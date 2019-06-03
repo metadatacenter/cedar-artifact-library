@@ -1,9 +1,9 @@
-CEDAR Archetype Tools
-=====================
+CEDAR Artifact Tools
+====================
 
-Contains various tools to work with cedar model artifacts.
+Contains various tools to work with CEDAR model artifacts.
 
-To build this library you must have the following items installed:
+To build the code in this repository you must have the following items installed:
 
 + [Java 11](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 + A tool for checking out a [Git](http://git-scm.com/) repository.
@@ -13,7 +13,7 @@ First build the [CEDAR parent project](https://github.com/metadatacenter/cedar-p
 
 Get a copy of the latest code:
 
-    git clone https://github.com/metadatacenter/cedar-atrifact-tools.git
+    git clone https://github.com/metadatacenter/cedar-artifact-tools.git
 
 Change into the cedar-artifact-tools directory:
 
@@ -23,7 +23,4 @@ Then build it with Maven:
 
     mvn clean install
 
-To run:
-
-    mvn exec:java
 
