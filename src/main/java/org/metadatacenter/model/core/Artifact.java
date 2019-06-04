@@ -1,6 +1,6 @@
 package org.metadatacenter.model.core;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -12,11 +12,11 @@ public abstract class Artifact
   private final String name;
   private final String description;
   private final String createdBy, modifiedBy;
-  private final LocalDateTime createdOn, lastUpdatedOn;
+  private final OffsetDateTime createdOn, lastUpdatedOn;
   private final Map<String, String> context;
 
   public Artifact(String jsonLDID, Set<String> jsonLDTypes, String name, String description, String createdBy,
-    String modifiedBy, LocalDateTime createdOn, LocalDateTime lastUpdatedOn, Map<String, String> context)
+    String modifiedBy, OffsetDateTime createdOn, OffsetDateTime lastUpdatedOn, Map<String, String> context)
   {
     this.jsonLDID = jsonLDID;
     this.jsonLDTypes = Collections.unmodifiableSet(jsonLDTypes);
@@ -59,12 +59,12 @@ public abstract class Artifact
     return modifiedBy;
   }
 
-  public LocalDateTime getCreatedOn()
+  public OffsetDateTime getCreatedOn()
   {
     return createdOn;
   }
 
-  public LocalDateTime getLastUpdatedOn()
+  public OffsetDateTime getLastUpdatedOn()
   {
     return lastUpdatedOn;
   }

@@ -1,6 +1,6 @@
 package org.metadatacenter.model.core;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ public class TemplateSchemaArtifact extends SchemaArtifact
   private final List<ElementSchemaArtifact> elements;
 
   public TemplateSchemaArtifact(String jsonLDID, Set<String> jsonLDTypes, String name, String description, String createdBy,
-    String modifiedBy, LocalDateTime createdOn, LocalDateTime lastUpdatedOn, String schema, String schemaVersion,
+    String modifiedBy, OffsetDateTime createdOn, OffsetDateTime lastUpdatedOn, String schema, String schemaVersion,
     String version, String status, Map<String, String> context, List<FieldSchemaArtifact> fields,
     List<ElementSchemaArtifact> elements)
   {

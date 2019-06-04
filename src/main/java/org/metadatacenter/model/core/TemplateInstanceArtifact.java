@@ -1,6 +1,6 @@
 package org.metadatacenter.model.core;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ public class TemplateInstanceArtifact extends InstanceArtifact
   private final Map<String, List<FieldInstanceArtifact>> fieldInstances;
 
   public TemplateInstanceArtifact(String jsonLDID, Set<String> jsonLDTypes, String name, String description,
-    String createdBy, String modifiedBy, LocalDateTime createdOn, LocalDateTime lastUpdatedOn,
+    String createdBy, String modifiedBy, OffsetDateTime createdOn, OffsetDateTime lastUpdatedOn,
     Map<String, String> context, String isBasedOn, Map<String, List<ElementInstanceArtifact>> elementInstances,
     Map<String, List<FieldInstanceArtifact>> fieldInstances)
   {
