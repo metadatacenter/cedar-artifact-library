@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.model.ModelNodeNames;
+import org.metadatacenter.model.core.Artifact;
 import org.metadatacenter.model.core.ElementSchemaArtifact;
 import org.metadatacenter.model.core.FieldSchemaArtifact;
+import org.metadatacenter.model.core.SchemaArtifact;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
 
 import java.time.OffsetDateTime;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ArtifactReader
 {
@@ -25,39 +28,62 @@ public class ArtifactReader
     this.mapper = mapper;
   }
 
-  protected String readJsonLDIDField(ObjectNode objectNode, String path)
-  {
-    return readTextualField(objectNode, ModelNodeNames.LD_ID, path);
-  }
-
-  /**
-   * See {@link ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_KEYWORDS}
-   */
   public TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode)
   {
-    List<String> jsonLDTypes = readJsonLDTypeField(objectNode, "/");
-    checkTemplateSchemaArtifactJSONLDType(jsonLDTypes, "/");
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, "/");
 
-    String jsonLDID = readJsonLDIDField(objectNode, "/");
-    String name = readNameField(objectNode, "/");
-    String description = readDescriptionField(objectNode, "/");
-    String createdBy = readCreatedByField(objectNode, "/");
-    String modifiedBy = readModifiedByField(objectNode, "/");
-    OffsetDateTime createdOn = readCreatedOnField(objectNode, "/");
-    OffsetDateTime lastUpdatedOn = readLastUpdatedOnField(objectNode, "/");
-    String schema = readSchemaField(objectNode, "/");
-    String schemaVersion = readSchemaVersionField(objectNode, "/");
-    String version = readVersionField(objectNode, "/");
-    String previousVersion = readPreviousVersionField(objectNode, "/");
-    String status = readStatusField(objectNode, "/");
-    Map<String, String> context = readJsonLDContextField(objectNode, "/");
     Map<String, FieldSchemaArtifact> fields = new HashMap<>();
     Map<String, ElementSchemaArtifact> elements = new HashMap<>();
 
-    // Validate that jsonLDTypes contains TemplateURI
+    checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
 
     readSubFieldsAndElements(objectNode, "/", fields, elements);
 
+    return new TemplateSchemaArtifact(schemaArtifact, fields, elements);
+  }
+
+  public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
+  {
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, "/");
+
+    Map<String, FieldSchemaArtifact> fields = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elements = new HashMap<>();
+    boolean isMultiple = false; // TODO
+
+    checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
+
+    readSubFieldsAndElements(objectNode, "/", fields, elements);
+
+    return new ElementSchemaArtifact(schemaArtifact, fields, elements, isMultiple);
+  }
+
+  public Artifact readArtifact(ObjectNode objectNode, String path)
+  {
+    Map<String, String> context = readJsonLDContextField(objectNode, path);
+    List<String> jsonLDTypes = readJsonLDTypeField(objectNode, path);
+    String jsonLDID = readRequiredJsonLDIDField(objectNode, path);
+    String name = readRequiredNameField(objectNode, "/");
+    String description = readRequiredDescriptionField(objectNode, path);
+    String createdBy = readCreatedByField(objectNode, "/");
+    String modifiedBy = readModifiedByField(objectNode, path);
+    OffsetDateTime createdOn = readCreatedOnField(objectNode, path);
+    OffsetDateTime lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
+
+    return new Artifact(jsonLDID, jsonLDTypes, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      context);
+  }
+
+  public SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
+  {
+    Artifact artifact = readArtifact(objectNode, path);
+
+    String schema = readRequiredSchemaField(objectNode, path);
+    String schemaVersion = readRequiredSchemaVersionField(objectNode, path);
+    String version = readRequiredVersionField(objectNode, path);
+    String previousVersion = readPreviousVersionField(objectNode, path);
+    String status = readRequiredStatusField(objectNode, path);
+
+    return new SchemaArtifact(artifact, schema, schemaVersion, version, previousVersion, status);
   }
 
   private void readSubFieldsAndElements(ObjectNode objectNode, String path, Map<String, FieldSchemaArtifact> fields,
@@ -102,6 +128,16 @@ public class ArtifactReader
         }
       }
     }
+  }
+
+  protected String readJsonLDIDField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.LD_ID, path);
+  }
+
+  protected String readRequiredJsonLDIDField(ObjectNode objectNode, String path)
+  {
+    return readRequiredTextualField(objectNode, ModelNodeNames.LD_ID, path);
   }
 
   private void checkSchemaArtifactJSONLDType(List<String> schemaArtifactJsonLDTypes, String path)
@@ -171,7 +207,7 @@ public class ArtifactReader
     return readTextualFieldValues(objectNode, ModelNodeNames.LD_TYPE, path);
   }
 
-  protected List<String> readMandatoryJsonLDTypeField(ObjectNode objectNode, String path)
+  protected Set<String> readMandatoryJsonLDTypeField(ObjectNode objectNode, String path)
   {
     List<String> jsonLDTypes = readTextualFieldValues(objectNode, ModelNodeNames.LD_TYPE, path);
 
@@ -220,9 +256,19 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames.SCHEMA_NAME, path);
   }
 
+  protected String readRequiredNameField(ObjectNode objectNode, String path)
+  {
+    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_NAME, path);
+  }
+
   protected String readCreatedByField(ObjectNode objectNode, String path)
   {
     return readTextualField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
+  }
+
+  protected String readRequiredCreatedByField(ObjectNode objectNode, String path)
+  {
+    return readRequiredTextualField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
   }
 
   protected String readModifiedByField(ObjectNode objectNode, String path)
@@ -230,9 +276,19 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
   }
 
+  protected String readRequiredModifiedByField(ObjectNode objectNode, String path)
+  {
+    return readRequiredTextualField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
+  }
+
   protected String readDescriptionField(ObjectNode objectNode, String path)
   {
     return readTextualField(objectNode, ModelNodeNames.SCHEMA_DESCRIPTION, path);
+  }
+
+  protected String readRequiredDescriptionField(ObjectNode objectNode, String path)
+  {
+    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_DESCRIPTION, path);
   }
 
   protected String readSchemaField(ObjectNode objectNode, String path)
@@ -240,14 +296,19 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames._SCHEMA, path);
   }
 
-  protected String readSchemaVersionField(ObjectNode objectNode, String path)
+  protected String readRequiredSchemaField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SCHEMA_SCHEMA_VERSION, path);
+    return readRequiredTextualField(objectNode, ModelNodeNames._SCHEMA, path);
   }
 
-  protected String readVersionField(ObjectNode objectNode, String path)
+  protected String readRequiredSchemaVersionField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.PAV_VERSION, path);
+    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_SCHEMA_VERSION, path);
+  }
+
+  protected String readRequiredVersionField(ObjectNode objectNode, String path)
+  {
+    return readRequiredTextualField(objectNode, ModelNodeNames.PAV_VERSION, path);
   }
 
   protected String readPreviousVersionField(ObjectNode objectNode, String path)
@@ -255,9 +316,9 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames.PAV_PREVIOUS_VERSION, path);
   }
 
-  protected String readStatusField(ObjectNode objectNode, String path)
+  protected String readRequiredStatusField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.BIBO_STATUS, path);
+    return readRequiredTextualField(objectNode, ModelNodeNames.BIBO_STATUS, path);
   }
 
   protected OffsetDateTime readCreatedOnField(ObjectNode objectNode, String path)
@@ -265,9 +326,19 @@ public class ArtifactReader
     return readOffsetDateTimeField(objectNode, ModelNodeNames.PAV_CREATED_ON, path);
   }
 
+  protected OffsetDateTime readRequiredCreatedOnField(ObjectNode objectNode, String path)
+  {
+    return readOffsetDateTimeField(objectNode, ModelNodeNames.PAV_CREATED_ON, path);
+  }
+
   protected OffsetDateTime readLastUpdatedOnField(ObjectNode objectNode, String path)
   {
     return readOffsetDateTimeField(objectNode, ModelNodeNames.PAV_LAST_UPDATED_ON, path);
+  }
+
+  protected OffsetDateTime readRequiredLastUpdatedOnField(ObjectNode objectNode, String path)
+  {
+    return readRequiredOffsetDateTimeField(objectNode, ModelNodeNames.PAV_LAST_UPDATED_ON, path);
   }
 
   protected ObjectMapper getMapper()
@@ -278,6 +349,18 @@ public class ArtifactReader
   private OffsetDateTime readOffsetDateTimeField(ObjectNode objectNode, String fieldName, String path)
   {
     String dateTimeValue = readTextualField(objectNode, fieldName, path);
+
+    try {
+      return OffsetDateTime.parse(dateTimeValue);
+    } catch (DateTimeParseException e) {
+      throw new RuntimeException(
+        "Invalid offset datetime value " + dateTimeValue + " in field " + fieldName + " at location " + path);
+    }
+  }
+
+  private OffsetDateTime readRequiredOffsetDateTimeField(ObjectNode objectNode, String fieldName, String path)
+  {
+    String dateTimeValue = readRequiredTextualField(objectNode, fieldName, path);
 
     try {
       return OffsetDateTime.parse(dateTimeValue);
@@ -300,7 +383,7 @@ public class ArtifactReader
     return jsonNode.asText();
   }
 
-  private String readMandatoryTextualField(ObjectNode objectNode, String fieldName, String path)
+  private String readRequiredTextualField(ObjectNode objectNode, String fieldName, String path)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -340,7 +423,7 @@ public class ArtifactReader
     return textValues;
   }
 
-  private List<String> readMandatoryTextualFieldValues(ObjectNode objectNode, String fieldName, String path)
+  private List<String> readRequiredTextualFieldValues(ObjectNode objectNode, String fieldName, String path)
   {
     List<String> textValues = readTextualFieldValues(objectNode, fieldName, path);
 
