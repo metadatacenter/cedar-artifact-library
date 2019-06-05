@@ -8,16 +8,17 @@ public abstract class SchemaArtifact extends Artifact
 {
   private final String schema;
   private final String schemaVersion;
-  private final String version, status;
+  private final String version, previousVersion, status;
 
   public SchemaArtifact(String jsonLDID, Set<String> jsonLDTypes, String name, String description, String createdBy,
     String modifiedBy, OffsetDateTime createdOn, OffsetDateTime lastUpdatedOn, String schema, String schemaVersion,
-    String version, String status, Map<String, String> context)
+    String version, String previousVersion, String status, Map<String, String> context)
   {
     super(jsonLDID, jsonLDTypes, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, context);
     this.schema = schema;
     this.schemaVersion = schemaVersion;
     this.version = version;
+    this.previousVersion = previousVersion;
     this.status = status;
   }
 
@@ -34,6 +35,11 @@ public abstract class SchemaArtifact extends Artifact
   public String getVersion()
   {
     return version;
+  }
+
+  public String getPreviousVersion()
+  {
+    return previousVersion;
   }
 
   public String getStatus()
