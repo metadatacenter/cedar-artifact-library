@@ -10,25 +10,25 @@ import java.util.Map;
  */
 public class ElementInstanceArtifact extends InstanceArtifact
 {
-  private final Map<String, List<ElementInstanceArtifact>> elementInstances;
   private final Map<String, List<FieldInstanceArtifact>> fieldInstances;
+  private final Map<String, List<ElementInstanceArtifact>> elementInstances;
 
   public ElementInstanceArtifact(InstanceArtifact instanceArtifact,
-    Map<String, List<ElementInstanceArtifact>> elementInstances,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances)
+    Map<String, List<FieldInstanceArtifact>> fieldInstances,
+    Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
     super(instanceArtifact);
-    this.elementInstances = Collections.unmodifiableMap(elementInstances);
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
-  }
-
-  public Map<String, List<ElementInstanceArtifact>> getElementInstances()
-  {
-    return elementInstances;
+    this.elementInstances = Collections.unmodifiableMap(elementInstances);
   }
 
   public Map<String, List<FieldInstanceArtifact>> getFieldInstances()
   {
     return fieldInstances;
+  }
+
+  public Map<String, List<ElementInstanceArtifact>> getElementInstances()
+  {
+    return elementInstances;
   }
 }

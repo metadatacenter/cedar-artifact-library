@@ -1,6 +1,6 @@
 package org.metadatacenter.model.core;
 
-public abstract class InstanceArtifact extends Artifact
+public class InstanceArtifact extends Artifact
 {
   public InstanceArtifact(Artifact artifact)
   {

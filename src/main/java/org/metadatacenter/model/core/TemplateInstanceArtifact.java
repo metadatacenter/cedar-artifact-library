@@ -1,10 +1,8 @@
 package org.metadatacenter.model.core;
 
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class TemplateInstanceArtifact extends InstanceArtifact
 {
@@ -12,12 +10,11 @@ public class TemplateInstanceArtifact extends InstanceArtifact
   private final Map<String, List<ElementInstanceArtifact>> elementInstances;
   private final Map<String, List<FieldInstanceArtifact>> fieldInstances;
 
-  public TemplateInstanceArtifact(String jsonLDID, Set<String> jsonLDTypes, String name, String description,
-    String createdBy, String modifiedBy, OffsetDateTime createdOn, OffsetDateTime lastUpdatedOn,
-    Map<String, String> context, String isBasedOn, Map<String, List<ElementInstanceArtifact>> elementInstances,
+  public TemplateInstanceArtifact(InstanceArtifact instanceArtifact, String isBasedOn,
+    Map<String, List<ElementInstanceArtifact>> elementInstances,
     Map<String, List<FieldInstanceArtifact>> fieldInstances)
   {
-    super(jsonLDID, jsonLDTypes, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, context);
+    super(instanceArtifact);
     this.isBasedOn = isBasedOn;
     this.elementInstances = Collections.unmodifiableMap(elementInstances);
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);

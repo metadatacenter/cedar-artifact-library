@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.model.ModelNodeNames;
 import org.metadatacenter.model.core.Artifact;
+import org.metadatacenter.model.core.ElementInstanceArtifact;
 import org.metadatacenter.model.core.ElementSchemaArtifact;
+import org.metadatacenter.model.core.FieldInstanceArtifact;
 import org.metadatacenter.model.core.FieldSchemaArtifact;
+import org.metadatacenter.model.core.InstanceArtifact;
 import org.metadatacenter.model.core.SchemaArtifact;
+import org.metadatacenter.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
 
 import java.time.OffsetDateTime;
@@ -17,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ArtifactReader
 {
@@ -37,7 +40,7 @@ public class ArtifactReader
 
     checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
 
-    readSubFieldsAndElements(objectNode, "/", fields, elements);
+    readNestedFieldsAndElementSchemaArtifacts(objectNode, "/", fields, elements);
 
     return new TemplateSchemaArtifact(schemaArtifact, fields, elements);
   }
@@ -52,7 +55,7 @@ public class ArtifactReader
 
     checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
 
-    readSubFieldsAndElements(objectNode, "/", fields, elements);
+    readNestedFieldsAndElementSchemaArtifacts(objectNode, "/", fields, elements);
 
     return new ElementSchemaArtifact(schemaArtifact, fields, elements, isMultiple);
   }
@@ -61,9 +64,9 @@ public class ArtifactReader
   {
     Map<String, String> context = readJsonLDContextField(objectNode, path);
     List<String> jsonLDTypes = readJsonLDTypeField(objectNode, path);
-    String jsonLDID = readRequiredJsonLDIDField(objectNode, path);
-    String name = readRequiredNameField(objectNode, "/");
-    String description = readRequiredDescriptionField(objectNode, path);
+    String jsonLDID = readJsonLDIDField(objectNode, path);
+    String name = readNameField(objectNode, "/");
+    String description = readDescriptionField(objectNode, path);
     String createdBy = readCreatedByField(objectNode, "/");
     String modifiedBy = readModifiedByField(objectNode, path);
     OffsetDateTime createdOn = readCreatedOnField(objectNode, path);
@@ -71,6 +74,23 @@ public class ArtifactReader
 
     return new Artifact(jsonLDID, jsonLDTypes, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn,
       context);
+  }
+
+  public InstanceArtifact readInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    Artifact artifact = readArtifact(objectNode, path);
+
+    return new InstanceArtifact(artifact);
+  }
+
+  public InstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    String isBasedOn = readRequiredIsBasedOnField(objectNode, path);
+    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+
+    return new TemplateInstanceArtifact(instanceArtifact, isBasedOn, elementInstances, fieldInstances);
   }
 
   public SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
@@ -86,8 +106,8 @@ public class ArtifactReader
     return new SchemaArtifact(artifact, schema, schemaVersion, version, previousVersion, status);
   }
 
-  private void readSubFieldsAndElements(ObjectNode objectNode, String path, Map<String, FieldSchemaArtifact> fields,
-    Map<String, ElementSchemaArtifact> elements)
+  private void readNestedFieldsAndElementSchemaArtifacts(ObjectNode objectNode, String path,
+    Map<String, FieldSchemaArtifact> fields, Map<String, ElementSchemaArtifact> elements)
   {
     Iterator<String> jsonFieldNames = objectNode.fieldNames();
 
@@ -95,39 +115,144 @@ public class ArtifactReader
       String jsonFieldName = jsonFieldNames.next();
 
       if (!ModelNodeNames.SCHEMA_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
-        JsonNode jsonFieldOrElementNode = objectNode.get(jsonFieldName);
+        JsonNode jsonFieldOrElementSchemaArtifactNode = objectNode.get(jsonFieldName);
         String fieldOrElementPath = path + "/" + jsonFieldName;
 
-        if (jsonFieldOrElementNode.isObject()) {
-          List<String> subArtifactJsonLDTypes = readJsonLDTypeField((ObjectNode)jsonFieldOrElementNode,
-            fieldOrElementPath);
+        if (jsonFieldOrElementSchemaArtifactNode.isObject()) {
+          List<String> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
+            (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
 
-          checkSchemaArtifactJSONLDType(subArtifactJsonLDTypes, fieldOrElementPath);
+          checkSchemaArtifactJSONLDType(subSchemaArtifactJsonLDTypes, fieldOrElementPath);
 
-          String subArtifactJsonLDType = subArtifactJsonLDTypes.get(0);
+          String subSchemaArtifactJsonLDType = subSchemaArtifactJsonLDTypes.get(0);
 
-          if (subArtifactJsonLDType.equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
+          if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
             throw new RuntimeException("Invalid nesting of template schema artifact at location " + fieldOrElementPath);
 
-          } else if (subArtifactJsonLDType.equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact((ObjectNode)jsonFieldOrElementNode,
-              fieldOrElementPath);
+          } else if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
+            ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
+              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
             elements.put(jsonFieldName, elementSchemaArtifact);
-          } else if (subArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact((ObjectNode)jsonFieldOrElementNode,
-              fieldOrElementPath);
+          } else if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
+            FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
+              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
             fields.put(jsonFieldName, fieldSchemaArtifact);
           } else
             throw new RuntimeException(
-              "Unknown JSON-LD @type " + subArtifactJsonLDType + "for field " + jsonFieldName + " at location "
+              "Unknown JSON-LD @type " + subSchemaArtifactJsonLDType + "for field " + jsonFieldName + " at location "
                 + fieldOrElementPath);
 
         } else {
           throw new RuntimeException(
-            "Unknown non-object field " + jsonFieldName + " at location " + fieldOrElementPath);
+            "Unknown non-object schema artifact field " + jsonFieldName + " at location " + fieldOrElementPath);
         }
       }
     }
+  }
+
+  protected ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+
+    readNestedFieldsAndElementInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
+
+    ElementInstanceArtifact elementInstanceArtifact = new ElementInstanceArtifact(instanceArtifact, fieldInstances,
+      elementInstances);
+
+    return elementInstanceArtifact;
+  }
+
+  protected FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    String jsonLDValue = readJsonLDValueField(objectNode, path);
+    String rdfsLabel = readRDFSLabelField(objectNode, path);
+    String skosNotation = readSKOSNotationField(objectNode, path);
+    String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
+    String skosAltLabel = readSKOSAltLabelField(objectNode, path);
+
+    FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLDValue, rdfsLabel,
+      skosNotation, skosPrefLabel, skosAltLabel);
+
+    return fieldInstanceArtifact;
+  }
+
+  private void readNestedFieldsAndElementInstanceArtifacts(ObjectNode objectNode, String path,
+    Map<String, List<FieldInstanceArtifact>> fields, Map<String, List<ElementInstanceArtifact>> elements)
+  {
+    Iterator<String> jsonFieldNames = objectNode.fieldNames();
+
+    while (jsonFieldNames.hasNext()) {
+      String jsonFieldName = jsonFieldNames.next();
+
+      if (!ModelNodeNames.INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
+        JsonNode jsonFieldOrElementInstanceArtifactNode = objectNode.get(jsonFieldName);
+        String fieldOrElementPath = path + "/" + jsonFieldName;
+
+        if (jsonFieldOrElementInstanceArtifactNode.isObject()) {
+
+          if (hasJSONLDContextField((ObjectNode)jsonFieldOrElementInstanceArtifactNode)) {
+            FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(objectNode, fieldOrElementPath);
+            if (fields.containsKey(jsonFieldName)) {
+              fields.get(jsonFieldName).add(fieldInstanceArtifact);
+            } else {
+              fields.put(jsonFieldName, new ArrayList<>());
+              fields.get(jsonFieldName).add(fieldInstanceArtifact);
+            }
+          } else if (jsonFieldOrElementInstanceArtifactNode.isArray()) {
+            // TODO Nested array of fields or instances
+            Iterator<JsonNode> nodeIterator = objectNode.iterator();
+
+            int arrayIndex = 0;
+            while (nodeIterator.hasNext()) {
+              JsonNode jsonNode = nodeIterator.next();
+              if (jsonNode == null) {
+                throw new RuntimeException(
+                  "Expecting field or element instance entry in array at location " + path + "[" + arrayIndex
+                    + "], got null");
+              } else {
+                if (!jsonNode.isObject())
+                  throw new RuntimeException(
+                    "Expecting nested field or element artifact instance in array at location " + path + "["
+                      + arrayIndex + "]");
+
+                
+              }
+              arrayIndex++;
+            }
+          } else { // Assume it is element instance artifact
+            ObjectNode elementInstanceArtifactNode = (ObjectNode)jsonFieldOrElementInstanceArtifactNode;
+            ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(objectNode,
+              fieldOrElementPath);
+            if (elements.containsKey(jsonFieldName))
+              throw new RuntimeException();
+            else
+              elementInstanceArtifactNode.put(jsonFieldName, elementInstanceArtifactNode);
+
+          }
+        } else {
+          throw new RuntimeException(
+            "Unknown non-object instance artifact field " + jsonFieldName + " at location " + fieldOrElementPath);
+        }
+      }
+    }
+  }
+
+  protected boolean hasJSONLDContextField(ObjectNode objectNode)
+  {
+    return objectNode.get(ModelNodeNames.LD_CONTEXT) != null;
+  }
+
+  protected String readIsBasedOnField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
+  }
+
+  protected String readRequiredIsBasedOnField(ObjectNode objectNode, String path)
+  {
+    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
   }
 
   protected String readJsonLDIDField(ObjectNode objectNode, String path)
@@ -138,6 +263,36 @@ public class ArtifactReader
   protected String readRequiredJsonLDIDField(ObjectNode objectNode, String path)
   {
     return readRequiredTextualField(objectNode, ModelNodeNames.LD_ID, path);
+  }
+
+  protected String readJsonLDValueField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.LD_VALUE, path);
+  }
+
+  protected String readRDFSLabelField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.RDFS_LABEL, path);
+  }
+
+  protected String readSKOSNotationField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.SKOS_NOTATION, path);
+  }
+
+  protected String readSKOSPrefLabelField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.SKOS_PREFLABEL, path);
+  }
+
+  protected String readSKOSAltLabelField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.SKOS_ALTLABEL, path);
+  }
+
+  protected String readSKOSPrefLabelValueField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.SKOS_PREFLABEL, path);
   }
 
   private void checkSchemaArtifactJSONLDType(List<String> schemaArtifactJsonLDTypes, String path)
@@ -207,7 +362,7 @@ public class ArtifactReader
     return readTextualFieldValues(objectNode, ModelNodeNames.LD_TYPE, path);
   }
 
-  protected Set<String> readMandatoryJsonLDTypeField(ObjectNode objectNode, String path)
+  protected List<String> readMandatoryJsonLDTypeField(ObjectNode objectNode, String path)
   {
     List<String> jsonLDTypes = readTextualFieldValues(objectNode, ModelNodeNames.LD_TYPE, path);
 
@@ -240,15 +395,10 @@ public class ArtifactReader
           String termURI = fieldEntry.getValue().textValue();
 
           if (context.containsKey(term))
-            throw new RuntimeException(
-              ModelNodeNames.LD_CONTEXT + " field contains duplicate entries for term " + term + " at location "
-                + path);
-
-          context.put(term, termURI);
+            4 context.put(term, termURI);
         }
       }
-    }
-    return context;
+    } return context;
   }
 
   protected String readNameField(ObjectNode objectNode, String path)
