@@ -156,7 +156,7 @@ public class ArtifactReader
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
-    readNestedFieldsAndElementInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
+    readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
 
     ElementInstanceArtifact elementInstanceArtifact = new ElementInstanceArtifact(instanceArtifact, fieldInstances,
       elementInstances);
@@ -179,64 +179,68 @@ public class ArtifactReader
     return fieldInstanceArtifact;
   }
 
-  private void readNestedFieldsAndElementInstanceArtifacts(ObjectNode objectNode, String path,
+  private void readNestedInstanceArtifacts(ObjectNode instanceArtifactNode, String path,
     Map<String, List<FieldInstanceArtifact>> fields, Map<String, List<ElementInstanceArtifact>> elements)
   {
-    Iterator<String> jsonFieldNames = objectNode.fieldNames();
+    Iterator<String> instanceArtifactFieldNames = instanceArtifactNode.fieldNames();
 
-    while (jsonFieldNames.hasNext()) {
-      String jsonFieldName = jsonFieldNames.next();
+    while (instanceArtifactFieldNames.hasNext()) {
+      String instanceArtifactFieldName = instanceArtifactFieldNames.next();
 
-      if (!ModelNodeNames.INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
-        JsonNode jsonFieldOrElementInstanceArtifactNode = objectNode.get(jsonFieldName);
-        String fieldOrElementPath = path + "/" + jsonFieldName;
+      if (!ModelNodeNames.INSTANCE_ARTIFACT_KEYWORDS.contains(instanceArtifactFieldName)) {
+        JsonNode nestedNode = instanceArtifactNode.get(instanceArtifactFieldName);
+        String nestedInstanceArtifactPath = path + "/" + instanceArtifactFieldName;
 
-        if (jsonFieldOrElementInstanceArtifactNode.isObject()) {
+        if (nestedNode.isObject()) {
+          ObjectNode nestedInstanceArtifactNode = (ObjectNode)nestedNode;
 
-          if (hasJSONLDContextField((ObjectNode)jsonFieldOrElementInstanceArtifactNode)) {
-            FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(objectNode, fieldOrElementPath);
-            if (fields.containsKey(jsonFieldName)) {
-              fields.get(jsonFieldName).add(fieldInstanceArtifact);
+          readNestedInstanceArtifact(instanceArtifactFieldName, nestedInstanceArtifactPath, nestedInstanceArtifactNode,
+            elements, fields);
+
+        } else if (nestedNode.isArray()) {
+          Iterator<JsonNode> nodeIterator = nestedNode.iterator();
+
+          int arrayIndex = 0;
+          while (nodeIterator.hasNext()) {
+            String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
+            JsonNode jsonNode = nodeIterator.next();
+            if (jsonNode == null) {
+              throw new RuntimeException("Expecting field or element instance artifact entry in array at location "
+                + arrayEnclosedInstanceArtifactPath + "], got null");
             } else {
-              fields.put(jsonFieldName, new ArrayList<>());
-              fields.get(jsonFieldName).add(fieldInstanceArtifact);
+              if (!jsonNode.isObject())
+                throw new RuntimeException("Expecting nested field or element instance artifact in array at location "
+                  + arrayEnclosedInstanceArtifactPath);
+
+              ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)jsonNode;
+              readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
+                arrayEnclosedInstanceArtifactNode, elements, fields);
             }
-          } else if (jsonFieldOrElementInstanceArtifactNode.isArray()) {
-            // TODO Nested array of fields or instances
-            Iterator<JsonNode> nodeIterator = objectNode.iterator();
-
-            int arrayIndex = 0;
-            while (nodeIterator.hasNext()) {
-              JsonNode jsonNode = nodeIterator.next();
-              if (jsonNode == null) {
-                throw new RuntimeException(
-                  "Expecting field or element instance entry in array at location " + path + "[" + arrayIndex
-                    + "], got null");
-              } else {
-                if (!jsonNode.isObject())
-                  throw new RuntimeException(
-                    "Expecting nested field or element artifact instance in array at location " + path + "["
-                      + arrayIndex + "]");
-
-                
-              }
-              arrayIndex++;
-            }
-          } else { // Assume it is element instance artifact
-            ObjectNode elementInstanceArtifactNode = (ObjectNode)jsonFieldOrElementInstanceArtifactNode;
-            ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(objectNode,
-              fieldOrElementPath);
-            if (elements.containsKey(jsonFieldName))
-              throw new RuntimeException();
-            else
-              elementInstanceArtifactNode.put(jsonFieldName, elementInstanceArtifactNode);
-
           }
-        } else {
-          throw new RuntimeException(
-            "Unknown non-object instance artifact field " + jsonFieldName + " at location " + fieldOrElementPath);
+          arrayIndex++;
         }
-      }
+      } else
+        throw new RuntimeException(
+          "Unknown non-object instance artifact field " + instanceArtifactFieldName + " at location "
+            + instanceArtifactFieldName);
+    }
+  }
+
+  private void readNestedInstanceArtifact(String instanceArtifactFieldName, String instanceArtifactPath,
+    ObjectNode instanceArtifactNode, Map<String, List<ElementInstanceArtifact>> elements,
+    Map<String, List<FieldInstanceArtifact>> fields)
+  {
+    if (hasJSONLDContextField(instanceArtifactNode)) { // With @context is an element instance artifact
+      ObjectNode elementInstanceArtifactNode = instanceArtifactNode;
+      ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
+        instanceArtifactPath);
+      elements.put(instanceArtifactFieldName, new ArrayList<>());
+      elements.get(instanceArtifactFieldName).add(elementInstanceArtifact);
+    } else { // Default to field instance artifact
+      FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(instanceArtifactNode,
+        instanceArtifactPath);
+      fields.put(instanceArtifactFieldName, new ArrayList<>());
+      fields.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
     }
   }
 
