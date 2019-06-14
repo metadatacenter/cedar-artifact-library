@@ -322,7 +322,7 @@ public class ArtifactReader
 
     String schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (schemaArtifactJsonLDType.equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new RuntimeException(
         "Unexpected template schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
 
@@ -334,7 +334,7 @@ public class ArtifactReader
 
     String schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (schemaArtifactJsonLDType.equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new RuntimeException(
         "Unexpected element schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
   }
@@ -345,7 +345,7 @@ public class ArtifactReader
 
     String schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (schemaArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new RuntimeException(
         "Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
   }
@@ -402,7 +402,8 @@ public class ArtifactReader
             context.put(term, termURI);
         }
       }
-    } return context;
+    }
+    return context;
   }
 
   protected String readNameField(ObjectNode objectNode, String path)
@@ -508,7 +509,8 @@ public class ArtifactReader
       return OffsetDateTime.parse(dateTimeValue);
     } catch (DateTimeParseException e) {
       throw new RuntimeException(
-        "Invalid offset datetime value " + dateTimeValue + " in field " + fieldName + " at location " + path);
+        "Invalid offset datetime value " + dateTimeValue + " in field " + fieldName + " at location " + path + ":" + e
+          .getMessage());
     }
   }
 
@@ -520,7 +522,8 @@ public class ArtifactReader
       return OffsetDateTime.parse(dateTimeValue);
     } catch (DateTimeParseException e) {
       throw new RuntimeException(
-        "Invalid offset datetime value " + dateTimeValue + " in field " + fieldName + " at location " + path);
+        "Invalid offset datetime value " + dateTimeValue + " in field " + fieldName + " at location " + path + ":" + e
+          .getMessage());
     }
   }
 
