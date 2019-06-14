@@ -109,14 +109,19 @@ public class ArtifactReader
   private void readNestedFieldsAndElementSchemaArtifacts(ObjectNode objectNode, String path,
     Map<String, FieldSchemaArtifact> fields, Map<String, ElementSchemaArtifact> elements)
   {
-    Iterator<String> jsonFieldNames = objectNode.fieldNames();
+    JsonNode propertiesNode = objectNode.get(ModelNodeNames.PROPERTIES);
+
+    if (propertiesNode == null || !propertiesNode.isObject())
+      throw new RuntimeException("Invalid JSON Schema properties node at " + path);
+
+    Iterator<String> jsonFieldNames = propertiesNode.fieldNames();
 
     while (jsonFieldNames.hasNext()) {
       String jsonFieldName = jsonFieldNames.next();
 
       if (!ModelNodeNames.SCHEMA_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
-        JsonNode jsonFieldOrElementSchemaArtifactNode = objectNode.get(jsonFieldName);
-        String fieldOrElementPath = path + "/" + jsonFieldName;
+        JsonNode jsonFieldOrElementSchemaArtifactNode = propertiesNode.get(jsonFieldName);
+        String fieldOrElementPath = path + "properties/" + jsonFieldName;
 
         if (jsonFieldOrElementSchemaArtifactNode.isObject()) {
           List<String> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
