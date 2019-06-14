@@ -1,7 +1,10 @@
-package org.metadatacenter.model;
+package org.metadatacenter.model.tools;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.model.reader.ArtifactReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +17,15 @@ public class TemplateSchemaArtifactReporter
       Usage();
 
     ObjectMapper mapper = new ObjectMapper();
-    File templateFile = new File(args[1]);
+    File templateFile = new File(args[0]);
     JsonNode jsonNode = mapper.readTree(templateFile);
+
+    if (!jsonNode.isObject())
+      throw new RuntimeException("Expecting JSON object");
+
+    ObjectNode templateObjectNode = (ObjectNode)jsonNode;
+    ArtifactReader artifactReader = new ArtifactReader(mapper);
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
 
   }

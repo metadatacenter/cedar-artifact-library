@@ -393,13 +393,13 @@ public class ArtifactReader
       while (fieldEntries.hasNext()) {
         Map.Entry<String, JsonNode> fieldEntry = fieldEntries.next();
 
-        // We only record simple term->term URI @context entries
+        // We only record simple term->term URI entries
         if (fieldEntry.getValue().isTextual()) {
           String term = fieldEntry.getKey();
           String termURI = fieldEntry.getValue().textValue();
 
-          if (context.containsKey(term))
-            4 context.put(term, termURI);
+          if (!context.containsKey(term))
+            context.put(term, termURI);
         }
       }
     } return context;
