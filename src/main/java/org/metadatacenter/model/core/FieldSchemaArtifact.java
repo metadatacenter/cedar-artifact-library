@@ -4,20 +4,20 @@ import java.util.Map;
 
 public class FieldSchemaArtifact extends SchemaArtifact
 {
-  private final String inputType;
+  private final String fieldInputType;
   private final boolean isMultiple;
 
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fields, String inputType,
-    boolean isMultiple)
+  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fields,
+    String fieldInputType, boolean isMultiple)
   {
     super(schemaArtifact);
-    this.inputType = inputType;
+    this.fieldInputType = fieldInputType;
     this.isMultiple = isMultiple;
   }
 
-  public String getInputType()
+  public String getFieldInputType()
   {
-    return inputType;
+    return fieldInputType;
   }
 
   public boolean isMultiple()

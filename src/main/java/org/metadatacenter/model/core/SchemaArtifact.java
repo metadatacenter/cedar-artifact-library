@@ -2,53 +2,53 @@ package org.metadatacenter.model.core;
 
 public class SchemaArtifact extends Artifact
 {
-  private final String schema;
-  private final String schemaVersion;
-  private final String version, previousVersion, status;
+  private final String jsonSchemaSchema;
+  private final String schemaOrgSchemaVersion;
+  private final String pavVersion, pavPreviousVersion, biboStatus;
 
-  public SchemaArtifact(Artifact artifact, String schema, String schemaVersion, String version, String previousVersion,
-    String status)
+  public SchemaArtifact(Artifact artifact, String jsonSchemaSchema, String schemaOrgSchemaVersion, String pavVersion,
+    String pavPreviousVersion, String biboStatus)
   {
     super(artifact);
-    this.schema = schema;
-    this.schemaVersion = schemaVersion;
-    this.version = version;
-    this.previousVersion = previousVersion;
-    this.status = status;
+    this.jsonSchemaSchema = jsonSchemaSchema;
+    this.schemaOrgSchemaVersion = schemaOrgSchemaVersion;
+    this.pavVersion = pavVersion;
+    this.pavPreviousVersion = pavPreviousVersion;
+    this.biboStatus = biboStatus;
   }
 
   public SchemaArtifact(SchemaArtifact schemaArtifact)
   {
     super(schemaArtifact);
-    this.schema = schemaArtifact.schema;
-    this.schemaVersion = schemaArtifact.schemaVersion;
-    this.version = schemaArtifact.version;
-    this.previousVersion = schemaArtifact.previousVersion;
-    this.status = schemaArtifact.status;
+    this.jsonSchemaSchema = schemaArtifact.jsonSchemaSchema;
+    this.schemaOrgSchemaVersion = schemaArtifact.schemaOrgSchemaVersion;
+    this.pavVersion = schemaArtifact.pavVersion;
+    this.pavPreviousVersion = schemaArtifact.pavPreviousVersion;
+    this.biboStatus = schemaArtifact.biboStatus;
   }
 
-  public String getSchema()
+  public String getJsonSchemaSchema()
   {
-    return schema;
+    return jsonSchemaSchema;
   }
 
-  public String getSchemaVersion()
+  public String getSchemaOrgSchemaVersion()
   {
-    return schemaVersion;
+    return schemaOrgSchemaVersion;
   }
 
-  public String getVersion()
+  public String getPavVersion()
   {
-    return version;
+    return pavVersion;
   }
 
-  public String getPreviousVersion()
+  public String getPavPreviousVersion()
   {
-    return previousVersion;
+    return pavPreviousVersion;
   }
 
-  public String getStatus()
+  public String getBiboStatus()
   {
-    return status;
+    return biboStatus;
   }
 }
