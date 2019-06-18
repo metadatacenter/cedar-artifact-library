@@ -9,17 +9,20 @@ public class Artifact
 {
   private final String jsonLDID;
   private final List<String> jsonLDTypes;
+  private final String jsonSchemaType;
   private final String name;
   private final String description;
   private final String createdBy, modifiedBy;
   private final OffsetDateTime createdOn, lastUpdatedOn;
   private final Map<String, String> context;
 
-  public Artifact(String jsonLDID, List<String> jsonLDTypes, String name, String description, String createdBy,
-    String modifiedBy, OffsetDateTime createdOn, OffsetDateTime lastUpdatedOn, Map<String, String> context)
+  public Artifact(String jsonLDID, List<String> jsonLDTypes, String jsonSchemaType, String name, String description,
+    String createdBy, String modifiedBy, OffsetDateTime createdOn, OffsetDateTime lastUpdatedOn,
+    Map<String, String> context)
   {
     this.jsonLDID = jsonLDID;
     this.jsonLDTypes = Collections.unmodifiableList(jsonLDTypes);
+    this.jsonSchemaType = jsonSchemaType;
     this.name = name;
     this.description = description;
     this.createdBy = createdBy;
@@ -33,6 +36,7 @@ public class Artifact
   {
     this.jsonLDID = artifact.jsonLDID;
     this.jsonLDTypes = Collections.unmodifiableList(artifact.jsonLDTypes);
+    this.jsonSchemaType = artifact.jsonSchemaType;
     this.name = artifact.name;
     this.description = artifact.description;
     this.createdBy = artifact.createdBy;
@@ -50,6 +54,11 @@ public class Artifact
   public List<String> getJsonLDTypes()
   {
     return jsonLDTypes;
+  }
+
+  public String getJsonSchemaType()
+  {
+    return jsonSchemaType;
   }
 
   public String getName()

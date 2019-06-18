@@ -65,15 +65,16 @@ public class ArtifactReader
     Map<String, String> context = readJsonLDContextField(objectNode, path);
     List<String> jsonLDTypes = readJsonLDTypeField(objectNode, path);
     String jsonLDID = readJsonLDIDField(objectNode, path);
-    String name = readNameField(objectNode, "/");
-    String description = readDescriptionField(objectNode, path);
+    String jsonSchemaType = readJsonSchemaTypeField(objectNode, "/");
+    String name = readJsonSchemaTitleField(objectNode, "/");
+    String description = readJsonSchemaDescriptionField(objectNode, path);
     String createdBy = readCreatedByField(objectNode, "/");
     String modifiedBy = readModifiedByField(objectNode, path);
     OffsetDateTime createdOn = readCreatedOnField(objectNode, path);
     OffsetDateTime lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
 
-    return new Artifact(jsonLDID, jsonLDTypes, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      context);
+    return new Artifact(jsonLDID, jsonLDTypes, jsonSchemaType, name, description, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, context);
   }
 
   public InstanceArtifact readInstanceArtifact(ObjectNode objectNode, String path)
@@ -97,7 +98,7 @@ public class ArtifactReader
   {
     Artifact artifact = readArtifact(objectNode, path);
 
-    String schema = readRequiredSchemaField(objectNode, path);
+    String schema = readRequiredJsonSchemaSchemaField(objectNode, path);
     String schemaVersion = readRequiredSchemaVersionField(objectNode, path);
     String version = readRequiredVersionField(objectNode, path);
     String previousVersion = readPreviousVersionField(objectNode, path);
@@ -109,7 +110,7 @@ public class ArtifactReader
   private void readNestedFieldsAndElementSchemaArtifacts(ObjectNode objectNode, String path,
     Map<String, FieldSchemaArtifact> fields, Map<String, ElementSchemaArtifact> elements)
   {
-    JsonNode propertiesNode = objectNode.get(ModelNodeNames.PROPERTIES);
+    JsonNode propertiesNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_PROPERTIES);
 
     if (propertiesNode == null || !propertiesNode.isObject())
       throw new RuntimeException("Invalid JSON Schema properties node at " + path);
@@ -119,11 +120,33 @@ public class ArtifactReader
     while (jsonFieldNames.hasNext()) {
       String jsonFieldName = jsonFieldNames.next();
 
-      if (!ModelNodeNames.SCHEMA_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
+      // The /properties field for each schema artifact contains entries constraining fields in instances
+      if (!ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)
+        && !ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)
+        && !ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
         JsonNode jsonFieldOrElementSchemaArtifactNode = propertiesNode.get(jsonFieldName);
         String fieldOrElementPath = path + "properties/" + jsonFieldName;
 
         if (jsonFieldOrElementSchemaArtifactNode.isObject()) {
+
+          String jsonSchemaType = readJsonSchemaTypeField((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
+            fieldOrElementPath);
+
+          if (jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_ARRAY)) {
+            jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode
+              .get(ModelNodeNames.JSON_SCHEMA_ITEMS);
+            if (jsonFieldOrElementSchemaArtifactNode == null)
+              throw new RuntimeException("No items field in array at " + fieldOrElementPath);
+
+            fieldOrElementPath += "/items";
+
+            if (!jsonFieldOrElementSchemaArtifactNode.isObject())
+              throw new RuntimeException("Non-object items content in array at " + fieldOrElementPath);
+          } else if (!jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_OBJECT)) {
+            throw new RuntimeException(
+              "Expecting array or object at location " + fieldOrElementPath + ", got " + jsonSchemaType);
+          }
+
           List<String> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
             (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
 
@@ -251,7 +274,7 @@ public class ArtifactReader
 
   protected boolean hasJSONLDContextField(ObjectNode objectNode)
   {
-    return objectNode.get(ModelNodeNames.LD_CONTEXT) != null;
+    return objectNode.get(ModelNodeNames.JSON_LD_CONTEXT) != null;
   }
 
   protected String readIsBasedOnField(ObjectNode objectNode, String path)
@@ -266,17 +289,17 @@ public class ArtifactReader
 
   protected String readJsonLDIDField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.LD_ID, path);
+    return readTextualField(objectNode, ModelNodeNames.JSON_LD_ID, path);
   }
 
   protected String readRequiredJsonLDIDField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.LD_ID, path);
+    return readRequiredTextualField(objectNode, ModelNodeNames.JSON_LD_ID, path);
   }
 
   protected String readJsonLDValueField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.LD_VALUE, path);
+    return readTextualField(objectNode, ModelNodeNames.JSON_LD_VALUE, path);
   }
 
   protected String readRDFSLabelField(ObjectNode objectNode, String path)
@@ -368,12 +391,17 @@ public class ArtifactReader
 
   protected List<String> readJsonLDTypeField(ObjectNode objectNode, String path)
   {
-    return readTextualFieldValues(objectNode, ModelNodeNames.LD_TYPE, path);
+    return readTextualFieldValues(objectNode, ModelNodeNames.JSON_LD_TYPE, path);
+  }
+
+  protected String readJsonSchemaTypeField(ObjectNode objectNode, String path)
+  {
+    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_TYPE, path);
   }
 
   protected List<String> readMandatoryJsonLDTypeField(ObjectNode objectNode, String path)
   {
-    List<String> jsonLDTypes = readTextualFieldValues(objectNode, ModelNodeNames.LD_TYPE, path);
+    List<String> jsonLDTypes = readTextualFieldValues(objectNode, ModelNodeNames.JSON_LD_TYPE, path);
 
     if (jsonLDTypes.isEmpty())
       throw new RuntimeException("No JSON-LD @type for artifact at location " + path);
@@ -385,13 +413,13 @@ public class ArtifactReader
   {
     Map<String, String> context = new HashMap<>();
 
-    JsonNode jsonNode = objectNode.get(ModelNodeNames.LD_CONTEXT);
+    JsonNode jsonNode = objectNode.get(ModelNodeNames.JSON_LD_CONTEXT);
 
     if (jsonNode != null) {
 
       if (!jsonNode.isObject())
         throw new RuntimeException(
-          "Value of field " + ModelNodeNames.LD_CONTEXT + " at location " + path + " must be an object");
+          "Value of field " + ModelNodeNames.JSON_LD_CONTEXT + " at location " + path + " must be an object");
 
       Iterator<Map.Entry<String, JsonNode>> fieldEntries = jsonNode.fields();
 
@@ -411,14 +439,9 @@ public class ArtifactReader
     return context;
   }
 
-  protected String readNameField(ObjectNode objectNode, String path)
+  protected String readJsonSchemaTitleField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SCHEMA_NAME, path);
-  }
-
-  protected String readRequiredNameField(ObjectNode objectNode, String path)
-  {
-    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_NAME, path);
+    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_TITLE, path);
   }
 
   protected String readCreatedByField(ObjectNode objectNode, String path)
@@ -441,29 +464,24 @@ public class ArtifactReader
     return readRequiredTextualField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
   }
 
-  protected String readDescriptionField(ObjectNode objectNode, String path)
+  protected String readJsonSchemaDescriptionField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SCHEMA_DESCRIPTION, path);
+    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_DESCRIPTION, path);
   }
 
-  protected String readRequiredDescriptionField(ObjectNode objectNode, String path)
+  protected String readJsonSchemaSchemaField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_DESCRIPTION, path);
+    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_SCHEMA, path);
   }
 
-  protected String readSchemaField(ObjectNode objectNode, String path)
+  protected String readRequiredJsonSchemaSchemaField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames._SCHEMA, path);
-  }
-
-  protected String readRequiredSchemaField(ObjectNode objectNode, String path)
-  {
-    return readRequiredTextualField(objectNode, ModelNodeNames._SCHEMA, path);
+    return readRequiredTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_SCHEMA, path);
   }
 
   protected String readRequiredSchemaVersionField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_SCHEMA_VERSION, path);
+    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION, path);
   }
 
   protected String readRequiredVersionField(ObjectNode objectNode, String path)
