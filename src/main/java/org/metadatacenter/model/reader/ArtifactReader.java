@@ -380,13 +380,25 @@ public class ArtifactReader
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
   {
-    return null;
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+    String fieldInputType = ""; // TODO
+    boolean isMultiple = false; // TODO
+
+    // TODO More
+
+    return new FieldSchemaArtifact(schemaArtifact, fieldInputType, isMultiple);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
   {
-    return null;
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+    Map<String, FieldSchemaArtifact> fields = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elements = new HashMap<>();
+    boolean isMultiple = false; // TODO
 
+    // TODO Read fields and elements
+
+    return new ElementSchemaArtifact(schemaArtifact, fields, elements, isMultiple);
   }
 
   protected List<String> readJsonLDTypeField(ObjectNode objectNode, String path)

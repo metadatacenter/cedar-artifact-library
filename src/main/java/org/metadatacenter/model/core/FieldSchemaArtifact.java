@@ -1,14 +1,11 @@
 package org.metadatacenter.model.core;
 
-import java.util.Map;
-
 public class FieldSchemaArtifact extends SchemaArtifact
 {
   private final String fieldInputType;
   private final boolean isMultiple;
 
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fields,
-    String fieldInputType, boolean isMultiple)
+  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, String fieldInputType, boolean isMultiple)
   {
     super(schemaArtifact);
     this.fieldInputType = fieldInputType;
