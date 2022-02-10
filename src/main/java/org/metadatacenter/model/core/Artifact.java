@@ -12,23 +12,23 @@ public class Artifact
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
   private final String jsonSchemaDescription;
-  private final String pavCreatedBy, oslcModifiedBy;
-  private final OffsetDateTime pavCreatedOn, pavLastUpdatedOn;
+  private final String createdBy, modifiedBy;
+  private final OffsetDateTime createdOn, lastUpdatedOn;
   private final Map<String, String> jsonLDContext;
 
   public Artifact(String jsonLDID, List<String> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, String pavCreatedBy, String oslcModifiedBy, OffsetDateTime pavCreatedOn,
-    OffsetDateTime pavLastUpdatedOn, Map<String, String> jsonLDContext)
+    String jsonSchemaDescription, String createdBy, String modifiedBy, OffsetDateTime createdOn,
+    OffsetDateTime lastUpdatedOn, Map<String, String> jsonLDContext)
   {
     this.jsonLDID = jsonLDID;
     this.jsonLDTypes = Collections.unmodifiableList(jsonLDTypes);
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
     this.jsonSchemaDescription = jsonSchemaDescription;
-    this.pavCreatedBy = pavCreatedBy;
-    this.oslcModifiedBy = oslcModifiedBy;
-    this.pavCreatedOn = pavCreatedOn;
-    this.pavLastUpdatedOn = pavLastUpdatedOn;
+    this.createdBy = createdBy;
+    this.modifiedBy = modifiedBy;
+    this.createdOn = createdOn;
+    this.lastUpdatedOn = lastUpdatedOn;
     this.jsonLDContext = Collections.unmodifiableMap(jsonLDContext);
   }
 
@@ -39,10 +39,10 @@ public class Artifact
     this.jsonSchemaType = artifact.jsonSchemaType;
     this.jsonSchemaTitle = artifact.jsonSchemaTitle;
     this.jsonSchemaDescription = artifact.jsonSchemaDescription;
-    this.pavCreatedBy = artifact.pavCreatedBy;
-    this.oslcModifiedBy = artifact.oslcModifiedBy;
-    this.pavCreatedOn = artifact.pavCreatedOn;
-    this.pavLastUpdatedOn = artifact.pavLastUpdatedOn;
+    this.createdBy = artifact.createdBy;
+    this.modifiedBy = artifact.modifiedBy;
+    this.createdOn = artifact.createdOn;
+    this.lastUpdatedOn = artifact.lastUpdatedOn;
     this.jsonLDContext = Collections.unmodifiableMap(artifact.jsonLDContext);
   }
 
@@ -71,24 +71,24 @@ public class Artifact
     return jsonSchemaDescription;
   }
 
-  public String getPavCreatedBy()
+  public String getCreatedBy()
   {
-    return pavCreatedBy;
+    return createdBy;
   }
 
-  public String getOslcModifiedBy()
+  public String getModifiedBy()
   {
-    return oslcModifiedBy;
+    return modifiedBy;
   }
 
-  public OffsetDateTime getPavCreatedOn()
+  public OffsetDateTime getCreatedOn()
   {
-    return pavCreatedOn;
+    return createdOn;
   }
 
-  public OffsetDateTime getPavLastUpdatedOn()
+  public OffsetDateTime getLastUpdatedOn()
   {
-    return pavLastUpdatedOn;
+    return lastUpdatedOn;
   }
 
   public Map<String, String> getJsonLDContext()

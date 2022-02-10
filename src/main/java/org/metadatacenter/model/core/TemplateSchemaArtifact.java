@@ -5,24 +5,24 @@ import java.util.Map;
 
 public class TemplateSchemaArtifact extends SchemaArtifact
 {
-  private final Map<String, FieldSchemaArtifact> fields;
-  private final Map<String, ElementSchemaArtifact> elements;
+  private final Map<String, FieldSchemaArtifact> fieldSchemas;
+  private final Map<String, ElementSchemaArtifact> elementSchemas;
 
-  public TemplateSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fields,
-    Map<String, ElementSchemaArtifact> elements)
+  public TemplateSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
+    Map<String, ElementSchemaArtifact> elementSchemas)
   {
     super(schemaArtifact);
-    this.fields = Collections.unmodifiableMap(fields);
-    this.elements = Collections.unmodifiableMap(elements);
+    this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
+    this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
   }
 
-  public Map<String, FieldSchemaArtifact> getFields()
+  public Map<String, FieldSchemaArtifact> getFieldSchemas()
   {
-    return fields;
+    return fieldSchemas;
   }
 
-  public Map<String, ElementSchemaArtifact> getElements()
+  public Map<String, ElementSchemaArtifact> getElementSchemas()
   {
-    return elements;
+    return elementSchemas;
   }
 }

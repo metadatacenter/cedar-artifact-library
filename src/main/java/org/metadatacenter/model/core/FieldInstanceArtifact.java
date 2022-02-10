@@ -6,45 +6,45 @@ package org.metadatacenter.model.core;
  */
 public class FieldInstanceArtifact extends InstanceArtifact
 {
-  private final String jsonLDValue;
-  private final String rdfsLabel;
-  private final String skosNotation;
-  private final String skosPrefLabel;
-  private final String skosAltLabel;
+  private final String value;
+  private final String label;
+  private final String notation;
+  private final String prefLabel;
+  private final String altLabel;
 
-  public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String jsonLDValue, String rdfsLabel,
-    String skosNotation, String skosPrefLabel, String skosAltLabel)
+  public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String value, String label, String notation,
+    String prefLabel, String altLabel)
   {
     super(instanceArtifact);
-    this.jsonLDValue = jsonLDValue;
-    this.rdfsLabel = rdfsLabel;
-    this.skosNotation = skosNotation;
-    this.skosPrefLabel = skosPrefLabel;
-    this.skosAltLabel = skosAltLabel;
+    this.value = value;
+    this.label = label;
+    this.notation = notation;
+    this.prefLabel = prefLabel;
+    this.altLabel = altLabel;
   }
 
   public String getJSONLDValue()
   {
-    return jsonLDValue;
+    return value;
   }
 
-  public String getRdfsLabel()
+  public String getLabel()
   {
-    return rdfsLabel;
+    return label;
   }
 
-  public String getSkosNotation()
+  public String getNotation()
   {
-    return skosNotation;
+    return notation;
   }
 
-  public String getSkosPrefLabel()
+  public String getPrefLabel()
   {
-    return skosPrefLabel;
+    return prefLabel;
   }
 
-  public String getSkosAltLabel()
+  public String getAltLabel()
   {
-    return skosAltLabel;
+    return altLabel;
   }
 }

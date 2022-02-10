@@ -35,29 +35,29 @@ public class ArtifactReader
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, "/");
 
-    Map<String, FieldSchemaArtifact> fields = new HashMap<>();
-    Map<String, ElementSchemaArtifact> elements = new HashMap<>();
+    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
 
     checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
 
-    readNestedFieldsAndElementSchemaArtifacts(objectNode, "/", fields, elements);
+    readNestedFieldAndElementSchemaArtifacts(objectNode, "/", fieldSchemas, elementSchemas);
 
-    return new TemplateSchemaArtifact(schemaArtifact, fields, elements);
+    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas);
   }
 
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, "/");
 
-    Map<String, FieldSchemaArtifact> fields = new HashMap<>();
-    Map<String, ElementSchemaArtifact> elements = new HashMap<>();
+    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     boolean isMultiple = false; // TODO
 
     checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
 
-    readNestedFieldsAndElementSchemaArtifacts(objectNode, "/", fields, elements);
+    readNestedFieldAndElementSchemaArtifacts(objectNode, "/", fieldSchemas, elementSchemas);
 
-    return new ElementSchemaArtifact(schemaArtifact, fields, elements, isMultiple);
+    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, isMultiple);
   }
 
   public Artifact readArtifact(ObjectNode objectNode, String path)
@@ -107,8 +107,8 @@ public class ArtifactReader
     return new SchemaArtifact(artifact, schema, schemaVersion, version, previousVersion, status);
   }
 
-  private void readNestedFieldsAndElementSchemaArtifacts(ObjectNode objectNode, String path,
-    Map<String, FieldSchemaArtifact> fields, Map<String, ElementSchemaArtifact> elements)
+  private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
+    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas)
   {
     JsonNode propertiesNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_PROPERTIES);
 
@@ -160,11 +160,11 @@ public class ArtifactReader
           } else if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
             ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
               (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
-            elements.put(jsonFieldName, elementSchemaArtifact);
+            elementSchemas.put(jsonFieldName, elementSchemaArtifact);
           } else if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
             FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
               (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
-            fields.put(jsonFieldName, fieldSchemaArtifact);
+            fieldSchemas.put(jsonFieldName, fieldSchemaArtifact);
           } else
             throw new RuntimeException(
               "Unknown JSON-LD @type " + subSchemaArtifactJsonLDType + "for field " + jsonFieldName + " at location "

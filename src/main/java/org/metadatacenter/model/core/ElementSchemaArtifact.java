@@ -5,27 +5,27 @@ import java.util.Map;
 
 public class ElementSchemaArtifact extends SchemaArtifact
 {
-  private final Map<String, FieldSchemaArtifact> fields;
-  private final Map<String, ElementSchemaArtifact> elements;
+  private final Map<String, FieldSchemaArtifact> fieldSchemas;
+  private final Map<String, ElementSchemaArtifact> elementSchemas;
   private final boolean isMultiple;
 
-  public ElementSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fields,
-    Map<String, ElementSchemaArtifact> elements, boolean isMultiple)
+  public ElementSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
+    Map<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple)
   {
     super(schemaArtifact);
-    this.fields = Collections.unmodifiableMap(fields);
-    this.elements = Collections.unmodifiableMap(elements);
+    this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
+    this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.isMultiple = isMultiple;
   }
 
-  public Map<String, FieldSchemaArtifact> getFields()
+  public Map<String, FieldSchemaArtifact> getFieldsSchemas()
   {
-    return fields;
+    return fieldSchemas;
   }
 
-  public Map<String, ElementSchemaArtifact> getElements()
+  public Map<String, ElementSchemaArtifact> getElementSchemas()
   {
-    return elements;
+    return elementSchemas;
   }
 
   public boolean isMultiple()
