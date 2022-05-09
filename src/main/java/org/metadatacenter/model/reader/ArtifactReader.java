@@ -83,7 +83,7 @@ public class ArtifactReader
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
     String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
-    String fieldInputType = "TODO"; // TODO
+    String fieldInputType = readFieldInputType(objectNode, path);
     List<String> skosAlternateLabels = readSKOSAltLabelField(objectNode, path);
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
@@ -424,6 +424,26 @@ public class ArtifactReader
       throw new RuntimeException("No JSON-LD @type for artifact at location " + path);
     else
       return jsonLDTypes;
+  }
+
+  protected String readFieldInputType(ObjectNode objectNode, String path)
+  {
+    JsonNode uiNode = objectNode.get(ModelNodeNames.UI);
+
+    if (uiNode == null)
+      throw new RuntimeException("No " + ModelNodeNames.UI + " field at location " + path);
+    else if (!uiNode.isObject())
+      throw new RuntimeException(
+        "Value of field " + ModelNodeNames.UI + " at location " + path + " must be an object");
+
+    else {
+      String inputType = readTextualField((ObjectNode)uiNode, ModelNodeNames.UI_FIELD_INPUT_TYPE, path + "/" + ModelNodeNames.UI);
+
+      if (!ModelNodeNames.INPUT_TYPES.contains(inputType))
+        throw new RuntimeException("Invalid filed input type " + inputType + " at location " + path + "/" + ModelNodeNames.UI);
+
+      return inputType;
+    }
   }
 
   protected Map<String, String> readJsonLDContextField(ObjectNode objectNode, String path)
