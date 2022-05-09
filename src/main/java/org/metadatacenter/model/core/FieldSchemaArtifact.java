@@ -7,14 +7,16 @@ public class FieldSchemaArtifact extends SchemaArtifact
 {
   private final String skosPrefLabel;
   private final String fieldInputType;
+  private final String defaultValue;
   private final List<String> skosAlternateLabels;
 
   public FieldSchemaArtifact(SchemaArtifact schemaArtifact, String skosPrefLabel, String fieldInputType,
-    List<String> skosAlternateLabels)
+    String defaultValue, List<String> skosAlternateLabels)
   {
     super(schemaArtifact);
     this.skosPrefLabel = skosPrefLabel;
     this.fieldInputType = fieldInputType;
+    this.defaultValue = defaultValue;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
   }
 
@@ -30,10 +32,9 @@ public class FieldSchemaArtifact extends SchemaArtifact
 
   public List<String> getSkosAlternateLabels() { return skosAlternateLabels; }
 
-
   @Override public String toString()
   {
-    return super.toString() + "\n FieldSchemaArtifact{" + "skosPrefLabel='" + skosPrefLabel + '\'' + ", fieldInputType='" + fieldInputType
-      + '\'' + ", skosAlternateLabels=" + skosAlternateLabels + '}';
+    return super.toString() + "FieldSchemaArtifact{" + "skosPrefLabel='" + skosPrefLabel + '\'' + ", fieldInputType='" + fieldInputType
+      + '\'' + ", defaultValue='" + defaultValue + '\'' + ", skosAlternateLabels=" + skosAlternateLabels + '}';
   }
 }

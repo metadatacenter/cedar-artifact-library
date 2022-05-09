@@ -84,11 +84,12 @@ public class ArtifactReader
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
     String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
     String fieldInputType = readFieldInputType(objectNode, path);
+    String defaultValue = readDefaultValue(objectNode, path);
     List<String> skosAlternateLabels = readSKOSAltLabelField(objectNode, path);
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 
-    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, skosAlternateLabels);
+    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, defaultValue, skosAlternateLabels);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
@@ -428,22 +429,49 @@ public class ArtifactReader
 
   protected String readFieldInputType(ObjectNode objectNode, String path)
   {
-    JsonNode uiNode = objectNode.get(ModelNodeNames.UI);
+    ObjectNode uiNode = readUINodeAtPath(objectNode, path);
+    String subPath = path + "/" + ModelNodeNames.UI;
 
-    if (uiNode == null)
+    String inputType = readTextualField(uiNode, ModelNodeNames.UI_FIELD_INPUT_TYPE, subPath);
+
+    if (!ModelNodeNames.INPUT_TYPES.contains(inputType))
+      throw new RuntimeException("Invalid field input type " + inputType + " at location " + subPath);
+
+    return inputType;
+  }
+
+  protected String readDefaultValue(ObjectNode objectNode, String path)
+  {
+    ObjectNode valueConstraintsNode = readValueConstraintsNodeAtPath(objectNode, path);
+    String subPath = path + "/" + ModelNodeNames.VALUE_CONSTRAINTS;
+
+    return readTextualField(valueConstraintsNode, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE, subPath);
+  }
+
+  protected ObjectNode readUINodeAtPath(ObjectNode objectNode, String path)
+  {
+    JsonNode jsonNode = objectNode.get(ModelNodeNames.UI);
+
+    if (jsonNode == null)
       throw new RuntimeException("No " + ModelNodeNames.UI + " field at location " + path);
-    else if (!uiNode.isObject())
+    else if (!jsonNode.isObject())
       throw new RuntimeException(
         "Value of field " + ModelNodeNames.UI + " at location " + path + " must be an object");
 
-    else {
-      String inputType = readTextualField((ObjectNode)uiNode, ModelNodeNames.UI_FIELD_INPUT_TYPE, path + "/" + ModelNodeNames.UI);
+     return (ObjectNode)jsonNode;
+  }
 
-      if (!ModelNodeNames.INPUT_TYPES.contains(inputType))
-        throw new RuntimeException("Invalid filed input type " + inputType + " at location " + path + "/" + ModelNodeNames.UI);
+  protected ObjectNode readValueConstraintsNodeAtPath(ObjectNode objectNode, String path)
+  {
+    JsonNode jsonNode = objectNode.get(ModelNodeNames.VALUE_CONSTRAINTS);
 
-      return inputType;
-    }
+    if (jsonNode == null)
+      throw new RuntimeException("No " + ModelNodeNames.VALUE_CONSTRAINTS + " field at location " + path);
+    else if (!jsonNode.isObject())
+      throw new RuntimeException(
+        "Value of field " + ModelNodeNames.VALUE_CONSTRAINTS + " at location " + path + " must be an object");
+
+    return (ObjectNode)jsonNode;
   }
 
   protected Map<String, String> readJsonLDContextField(ObjectNode objectNode, String path)
