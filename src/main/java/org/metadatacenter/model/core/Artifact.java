@@ -1,5 +1,6 @@
 package org.metadatacenter.model.core;
 
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -7,17 +8,17 @@ import java.util.Map;
 
 public class Artifact
 {
-  private final String jsonLDID;
+  private final URI jsonLDID;
   private final List<String> jsonLDTypes;
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
   private final String jsonSchemaDescription;
-  private final String createdBy, modifiedBy;
+  private final URI createdBy, modifiedBy;
   private final OffsetDateTime createdOn, lastUpdatedOn;
   private final Map<String, String> jsonLDContext;
 
-  public Artifact(String jsonLDID, List<String> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, String createdBy, String modifiedBy, OffsetDateTime createdOn,
+  public Artifact(URI jsonLDID, List<String> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
+    String jsonSchemaDescription, URI createdBy, URI modifiedBy, OffsetDateTime createdOn,
     OffsetDateTime lastUpdatedOn, Map<String, String> jsonLDContext)
   {
     this.jsonLDID = jsonLDID;
@@ -46,7 +47,7 @@ public class Artifact
     this.jsonLDContext = Collections.unmodifiableMap(artifact.jsonLDContext);
   }
 
-  public String getJsonLDID()
+  public URI getJsonLDID()
   {
     return jsonLDID;
   }
@@ -71,12 +72,12 @@ public class Artifact
     return jsonSchemaDescription;
   }
 
-  public String getCreatedBy()
+  public URI getCreatedBy()
   {
     return createdBy;
   }
 
-  public String getModifiedBy()
+  public URI getModifiedBy()
   {
     return modifiedBy;
   }

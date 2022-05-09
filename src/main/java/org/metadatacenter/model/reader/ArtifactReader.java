@@ -14,6 +14,7 @@ import org.metadatacenter.model.core.SchemaArtifact;
 import org.metadatacenter.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
 
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -86,12 +87,12 @@ public class ArtifactReader
   {
     Map<String, String> context = readJsonLDContextField(objectNode, path);
     List<String> jsonLDTypes = readJsonLDTypeField(objectNode, path);
-    String jsonLDID = readJsonLDIDField(objectNode, path);
+    URI jsonLDID = readJsonLDIDField(objectNode, path);
     String jsonSchemaType = readJsonSchemaTypeField(objectNode, "/");
     String name = readJsonSchemaTitleField(objectNode, "/");
     String description = readJsonSchemaDescriptionField(objectNode, path);
-    String createdBy = readCreatedByField(objectNode, "/");
-    String modifiedBy = readModifiedByField(objectNode, path);
+    URI createdBy = readCreatedByField(objectNode, "/");
+    URI modifiedBy = readModifiedByField(objectNode, path);
     OffsetDateTime createdOn = readCreatedOnField(objectNode, path);
     OffsetDateTime lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
 
@@ -309,14 +310,14 @@ public class ArtifactReader
     return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
   }
 
-  protected String readJsonLDIDField(ObjectNode objectNode, String path)
+  protected URI readJsonLDIDField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.JSON_LD_ID, path);
+    return readURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
   }
 
-  protected String readRequiredJsonLDIDField(ObjectNode objectNode, String path)
+  protected URI readRequiredJsonLDIDField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.JSON_LD_ID, path);
+    return readRequiredURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
   }
 
   protected String readJsonLDValueField(ObjectNode objectNode, String path)
@@ -455,24 +456,24 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_TITLE, path);
   }
 
-  protected String readCreatedByField(ObjectNode objectNode, String path)
+  protected URI readCreatedByField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
+    return readURIField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
   }
 
-  protected String readRequiredCreatedByField(ObjectNode objectNode, String path)
+  protected URI readRequiredCreatedByField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
+    return readRequiredURIField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
   }
 
-  protected String readModifiedByField(ObjectNode objectNode, String path)
+  protected URI readModifiedByField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
+    return readURIField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
   }
 
-  protected String readRequiredModifiedByField(ObjectNode objectNode, String path)
+  protected URI readRequiredURIByField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
+    return readRequiredURIField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
   }
 
   protected String readJsonSchemaDescriptionField(ObjectNode objectNode, String path)
@@ -561,6 +562,23 @@ public class ArtifactReader
     }
   }
 
+  private URI readURIField(ObjectNode objectNode, String fieldName, String path)
+  {
+    JsonNode jsonNode = objectNode.get(fieldName);
+
+    if (jsonNode == null)
+      return null;
+
+    if (!jsonNode.isTextual())
+      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be textual");
+
+    try {
+      return new URI(jsonNode.asText());
+    } catch (Exception e) {
+      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be a URI");
+    }
+  }
+
   private String readTextualField(ObjectNode objectNode, String fieldName, String path)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
@@ -585,6 +603,24 @@ public class ArtifactReader
         throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be textual");
 
       return jsonNode.asText();
+    }
+  }
+
+  private URI readRequiredURIField(ObjectNode objectNode, String fieldName, String path)
+  {
+    JsonNode jsonNode = objectNode.get(fieldName);
+
+    if (jsonNode == null)
+      throw new RuntimeException("No value for field " + fieldName + " at location " + path);
+    else {
+      if (!jsonNode.isTextual())
+        throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be textual");
+
+      try {
+        return new URI(jsonNode.asText());
+      } catch (Exception e) {
+        throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be a URI");
+      }
     }
   }
 
