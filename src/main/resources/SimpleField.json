@@ -40,7 +40,10 @@
     "inputType": "textfield"
   },
   "_valueConstraints": {
-    "requiredValue": false
+    "requiredValue": false,
+    "defaultValue": "a default value",
+    "minLength": 10,
+    "maxLength": 30
   },
   "properties": {
     "@type": {
@@ -88,6 +91,9 @@
   "additionalProperties": false,
   "schema:identifier": "SF0001",
   "skos:prefLabel": "Simple Field",
-  "$schema": "http://json-schema.org/draft-04/schema#"
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "skos:altLabel": [
+    "Alternate labels 1",
+    "Alternate labels 2"
+  ]
 }
-

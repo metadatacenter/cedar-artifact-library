@@ -10,17 +10,15 @@ public class FieldInstanceArtifact extends InstanceArtifact
   private final String label;
   private final String notation;
   private final String prefLabel;
-  private final String altLabel;
 
   public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String value, String label, String notation,
-    String prefLabel, String altLabel)
+    String prefLabel)
   {
     super(instanceArtifact);
     this.value = value;
     this.label = label;
     this.notation = notation;
     this.prefLabel = prefLabel;
-    this.altLabel = altLabel;
   }
 
   public String getJSONLDValue()
@@ -43,15 +41,11 @@ public class FieldInstanceArtifact extends InstanceArtifact
     return prefLabel;
   }
 
-  public String getAltLabel()
-  {
-    return altLabel;
-  }
 
   @Override public String toString()
   {
     return super.toString() + "\n FieldInstanceArtifact{" + "value='" + value + '\'' + ", label='" + label + '\'' + ", notation='" + notation
-      + '\'' + ", prefLabel='" + prefLabel + '\'' + ", altLabel='" + altLabel + '\'' + '}';
+      + '\'' + ", prefLabel='" + prefLabel + '\'' + '}';
   }
 }
 

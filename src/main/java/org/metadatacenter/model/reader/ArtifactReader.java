@@ -83,12 +83,12 @@ public class ArtifactReader
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
     String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
-    boolean isMultiple = false; // TODO
     String fieldInputType = "TODO"; // TODO
+    List<String> skosAlternateLabels = readSKOSAltLabelField(objectNode, path);
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 
-    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, isMultiple);
+    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, skosAlternateLabels);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
@@ -228,10 +228,9 @@ public class ArtifactReader
     String rdfsLabel = readRDFSLabelField(objectNode, path);
     String skosNotation = readSKOSNotationField(objectNode, path);
     String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
-    String skosAltLabel = readSKOSAltLabelField(objectNode, path);
 
     FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLDValue, rdfsLabel,
-      skosNotation, skosPrefLabel, skosAltLabel);
+      skosNotation, skosPrefLabel);
 
     return fieldInstanceArtifact;
   }
@@ -346,9 +345,9 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames.SKOS_PREFLABEL, path);
   }
 
-  protected String readSKOSAltLabelField(ObjectNode objectNode, String path)
+  protected List<String> readSKOSAltLabelField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SKOS_ALTLABEL, path);
+    return readTextualFieldValues(objectNode, ModelNodeNames.SKOS_ALTLABEL, path);
   }
 
   protected String readSKOSPrefLabelValueField(ObjectNode objectNode, String path)
@@ -632,18 +631,19 @@ public class ArtifactReader
 
   private List<String> readTextualFieldValues(ObjectNode objectNode, String fieldName, String path)
   {
+    JsonNode jsonNode = objectNode.get(fieldName);
     List<String> textValues = new ArrayList<>();
 
-    if (objectNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = objectNode.iterator();
+    if (jsonNode.isArray()) {
+      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
       while (nodeIterator.hasNext()) {
-        JsonNode jsonNode = nodeIterator.next();
-        if (jsonNode != null) {
-          if (!jsonNode.isTextual())
+        JsonNode jsonValueNode = nodeIterator.next();
+        if (jsonValueNode != null) {
+          if (!jsonValueNode.isTextual())
             throw new RuntimeException(
               "Value in array field " + fieldName + " at location " + path + " must be textual");
-          String textValue = jsonNode.asText();
+          String textValue = jsonValueNode.asText();
           if (!textValue.isEmpty())
             textValues.add(textValue);
         }
