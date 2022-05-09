@@ -32,4 +32,10 @@ public class ElementSchemaArtifact extends SchemaArtifact
   {
     return isMultiple;
   }
+
+  @Override public String toString()
+  {
+    return super.toString() + "\n ElementSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
+      + ", isMultiple=" + isMultiple + '}';
+  }
 }

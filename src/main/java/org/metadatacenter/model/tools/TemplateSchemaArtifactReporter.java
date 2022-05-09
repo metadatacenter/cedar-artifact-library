@@ -3,7 +3,7 @@ package org.metadatacenter.model.tools;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.metadatacenter.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.model.core.FieldSchemaArtifact;
 import org.metadatacenter.model.reader.ArtifactReader;
 
 import java.io.File;
@@ -25,8 +25,10 @@ public class TemplateSchemaArtifactReporter
 
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
     ArtifactReader artifactReader = new ArtifactReader(mapper);
-    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
+    //TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
+    FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(templateObjectNode);
 
+    System.out.println("Field: " + fieldSchemaArtifact);
 
   }
 

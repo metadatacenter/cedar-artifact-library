@@ -47,4 +47,11 @@ public class FieldInstanceArtifact extends InstanceArtifact
   {
     return altLabel;
   }
+
+  @Override public String toString()
+  {
+    return super.toString() + "\n FieldInstanceArtifact{" + "value='" + value + '\'' + ", label='" + label + '\'' + ", notation='" + notation
+      + '\'' + ", prefLabel='" + prefLabel + '\'' + ", altLabel='" + altLabel + '\'' + '}';
+  }
 }
+

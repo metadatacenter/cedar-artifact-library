@@ -34,4 +34,10 @@ public class TemplateInstanceArtifact extends InstanceArtifact
   {
     return fieldInstances;
   }
+
+  @Override public String toString()
+  {
+    return super.toString() + "\n TemplateInstanceArtifact{" + "isBasedOn='" + isBasedOn + '\'' + ", elementInstances=" + elementInstances
+      + ", fieldInstances=" + fieldInstances + '}';
+  }
 }

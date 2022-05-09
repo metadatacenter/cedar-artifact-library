@@ -47,7 +47,12 @@ public class ArtifactReader
 
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
   {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, "/");
+    return readElementSchemaArtifact(objectNode, "/");
+  }
+
+  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
+  {
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
 
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
@@ -58,6 +63,23 @@ public class ArtifactReader
     readNestedFieldAndElementSchemaArtifacts(objectNode, "/", fieldSchemas, elementSchemas);
 
     return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, isMultiple);
+  }
+
+  public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
+  {
+    return readFieldSchemaArtifact(objectNode, "/");
+  }
+
+  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
+  {
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+    String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
+    boolean isMultiple = false; // TODO
+    String fieldInputType = "TODO"; // TODO
+
+    checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
+
+    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, isMultiple);
   }
 
   public Artifact readArtifact(ObjectNode objectNode, String path)
@@ -376,29 +398,6 @@ public class ArtifactReader
     if (!schemaArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new RuntimeException(
         "Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
-  }
-
-  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
-  {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-    String fieldInputType = ""; // TODO
-    boolean isMultiple = false; // TODO
-
-    // TODO More
-
-    return new FieldSchemaArtifact(schemaArtifact, fieldInputType, isMultiple);
-  }
-
-  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
-  {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-    Map<String, FieldSchemaArtifact> fields = new HashMap<>();
-    Map<String, ElementSchemaArtifact> elements = new HashMap<>();
-    boolean isMultiple = false; // TODO
-
-    // TODO Read fields and elements
-
-    return new ElementSchemaArtifact(schemaArtifact, fields, elements, isMultiple);
   }
 
   protected List<String> readJsonLDTypeField(ObjectNode objectNode, String path)

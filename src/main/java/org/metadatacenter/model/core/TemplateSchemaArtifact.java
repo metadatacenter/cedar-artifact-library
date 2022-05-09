@@ -25,4 +25,9 @@ public class TemplateSchemaArtifact extends SchemaArtifact
   {
     return elementSchemas;
   }
+
+  @Override public String toString()
+  {
+    return super.toString() + "\n TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas + '}';
+  }
 }

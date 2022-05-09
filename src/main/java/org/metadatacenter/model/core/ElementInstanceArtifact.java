@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * While element instances may not necessarily have JSON-LD identifiers or provenance fields (name, description,
- * createdBy, modifiedBy, createdOn, lastUpdatedOn) the model allows them.
+ * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them.
  */
 public class ElementInstanceArtifact extends InstanceArtifact
 {
@@ -30,5 +30,11 @@ public class ElementInstanceArtifact extends InstanceArtifact
   public Map<String, List<ElementInstanceArtifact>> getElementInstances()
   {
     return elementInstances;
+  }
+
+  @Override public String toString()
+  {
+    return super.toString() + "\n ElementInstanceArtifact{" + "fieldInstances=" + fieldInstances + ", elementInstances=" + elementInstances
+      + '}';
   }
 }

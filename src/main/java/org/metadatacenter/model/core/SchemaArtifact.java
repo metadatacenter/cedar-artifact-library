@@ -51,4 +51,11 @@ public class SchemaArtifact extends Artifact
   {
     return status;
   }
+
+  @Override public String toString()
+  {
+    return super.toString() + "\n SchemaArtifact{" + "jsonSchemaSchema='" + jsonSchemaSchema + '\'' + ", modelVersion='" + modelVersion + '\''
+      + ", version='" + version + '\'' + ", previousVersion='" + previousVersion + '\'' + ", status='" + status + '\''
+      + '}';
+  }
 }

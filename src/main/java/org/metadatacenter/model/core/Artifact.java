@@ -95,4 +95,12 @@ public class Artifact
   {
     return jsonLDContext;
   }
+
+  @Override public String toString()
+  {
+    return "Artifact{" + "jsonLDID='" + jsonLDID + '\'' + ", jsonLDTypes=" + jsonLDTypes + ", jsonSchemaType='"
+      + jsonSchemaType + '\'' + ", jsonSchemaTitle='" + jsonSchemaTitle + '\'' + ", jsonSchemaDescription='"
+      + jsonSchemaDescription + '\'' + ", createdBy='" + createdBy + '\'' + ", modifiedBy='" + modifiedBy + '\''
+      + ", createdOn=" + createdOn + ", lastUpdatedOn=" + lastUpdatedOn + ", jsonLDContext=" + jsonLDContext + '}';
+  }
 }

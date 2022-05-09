@@ -6,5 +6,4 @@ public class InstanceArtifact extends Artifact
   {
     super(artifact);
   }
-
 }
