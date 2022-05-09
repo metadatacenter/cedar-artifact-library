@@ -51,54 +51,11 @@ public class ArtifactReader
     return readElementSchemaArtifact(objectNode, "/");
   }
 
-  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
-  {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-
-    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    boolean isMultiple = false; // TODO
-
-    checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
-
-    readNestedFieldAndElementSchemaArtifacts(objectNode, "/", fieldSchemas, elementSchemas);
-
-    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, isMultiple);
-  }
-
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
   {
     return readFieldSchemaArtifact(objectNode, "/");
   }
 
-  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
-  {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-    String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
-    boolean isMultiple = false; // TODO
-    String fieldInputType = "TODO"; // TODO
-
-    checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
-
-    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, isMultiple);
-  }
-
-  public Artifact readArtifact(ObjectNode objectNode, String path)
-  {
-    Map<String, String> context = readJsonLDContextField(objectNode, path);
-    List<String> jsonLDTypes = readJsonLDTypeField(objectNode, path);
-    URI jsonLDID = readJsonLDIDField(objectNode, path);
-    String jsonSchemaType = readJsonSchemaTypeField(objectNode, "/");
-    String name = readJsonSchemaTitleField(objectNode, "/");
-    String description = readJsonSchemaDescriptionField(objectNode, path);
-    URI createdBy = readCreatedByField(objectNode, "/");
-    URI modifiedBy = readModifiedByField(objectNode, path);
-    OffsetDateTime createdOn = readCreatedOnField(objectNode, path);
-    OffsetDateTime lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
-
-    return new Artifact(jsonLDID, jsonLDTypes, jsonSchemaType, name, description, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, context);
-  }
 
   public InstanceArtifact readInstanceArtifact(ObjectNode objectNode, String path)
   {
@@ -117,7 +74,51 @@ public class ArtifactReader
     return new TemplateInstanceArtifact(instanceArtifact, isBasedOn, elementInstances, fieldInstances);
   }
 
-  public SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
+  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
+  {
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+    String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
+    boolean isMultiple = false; // TODO
+    String fieldInputType = "TODO"; // TODO
+
+    checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
+
+    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, isMultiple);
+  }
+
+  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
+  {
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+
+    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    boolean isMultiple = false; // TODO
+
+    checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
+
+    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
+
+    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, isMultiple);
+  }
+
+  private Artifact readArtifact(ObjectNode objectNode, String path)
+  {
+    Map<String, String> context = readJsonLDContextField(objectNode, path);
+    List<String> jsonLDTypes = readJsonLDTypeField(objectNode, path);
+    URI jsonLDID = readJsonLDIDField(objectNode, path);
+    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
+    String name = readJsonSchemaTitleField(objectNode, path);
+    String description = readJsonSchemaDescriptionField(objectNode, path);
+    URI createdBy = readCreatedByField(objectNode, path);
+    URI modifiedBy = readModifiedByField(objectNode, path);
+    OffsetDateTime createdOn = readCreatedOnField(objectNode, path);
+    OffsetDateTime lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
+
+    return new Artifact(jsonLDID, jsonLDTypes, jsonSchemaType, name, description, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, context);
+  }
+
+  private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
   {
     Artifact artifact = readArtifact(objectNode, path);
 
