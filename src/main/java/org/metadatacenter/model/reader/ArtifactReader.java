@@ -34,16 +34,7 @@ public class ArtifactReader
 
   public TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode)
   {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, "/");
-
-    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-
-    checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), "/");
-
-    readNestedFieldAndElementSchemaArtifacts(objectNode, "/", fieldSchemas, elementSchemas);
-
-    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas);
+    return readTemplateSchemaArtifact(objectNode, "/");
   }
 
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
@@ -72,6 +63,20 @@ public class ArtifactReader
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
 
     return new TemplateInstanceArtifact(instanceArtifact, isBasedOn, elementInstances, fieldInstances);
+  }
+
+  private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
+  {
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+
+    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+
+    checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
+
+    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
+
+    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
@@ -104,7 +109,7 @@ public class ArtifactReader
   private Artifact readArtifact(ObjectNode objectNode, String path)
   {
     Map<String, String> context = readJsonLDContextField(objectNode, path);
-    List<String> jsonLDTypes = readJsonLDTypeField(objectNode, path);
+    List<URI> jsonLDTypes = readJsonLDTypeField(objectNode, path);
     URI jsonLDID = readJsonLDIDField(objectNode, path);
     String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
     String name = readJsonSchemaTitleField(objectNode, path);
@@ -122,7 +127,7 @@ public class ArtifactReader
   {
     Artifact artifact = readArtifact(objectNode, path);
 
-    String schema = readRequiredJsonSchemaSchemaField(objectNode, path);
+    URI schema = readRequiredJsonSchemaSchemaField(objectNode, path);
     String schemaVersion = readRequiredSchemaVersionField(objectNode, path);
     String version = readRequiredVersionField(objectNode, path);
     String previousVersion = readPreviousVersionField(objectNode, path);
@@ -171,21 +176,21 @@ public class ArtifactReader
               "Expecting array or object at location " + fieldOrElementPath + ", got " + jsonSchemaType);
           }
 
-          List<String> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
+          List<URI> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
             (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
 
           checkSchemaArtifactJSONLDType(subSchemaArtifactJsonLDTypes, fieldOrElementPath);
 
-          String subSchemaArtifactJsonLDType = subSchemaArtifactJsonLDTypes.get(0);
+          URI subSchemaArtifactJsonLDType = subSchemaArtifactJsonLDTypes.get(0);
 
-          if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
+          if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
             throw new RuntimeException("Invalid nesting of template schema artifact at location " + fieldOrElementPath);
 
-          } else if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
+          } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
             ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
               (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
             elementSchemas.put(jsonFieldName, elementSchemaArtifact);
-          } else if (subSchemaArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
+          } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
             FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
               (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
             fieldSchemas.put(jsonFieldName, fieldSchemaArtifact);
@@ -351,60 +356,60 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames.SKOS_PREFLABEL, path);
   }
 
-  private void checkSchemaArtifactJSONLDType(List<String> schemaArtifactJsonLDTypes, String path)
+  private void checkSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
   {
     if (schemaArtifactJsonLDTypes.isEmpty())
-      throw new RuntimeException("Unknown object at location " + path + " - must be a element or field artifact");
+      throw new RuntimeException("Unknown object at location " + path + " - must be a JSON-LD type or array of types");
 
     if (schemaArtifactJsonLDTypes.size() != 1)
       throw new RuntimeException(
         "Expecting single JSON-LD @type field for schema artifact, got " + schemaArtifactJsonLDTypes.size()
           + " at location " + path);
 
-    String schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
+    URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!ModelNodeNames.SCHEMA_ARTIFACT_TYPE_IRIS.contains(schemaArtifactJsonLDType))
+    if (!ModelNodeNames.SCHEMA_ARTIFACT_TYPE_IRIS.contains(schemaArtifactJsonLDType.toString()))
       throw new RuntimeException(
         "Unexpected schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
   }
 
-  private void checkTemplateSchemaArtifactJSONLDType(List<String> schemaArtifactJsonLDTypes, String path)
+  private void checkTemplateSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
   {
     checkSchemaArtifactJSONLDType(schemaArtifactJsonLDTypes, path);
 
-    String schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
+    URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!schemaArtifactJsonLDType.equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new RuntimeException(
         "Unexpected template schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
 
   }
 
-  private void checkElementSchemaArtifactJSONLDType(List<String> schemaArtifactJsonLDTypes, String path)
+  private void checkElementSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
   {
     checkSchemaArtifactJSONLDType(schemaArtifactJsonLDTypes, path);
 
-    String schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
+    URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!schemaArtifactJsonLDType.equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new RuntimeException(
         "Unexpected element schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
   }
 
-  private void checkFieldSchemaArtifactJSONLDType(List<String> schemaArtifactJsonLDTypes, String path)
+  private void checkFieldSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
   {
     checkSchemaArtifactJSONLDType(schemaArtifactJsonLDTypes, path);
 
-    String schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
+    URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!schemaArtifactJsonLDType.equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new RuntimeException(
         "Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
   }
 
-  protected List<String> readJsonLDTypeField(ObjectNode objectNode, String path)
+  protected List<URI> readJsonLDTypeField(ObjectNode objectNode, String path)
   {
-    return readTextualFieldValues(objectNode, ModelNodeNames.JSON_LD_TYPE, path);
+    return readURIFieldValues(objectNode, ModelNodeNames.JSON_LD_TYPE, path);
   }
 
   protected String readJsonSchemaTypeField(ObjectNode objectNode, String path)
@@ -487,9 +492,9 @@ public class ArtifactReader
     return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_SCHEMA, path);
   }
 
-  protected String readRequiredJsonSchemaSchemaField(ObjectNode objectNode, String path)
+  protected URI readRequiredJsonSchemaSchemaField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_SCHEMA, path);
+    return readRequiredURIField(objectNode, ModelNodeNames.JSON_SCHEMA_SCHEMA, path);
   }
 
   protected String readRequiredSchemaVersionField(ObjectNode objectNode, String path)
@@ -649,6 +654,35 @@ public class ArtifactReader
         textValues.add(textValue);
     }
     return textValues;
+  }
+
+  private List<URI> readURIFieldValues(ObjectNode objectNode, String fieldName, String path)
+  {
+    List<URI> uriValues = new ArrayList<>();
+
+    if (objectNode.isArray()) {
+      Iterator<JsonNode> nodeIterator = objectNode.iterator();
+
+      while (nodeIterator.hasNext()) {
+        JsonNode jsonNode = nodeIterator.next();
+        if (jsonNode != null) {
+          if (!jsonNode.isTextual())
+            throw new RuntimeException(
+              "Value in array field " + fieldName + " at location " + path + " must be textual");
+          try {
+            URI uriValue = new URI(jsonNode.asText());
+            uriValues.add(uriValue);
+          } catch (Exception e) {
+            throw new RuntimeException(
+              "Value in array field " + fieldName + " at location " + path + " must be textual");
+          }
+        }
+      }
+    } else {
+      URI uriValue = readURIField(objectNode, fieldName, path);
+      uriValues.add(uriValue);
+    }
+    return uriValues;
   }
 
   private List<String> readRequiredTextualFieldValues(ObjectNode objectNode, String fieldName, String path)

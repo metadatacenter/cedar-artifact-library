@@ -9,7 +9,7 @@ import java.util.Map;
 public class Artifact
 {
   private final URI jsonLDID;
-  private final List<String> jsonLDTypes;
+  private final List<URI> jsonLDTypes;
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
   private final String jsonSchemaDescription;
@@ -17,7 +17,7 @@ public class Artifact
   private final OffsetDateTime createdOn, lastUpdatedOn;
   private final Map<String, String> jsonLDContext;
 
-  public Artifact(URI jsonLDID, List<String> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
+  public Artifact(URI jsonLDID, List<URI> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, URI createdBy, URI modifiedBy, OffsetDateTime createdOn,
     OffsetDateTime lastUpdatedOn, Map<String, String> jsonLDContext)
   {
@@ -52,7 +52,7 @@ public class Artifact
     return jsonLDID;
   }
 
-  public List<String> getJsonLDTypes()
+  public List<URI> getJsonLDTypes()
   {
     return jsonLDTypes;
   }

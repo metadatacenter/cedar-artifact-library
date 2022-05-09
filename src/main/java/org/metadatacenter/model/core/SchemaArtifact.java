@@ -1,12 +1,14 @@
 package org.metadatacenter.model.core;
 
+import java.net.URI;
+
 public class SchemaArtifact extends Artifact
 {
-  private final String jsonSchemaSchema;
+  private final URI jsonSchemaSchema;
   private final String modelVersion;
   private final String version, previousVersion, status;
 
-  public SchemaArtifact(Artifact artifact, String jsonSchemaSchema, String modelVersion, String version,
+  public SchemaArtifact(Artifact artifact, URI jsonSchemaSchema, String modelVersion, String version,
     String previousVersion, String status)
   {
     super(artifact);
@@ -27,7 +29,7 @@ public class SchemaArtifact extends Artifact
     this.status = schemaArtifact.status;
   }
 
-  public String getJsonSchemaSchema()
+  public URI getJsonSchemaSchema()
   {
     return jsonSchemaSchema;
   }
