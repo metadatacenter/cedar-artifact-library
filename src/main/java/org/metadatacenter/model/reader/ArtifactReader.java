@@ -421,7 +421,7 @@ public class ArtifactReader
     return readRequiredTextualField(objectNode, path, ModelNodeNames.JSON_SCHEMA_TYPE);
   }
 
-  protected List<String> readMandatoryJsonLDTypeField(ObjectNode objectNode, String path)
+  protected List<String> readRequiredJsonLDTypeField(ObjectNode objectNode, String path)
   {
     List<String> jsonLDTypes = readTextualFieldValues(objectNode, path, ModelNodeNames.JSON_LD_TYPE);
 
@@ -455,6 +455,22 @@ public class ArtifactReader
     String footer = readOptionalTextualField(uiNode, uiPath, ModelNodeNames.UI_FOOTER, "");
 
     return new ElementUI(order, propertyLabels, propertyDescriptions, header, footer);
+  }
+
+
+  protected TemplateUI readTemplateUI(ObjectNode objectNode, String path)
+  {
+    ObjectNode uiNode = readUINodeAtPath(objectNode, path);
+    String uiPath = path + "/" + ModelNodeNames.UI;
+
+    List<String> order = readTextualFieldValues(uiNode, uiPath, ModelNodeNames.UI_ORDER);
+    List<String> pages = readTextualFieldValues(uiNode, uiPath, ModelNodeNames.UI_PAGES);
+    Map<String, String> propertyLabels = readFieldNameStringValueMap(uiNode, uiPath, ModelNodeNames.UI_PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readFieldNameStringValueMap(uiNode, uiPath, ModelNodeNames.UI_PROPERTY_DESCRIPTIONS);
+    String header = readOptionalTextualField(uiNode, uiPath, ModelNodeNames.UI_HEADER, "");
+    String footer = readOptionalTextualField(uiNode, uiPath, ModelNodeNames.UI_FOOTER, "");
+
+    return new TemplateUI(order, pages, propertyLabels, propertyDescriptions, header, footer);
   }
 
   protected boolean readOptionalBooleanField(ObjectNode objectNode, String path, String fieldName, boolean defaultValue)
