@@ -8,17 +8,19 @@ public class ElementSchemaArtifact extends SchemaArtifact
   private final Map<String, FieldSchemaArtifact> fieldSchemas;
   private final Map<String, ElementSchemaArtifact> elementSchemas;
   private final boolean isMultiple;
+  private final ElementUI elementUI;
 
   public ElementSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple)
+    Map<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple, ElementUI elementUI)
   {
     super(schemaArtifact);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.isMultiple = isMultiple;
+    this.elementUI = elementUI;
   }
 
-  public Map<String, FieldSchemaArtifact> getFieldsSchemas()
+  public Map<String, FieldSchemaArtifact> getFieldSchemas()
   {
     return fieldSchemas;
   }
@@ -33,9 +35,14 @@ public class ElementSchemaArtifact extends SchemaArtifact
     return isMultiple;
   }
 
+  public ElementUI getElementUI()
+  {
+    return elementUI;
+  }
+
   @Override public String toString()
   {
     return super.toString() + "\n ElementSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
-      + ", isMultiple=" + isMultiple + '}';
+      + ", isMultiple=" + isMultiple + ", elementUI=" + elementUI + '}';
   }
 }

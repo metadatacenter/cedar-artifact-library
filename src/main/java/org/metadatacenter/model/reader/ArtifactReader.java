@@ -7,12 +7,15 @@ import org.metadatacenter.model.ModelNodeNames;
 import org.metadatacenter.model.core.Artifact;
 import org.metadatacenter.model.core.ElementInstanceArtifact;
 import org.metadatacenter.model.core.ElementSchemaArtifact;
+import org.metadatacenter.model.core.ElementUI;
 import org.metadatacenter.model.core.FieldInstanceArtifact;
 import org.metadatacenter.model.core.FieldSchemaArtifact;
+import org.metadatacenter.model.core.FieldUI;
 import org.metadatacenter.model.core.InstanceArtifact;
 import org.metadatacenter.model.core.SchemaArtifact;
 import org.metadatacenter.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.model.core.TemplateUI;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -68,28 +71,28 @@ public class ArtifactReader
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    TemplateUI templateUI = null; // TODO
 
     checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
-    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas);
+    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, templateUI);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
     String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
-    String fieldInputType = readFieldInputType(objectNode, path);
     String defaultValue = readDefaultValue(objectNode, path);
     List<String> skosAlternateLabels = readSKOSAltLabelField(objectNode, path);
+    FieldUI fieldUI = readFieldUI(objectNode, path);
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 
-    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, fieldInputType, defaultValue, skosAlternateLabels);
+    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, defaultValue, skosAlternateLabels, fieldUI);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
@@ -98,18 +101,19 @@ public class ArtifactReader
 
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    ElementUI elementUI = readElementUI(objectNode, path);
     boolean isMultiple = false; // TODO
 
     checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
-    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, isMultiple);
+    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, isMultiple, elementUI);
   }
 
   private Artifact readArtifact(ObjectNode objectNode, String path)
   {
-    Map<String, String> context = readJsonLDContextField(objectNode, path);
+    Map<String, String> context = readFieldNameStringValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
     List<URI> jsonLDTypes = readJsonLDTypeField(objectNode, path);
     URI jsonLDID = readJsonLDIDField(objectNode, path);
     String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
@@ -306,9 +310,9 @@ public class ArtifactReader
     return objectNode.get(ModelNodeNames.JSON_LD_CONTEXT) != null;
   }
 
-  protected String readIsBasedOnField(ObjectNode objectNode, String path)
+  protected URI readIsBasedOnField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
+    return readURIField(objectNode, path, ModelNodeNames.SCHEMA_IS_BASED_ON);
   }
 
   protected String readRequiredIsBasedOnField(ObjectNode objectNode, String path)
@@ -328,32 +332,32 @@ public class ArtifactReader
 
   protected String readJsonLDValueField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.JSON_LD_VALUE, path);
+    return readOptionalTextualField(objectNode, path, ModelNodeNames.JSON_LD_VALUE, null);
   }
 
   protected String readRDFSLabelField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.RDFS_LABEL, path);
+    return readOptionalTextualField(objectNode, path, ModelNodeNames.RDFS_LABEL, null);
   }
 
   protected String readSKOSNotationField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SKOS_NOTATION, path);
+    return readOptionalTextualField(objectNode, path, ModelNodeNames.SKOS_NOTATION, null);
   }
 
   protected String readSKOSPrefLabelField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SKOS_PREFLABEL, path);
+    return readOptionalTextualField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL, null);
   }
 
   protected List<String> readSKOSAltLabelField(ObjectNode objectNode, String path)
   {
-    return readTextualFieldValues(objectNode, ModelNodeNames.SKOS_ALTLABEL, path);
+    return readTextualFieldValues(objectNode, path, ModelNodeNames.SKOS_ALTLABEL);
   }
 
   protected String readSKOSPrefLabelValueField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.SKOS_PREFLABEL, path);
+    return readOptionalTextualField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL, null);
   }
 
   private void checkSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
@@ -409,17 +413,17 @@ public class ArtifactReader
 
   protected List<URI> readJsonLDTypeField(ObjectNode objectNode, String path)
   {
-    return readURIFieldValues(objectNode, ModelNodeNames.JSON_LD_TYPE, path);
+    return readURIFieldValues(objectNode, path, ModelNodeNames.JSON_LD_TYPE);
   }
 
   protected String readJsonSchemaTypeField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_TYPE, path);
+    return readRequiredTextualField(objectNode, path, ModelNodeNames.JSON_SCHEMA_TYPE);
   }
 
   protected List<String> readMandatoryJsonLDTypeField(ObjectNode objectNode, String path)
   {
-    List<String> jsonLDTypes = readTextualFieldValues(objectNode, ModelNodeNames.JSON_LD_TYPE, path);
+    List<String> jsonLDTypes = readTextualFieldValues(objectNode, path, ModelNodeNames.JSON_LD_TYPE);
 
     if (jsonLDTypes.isEmpty())
       throw new RuntimeException("No JSON-LD @type for artifact at location " + path);
@@ -427,15 +431,64 @@ public class ArtifactReader
       return jsonLDTypes;
   }
 
-  protected String readFieldInputType(ObjectNode objectNode, String path)
+  protected FieldUI readFieldUI(ObjectNode objectNode, String path)
   {
     ObjectNode uiNode = readUINodeAtPath(objectNode, path);
-    String subPath = path + "/" + ModelNodeNames.UI;
+    String uiPath = path + "/" + ModelNodeNames.UI;
 
-    String inputType = readTextualField(uiNode, ModelNodeNames.UI_FIELD_INPUT_TYPE, subPath);
+    String fieldInputType = readFieldInputType(uiNode, uiPath);
+    boolean isValueRecommendationEnabled = readOptionalBooleanField(uiNode, uiPath, ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED, false);
+    boolean hidden = readOptionalBooleanField(uiNode, uiPath, ModelNodeNames.UI_HIDDEN, false);
+
+    return new FieldUI(fieldInputType, isValueRecommendationEnabled, hidden);
+  }
+
+  protected ElementUI readElementUI(ObjectNode objectNode, String path)
+  {
+    ObjectNode uiNode = readUINodeAtPath(objectNode, path);
+    String uiPath = path + "/" + ModelNodeNames.UI;
+
+    List<String> order = readTextualFieldValues(uiNode, uiPath, ModelNodeNames.UI_ORDER);
+    Map<String, String> propertyLabels = readFieldNameStringValueMap(uiNode, uiPath, ModelNodeNames.UI_PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readFieldNameStringValueMap(uiNode, uiPath, ModelNodeNames.UI_PROPERTY_DESCRIPTIONS);
+    String header = readOptionalTextualField(uiNode, uiPath, ModelNodeNames.UI_HEADER, "");
+    String footer = readOptionalTextualField(uiNode, uiPath, ModelNodeNames.UI_FOOTER, "");
+
+    return new ElementUI(order, propertyLabels, propertyDescriptions, header, footer);
+  }
+
+  protected boolean readOptionalBooleanField(ObjectNode objectNode, String path, String fieldName, boolean defaultValue)
+  {
+    JsonNode jsonNode = objectNode.get(fieldName);
+
+    if (jsonNode == null)
+      return defaultValue;
+
+    if (!jsonNode.isBoolean())
+      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be boolean");
+
+    return jsonNode.asBoolean();
+  }
+
+  protected boolean readRequiredBooleanField(ObjectNode objectNode, String path, String fieldName)
+  {
+    JsonNode jsonNode = objectNode.get(fieldName);
+
+    if (jsonNode == null)
+      throw new RuntimeException("Field " + fieldName + " at location " + path + " must be present");
+
+    if (!jsonNode.isBoolean())
+      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be boolean");
+
+    return jsonNode.asBoolean();
+  }
+
+  protected String readFieldInputType(ObjectNode objectNode, String path)
+  {
+    String inputType = readRequiredTextualField(objectNode, path, ModelNodeNames.UI_FIELD_INPUT_TYPE);
 
     if (!ModelNodeNames.INPUT_TYPES.contains(inputType))
-      throw new RuntimeException("Invalid field input type " + inputType + " at location " + subPath);
+      throw new RuntimeException("Invalid field input type " + inputType + " at location " + path);
 
     return inputType;
   }
@@ -445,7 +498,7 @@ public class ArtifactReader
     ObjectNode valueConstraintsNode = readValueConstraintsNodeAtPath(objectNode, path);
     String subPath = path + "/" + ModelNodeNames.VALUE_CONSTRAINTS;
 
-    return readTextualField(valueConstraintsNode, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE, subPath);
+    return readOptionalTextualField(valueConstraintsNode, subPath, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE, null);
   }
 
   protected ObjectNode readUINodeAtPath(ObjectNode objectNode, String path)
@@ -474,17 +527,17 @@ public class ArtifactReader
     return (ObjectNode)jsonNode;
   }
 
-  protected Map<String, String> readJsonLDContextField(ObjectNode objectNode, String path)
+  protected Map<String, String> readFieldNameStringValueMap(ObjectNode objectNode, String path, String fieldName)
   {
-    Map<String, String> context = new HashMap<>();
+    Map<String, String> fieldNameStringValueMap = new HashMap<>();
 
-    JsonNode jsonNode = objectNode.get(ModelNodeNames.JSON_LD_CONTEXT);
+    JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode != null) {
 
       if (!jsonNode.isObject())
         throw new RuntimeException(
-          "Value of field " + ModelNodeNames.JSON_LD_CONTEXT + " at location " + path + " must be an object");
+          "Value of field " + fieldName + " at location " + path + " must be an object");
 
       Iterator<Map.Entry<String, JsonNode>> fieldEntries = jsonNode.fields();
 
@@ -493,95 +546,97 @@ public class ArtifactReader
 
         // We only record simple term->term URI entries
         if (fieldEntry.getValue().isTextual()) {
-          String term = fieldEntry.getKey();
-          String termURI = fieldEntry.getValue().textValue();
+          String currentFieldName = fieldEntry.getKey();
+          String currentFieldValue = fieldEntry.getValue().textValue();
 
-          if (!context.containsKey(term))
-            context.put(term, termURI);
-        }
+          if (currentFieldValue != null && !currentFieldValue.isEmpty())
+            fieldNameStringValueMap.put(currentFieldName, currentFieldValue);
+        } else
+          if (!jsonNode.isObject())
+            throw new RuntimeException("Object in field " + fieldName + " at location " + path + " must contain string values");
       }
     }
-    return context;
+    return fieldNameStringValueMap;
   }
 
   protected String readJsonSchemaTitleField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_TITLE, path);
+    return readRequiredTextualField(objectNode, path, ModelNodeNames.JSON_SCHEMA_TITLE);
   }
 
   protected URI readCreatedByField(ObjectNode objectNode, String path)
   {
-    return readURIField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
+    return readURIField(objectNode, path, ModelNodeNames.PAV_CREATED_BY);
   }
 
   protected URI readRequiredCreatedByField(ObjectNode objectNode, String path)
   {
-    return readRequiredURIField(objectNode, ModelNodeNames.PAV_CREATED_BY, path);
+    return readRequiredURIField(objectNode, path, ModelNodeNames.PAV_CREATED_BY);
   }
 
   protected URI readModifiedByField(ObjectNode objectNode, String path)
   {
-    return readURIField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
+    return readURIField(objectNode, path, ModelNodeNames.OSLC_MODIFIED_BY);
   }
 
-  protected URI readRequiredURIByField(ObjectNode objectNode, String path)
+  protected URI readRequiredURIModifiedByField(ObjectNode objectNode, String path)
   {
-    return readRequiredURIField(objectNode, ModelNodeNames.OSLC_MODIFIED_BY, path);
+    return readRequiredURIField(objectNode, path, ModelNodeNames.OSLC_MODIFIED_BY);
   }
 
   protected String readJsonSchemaDescriptionField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_DESCRIPTION, path);
+    return readOptionalTextualField(objectNode, path, ModelNodeNames.JSON_SCHEMA_DESCRIPTION, "");
   }
 
   protected String readJsonSchemaSchemaField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.JSON_SCHEMA_SCHEMA, path);
+    return readRequiredTextualField(objectNode, path, ModelNodeNames.JSON_SCHEMA_SCHEMA);
   }
 
   protected URI readRequiredJsonSchemaSchemaField(ObjectNode objectNode, String path)
   {
-    return readRequiredURIField(objectNode, ModelNodeNames.JSON_SCHEMA_SCHEMA, path);
+    return readRequiredURIField(objectNode, path, ModelNodeNames.JSON_SCHEMA_SCHEMA);
   }
 
   protected String readRequiredSchemaVersionField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION, path);
+    return readRequiredTextualField(objectNode, path, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
   }
 
   protected String readRequiredVersionField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.PAV_VERSION, path);
+    return readRequiredTextualField(objectNode, path, ModelNodeNames.PAV_VERSION);
   }
 
   protected String readPreviousVersionField(ObjectNode objectNode, String path)
   {
-    return readTextualField(objectNode, ModelNodeNames.PAV_PREVIOUS_VERSION, path);
+    return readOptionalTextualField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
   }
 
   protected String readRequiredStatusField(ObjectNode objectNode, String path)
   {
-    return readRequiredTextualField(objectNode, ModelNodeNames.BIBO_STATUS, path);
+    return readRequiredTextualField(objectNode, path, ModelNodeNames.BIBO_STATUS);
   }
 
   protected OffsetDateTime readCreatedOnField(ObjectNode objectNode, String path)
   {
-    return readOffsetDateTimeField(objectNode, ModelNodeNames.PAV_CREATED_ON, path);
+    return readOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_CREATED_ON);
   }
 
   protected OffsetDateTime readRequiredCreatedOnField(ObjectNode objectNode, String path)
   {
-    return readOffsetDateTimeField(objectNode, ModelNodeNames.PAV_CREATED_ON, path);
+    return readOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_CREATED_ON);
   }
 
   protected OffsetDateTime readLastUpdatedOnField(ObjectNode objectNode, String path)
   {
-    return readOffsetDateTimeField(objectNode, ModelNodeNames.PAV_LAST_UPDATED_ON, path);
+    return readOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_LAST_UPDATED_ON);
   }
 
   protected OffsetDateTime readRequiredLastUpdatedOnField(ObjectNode objectNode, String path)
   {
-    return readRequiredOffsetDateTimeField(objectNode, ModelNodeNames.PAV_LAST_UPDATED_ON, path);
+    return readRequiredOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_LAST_UPDATED_ON);
   }
 
   protected ObjectMapper getMapper()
@@ -589,9 +644,9 @@ public class ArtifactReader
     return this.mapper;
   }
 
-  private OffsetDateTime readOffsetDateTimeField(ObjectNode objectNode, String fieldName, String path)
+  private OffsetDateTime readOffsetDateTimeField(ObjectNode objectNode, String path, String fieldName)
   {
-    String dateTimeValue = readTextualField(objectNode, fieldName, path);
+    String dateTimeValue = readRequiredTextualField(objectNode, path, fieldName);
 
     try {
       return OffsetDateTime.parse(dateTimeValue);
@@ -602,9 +657,9 @@ public class ArtifactReader
     }
   }
 
-  private OffsetDateTime readRequiredOffsetDateTimeField(ObjectNode objectNode, String fieldName, String path)
+  private OffsetDateTime readRequiredOffsetDateTimeField(ObjectNode objectNode, String path, String fieldName)
   {
-    String dateTimeValue = readRequiredTextualField(objectNode, fieldName, path);
+    String dateTimeValue = readRequiredTextualField(objectNode, path, fieldName);
 
     try {
       return OffsetDateTime.parse(dateTimeValue);
@@ -615,7 +670,7 @@ public class ArtifactReader
     }
   }
 
-  private URI readURIField(ObjectNode objectNode, String fieldName, String path)
+  private URI readURIField(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -632,20 +687,19 @@ public class ArtifactReader
     }
   }
 
-  private String readTextualField(ObjectNode objectNode, String fieldName, String path)
+  private String readOptionalTextualField(ObjectNode objectNode, String path, String fieldName, String defaultValue)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      return null;
-
-    if (!jsonNode.isTextual())
+      return defaultValue;
+    else if (!jsonNode.isTextual())
       throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be textual");
-
-    return jsonNode.asText();
+    else
+      return jsonNode.asText();
   }
 
-  private String readRequiredTextualField(ObjectNode objectNode, String fieldName, String path)
+  private String readRequiredTextualField(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -659,7 +713,7 @@ public class ArtifactReader
     }
   }
 
-  private URI readRequiredURIField(ObjectNode objectNode, String fieldName, String path)
+  private URI readRequiredURIField(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -677,7 +731,7 @@ public class ArtifactReader
     }
   }
 
-  private List<String> readTextualFieldValues(ObjectNode objectNode, String fieldName, String path)
+  private List<String> readTextualFieldValues(ObjectNode objectNode, String path,  String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
     List<String> textValues = new ArrayList<>();
@@ -697,14 +751,14 @@ public class ArtifactReader
         }
       }
     } else {
-      String textValue = readTextualField(objectNode, fieldName, path);
-      if (textValue != null)
+      String textValue = readOptionalTextualField(objectNode, path, fieldName, "");
+      if (textValue != null && !textValue.isEmpty())
         textValues.add(textValue);
     }
     return textValues;
   }
 
-  private List<URI> readURIFieldValues(ObjectNode objectNode, String fieldName, String path)
+  private List<URI> readURIFieldValues(ObjectNode objectNode, String path, String fieldName)
   {
     List<URI> uriValues = new ArrayList<>();
 
@@ -727,15 +781,15 @@ public class ArtifactReader
         }
       }
     } else {
-      URI uriValue = readURIField(objectNode, fieldName, path);
+      URI uriValue = readURIField(objectNode, path, fieldName);
       uriValues.add(uriValue);
     }
     return uriValues;
   }
 
-  private List<String> readRequiredTextualFieldValues(ObjectNode objectNode, String fieldName, String path)
+  private List<String> readRequiredTextualFieldValues(ObjectNode objectNode, String path, String fieldName)
   {
-    List<String> textValues = readTextualFieldValues(objectNode, fieldName, path);
+    List<String> textValues = readTextualFieldValues(objectNode, path, fieldName);
 
     if (textValues.isEmpty())
       throw new RuntimeException("No value for field " + fieldName + " at location " + path);
