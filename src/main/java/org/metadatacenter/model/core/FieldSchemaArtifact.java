@@ -10,8 +10,8 @@ public class FieldSchemaArtifact extends SchemaArtifact
   private final List<String> skosAlternateLabels;
   private final FieldUI fieldUI;
 
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, String skosPrefLabel, String defaultValue, List<String> skosAlternateLabels,
-    FieldUI fieldUI)
+  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, String skosPrefLabel, String defaultValue,
+    List<String> skosAlternateLabels, FieldUI fieldUI)
   {
     super(schemaArtifact);
     this.skosPrefLabel = skosPrefLabel;

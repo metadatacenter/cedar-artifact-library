@@ -637,11 +637,6 @@ public class ArtifactReader
     return readOptionalTextualField(objectNode, path, ModelNodeNames.JSON_SCHEMA_DESCRIPTION, "");
   }
 
-  protected String readJsonSchemaSchemaField(ObjectNode objectNode, String path)
-  {
-    return readRequiredTextualField(objectNode, path, ModelNodeNames.JSON_SCHEMA_SCHEMA);
-  }
-
   protected URI readRequiredJsonSchemaSchemaField(ObjectNode objectNode, String path)
   {
     return readRequiredURIField(objectNode, path, ModelNodeNames.JSON_SCHEMA_SCHEMA);
