@@ -113,7 +113,7 @@ public class ArtifactReader
 
   private Artifact readArtifact(ObjectNode objectNode, String path)
   {
-    Map<String, String> context = readFieldNameStringValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
+    Map<String, URI> context = readFieldNameURIValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
     List<URI> jsonLDTypes = readJsonLDTypeField(objectNode, path);
     URI jsonLDID = readJsonLDIDField(objectNode, path);
     String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
@@ -560,7 +560,6 @@ public class ArtifactReader
       while (fieldEntries.hasNext()) {
         Map.Entry<String, JsonNode> fieldEntry = fieldEntries.next();
 
-        // We only record simple term->term URI entries
         if (fieldEntry.getValue().isTextual()) {
           String currentFieldName = fieldEntry.getKey();
           String currentFieldValue = fieldEntry.getValue().textValue();
@@ -568,8 +567,41 @@ public class ArtifactReader
           if (currentFieldValue != null && !currentFieldValue.isEmpty())
             fieldNameStringValueMap.put(currentFieldName, currentFieldValue);
         } else
-          if (!jsonNode.isObject())
             throw new RuntimeException("Object in field " + fieldName + " at location " + path + " must contain string values");
+      }
+    }
+    return fieldNameStringValueMap;
+  }
+
+  protected Map<String, URI> readFieldNameURIValueMap(ObjectNode objectNode, String path, String fieldName)
+  {
+    Map<String, URI> fieldNameStringValueMap = new HashMap<>();
+
+    JsonNode jsonNode = objectNode.get(fieldName);
+
+    if (jsonNode != null) {
+
+      if (!jsonNode.isObject())
+        throw new RuntimeException(
+          "Value of field " + fieldName + " at location " + path + " must be an object");
+
+      Iterator<Map.Entry<String, JsonNode>> fieldEntries = jsonNode.fields();
+
+      while (fieldEntries.hasNext()) {
+        Map.Entry<String, JsonNode> fieldEntry = fieldEntries.next();
+
+        // We only record simple term->term URI entries
+        if (fieldEntry.getValue().isTextual()) {
+          String currentFieldName = fieldEntry.getKey();
+          String currentFieldValue = fieldEntry.getValue().textValue();
+
+          try {
+            URI currentFieldURIValue = new URI(currentFieldValue);
+            fieldNameStringValueMap.put(currentFieldName, currentFieldURIValue);
+          } catch (Exception e) {
+            throw new RuntimeException("Object in field " + fieldName + " at location " + path + " must contain URI values");
+          }
+        }
       }
     }
     return fieldNameStringValueMap;

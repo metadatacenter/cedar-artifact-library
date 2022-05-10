@@ -15,11 +15,11 @@ public class Artifact
   private final String jsonSchemaDescription;
   private final URI createdBy, modifiedBy;
   private final OffsetDateTime createdOn, lastUpdatedOn;
-  private final Map<String, String> jsonLDContext;
+  private final Map<String, URI> jsonLDContext;
 
   public Artifact(URI jsonLDID, List<URI> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, URI createdBy, URI modifiedBy, OffsetDateTime createdOn,
-    OffsetDateTime lastUpdatedOn, Map<String, String> jsonLDContext)
+    OffsetDateTime lastUpdatedOn, Map<String, URI> jsonLDContext)
   {
     this.jsonLDID = jsonLDID;
     this.jsonLDTypes = Collections.unmodifiableList(jsonLDTypes);
@@ -92,7 +92,7 @@ public class Artifact
     return lastUpdatedOn;
   }
 
-  public Map<String, String> getJsonLDContext()
+  public Map<String, URI> getJsonLDContext()
   {
     return jsonLDContext;
   }
