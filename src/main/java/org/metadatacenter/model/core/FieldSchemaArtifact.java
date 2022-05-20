@@ -6,28 +6,23 @@ import java.util.List;
 public class FieldSchemaArtifact extends SchemaArtifact
 {
   private final String skosPrefLabel;
-  private final String defaultValue;
   private final List<String> skosAlternateLabels;
   private final FieldUI fieldUI;
+  private final ValueConstraints valueConstraints;
 
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, String skosPrefLabel, String defaultValue,
-    List<String> skosAlternateLabels, FieldUI fieldUI)
+  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, String skosPrefLabel,
+    List<String> skosAlternateLabels, FieldUI fieldUI, ValueConstraints valueConstraints)
   {
     super(schemaArtifact);
     this.skosPrefLabel = skosPrefLabel;
-    this.defaultValue = defaultValue;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
+    this.valueConstraints = valueConstraints;
     this.fieldUI = fieldUI;
   }
 
   public String getSkosPrefLabel()
   {
     return skosPrefLabel;
-  }
-
-  public String getDefaultValue()
-  {
-    return defaultValue;
   }
 
   public List<String> getSkosAlternateLabels()
@@ -40,9 +35,14 @@ public class FieldSchemaArtifact extends SchemaArtifact
     return fieldUI;
   }
 
+  public ValueConstraints getValueConstraints()
+  {
+    return valueConstraints;
+  }
+
   @Override public String toString()
   {
-    return super.toString() + "\n FieldSchemaArtifact{" + "skosPrefLabel='" + skosPrefLabel + '\'' + ", defaultValue='" + defaultValue + '\''
-      + ", skosAlternateLabels=" + skosAlternateLabels + ", fieldUI=" + fieldUI + '}';
+    return "FieldSchemaArtifact{" + "skosPrefLabel='" + skosPrefLabel + '\'' + ", skosAlternateLabels="
+      + skosAlternateLabels + ", fieldUI=" + fieldUI + ", valueConstraints=" + valueConstraints + '}';
   }
 }
