@@ -29,8 +29,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   private void processTemplateSchemaArtifact(Workbook workbook)
   {
-    String formName = templateSchemaArtifact.getJsonSchemaTitle();
-    Sheet sheet = workbook.createSheet(formName);
+    String templateName = templateSchemaArtifact.getJsonSchemaTitle();
+    String templateDescription = templateSchemaArtifact.getJsonSchemaDescription();
+    Sheet sheet = workbook.createSheet(templateName);
     createHeader(sheet);
 
     int currentRowNumber = REDCapConstants.HEADER_ROW_NUMBER + 1;
@@ -38,7 +39,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
       if (templateSchemaArtifact.getFieldSchemas().containsKey(fieldName)) {
         FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemas().get(fieldName);
 
-        processFieldSchemaArtifact(fieldSchemaArtifact, sheet, currentRowNumber, formName);
+        processFieldSchemaArtifact(fieldSchemaArtifact, sheet, currentRowNumber, templateName, templateDescription);
       } else {
         // TODO Ignore non-field values silently for the moment
       }
@@ -48,8 +49,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
   }
 
   private void processFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int rowNumber,
-    String formName)
+    String templateName, String templateDescription)
   {
+
     Row row = sheet.createRow(rowNumber);
     String fieldName = fieldSchemaArtifact.getName();
 
@@ -58,7 +60,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
     variableNameCell.setCellValue(fieldName);
 
     Cell formNameCell = row.createCell(REDCapConstants.FORM_NAME_COLUMN_INDEX);
-    formNameCell.setCellValue(formName);
+    formNameCell.setCellValue(templateName);
+
+    // TODO Put template description in cell comment
 
     Cell sectionHeaderCell = row.createCell(REDCapConstants.SECTION_HEADER_COLUMN_INDEX);
     sectionHeaderCell.setCellValue(""); // TODO Deal with section headers
