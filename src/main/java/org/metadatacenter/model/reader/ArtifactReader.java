@@ -83,7 +83,7 @@ public class ArtifactReader
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    TemplateUI templateUI = null; // TODO
+    TemplateUI templateUI = readTemplateUI(objectNode, path);
 
     checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 

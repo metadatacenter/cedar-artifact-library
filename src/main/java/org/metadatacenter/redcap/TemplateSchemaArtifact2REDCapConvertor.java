@@ -13,7 +13,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
 {
   private final TemplateSchemaArtifact templateSchemaArtifact;
 
-  TemplateSchemaArtifact2REDCapConvertor(TemplateSchemaArtifact templateSchemaArtifact)
+  public TemplateSchemaArtifact2REDCapConvertor(TemplateSchemaArtifact templateSchemaArtifact)
   {
     this.templateSchemaArtifact = templateSchemaArtifact;
   }
