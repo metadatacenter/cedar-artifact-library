@@ -4,19 +4,19 @@ public class CellLocation
 {
   // There is an equals() method defined on this class.
   private final String sheetName;
-  // Column and row number are 0-based
-  private final int columnNumber, rowNumber;
+  // Column index and row number are 0-based
+  private final int columnIndex, rowNumber;
 
   /**
    *
    * @param sheetName The name of the sheet
-   * @param columnNumber The column number (0-based)
+   * @param columnIndex The column index (0-based)
    * @param rowNumber The row number (0-based)
    */
-  public CellLocation(String sheetName, int columnNumber, int rowNumber)
+  public CellLocation(String sheetName, int columnIndex, int rowNumber)
   {
     this.sheetName = sheetName;
-    this.columnNumber = columnNumber;
+    this.columnIndex = columnIndex;
     this.rowNumber = rowNumber;
   }
 
@@ -30,14 +30,14 @@ public class CellLocation
    *
    * @return The column number (0-based).
    */
-  public int getColumnNumber()
+  public int getColumnIndex()
   {
-    return columnNumber;
+    return columnIndex;
   }
 
   public String getColumnName()
   {
-    return SpreadSheetUtil.columnNumber2Name(this.columnNumber + 1);
+    return SpreadSheetUtil.columnNumber2Name(this.columnIndex + 1);
   }
 
   /**
@@ -72,7 +72,7 @@ public class CellLocation
 
     CellLocation that = (CellLocation)o;
 
-    if (columnNumber != that.columnNumber)
+    if (columnIndex != that.columnIndex)
       return false;
     if (rowNumber != that.rowNumber)
       return false;
@@ -83,7 +83,7 @@ public class CellLocation
   @Override public int hashCode()
   {
     int result = sheetName != null ? sheetName.hashCode() : 0;
-    result = 31 * result + columnNumber;
+    result = 31 * result + columnIndex;
     result = 31 * result + rowNumber;
     return result;
   }

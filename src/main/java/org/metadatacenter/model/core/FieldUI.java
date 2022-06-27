@@ -2,18 +2,18 @@ package org.metadatacenter.model.core;
 
 public class FieldUI
 {
-  private final String inputType;
+  private final FieldInputType inputType;
   private final boolean valueRecommendationEnabled;
   private final boolean hidden;
 
-  public FieldUI(String inputType, boolean valueRecommendationEnabled, boolean hidden)
+  public FieldUI(FieldInputType inputType, boolean valueRecommendationEnabled, boolean hidden)
   {
     this.inputType = inputType;
     this.valueRecommendationEnabled = valueRecommendationEnabled;
     this.hidden = hidden;
   }
 
-  public String getInputType()
+  public FieldInputType getInputType()
   {
     return inputType;
   }

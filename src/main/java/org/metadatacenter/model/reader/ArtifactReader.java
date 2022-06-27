@@ -10,16 +10,19 @@ import org.metadatacenter.model.core.ClassValueConstraint;
 import org.metadatacenter.model.core.ElementInstanceArtifact;
 import org.metadatacenter.model.core.ElementSchemaArtifact;
 import org.metadatacenter.model.core.ElementUI;
+import org.metadatacenter.model.core.FieldInputType;
 import org.metadatacenter.model.core.FieldInstanceArtifact;
 import org.metadatacenter.model.core.FieldSchemaArtifact;
 import org.metadatacenter.model.core.FieldUI;
 import org.metadatacenter.model.core.InstanceArtifact;
 import org.metadatacenter.model.core.LiteralValueConstraint;
+import org.metadatacenter.model.core.NumberType;
 import org.metadatacenter.model.core.OntologyValueConstraint;
 import org.metadatacenter.model.core.SchemaArtifact;
 import org.metadatacenter.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.core.TemplateUI;
+import org.metadatacenter.model.core.TemporalType;
 import org.metadatacenter.model.core.ValueConstraints;
 import org.metadatacenter.model.core.ValueSetValueConstraint;
 
@@ -139,13 +142,16 @@ public class ArtifactReader
   {
     Artifact artifact = readArtifact(objectNode, path);
 
-    URI schema = readRequiredJsonSchemaSchemaField(objectNode, path);
-    String schemaVersion = readRequiredSchemaVersionField(objectNode, path);
-    String version = readRequiredVersionField(objectNode, path);
+    URI jsonSchemaSchemaURI = readJsonSchemaSchemaURIField(objectNode, path);
+    String modelVersion = readPAVVersionField(objectNode, path);
+    String name = readSchemaOrgNameField(objectNode, path);
+    String description = readSchemaOrgDescriptionField(objectNode, path);
+    String version = readSchemaOrgSchemaVersionField(objectNode, path);
     String previousVersion = readPreviousVersionField(objectNode, path);
-    String status = readRequiredStatusField(objectNode, path);
+    String status = readBIBOStatusField(objectNode, path);
 
-    return new SchemaArtifact(artifact, schema, schemaVersion, version, previousVersion, status);
+    return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, previousVersion,
+      status);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
@@ -447,14 +453,14 @@ public class ArtifactReader
       false);
     boolean multipleChoice = readOptionalBooleanField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_MULTIPLE_CHOICE,
       false);
-    Optional<String> numberType = readOptionalStringField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE);
+    Optional<NumberType> numberType = readNumberTypeField(vcNode, vcPath);
     Optional<String> unitOfMeasure = readOptionalStringField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
     Optional<String> minValue = readOptionalStringField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
     Optional<String> maxValue = readOptionalStringField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);
     Optional<Integer> decimalPlaces = readOptionalIntegerField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_DECIMAL_PLACE);
     Optional<Integer> minLength = readOptionalIntegerField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
     Optional<Integer> maxLength = readOptionalIntegerField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
-    Optional<String> temporalType = readOptionalStringField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE);
+    Optional<TemporalType> temporalType = readTemporalTypeField(vcNode, vcPath);
     List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath);
     List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(vcNode, vcPath);
     List<ClassValueConstraint> classes = readClassValueConstraints(vcNode, vcPath);
@@ -464,6 +470,26 @@ public class ArtifactReader
 
     return new ValueConstraints(requiredValue, multipleChoice, numberType, unitOfMeasure, minValue, maxValue, decimalPlaces,
       minLength, maxLength, temporalType, ontologies, valueSets, classes, branches, literals, defaultValue);
+  }
+
+  protected Optional<TemporalType> readTemporalTypeField(ObjectNode objectNode, String path)
+  {
+    Optional<String> temporalTypeValue = readOptionalStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE);
+
+    if (temporalTypeValue.isPresent())
+      return Optional.of(TemporalType.valueOf(temporalTypeValue.get()));
+    else
+      return Optional.empty();
+  }
+
+  protected Optional<NumberType> readNumberTypeField(ObjectNode objectNode, String path)
+  {
+    Optional<String> numberTypeValue = readOptionalStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE);
+
+    if (numberTypeValue.isPresent())
+      return Optional.of(NumberType.valueOf(numberTypeValue.get()));
+    else
+      return Optional.empty();
   }
 
   protected List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode objectNode, String path)
@@ -640,7 +666,7 @@ public class ArtifactReader
     ObjectNode uiNode = readUINodeAtPath(objectNode, path);
     String uiPath = path + "/" + ModelNodeNames.UI;
 
-    String fieldInputType = readFieldInputType(uiNode, uiPath);
+    FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath);
     boolean isValueRecommendationEnabled = readOptionalBooleanField(uiNode, uiPath, ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readOptionalBooleanField(uiNode, uiPath, ModelNodeNames.UI_HIDDEN, false);
 
@@ -729,14 +755,14 @@ public class ArtifactReader
     return jsonNode.asBoolean();
   }
 
-  protected String readFieldInputType(ObjectNode objectNode, String path)
+  protected FieldInputType readFieldInputType(ObjectNode objectNode, String path)
   {
     String inputType = readRequiredStringField(objectNode, path, ModelNodeNames.UI_FIELD_INPUT_TYPE);
 
     if (!ModelNodeNames.INPUT_TYPES.contains(inputType))
       throw new RuntimeException("Invalid field input type " + inputType + " at location " + path);
 
-    return inputType;
+    return FieldInputType.fromString(inputType);
   }
 
   protected String readDefaultValue(ObjectNode objectNode, String path)
@@ -867,17 +893,27 @@ public class ArtifactReader
     return readOptionalStringField(objectNode, path, ModelNodeNames.JSON_SCHEMA_DESCRIPTION, "");
   }
 
-  protected URI readRequiredJsonSchemaSchemaField(ObjectNode objectNode, String path)
+  protected URI readJsonSchemaSchemaURIField(ObjectNode objectNode, String path)
   {
     return readRequiredURIField(objectNode, path, ModelNodeNames.JSON_SCHEMA_SCHEMA);
   }
 
-  protected String readRequiredSchemaVersionField(ObjectNode objectNode, String path)
+  protected String readSchemaOrgSchemaVersionField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
   }
 
-  protected String readRequiredVersionField(ObjectNode objectNode, String path)
+  protected String readSchemaOrgNameField(ObjectNode objectNode, String path)
+  {
+    return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_NAME);
+  }
+
+  protected String readSchemaOrgDescriptionField(ObjectNode objectNode, String path)
+  {
+    return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
+  }
+
+  protected String readPAVVersionField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.PAV_VERSION);
   }
@@ -887,7 +923,7 @@ public class ArtifactReader
     return readOptionalStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
   }
 
-  protected String readRequiredStatusField(ObjectNode objectNode, String path)
+  protected String readBIBOStatusField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.BIBO_STATUS);
   }

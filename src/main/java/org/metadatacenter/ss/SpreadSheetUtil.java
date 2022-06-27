@@ -38,7 +38,7 @@ public class SpreadSheetUtil
    * @param columnName
    * @return 1-based column number
    */
-  static public int columnName2Number(String columnName)
+  static public int columnName2Index(String columnName)
   {
     int pos = 0;
 
@@ -92,12 +92,12 @@ public class SpreadSheetUtil
    *
    * @param sheet
    * @param columnSpecification
-   * @return 1-basec column number
+   * @return 1-based column number
    */
   public static int getColumnNumber(Sheet sheet, String columnSpecification)
   {
     checkColumnSpecification(columnSpecification);
-    int columnNumber = columnName2Number(columnSpecification);
+    int columnNumber = columnName2Index(columnSpecification);
     return columnNumber; // 0-indexed
   }
 

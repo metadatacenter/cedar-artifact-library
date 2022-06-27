@@ -13,8 +13,8 @@ public class SpreadsheetFactory
     return new XSSFWorkbook(); // An empty workbook
   }
 
-  public static Workbook loadWorkbookFromDocument(String location) throws Exception
+  public static Workbook loadWorkbookFromDocument(String path) throws Exception
   {
-    return WorkbookFactory.create(new FileInputStream(location));
+    return WorkbookFactory.create(new FileInputStream(path));
   }
 }

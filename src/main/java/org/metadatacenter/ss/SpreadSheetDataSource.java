@@ -77,7 +77,7 @@ public class SpreadSheetDataSource
       int columnNumber, rowNumber;
 
       if (isColumnWildcard) {
-        columnNumber = currentCellLocation.getColumnNumber();
+        columnNumber = currentCellLocation.getColumnIndex();
       } else {
         columnNumber = SpreadSheetUtil.getColumnNumber(sheet, columnSpecification) - 1;
       }
@@ -105,7 +105,7 @@ public class SpreadSheetDataSource
 
   private String getCellLocationValue(CellLocation cellLocation)
   {
-    int columnNumber = cellLocation.getColumnNumber();
+    int columnNumber = cellLocation.getColumnIndex();
     int rowNumber = cellLocation.getRowNumber();
 
     Sheet sheet = workbook.getSheet(cellLocation.getSheetName());

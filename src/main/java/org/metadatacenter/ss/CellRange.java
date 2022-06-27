@@ -24,10 +24,10 @@ public class CellRange implements Iterable<CellLocation>
     if (currentCellLocation.equals(finishCellLocation))
       return Optional.empty();
     else {
-      int columnNumber = currentCellLocation.getColumnNumber();
+      int columnNumber = currentCellLocation.getColumnIndex();
       int rowNumber = currentCellLocation.getRowNumber();
 
-      if (columnNumber < this.startCellLocation.getColumnNumber())
+      if (columnNumber < this.startCellLocation.getColumnIndex())
         return Optional.empty();
 
       if (rowNumber < this.startCellLocation.getRowNumber())
@@ -36,7 +36,7 @@ public class CellRange implements Iterable<CellLocation>
       if (rowNumber < this.finishCellLocation.getRowNumber())
         rowNumber++;
       else {
-        if (columnNumber != this.finishCellLocation.getColumnNumber()) {
+        if (columnNumber != this.finishCellLocation.getColumnIndex()) {
           columnNumber++;
           rowNumber = 0;
         } else

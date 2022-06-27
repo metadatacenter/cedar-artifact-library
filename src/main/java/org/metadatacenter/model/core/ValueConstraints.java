@@ -8,14 +8,14 @@ public class ValueConstraints
 {
   private final boolean requiredValue;
   private final boolean multipleChoice;
-  private final Optional<String> numberType;
+  private final Optional<NumberType> numberType;
   private final Optional<String> unitOfMeasure;
   private final Optional<String> minValue;
   private final Optional<String> maxValue;
   private final Optional<Integer> decimalPlaces;
   private final Optional<Integer> minLength;
   private final Optional<Integer> maxLength;
-  private final Optional<String> temporalType;
+  private final Optional<TemporalType> temporalType;
   private final List<OntologyValueConstraint> ontologies;
   private final List<ValueSetValueConstraint> valueSets;
   private final List<ClassValueConstraint> classes;
@@ -23,10 +23,10 @@ public class ValueConstraints
   private final List<LiteralValueConstraint> literals;
   private final Optional<String> defaultValue;
 
-  public ValueConstraints(boolean requiredValue, boolean multipleChoice, Optional<String> numberType,
+  public ValueConstraints(boolean requiredValue, boolean multipleChoice, Optional<NumberType> numberType,
     Optional<String> unitOfMeasure, Optional<String> minValue, Optional<String> maxValue,
     Optional<Integer> decimalPlaces, Optional<Integer> minLength, Optional<Integer> maxLength,
-    Optional<String> temporalType, List<OntologyValueConstraint> ontologies, List<ValueSetValueConstraint> valueSets,
+    Optional<TemporalType> temporalType, List<OntologyValueConstraint> ontologies, List<ValueSetValueConstraint> valueSets,
     List<ClassValueConstraint> classes, List<BranchValueConstraint> branches, List<LiteralValueConstraint> literals,
     Optional<String> defaultValue)
   {
@@ -58,7 +58,7 @@ public class ValueConstraints
     return multipleChoice;
   }
 
-  public Optional<String> getNumberType()
+  public Optional<NumberType> getNumberType()
   {
     return numberType;
   }
@@ -93,7 +93,7 @@ public class ValueConstraints
     return maxLength;
   }
 
-  public Optional<String> getTemporalType()
+  public Optional<TemporalType> getTemporalType()
   {
     return temporalType;
   }
