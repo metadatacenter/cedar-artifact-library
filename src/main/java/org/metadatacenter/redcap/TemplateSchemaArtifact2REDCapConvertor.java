@@ -6,8 +6,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.model.core.FieldInputType;
 import org.metadatacenter.model.core.FieldSchemaArtifact;
+import org.metadatacenter.model.core.NumberType;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.ss.SpreadsheetFactory;
+import org.metadatacenter.model.core.TemporalType;
+import org.metadatacenter.model.core.ValueConstraints;
+
+import java.util.Optional;
 
 public class TemplateSchemaArtifact2REDCapConvertor
 {
@@ -18,13 +22,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
     this.templateSchemaArtifact = templateSchemaArtifact;
   }
 
-  public Workbook generateREDCapSpreadsheet()
+  public void generateREDCapWorkbook(Workbook workbook)
   {
-    Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
-
     processTemplateSchemaArtifact(workbook);
-
-    return workbook;
   }
 
   private void processTemplateSchemaArtifact(Workbook workbook)
@@ -74,13 +74,122 @@ public class TemplateSchemaArtifact2REDCapConvertor
     Cell fieldLabelHeaderCell = row.createCell(REDCapConstants.FIELD_LABEL_COLUMN_INDEX);
     fieldLabelHeaderCell.setCellValue(fieldName);
 
+    Cell choicesCalculationsORSliderLabelsHeaderCell = row.createCell(REDCapConstants.CHOICES_CALCULATIONS_OR_SLIDER_LABELS_COLUMN_INDEX);
+    // TODO
+
     Cell fieldNotesHeaderCell = row.createCell(REDCapConstants.FIELD_NOTES_COLUMN_INDEX);
     fieldNotesHeaderCell.setCellValue(fieldSchemaArtifact.getDescription());
+
+    Cell textValidationTypeORShowSliderNumberHeaderCell = row.createCell(REDCapConstants.TEXT_VALIDATION_TYPE_OR_SHOW_SLIDER_NUMBER_COLUMN_INDEX);
+    if (fieldType == REDCapConstants.TEXT_FIELD_TYPE) {
+      Optional<String> textFieldValidationValue = createTextFieldValidationValue(fieldSchemaArtifact);
+    } else if (fieldType == REDCapConstants.SLIDER_FIELD_TYPE) {
+      // TODO
+    }
+
+    Cell textValidationMinMaxHeaderCell = row.createCell(REDCapConstants.TEXT_VALIDATION_TYPE_OR_SHOW_SLIDER_NUMBER_COLUMN_INDEX);
+    // TODO
 
     Cell requiredFieldHeaderCell = row.createCell(REDCapConstants.REQUIRED_FIELD_COLUMN_INDEX);
     requiredFieldHeaderCell.setCellValue(fieldSchemaArtifact.getValueConstraints().isRequiredValue());
 
   }
+
+  Optional<String> createTextFieldValidationValue(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
+    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+
+    switch (fieldInputType) {
+    case TEMPORAL:
+      if (valueConstraints.getTemporalType().isPresent()) {
+        TemporalType temporalType = valueConstraints.getTemporalType().get();
+
+        switch (temporalType) {
+
+//        "_ui": {
+//          "inputType": "temporal",
+//            "timezoneEnabled": true,
+//            "inputTimeFormat": "24h",
+//            "temporalGranularity": "minute"
+//        },
+        case DATE:
+          //  DATE_YMD_TEXTFIELD_VALIDATION = "DATE_YMD";
+          //  DATE_MDY_TEXTFIELD_VALIDATION = "DATE_MDY";
+          //  DATE_DMY_TEXTFIELD_VALIDATION = "DATE_DMY";
+          //  MY_TEXTFIELD_VALIDATION = "MY";
+          //  MD_TEXTFIELD_VALIDATION = "MD";
+          //  DY_TEXTFIELD_VALIDATION = "DY";
+
+        case DATETIME:
+          //  DATETIME_YMD_FIELD_VALIDATION = "DATETIME_YMD";
+          //  DATETIME_MDY_FIELD_VALIDATION = "DATETIME_MDY";
+          //  DATETIME_DMY_TEXTFIELD_VALIDATION = "DATETIME_DMY";
+          //  DATETIME_SECONDS_Y_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_Y";
+          //  DATETIME_SECONDS_M_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_M";
+          //  DATETIME_SECONDS_D_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_D";
+        case TIME:
+          //  TIME_TEXTFIELD_VALIDATION = "TIME";
+          //  TIME_MM_SS_TEXTFIELD_VALIDATION = "Time (MM:SS)";
+
+        }
+
+      } else
+        throw new RuntimeException("Missing temporalType value in value constraint for numeric field " + fieldSchemaArtifact.getName());
+
+    case EMAIL:
+      return Optional.of(REDCapConstants.EMAIL_TEXTFIELD_VALIDATION);
+    case NUMERIC:
+
+      if (valueConstraints.getNumberType().isPresent()) {
+        NumberType numberType = valueConstraints.getNumberType().get();
+
+        switch (numberType) {
+        case INTEGER:
+        case LONG:
+        case INT:
+        case SHORT:
+        case BYTE:
+          return Optional.of(REDCapConstants.INTEGER_TEXTFIELD_VALIDATION);
+        case DECIMAL:
+        case FLOAT:
+        case DOUBLE:
+          if (valueConstraints.getDecimalPlaces().isPresent()) {
+            Integer decimalPlaces = valueConstraints.getDecimalPlaces().get();
+            if (decimalPlaces == 1)
+              return Optional.of(REDCapConstants.NUMBER_1_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
+            else if (decimalPlaces == 2)
+              return Optional.of(REDCapConstants.NUMBER_2_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
+            else if (decimalPlaces == 2)
+              return Optional.of(REDCapConstants.NUMBER_3_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
+            else if (decimalPlaces == 4)
+              return Optional.of(REDCapConstants.NUMBER_4_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
+            else
+              return Optional.of(REDCapConstants.NUMBER_TEXTFIELD_VALIDATION);
+          } else {
+            return Optional.of(REDCapConstants.NUMBER_TEXTFIELD_VALIDATION);
+          }
+        }
+      } else
+        throw new RuntimeException("Missing numberType value in value constraint  for numeric field " + fieldSchemaArtifact.getName());
+
+    case PHONE_NUMBER:
+      return Optional.of(REDCapConstants.PHONE_TEXTFIELD_VALIDATION);
+    default:
+      return Optional.empty();
+    }
+
+    // We don't currently generate:
+    //  PHONE_AUSTRALIA_TEXTFIELD_VALIDATION = "Phone (Australia)";
+    //  POSTAL_CODE_AUSTRALIA_TEXTFIELD_VALIDATION = "Postal Code (Australia)";
+    //  POSTAL_CODE_CANADA_TEXTFIELD_VALIDATION = "Postal Code (Canada)";
+    //  SOCIAL_SECURITY_NUMBER_US_TEXTFIELD_VALIDATION = "Social Security Number (US)";
+    //  LETTERS_ONLY_TEXTFIELD_VALIDATION = "Letters only";
+    //  SQL_TEXTFIELD_VALIDATION = "SQL";
+    //  MRN_TEXTFIELD_VALIDATION = "MRN";
+    //  ZIPCODE_TEXTFIELD_VALIDATION = "ZIPCODE";
+  }
+
 
   //  public static final int TEXT_VALIDATION_TYPE_OR_SHOW_SLIDER_NUMBER_COLUMN_INDEX = 7;
   //  public static final int TEXT_VALIDATION_MIN_MAX_COLUMN_INDEX = 8;
@@ -90,12 +199,17 @@ public class TemplateSchemaArtifact2REDCapConvertor
   {
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
 
-    if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEMPORAL ||
-      fieldInputType == FieldInputType.EMAIL ||       fieldInputType == FieldInputType.NUMERIC ||
-      fieldInputType == FieldInputType.PHONE_NUMBER)
-
-    return REDCapConstants.TEXT_FIELD_TYPE;
-    else if (fieldInputType == FieldInputType.TEXTAREA)
+    if (fieldInputType == FieldInputType.TEXTFIELD)
+      return REDCapConstants.TEXT_FIELD_TYPE;
+    else if (fieldInputType == FieldInputType.TEMPORAL)
+      return REDCapConstants.TEXT_FIELD_TYPE;
+    else if (fieldInputType == FieldInputType.EMAIL)
+      return REDCapConstants.TEXT_FIELD_TYPE;
+    else if (fieldInputType == FieldInputType.NUMERIC)
+      return REDCapConstants.TEXT_FIELD_TYPE;
+    else if (fieldInputType == FieldInputType.PHONE_NUMBER)
+      return REDCapConstants.TEXT_FIELD_TYPE;
+     else if (fieldInputType == FieldInputType.TEXTAREA)
       return REDCapConstants.NOTES_FIELD_TYPE;
     else if (fieldInputType == FieldInputType.RADIO)
       return REDCapConstants.RADIO_FIELD_TYPE;
@@ -121,6 +235,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
     for (String columnName: REDCapConstants.COLUMN_NAMES) {
       Cell cell = headerRow.createCell(columnIndex);
       cell.setCellValue(columnName);
+      sheet.setColumnWidth(columnIndex, (columnName.length() + 2) * 256);
       columnIndex++;
     }
   }

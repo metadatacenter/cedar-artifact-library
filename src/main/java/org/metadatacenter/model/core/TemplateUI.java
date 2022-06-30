@@ -3,6 +3,7 @@ package org.metadatacenter.model.core;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class TemplateUI
 {
@@ -10,11 +11,11 @@ public class TemplateUI
   private final List<String> pages;
   private final Map<String, String> propertyLabels;
   private final Map<String, String> propertyDescriptions;
-  private final String header;
-  private final String footer;
+  private final Optional<String> header;
+  private final Optional<String> footer;
 
   public TemplateUI(List<String> order, List<String> pages, Map<String, String> propertyLabels,
-    Map<String, String> propertyDescriptions, String header, String footer)
+    Map<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
   {
     this.order = order;
     this.pages = pages;
@@ -44,12 +45,12 @@ public class TemplateUI
     return propertyDescriptions;
   }
 
-  public String getHeader()
+  public Optional<String> getHeader()
   {
     return header;
   }
 
-  public String getFooter()
+  public Optional<String> getFooter()
   {
     return footer;
   }

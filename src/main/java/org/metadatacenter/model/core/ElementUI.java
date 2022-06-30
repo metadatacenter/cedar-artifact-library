@@ -3,17 +3,18 @@ package org.metadatacenter.model.core;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ElementUI
 {
   private final List<String> order;
   private final Map<String, String> propertyLabels;
   private final Map<String, String> propertyDescriptions;
-  private final String header;
-  private final String footer;
+  private final Optional<String> header;
+  private final Optional<String> footer;
 
   public ElementUI(List<String> order, Map<String, String> propertyLabels, Map<String, String> propertyDescriptions,
-    String header, String footer)
+    Optional<String> header, Optional<String> footer)
   {
     this.order = order;
     this.propertyLabels = Collections.unmodifiableMap(propertyLabels);
@@ -37,12 +38,12 @@ public class ElementUI
     return propertyDescriptions;
   }
 
-  public String getHeader()
+  public Optional<String> getHeader()
   {
     return header;
   }
 
-  public String getFooter()
+  public Optional<String> getFooter()
   {
     return footer;
   }

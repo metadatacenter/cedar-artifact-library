@@ -2,6 +2,7 @@ package org.metadatacenter.redcap;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class REDCapConstants
@@ -36,12 +37,12 @@ public class REDCapConstants
   public static final int CUSTOM_ALIGNMENT_COLUMN_INDEX = 12;
   public static final int QUESTION_NUMBER_COLUMN_INDEX = 13;
 
-  public static final Set<String> COLUMN_NAMES = new HashSet<>(Arrays
+  public static final List<String> COLUMN_NAMES = Arrays
     .asList(VARIABLE_NAME_COLUMN_NAME, FORM_NAME_COLUMN_NAME, SECTION_HEADER_COLUMN_NAME, FIELD_TYPE_COLUMN_NAME,
       FIELD_LABEL_COLUMN_NAME, CHOICES_CALCULATIONS_OR_SLIDER_LABELS_COLUMN_NAME, FIELD_NOTES_COLUMN_NAME,
       TEXT_VALIDATION_TYPE_OR_SHOW_SLIDER_NUMBER_COLUMN_NAME, TEXT_VALIDATION_MIN_MAX_COLUMN_NAME,
       IDENTIFIERS_COLUMN_NAME, BRANCHING_LOGIC_COLUMN_NAME, REQUIRED_FIELD_COLUMN_NAME, CUSTOM_ALIGNMENT_COLUMN_NAME,
-      QUESTION_NUMBER_COLUMN_NAME));
+      QUESTION_NUMBER_COLUMN_NAME);
 
   public static final int HEADER_ROW_NUMBER = 0;
 
@@ -56,6 +57,11 @@ public class REDCapConstants
   public static final String TRUEFALSE_FIELD_TYPE = "TRUEFALSE";
   public static final String DESCRIPTIVE_FIELD_TYPE = "DESCRIPTIVE";
   public static final String SLIDER_FIELD_TYPE = "SLIDER";
+
+  public static final Set<String> FIELD_TYPES = new HashSet<>(Arrays
+    .asList(TEXT_FIELD_TYPE, NOTES_FIELD_TYPE, RADIO_FIELD_TYPE, DROPDOWN_FIELD_TYPE, CHECKBOX_FIELD_TYPE,
+      CALC_FIELD_TYPE, FILE_FIELD_TYPE, YESNO_FIELD_TYPE, TRUEFALSE_FIELD_TYPE, DESCRIPTIVE_FIELD_TYPE,
+      SLIDER_FIELD_TYPE));
 
   public static final String DATE_YMD_TEXTFIELD_VALIDATION = "DATE_YMD";
   public static final String DATE_MDY_TEXTFIELD_VALIDATION = "DATE_MDY";
@@ -87,11 +93,6 @@ public class REDCapConstants
   public static final String NUMBER_2_DECIMAL_PLACE_TEXTFIELD_VALIDATION = "Number (2 decimal places)";
   public static final String NUMBER_3_DECIMAL_PLACE_TEXTFIELD_VALIDATION = "Number (3 decimal places)";
   public static final String NUMBER_4_DECIMAL_PLACE_TEXTFIELD_VALIDATION = "Number (4 decimal places)";
-
-  public static final Set<String> FIELD_TYPES = new HashSet<>(Arrays
-    .asList(TEXT_FIELD_TYPE, NOTES_FIELD_TYPE, RADIO_FIELD_TYPE, DROPDOWN_FIELD_TYPE, CHECKBOX_FIELD_TYPE,
-      CALC_FIELD_TYPE, FILE_FIELD_TYPE, YESNO_FIELD_TYPE, TRUEFALSE_FIELD_TYPE, DESCRIPTIVE_FIELD_TYPE,
-      SLIDER_FIELD_TYPE));
 
   public static final Set<String> TEXTFIELD_VALIDATIONS = new HashSet<>(Arrays
     .asList(DATE_YMD_TEXTFIELD_VALIDATION, DATE_MDY_TEXTFIELD_VALIDATION, DATE_DMY_TEXTFIELD_VALIDATION,

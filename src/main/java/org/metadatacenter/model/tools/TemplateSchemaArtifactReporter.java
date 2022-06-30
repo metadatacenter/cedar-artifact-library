@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.reader.ArtifactReader;
 import org.metadatacenter.redcap.TemplateSchemaArtifact2REDCapConvertor;
+import org.metadatacenter.ss.SpreadsheetFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +16,13 @@ public class TemplateSchemaArtifactReporter
 {
   public static void main(String[] args) throws IOException
   {
-    if (args.length != 1)
+    if (args.length != 2)
       Usage();
 
     ObjectMapper mapper = new ObjectMapper();
     File templateFile = new File(args[0]);
+    File spreadsheetFile = new File(args[1]);
+
     JsonNode jsonNode = mapper.readTree(templateFile);
 
     if (!jsonNode.isObject())
@@ -33,13 +36,16 @@ public class TemplateSchemaArtifactReporter
 
     TemplateSchemaArtifact2REDCapConvertor convertor = new TemplateSchemaArtifact2REDCapConvertor(templateSchemaArtifact);
 
-    Workbook workbook = convertor.generateREDCapSpreadsheet();
+    Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
 
+    convertor.generateREDCapWorkbook(workbook);
+
+    SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
   }
 
   private static void Usage()
   {
-    System.err.println("Usage: " + TemplateSchemaArtifactReporter.class.getName() + " [ <templateFileName> ]");
+    System.err.println("Usage: " + TemplateSchemaArtifactReporter.class.getName() + " [ <templateFileName> ] [ <spreadsheetFileName>]");
     System.exit(1);
   }
 }
