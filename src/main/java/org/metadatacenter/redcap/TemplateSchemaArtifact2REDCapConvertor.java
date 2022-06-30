@@ -6,8 +6,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.model.core.FieldInputType;
 import org.metadatacenter.model.core.FieldSchemaArtifact;
+import org.metadatacenter.model.core.FieldUI;
+import org.metadatacenter.model.core.InputTimeFormat;
 import org.metadatacenter.model.core.NumberType;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.model.core.TemporalGranularity;
 import org.metadatacenter.model.core.TemporalType;
 import org.metadatacenter.model.core.ValueConstraints;
 
@@ -99,41 +102,51 @@ public class TemplateSchemaArtifact2REDCapConvertor
   {
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
     ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
 
     switch (fieldInputType) {
     case TEMPORAL:
       if (valueConstraints.getTemporalType().isPresent()) {
         TemporalType temporalType = valueConstraints.getTemporalType().get();
+        Optional<InputTimeFormat> inputTimeFormat = fieldUI.getInputTimeFormat();
+        Optional<TemporalGranularity> temporalGranularity = fieldUI.getTemporalGranularity();
 
         switch (temporalType) {
-
-//        "_ui": {
-//          "inputType": "temporal",
-//            "timezoneEnabled": true,
-//            "inputTimeFormat": "24h",
-//            "temporalGranularity": "minute"
-//        },
         case DATE:
-          //  DATE_YMD_TEXTFIELD_VALIDATION = "DATE_YMD";
-          //  DATE_MDY_TEXTFIELD_VALIDATION = "DATE_MDY";
-          //  DATE_DMY_TEXTFIELD_VALIDATION = "DATE_DMY";
-          //  MY_TEXTFIELD_VALIDATION = "MY";
-          //  MD_TEXTFIELD_VALIDATION = "MD";
-          //  DY_TEXTFIELD_VALIDATION = "DY";
+          if (temporalGranularity.isPresent()) {
+            if (temporalGranularity.get() == TemporalGranularity.MONTH)
+              return Optional.of(REDCapConstants.DATE_MY_TEXTFIELD_VALIDATION);
+            else if (temporalGranularity.get() == TemporalGranularity.DAY)
+              return Optional.of(REDCapConstants.DATE_DY_TEXTFIELD_VALIDATION);
+            else
+              return Optional.of(REDCapConstants.DATE_YMD_TEXTFIELD_VALIDATION);
+          } else
+            return Optional.of(REDCapConstants.DATE_YMD_TEXTFIELD_VALIDATION);
 
+          // CEDAR has no way of specifying the following REDCap validations:
+          // DATE_MDY_TEXTFIELD_VALIDATION = "DATE_MDY";
+          // DATE_DMY_TEXTFIELD_VALIDATION = "DATE_DMY";
+          // MD_TEXTFIELD_VALIDATION = "MD";
         case DATETIME:
-          //  DATETIME_YMD_FIELD_VALIDATION = "DATETIME_YMD";
-          //  DATETIME_MDY_FIELD_VALIDATION = "DATETIME_MDY";
-          //  DATETIME_DMY_TEXTFIELD_VALIDATION = "DATETIME_DMY";
-          //  DATETIME_SECONDS_Y_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_Y";
-          //  DATETIME_SECONDS_M_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_M";
-          //  DATETIME_SECONDS_D_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_D";
+          if (temporalGranularity.isPresent()) {
+            if (temporalGranularity.get() == TemporalGranularity.SECOND)
+              return Optional.of(REDCapConstants.DATETIME_SECONDS_Y_TEXTFIELD_VALIDATION);
+            else
+              return Optional.of(REDCapConstants.DATETIME_YMD_TEXTFIELD_VALIDATION);
+          } else
+            return Optional.of(REDCapConstants.DATETIME_YMD_TEXTFIELD_VALIDATION);
+          // CEDAR has no way of specifying the following REDCap validations:
+          // DATETIME_SECONDS_M_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_M";
+          // DATETIME_SECONDS_D_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_D";
+          // DATETIME_DMY_TEXTFIELD_VALIDATION = "DATETIME_DMY";
+          // DATETIME_YMD_FIELD_VALIDATION = "DATETIME_YMD";
+          // DATETIME_MDY_FIELD_VALIDATION = "DATETIME_MDY";
         case TIME:
-          //  TIME_TEXTFIELD_VALIDATION = "TIME";
-          //  TIME_MM_SS_TEXTFIELD_VALIDATION = "Time (MM:SS)";
-
+          if (temporalGranularity.isPresent() && temporalGranularity.get() == TemporalGranularity.SECOND)
+            return Optional.of(REDCapConstants.TIME_MM_SS_TEXTFIELD_VALIDATION);
+          else
+            return Optional.of(REDCapConstants.TIME_TEXTFIELD_VALIDATION);
         }
-
       } else
         throw new RuntimeException("Missing temporalType value in value constraint for numeric field " + fieldSchemaArtifact.getName());
 
