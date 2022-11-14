@@ -18,6 +18,14 @@ public class TemplateSchemaArtifact extends SchemaArtifact
     this.templateUI = templateUI;
   }
 
+  public TemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
+  {
+    super(templateSchemaArtifact);
+    this.fieldSchemas = templateSchemaArtifact.fieldSchemas;
+    this.elementSchemas = templateSchemaArtifact.elementSchemas;
+    this.templateUI = templateSchemaArtifact.templateUI;
+  }
+
   public Map<String, FieldSchemaArtifact> getFieldSchemas()
   {
     return fieldSchemas;

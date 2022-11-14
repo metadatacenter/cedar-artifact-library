@@ -20,6 +20,15 @@ public class TemplateInstanceArtifact extends InstanceArtifact
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
   }
 
+
+  public TemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
+  {
+    super(templateInstanceArtifact);
+    this.isBasedOn = templateInstanceArtifact.isBasedOn;
+    this.elementInstances = templateInstanceArtifact.elementInstances;
+    this.fieldInstances = templateInstanceArtifact.fieldInstances;
+  }
+
   public String getIsBasedOn()
   {
     return isBasedOn;

@@ -22,6 +22,13 @@ public class ElementInstanceArtifact extends InstanceArtifact
     this.elementInstances = Collections.unmodifiableMap(elementInstances);
   }
 
+  public ElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    super(elementInstanceArtifact);
+    this.fieldInstances = elementInstanceArtifact.fieldInstances;
+    this.elementInstances = elementInstanceArtifact.elementInstances;
+  }
+
   public Map<String, List<FieldInstanceArtifact>> getFieldInstances()
   {
     return fieldInstances;

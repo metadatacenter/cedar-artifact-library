@@ -20,6 +20,15 @@ public class ElementSchemaArtifact extends SchemaArtifact
     this.elementUI = elementUI;
   }
 
+  public ElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  {
+    super(elementSchemaArtifact);
+    this.fieldSchemas = elementSchemaArtifact.fieldSchemas;
+    this.elementSchemas = elementSchemaArtifact.elementSchemas;
+    this.isMultiple = elementSchemaArtifact.isMultiple;
+    this.elementUI = elementSchemaArtifact.elementUI;
+  }
+
   public Map<String, FieldSchemaArtifact> getFieldSchemas()
   {
     return fieldSchemas;

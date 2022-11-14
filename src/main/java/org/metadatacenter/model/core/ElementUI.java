@@ -16,7 +16,7 @@ public class ElementUI
   public ElementUI(List<String> order, Map<String, String> propertyLabels, Map<String, String> propertyDescriptions,
     Optional<String> header, Optional<String> footer)
   {
-    this.order = order;
+    this.order = Collections.unmodifiableList(order);
     this.propertyLabels = Collections.unmodifiableMap(propertyLabels);
     this.propertyDescriptions = Collections.unmodifiableMap(propertyDescriptions);
     this.header = header;

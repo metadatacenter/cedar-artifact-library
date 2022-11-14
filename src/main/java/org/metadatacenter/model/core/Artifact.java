@@ -36,7 +36,7 @@ public class Artifact
   public Artifact(Artifact artifact)
   {
     this.jsonLDID = artifact.jsonLDID;
-    this.jsonLDTypes = Collections.unmodifiableList(artifact.jsonLDTypes);
+    this.jsonLDTypes = artifact.jsonLDTypes;
     this.jsonSchemaType = artifact.jsonSchemaType;
     this.jsonSchemaTitle = artifact.jsonSchemaTitle;
     this.jsonSchemaDescription = artifact.jsonSchemaDescription;
@@ -44,7 +44,7 @@ public class Artifact
     this.modifiedBy = artifact.modifiedBy;
     this.createdOn = artifact.createdOn;
     this.lastUpdatedOn = artifact.lastUpdatedOn;
-    this.jsonLDContext = Collections.unmodifiableMap(artifact.jsonLDContext);
+    this.jsonLDContext = artifact.jsonLDContext;
   }
 
   public URI getJsonLDID()

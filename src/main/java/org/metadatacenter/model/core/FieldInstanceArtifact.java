@@ -21,6 +21,15 @@ public class FieldInstanceArtifact extends InstanceArtifact
     this.prefLabel = prefLabel;
   }
 
+  public FieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact)
+  {
+    super(fieldInstanceArtifact);
+    this.value = fieldInstanceArtifact.value;
+    this.label = fieldInstanceArtifact.label;
+    this.notation = fieldInstanceArtifact.notation;
+    this.prefLabel = fieldInstanceArtifact.prefLabel;
+  }
+
   public String getJSONLDValue()
   {
     return value;
