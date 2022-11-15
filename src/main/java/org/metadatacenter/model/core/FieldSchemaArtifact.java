@@ -20,15 +20,6 @@ public class FieldSchemaArtifact extends SchemaArtifact
     this.fieldUI = fieldUI;
   }
 
-  public FieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
-  {
-    super(fieldSchemaArtifact);
-    this.skosPrefLabel = fieldSchemaArtifact.skosPrefLabel;
-    this.skosAlternateLabels = fieldSchemaArtifact.skosAlternateLabels;
-    this.valueConstraints = fieldSchemaArtifact.valueConstraints;
-    this.fieldUI = fieldSchemaArtifact.fieldUI;
-  }
-
   public String getSkosPrefLabel()
   {
     return skosPrefLabel;

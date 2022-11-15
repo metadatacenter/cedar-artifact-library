@@ -21,6 +21,7 @@ import org.metadatacenter.model.core.LiteralValueConstraint;
 import org.metadatacenter.model.core.NumberType;
 import org.metadatacenter.model.core.OntologyValueConstraint;
 import org.metadatacenter.model.core.SchemaArtifact;
+import org.metadatacenter.model.core.Status;
 import org.metadatacenter.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.core.TemplateUI;
@@ -105,7 +106,8 @@ public class ArtifactReader
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 
-    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel, skosAlternateLabels, fieldUI, valueConstraints);
+    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel,
+      skosAlternateLabels, fieldUI, valueConstraints);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
@@ -137,8 +139,8 @@ public class ArtifactReader
     OffsetDateTime createdOn = readCreatedOnField(objectNode, path);
     OffsetDateTime lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
 
-    return new Artifact(jsonLDID, jsonLDTypes, jsonSchemaType, name, description, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, context);
+    return new Artifact(jsonLDID, jsonLDTypes, jsonSchemaType,
+      name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, context);
   }
 
   private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
@@ -151,7 +153,7 @@ public class ArtifactReader
     String description = readSchemaOrgDescriptionField(objectNode, path);
     String version = readSchemaOrgSchemaVersionField(objectNode, path);
     String previousVersion = readPreviousVersionField(objectNode, path);
-    String status = readBIBOStatusField(objectNode, path);
+    Status status = readBIBOStatusField(objectNode, path);
 
     return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, previousVersion,
       status);
@@ -969,9 +971,9 @@ public class ArtifactReader
     return readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
   }
 
-  protected String readBIBOStatusField(ObjectNode objectNode, String path)
+  protected Status readBIBOStatusField(ObjectNode objectNode, String path)
   {
-    return readRequiredStringField(objectNode, path, ModelNodeNames.BIBO_STATUS);
+    return Status.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.BIBO_STATUS));
   }
 
   protected OffsetDateTime readCreatedOnField(ObjectNode objectNode, String path)

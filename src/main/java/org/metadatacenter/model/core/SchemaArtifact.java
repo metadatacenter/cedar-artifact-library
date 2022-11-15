@@ -8,10 +8,11 @@ public class SchemaArtifact extends Artifact
   private final String modelVersion;
   private final String name;
   private final String description;
-  private final String version, previousVersion, status;
+  private final String version, previousVersion;
+  private final Status status;
 
   public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaURI, String modelVersion, String name,
-    String description, String version, String previousVersion, String status)
+    String description, String version, String previousVersion, Status status)
   {
     super(artifact);
     this.jsonSchemaSchemaURI = jsonSchemaSchemaURI;
@@ -65,7 +66,7 @@ public class SchemaArtifact extends Artifact
     return previousVersion;
   }
 
-  public String getStatus()
+  public Status getStatus()
   {
     return status;
   }
