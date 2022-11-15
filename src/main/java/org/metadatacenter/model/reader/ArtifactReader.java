@@ -29,6 +29,7 @@ import org.metadatacenter.model.core.TemporalGranularity;
 import org.metadatacenter.model.core.TemporalType;
 import org.metadatacenter.model.core.ValueConstraints;
 import org.metadatacenter.model.core.ValueSetValueConstraint;
+import org.metadatacenter.model.core.Version;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -148,11 +149,11 @@ public class ArtifactReader
     Artifact artifact = readArtifact(objectNode, path);
 
     URI jsonSchemaSchemaURI = readJsonSchemaSchemaURIField(objectNode, path);
-    String modelVersion = readPAVVersionField(objectNode, path);
+    Version modelVersion = readPAVVersionField(objectNode, path);
     String name = readSchemaOrgNameField(objectNode, path);
     String description = readSchemaOrgDescriptionField(objectNode, path);
-    String version = readSchemaOrgSchemaVersionField(objectNode, path);
-    String previousVersion = readPreviousVersionField(objectNode, path);
+    Version version = readSchemaOrgSchemaVersionField(objectNode, path);
+    Version previousVersion = readPreviousVersionField(objectNode, path);
     Status status = readBIBOStatusField(objectNode, path);
 
     return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, previousVersion,
@@ -946,9 +947,9 @@ public class ArtifactReader
     return readRequiredURIField(objectNode, path, ModelNodeNames.JSON_SCHEMA_SCHEMA);
   }
 
-  protected String readSchemaOrgSchemaVersionField(ObjectNode objectNode, String path)
+  protected Version readSchemaOrgSchemaVersionField(ObjectNode objectNode, String path)
   {
-    return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
+    return Version.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION));
   }
 
   protected String readSchemaOrgNameField(ObjectNode objectNode, String path)
@@ -961,14 +962,14 @@ public class ArtifactReader
     return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
   }
 
-  protected String readPAVVersionField(ObjectNode objectNode, String path)
+  protected Version readPAVVersionField(ObjectNode objectNode, String path)
   {
-    return readRequiredStringField(objectNode, path, ModelNodeNames.PAV_VERSION);
+    return Version.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.PAV_VERSION));
   }
 
-  protected String readPreviousVersionField(ObjectNode objectNode, String path)
+  protected Version readPreviousVersionField(ObjectNode objectNode, String path)
   {
-    return readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
+    return Version.fromString(readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null));
   }
 
   protected Status readBIBOStatusField(ObjectNode objectNode, String path)

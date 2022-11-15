@@ -5,14 +5,14 @@ import java.net.URI;
 public class SchemaArtifact extends Artifact
 {
   private final URI jsonSchemaSchemaURI;
-  private final String modelVersion;
+  private final Version modelVersion;
   private final String name;
   private final String description;
-  private final String version, previousVersion;
+  private final Version version, previousVersion;
   private final Status status;
 
-  public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaURI, String modelVersion, String name,
-    String description, String version, String previousVersion, Status status)
+  public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaURI, Version modelVersion, String name,
+    String description, Version version, Version previousVersion, Status status)
   {
     super(artifact);
     this.jsonSchemaSchemaURI = jsonSchemaSchemaURI;
@@ -51,17 +51,17 @@ public class SchemaArtifact extends Artifact
     return description;
   }
 
-  public String getModelVersion()
+  public Version getModelVersion()
   {
     return modelVersion;
   }
 
-  public String getVersion()
+  public Version getVersion()
   {
     return version;
   }
 
-  public String getPreviousVersion()
+  public Version getPreviousVersion()
   {
     return previousVersion;
   }
