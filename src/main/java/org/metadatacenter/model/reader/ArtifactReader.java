@@ -100,15 +100,14 @@ public class ArtifactReader
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-    String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
-    List<String> skosAlternateLabels = readSKOSAltLabelField(objectNode, path);
     FieldUI fieldUI = readFieldUI(objectNode, path);
     ValueConstraints valueConstraints = readValueConstraints(objectNode, path);
+    Optional<String> skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
+    List<String> skosAlternateLabels = readSKOSAltLabelField(objectNode, path);
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
 
-    return new FieldSchemaArtifact(schemaArtifact, skosPrefLabel,
-      skosAlternateLabels, fieldUI, valueConstraints);
+    return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
@@ -153,11 +152,10 @@ public class ArtifactReader
     String name = readSchemaOrgNameField(objectNode, path);
     String description = readSchemaOrgDescriptionField(objectNode, path);
     Version version = readSchemaOrgSchemaVersionField(objectNode, path);
-    Version previousVersion = readPreviousVersionField(objectNode, path);
     Status status = readBIBOStatusField(objectNode, path);
+    Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
 
-    return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, previousVersion,
-      status);
+    return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, status, previousVersion);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
@@ -250,8 +248,8 @@ public class ArtifactReader
     InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
     String jsonLDValue = readJsonLDValueField(objectNode, path);
     String rdfsLabel = readRDFSLabelField(objectNode, path);
-    String skosNotation = readSKOSNotationField(objectNode, path);
-    String skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
+    Optional<String> skosNotation = readSKOSNotationField(objectNode, path);
+    Optional<String> skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
 
     FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLDValue, rdfsLabel,
       skosNotation, skosPrefLabel);
@@ -359,14 +357,14 @@ public class ArtifactReader
     return readStringField(objectNode, path, ModelNodeNames.RDFS_LABEL, null);
   }
 
-  protected String readSKOSNotationField(ObjectNode objectNode, String path)
+  protected Optional<String> readSKOSNotationField(ObjectNode objectNode, String path)
   {
-    return readStringField(objectNode, path, ModelNodeNames.SKOS_NOTATION, null);
+    return readOptionalStringField(objectNode, path, ModelNodeNames.SKOS_NOTATION);
   }
 
-  protected String readSKOSPrefLabelField(ObjectNode objectNode, String path)
+  protected Optional<String> readSKOSPrefLabelField(ObjectNode objectNode, String path)
   {
-    return readStringField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL, null);
+    return readOptionalStringField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL);
   }
 
   protected List<String> readSKOSAltLabelField(ObjectNode objectNode, String path)
@@ -967,9 +965,14 @@ public class ArtifactReader
     return Version.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.PAV_VERSION));
   }
 
-  protected Version readPreviousVersionField(ObjectNode objectNode, String path)
+  protected Optional<Version> readPreviousVersionField(ObjectNode objectNode, String path)
   {
-    return Version.fromString(readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null));
+    String previousVersion = readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
+
+    if (previousVersion != null)
+      return Optional.of(Version.fromString(previousVersion));
+    else
+      return Optional.empty();
   }
 
   protected Status readBIBOStatusField(ObjectNode objectNode, String path)

@@ -1,5 +1,7 @@
 package org.metadatacenter.model.core;
 
+import java.util.Optional;
+
 /**
  * While field instances may not necessarily have JSON-LD identifiers or provenance fields (name, description,
  * createdBy, modifiedBy, createdOn, lastUpdatedOn) the model allows them.
@@ -8,11 +10,11 @@ public class FieldInstanceArtifact extends InstanceArtifact
 {
   private final String value;
   private final String label;
-  private final String notation;
-  private final String prefLabel;
+  private final Optional<String> notation;
+  private final Optional<String> prefLabel;
 
-  public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String value, String label, String notation,
-    String prefLabel)
+  public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String value, String label,
+    Optional<String> notation, Optional<String> prefLabel)
   {
     super(instanceArtifact);
     this.value = value;
@@ -40,12 +42,12 @@ public class FieldInstanceArtifact extends InstanceArtifact
     return label;
   }
 
-  public String getNotation()
+  public Optional<String> getNotation()
   {
     return notation;
   }
 
-  public String getPrefLabel()
+  public Optional<String> getPrefLabel()
   {
     return prefLabel;
   }

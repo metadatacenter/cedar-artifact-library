@@ -2,33 +2,25 @@ package org.metadatacenter.model.core;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class FieldSchemaArtifact extends SchemaArtifact
 {
-  private final String skosPrefLabel;
-  private final List<String> skosAlternateLabels;
   private final FieldUI fieldUI;
   private final ValueConstraints valueConstraints;
+  private final Optional<String> skosPrefLabel;
+  private final List<String> skosAlternateLabels;
 
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, String skosPrefLabel,
-    List<String> skosAlternateLabels, FieldUI fieldUI, ValueConstraints valueConstraints)
+  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI, ValueConstraints valueConstraints,
+    Optional<String> skosPrefLabel, List<String> skosAlternateLabels)
   {
     super(schemaArtifact);
-    this.skosPrefLabel = skosPrefLabel;
-    this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
     this.valueConstraints = valueConstraints;
     this.fieldUI = fieldUI;
+    this.skosPrefLabel = skosPrefLabel;
+    this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
   }
 
-  public String getSkosPrefLabel()
-  {
-    return skosPrefLabel;
-  }
-
-  public List<String> getSkosAlternateLabels()
-  {
-    return skosAlternateLabels;
-  }
 
   public FieldUI getFieldUI()
   {
@@ -40,9 +32,19 @@ public class FieldSchemaArtifact extends SchemaArtifact
     return valueConstraints;
   }
 
+  public Optional<String> getSkosPrefLabel()
+  {
+    return skosPrefLabel;
+  }
+
+  public List<String> getSkosAlternateLabels()
+  {
+    return skosAlternateLabels;
+  }
+
   @Override public String toString()
   {
-    return "FieldSchemaArtifact{" + "skosPrefLabel='" + skosPrefLabel + '\'' + ", skosAlternateLabels="
-      + skosAlternateLabels + ", fieldUI=" + fieldUI + ", valueConstraints=" + valueConstraints + '}';
+    return "FieldSchemaArtifact{" + "fieldUI=" + fieldUI + ", valueConstraints=" + valueConstraints + ", skosPrefLabel="
+      + skosPrefLabel + ", skosAlternateLabels=" + skosAlternateLabels + '}';
   }
 }
