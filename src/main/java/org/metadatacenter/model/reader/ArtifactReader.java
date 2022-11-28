@@ -65,15 +65,7 @@ public class ArtifactReader
     return readFieldSchemaArtifact(objectNode, "/");
   }
 
-
-  public InstanceArtifact readInstanceArtifact(ObjectNode objectNode, String path)
-  {
-    Artifact artifact = readArtifact(objectNode, path);
-
-    return new InstanceArtifact(artifact);
-  }
-
-  public InstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
+  public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
   {
     InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
     String isBasedOn = readRequiredIsBasedOnField(objectNode, path);
@@ -81,6 +73,41 @@ public class ArtifactReader
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
 
     return new TemplateInstanceArtifact(instanceArtifact, isBasedOn, elementInstances, fieldInstances);
+  }
+
+  public ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+
+    readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
+
+    ElementInstanceArtifact elementInstanceArtifact = new ElementInstanceArtifact(instanceArtifact, fieldInstances,
+      elementInstances);
+
+    return elementInstanceArtifact;
+  }
+
+  public FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    String jsonLDValue = readJsonLDValueField(objectNode, path);
+    String rdfsLabel = readRDFSLabelField(objectNode, path);
+    Optional<String> skosNotation = readSKOSNotationField(objectNode, path);
+    Optional<String> skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
+
+    FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLDValue, rdfsLabel,
+      skosNotation, skosPrefLabel);
+
+    return fieldInstanceArtifact;
+  }
+
+  private InstanceArtifact readInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    Artifact artifact = readArtifact(objectNode, path);
+
+    return new InstanceArtifact(artifact);
   }
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
@@ -227,34 +254,6 @@ public class ArtifactReader
         }
       }
     }
-  }
-
-  protected ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
-  {
-    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
-    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
-    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
-
-    readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
-
-    ElementInstanceArtifact elementInstanceArtifact = new ElementInstanceArtifact(instanceArtifact, fieldInstances,
-      elementInstances);
-
-    return elementInstanceArtifact;
-  }
-
-  protected FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
-  {
-    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
-    String jsonLDValue = readJsonLDValueField(objectNode, path);
-    String rdfsLabel = readRDFSLabelField(objectNode, path);
-    Optional<String> skosNotation = readSKOSNotationField(objectNode, path);
-    Optional<String> skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
-
-    FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLDValue, rdfsLabel,
-      skosNotation, skosPrefLabel);
-
-    return fieldInstanceArtifact;
   }
 
   private void readNestedInstanceArtifacts(ObjectNode instanceArtifactNode, String path,
