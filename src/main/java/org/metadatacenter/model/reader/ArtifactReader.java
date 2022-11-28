@@ -307,73 +307,18 @@ public class ArtifactReader
     ObjectNode instanceArtifactNode, Map<String, List<ElementInstanceArtifact>> elements,
     Map<String, List<FieldInstanceArtifact>> fields)
   {
-    if (hasJSONLDContextField(instanceArtifactNode)) { // With @context is an element instance artifact
+    if (hasJSONLDContextField(instanceArtifactNode)) { // Element instance artifacts have @context fields
       ObjectNode elementInstanceArtifactNode = instanceArtifactNode;
       ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
         instanceArtifactPath);
       elements.put(instanceArtifactFieldName, new ArrayList<>());
       elements.get(instanceArtifactFieldName).add(elementInstanceArtifact);
-    } else { // Default to field instance artifact
+    } else { // Field instance artifact do not
       FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(instanceArtifactNode,
         instanceArtifactPath);
       fields.put(instanceArtifactFieldName, new ArrayList<>());
       fields.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
     }
-  }
-
-  protected boolean hasJSONLDContextField(ObjectNode objectNode)
-  {
-    return objectNode.get(ModelNodeNames.JSON_LD_CONTEXT) != null;
-  }
-
-  protected URI readIsBasedOnField(ObjectNode objectNode, String path)
-  {
-    return readURIField(objectNode, path, ModelNodeNames.SCHEMA_IS_BASED_ON);
-  }
-
-  protected String readRequiredIsBasedOnField(ObjectNode objectNode, String path)
-  {
-    return readRequiredStringField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
-  }
-
-  protected URI readJsonLDIDField(ObjectNode objectNode, String path)
-  {
-    return readURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
-  }
-
-  protected URI readRequiredJsonLDIDField(ObjectNode objectNode, String path)
-  {
-    return readRequiredURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
-  }
-
-  protected String readJsonLDValueField(ObjectNode objectNode, String path)
-  {
-    return readStringField(objectNode, path, ModelNodeNames.JSON_LD_VALUE, null);
-  }
-
-  protected String readRDFSLabelField(ObjectNode objectNode, String path)
-  {
-    return readStringField(objectNode, path, ModelNodeNames.RDFS_LABEL, null);
-  }
-
-  protected Optional<String> readSKOSNotationField(ObjectNode objectNode, String path)
-  {
-    return readOptionalStringField(objectNode, path, ModelNodeNames.SKOS_NOTATION);
-  }
-
-  protected Optional<String> readSKOSPrefLabelField(ObjectNode objectNode, String path)
-  {
-    return readOptionalStringField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL);
-  }
-
-  protected List<String> readSKOSAltLabelField(ObjectNode objectNode, String path)
-  {
-    return readStringFieldValues(objectNode, path, ModelNodeNames.SKOS_ALTLABEL);
-  }
-
-  protected String readSKOSPrefLabelValueField(ObjectNode objectNode, String path)
-  {
-    return readStringField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL, null);
   }
 
   private void checkSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
@@ -427,17 +372,17 @@ public class ArtifactReader
         "Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
   }
 
-  protected List<URI> readJsonLDTypeField(ObjectNode objectNode, String path)
+  private List<URI> readJsonLDTypeField(ObjectNode objectNode, String path)
   {
     return readURIFieldValues(objectNode, path, ModelNodeNames.JSON_LD_TYPE);
   }
 
-  protected String readJsonSchemaTypeField(ObjectNode objectNode, String path)
+  private String readJsonSchemaTypeField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.JSON_SCHEMA_TYPE);
   }
 
-  protected List<String> readRequiredJsonLDTypeField(ObjectNode objectNode, String path)
+  private List<String> readRequiredJsonLDTypeField(ObjectNode objectNode, String path)
   {
     List<String> jsonLDTypes = readStringFieldValues(objectNode, path, ModelNodeNames.JSON_LD_TYPE);
 
@@ -447,7 +392,7 @@ public class ArtifactReader
       return jsonLDTypes;
   }
 
-  protected ValueConstraints readValueConstraints(ObjectNode objectNode, String path)
+  private ValueConstraints readValueConstraints(ObjectNode objectNode, String path)
   {
     String vcPath = path + ModelNodeNames.VALUE_CONSTRAINTS;
     ObjectNode vcNode = readValueConstraintsNodeAtPath(objectNode, path);
@@ -475,7 +420,7 @@ public class ArtifactReader
       minLength, maxLength, temporalType, ontologies, valueSets, classes, branches, literals, defaultValue);
   }
 
-  protected Optional<TemporalType> readTemporalTypeField(ObjectNode objectNode, String path)
+  private Optional<TemporalType> readTemporalTypeField(ObjectNode objectNode, String path)
   {
     Optional<String> temporalTypeValue = readOptionalStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE);
 
@@ -485,7 +430,7 @@ public class ArtifactReader
       return Optional.empty();
   }
 
-  protected Optional<NumberType> readNumberTypeField(ObjectNode objectNode, String path)
+  private Optional<NumberType> readNumberTypeField(ObjectNode objectNode, String path)
   {
     Optional<String> numberTypeValue = readOptionalStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE);
 
@@ -495,7 +440,7 @@ public class ArtifactReader
       return Optional.empty();
   }
 
-  protected List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode objectNode, String path)
+  private List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode objectNode, String path)
   {
     List<OntologyValueConstraint> ontologyValueConstraints = new ArrayList<>();
 
@@ -519,7 +464,7 @@ public class ArtifactReader
     return ontologyValueConstraints;
   }
 
-  protected List<ClassValueConstraint> readClassValueConstraints(ObjectNode objectNode, String path)
+  private List<ClassValueConstraint> readClassValueConstraints(ObjectNode objectNode, String path)
   {
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
@@ -543,7 +488,7 @@ public class ArtifactReader
     return classValueConstraints;
   }
 
-  protected List<ValueSetValueConstraint> readValueSetValueConstraints(ObjectNode objectNode, String path)
+  private List<ValueSetValueConstraint> readValueSetValueConstraints(ObjectNode objectNode, String path)
   {
     List<ValueSetValueConstraint> valueSetValueConstraints = new ArrayList<>();
 
@@ -567,7 +512,7 @@ public class ArtifactReader
     return valueSetValueConstraints;
   }
 
-  protected List<BranchValueConstraint> readBranchValueConstraints(ObjectNode objectNode, String path)
+  private List<BranchValueConstraint> readBranchValueConstraints(ObjectNode objectNode, String path)
   {
     List<BranchValueConstraint> branchValueConstraints = new ArrayList<>();
 
@@ -591,7 +536,7 @@ public class ArtifactReader
     return branchValueConstraints;
   }
 
-  protected List<LiteralValueConstraint> readLiteralValueConstraints(ObjectNode objectNode, String path)
+  private List<LiteralValueConstraint> readLiteralValueConstraints(ObjectNode objectNode, String path)
   {
     List<LiteralValueConstraint> literalValueConstraints = new ArrayList<>();
 
@@ -615,7 +560,7 @@ public class ArtifactReader
     return literalValueConstraints;
   }
 
-  protected OntologyValueConstraint readOntologyValueConstraint(ObjectNode objectNode, String path)
+  private OntologyValueConstraint readOntologyValueConstraint(ObjectNode objectNode, String path)
   {
     URI uri = readURIField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_URI);
     String acronym = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_ACRONYM);
@@ -625,7 +570,7 @@ public class ArtifactReader
     return new OntologyValueConstraint(uri, acronym, name, numTerms);
   }
 
-  protected ClassValueConstraint readClassValueConstraint(ObjectNode objectNode, String path)
+  private ClassValueConstraint readClassValueConstraint(ObjectNode objectNode, String path)
   {
     URI uri = readURIField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_URI);
     String prefLabel = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_PREFLABEL);
@@ -636,7 +581,7 @@ public class ArtifactReader
     return new ClassValueConstraint(uri, prefLabel, type, label, source);
   }
 
-  protected ValueSetValueConstraint readValueSetValueConstraint(ObjectNode objectNode, String path)
+  private ValueSetValueConstraint readValueSetValueConstraint(ObjectNode objectNode, String path)
   {
     String name = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_NAME);
     String vsCollection = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLECTION);
@@ -645,7 +590,7 @@ public class ArtifactReader
 
     return new ValueSetValueConstraint(name, vsCollection, uri, numTerms);
   }
-  protected BranchValueConstraint readBranchValueConstraint(ObjectNode objectNode, String path)
+  private BranchValueConstraint readBranchValueConstraint(ObjectNode objectNode, String path)
   {
     String source = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_SOURCE);
     String acronym = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_ACRONYM);
@@ -656,7 +601,7 @@ public class ArtifactReader
     return new BranchValueConstraint(source, acronym, uri, name, maxDepth);
   }
 
-  protected LiteralValueConstraint readLiteralValueConstraint(ObjectNode objectNode, String path)
+  private LiteralValueConstraint readLiteralValueConstraint(ObjectNode objectNode, String path)
   {
     String label = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_LABEL);
     boolean selectedByDefault = readBooleanField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT, false);
@@ -664,7 +609,7 @@ public class ArtifactReader
     return new LiteralValueConstraint(label, selectedByDefault);
   }
 
-  protected FieldUI readFieldUI(ObjectNode objectNode, String path)
+  private FieldUI readFieldUI(ObjectNode objectNode, String path)
   {
     ObjectNode uiNode = readUINodeAtPath(objectNode, path);
     String uiPath = path + "/" + ModelNodeNames.UI;
@@ -680,7 +625,7 @@ public class ArtifactReader
     return new FieldUI(fieldInputType, isValueRecommendationEnabled, hidden, timeZoneEnabled, temporalGranularity, inputTimeFormat);
   }
 
-  protected ElementUI readElementUI(ObjectNode objectNode, String path)
+  private ElementUI readElementUI(ObjectNode objectNode, String path)
   {
     ObjectNode uiNode = readUINodeAtPath(objectNode, path);
     String uiPath = path + "/" + ModelNodeNames.UI;
@@ -695,7 +640,7 @@ public class ArtifactReader
   }
 
 
-  protected TemplateUI readTemplateUI(ObjectNode objectNode, String path)
+  private TemplateUI readTemplateUI(ObjectNode objectNode, String path)
   {
     ObjectNode uiNode = readUINodeAtPath(objectNode, path);
     String uiPath = path + "/" + ModelNodeNames.UI;
@@ -710,7 +655,7 @@ public class ArtifactReader
     return new TemplateUI(order, pages, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  protected Optional<String> readOptionalStringField(ObjectNode objectNode, String path, String fieldName)
+  private Optional<String> readOptionalStringField(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -723,7 +668,7 @@ public class ArtifactReader
     return Optional.of(jsonNode.asText());
   }
 
-  protected Optional<Integer> readOptionalIntegerField(ObjectNode objectNode, String path, String fieldName)
+  private Optional<Integer> readOptionalIntegerField(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -736,7 +681,7 @@ public class ArtifactReader
     return Optional.of(jsonNode.asInt());
   }
 
-  protected Optional<Boolean> readOptionalBooleanField(ObjectNode objectNode, String path, String fieldName)
+  private Optional<Boolean> readOptionalBooleanField(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -749,7 +694,7 @@ public class ArtifactReader
     return Optional.of(jsonNode.asBoolean());
   }
 
-  protected boolean readRequiredBooleanField(ObjectNode objectNode, String path, String fieldName)
+  private boolean readRequiredBooleanField(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -762,7 +707,7 @@ public class ArtifactReader
     return jsonNode.asBoolean();
   }
 
-  protected boolean readBooleanField(ObjectNode objectNode, String path, String fieldName, boolean defaultValue)
+  private boolean readBooleanField(ObjectNode objectNode, String path, String fieldName, boolean defaultValue)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -775,7 +720,7 @@ public class ArtifactReader
     return jsonNode.asBoolean();
   }
 
-  protected FieldInputType readFieldInputType(ObjectNode objectNode, String path)
+  private FieldInputType readFieldInputType(ObjectNode objectNode, String path)
   {
     String inputType = readRequiredStringField(objectNode, path, ModelNodeNames.UI_FIELD_INPUT_TYPE);
 
@@ -811,7 +756,7 @@ public class ArtifactReader
     return Optional.of(InputTimeFormat.fromString(timeFormat));
   }
 
-  protected String readDefaultValue(ObjectNode objectNode, String path)
+  private String readDefaultValue(ObjectNode objectNode, String path)
   {
     ObjectNode valueConstraintsNode = readValueConstraintsNodeAtPath(objectNode, path);
     String subPath = path + "/" + ModelNodeNames.VALUE_CONSTRAINTS;
@@ -819,7 +764,7 @@ public class ArtifactReader
     return readStringField(valueConstraintsNode, subPath, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE);
   }
 
-  protected ObjectNode readUINodeAtPath(ObjectNode objectNode, String path)
+  private ObjectNode readUINodeAtPath(ObjectNode objectNode, String path)
   {
     JsonNode jsonNode = objectNode.get(ModelNodeNames.UI);
 
@@ -832,7 +777,7 @@ public class ArtifactReader
      return (ObjectNode)jsonNode;
   }
 
-  protected ObjectNode readValueConstraintsNodeAtPath(ObjectNode objectNode, String path)
+  private ObjectNode readValueConstraintsNodeAtPath(ObjectNode objectNode, String path)
   {
     JsonNode jsonNode = objectNode.get(ModelNodeNames.VALUE_CONSTRAINTS);
 
@@ -845,7 +790,7 @@ public class ArtifactReader
     return (ObjectNode)jsonNode;
   }
 
-  protected Map<String, String> readFieldNameStringValueMap(ObjectNode objectNode, String path, String fieldName)
+  private Map<String, String> readFieldNameStringValueMap(ObjectNode objectNode, String path, String fieldName)
   {
     Map<String, String> fieldNameStringValueMap = new HashMap<>();
 
@@ -875,7 +820,7 @@ public class ArtifactReader
     return fieldNameStringValueMap;
   }
 
-  protected Map<String, URI> readFieldNameURIValueMap(ObjectNode objectNode, String path, String fieldName)
+  private Map<String, URI> readFieldNameURIValueMap(ObjectNode objectNode, String path, String fieldName)
   {
     Map<String, URI> fieldNameStringValueMap = new HashMap<>();
 
@@ -909,62 +854,52 @@ public class ArtifactReader
     return fieldNameStringValueMap;
   }
 
-  protected String readJsonSchemaTitleField(ObjectNode objectNode, String path)
+  private String readJsonSchemaTitleField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.JSON_SCHEMA_TITLE);
   }
 
-  protected URI readCreatedByField(ObjectNode objectNode, String path)
-  {
-    return readURIField(objectNode, path, ModelNodeNames.PAV_CREATED_BY);
-  }
-
-  protected URI readRequiredCreatedByField(ObjectNode objectNode, String path)
+  private URI readCreatedByField(ObjectNode objectNode, String path)
   {
     return readRequiredURIField(objectNode, path, ModelNodeNames.PAV_CREATED_BY);
   }
 
-  protected URI readModifiedByField(ObjectNode objectNode, String path)
-  {
-    return readURIField(objectNode, path, ModelNodeNames.OSLC_MODIFIED_BY);
-  }
-
-  protected URI readRequiredURIModifiedByField(ObjectNode objectNode, String path)
+  private URI readModifiedByField(ObjectNode objectNode, String path)
   {
     return readRequiredURIField(objectNode, path, ModelNodeNames.OSLC_MODIFIED_BY);
   }
 
-  protected String readJsonSchemaDescriptionField(ObjectNode objectNode, String path)
+  private String readJsonSchemaDescriptionField(ObjectNode objectNode, String path)
   {
     return readStringField(objectNode, path, ModelNodeNames.JSON_SCHEMA_DESCRIPTION, "");
   }
 
-  protected URI readJsonSchemaSchemaURIField(ObjectNode objectNode, String path)
+  private URI readJsonSchemaSchemaURIField(ObjectNode objectNode, String path)
   {
     return readRequiredURIField(objectNode, path, ModelNodeNames.JSON_SCHEMA_SCHEMA);
   }
 
-  protected Version readSchemaOrgSchemaVersionField(ObjectNode objectNode, String path)
+  private Version readSchemaOrgSchemaVersionField(ObjectNode objectNode, String path)
   {
     return Version.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION));
   }
 
-  protected String readSchemaOrgNameField(ObjectNode objectNode, String path)
+  private String readSchemaOrgNameField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_NAME);
   }
 
-  protected String readSchemaOrgDescriptionField(ObjectNode objectNode, String path)
+  private String readSchemaOrgDescriptionField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
   }
 
-  protected Version readPAVVersionField(ObjectNode objectNode, String path)
+  private Version readPAVVersionField(ObjectNode objectNode, String path)
   {
     return Version.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.PAV_VERSION));
   }
 
-  protected Optional<Version> readPreviousVersionField(ObjectNode objectNode, String path)
+  private Optional<Version> readPreviousVersionField(ObjectNode objectNode, String path)
   {
     String previousVersion = readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
 
@@ -974,34 +909,29 @@ public class ArtifactReader
       return Optional.empty();
   }
 
-  protected Status readBIBOStatusField(ObjectNode objectNode, String path)
+  private Status readBIBOStatusField(ObjectNode objectNode, String path)
   {
     return Status.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.BIBO_STATUS));
   }
 
-  protected OffsetDateTime readCreatedOnField(ObjectNode objectNode, String path)
+  private OffsetDateTime readCreatedOnField(ObjectNode objectNode, String path)
   {
     return readOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_CREATED_ON);
   }
 
-  protected OffsetDateTime readRequiredCreatedOnField(ObjectNode objectNode, String path)
+  private OffsetDateTime readRequiredCreatedOnField(ObjectNode objectNode, String path)
   {
     return readOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_CREATED_ON);
   }
 
-  protected OffsetDateTime readLastUpdatedOnField(ObjectNode objectNode, String path)
+  private OffsetDateTime readLastUpdatedOnField(ObjectNode objectNode, String path)
   {
     return readOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_LAST_UPDATED_ON);
   }
 
-  protected OffsetDateTime readRequiredLastUpdatedOnField(ObjectNode objectNode, String path)
+  private OffsetDateTime readRequiredLastUpdatedOnField(ObjectNode objectNode, String path)
   {
     return readRequiredOffsetDateTimeField(objectNode, path, ModelNodeNames.PAV_LAST_UPDATED_ON);
-  }
-
-  protected ObjectMapper getMapper()
-  {
-    return this.mapper;
   }
 
   private OffsetDateTime readOffsetDateTimeField(ObjectNode objectNode, String path, String fieldName)
@@ -1181,6 +1111,66 @@ public class ArtifactReader
       throw new RuntimeException("No value for field " + fieldName + " at location " + path);
     else
       return textValues;
+  }
+
+  private boolean hasJSONLDContextField(ObjectNode objectNode)
+  {
+    return objectNode.get(ModelNodeNames.JSON_LD_CONTEXT) != null;
+  }
+
+  private URI readIsBasedOnField(ObjectNode objectNode, String path)
+  {
+    return readURIField(objectNode, path, ModelNodeNames.SCHEMA_IS_BASED_ON);
+  }
+
+  private String readRequiredIsBasedOnField(ObjectNode objectNode, String path)
+  {
+    return readRequiredStringField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
+  }
+
+  private URI readJsonLDIDField(ObjectNode objectNode, String path)
+  {
+    return readURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
+  }
+
+  private URI readRequiredJsonLDIDField(ObjectNode objectNode, String path)
+  {
+    return readRequiredURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
+  }
+
+  private String readJsonLDValueField(ObjectNode objectNode, String path)
+  {
+    return readStringField(objectNode, path, ModelNodeNames.JSON_LD_VALUE, null);
+  }
+
+  private String readRDFSLabelField(ObjectNode objectNode, String path)
+  {
+    return readStringField(objectNode, path, ModelNodeNames.RDFS_LABEL, null);
+  }
+
+  private Optional<String> readSKOSNotationField(ObjectNode objectNode, String path)
+  {
+    return readOptionalStringField(objectNode, path, ModelNodeNames.SKOS_NOTATION);
+  }
+
+  private Optional<String> readSKOSPrefLabelField(ObjectNode objectNode, String path)
+  {
+    return readOptionalStringField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL);
+  }
+
+  private List<String> readSKOSAltLabelField(ObjectNode objectNode, String path)
+  {
+    return readStringFieldValues(objectNode, path, ModelNodeNames.SKOS_ALTLABEL);
+  }
+
+  private String readSKOSPrefLabelValueField(ObjectNode objectNode, String path)
+  {
+    return readStringField(objectNode, path, ModelNodeNames.SKOS_PREFLABEL, null);
+  }
+
+  private ObjectMapper getMapper()
+  {
+    return this.mapper;
   }
 
 }
