@@ -1,6 +1,8 @@
 package org.metadatacenter.model.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class TemplateSchemaArtifact extends SchemaArtifact
@@ -36,9 +38,55 @@ public class TemplateSchemaArtifact extends SchemaArtifact
     return elementSchemas;
   }
 
+  public FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  {
+    if (fieldSchemas.containsKey(name))
+      return fieldSchemas.get(name);
+    else
+      throw new IllegalArgumentException("Field " + name + "not present in template " + getName());
+  }
+
+  public ElementSchemaArtifact getElementSchemaArtifact(String name)
+  {
+    if (elementSchemas.containsKey(name))
+      return elementSchemas.get(name);
+    else
+      throw new IllegalArgumentException("Element " + name + "not present in template " + getName());
+  }
+
+  public boolean hasFields() { return !fieldSchemas.isEmpty(); }
+
+  public boolean hasElements() { return !elementSchemas.isEmpty(); }
+
   public TemplateUI getTemplateUI()
   {
     return templateUI;
+  }
+
+  public boolean isField(String name) { return fieldSchemas.containsKey(name); }
+
+  public boolean isElement(String name) { return elementSchemas.containsKey(name); }
+
+  public List<String> getFieldNames()
+  {
+    ArrayList<String> fieldNames = new ArrayList<>();
+
+    for (String name: templateUI.getOrder())
+      if (isField(name))
+        fieldNames.add(name);
+
+    return fieldNames;
+  }
+
+  public List<String> getElementNames()
+  {
+    ArrayList<String> elementNames = new ArrayList<>();
+
+    for (String name: templateUI.getOrder())
+      if (isElement(name))
+        elementNames.add(name);
+
+    return elementNames;
   }
 
   @Override public String toString()
