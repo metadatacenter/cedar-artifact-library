@@ -3,11 +3,8 @@ package org.metadatacenter.model.tools;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.reader.ArtifactReader;
-import org.metadatacenter.redcap.TemplateSchemaArtifact2REDCapConvertor;
-import org.metadatacenter.ss.SpreadsheetFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,13 +31,10 @@ public class TemplateSchemaArtifactReporter
 
     System.out.println("Template: " + templateSchemaArtifact);
 
-    TemplateSchemaArtifact2REDCapConvertor convertor = new TemplateSchemaArtifact2REDCapConvertor(templateSchemaArtifact);
+    // Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
 
-    Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
 
-    convertor.generateREDCapWorkbook(workbook);
-
-    SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
+    //SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
   }
 
   private static void Usage()

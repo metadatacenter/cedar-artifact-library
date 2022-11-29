@@ -615,8 +615,8 @@ public class ArtifactReader
     String uiPath = path + "/" + ModelNodeNames.UI;
 
     FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath);
-    boolean isValueRecommendationEnabled = readRequiredBooleanField(uiNode, uiPath, ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED);
-    boolean hidden = readRequiredBooleanField(uiNode, uiPath, ModelNodeNames.UI_HIDDEN);
+    boolean isValueRecommendationEnabled = readBooleanField(uiNode, uiPath, ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED, false);
+    boolean hidden = readBooleanField(uiNode, uiPath, ModelNodeNames.UI_HIDDEN, false);
     Optional<Boolean> timeZoneEnabled = readOptionalBooleanField(uiNode, uiPath, ModelNodeNames.UI_TIMEZONE_ENABLED);
 
     Optional<TemporalGranularity> temporalGranularity = readTemporalGranularity(uiNode, uiPath);
@@ -1130,12 +1130,12 @@ public class ArtifactReader
 
   private URI readJsonLDIDField(ObjectNode objectNode, String path)
   {
-    return readURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
+    return readURIField(objectNode, path, ModelNodeNames.JSON_LD_ID);
   }
 
   private URI readRequiredJsonLDIDField(ObjectNode objectNode, String path)
   {
-    return readRequiredURIField(objectNode, ModelNodeNames.JSON_LD_ID, path);
+    return readRequiredURIField(objectNode, path, ModelNodeNames.JSON_LD_ID);
   }
 
   private String readJsonLDValueField(ObjectNode objectNode, String path)
