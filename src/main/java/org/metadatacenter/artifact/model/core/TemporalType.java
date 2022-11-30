@@ -3,7 +3,7 @@ package org.metadatacenter.artifact.model.core;
 public enum TemporalType
 {
   DATE("xsd:date"),
-  DATETIME("xsd:time"),
+  DATETIME("xsd:dateTime"),
   TIME("xsd:time");
 
   private String text;

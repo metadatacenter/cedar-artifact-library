@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Artifact
 {
@@ -13,13 +14,14 @@ public class Artifact
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
   private final String jsonSchemaDescription;
-  private final URI createdBy, modifiedBy;
-  private final OffsetDateTime createdOn, lastUpdatedOn;
+  private final Optional<URI> createdBy, modifiedBy;
+  private final Optional<OffsetDateTime> createdOn, lastUpdatedOn;
   private final Map<String, URI> jsonLDContext;
 
   public Artifact(URI jsonLDID, List<URI> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, URI createdBy, URI modifiedBy, OffsetDateTime createdOn,
-    OffsetDateTime lastUpdatedOn, Map<String, URI> jsonLDContext)
+    String jsonSchemaDescription, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn,
+    Optional<OffsetDateTime> lastUpdatedOn, Map<String, URI> jsonLDContext)
   {
     this.jsonLDID = jsonLDID;
     this.jsonLDTypes = Collections.unmodifiableList(jsonLDTypes);
@@ -72,22 +74,22 @@ public class Artifact
     return jsonSchemaDescription;
   }
 
-  public URI getCreatedBy()
+  public Optional<URI> getCreatedBy()
   {
     return createdBy;
   }
 
-  public URI getModifiedBy()
+  public Optional<URI> getModifiedBy()
   {
     return modifiedBy;
   }
 
-  public OffsetDateTime getCreatedOn()
+  public Optional<OffsetDateTime> getCreatedOn()
   {
     return createdOn;
   }
 
-  public OffsetDateTime getLastUpdatedOn()
+  public Optional<OffsetDateTime> getLastUpdatedOn()
   {
     return lastUpdatedOn;
   }

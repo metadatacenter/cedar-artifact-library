@@ -4,7 +4,7 @@ public enum TemporalGranularity
 {
   YEAR("year"),
   MONTH("month"),
-  DAY("daya"),
+  DAY("day"),
   HOUR("hour"),
   MINUTE("minute"),
   SECOND("second"),

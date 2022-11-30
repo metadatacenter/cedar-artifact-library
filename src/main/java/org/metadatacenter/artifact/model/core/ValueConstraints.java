@@ -10,8 +10,8 @@ public class ValueConstraints
   private final boolean multipleChoice;
   private final Optional<NumberType> numberType;
   private final Optional<String> unitOfMeasure;
-  private final Optional<String> minValue;
-  private final Optional<String> maxValue;
+  private final Optional<Number> minValue;
+  private final Optional<Number> maxValue;
   private final Optional<Integer> decimalPlaces;
   private final Optional<Integer> minLength;
   private final Optional<Integer> maxLength;
@@ -24,7 +24,7 @@ public class ValueConstraints
   private final Optional<String> defaultValue;
 
   public ValueConstraints(boolean requiredValue, boolean multipleChoice, Optional<NumberType> numberType,
-    Optional<String> unitOfMeasure, Optional<String> minValue, Optional<String> maxValue,
+    Optional<String> unitOfMeasure, Optional<Number> minValue, Optional<Number> maxValue,
     Optional<Integer> decimalPlaces, Optional<Integer> minLength, Optional<Integer> maxLength,
     Optional<TemporalType> temporalType, List<OntologyValueConstraint> ontologies, List<ValueSetValueConstraint> valueSets,
     List<ClassValueConstraint> classes, List<BranchValueConstraint> branches, List<LiteralValueConstraint> literals,
@@ -68,12 +68,12 @@ public class ValueConstraints
     return unitOfMeasure;
   }
 
-  public Optional<String> getMinValue()
+  public Optional<Number> getMinValue()
   {
     return minValue;
   }
 
-  public Optional<String> getMaxValue()
+  public Optional<Number> getMaxValue()
   {
     return maxValue;
   }
