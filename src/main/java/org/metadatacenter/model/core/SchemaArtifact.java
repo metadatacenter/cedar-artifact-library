@@ -9,12 +9,12 @@ public class SchemaArtifact extends Artifact
   private final Version modelVersion;
   private final String name;
   private final String description;
-  private final Version version;
-  private final Status status;
+  private final Optional<Version> version;
+  private final Optional<Status> status;
   private final Optional<Version> previousVersion;
 
   public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaURI, Version modelVersion, String name,
-    String description, Version version, Status status, Optional<Version> previousVersion)
+    String description, Optional<Version> version, Optional<Status> status, Optional<Version> previousVersion)
   {
     super(artifact);
     this.jsonSchemaSchemaURI = jsonSchemaSchemaURI;
@@ -58,19 +58,19 @@ public class SchemaArtifact extends Artifact
     return modelVersion;
   }
 
-  public Version getVersion()
+  public Optional<Version> getVersion()
   {
     return version;
+  }
+
+  public Optional<Status> getStatus()
+  {
+    return status;
   }
 
   public Optional<Version> getPreviousVersion()
   {
     return previousVersion;
-  }
-
-  public Status getStatus()
-  {
-    return status;
   }
 
   @Override public String toString()

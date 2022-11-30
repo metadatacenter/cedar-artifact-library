@@ -175,11 +175,11 @@ public class ArtifactReader
     Artifact artifact = readArtifact(objectNode, path);
 
     URI jsonSchemaSchemaURI = readJsonSchemaSchemaURIField(objectNode, path);
-    Version modelVersion = readPAVVersionField(objectNode, path);
+    Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
     String name = readSchemaOrgNameField(objectNode, path);
     String description = readSchemaOrgDescriptionField(objectNode, path);
-    Version version = readSchemaOrgSchemaVersionField(objectNode, path);
-    Status status = readBIBOStatusField(objectNode, path);
+    Optional<Version> version = readPAVVersionField(objectNode, path);
+    Optional<Status> status = readBIBOStatusField(objectNode, path);
     Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
 
     return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, status, previousVersion);
@@ -203,7 +203,7 @@ public class ArtifactReader
         && !ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)
         && !ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
         JsonNode jsonFieldOrElementSchemaArtifactNode = propertiesNode.get(jsonFieldName);
-        String fieldOrElementPath = path + "properties/" + jsonFieldName;
+        String fieldOrElementPath = path + "/properties/" + jsonFieldName;
 
         if (jsonFieldOrElementSchemaArtifactNode.isObject()) {
 
@@ -243,6 +243,8 @@ public class ArtifactReader
             FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
               (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
             fieldSchemas.put(jsonFieldName, fieldSchemaArtifact);
+          } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
+            // TODO: We do not yet handle these
           } else
             throw new RuntimeException(
               "Unknown JSON-LD @type " + subSchemaArtifactJsonLDType + "for field " + jsonFieldName + " at location "
@@ -425,7 +427,7 @@ public class ArtifactReader
     Optional<String> temporalTypeValue = readOptionalStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE);
 
     if (temporalTypeValue.isPresent())
-      return Optional.of(TemporalType.valueOf(temporalTypeValue.get()));
+      return Optional.of(TemporalType.fromString(temporalTypeValue.get()));
     else
       return Optional.empty();
   }
@@ -435,7 +437,7 @@ public class ArtifactReader
     Optional<String> numberTypeValue = readOptionalStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE);
 
     if (numberTypeValue.isPresent())
-      return Optional.of(NumberType.valueOf(numberTypeValue.get()));
+      return Optional.of(NumberType.fromString(numberTypeValue.get()));
     else
       return Optional.empty();
   }
@@ -894,9 +896,14 @@ public class ArtifactReader
     return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
   }
 
-  private Version readPAVVersionField(ObjectNode objectNode, String path)
+  private Optional<Version> readPAVVersionField(ObjectNode objectNode, String path)
   {
-    return Version.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.PAV_VERSION));
+    String version = readStringField(objectNode, path, ModelNodeNames.PAV_VERSION);
+
+    if (version == null)
+      return Optional.empty();
+    else
+      return Optional.of(Version.fromString(version));
   }
 
   private Optional<Version> readPreviousVersionField(ObjectNode objectNode, String path)
@@ -909,9 +916,14 @@ public class ArtifactReader
       return Optional.empty();
   }
 
-  private Status readBIBOStatusField(ObjectNode objectNode, String path)
+  private Optional<Status> readBIBOStatusField(ObjectNode objectNode, String path)
   {
-    return Status.fromString(readRequiredStringField(objectNode, path, ModelNodeNames.BIBO_STATUS));
+    String status = readStringField(objectNode, path, ModelNodeNames.BIBO_STATUS);
+
+    if (status == null)
+      return Optional.empty();
+    else
+      return Optional.of(Status.fromString(status));
   }
 
   private OffsetDateTime readCreatedOnField(ObjectNode objectNode, String path)
@@ -1052,53 +1064,55 @@ public class ArtifactReader
     JsonNode jsonNode = objectNode.get(fieldName);
     List<String> textValues = new ArrayList<>();
 
-    if (jsonNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
+    if (jsonNode != null) {
+      if (jsonNode.isArray()) {
+        Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode jsonValueNode = nodeIterator.next();
-        if (jsonValueNode != null) {
-          if (!jsonValueNode.isTextual())
-            throw new RuntimeException(
-              "Value in array field " + fieldName + " at location " + path + " must be textual");
-          String textValue = jsonValueNode.asText();
-          if (!textValue.isEmpty())
-            textValues.add(textValue);
+        while (nodeIterator.hasNext()) {
+          JsonNode jsonValueNode = nodeIterator.next();
+          if (jsonValueNode != null) {
+            if (!jsonValueNode.isTextual())
+              throw new RuntimeException("Value in array field " + fieldName + " at location " + path + " must be textual");
+            String textValue = jsonValueNode.asText();
+            if (!textValue.isEmpty())
+              textValues.add(textValue);
+          }
         }
+      } else {
+        String textValue = readStringField(objectNode, path, fieldName, "");
+        if (textValue != null && !textValue.isEmpty())
+          textValues.add(textValue);
       }
-    } else {
-      String textValue = readStringField(objectNode, path, fieldName, "");
-      if (textValue != null && !textValue.isEmpty())
-        textValues.add(textValue);
     }
     return textValues;
   }
 
   private List<URI> readURIFieldValues(ObjectNode objectNode, String path, String fieldName)
   {
+    JsonNode jsonNode = objectNode.get(fieldName);
     List<URI> uriValues = new ArrayList<>();
 
-    if (objectNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = objectNode.iterator();
+    if (jsonNode != null) {
+      if (jsonNode.isArray()) {
+        Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode jsonNode = nodeIterator.next();
-        if (jsonNode != null) {
-          if (!jsonNode.isTextual())
-            throw new RuntimeException(
-              "Value in array field " + fieldName + " at location " + path + " must be textual");
-          try {
-            URI uriValue = new URI(jsonNode.asText());
-            uriValues.add(uriValue);
-          } catch (Exception e) {
-            throw new RuntimeException(
-              "Value in array field " + fieldName + " at location " + path + " must be textual");
+        while (nodeIterator.hasNext()) {
+          JsonNode itemNode = nodeIterator.next();
+          if (itemNode != null) {
+            if (!itemNode.isTextual())
+              throw new RuntimeException("Value in array field " + fieldName + " at location " + path + " must be textual");
+            try {
+              URI uriValue = new URI(itemNode.asText());
+              uriValues.add(uriValue);
+            } catch (Exception e) {
+              throw new RuntimeException("Value in array field " + fieldName + " at location " + path + " must be textual");
+            }
           }
         }
+      } else {
+        URI uriValue = readURIField(objectNode, path, fieldName);
+        uriValues.add(uriValue);
       }
-    } else {
-      URI uriValue = readURIField(objectNode, path, fieldName);
-      uriValues.add(uriValue);
     }
     return uriValues;
   }
