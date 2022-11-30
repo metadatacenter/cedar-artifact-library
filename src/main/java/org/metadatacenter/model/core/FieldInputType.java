@@ -19,7 +19,7 @@ public enum FieldInputType
   LINK(ModelNodeNames.FIELD_INPUT_TYPE_LINK),
   YOUTUBE(ModelNodeNames.FIELD_INPUT_TYPE_YOUTUBE);
 
-  private String text;
+  private final String text;
 
   FieldInputType(String text) {
     this.text = text;
