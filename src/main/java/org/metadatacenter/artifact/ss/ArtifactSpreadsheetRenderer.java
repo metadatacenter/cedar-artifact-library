@@ -3,9 +3,13 @@ package org.metadatacenter.artifact.ss;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.metadatacenter.artifact.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifact.model.core.FieldInputType;
 import org.metadatacenter.artifact.model.core.FieldSchemaArtifact;
@@ -55,10 +59,10 @@ public class ArtifactSpreadsheetRenderer
     // TODO help text
 
     String fieldName = fieldSchemaArtifact.getName();
-     Cell columnNameCell = headerRow.createCell(columnIndex);
-     columnNameCell.setCellValue(fieldSchemaArtifact.getName());
+    Cell columnNameCell = headerRow.createCell(columnIndex);
+    columnNameCell.setCellValue(fieldSchemaArtifact.getName());
 
-     CellStyle cellStyle = createCellStyle(fieldName, fieldSchemaArtifact.getFieldUI(), fieldSchemaArtifact.getValueConstraints());
+    CellStyle cellStyle = createCellStyle(fieldName, fieldSchemaArtifact.getFieldUI(), fieldSchemaArtifact.getValueConstraints());
   }
 
   private CellStyle createCellStyle(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
@@ -71,6 +75,140 @@ public class ArtifactSpreadsheetRenderer
     // worksheet.setDefaultColumnStyle(0, textStyle);
     return cellStyle;
   }
+
+  private void setFieldDataValidationConstraint(String fieldName, FieldInputType fieldInputType,
+    ValueConstraints valueConstraints, Sheet sheet, int columnIndex, int firstRow)
+  {
+    DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+    Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldName, fieldInputType, valueConstraints,
+      dataValidationHelper);
+
+    if (constraint.isPresent()) {
+      CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, -1, columnIndex, columnIndex);
+      DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
+
+      //dataValidation.createErrorBox("Title", "Message");
+      dataValidation.setSuppressDropDownArrow(true);
+      dataValidation.setShowErrorBox(true);
+    }
+  }
+
+  private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName, FieldInputType fieldInputType,
+    ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
+  {
+    DataValidationConstraint constraint = dataValidationHelper.createIntegerConstraint(DataValidationConstraint.OperatorType.BETWEEN, "0", "10");
+
+    if (fieldInputType == FieldInputType.TEXTFIELD) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.TEXTAREA) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.RADIO) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.CHECKBOX) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.TEMPORAL) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.EMAIL) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.LIST) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.NUMERIC) {
+      int validationType = getValidationType(fieldName, fieldInputType, valueConstraints);
+      // TODO
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.PHONE_NUMBER) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.SECTION_BREAK) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.RICHTEXT) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.IMAGE) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.LIST) {
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.YOUTUBE) {
+      return Optional.empty();
+    } else
+      throw new RuntimeException("Invalid field type " + fieldInputType + " for field " + fieldName);
+  }
+
+  private int getValidationType(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints)
+  {
+    if (fieldInputType == FieldInputType.NUMERIC) {
+      if (valueConstraints.getNumberType().isPresent()) {
+        NumberType numberType = valueConstraints.getNumberType().get();
+
+        if (numberType == NumberType.DECIMAL) {
+          return DataValidationConstraint.ValidationType.DECIMAL;
+        } else if (numberType == NumberType.DOUBLE) {
+          return DataValidationConstraint.ValidationType.DECIMAL;
+        } else if (numberType == NumberType.FLOAT) {
+          return DataValidationConstraint.ValidationType.DECIMAL;
+        } else if (numberType == NumberType.LONG) {
+          return DataValidationConstraint.ValidationType.INTEGER;
+        } else if (numberType == NumberType.INTEGER) {
+          return DataValidationConstraint.ValidationType.INTEGER;
+        } else if (numberType == NumberType.INT) {
+          return DataValidationConstraint.ValidationType.INTEGER;
+        } else if (numberType == NumberType.SHORT) {
+          return DataValidationConstraint.ValidationType.INTEGER;
+        } else if (numberType == NumberType.BYTE) {
+          return DataValidationConstraint.ValidationType.INTEGER;
+        } else
+          throw new RuntimeException("Invalid number type " + numberType + " for field " + fieldName);
+      } else
+        throw new RuntimeException("Missing number type for field " + fieldName);
+    } else if (fieldInputType == FieldInputType.TEXTFIELD) {
+      if (valueConstraints.getMinLength().isPresent() || valueConstraints.getMaxLength().isPresent())
+        return DataValidationConstraint.ValidationType.TEXT_LENGTH;
+      else
+        return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.TEXTAREA) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.RADIO) {
+      return DataValidationConstraint.ValidationType.LIST;
+    } else if (fieldInputType == FieldInputType.CHECKBOX) {
+      return DataValidationConstraint.ValidationType.LIST;
+    } else if (fieldInputType == FieldInputType.TEMPORAL) {
+      if (valueConstraints.getTemporalType().isPresent()) {
+        TemporalType temporalType = valueConstraints.getTemporalType().get();
+
+        if (temporalType == TemporalType.DATE || temporalType == TemporalType.DATETIME)
+          return DataValidationConstraint.ValidationType.DATE;
+        else if (temporalType == TemporalType.TIME)
+          return DataValidationConstraint.ValidationType.TIME;
+        else
+          throw new RuntimeException("Invalid temporal type " + temporalType + " for field " + fieldName);
+
+      } else if (fieldInputType == FieldInputType.EMAIL) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else if (fieldInputType == FieldInputType.LIST) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else if (fieldInputType == FieldInputType.PHONE_NUMBER) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else if (fieldInputType == FieldInputType.SECTION_BREAK) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else if (fieldInputType == FieldInputType.RICHTEXT) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else if (fieldInputType == FieldInputType.IMAGE) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else if (fieldInputType == FieldInputType.LINK) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else if (fieldInputType == FieldInputType.YOUTUBE) {
+        return DataValidationConstraint.ValidationType.ANY;
+      } else
+        return DataValidationConstraint.ValidationType.ANY;
+    } else throw new RuntimeException("Ilnvali field input type " + fieldInputType + " for field " + fieldName);
+  }
+
+  //  public static final int BETWEEN = 0x00;
+  //  public static final int NOT_BETWEEN = 0x01;
+  //  public static final int EQUAL = 0x02;
+  //  public static final int NOT_EQUAL = 0x03;
+  //  public static final int GREATER_THAN = 0x04;
+  //  public static final int LESS_THAN = 0x05;
+  //  public static final int GREATER_OR_EQUAL = 0x06;
+  //  public static final int LESS_OR_EQUAL = 0x07;
 
   private String getFormatString(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
   {
@@ -91,7 +229,8 @@ public class ArtifactSpreadsheetRenderer
     } else if (fieldUI.getInputType() == FieldInputType.LIST) {
       return "text";
     } else if (fieldUI.getInputType() == FieldInputType.NUMERIC) {
-      return getNumericFormatString(fieldName, valueConstraints.getNumberType(), valueConstraints.getDecimalPlaces());
+      return getNumericFormatString(fieldName, valueConstraints.getNumberType(),
+        valueConstraints.getDecimalPlaces(), valueConstraints.getUnitOfMeasure());
     } else if (fieldUI.getInputType() == FieldInputType.PHONE_NUMBER) {
       return "text";
     } else if (fieldUI.getInputType() == FieldInputType.SECTION_BREAK) {
@@ -109,25 +248,33 @@ public class ArtifactSpreadsheetRenderer
   }
 
   private String getNumericFormatString(String fieldName, Optional<NumberType> numberType,
-    Optional<Integer> decimalPlaces) {
-
+    Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure)
+  {
     String numericFormatString = "";
 
     if (numberType.isPresent()) {
       if (numberType.get() == NumberType.DECIMAL) {
-        if (decimalPlaces.isPresent()) numericFormatString += ""; // TODO
+        if (decimalPlaces.isPresent())
+          numericFormatString += ""; // TODO
       } else if (numberType.get() == NumberType.DOUBLE) {
-        if (decimalPlaces.isPresent()) numericFormatString += ""; // TODO
+        if (decimalPlaces.isPresent())
+          numericFormatString += ""; // TODO
       } else if (numberType.get() == NumberType.FLOAT) {
-        if (decimalPlaces.isPresent()) numericFormatString += ""; // TODO
+        if (decimalPlaces.isPresent())
+          numericFormatString += ""; // TODO
       } else if (numberType.get() == NumberType.LONG) {
       } else if (numberType.get() == NumberType.INTEGER) {
       } else if (numberType.get() == NumberType.INT) {
       } else if (numberType.get() == NumberType.SHORT) {
       } else if (numberType.get() == NumberType.BYTE) {
-      } else throw new RuntimeException("Invalid number type " + numberType + " for numeric field " + fieldName);
+      } else
+        throw new RuntimeException("Invalid number type " + numberType + " for numeric field " + fieldName);
+    } else
+      throw new RuntimeException("Number type is not present for numeric field " + fieldName);
 
-      } else throw new RuntimeException("Number type is not present for numeric field " + fieldName);
+    if (unitOfMeasure.isPresent()) {
+      // TODO
+    }
 
     return numericFormatString;
   }
