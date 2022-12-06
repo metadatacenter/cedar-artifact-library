@@ -32,21 +32,20 @@ public class ArtifactSpreadsheetRenderer
     this.workbook = workbook;
   }
 
-  public void render(TemplateSchemaArtifact templateSchemaArtifact, Sheet sheet,
-    int headerStartColumnIndex, int headerRowNumber)
+  public void render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
   {
+    String sheetName = templateSchemaArtifact.getName();
     int columnIndex = headerStartColumnIndex;
+    Sheet sheet = workbook.createSheet(sheetName);
+    Row headerRow = sheet.createRow(headerRowNumber);
 
     for (String fieldName : templateSchemaArtifact.getFieldNames()) {
       FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldName);
 
-      Row headerRow = sheet.createRow(headerRowNumber);
-
       render(fieldSchemaArtifact, sheet, columnIndex, headerRow);
 
-      columnIndex++;
+      columnIndex += 1;
     }
-
   }
 
   public void render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
@@ -58,16 +57,16 @@ public class ArtifactSpreadsheetRenderer
   {
     String fieldName = fieldSchemaArtifact.getName();
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
-    Cell columnNameCell = headerRow.createCell(columnIndex);
     CellStyle cellStyle = createCellStyle(fieldName, fieldSchemaArtifact.getFieldUI(), fieldSchemaArtifact.getValueConstraints());
     int rowIndex = headerRow.getRowNum() + 1;
-
-    // worksheet.setDefaultColumnStyle(0, textStyle);
-
-    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType,
-      fieldSchemaArtifact.getValueConstraints(), sheet, columnIndex, rowIndex);
-
+    Cell columnNameCell = headerRow.createCell(columnIndex);
     columnNameCell.setCellValue(fieldSchemaArtifact.getName());
+
+    // worksheet.setDefaultColumnStyle(0, cellStyle);
+
+//    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType,
+//      fieldSchemaArtifact.getValueConstraints(), sheet, columnIndex, rowIndex);
+
 
   }
 
@@ -88,8 +87,8 @@ public class ArtifactSpreadsheetRenderer
     Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldName, fieldInputType, valueConstraints,
       dataValidationHelper);
 
-    if (constraint.isPresent()) {
-      CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, -1, columnIndex, columnIndex);
+    if (constraint.isPresent()) { // TODO Hard-coded 100
+      CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 100, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
       //dataValidation.createErrorBox("Title", "Message");
@@ -209,36 +208,28 @@ public class ArtifactSpreadsheetRenderer
           return DataValidationConstraint.ValidationType.TIME;
         else
           throw new RuntimeException("Invalid temporal type " + temporalType + " for field " + fieldName);
+      } else throw new RuntimeException("Missing temporal type for field " + fieldName);
 
-      } else if (fieldInputType == FieldInputType.EMAIL) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else if (fieldInputType == FieldInputType.LIST) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else if (fieldInputType == FieldInputType.PHONE_NUMBER) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else if (fieldInputType == FieldInputType.SECTION_BREAK) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else if (fieldInputType == FieldInputType.RICHTEXT) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else if (fieldInputType == FieldInputType.IMAGE) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else if (fieldInputType == FieldInputType.LINK) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else if (fieldInputType == FieldInputType.YOUTUBE) {
-        return DataValidationConstraint.ValidationType.ANY;
-      } else
-        return DataValidationConstraint.ValidationType.ANY;
-    } else throw new RuntimeException("Ilnvali field input type " + fieldInputType + " for field " + fieldName);
+
+    } else if (fieldInputType == FieldInputType.EMAIL) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.LIST) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.PHONE_NUMBER) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.SECTION_BREAK) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.RICHTEXT) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.IMAGE) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.LINK) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.YOUTUBE) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else
+      throw new RuntimeException("Invalid field input type " + fieldInputType + " for field " + fieldName);
   }
-
-  //  public static final int BETWEEN = 0x00;
-  //  public static final int NOT_BETWEEN = 0x01;
-  //  public static final int EQUAL = 0x02;
-  //  public static final int NOT_EQUAL = 0x03;
-  //  public static final int GREATER_THAN = 0x04;
-  //  public static final int LESS_THAN = 0x05;
-  //  public static final int GREATER_OR_EQUAL = 0x06;
-  //  public static final int LESS_OR_EQUAL = 0x07;
 
   private String getFormatString(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
   {
@@ -338,16 +329,12 @@ public class ArtifactSpreadsheetRenderer
         } else
           throw new RuntimeException("No granularity specified for temporal field " + fieldName);
       } else if (temporalType.get() == TemporalType.DATE) {
-        if (temporalGranularity.get() == TemporalGranularity.DAY)
-          temporalFormatString += "d";
-        else if (temporalGranularity.get() == TemporalGranularity.HOUR)
-          temporalFormatString += "d hh";
-        else if (temporalGranularity.get() == TemporalGranularity.MINUTE)
-          temporalFormatString += "d hh:mm";
-        else if (temporalGranularity.get() == TemporalGranularity.SECOND)
-          temporalFormatString += "d hh:mm:s";
-        else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
-          temporalFormatString += "d hh:mm:s"; // TODO
+        if (temporalGranularity.get() == TemporalGranularity.YEAR)
+          temporalFormatString += "yy";
+        else if (temporalGranularity.get() == TemporalGranularity.MONTH)
+          temporalFormatString += "yy/m";
+        else if (temporalGranularity.get() == TemporalGranularity.DAY)
+          temporalFormatString += "yy/m/d";
         else
           throw new RuntimeException(
             "Invalid temporal granularity " + temporalGranularity.get() + " specified for date temporal field " + fieldName);
@@ -377,8 +364,7 @@ public class ArtifactSpreadsheetRenderer
       } else if (inputTimeFormat.get() == InputTimeFormat.TWENTY_FOUR_HOUR) {
       } else
         throw new RuntimeException("Unknown time format " + inputTimeFormat + " specified for temporal field " + fieldName);
-    } else
-      throw new RuntimeException("No input time format specified for field " + fieldName);
+    }
 
     return temporalFormatString;
   }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifact.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifact.model.reader.ArtifactReader;
+import org.metadatacenter.artifact.ss.ArtifactSpreadsheetRenderer;
 import org.metadatacenter.artifact.ss.SpreadsheetFactory;
 
 import java.io.File;
@@ -35,7 +36,9 @@ public class TemplateSchemaArtifactReporter
 
     Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
 
-    
+    ArtifactSpreadsheetRenderer renderer = new ArtifactSpreadsheetRenderer(workbook);
+
+    renderer.render(templateSchemaArtifact, 0, 0);
 
     SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
   }
