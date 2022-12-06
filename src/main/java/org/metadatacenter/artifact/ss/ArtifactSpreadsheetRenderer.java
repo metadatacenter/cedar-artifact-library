@@ -96,42 +96,48 @@ public class ArtifactSpreadsheetRenderer
   private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName, FieldInputType fieldInputType,
     ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
   {
-    DataValidationConstraint constraint = dataValidationHelper.createIntegerConstraint(DataValidationConstraint.OperatorType.BETWEEN, "0", "10");
+    int validationType = getValidationType(fieldName, fieldInputType, valueConstraints);
 
-    if (fieldInputType == FieldInputType.TEXTFIELD) {
+    // Only some fields have validation constraints that we can act on
+    if (validationType ==  DataValidationConstraint.ValidationType.ANY)
       return Optional.empty();
-    } else if (fieldInputType == FieldInputType.TEXTAREA) {
+
+    if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
+
+      if (valueConstraints.getMinLength().isPresent()) {
+        Integer minLength = valueConstraints.getMinLength().get();
+        if (valueConstraints.getMaxLength().isPresent()) {
+          Integer maxLength = valueConstraints.getMaxLength().get();
+          return Optional.of(
+            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN, minLength.toString(), maxLength.toString()));
+        } else {
+          return Optional.of(
+            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN,
+              minLength.toString(), ""));
+        }
+      } else {
+        if (valueConstraints.getMaxLength().isPresent()) {
+          Integer maxLength = valueConstraints.getMaxLength().get();
+          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxLength.toString(), "")));
+        } else {
+          return Optional.empty();
+        }
+      }
+    } else if (fieldInputType == FieldInputType.TEMPORAL) {
+      // TODO
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.NUMERIC) {
+      // TODO
+      return Optional.empty();
+    } else if (fieldInputType == FieldInputType.LIST) {
       return Optional.empty();
     } else if (fieldInputType == FieldInputType.RADIO) {
       return Optional.empty();
     } else if (fieldInputType == FieldInputType.CHECKBOX) {
       return Optional.empty();
-    } else if (fieldInputType == FieldInputType.TEMPORAL) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.EMAIL) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.LIST) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.NUMERIC) {
-      int validationType = getValidationType(fieldName, fieldInputType, valueConstraints);
-      // TODO
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.PHONE_NUMBER) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.SECTION_BREAK) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.RICHTEXT) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.IMAGE) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.LIST) {
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.YOUTUBE) {
-      return Optional.empty();
-    } else
-      throw new RuntimeException("Invalid field type " + fieldInputType + " for field " + fieldName);
+    } else return Optional.empty();
   }
-
+  // Returns DataValidationConstraint.ValidationType
   private int getValidationType(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints)
   {
     if (fieldInputType == FieldInputType.NUMERIC) {
