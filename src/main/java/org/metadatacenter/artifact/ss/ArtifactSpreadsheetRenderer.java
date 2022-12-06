@@ -64,6 +64,7 @@ public class ArtifactSpreadsheetRenderer
     columnNameCell.setCellValue(fieldSchemaArtifact.getName());
 
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
+    sheet.autoSizeColumn(columnIndex);
 
 //    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType,
 //      fieldSchemaArtifact.getValueConstraints(), sheet, columnIndex, rowIndex);
@@ -311,19 +312,19 @@ public class ArtifactSpreadsheetRenderer
       if (temporalType.get() == TemporalType.DATETIME) {
         if (temporalGranularity.isPresent()) {
           if (temporalGranularity.get() == TemporalGranularity.YEAR)
-            temporalFormatString += "yy";
+            temporalFormatString += "yyyy";
           else if (temporalGranularity.get() == TemporalGranularity.MONTH)
-            temporalFormatString += "yy/m";
+            temporalFormatString += "yyyy/m";
           else if (temporalGranularity.get() == TemporalGranularity.DAY)
-            temporalFormatString += "yy/m/d";
+            temporalFormatString += "yyyy/m/d";
           else if (temporalGranularity.get() == TemporalGranularity.HOUR)
-            temporalFormatString += "yy/m/d hh";
+            temporalFormatString += "yyyy/m/d hh";
           else if (temporalGranularity.get() == TemporalGranularity.MINUTE)
-            temporalFormatString += "yy/m/d hh:mm";
+            temporalFormatString += "yyyy/m/d hh:mm";
           else if (temporalGranularity.get() == TemporalGranularity.SECOND)
-            temporalFormatString += "yy/m/d hh:mm:s";
+            temporalFormatString += "yyyy/m/d hh:mm:ss";
           else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
-            temporalFormatString += "yy/m/d hh:mm:s.0";
+            temporalFormatString += "yyyy/m/d hh:mm:ss.000";
           else
             throw new RuntimeException(
               "Unknown temporal granularity " + temporalGranularity.get() + " specified for temporal field " + fieldName);
@@ -331,11 +332,11 @@ public class ArtifactSpreadsheetRenderer
           throw new RuntimeException("No granularity specified for temporal field " + fieldName);
       } else if (temporalType.get() == TemporalType.DATE) {
         if (temporalGranularity.get() == TemporalGranularity.YEAR)
-          temporalFormatString += "yy";
+          temporalFormatString += "yyyy";
         else if (temporalGranularity.get() == TemporalGranularity.MONTH)
-          temporalFormatString += "yy/m";
+          temporalFormatString += "yyyy/m";
         else if (temporalGranularity.get() == TemporalGranularity.DAY)
-          temporalFormatString += "yy/m/d";
+          temporalFormatString += "yyyy/m/d";
         else
           throw new RuntimeException(
             "Invalid temporal granularity " + temporalGranularity.get() + " specified for date temporal field " + fieldName);
@@ -348,7 +349,7 @@ public class ArtifactSpreadsheetRenderer
         else if (temporalGranularity.get() == TemporalGranularity.SECOND)
           temporalFormatString += "hh:mm:ss";
         else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
-          temporalFormatString += "hh:mm:ss"; // TODO
+          temporalFormatString += "hh:mm:ss.000";
         else
           throw new RuntimeException(
             "Invalid temporal granularity " + temporalGranularity.get() + " specified for time temporal field " + fieldName);
