@@ -3,8 +3,10 @@ package org.metadatacenter.artifact.model.tools;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.metadatacenter.artifact.model.reader.ArtifactReader;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifact.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifact.model.reader.ArtifactReader;
+import org.metadatacenter.artifact.ss.SpreadsheetFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +33,11 @@ public class TemplateSchemaArtifactReporter
 
     System.out.println("Template: " + templateSchemaArtifact);
 
-    // Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
+    Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
 
+    
 
-    //SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
+    SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
   }
 
   private static void Usage()

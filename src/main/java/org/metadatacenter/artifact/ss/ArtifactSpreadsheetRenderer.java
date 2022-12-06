@@ -56,13 +56,19 @@ public class ArtifactSpreadsheetRenderer
 
   public void render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow)
   {
-    // TODO help text
-
     String fieldName = fieldSchemaArtifact.getName();
+    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
     Cell columnNameCell = headerRow.createCell(columnIndex);
+    CellStyle cellStyle = createCellStyle(fieldName, fieldSchemaArtifact.getFieldUI(), fieldSchemaArtifact.getValueConstraints());
+    int rowIndex = headerRow.getRowNum() + 1;
+
+    // worksheet.setDefaultColumnStyle(0, textStyle);
+
+    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType,
+      fieldSchemaArtifact.getValueConstraints(), sheet, columnIndex, rowIndex);
+
     columnNameCell.setCellValue(fieldSchemaArtifact.getName());
 
-    CellStyle cellStyle = createCellStyle(fieldName, fieldSchemaArtifact.getFieldUI(), fieldSchemaArtifact.getValueConstraints());
   }
 
   private CellStyle createCellStyle(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
@@ -72,11 +78,10 @@ public class ArtifactSpreadsheetRenderer
     String formatString = getFormatString(fieldName, fieldUI, valueConstraints);
     cellStyle.setDataFormat(dataFormat.getFormat(formatString));
 
-    // worksheet.setDefaultColumnStyle(0, textStyle);
     return cellStyle;
   }
 
-  private void setFieldDataValidationConstraint(String fieldName, FieldInputType fieldInputType,
+  private void setFieldDataValidationConstraintIfRequired(String fieldName, FieldInputType fieldInputType,
     ValueConstraints valueConstraints, Sheet sheet, int columnIndex, int firstRow)
   {
     DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
