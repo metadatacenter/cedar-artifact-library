@@ -60,9 +60,10 @@ public class ArtifactSpreadsheetRenderer
     CellStyle cellStyle = createCellStyle(fieldName, fieldSchemaArtifact.getFieldUI(), fieldSchemaArtifact.getValueConstraints());
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameCell = headerRow.createCell(columnIndex);
+
     columnNameCell.setCellValue(fieldSchemaArtifact.getName());
 
-    // worksheet.setDefaultColumnStyle(0, cellStyle);
+    sheet.setDefaultColumnStyle(columnIndex, cellStyle);
 
 //    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType,
 //      fieldSchemaArtifact.getValueConstraints(), sheet, columnIndex, rowIndex);
@@ -322,7 +323,7 @@ public class ArtifactSpreadsheetRenderer
           else if (temporalGranularity.get() == TemporalGranularity.SECOND)
             temporalFormatString += "yy/m/d hh:mm:s";
           else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
-            temporalFormatString += "yy/m/d hh:mm:s"; // TODO
+            temporalFormatString += "yy/m/d hh:mm:s.0";
           else
             throw new RuntimeException(
               "Unknown temporal granularity " + temporalGranularity.get() + " specified for temporal field " + fieldName);
@@ -345,9 +346,9 @@ public class ArtifactSpreadsheetRenderer
         else if (temporalGranularity.get() == TemporalGranularity.MINUTE)
           temporalFormatString += "hh:mm";
         else if (temporalGranularity.get() == TemporalGranularity.SECOND)
-          temporalFormatString += "hh:mm:s";
+          temporalFormatString += "hh:mm:ss";
         else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
-          temporalFormatString += "hh:mm:s"; // TODO
+          temporalFormatString += "hh:mm:ss"; // TODO
         else
           throw new RuntimeException(
             "Invalid temporal granularity " + temporalGranularity.get() + " specified for time temporal field " + fieldName);
