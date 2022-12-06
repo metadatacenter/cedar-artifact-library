@@ -93,8 +93,8 @@ public class ArtifactSpreadsheetRenderer
     }
   }
 
-  private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName, FieldInputType fieldInputType,
-    ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
+  private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName,
+    FieldInputType fieldInputType, ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
   {
     int validationType = getValidationType(fieldName, fieldInputType, valueConstraints);
 
@@ -106,35 +106,54 @@ public class ArtifactSpreadsheetRenderer
 
       if (valueConstraints.getMinLength().isPresent()) {
         Integer minLength = valueConstraints.getMinLength().get();
-        if (valueConstraints.getMaxLength().isPresent()) {
+        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
           Integer maxLength = valueConstraints.getMaxLength().get();
           return Optional.of(
-            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN, minLength.toString(), maxLength.toString()));
-        } else {
+            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN,
+              minLength.toString(), maxLength.toString()));
+        } else { // Minimum length present, maximum length not present
           return Optional.of(
             dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN,
               minLength.toString(), ""));
         }
       } else {
-        if (valueConstraints.getMaxLength().isPresent()) {
+        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length not present, maximum length present
           Integer maxLength = valueConstraints.getMaxLength().get();
-          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxLength.toString(), "")));
-        } else {
+          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL,
+            maxLength.toString(), ""));
+        } else { // Minimum length not present, maximum length not present
+          return Optional.empty(); // TODO Handle lists of values
+        }
+      }
+    } else if (fieldInputType == FieldInputType.NUMERIC) {
+
+      if (valueConstraints.getMinValue().isPresent()) {
+        Number minValue = valueConstraints.getMinValue().get();
+        if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
+          Number maxValue = valueConstraints.getMaxValue().get();
+          return Optional.of(
+            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+              minValue.toString(), maxValue.toString()));
+        } else { // Minimum present, maximum not present
+          return Optional.of(
+            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.GREATER_THAN,
+              minValue.toString(), ""));
+        }
+      } else {
+        if (valueConstraints.getMaxValue().isPresent()) { // Maximum present, minimum not present
+          Number maxValue = valueConstraints.getMaxValue().get();
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+            DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
+        } else { // Maximum not present, minimum not present
           return Optional.empty();
         }
       }
-    } else if (fieldInputType == FieldInputType.TEMPORAL) {
-      // TODO
-      return Optional.empty();
-    } else if (fieldInputType == FieldInputType.NUMERIC) {
-      // TODO
-      return Optional.empty();
     } else if (fieldInputType == FieldInputType.LIST) {
-      return Optional.empty();
+      return Optional.empty(); // TODO list of values
     } else if (fieldInputType == FieldInputType.RADIO) {
-      return Optional.empty();
+      return Optional.empty(); // TODO list of values
     } else if (fieldInputType == FieldInputType.CHECKBOX) {
-      return Optional.empty();
+      return Optional.empty(); // TODO list of values
     } else return Optional.empty();
   }
   // Returns DataValidationConstraint.ValidationType
