@@ -91,11 +91,63 @@ public class ArtifactSpreadsheetRenderer
       CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 100, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
-      dataValidation.createErrorBox("My Title", "My Message");
+      dataValidation.createErrorBox("Validation Error", createDataValidationText(fieldName, fieldInputType, valueConstraints));
       dataValidation.setSuppressDropDownArrow(true);
       dataValidation.setShowErrorBox(true);
       sheet.addValidationData(dataValidation);
     }
+  }
+
+  private String createDataValidationText(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints) {
+    int validationType = getValidationType(fieldName, fieldInputType, valueConstraints);
+
+    // Only some fields have validation constraints that we can act on
+    if (validationType ==  DataValidationConstraint.ValidationType.ANY)
+      return "";
+
+    if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
+
+      if (valueConstraints.getMinLength().isPresent()) {
+        Integer minLength = valueConstraints.getMinLength().get();
+        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
+          Integer maxLength = valueConstraints.getMaxLength().get();
+          return "Value should have a minimum of " +  minLength + " characters and a maximum of " + maxLength;
+        } else { // Minimum length present, maximum length not present
+          return "Value should have a minimum of " + minLength + " characters";
+        }
+      } else {
+        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length not present, maximum length present
+          Integer maxLength = valueConstraints.getMaxLength().get();
+          return "Value should have a maximum of " + maxLength + " characters";
+        } else { // Minimum length not present, maximum length not present
+          return "";
+        }
+      }
+    } else if (fieldInputType == FieldInputType.NUMERIC) {
+
+      if (valueConstraints.getMinValue().isPresent()) {
+        Number minValue = valueConstraints.getMinValue().get();
+        if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
+          Number maxValue = valueConstraints.getMaxValue().get();
+          return "Value should be between " +  minValue + " and " + maxValue;
+        } else { // Minimum present, maximum not present
+          return "Value should be greater than " +  minValue;
+        }
+      } else {
+        if (valueConstraints.getMaxValue().isPresent()) { // Maximum present, minimum not present
+          Number maxValue = valueConstraints.getMaxValue().get();
+          return "Value should be less than " +  maxValue;
+        } else { // Maximum not present, minimum not present
+          return "";
+        }
+      }
+    } else if (fieldInputType == FieldInputType.LIST) {
+      return "Value not in specified list";
+    } else if (fieldInputType == FieldInputType.RADIO) {
+      return "Value not in specified list";
+    } else if (fieldInputType == FieldInputType.CHECKBOX) {
+      return "Value not in specified list";
+    } else return "";
   }
 
   private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName,
