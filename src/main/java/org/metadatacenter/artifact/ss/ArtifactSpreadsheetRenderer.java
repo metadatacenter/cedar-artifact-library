@@ -50,7 +50,7 @@ public class ArtifactSpreadsheetRenderer
 
   public void render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
   {
-
+    // TODO
   }
 
   public void render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow)
@@ -66,10 +66,8 @@ public class ArtifactSpreadsheetRenderer
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
     sheet.autoSizeColumn(columnIndex);
 
-//    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType,
-//      fieldSchemaArtifact.getValueConstraints(), sheet, columnIndex, rowIndex);
-
-
+    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType, fieldSchemaArtifact.getValueConstraints(),
+      sheet, columnIndex, rowIndex);
   }
 
   private CellStyle createCellStyle(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
@@ -93,9 +91,10 @@ public class ArtifactSpreadsheetRenderer
       CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 100, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
-      //dataValidation.createErrorBox("Title", "Message");
+      dataValidation.createErrorBox("My Title", "My Message");
       dataValidation.setSuppressDropDownArrow(true);
       dataValidation.setShowErrorBox(true);
+      sheet.addValidationData(dataValidation);
     }
   }
 
