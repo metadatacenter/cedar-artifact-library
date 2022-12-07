@@ -15,13 +15,16 @@ import org.metadatacenter.artifact.model.core.FieldInputType;
 import org.metadatacenter.artifact.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifact.model.core.FieldUI;
 import org.metadatacenter.artifact.model.core.InputTimeFormat;
+import org.metadatacenter.artifact.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifact.model.core.NumberType;
 import org.metadatacenter.artifact.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifact.model.core.TemporalGranularity;
 import org.metadatacenter.artifact.model.core.TemporalType;
 import org.metadatacenter.artifact.model.core.ValueConstraints;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ArtifactSpreadsheetRenderer
 {
@@ -205,12 +208,12 @@ public class ArtifactSpreadsheetRenderer
           return Optional.empty();
         }
       }
-    } else if (fieldInputType == FieldInputType.LIST) {
-      return Optional.empty(); // TODO list of values
-    } else if (fieldInputType == FieldInputType.RADIO) {
-      return Optional.empty(); // TODO list of values
-    } else if (fieldInputType == FieldInputType.CHECKBOX) {
-      return Optional.empty(); // TODO list of values
+    } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO ||
+      fieldInputType == FieldInputType.CHECKBOX) {
+      List<String> literals = valueConstraints.getLiterals().stream().map(LiteralValueConstraint::getLabel).collect(
+        Collectors.toList());
+      // TODO Check max length of literals
+      return Optional.of(dataValidationHelper.createExplicitListConstraint(literals.toArray(new String[0])));
     } else return Optional.empty();
   }
   // Returns DataValidationConstraint.ValidationType
