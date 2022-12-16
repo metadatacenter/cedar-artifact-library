@@ -65,9 +65,9 @@ public class ArtifactSpreadsheetRenderer
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameCell = headerRow.createCell(columnIndex);
 
-    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
-      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
-    else
+//    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
+//      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
+//    else
       columnNameCell.setCellValue(fieldSchemaArtifact.getName());
 
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
