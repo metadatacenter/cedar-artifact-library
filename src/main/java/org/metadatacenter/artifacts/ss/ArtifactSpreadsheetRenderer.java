@@ -77,15 +77,6 @@ public class ArtifactSpreadsheetRenderer
       sheet, columnIndex, rowIndex);
   }
 
-  private CellStyle createCellStyle(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
-  {
-    DataFormat dataFormat = workbook.createDataFormat();
-    CellStyle cellStyle = workbook.createCellStyle();
-    String formatString = getFormatString(fieldName, fieldUI, valueConstraints);
-    cellStyle.setDataFormat(dataFormat.getFormat(formatString));
-
-    return cellStyle;
-  }
 
   private void setFieldDataValidationConstraintIfRequired(String fieldName, FieldInputType fieldInputType,
     ValueConstraints valueConstraints, Sheet sheet, int columnIndex, int firstRow)
@@ -94,7 +85,7 @@ public class ArtifactSpreadsheetRenderer
     Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldName, fieldInputType, valueConstraints,
       dataValidationHelper);
 
-    if (constraint.isPresent()) { // TODO Hard-coded 100
+    if (constraint.isPresent()) { // TODO Hard-coded to 100 rows
       CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 100, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
@@ -157,7 +148,6 @@ public class ArtifactSpreadsheetRenderer
     } else return "";
   }
 
-  // TODO Too long. Refactor.
   private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName,
     FieldInputType fieldInputType, ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
   {
@@ -297,8 +287,6 @@ public class ArtifactSpreadsheetRenderer
         else
           throw new RuntimeException("Invalid temporal type " + temporalType + " for field " + fieldName);
       } else throw new RuntimeException("Missing temporal type for field " + fieldName);
-
-
     } else if (fieldInputType == FieldInputType.EMAIL) {
       return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.LIST) {
@@ -457,4 +445,13 @@ public class ArtifactSpreadsheetRenderer
     return temporalFormatString;
   }
 
+  private CellStyle createCellStyle(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
+  {
+    DataFormat dataFormat = workbook.createDataFormat();
+    CellStyle cellStyle = workbook.createCellStyle();
+    String formatString = getFormatString(fieldName, fieldUI, valueConstraints);
+    cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+
+    return cellStyle;
+  }
 }
