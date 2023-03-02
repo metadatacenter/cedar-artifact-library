@@ -16,7 +16,6 @@ import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUI;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
@@ -73,47 +72,33 @@ public class ArtifactSpreadsheetRenderer
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
     sheet.autoSizeColumn(columnIndex);
 
-    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType, fieldSchemaArtifact.getValueConstraints(),
+    setColumnDataValidationConstraintIfRequired(fieldName, fieldInputType, fieldSchemaArtifact.getValueConstraints(),
       sheet, columnIndex, rowIndex);
   }
 
-  private CellStyle createCellStyle(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
-  {
-    DataFormat dataFormat = workbook.createDataFormat();
-    CellStyle cellStyle = workbook.createCellStyle();
-    String formatString = getFormatString(fieldName, fieldUI, valueConstraints);
-    cellStyle.setDataFormat(dataFormat.getFormat(formatString));
-
-    return cellStyle;
-  }
-
-  private void setFieldDataValidationConstraintIfRequired(String fieldName, FieldInputType fieldInputType,
+  private void setColumnDataValidationConstraintIfRequired(String fieldName, FieldInputType fieldInputType,
     ValueConstraints valueConstraints, Sheet sheet, int columnIndex, int firstRow)
   {
     DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
     Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldName, fieldInputType, valueConstraints,
       dataValidationHelper);
 
-    if (constraint.isPresent()) { // TODO Hard-coded 100
-      CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 100, columnIndex, columnIndex);
+    if (constraint.isPresent()) {
+      CellRangeAddressList cellRange = new CellRangeAddressList(0, 0, 0, 0);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
-      dataValidation.createErrorBox("Validation Error", createDataValidationText(fieldName, fieldInputType, valueConstraints));
+      dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldName, fieldInputType, valueConstraints));
       dataValidation.setSuppressDropDownArrow(true);
       dataValidation.setShowErrorBox(true);
       sheet.addValidationData(dataValidation);
     }
   }
 
-  private String createDataValidationText(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints) {
+  private String createDataValidationMessage(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints) {
     int validationType = getValidationType(fieldName, fieldInputType, valueConstraints);
 
-    // Only some fields have validation constraints that we can act on
-    if (validationType ==  DataValidationConstraint.ValidationType.ANY)
-      return "";
-
+    // Only some fields have validation constraints that we can create messages for
     if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
-
       if (valueConstraints.getMinLength().isPresent()) {
         Integer minLength = valueConstraints.getMinLength().get();
         if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
@@ -131,7 +116,6 @@ public class ArtifactSpreadsheetRenderer
         }
       }
     } else if (fieldInputType == FieldInputType.NUMERIC) {
-
       if (valueConstraints.getMinValue().isPresent()) {
         Number minValue = valueConstraints.getMinValue().get();
         if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
@@ -148,16 +132,9 @@ public class ArtifactSpreadsheetRenderer
           return "";
         }
       }
-    } else if (fieldInputType == FieldInputType.LIST) {
-      return "Value not in specified list";
-    } else if (fieldInputType == FieldInputType.RADIO) {
-      return "Value not in specified list";
-    } else if (fieldInputType == FieldInputType.CHECKBOX) {
-      return "Value not in specified list";
     } else return "";
   }
 
-  // TODO Too long. Refactor.
   private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName,
     FieldInputType fieldInputType, ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
   {
@@ -166,24 +143,29 @@ public class ArtifactSpreadsheetRenderer
     // Only some fields have validation constraints that we can act on
     if (validationType ==  DataValidationConstraint.ValidationType.ANY)
       return Optional.empty();
-
-    if (fieldInputType == FieldInputType.TEXTFIELD) {
-      return createTextFieldValueConstraint(validationType, valueConstraints, dataValidationHelper);
-    } else if (fieldInputType == FieldInputType.NUMERIC) {
-      return createNumericFieldValueConstraint(validationType, valueConstraints, dataValidationHelper);
-    } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO ||
-      fieldInputType == FieldInputType.CHECKBOX) {
-      List<String> literals = valueConstraints.getLiterals().stream().map(LiteralValueConstraint::getLabel).collect(
-        Collectors.toList());
+    else if (validationType == DataValidationConstraint.ValidationType.TEXT_LENGTH)
+      return createTextLengthDataValidationConstraint(fieldName, valueConstraints, dataValidationHelper);
+    else if (validationType == DataValidationConstraint.ValidationType.DECIMAL)
+      return createDecimalDataValidationConstraint(fieldName, valueConstraints, dataValidationHelper);
+    else if (validationType == DataValidationConstraint.ValidationType.INTEGER)
+      return createIntegerDataValidationConstraint(fieldName, valueConstraints, dataValidationHelper);
+    else if (validationType == DataValidationConstraint.ValidationType.DATE)
+      return createDateDataValidationConstraint(fieldName, valueConstraints, dataValidationHelper);
+    else if (validationType == DataValidationConstraint.ValidationType.TIME)
+      return createTimeDataValidationConstraint(fieldName, valueConstraints, dataValidationHelper);
+    else if (validationType == DataValidationConstraint.ValidationType.FORMULA) {
+      return createFormulaDataValidationConstraint(fieldName, valueConstraints, dataValidationHelper);
       // TODO Need to store values in hidden sheet
       //return Optional.of(dataValidationHelper.createExplicitListConstraint(literals.toArray(new String[0])));
-      return Optional.empty();
-    } else return Optional.empty();
+    } else throw new RuntimeException("Do no know how to handle data validation type " + validationType +
+      " for field " + fieldName);
   }
 
-  private static Optional<DataValidationConstraint> createNumericFieldValueConstraint(int validationType,
+  private static Optional<DataValidationConstraint> createDecimalDataValidationConstraint(String fieldName,
     ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
   {
+    int validationType = DataValidationConstraint.ValidationType.DECIMAL;
+
     if (valueConstraints.getMinValue().isPresent()) {
       Number minValue = valueConstraints.getMinValue().get();
       if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
@@ -206,86 +188,110 @@ public class ArtifactSpreadsheetRenderer
     }
   }
 
-  private static Optional<DataValidationConstraint> createTextFieldValueConstraint(int validationType,
+  private static Optional<DataValidationConstraint> createIntegerDataValidationConstraint(String fieldName,
     ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
   {
-    if (validationType == DataValidationConstraint.ValidationType.TEXT_LENGTH) {
-      if (valueConstraints.getMinLength().isPresent()) {
-        Integer minLength = valueConstraints.getMinLength().get();
-        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
-          Integer maxLength = valueConstraints.getMaxLength().get();
-          return Optional.of(
-            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN,
-              minLength.toString(), maxLength.toString()));
-        } else { // Minimum length present, maximum length not present
-          return Optional.of(
-            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN,
-              minLength.toString(), ""));
-        }
-      } else {
-        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length not present, maximum length present
-          Integer maxLength = valueConstraints.getMaxLength().get();
-          return Optional.of(
-            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL,
-              maxLength.toString(), ""));
-        } else { // Minimum length not present, maximum length not present
-          return Optional.empty();
-        }
+    int validationType = DataValidationConstraint.ValidationType.INTEGER;
+
+    if (valueConstraints.getMinValue().isPresent()) {
+      Number minValue = valueConstraints.getMinValue().get();
+      if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
+        Number maxValue = valueConstraints.getMaxValue().get();
+        return Optional.of(
+          dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+            minValue.toString(), maxValue.toString()));
+      } else { // Minimum present, maximum not present
+        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+          DataValidationConstraint.OperatorType.GREATER_THAN, minValue.toString(), ""));
       }
-    } else if (validationType == DataValidationConstraint.ValidationType.LIST) {
-      if (!valueConstraints.getClasses().isEmpty()) {
-        List<String> labels = valueConstraints.getClasses().stream().map(ClassValueConstraint::getLabel).collect(
-          Collectors.toList()); // TODO Need to store values in hidden sheet
-        //return Optional.of(dataValidationHelper.createExplicitListConstraint(labels.toArray(new String[0])));
+    } else {
+      if (valueConstraints.getMaxValue().isPresent()) { // Maximum present, minimum not present
+        Number maxValue = valueConstraints.getMaxValue().get();
+        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+          DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
+      } else { // Maximum not present, minimum not present
         return Optional.empty();
-      } else
-        return Optional.empty();
-    } else
-      return Optional.empty();
+      }
+    }
   }
 
-  // Returns DataValidationConstraint.ValidationType
+  private static Optional<DataValidationConstraint> createTextLengthDataValidationConstraint(String fieldName,
+    ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
+  {
+    if (valueConstraints.getMinLength().isPresent()) {
+      Integer minLength = valueConstraints.getMinLength().get();
+      if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
+        Integer maxLength = valueConstraints.getMaxLength().get();
+        return Optional.of(
+          dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN, minLength.toString(), maxLength.toString()));
+      } else { // Minimum length present, maximum length not present
+        return Optional.of(
+          dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN, minLength.toString(), ""));
+      }
+    } else {
+      if (valueConstraints.getMaxLength().isPresent()) { // Minimum length not present, maximum length present
+        Integer maxLength = valueConstraints.getMaxLength().get();
+        return Optional.of(
+          dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxLength.toString(), ""));
+      } else { // Minimum length not present, maximum length not present
+        return Optional.empty();
+      }
+    }
+  }
+
+  private static Optional<DataValidationConstraint> createDateDataValidationConstraint(String fieldName, ValueConstraints valueConstraints,
+    DataValidationHelper dataValidationHelper)
+  {
+    return Optional.empty(); // CEDAR does not have date constraints
+  }
+
+  private static Optional<DataValidationConstraint> createTimeDataValidationConstraint(String fieldName, ValueConstraints valueConstraints,
+    DataValidationHelper dataValidationHelper)
+  {
+    return Optional.empty(); // CEDAR does not have time constraints
+  }
+
+  private static Optional<DataValidationConstraint> createFormulaDataValidationConstraint(String fieldName, ValueConstraints valueConstraints,
+    DataValidationHelper dataValidationHelper)
+  {
+    if (valueConstraints.hasValueBasedConstraints()) {
+      List<String> labels = valueConstraints.getClasses().stream().map(ClassValueConstraint::getLabel).collect(Collectors.toList()); // TODO Need to store values in hidden sheet
+      // See: https://stackoverflow.com/questions/27630507/is-there-a-max-number-items-while-generating-drop-down-list-in-excel-using-apach/27639609#27639609
+      //return Optional.of(dataValidationHelper.createExplicitListConstraint(labels.toArray(new String[0])));
+      return Optional.empty();
+    } else
+      throw new RuntimeException("No value-based constraints for field " + fieldName);
+  }
+
+  // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
   private int getValidationType(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints)
   {
-    if (fieldInputType == FieldInputType.NUMERIC) {
+    if (fieldInputType == FieldInputType.TEXTAREA || fieldInputType == FieldInputType.PHONE_NUMBER
+      || fieldInputType == FieldInputType.SECTION_BREAK || fieldInputType == FieldInputType.RICHTEXT) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO ||
+      fieldInputType == FieldInputType.CHECKBOX) {
+      return DataValidationConstraint.ValidationType.FORMULA;
+    } else if (fieldInputType == FieldInputType.TEXTFIELD) {
+      if (valueConstraints.hasValueBasedConstraints())
+        return DataValidationConstraint.ValidationType.FORMULA;
+      else if (valueConstraints.getMinLength().isPresent() || valueConstraints.getMaxLength().isPresent())
+        return DataValidationConstraint.ValidationType.TEXT_LENGTH;
+      else
+        return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.NUMERIC) {
       if (valueConstraints.getNumberType().isPresent()) {
         NumberType numberType = valueConstraints.getNumberType().get();
 
-        if (numberType == NumberType.DECIMAL) {
+        if (numberType == NumberType.DECIMAL || numberType == NumberType.DOUBLE || numberType == NumberType.FLOAT) {
           return DataValidationConstraint.ValidationType.DECIMAL;
-        } else if (numberType == NumberType.DOUBLE) {
-          return DataValidationConstraint.ValidationType.DECIMAL;
-        } else if (numberType == NumberType.FLOAT) {
-          return DataValidationConstraint.ValidationType.DECIMAL;
-        } else if (numberType == NumberType.LONG) {
-          return DataValidationConstraint.ValidationType.INTEGER;
-        } else if (numberType == NumberType.INTEGER) {
-          return DataValidationConstraint.ValidationType.INTEGER;
-        } else if (numberType == NumberType.INT) {
-          return DataValidationConstraint.ValidationType.INTEGER;
-        } else if (numberType == NumberType.SHORT) {
-          return DataValidationConstraint.ValidationType.INTEGER;
-        } else if (numberType == NumberType.BYTE) {
+        } else if (numberType == NumberType.LONG || numberType == NumberType.INTEGER || numberType == NumberType.INT
+          || numberType == NumberType.SHORT || numberType == NumberType.BYTE) {
           return DataValidationConstraint.ValidationType.INTEGER;
         } else
-          throw new RuntimeException("Invalid number type " + numberType + " for field " + fieldName);
+          throw new RuntimeException("Invalid number type " + numberType + " for numeric field " + fieldName);
       } else
-        throw new RuntimeException("Missing number type for field " + fieldName);
-    } else if (fieldInputType == FieldInputType.TEXTFIELD) {
-      if (valueConstraints.getMinLength().isPresent() || valueConstraints.getMaxLength().isPresent())
-        return DataValidationConstraint.ValidationType.TEXT_LENGTH;
-      else if (!valueConstraints.getLiterals().isEmpty())
-        return DataValidationConstraint.ValidationType.LIST;
-      else if (!valueConstraints.getClasses().isEmpty())
-        return DataValidationConstraint.ValidationType.LIST;
-      else
-      return DataValidationConstraint.ValidationType.ANY;
-    } else if (fieldInputType == FieldInputType.TEXTAREA) {
-      return DataValidationConstraint.ValidationType.ANY;
-    } else if (fieldInputType == FieldInputType.RADIO) {
-      return DataValidationConstraint.ValidationType.LIST;
-    } else if (fieldInputType == FieldInputType.CHECKBOX) {
-      return DataValidationConstraint.ValidationType.LIST;
+        throw new RuntimeException("Missing number type for numeric field " + fieldName);
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
       if (valueConstraints.getTemporalType().isPresent()) {
         TemporalType temporalType = valueConstraints.getTemporalType().get();
@@ -295,19 +301,10 @@ public class ArtifactSpreadsheetRenderer
         else if (temporalType == TemporalType.TIME)
           return DataValidationConstraint.ValidationType.TIME;
         else
-          throw new RuntimeException("Invalid temporal type " + temporalType + " for field " + fieldName);
-      } else throw new RuntimeException("Missing temporal type for field " + fieldName);
-
-
+          throw new RuntimeException("Invalid temporal type " + temporalType + " for temporal field " + fieldName);
+      } else
+        throw new RuntimeException("Missing temporal type for temporal field " + fieldName);
     } else if (fieldInputType == FieldInputType.EMAIL) {
-      return DataValidationConstraint.ValidationType.ANY;
-    } else if (fieldInputType == FieldInputType.LIST) {
-      return DataValidationConstraint.ValidationType.ANY;
-    } else if (fieldInputType == FieldInputType.PHONE_NUMBER) {
-      return DataValidationConstraint.ValidationType.ANY;
-    } else if (fieldInputType == FieldInputType.SECTION_BREAK) {
-      return DataValidationConstraint.ValidationType.ANY;
-    } else if (fieldInputType == FieldInputType.RICHTEXT) {
       return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.IMAGE) {
       return DataValidationConstraint.ValidationType.ANY;
@@ -457,4 +454,13 @@ public class ArtifactSpreadsheetRenderer
     return temporalFormatString;
   }
 
+  private CellStyle createCellStyle(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
+  {
+    DataFormat dataFormat = workbook.createDataFormat();
+    CellStyle cellStyle = workbook.createCellStyle();
+    String formatString = getFormatString(fieldName, fieldUI, valueConstraints);
+    cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+
+    return cellStyle;
+  }
 }
