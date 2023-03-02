@@ -16,7 +16,6 @@ import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUI;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
@@ -73,38 +72,33 @@ public class ArtifactSpreadsheetRenderer
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
     sheet.autoSizeColumn(columnIndex);
 
-    setFieldDataValidationConstraintIfRequired(fieldName, fieldInputType, fieldSchemaArtifact.getValueConstraints(),
+    setColumnDataValidationConstraintIfRequired(fieldName, fieldInputType, fieldSchemaArtifact.getValueConstraints(),
       sheet, columnIndex, rowIndex);
   }
 
-
-  private void setFieldDataValidationConstraintIfRequired(String fieldName, FieldInputType fieldInputType,
+  private void setColumnDataValidationConstraintIfRequired(String fieldName, FieldInputType fieldInputType,
     ValueConstraints valueConstraints, Sheet sheet, int columnIndex, int firstRow)
   {
     DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
     Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldName, fieldInputType, valueConstraints,
       dataValidationHelper);
 
-    if (constraint.isPresent()) { // TODO Hard-coded to 100 rows
-      CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 100, columnIndex, columnIndex);
+    if (constraint.isPresent()) {
+      CellRangeAddressList cellRange = new CellRangeAddressList(0, 0, 0, 0);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
-      dataValidation.createErrorBox("Validation Error", createDataValidationText(fieldName, fieldInputType, valueConstraints));
+      dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldName, fieldInputType, valueConstraints));
       dataValidation.setSuppressDropDownArrow(true);
       dataValidation.setShowErrorBox(true);
       sheet.addValidationData(dataValidation);
     }
   }
 
-  private String createDataValidationText(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints) {
+  private String createDataValidationMessage(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints) {
     int validationType = getValidationType(fieldName, fieldInputType, valueConstraints);
 
-    // Only some fields have validation constraints that we can act on
-    if (validationType ==  DataValidationConstraint.ValidationType.ANY)
-      return "";
-
+    // Only some fields have validation constraints that we can create messages for
     if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
-
       if (valueConstraints.getMinLength().isPresent()) {
         Integer minLength = valueConstraints.getMinLength().get();
         if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
@@ -122,7 +116,6 @@ public class ArtifactSpreadsheetRenderer
         }
       }
     } else if (fieldInputType == FieldInputType.NUMERIC) {
-
       if (valueConstraints.getMinValue().isPresent()) {
         Number minValue = valueConstraints.getMinValue().get();
         if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
@@ -139,16 +132,8 @@ public class ArtifactSpreadsheetRenderer
           return "";
         }
       }
-    } else if (fieldInputType == FieldInputType.LIST) {
-      return "Value not in specified list";
-    } else if (fieldInputType == FieldInputType.RADIO) {
-      return "Value not in specified list";
-    } else if (fieldInputType == FieldInputType.CHECKBOX) {
-      return "Value not in specified list";
     } else return "";
   }
-
-  // DataValidationConstraint.ValidationType: ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
 
   private Optional<DataValidationConstraint> createDataValidationConstraint(String fieldName,
     FieldInputType fieldInputType, ValueConstraints valueConstraints, DataValidationHelper dataValidationHelper)
