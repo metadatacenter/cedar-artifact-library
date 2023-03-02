@@ -123,6 +123,11 @@ public class ValueConstraints
     return literals;
   }
 
+  public boolean hasValueBasedConstraints()
+  {
+    return !ontologies.isEmpty() || !valueSets.isEmpty() || classes.isEmpty() || branches.isEmpty() || literals.isEmpty();
+  }
+
   public Optional<String> getDefaultValue()
   {
     return defaultValue;
