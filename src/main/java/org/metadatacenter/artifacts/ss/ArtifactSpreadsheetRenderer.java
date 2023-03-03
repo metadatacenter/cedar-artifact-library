@@ -53,7 +53,7 @@ public class ArtifactSpreadsheetRenderer
 
   public void render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
   {
-    // TODO
+    throw new RuntimeException("element rendering not implemented");
   }
 
   public void render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow)
@@ -316,43 +316,6 @@ public class ArtifactSpreadsheetRenderer
       throw new RuntimeException("Invalid field input type " + fieldInputType + " for field " + fieldName);
   }
 
-  private String getFormatString(String fieldName, FieldUI fieldUI, ValueConstraints valueConstraints)
-  {
-    if (fieldUI.getInputType() == FieldInputType.TEXTFIELD) {
-      return "text"; // TODO Handle min and max length
-    } else if (fieldUI.getInputType() == FieldInputType.TEXTAREA) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.RADIO) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.CHECKBOX) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.TEMPORAL) {
-        return getTemporalFormatString(fieldName, valueConstraints.getTemporalType(),
-          fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
-
-    } else if (fieldUI.getInputType() == FieldInputType.EMAIL) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.LIST) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.NUMERIC) {
-      return getNumericFormatString(fieldName, valueConstraints.getNumberType(),
-        valueConstraints.getDecimalPlaces(), valueConstraints.getUnitOfMeasure());
-    } else if (fieldUI.getInputType() == FieldInputType.PHONE_NUMBER) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.SECTION_BREAK) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.RICHTEXT) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.IMAGE) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.LINK) {
-      return "text";
-    } else if (fieldUI.getInputType() == FieldInputType.YOUTUBE) {
-      return "text";
-    } else
-      throw new RuntimeException("Unknown field type " + fieldUI.getInputType() + " for field " + fieldName);
-  }
-
   private String getNumericFormatString(String fieldName, Optional<NumberType> numberType,
     Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure)
   {
@@ -394,38 +357,56 @@ public class ArtifactSpreadsheetRenderer
     if (temporalType.isPresent()) {
       if (temporalType.get() == TemporalType.DATETIME) {
         if (temporalGranularity.isPresent()) {
-          if (temporalGranularity.get() == TemporalGranularity.YEAR) temporalFormatString += "yyyy";
-          else if (temporalGranularity.get() == TemporalGranularity.MONTH) temporalFormatString += "yyyy/m";
-          else if (temporalGranularity.get() == TemporalGranularity.DAY) temporalFormatString += "yyyy/m/d";
-          else if (temporalGranularity.get() == TemporalGranularity.HOUR) temporalFormatString += "yyyy/m/d hh";
-          else if (temporalGranularity.get() == TemporalGranularity.MINUTE) temporalFormatString += "yyyy/m/d hh:mm";
-          else if (temporalGranularity.get() == TemporalGranularity.SECOND) temporalFormatString += "yyyy/m/d hh:mm:ss";
-          else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND) temporalFormatString += "yyyy/m/d hh:mm:ss.000";
-          else throw new RuntimeException("Unknown temporal granularity " + temporalGranularity.get() +
-              " specified for temporal field " + fieldName);
+          if (temporalGranularity.get() == TemporalGranularity.YEAR)
+            temporalFormatString += "yyyy";
+          else if (temporalGranularity.get() == TemporalGranularity.MONTH)
+            temporalFormatString += "yyyy/m";
+          else if (temporalGranularity.get() == TemporalGranularity.DAY)
+            temporalFormatString += "yyyy/m/d";
+          else if (temporalGranularity.get() == TemporalGranularity.HOUR)
+            temporalFormatString += "yyyy/m/d hh";
+          else if (temporalGranularity.get() == TemporalGranularity.MINUTE)
+            temporalFormatString += "yyyy/m/d hh:mm";
+          else if (temporalGranularity.get() == TemporalGranularity.SECOND)
+            temporalFormatString += "yyyy/m/d hh:mm:ss";
+          else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
+            temporalFormatString += "yyyy/m/d hh:mm:ss.000";
+          else
+            throw new RuntimeException(
+              "Unknown temporal granularity " + temporalGranularity.get() + " specified for temporal field " + fieldName);
         } else
           throw new RuntimeException("No granularity specified for temporal field " + fieldName);
       } else if (temporalType.get() == TemporalType.DATE) {
-        if (temporalGranularity.get() == TemporalGranularity.YEAR) temporalFormatString += "yyyy";
-        else if (temporalGranularity.get() == TemporalGranularity.MONTH) temporalFormatString += "yyyy/m";
-        else if (temporalGranularity.get() == TemporalGranularity.DAY) temporalFormatString += "yyyy/m/d";
-        else throw new RuntimeException("Invalid temporal granularity " + temporalGranularity.get() +
-            " specified for date temporal field " + fieldName);
-
+        if (temporalGranularity.get() == TemporalGranularity.YEAR)
+          temporalFormatString += "yyyy";
+        else if (temporalGranularity.get() == TemporalGranularity.MONTH)
+          temporalFormatString += "yyyy/m";
+        else if (temporalGranularity.get() == TemporalGranularity.DAY)
+          temporalFormatString += "yyyy/m/d";
+        else
+          throw new RuntimeException(
+            "Invalid temporal granularity " + temporalGranularity.get() + " specified for date temporal field " + fieldName);
       } else if (temporalType.get() == TemporalType.TIME) {
-        if (temporalGranularity.get() == TemporalGranularity.HOUR) temporalFormatString += "hh";
-        else if (temporalGranularity.get() == TemporalGranularity.MINUTE) temporalFormatString += "hh:mm";
-        else if (temporalGranularity.get() == TemporalGranularity.SECOND) temporalFormatString += "hh:mm:ss";
-        else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND) temporalFormatString += "hh:mm:ss.000";
-        else throw new RuntimeException("Invalid temporal granularity " + temporalGranularity.get() +
-            " specified for time temporal field " + fieldName);
-      } else throw new RuntimeException(
+        if (temporalGranularity.get() == TemporalGranularity.HOUR)
+          temporalFormatString += "hh";
+        else if (temporalGranularity.get() == TemporalGranularity.MINUTE)
+          temporalFormatString += "hh:mm";
+        else if (temporalGranularity.get() == TemporalGranularity.SECOND)
+          temporalFormatString += "hh:mm:ss";
+        else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
+          temporalFormatString += "hh:mm:ss.000";
+        else
+          throw new RuntimeException(
+            "Invalid temporal granularity " + temporalGranularity.get() + " specified for time temporal field " + fieldName);
+      } else
+        throw new RuntimeException(
           "Unknown temporal type " + temporalType.get() + " specified for temporal field " + fieldName);
 
-    } else throw new RuntimeException("No temporal type specified for temporal field " + fieldName);
+    } else
+      throw new RuntimeException("No temporal type specified for temporal field " + fieldName);
 
     if (inputTimeFormat.isPresent() && inputTimeFormat.get() == InputTimeFormat.TWELVE_HOUR)
-        temporalFormatString += " AM/PM";
+      temporalFormatString += " AM/PM";
 
     return temporalFormatString;
   }
@@ -434,8 +415,16 @@ public class ArtifactSpreadsheetRenderer
   {
     DataFormat dataFormat = workbook.createDataFormat();
     CellStyle cellStyle = workbook.createCellStyle();
-    String formatString = getFormatString(fieldName, fieldUI, valueConstraints);
-    cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+
+    if (fieldUI.isNumeric()) {
+      String formatString = getNumericFormatString(fieldName, valueConstraints.getNumberType(),
+        valueConstraints.getDecimalPlaces(), valueConstraints.getUnitOfMeasure());
+      cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+    } else if (fieldUI.isTemporal()) {
+      String formatString = getTemporalFormatString(fieldName, valueConstraints.getTemporalType(),
+        fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
+      cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+    }
 
     return cellStyle;
   }
