@@ -125,7 +125,7 @@ public class ValueConstraints
 
   public boolean hasValueBasedConstraints()
   {
-    return !ontologies.isEmpty() || !valueSets.isEmpty() || classes.isEmpty() || branches.isEmpty() || literals.isEmpty();
+    return !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty() || !literals.isEmpty();
   }
 
   public Optional<String> getDefaultValue()

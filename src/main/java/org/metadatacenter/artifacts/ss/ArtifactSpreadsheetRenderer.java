@@ -74,6 +74,9 @@ public class ArtifactSpreadsheetRenderer
 
     setColumnDataValidationConstraintIfRequired(fieldName, fieldInputType, fieldSchemaArtifact.getValueConstraints(),
       sheet, columnIndex, rowIndex);
+
+    if (fieldSchemaArtifact.isHidden())
+      sheet.setColumnHidden(columnIndex, true);
   }
 
   private void setColumnDataValidationConstraintIfRequired(String fieldName, FieldInputType fieldInputType,
@@ -84,7 +87,8 @@ public class ArtifactSpreadsheetRenderer
       dataValidationHelper);
 
     if (constraint.isPresent()) {
-      CellRangeAddressList cellRange = new CellRangeAddressList(0, 0, 0, 0);
+      // TODO Check lastRow
+      CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 1000, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
       dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldName, fieldInputType, valueConstraints));
@@ -242,13 +246,15 @@ public class ArtifactSpreadsheetRenderer
   private static Optional<DataValidationConstraint> createDateDataValidationConstraint(String fieldName, ValueConstraints valueConstraints,
     DataValidationHelper dataValidationHelper)
   {
-    return Optional.empty(); // CEDAR does not have date constraints
+    return Optional.of(dataValidationHelper.createDateConstraint(DataValidationConstraint.OperatorType.BETWEEN,
+      "Date(1, 1, 1)", "Date(9999,12,31)", "dd/mm/yyyy"));
   }
 
   private static Optional<DataValidationConstraint> createTimeDataValidationConstraint(String fieldName, ValueConstraints valueConstraints,
     DataValidationHelper dataValidationHelper)
   {
-    return Optional.empty(); // CEDAR does not have time constraints
+    return Optional.of(dataValidationHelper.createTimeConstraint(DataValidationConstraint.OperatorType.BETWEEN,
+      "=TIME(0,0,0)", "=TIME(23,59,59)"));
   }
 
   private static Optional<DataValidationConstraint> createFormulaDataValidationConstraint(String fieldName, ValueConstraints valueConstraints,
@@ -266,13 +272,13 @@ public class ArtifactSpreadsheetRenderer
   // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
   private int getValidationType(String fieldName, FieldInputType fieldInputType, ValueConstraints valueConstraints)
   {
-    if (fieldInputType == FieldInputType.TEXTAREA || fieldInputType == FieldInputType.PHONE_NUMBER
-      || fieldInputType == FieldInputType.SECTION_BREAK || fieldInputType == FieldInputType.RICHTEXT) {
+    if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
+      || fieldInputType == FieldInputType.RICHTEXT) {
       return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO ||
       fieldInputType == FieldInputType.CHECKBOX) {
       return DataValidationConstraint.ValidationType.FORMULA;
-    } else if (fieldInputType == FieldInputType.TEXTFIELD) {
+    } else if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
       if (valueConstraints.hasValueBasedConstraints())
         return DataValidationConstraint.ValidationType.FORMULA;
       else if (valueConstraints.getMinLength().isPresent() || valueConstraints.getMaxLength().isPresent())

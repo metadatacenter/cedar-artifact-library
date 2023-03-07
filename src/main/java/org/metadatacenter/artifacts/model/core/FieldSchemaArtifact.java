@@ -27,6 +27,8 @@ public class FieldSchemaArtifact extends SchemaArtifact
     return fieldUI;
   }
 
+  public boolean isHidden() { return fieldUI.isHidden(); }
+
   public ValueConstraints getValueConstraints()
   {
     return valueConstraints;
