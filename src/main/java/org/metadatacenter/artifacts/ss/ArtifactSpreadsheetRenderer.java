@@ -1,5 +1,9 @@
 package org.metadatacenter.artifacts.ss;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -21,19 +25,38 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
+import org.metadatacenter.artifacts.util.ConnectionUtil;
 
-import java.lang.reflect.Field;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ArtifactSpreadsheetRenderer
 {
-  private Workbook workbook;
+  private final Workbook workbook;
+  private final String terminologyServerIntegratedSearchEndpoint;
 
-  public ArtifactSpreadsheetRenderer(Workbook workbook)
+  private final String terminologyServerAPIKey;
+  private final ObjectMapper mapper;
+  private final ObjectWriter objectWriter;
+
+  public ArtifactSpreadsheetRenderer(Workbook workbook, String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
   {
     this.workbook = workbook;
+    this.terminologyServerIntegratedSearchEndpoint = terminologyServerIntegratedSearchEndpoint;
+    this.terminologyServerAPIKey = terminologyServerAPIKey;
+
+    this.mapper = new ObjectMapper();
+    mapper.registerModule(new Jdk8Module());
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+    this.objectWriter = mapper.writer().withDefaultPrettyPrinter();
   }
 
   public void render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
@@ -65,10 +88,10 @@ public class ArtifactSpreadsheetRenderer
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameCell = headerRow.createCell(columnIndex);
 
-//    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
-//      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
-//    else
-      columnNameCell.setCellValue(fieldSchemaArtifact.getName());
+    //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
+    //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
+    //    else
+    columnNameCell.setCellValue(fieldSchemaArtifact.getName());
 
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
     sheet.autoSizeColumn(columnIndex);
@@ -79,11 +102,10 @@ public class ArtifactSpreadsheetRenderer
       sheet.setColumnHidden(columnIndex, true);
   }
 
-  private void setColumnDataValidationConstraintIfRequired(FieldSchemaArtifact fieldSchemaArtifact,
-    Sheet sheet, int columnIndex, int firstRow)
+  private void setColumnDataValidationConstraintIfRequired(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, int firstRow)
   {
     DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
-    Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldSchemaArtifact,
+    Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldSchemaArtifact, columnIndex,
       dataValidationHelper);
 
     if (constraint.isPresent()) {
@@ -149,14 +171,14 @@ public class ArtifactSpreadsheetRenderer
   }
 
   private Optional<DataValidationConstraint> createDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
-    DataValidationHelper dataValidationHelper)
+    int columnIndex, DataValidationHelper dataValidationHelper)
   {
     String fieldName = fieldSchemaArtifact.getName();
 
     int validationType = getValidationType(fieldSchemaArtifact);
 
     // Only some fields have validation constraints that we can act on
-    if (validationType ==  DataValidationConstraint.ValidationType.ANY)
+    if (validationType == DataValidationConstraint.ValidationType.ANY)
       return Optional.empty();
     else if (validationType == DataValidationConstraint.ValidationType.TEXT_LENGTH)
       return createTextLengthDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
@@ -169,14 +191,12 @@ public class ArtifactSpreadsheetRenderer
     else if (validationType == DataValidationConstraint.ValidationType.TIME)
       return createTimeDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
     else if (validationType == DataValidationConstraint.ValidationType.FORMULA) {
-      return createFormulaDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
-      // TODO Need to store values in hidden sheet
-      //return Optional.of(dataValidationHelper.createExplicitListConstraint(literals.toArray(new String[0])));
-    } else throw new RuntimeException("Do no know how to handle data validation type " + validationType +
-      " for field " + fieldName);
+      return createFormulaDataValidationConstraint(fieldSchemaArtifact, columnIndex, dataValidationHelper);
+    } else
+      throw new RuntimeException("Do no know how to handle data validation type " + validationType + " for field " + fieldName);
   }
 
-  private static Optional<DataValidationConstraint> createDecimalDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
+  private Optional<DataValidationConstraint> createDecimalDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
@@ -204,7 +224,7 @@ public class ArtifactSpreadsheetRenderer
     }
   }
 
-  private static Optional<DataValidationConstraint> createIntegerDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
+  private Optional<DataValidationConstraint> createIntegerDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
@@ -233,7 +253,7 @@ public class ArtifactSpreadsheetRenderer
     }
   }
 
-  private static Optional<DataValidationConstraint> createTextLengthDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
+  private Optional<DataValidationConstraint> createTextLengthDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
@@ -259,7 +279,7 @@ public class ArtifactSpreadsheetRenderer
     }
   }
 
-  private static Optional<DataValidationConstraint> createDateDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
+  private Optional<DataValidationConstraint> createDateDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     if (fieldSchemaArtifact.getFieldUI().isTemporal())
@@ -270,7 +290,7 @@ public class ArtifactSpreadsheetRenderer
       return Optional.empty();
   }
 
-  private static Optional<DataValidationConstraint> createTimeDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
+  private Optional<DataValidationConstraint> createTimeDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     if (fieldSchemaArtifact.getFieldUI().isTemporal())
@@ -281,19 +301,90 @@ public class ArtifactSpreadsheetRenderer
       return Optional.empty();
   }
 
-  private static Optional<DataValidationConstraint> createFormulaDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
-    DataValidationHelper dataValidationHelper)
-  {
-    String fieldName = fieldSchemaArtifact.getName();
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+  // See: https://stackoverflow.com/questions/27630507/is-there-a-max-number-items-while-generating-drop-down-list-in-excel-using-apach/27639609#27639609
 
-    if (valueConstraints.hasValueBasedConstraints()) {
-      List<String> labels = valueConstraints.getClasses().stream().map(ClassValueConstraint::getLabel).collect(Collectors.toList()); // TODO Need to store values in hidden sheet
-      // See: https://stackoverflow.com/questions/27630507/is-there-a-max-number-items-while-generating-drop-down-list-in-excel-using-apach/27639609#27639609
-      //return Optional.of(dataValidationHelper.createExplicitListConstraint(labels.toArray(new String[0])));
-      return Optional.empty();
+  private Optional<DataValidationConstraint> createFormulaDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
+    int columnIndex, DataValidationHelper dataValidationHelper)
+  {
+    Map<String, String> values = getPossibleValues(fieldSchemaArtifact.getValueConstraints());
+
+    if (!values.isEmpty()) {
+      String sheetName = fieldSchemaArtifact.getName() + " " + columnIndex;
+      Sheet valueSheet = workbook.createSheet(sheetName);
+      int valueSheetIndex = workbook.getSheetIndex(valueSheet);
+      int numberOfValues = values.keySet().size();
+      String formula = sheetName + "!$A$1:$A$" + numberOfValues;
+
+      int rowNumber = 0;
+      for (String prefLabel : values.keySet()) {
+        String iri = values.get(prefLabel);
+        Row row = valueSheet.createRow(rowNumber);
+        Cell valueCell = row.createCell(0);
+        valueCell.setCellValue(prefLabel);
+
+        // Even though we don't use them we put the IRI in the second column
+        if (iri != null || !iri.isEmpty()) {
+          Cell iriCell = row.createCell(1);
+          iriCell.setCellValue(iri);
+        }
+        rowNumber++;
+      }
+//      workbook.setSheetHidden(valueSheetIndex, true);
+
+      return Optional.of(dataValidationHelper.createFormulaListConstraint(formula));
     } else
-      throw new RuntimeException("No value-based constraints for field " + fieldName);
+      return Optional.empty();
+  }
+
+  private Map<String, String> getPossibleValues(ValueConstraints valueConstraints)
+  {
+    Map<String, String> values = new HashMap<>();
+    List<String> labels = valueConstraints.getLiterals().stream().map(LiteralValueConstraint::getLabel).collect(Collectors.toList());
+
+    if (valueConstraints.hasOntologyValueBasedConstraints()) {
+      Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints);
+      values.putAll(ontologyBasedValues);
+    }
+
+    for (String label : labels)
+      values.put(label, "");
+
+    return values;
+  }
+
+  // Return prefLabel->IRI
+  private Map<String, String> getValuesFromTerminologyServer(ValueConstraints valueConstraints)
+  {
+
+    Map<String, String> values = new HashMap<>();
+
+    try {
+      String vc = objectWriter.writeValueAsString(valueConstraints);
+      System.out.println(vc);
+      Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
+      System.out.println(vcMap);
+
+      List<Map<String, String>> valueDescriptions;
+      int page = 1;
+      do {
+        Map<String, Object> searchResult = integratedSearch(vcMap, page, 5000, // TODO
+          terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
+        valueDescriptions = searchResult.containsKey("collection") ? (List<Map<String, String>>) searchResult.get("collection") :
+          new ArrayList<>();
+        if (valueDescriptions.size() > 0) {
+          for (int valueDescriptionsIndex = 0; valueDescriptionsIndex < valueDescriptions.size(); valueDescriptionsIndex++) {
+            String uri = valueDescriptions.get(valueDescriptionsIndex).get("@id");
+            String prefLabel = valueDescriptions.get(valueDescriptionsIndex).get("prefLabel");
+            values.put(prefLabel, uri);
+          }
+          page++;
+        }
+      } while (valueDescriptions.size() > 0);
+
+    } catch (IOException | RuntimeException e) {
+      throw new RuntimeException("Error retrieving values from terminology server " + e.getMessage());
+    }
+    return values;
   }
 
   // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
@@ -462,5 +553,38 @@ public class ArtifactSpreadsheetRenderer
     }
 
     return cellStyle;
+  }
+
+  private Map<String, Object> integratedSearch(Map<String, Object> valueConstraints,
+    Integer page, Integer pageSize, String integratedSearchEndpoint, String apiKey) throws IOException, RuntimeException
+  {
+    HttpURLConnection connection = null;
+    Map<String, Object> resultsMap = new HashMap<>();
+    try {
+      Map<String, Object> vcMap = new HashMap<>();
+      vcMap.put("valueConstraints", valueConstraints);
+      Map<String, Object> payloadMap = new HashMap<>();
+      payloadMap.put("parameterObject", vcMap);
+      payloadMap.put("page", page);
+      payloadMap.put("pageSize", pageSize);
+      String payload = mapper.writeValueAsString(payloadMap);
+      connection = ConnectionUtil.createAndOpenConnection("POST", integratedSearchEndpoint, apiKey);
+      OutputStream os = connection.getOutputStream();
+      os.write(payload.getBytes());
+      os.flush();
+      int responseCode = connection.getResponseCode();
+      if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
+        String message = "Error running integrated search. Payload: " + payload;
+        throw new RuntimeException(message);
+      } else {
+        String response = ConnectionUtil.readResponseMessage(connection.getInputStream());
+        resultsMap = mapper.readValue(response, HashMap.class);
+      }
+    } finally {
+      if (connection != null) {
+        connection.disconnect();
+      }
+    }
+    return resultsMap;
   }
 }

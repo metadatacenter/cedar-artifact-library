@@ -21,7 +21,6 @@ public class FieldSchemaArtifact extends SchemaArtifact
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
   }
 
-
   public FieldUI getFieldUI()
   {
     return fieldUI;

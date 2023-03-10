@@ -16,12 +16,14 @@ public class Template2Excel
 {
   public static void main(String[] args) throws IOException
   {
-    if (args.length != 2)
+    if (args.length != 4)
       Usage();
 
     ObjectMapper mapper = new ObjectMapper();
     File templateFile = new File(args[0]);
     File spreadsheetFile = new File(args[1]);
+    String terminologyServerIntegratedSearchEndpoint = args[2];
+    String terminologyServerAPIKey= args[3];
 
     JsonNode jsonNode = mapper.readTree(templateFile);
 
@@ -29,14 +31,14 @@ public class Template2Excel
       throw new RuntimeException("Expecting JSON object");
 
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
+
     ArtifactReader artifactReader = new ArtifactReader(mapper);
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-    System.out.println("Template: " + templateSchemaArtifact);
-
     Workbook workbook = SpreadsheetFactory.createEmptyWorkbook();
 
-    ArtifactSpreadsheetRenderer renderer = new ArtifactSpreadsheetRenderer(workbook);
+    ArtifactSpreadsheetRenderer renderer
+      = new ArtifactSpreadsheetRenderer(workbook, terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
 
     renderer.render(templateSchemaArtifact, 0, 0);
 
@@ -45,7 +47,8 @@ public class Template2Excel
 
   private static void Usage()
   {
-    System.err.println("Usage: " + Template2Excel.class.getName() + " [ <templateFileName> ] [ <spreadsheetFileName>]");
+    System.err.println("Usage: " + Template2Excel.class.getName() +
+      " <templateFileName> <spreadsheetFileName> <terminologyServerIntegratedSearchEndpoint> <terminologyServerAPIKey>");
     System.exit(1);
   }
 }

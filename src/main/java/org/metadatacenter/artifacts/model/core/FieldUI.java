@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.model.ModelNodeNames;
-
 import java.util.Optional;
 
 public class FieldUI
