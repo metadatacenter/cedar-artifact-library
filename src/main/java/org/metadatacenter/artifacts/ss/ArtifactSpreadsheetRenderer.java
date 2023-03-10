@@ -113,9 +113,9 @@ public class ArtifactSpreadsheetRenderer
       CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 1000, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
-      dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldSchemaArtifact));
-      dataValidation.setSuppressDropDownArrow(true);
-      dataValidation.setShowErrorBox(true);
+//      dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldSchemaArtifact));
+//      dataValidation.setSuppressDropDownArrow(true);
+//      dataValidation.setShowErrorBox(true);
       sheet.addValidationData(dataValidation);
     }
   }
@@ -313,7 +313,7 @@ public class ArtifactSpreadsheetRenderer
       Sheet valueSheet = workbook.createSheet(sheetName);
       int valueSheetIndex = workbook.getSheetIndex(valueSheet);
       int numberOfValues = values.keySet().size();
-      String formula = sheetName + "!$A$1:$A$" + numberOfValues;
+      String formula = "'" + sheetName + "'!$A$1:$A$" + numberOfValues;
 
       int rowNumber = 0;
       for (String prefLabel : values.keySet()) {
@@ -331,7 +331,8 @@ public class ArtifactSpreadsheetRenderer
       }
 //      workbook.setSheetHidden(valueSheetIndex, true);
 
-      return Optional.of(dataValidationHelper.createFormulaListConstraint(formula));
+      DataValidationConstraint dataValidationConstraint = dataValidationHelper.createFormulaListConstraint(formula);
+      return Optional.of(dataValidationConstraint);
     } else
       return Optional.empty();
   }
@@ -360,27 +361,21 @@ public class ArtifactSpreadsheetRenderer
 
     try {
       String vc = objectWriter.writeValueAsString(valueConstraints);
-      System.out.println(vc);
       Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
-      System.out.println(vcMap);
 
       List<Map<String, String>> valueDescriptions;
-      int page = 1;
-      do {
-        Map<String, Object> searchResult = integratedSearch(vcMap, page, 5000, // TODO
-          terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
-        valueDescriptions = searchResult.containsKey("collection") ? (List<Map<String, String>>) searchResult.get("collection") :
-          new ArrayList<>();
-        if (valueDescriptions.size() > 0) {
-          for (int valueDescriptionsIndex = 0; valueDescriptionsIndex < valueDescriptions.size(); valueDescriptionsIndex++) {
-            String uri = valueDescriptions.get(valueDescriptionsIndex).get("@id");
-            String prefLabel = valueDescriptions.get(valueDescriptionsIndex).get("prefLabel");
-            values.put(prefLabel, uri);
-          }
-          page++;
+      Map<String, Object> searchResult = integratedSearch(vcMap, 1, 5000, // TODO
+        terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
+      valueDescriptions = searchResult.containsKey("collection") ?
+        (List<Map<String, String>>)searchResult.get("collection") :
+        new ArrayList<>();
+      if (valueDescriptions.size() > 0) {
+        for (int valueDescriptionsIndex = 0; valueDescriptionsIndex < valueDescriptions.size(); valueDescriptionsIndex++) {
+          String uri = valueDescriptions.get(valueDescriptionsIndex).get("@id");
+          String prefLabel = valueDescriptions.get(valueDescriptionsIndex).get("prefLabel");
+          values.put(prefLabel, uri);
         }
-      } while (valueDescriptions.size() > 0);
-
+      }
     } catch (IOException | RuntimeException e) {
       throw new RuntimeException("Error retrieving values from terminology server " + e.getMessage());
     }

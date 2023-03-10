@@ -1,8 +1,5 @@
 package org.metadatacenter.artifacts.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -19,8 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 public class ConnectionUtil {
-
-  private static final Logger logger = LoggerFactory.getLogger(ConnectionUtil.class);
 
   //@formatter:off
   private static TrustManager[] trustAllCerts = new TrustManager[1];
@@ -41,7 +36,6 @@ public class ConnectionUtil {
         sb.append(messageLine);
       }
     } catch (IOException e) {
-      logger.error(e.getMessage());
       throw new RuntimeException(e.getMessage());
     }
     return sb.toString();
@@ -58,7 +52,6 @@ public class ConnectionUtil {
       conn.setRequestProperty("Authorization", "apiKey " + apiKey);
       return conn;
     } catch (MalformedURLException e) {
-      logger.error(e.getMessage());
       throw new RuntimeException(e.getMessage());
     }
   }
@@ -70,14 +63,12 @@ public class ConnectionUtil {
       HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
       HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> 1 == 1);
     } catch (KeyManagementException | NoSuchAlgorithmException e) {
-      logger.error(e.getMessage());
       throw new RuntimeException(e.getMessage());
     }
   }
 
   public static void logErrorMessageAndThrowException(String message, final HttpURLConnection conn) {
     String response = ConnectionUtil.readResponseMessage(conn.getErrorStream());
-    logger.error(response);
     throw new RuntimeException(message + "\nError message: " + response);
   }
 }
