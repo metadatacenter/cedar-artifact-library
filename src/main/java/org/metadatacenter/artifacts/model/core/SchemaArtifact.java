@@ -12,9 +12,11 @@ public class SchemaArtifact extends Artifact
   private final Optional<Version> version;
   private final Optional<Status> status;
   private final Optional<Version> previousVersion;
+  private final Optional<URI> derivedFrom;
 
   public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaURI, Version modelVersion, String name,
-    String description, Optional<Version> version, Optional<Status> status, Optional<Version> previousVersion)
+    String description, Optional<Version> version, Optional<Status> status, Optional<Version> previousVersion,
+    Optional<URI> derivedFrom)
   {
     super(artifact);
     this.jsonSchemaSchemaURI = jsonSchemaSchemaURI;
@@ -22,8 +24,9 @@ public class SchemaArtifact extends Artifact
     this.description = description;
     this.modelVersion = modelVersion;
     this.version = version;
-    this.previousVersion = previousVersion;
     this.status = status;
+    this.previousVersion = previousVersion;
+    this.derivedFrom = derivedFrom;
   }
 
   public SchemaArtifact(SchemaArtifact schemaArtifact)
@@ -36,6 +39,7 @@ public class SchemaArtifact extends Artifact
     this.version = schemaArtifact.version;
     this.status = schemaArtifact.status;
     this.previousVersion = schemaArtifact.previousVersion;
+    this.derivedFrom = schemaArtifact.derivedFrom;
   }
 
   public URI getJsonSchemaSchemaURI()
@@ -73,10 +77,15 @@ public class SchemaArtifact extends Artifact
     return previousVersion;
   }
 
+  public Optional<URI> getDerivedFrom()
+  {
+    return derivedFrom;
+  }
+
   @Override public String toString()
   {
-    return super.toString() + "\n SchemaArtifact{" + "jsonSchemaSchema='" + jsonSchemaSchemaURI + '\'' + ", modelVersion='" + modelVersion + '\''
-      + ", version='" + version + '\'' + ", previousVersion='" + previousVersion + '\'' + ", status='" + status + '\''
-      + '}';
+    return "SchemaArtifact{" + "jsonSchemaSchemaURI=" + jsonSchemaSchemaURI + ", modelVersion=" + modelVersion
+      + ", name='" + name + '\'' + ", description='" + description + '\'' + ", version=" + version + ", status="
+      + status + ", previousVersion=" + previousVersion + ", derivedFrom=" + derivedFrom + '}';
   }
 }

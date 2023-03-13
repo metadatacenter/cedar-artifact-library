@@ -14,19 +14,19 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUI;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -47,6 +47,8 @@ public class ArtifactSpreadsheetRenderer
   private final ObjectMapper mapper;
   private final ObjectWriter objectWriter;
 
+  private final String metadataSheetName = ".metadata";
+
   public ArtifactSpreadsheetRenderer(Workbook workbook, String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
   {
     this.workbook = workbook;
@@ -63,6 +65,7 @@ public class ArtifactSpreadsheetRenderer
   {
     String sheetName = templateSchemaArtifact.getName();
     int columnIndex = headerStartColumnIndex;
+
     Sheet sheet = workbook.createSheet(sheetName);
     Row headerRow = sheet.createRow(headerRowNumber);
 
@@ -73,6 +76,8 @@ public class ArtifactSpreadsheetRenderer
 
       columnIndex += 1;
     }
+
+    addMetadataSheet(templateSchemaArtifact);
   }
 
   public void render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
@@ -581,5 +586,56 @@ public class ArtifactSpreadsheetRenderer
       }
     }
     return resultsMap;
+  }
+
+  private void addMetadataSheet(TemplateSchemaArtifact templateSchemaArtifact)
+  {
+    Sheet sheet = workbook.createSheet(metadataSheetName);
+    Row headerRow = sheet.createRow(0);
+    Row dataRow = sheet.createRow(1);
+
+    Cell schemaNameHeaderCell = headerRow.createCell(0);
+    schemaNameHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_NAME);
+
+    Cell schemaNameDataCell = dataRow.createCell(0);
+    schemaNameDataCell.setCellValue(templateSchemaArtifact.getName());
+
+    Cell schemaDescriptionHeaderCell = headerRow.createCell(1);
+    schemaDescriptionHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
+
+    Cell schemaDescriptionDataCell = dataRow.createCell(1);
+    schemaDescriptionDataCell.setCellValue(templateSchemaArtifact.getDescription());
+
+    if (templateSchemaArtifact.getVersion().isPresent()) {
+      Cell schemaVersionHeaderCell = headerRow.createCell(2);
+      schemaVersionHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
+      Cell schemaVersionDataCell = dataRow.createCell(2);
+      schemaVersionDataCell.setCellValue(templateSchemaArtifact.getVersion().get().toString());
+    } else
+      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
+
+    if (templateSchemaArtifact.getCreatedOn().isPresent()) {
+      Cell pavCreatedOnHeaderCell = headerRow.createCell(3);
+      pavCreatedOnHeaderCell.setCellValue(ModelNodeNames.PAV_CREATED_ON);
+      Cell pavCreatedOnDataCell = dataRow.createCell(3);
+      pavCreatedOnDataCell.setCellValue(templateSchemaArtifact.getCreatedOn().get().toString());
+    } else
+      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.PAV_CREATED_ON);
+
+    if (templateSchemaArtifact.getCreatedBy().isPresent()) {
+      Cell pavCreatedByHeaderCell = headerRow.createCell(4);
+      pavCreatedByHeaderCell.setCellValue(ModelNodeNames.PAV_CREATED_BY);
+      Cell pavCreatedByDataCell = dataRow.createCell(4);
+      pavCreatedByDataCell.setCellValue(templateSchemaArtifact.getCreatedBy().get().toString());
+    } else
+      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.PAV_CREATED_BY);
+
+    if (templateSchemaArtifact.getDerivedFrom().isPresent()) {
+      Cell derivedFromHeaderCell = headerRow.createCell(5);
+      derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
+      Cell derivedFromDataCell = dataRow.createCell(5);
+      derivedFromDataCell.setCellValue(templateSchemaArtifact.getDerivedFrom().get().toString());
+    } else
+      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.PAV_DERIVED_FROM);
   }
 }

@@ -181,8 +181,10 @@ public class ArtifactReader
     Optional<Version> version = readPAVVersionField(objectNode, path);
     Optional<Status> status = readBIBOStatusField(objectNode, path);
     Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
+    Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
 
-    return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, status, previousVersion);
+    return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, status,
+      previousVersion, derivedFrom);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
@@ -937,6 +939,11 @@ public class ArtifactReader
       return Optional.of(Version.fromString(previousVersion));
     else
       return Optional.empty();
+  }
+
+  private Optional<URI> readDerivedFromField(ObjectNode objectNode, String path)
+  {
+    return readURIField(objectNode, path, ModelNodeNames.PAV_DERIVED_FROM);
   }
 
   private Optional<Status> readBIBOStatusField(ObjectNode objectNode, String path)
