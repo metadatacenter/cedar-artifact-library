@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
+
 public class ArtifactSpreadsheetRenderer
 {
   private final Workbook workbook;
@@ -88,6 +90,7 @@ public class ArtifactSpreadsheetRenderer
   public void render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow)
   {
     String fieldName = fieldSchemaArtifact.getName();
+    String fieldDescription = fieldSchemaArtifact.getDescription();
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
@@ -96,7 +99,8 @@ public class ArtifactSpreadsheetRenderer
     //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
     //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
     //    else
-    columnNameCell.setCellValue(fieldSchemaArtifact.getName());
+    columnNameCell.setCellValue(fieldName);
+    setCellComment(columnNameCell, fieldDescription);
 
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
     sheet.autoSizeColumn(columnIndex);
@@ -118,9 +122,9 @@ public class ArtifactSpreadsheetRenderer
       CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 1000, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
-//      dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldSchemaArtifact));
-//      dataValidation.setSuppressDropDownArrow(true);
-//      dataValidation.setShowErrorBox(true);
+     dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldSchemaArtifact));
+ //    dataValidation.setSuppressDropDownArrow(true);
+       dataValidation.setShowErrorBox(true);
       sheet.addValidationData(dataValidation);
     }
   }
@@ -164,7 +168,7 @@ public class ArtifactSpreadsheetRenderer
           Number maxValue = valueConstraints.getMaxValue().get();
           return "Value should be less than " + maxValue;
         } else { // Maximum not present, minimum not present
-          return "";
+          return "Value should be a number";
         }
       }
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
@@ -224,7 +228,8 @@ public class ArtifactSpreadsheetRenderer
         return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
           DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
       } else { // Maximum not present, minimum not present
-        return Optional.empty();
+        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+          DataValidationConstraint.OperatorType.BETWEEN, String.valueOf(Float.MIN_VALUE), String.valueOf(Float.MAX_VALUE)));
       }
     }
   }
@@ -253,7 +258,8 @@ public class ArtifactSpreadsheetRenderer
         return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
           DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
       } else { // Maximum not present, minimum not present
-        return Optional.empty();
+        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+          DataValidationConstraint.OperatorType.BETWEEN, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
       }
     }
   }

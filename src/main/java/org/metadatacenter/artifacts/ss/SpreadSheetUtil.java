@@ -1,5 +1,11 @@
 package org.metadatacenter.artifacts.ss;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -124,7 +130,26 @@ public class SpreadSheetUtil
     return sheet;
   }
 
+  public static void setCellComment(Cell cell, String commentText)
+  {
+    Drawing drawingPatriarch = cell.getSheet().createDrawingPatriarch();
+    CreationHelper creationHelper = cell.getSheet().getWorkbook().getCreationHelper();
+    ClientAnchor clientAnchor = creationHelper.createClientAnchor();
+    int numberOfNewLines = (int)commentText.chars().filter(ch -> ch == '\n').count();
+
+    clientAnchor.setCol1(cell.getColumnIndex());
+    clientAnchor.setRow1(cell.getRowIndex());
+    clientAnchor.setCol2(cell.getColumnIndex() + 3); // TODO Not principled but should work for the moment
+    clientAnchor.setRow2(cell.getRowIndex() + numberOfNewLines + 1);
+
+    Comment newComment = drawingPatriarch.createCellComment(clientAnchor);
+    newComment.setString(creationHelper.createRichTextString(commentText));
+    newComment.setAuthor("CEDAR Metadata Validator");
+    cell.setCellComment(newComment);
+  }
+
   private static boolean isAlpha(char c) { return c >= 'A' && c <= 'Z'; }
 
   private static boolean isNumeric(char c) { return c >= '0' && c <= '9'; }
-} 
+
+}
