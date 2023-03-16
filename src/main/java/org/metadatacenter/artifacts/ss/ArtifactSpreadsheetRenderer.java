@@ -596,9 +596,9 @@ public class ArtifactSpreadsheetRenderer
 
   private void addMetadataSheet(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    Sheet sheet = workbook.createSheet(metadataSheetName);
-    Row headerRow = sheet.createRow(0);
-    Row dataRow = sheet.createRow(1);
+    Sheet metadataSheet = workbook.createSheet(metadataSheetName);
+    Row headerRow = metadataSheet.createRow(0);
+    Row dataRow = metadataSheet.createRow(1);
 
     Cell schemaNameHeaderCell = headerRow.createCell(0);
     schemaNameHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_NAME);
@@ -636,12 +636,16 @@ public class ArtifactSpreadsheetRenderer
     } else
       throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.PAV_CREATED_BY);
 
-    if (templateSchemaArtifact.getDerivedFrom().isPresent()) {
-      Cell derivedFromHeaderCell = headerRow.createCell(5);
-      derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
-      Cell derivedFromDataCell = dataRow.createCell(5);
-      derivedFromDataCell.setCellValue(templateSchemaArtifact.getDerivedFrom().get().toString());
-    } else
-      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.PAV_DERIVED_FROM);
+    Cell derivedFromHeaderCell = headerRow.createCell(5);
+    derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
+    Cell derivedFromDataCell = dataRow.createCell(5);
+    derivedFromDataCell.setCellValue(templateSchemaArtifact.getJsonLDID().toString());
+
+    metadataSheet.autoSizeColumn(0);
+    metadataSheet.autoSizeColumn(1);
+    metadataSheet.autoSizeColumn(2);
+    metadataSheet.autoSizeColumn(3);
+    metadataSheet.autoSizeColumn(4);
+    metadataSheet.autoSizeColumn(5);
   }
 }
