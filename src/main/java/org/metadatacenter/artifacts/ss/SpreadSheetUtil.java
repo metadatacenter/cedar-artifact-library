@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.ss;
 
+import org.apache.commons.text.WordUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
@@ -134,7 +135,8 @@ public class SpreadSheetUtil
     Drawing drawingPatriarch = cell.getSheet().createDrawingPatriarch();
     CreationHelper creationHelper = cell.getSheet().getWorkbook().getCreationHelper();
     ClientAnchor clientAnchor = creationHelper.createClientAnchor();
-    int numberOfNewLines = (int)commentText.chars().filter(ch -> ch == '\n').count();
+    String wrappedText  = WordUtils.wrap(commentText, 80);
+    int numberOfNewLines = (int)wrappedText.chars().filter(ch -> ch == '\n').count();
 
     clientAnchor.setCol1(cell.getColumnIndex());
     clientAnchor.setRow1(cell.getRowIndex());
@@ -142,7 +144,7 @@ public class SpreadSheetUtil
     clientAnchor.setRow2(cell.getRowIndex() + numberOfNewLines + 1);
 
     Comment newComment = drawingPatriarch.createCellComment(clientAnchor);
-    newComment.setString(creationHelper.createRichTextString(commentText));
+    newComment.setString(creationHelper.createRichTextString(wrappedText));
     newComment.setAuthor("CEDAR Metadata Validator");
     cell.setCellComment(newComment);
   }
