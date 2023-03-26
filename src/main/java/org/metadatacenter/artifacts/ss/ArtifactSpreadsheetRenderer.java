@@ -10,6 +10,9 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -51,6 +54,10 @@ public class ArtifactSpreadsheetRenderer
 
   private final String metadataSheetName = ".metadata";
 
+  private final Short LIGHT_CORNFLOUR_BLUE = IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex();
+
+  private final CellStyle headerCellstyle;
+
   public ArtifactSpreadsheetRenderer(Workbook workbook, String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
   {
     this.workbook = workbook;
@@ -61,6 +68,8 @@ public class ArtifactSpreadsheetRenderer
     mapper.registerModule(new Jdk8Module());
     mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
     this.objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+    this.headerCellstyle = createHeaderCellStyle(workbook);
   }
 
   public void render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
@@ -94,13 +103,14 @@ public class ArtifactSpreadsheetRenderer
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
-    Cell columnNameCell = headerRow.createCell(columnIndex);
+    Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
 
     //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
     //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
     //    else
-    columnNameCell.setCellValue(fieldName);
-    setCellComment(columnNameCell, fieldDescription);
+    columnNameHeaderCell.setCellValue(fieldName);
+    columnNameHeaderCell.setCellStyle(headerCellstyle);
+    setCellComment(columnNameHeaderCell, fieldDescription);
 
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
     sheet.autoSizeColumn(columnIndex);
@@ -559,6 +569,17 @@ public class ArtifactSpreadsheetRenderer
     }
 
     return cellStyle;
+  }
+
+  private CellStyle createHeaderCellStyle(Workbook workbook)
+  {
+    CellStyle headerCellStyle = workbook.createCellStyle();
+    headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+    headerCellStyle.setFillForegroundColor(LIGHT_CORNFLOUR_BLUE);
+    headerCellStyle.setFillBackgroundColor(LIGHT_CORNFLOUR_BLUE);
+
+    return headerCellStyle;
   }
 
   private Map<String, Object> integratedSearch(Map<String, Object> valueConstraints,
