@@ -9,14 +9,14 @@
 
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-artifact-tools</artifactId>
-  <version>2.6.23</version>
+  <version>2.6.24-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
     <connection>scm:git:https://github.com/metadatacenter/cedar-artifact-tools.git</connection>
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-tools.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-artifact-tools</url>
-    <tag>release-2.6.23</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>
