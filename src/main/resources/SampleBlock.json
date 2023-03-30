@@ -1,4 +1,5 @@
 {
+  "@id": "https://repo.metadatacenter.org/templates/5233af93-798c-45ac-a902-5bc409766a21",
   "@type": "https://schema.metadatacenter.org/core/Template",
   "@context": {
     "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -41,11 +42,11 @@
       "pathology_distance_value",
       "pathology_distance_unit",
       "preparation_medium",
-      "preparation_temperature",
+      "preparation_condition",
       "processing_time_value",
       "processing_time_unit",
       "storage_medium",
-      "storage_temperature",
+      "storage_condition",
       "quality_criteria",
       "histological_report",
       "notes"
@@ -53,43 +54,42 @@
     "propertyLabels": {
       "sample_id": "sample_id",
       "source_storage_time_value": "source_storage_time_value",
-      "source_storage_time_unit": "source_storage_time_unit",
       "weight_value": "weight_value",
-      "weight_unit": "weight_unit",
       "volume_value": "volume_value",
-      "volume_unit": "volume_unit",
       "pathology_distance_value": "pathology_distance_value",
-      "pathology_distance_unit": "pathology_distance_unit",
-      "preparation_temperature": "preparation_temperature",
-      "processing_time_value": "processing_time_value",
-      "processing_time_unit": "processing_time_unit",
-      "storage_temperature": "storage_temperature",
-      "notes": "notes",
-      "histological_report": "histological_report",
       "quality_criteria": "quality_criteria",
+      "histological_report": "histological_report",
+      "notes": "notes",
+      "source_storage_time_unit": "source_storage_time_unit",
+      "weight_unit": "weight_unit",
+      "volume_unit": "volume_unit",
+      "pathology_distance_unit": "pathology_distance_unit",
       "preparation_medium": "preparation_medium",
-      "storage_medium": "storage_medium"
+      "preparation_condition": "preparation_condition",
+      "processing_time_unit": "processing_time_unit",
+      "storage_medium": "storage_medium",
+      "storage_condition": "storage_condition",
+      "processing_time_value": "processing_time_value"
     },
     "propertyDescriptions": {
-      "Histological report": "",
-      "sample_id": "the unique submission ID for the sample assigned by the ingest portal. An example might be \"VAN0010-LK-152-162\"",
-      "source_storage_time_value": "The amount of time that elapsed between when the source was generated and this sample was derived from the source. This would, for example, include how long the source was stored in a freezer.",
-      "source_storage_time_unit": "time unit",
-      "weight_value": "weight of a tissue block",
-      "weight_unit": "weight unit",
-      "volume_value": "the volume of a tissue block",
-      "volume_unit": "volume unit",
-      "pathology_distance_value": "if surgical sample, how far from the pathology was the sample obtained. Typically a number of centimeters. Leave blank if not applicable or unknown",
-      "pathology_distance_unit": "distance unit",
-      "preparation_temperature": "the temperature for the preparation process",
-      "processing_time_value": "The amount of time that elapsed from beginning of sampling to the first preservation (time from when received in lab to preservation). This would, for example, represent how long it took to cut the tissue and freeze it.",
-      "processing_time_unit": "time unit",
-      "storage_temperature": "The temperature during storage, after preparation and before the assay is performed.",
-      "notes": "Help Text",
-      "histological_report": "histological reporting of key variables that are important for the tissue (absence of necrosis, comment on composition, significant pathology description, high level inflammation/fibrosis assessment etc",
+      "sample_id": "The HuBMAP ID for the sample assigned by the ingest portal. An example value might be \"HBM743.CKJW.876\"",
+      "source_storage_time_value": "How long was the source material stored, prior to this sample being processed? For tissue blocks, this would typically be the time between when the organ arrived in the lab and the processing of the organ began. In most cases this will likely be 0, while in some cases the organ might be stored (on ice) in the lab before dissection. For tissue sections, this would be how long the tissue block was stored, usually in a -80 freezer, prior to the section being cut. For suspensions, this would be the length of time the tissue block was stored prior to the initiation of the dissociation process.",
+      "weight_value": "Weight of the tissue block",
+      "volume_value": "Volume of the tissue block",
+      "pathology_distance_value": "If surgical sample, how far from the pathology was the sample obtained. Typically a number of centimeters. Leave blank if not applicable or unknown.",
       "quality_criteria": "For example, RIN: 8.7. For suspensions, measured by visual inspection prior to cell lysis or defined by known parameters such as wells with several cells or no cells. This can be captured at a high level. \"OK\" or \"not OK\", or with more specificity such as \"debris\", \"clump\", \"low clump\".",
-      "preparation_medium": "The medium used during preparation of the sample.",
-      "storage_medium": "What was the sample preserved in."
+      "histological_report": "Histopathological reporting of key variables that are important for the tissue sample (e.g., absence of necrosis, comment on composition, significant pathology description, high level inflammation/fibrosis assessment, etc.)",
+      "notes": "Additional description or commentary notes",
+      "source_storage_time_unit": "Time unit",
+      "weight_unit": "Unit of weight measurement",
+      "volume_unit": "Unit of volume measurement",
+      "pathology_distance_unit": "Unit of pathology distance measurement",
+      "preparation_medium": "The medium used during the sample preparation.",
+      "preparation_condition": "The condition or environment under which the preparation occurred, such as was the sample sitting on dry ice during the preparation.",
+      "processing_time_unit": "Unit of processing time measurement",
+      "storage_medium": "What was the sample preserved in.",
+      "storage_condition": "The condition or environment under which the sample is stored, after preparation and before the assay is performed.",
+      "processing_time_value": "The time the tissue sample was being handled before the initial preservation."
     }
   },
   "properties": {
@@ -250,92 +250,92 @@
         },
         "sample_id": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/9280d2bd-ff21-436d-8a6f-d86fc6cdb6ce"
+            "https://schema.metadatacenter.org/properties/880d59a8-6e2a-4df9-a53e-2cb53f3dd96d"
           ]
         },
         "source_storage_time_value": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/6d9cf1d9-6850-4188-80b8-fbcd8c695b9b"
-          ]
-        },
-        "source_storage_time_unit": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/d6e43743-410c-4270-85a0-02165458f73c"
+            "https://schema.metadatacenter.org/properties/8c7513b1-83b7-4232-b3c1-63de50ab5efb"
           ]
         },
         "weight_value": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/ffa80e02-caac-4a70-b5f8-9d1066b4c056"
-          ]
-        },
-        "weight_unit": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/9afad3a6-cbbc-444e-99c5-c67131ad62aa"
+            "https://schema.metadatacenter.org/properties/16f75b4a-2c30-4998-a829-ac84904a8c1e"
           ]
         },
         "volume_value": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/41da1e19-e026-408b-bd99-f53b72219391"
-          ]
-        },
-        "volume_unit": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/f755ba03-446e-41f9-90c0-4d774ab4e19c"
+            "https://schema.metadatacenter.org/properties/37220021-cd4e-4265-b68c-b18e27673019"
           ]
         },
         "pathology_distance_value": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/800e7e52-8c26-40e8-8d6b-8bdaabece1b7"
-          ]
-        },
-        "pathology_distance_unit": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/2cf133e5-94ff-49c4-b076-31e4b57451b4"
-          ]
-        },
-        "preparation_temperature": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/031d4bb9-a2f4-4641-9a62-5b3fb5752674"
-          ]
-        },
-        "processing_time_value": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/b7d27b5a-3337-4293-a256-a6ebda528251"
-          ]
-        },
-        "processing_time_unit": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/1b89bc18-f88e-4209-8e27-af92a3f064ce"
-          ]
-        },
-        "storage_temperature": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/f3a7a1b4-b02b-4227-a54b-a828fc0f2e8d"
-          ]
-        },
-        "notes": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/4de410a9-4a3f-4298-b886-701d64dd883f"
-          ]
-        },
-        "histological_report": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/54f671ac-3e05-48d9-8989-4fd28b64db7f"
+            "https://schema.metadatacenter.org/properties/195bd43f-4d80-43e0-ac2b-59e0af7f0a36"
           ]
         },
         "quality_criteria": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/39622c9b-5667-47d9-bee7-56a80a15509b"
+            "https://schema.metadatacenter.org/properties/37d77464-d71b-4470-9aca-bac20645b67c"
+          ]
+        },
+        "histological_report": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/176aecf4-43f6-46b5-97c4-5863ce1e4f71"
+          ]
+        },
+        "notes": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/a8ce1183-59a1-41c0-aebd-c84f8a3852ca"
+          ]
+        },
+        "source_storage_time_unit": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/73a110f6-1e47-4f2f-8d73-77d9c4205331"
+          ]
+        },
+        "weight_unit": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/ddc1d473-77df-4d4f-92a8-42e53c9cfdec"
+          ]
+        },
+        "volume_unit": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/d8b52a43-6e87-4e68-baf6-f23e9572fadb"
+          ]
+        },
+        "pathology_distance_unit": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/eaa811d3-0dcb-49fd-9116-22d89060624d"
           ]
         },
         "preparation_medium": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/de272d97-c478-466c-8064-a1288015a9ce"
+            "https://schema.metadatacenter.org/properties/313d1035-46ff-4743-860a-fd380b95f25d"
+          ]
+        },
+        "preparation_condition": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/c1fa1d58-49ab-4294-b880-44e95edec2ce"
+          ]
+        },
+        "processing_time_unit": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/546c42ba-c413-4c46-beea-56ff97671ac6"
           ]
         },
         "storage_medium": {
           "enum": [
-            "https://schema.metadatacenter.org/properties/bc8bca67-061d-4eb7-9a9c-50a396f02470"
+            "https://schema.metadatacenter.org/properties/3f4eb32d-7ad3-4a94-84fb-e8e7ba3ac711"
+          ]
+        },
+        "storage_condition": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/246639a1-cfb5-4aa7-a602-69d63b8f9772"
+          ]
+        },
+        "processing_time_value": {
+          "enum": [
+            "https://schema.metadatacenter.org/properties/99e4731d-450c-45f5-85f4-c1ef2534607d"
           ]
         }
       },
@@ -350,7 +350,25 @@
         "pav:createdOn",
         "pav:createdBy",
         "pav:lastUpdatedOn",
-        "oslc:modifiedBy"
+        "oslc:modifiedBy",
+        "sample_id",
+        "source_storage_time_value",
+        "weight_value",
+        "volume_value",
+        "pathology_distance_value",
+        "quality_criteria",
+        "histological_report",
+        "notes",
+        "source_storage_time_unit",
+        "weight_unit",
+        "volume_unit",
+        "pathology_distance_unit",
+        "preparation_medium",
+        "preparation_condition",
+        "processing_time_unit",
+        "storage_medium",
+        "storage_condition",
+        "processing_time_value"
       ],
       "additionalProperties": false
     },
@@ -365,20 +383,14 @@
       "oneOf": [
         {
           "type": "string",
-          "format": "uri",
-          "enum": [
-            "http://data.bioontology.org/ontologies/NCIT/classes/http%3A%2F%2Fncicb.nci.nih.gov%2Fxml%2Fowl%2FEVS%2FThesaurus.owl%23C86947"
-          ]
+          "format": "uri"
         },
         {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "string",
-            "format": "uri",
-            "enum": [
-              "http://data.bioontology.org/ontologies/NCIT/classes/http%3A%2F%2Fncicb.nci.nih.gov%2Fxml%2Fowl%2FEVS%2FThesaurus.owl%23C86947"
-            ]
+            "format": "uri"
           },
           "uniqueItems": true
         }
@@ -428,6 +440,7 @@
       "format": "uri"
     },
     "sample_id": {
+      "@id": "https://repo.metadatacenter.org/template-fields/2aa2a62a-d62a-4f42-9a1c-c735376a8b7e",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -505,18 +518,20 @@
         "@value"
       ],
       "schema:name": "sample_id",
-      "schema:description": "the unique submission ID for the sample assigned by the ingest portal. An example might be \"VAN0010-LK-152-162\"",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:description": "The HuBMAP ID for the sample assigned by the ingest portal. An example value might be \"HBM743.CKJW.876\"",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Sample ID",
-      "@id": "https://repo.metadatacenter.org/template-fields/7963887d-b822-478c-9a3c-0d1dc42e83f2",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
     "source_storage_time_value": {
+      "@id": "https://repo.metadatacenter.org/template-fields/93ce1b2c-0c08-4da2-b9c4-2ea93a254e13",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -551,14 +566,14 @@
         }
       },
       "type": "object",
-      "title": "source_storage_time_value field schema",
-      "description": "source_storage_time_value field schema generated by the CEDAR Template Editor 2.6.19",
+      "title": "Untitled field schema",
+      "description": "Untitled field schema generated by the CEDAR Template Editor 2.6.19",
       "_ui": {
         "inputType": "numeric"
       },
       "_valueConstraints": {
         "requiredValue": true,
-        "numberType": "xsd:float"
+        "numberType": "xsd:decimal"
       },
       "properties": {
         "@value": {
@@ -583,18 +598,533 @@
         "@type"
       ],
       "schema:name": "source_storage_time_value",
-      "schema:description": "The amount of time that elapsed between when the source was generated and this sample was derived from the source. This would, for example, include how long the source was stored in a freezer.",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:description": "How long was the source material stored, prior to this sample being processed? For tissue blocks, this would typically be the time between when the organ arrived in the lab and the processing of the organ began. In most cases this will likely be 0, while in some cases the organ might be stored (on ice) in the lab before dissection. For tissue sections, this would be how long the tissue block was stored, usually in a -80 freezer, prior to the section being cut. For suspensions, this would be the length of time the tissue block was stored prior to the initiation of the dissociation process.",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Source Storage Time Value",
-      "@id": "https://repo.metadatacenter.org/template-fields/8ed11a13-ec6b-4803-8961-6bbee9d279a5",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "weight_value": {
+      "@id": "https://repo.metadatacenter.org/template-fields/e702207a-4e46-49c6-9ccb-3dc7555cd48a",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "weight_value field schema",
+      "description": "weight_value field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "numeric"
+      },
+      "_valueConstraints": {
+        "requiredValue": false,
+        "numberType": "xsd:decimal"
+      },
+      "properties": {
+        "@value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "@type": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "@value",
+        "@type"
+      ],
+      "schema:name": "weight_value",
+      "schema:description": "Weight of the tissue block",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Weight Value",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "volume_value": {
+      "@id": "https://repo.metadatacenter.org/template-fields/d00f969e-9794-48ec-8cd6-1e1dccf78325",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "Untitled field schema",
+      "description": "Untitled field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "numeric"
+      },
+      "_valueConstraints": {
+        "requiredValue": false,
+        "numberType": "xsd:decimal"
+      },
+      "properties": {
+        "@value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "@type": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "@value",
+        "@type"
+      ],
+      "schema:name": "volume_value",
+      "schema:description": "Volume of the tissue block",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Volume Value",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "pathology_distance_value": {
+      "@id": "https://repo.metadatacenter.org/template-fields/b5df3b97-c31d-4833-9cf4-a44b77180998",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "pathology_distance_value field schema",
+      "description": "pathology_distance_value field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "numeric"
+      },
+      "_valueConstraints": {
+        "requiredValue": false,
+        "numberType": "xsd:decimal"
+      },
+      "properties": {
+        "@value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "@type": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "@value",
+        "@type"
+      ],
+      "schema:name": "pathology_distance_value",
+      "schema:description": "If surgical sample, how far from the pathology was the sample obtained. Typically a number of centimeters. Leave blank if not applicable or unknown.",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Pathology Distance Value",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "quality_criteria": {
+      "@id": "https://repo.metadatacenter.org/template-fields/f73917ef-cdeb-4ece-82e8-722f69a3a2a3",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "quality_criteria field schema",
+      "description": "quality_criteria field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "textfield"
+      },
+      "_valueConstraints": {
+        "requiredValue": false
+      },
+      "properties": {
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "@value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "@value"
+      ],
+      "schema:name": "quality_criteria",
+      "schema:description": "For example, RIN: 8.7. For suspensions, measured by visual inspection prior to cell lysis or defined by known parameters such as wells with several cells or no cells. This can be captured at a high level. \"OK\" or \"not OK\", or with more specificity such as \"debris\", \"clump\", \"low clump\".",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Quality Criteria",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "histological_report": {
+      "@id": "https://repo.metadatacenter.org/template-fields/0550f81d-d524-4b93-92c2-26ccbd789042",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "histological_report field schema",
+      "description": "histological_report field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "textfield"
+      },
+      "_valueConstraints": {
+        "requiredValue": false
+      },
+      "properties": {
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "@value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "@value"
+      ],
+      "schema:name": "histological_report",
+      "schema:description": "Histopathological reporting of key variables that are important for the tissue sample (e.g., absence of necrosis, comment on composition, significant pathology description, high level inflammation/fibrosis assessment, etc.)",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Histological Report",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "notes": {
+      "@id": "https://repo.metadatacenter.org/template-fields/9647ed65-3784-4ff7-a6a0-2f09cb0e50d4",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "notes field schema",
+      "description": "notes field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "textfield"
+      },
+      "_valueConstraints": {
+        "requiredValue": false
+      },
+      "properties": {
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "@value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "@value"
+      ],
+      "schema:name": "notes",
+      "schema:description": "Additional description or commentary notes",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Notes",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
     "source_storage_time_unit": {
+      "@id": "https://repo.metadatacenter.org/template-fields/6ca9befa-ae69-4586-9040-41ca4b7a650c",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -641,45 +1171,35 @@
         "classes": [
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000031",
-            "prefLabel": "minute",
+            "prefLabel": "Minute",
             "type": "OntologyClass",
             "label": "minute",
-            "source": "UO"
-          },
-          {
-            "uri": "http://purl.obolibrary.org/obo/UO_0000032",
-            "prefLabel": "hour",
-            "type": "OntologyClass",
-            "label": "hour",
-            "source": "UO"
-          },
-          {
-            "uri": "http://purl.obolibrary.org/obo/UO_0000033",
-            "prefLabel": "day",
-            "type": "OntologyClass",
-            "label": "day",
-            "source": "UO"
+            "source": "HRAVS"
           },
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000036",
-            "prefLabel": "year",
+            "prefLabel": "Year",
             "type": "OntologyClass",
             "label": "year",
-            "source": "UO"
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/UO_0000032",
+            "prefLabel": "Hour",
+            "type": "OntologyClass",
+            "label": "hour",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/UO_0000033",
+            "prefLabel": "Day",
+            "type": "OntologyClass",
+            "label": "day",
+            "source": "HRAVS"
           }
         ],
         "branches": [],
-        "multipleChoice": false,
-        "actions": [
-          {
-            "to": 1,
-            "action": "move",
-            "termUri": "http://purl.obolibrary.org/obo/UO_0000032",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "UO"
-          }
-        ]
+        "multipleChoice": false
       },
       "properties": {
         "@type": {
@@ -711,96 +1231,20 @@
         }
       },
       "schema:name": "source_storage_time_unit",
-      "schema:description": "time unit",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:description": "Time unit",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Source Storage Time Unit",
-      "@id": "https://repo.metadatacenter.org/template-fields/6a9ea93f-ac79-49c3-bae1-55dea456d22a",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "weight_value": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "weight_value field schema",
-      "description": "weight_value field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "numeric"
-      },
-      "_valueConstraints": {
-        "requiredValue": false,
-        "numberType": "xsd:float"
-      },
-      "properties": {
-        "@value": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "@type": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "required": [
-        "@value",
-        "@type"
-      ],
-      "schema:name": "weight_value",
-      "schema:description": "weight of a tissue block",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "@id": "https://repo.metadatacenter.org/template-fields/d286e86a-4a1d-4ec8-8627-033b615af2a6",
-      "skos:prefLabel": "Weight Value",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
     "weight_unit": {
+      "@id": "https://repo.metadatacenter.org/template-fields/a7dc03a6-9ce6-4315-8abe-2bbbe7f105d9",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -847,24 +1291,24 @@
         "classes": [
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000022",
-            "prefLabel": "milligram",
+            "prefLabel": "Milligram",
             "type": "OntologyClass",
             "label": "milligram",
-            "source": "UO"
+            "source": "HRAVS"
           },
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000021",
-            "prefLabel": "gram",
+            "prefLabel": "Gram",
             "type": "OntologyClass",
             "label": "gram",
-            "source": "UO"
+            "source": "HRAVS"
           },
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000009",
-            "prefLabel": "kilogram",
+            "prefLabel": "Kilogram",
             "type": "OntologyClass",
             "label": "kilogram",
-            "source": "UO"
+            "source": "HRAVS"
           }
         ],
         "branches": [],
@@ -900,96 +1344,20 @@
         }
       },
       "schema:name": "weight_unit",
-      "schema:description": "weight unit",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:description": "Unit of weight measurement",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Weight Unit",
-      "@id": "https://repo.metadatacenter.org/template-fields/0524e13b-a189-48e1-8f1d-613f37914c91",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "volume_value": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "volume_value field schema",
-      "description": "volume_value field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "numeric"
-      },
-      "_valueConstraints": {
-        "requiredValue": false,
-        "numberType": "xsd:float"
-      },
-      "properties": {
-        "@value": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "@type": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "required": [
-        "@value",
-        "@type"
-      ],
-      "schema:name": "volume_value",
-      "schema:description": "the volume of a tissue block",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "@id": "https://repo.metadatacenter.org/template-fields/cf89b36e-f98f-455f-ae10-a04ad4953bfd",
-      "skos:prefLabel": "Volume Value",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
     "volume_unit": {
+      "@id": "https://repo.metadatacenter.org/template-fields/a4758e7a-d83a-4b61-9d48-05249e9d6aeb",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -1035,18 +1403,18 @@
         "valueSets": [],
         "classes": [
           {
-            "uri": "https://cadsr.nci.nih.gov/metadata/CADSR-VS/c8c96bde36c1499045166bb4b44585bdc757c5e2",
-            "prefLabel": "Cubic millimeters",
+            "uri": "http://purl.humanatlas.io/valueset/R80pLGp0K9s1vyETbCAH8fN",
+            "prefLabel": "Cubic micrometer",
             "type": "OntologyClass",
-            "label": "Cubic millimeters",
-            "source": "CADSR-VS"
+            "label": "cubic micrometer",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/cubicmicrometer",
-            "prefLabel": "um^3",
+            "uri": "http://purl.humanatlas.io/valueset/RDGEVK5FP0hZRRjI4Iph62g",
+            "prefLabel": "Cubic millimeter",
             "type": "OntologyClass",
-            "label": "um^3",
-            "source": "HUSAT"
+            "label": "cubic millimeter",
+            "source": "HRAVS"
           }
         ],
         "branches": [],
@@ -1082,96 +1450,20 @@
         }
       },
       "schema:name": "volume_unit",
-      "schema:description": "volume unit",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:description": "Unit of volume measurement",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Volume Unit",
-      "@id": "https://repo.metadatacenter.org/template-fields/676e5790-19f1-4667-b369-9c872512681f",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "pathology_distance_value": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "pathology_distance_value field schema",
-      "description": "pathology_distance_value field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "numeric"
-      },
-      "_valueConstraints": {
-        "requiredValue": false,
-        "numberType": "xsd:float"
-      },
-      "properties": {
-        "@value": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "@type": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "required": [
-        "@value",
-        "@type"
-      ],
-      "schema:name": "pathology_distance_value",
-      "schema:description": "if surgical sample, how far from the pathology was the sample obtained. Typically a number of centimeters. Leave blank if not applicable or unknown",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "@id": "https://repo.metadatacenter.org/template-fields/3c521123-0b48-47d8-83c0-25785fa67733",
-      "skos:prefLabel": "Pathology Distance Value",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
     "pathology_distance_unit": {
+      "@id": "https://repo.metadatacenter.org/template-fields/e0c71cc8-e13f-4959-ae32-ab6559e75d9b",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -1218,17 +1510,17 @@
         "classes": [
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000016",
-            "prefLabel": "millimeter",
+            "prefLabel": "Millimeter",
             "type": "OntologyClass",
             "label": "millimeter",
-            "source": "UO"
+            "source": "HRAVS"
           },
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000015",
-            "prefLabel": "centimeter",
+            "prefLabel": "Centimeter",
             "type": "OntologyClass",
             "label": "centimeter",
-            "source": "UO"
+            "source": "HRAVS"
           }
         ],
         "branches": [],
@@ -1264,18 +1556,20 @@
         }
       },
       "schema:name": "pathology_distance_unit",
-      "schema:description": "distance unit",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:description": "Unit of pathology distance measurement",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Pathology Distance Unit",
-      "@id": "https://repo.metadatacenter.org/template-fields/86230cd1-1189-42fb-917d-ccba4dc6ceaf",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
-    "preparation_temperature": {
+    "preparation_medium": {
+      "@id": "https://repo.metadatacenter.org/template-fields/8a3502be-d7f2-48c4-8f12-c80c5879b674",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -1310,8 +1604,8 @@
         }
       },
       "type": "object",
-      "title": "preparation_temperature field schema",
-      "description": "preparation_temperature field schema generated by the CEDAR Template Editor 2.6.19",
+      "title": "preparation_medium field schema",
+      "description": "preparation_medium field schema generated by the CEDAR Template Editor 2.6.19",
       "_ui": {
         "inputType": "textfield"
       },
@@ -1321,60 +1615,144 @@
         "valueSets": [],
         "classes": [
           {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C68796",
-            "prefLabel": "Liquid Nitrogen",
+            "uri": "http://purl.humanatlas.io/valueset/RDXeyhRkzgtsJkPHsDuYppJ",
+            "prefLabel": "PFA (4%)",
             "type": "OntologyClass",
-            "label": "Liquid Nitrogen",
-            "source": "NCIT"
+            "label": "PFA (4%)",
+            "source": "HRAVS"
           },
           {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C174159",
-            "prefLabel": "Liquid Nitrogen Vapor",
+            "uri": "http://purl.obolibrary.org/obo/OBIB_0000213",
+            "prefLabel": "Buffered formalin (10% NBF)",
             "type": "OntologyClass",
-            "label": "Liquid Nitrogen Vapor",
-            "source": "NCIT"
+            "label": "Buffered formalin (10% NBF)",
+            "source": "HRAVS"
           },
           {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63373",
-            "prefLabel": "Dry Ice",
+            "uri": "http://purl.humanatlas.io/valueset/R7wmumB7L0c6loPVH18aQBB",
+            "prefLabel": "Non-buffered formalin (FOR)",
             "type": "OntologyClass",
-            "label": "Dry Ice",
-            "source": "NCIT"
+            "label": "Non-buffered formalin (FOR)",
+            "source": "HRAVS"
           },
           {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C185332",
-            "prefLabel": "4 Degrees Celsius",
+            "uri": "http://purl.humanatlas.io/valueset/R29zLLugL85QKYJ6yoYhMm",
+            "prefLabel": "1 x PBS",
             "type": "OntologyClass",
-            "label": "4 Degrees Celsius",
-            "source": "NCIT"
+            "label": "1 x PBS",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/24Celsius-RoomTemperature",
-            "prefLabel": "24 Celsius (Room Temperature)",
+            "uri": "http://purl.humanatlas.io/valueset/R8fl7lw3OzJWYBTtJD9M064",
+            "prefLabel": "Formalin fixed OCT",
             "type": "OntologyClass",
-            "label": "24 Celsius (Room Temperature)",
-            "source": "HUSAT"
+            "label": "Formalin fixed OCT",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/37Celsius-PT",
-            "prefLabel": "37 Celsius",
+            "uri": "http://purl.humanatlas.io/valueset/Rg1p4Ycg6PUBFyMr0BZBiX",
+            "prefLabel": "PFA fixed frozen OCT",
             "type": "OntologyClass",
-            "label": "37 Celsius",
-            "source": "HUSAT"
+            "label": "PFA fixed frozen OCT",
+            "source": "HRAVS"
           },
           {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C185336",
-            "prefLabel": "Minus 80 Degrees Celsius",
+            "uri": "http://purl.humanatlas.io/valueset/RB3yprKLnUoisr7PChMkT87",
+            "prefLabel": "Fresh frozen OCT",
             "type": "OntologyClass",
-            "label": "-80 Degrees Celsius",
-            "source": "NCIT"
+            "label": "Fresh frozen OCT",
+            "source": "HRAVS"
           },
           {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C185334",
-            "prefLabel": "Minus 20 Degrees Celsius",
+            "uri": "http://purl.humanatlas.io/valueset/RCKKzxKjE51aLbgtIXDdnc7",
+            "prefLabel": "Fresh frozen CMC",
             "type": "OntologyClass",
-            "label": "-20 Degrees Celsius",
-            "source": "NCIT"
+            "label": "Fresh frozen CMC",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/R7Ls93P9LB6JfLVUM9VvUl0",
+            "prefLabel": "MACS tissue storage solution",
+            "type": "OntologyClass",
+            "label": "MACS tissue storage solution",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63348",
+            "prefLabel": "RNAlater",
+            "type": "OntologyClass",
+            "label": "RNAlater",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/CHEBI_17790",
+            "prefLabel": "Methanol (100%)",
+            "type": "OntologyClass",
+            "label": "Methanol (100%)",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/RBOfrv1hGkhv7LcoIMLZyUB",
+            "prefLabel": "Non-aldehyde based without acetic acid (NAA)",
+            "type": "OntologyClass",
+            "label": "Non-aldehyde based without acetic acid (NAA)",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/RBpO8IvOV1PqCgb5cnqgHBS",
+            "prefLabel": "Non-aldehyde based with acetic acid (ACA)",
+            "type": "OntologyClass",
+            "label": "Non-aldehyde based with acetic acid (ACA)",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C185113",
+            "prefLabel": "PAXgene tissue kit (PXT)",
+            "type": "OntologyClass",
+            "label": "PAXgene tissue kit (PXT)",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/R95PHE1u6kibXPQ1ouXV1w8",
+            "prefLabel": "Allprotect tissue reagent (ALL)",
+            "type": "OntologyClass",
+            "label": "Allprotect tissue reagent (ALL)",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/RCzpNKBkUriJVExpnx638Kz",
+            "prefLabel": "CLARITY hydrogel",
+            "type": "OntologyClass",
+            "label": "CLARITY hydrogel",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/CHEBI_58187",
+            "prefLabel": "Alginate inflated",
+            "type": "OntologyClass",
+            "label": "Alginate inflated",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/CHEBI_2511",
+            "prefLabel": "Agarose inflated",
+            "type": "OntologyClass",
+            "label": "Agarose inflated",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C41132",
+            "prefLabel": "None",
+            "type": "OntologyClass",
+            "label": "None",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17998",
+            "prefLabel": "Unknown",
+            "type": "OntologyClass",
+            "label": "Unknown",
+            "source": "HRAVS"
           }
         ],
         "branches": [],
@@ -1409,19 +1787,21 @@
           "format": "uri"
         }
       },
-      "schema:name": "preparation_temperature",
-      "schema:description": "the temperature for the preparation process",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:name": "preparation_medium",
+      "schema:description": "The medium used during the sample preparation.",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
-      "skos:prefLabel": "Preparation Temperature",
-      "@id": "https://repo.metadatacenter.org/template-fields/6794999b-225a-44e8-8603-c1763cba32a4",
+      "skos:prefLabel": "Preparation Medium",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
-    "processing_time_value": {
+    "preparation_condition": {
+      "@id": "https://repo.metadatacenter.org/template-fields/520b7685-0f39-481e-8dd1-023820320350",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -1456,20 +1836,78 @@
         }
       },
       "type": "object",
-      "title": "processing_time_value field schema",
-      "description": "processing_time_value field schema generated by the CEDAR Template Editor 2.6.19",
+      "title": "preparation_condition field schema",
+      "description": "preparation_condition field schema generated by the CEDAR Template Editor 2.6.19",
       "_ui": {
-        "inputType": "numeric"
+        "inputType": "textfield"
       },
       "_valueConstraints": {
-        "requiredValue": false,
-        "numberType": "xsd:float"
+        "requiredValue": true,
+        "ontologies": [],
+        "valueSets": [],
+        "classes": [
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C68796",
+            "prefLabel": "Liquid nitrogen",
+            "type": "OntologyClass",
+            "label": "Liquid nitrogen",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C174159",
+            "prefLabel": "Liquid nitrogen vapor",
+            "type": "OntologyClass",
+            "label": "Liquid nitrogen vapor",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/XCO_0000058",
+            "prefLabel": "Room temperature",
+            "type": "OntologyClass",
+            "label": "Room temperature",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63373",
+            "prefLabel": "Dry ice",
+            "type": "OntologyClass",
+            "label": "Dry ice",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C67342",
+            "prefLabel": "Ice",
+            "type": "OntologyClass",
+            "label": "Ice",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17998",
+            "prefLabel": "Unknown",
+            "type": "OntologyClass",
+            "label": "Unknown",
+            "source": "HRAVS"
+          }
+        ],
+        "branches": [],
+        "multipleChoice": false
       },
       "properties": {
-        "@value": {
-          "type": [
-            "string",
-            "null"
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
           ]
         },
         "rdfs:label": {
@@ -1478,28 +1916,26 @@
             "null"
           ]
         },
-        "@type": {
+        "@id": {
           "type": "string",
           "format": "uri"
         }
       },
-      "required": [
-        "@value",
-        "@type"
-      ],
-      "schema:name": "processing_time_value",
-      "schema:description": "The amount of time that elapsed from beginning of sampling to the first preservation (time from when received in lab to preservation). This would, for example, represent how long it took to cut the tissue and freeze it.",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:name": "preparation_condition",
+      "schema:description": "The condition or environment under which the preparation occurred, such as was the sample sitting on dry ice during the preparation.",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
-      "skos:prefLabel": "Processing Time Value",
-      "@id": "https://repo.metadatacenter.org/template-fields/cf3d29bc-159f-4f88-aa3b-36e2fca795ad",
+      "skos:prefLabel": "Preparation Condition",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
     "processing_time_unit": {
+      "@id": "https://repo.metadatacenter.org/template-fields/20d13d18-e268-4899-85c8-d3f0fa6e8cd1",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -1546,24 +1982,24 @@
         "classes": [
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000031",
-            "prefLabel": "minute",
+            "prefLabel": "Minute",
             "type": "OntologyClass",
             "label": "minute",
-            "source": "UO"
+            "source": "HRAVS"
           },
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000032",
-            "prefLabel": "hour",
+            "prefLabel": "Hour",
             "type": "OntologyClass",
             "label": "hour",
-            "source": "UO"
+            "source": "HRAVS"
           },
           {
             "uri": "http://purl.obolibrary.org/obo/UO_0000033",
-            "prefLabel": "day",
+            "prefLabel": "Day",
             "type": "OntologyClass",
             "label": "day",
-            "source": "UO"
+            "source": "HRAVS"
           }
         ],
         "branches": [],
@@ -1599,742 +2035,20 @@
         }
       },
       "schema:name": "processing_time_unit",
-      "schema:description": "time unit",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "schema:description": "Unit of processing time measurement",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Processing Time Unit",
-      "@id": "https://repo.metadatacenter.org/template-fields/6adf52c4-e3c7-4f26-8104-6642582605f4",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "storage_temperature": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "storage_temperature field schema",
-      "description": "storage_temperature field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "textfield"
-      },
-      "_valueConstraints": {
-        "requiredValue": true,
-        "ontologies": [],
-        "valueSets": [],
-        "classes": [
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/LiquidNitrogen-Unspecified",
-            "prefLabel": "Liquid Nitrogen (Unspecified)",
-            "type": "OntologyClass",
-            "label": "Liquid Nitrogen (Unspecified)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/LiquidNitrogen-Cryotube",
-            "prefLabel": "Liquid Nitrogen (Cryotube)",
-            "type": "OntologyClass",
-            "label": "Liquid Nitrogen (Cryotube)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/LiquidNitrogen-Straw",
-            "prefLabel": "Liquid Nitrogen (Straw)",
-            "type": "OntologyClass",
-            "label": "Liquid Nitrogen (Straw)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C174159",
-            "prefLabel": "Liquid Nitrogen Vapor",
-            "type": "OntologyClass",
-            "label": "Liquid Nitrogen Vapor",
-            "source": "NCIT"
-          },
-          {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63373",
-            "prefLabel": "Dry Ice",
-            "type": "OntologyClass",
-            "label": "Dry Ice",
-            "source": "NCIT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/-80Celsius-Unspecified",
-            "prefLabel": "-80 Celsius (Unspecified)",
-            "type": "OntologyClass",
-            "label": "-80 Celsius (Unspecified)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/-80Celsius-Cryotube",
-            "prefLabel": "-80 Celsius (Cryotube)",
-            "type": "OntologyClass",
-            "label": "-80 Celsius (Cryotube)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/-80Celsius-Straw",
-            "prefLabel": "-80 Celsius (Straw)",
-            "type": "OntologyClass",
-            "label": "-80 Celsius (Straw)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C185332",
-            "prefLabel": "4 Degrees Celsius",
-            "type": "OntologyClass",
-            "label": "4 Degrees Celsius",
-            "source": "NCIT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/24Celsius-RoomTemperature",
-            "prefLabel": "24 Celsius (Room Temperature)",
-            "type": "OntologyClass",
-            "label": "24 Celsius (Room Temperature)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/37Celsius-ST",
-            "prefLabel": "37 Celsius",
-            "type": "OntologyClass",
-            "label": "37 Celsius",
-            "source": "HUSAT"
-          }
-        ],
-        "branches": [],
-        "multipleChoice": false
-      },
-      "properties": {
-        "@type": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "string",
-                "format": "uri"
-              },
-              "uniqueItems": true
-            }
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "@id": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "schema:name": "storage_temperature",
-      "schema:description": "The temperature during storage, after preparation and before the assay is performed.",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "skos:prefLabel": "Storage Temperature",
-      "@id": "https://repo.metadatacenter.org/template-fields/4cd20e64-d91f-44f3-bc7b-77ced55f4857",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "notes": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "notes field schema",
-      "description": "notes field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "textarea"
-      },
-      "_valueConstraints": {
-        "requiredValue": false
-      },
-      "properties": {
-        "@type": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "string",
-                "format": "uri"
-              },
-              "uniqueItems": true
-            }
-          ]
-        },
-        "@value": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "@value"
-      ],
-      "schema:name": "notes",
-      "schema:description": "Help Text",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "skos:prefLabel": "Notes",
-      "@id": "https://repo.metadatacenter.org/template-fields/d295732c-409c-421c-93a2-7d4334b26e0d",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "histological_report": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "histological_report field schema",
-      "description": "histological_report field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "textarea"
-      },
-      "_valueConstraints": {
-        "requiredValue": false
-      },
-      "properties": {
-        "@type": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "string",
-                "format": "uri"
-              },
-              "uniqueItems": true
-            }
-          ]
-        },
-        "@value": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "@value"
-      ],
-      "schema:name": "histological_report",
-      "schema:description": "histological reporting of key variables that are important for the tissue (absence of necrosis, comment on composition, significant pathology description, high level inflammation/fibrosis assessment etc",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "skos:prefLabel": "Histological Report",
-      "@id": "https://repo.metadatacenter.org/template-fields/979520e2-cb7c-4007-83bb-aac9acbe7ecc",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "quality_criteria": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "quality_criteria field schema",
-      "description": "quality_criteria field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "textarea"
-      },
-      "_valueConstraints": {
-        "requiredValue": false
-      },
-      "properties": {
-        "@type": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "string",
-                "format": "uri"
-              },
-              "uniqueItems": true
-            }
-          ]
-        },
-        "@value": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "@value"
-      ],
-      "schema:name": "quality_criteria",
-      "schema:description": "For example, RIN: 8.7. For suspensions, measured by visual inspection prior to cell lysis or defined by known parameters such as wells with several cells or no cells. This can be captured at a high level. \"OK\" or \"not OK\", or with more specificity such as \"debris\", \"clump\", \"low clump\".",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "skos:prefLabel": "Quality Criteria",
-      "@id": "https://repo.metadatacenter.org/template-fields/e366edf4-9e26-4d8d-95d9-f33f9419ab8b",
-      "$schema": "http://json-schema.org/draft-04/schema#"
-    },
-    "preparation_medium": {
-      "@type": "https://schema.metadatacenter.org/core/TemplateField",
-      "@context": {
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "pav": "http://purl.org/pav/",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "oslc": "http://open-services.net/ns/core#",
-        "schema": "http://schema.org/",
-        "skos": "http://www.w3.org/2004/02/skos/core#",
-        "schema:name": {
-          "@type": "xsd:string"
-        },
-        "schema:description": {
-          "@type": "xsd:string"
-        },
-        "skos:prefLabel": {
-          "@type": "xsd:string"
-        },
-        "skos:altLabel": {
-          "@type": "xsd:string"
-        },
-        "pav:createdOn": {
-          "@type": "xsd:dateTime"
-        },
-        "pav:createdBy": {
-          "@type": "@id"
-        },
-        "pav:lastUpdatedOn": {
-          "@type": "xsd:dateTime"
-        },
-        "oslc:modifiedBy": {
-          "@type": "@id"
-        }
-      },
-      "type": "object",
-      "title": "preparation_medium field schema",
-      "description": "preparation_medium field schema generated by the CEDAR Template Editor 2.6.19",
-      "_ui": {
-        "inputType": "textfield"
-      },
-      "_valueConstraints": {
-        "requiredValue": true,
-        "ontologies": [],
-        "valueSets": [],
-        "classes": [
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/PFA4pc-prep",
-            "prefLabel": "PFA 4%",
-            "type": "OntologyClass",
-            "label": "PFA 4%",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/bufferedFormalin-10pcNBF-prep",
-            "prefLabel": "Buffered Formalin (10% NBF)",
-            "type": "OntologyClass",
-            "label": "Buffered Formalin (10% NBF)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/Non-BufferedFormalin-FOR-prep",
-            "prefLabel": "Non-Buffered Formalin (FOR)",
-            "type": "OntologyClass",
-            "label": "Non-Buffered Formalin (FOR)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/1xPBS-prep",
-            "prefLabel": "1 x PBS",
-            "type": "OntologyClass",
-            "label": "1 x PBS",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/OCT",
-            "prefLabel": "OCT",
-            "type": "OntologyClass",
-            "label": "OCT",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/CMC-prep",
-            "prefLabel": "CMC",
-            "type": "OntologyClass",
-            "label": "CMC",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/maCSTissueStorageSolution-prep",
-            "prefLabel": "MACS Tissue Storage Solution",
-            "type": "OntologyClass",
-            "label": "MACS Tissue Storage Solution",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63348",
-            "prefLabel": "RNALater",
-            "type": "OntologyClass",
-            "label": "RNALater",
-            "source": "NCIT"
-          },
-          {
-            "uri": "http://purl.bioontology.org/ontology/MESH/D000432",
-            "prefLabel": "Methanol",
-            "type": "OntologyClass",
-            "label": "Methanol",
-            "source": "MESH"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/Non-AldehydeBasedWithoutAceticAcid-NAA",
-            "prefLabel": "Non-Aldehyde Based Without Acetic Acid (NAA)",
-            "type": "OntologyClass",
-            "label": "Non-Aldehyde Based Without Acetic Acid (NAA)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/Non-AldehydeWithAceticAcid-ACA",
-            "prefLabel": "Non-Aldehyde With Acetic Acid (ACA)",
-            "type": "OntologyClass",
-            "label": "Non-Aldehyde With Acetic Acid (ACA)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C126392",
-            "prefLabel": "PAXgene Blood Tissue System",
-            "type": "OntologyClass",
-            "label": "PAXgene Blood Tissue System",
-            "source": "NCIT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/allprotectTissueReagent-ALL-prep",
-            "prefLabel": "Allprotect Tissue Reagent (ALL)",
-            "type": "OntologyClass",
-            "label": "Allprotect Tissue Reagent (ALL)",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C41132",
-            "prefLabel": "None",
-            "type": "OntologyClass",
-            "label": "None",
-            "source": "NCIT"
-          }
-        ],
-        "branches": [],
-        "multipleChoice": false,
-        "actions": [
-          {
-            "to": 7,
-            "action": "move",
-            "termUri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63348",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "NCIT"
-          },
-          {
-            "to": 10,
-            "action": "move",
-            "termUri": "https://cadsr.nci.nih.gov/metadata/CADSR-VS/7cdc5c991cea13e5cb39d1f3a140f6e2add46a42",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "CADSR-VS"
-          },
-          {
-            "to": 3,
-            "action": "move",
-            "termUri": "https://purl.org/hubmapvoc/samples-voc-additions/PFA4pc-prep",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "HUSAT"
-          },
-          {
-            "to": 0,
-            "action": "move",
-            "termUri": "https://purl.org/hubmapvoc/samples-voc-additions/PFA4pc-prep",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "HUSAT"
-          },
-          {
-            "to": 2,
-            "action": "move",
-            "termUri": "https://purl.org/hubmapvoc/samples-voc-additions/bufferedFormalin-10pcNBF-prep",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "HUSAT"
-          },
-          {
-            "to": 1,
-            "action": "move",
-            "termUri": "https://purl.org/hubmapvoc/samples-voc-additions/bufferedFormalin-10pcNBF-prep",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "HUSAT"
-          },
-          {
-            "to": 4,
-            "action": "move",
-            "termUri": "https://purl.org/hubmapvoc/samples-voc-additions/OCT",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "HUSAT"
-          },
-          {
-            "termUri": "http://purl.jp/bio/4/id/200906024077027800",
-            "sourceUri": "template",
-            "source": "IOBC",
-            "type": "OntologyClass",
-            "action": "delete"
-          },
-          {
-            "termUri": "http://purl.bioontology.org/ontology/SNOMEDCT/434162003",
-            "sourceUri": "template",
-            "source": "SNOMEDCT",
-            "type": "OntologyClass",
-            "action": "delete"
-          },
-          {
-            "termUri": "http://purl.obolibrary.org/obo/XCO_0000445",
-            "sourceUri": "template",
-            "source": "XCO",
-            "type": "OntologyClass",
-            "action": "delete"
-          },
-          {
-            "termUri": "http://purl.org/net/OCRe/OCRe.owl#OCRE400018",
-            "sourceUri": "template",
-            "source": "OCRE",
-            "type": "OntologyClass",
-            "action": "delete"
-          },
-          {
-            "to": 4,
-            "action": "move",
-            "termUri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63348",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "NCIT"
-          },
-          {
-            "to": 7,
-            "action": "move",
-            "termUri": "http://purl.bioontology.org/ontology/SNOMEDCT/260413007",
-            "type": "OntologyClass",
-            "sourceUri": "template",
-            "source": "SNOMEDCT"
-          }
-        ]
-      },
-      "properties": {
-        "@type": {
-          "oneOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "string",
-                "format": "uri"
-              },
-              "uniqueItems": true
-            }
-          ]
-        },
-        "rdfs:label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "@id": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "schema:name": "preparation_medium",
-      "schema:description": "The medium used during preparation of the sample.",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
-      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
-      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "schema:schemaVersion": "1.6.0",
-      "additionalProperties": false,
-      "skos:prefLabel": "Preparation Medium",
-      "@id": "https://repo.metadatacenter.org/template-fields/ee4a9425-9b24-4d2a-8275-79ac501a656a",
       "$schema": "http://json-schema.org/draft-04/schema#"
     },
     "storage_medium": {
+      "@id": "https://repo.metadatacenter.org/template-fields/7fad671a-876f-46bd-87e5-efbb9b4175b8",
       "@type": "https://schema.metadatacenter.org/core/TemplateField",
       "@context": {
         "xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -2380,144 +2094,165 @@
         "valueSets": [],
         "classes": [
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/PFA4pc-store",
-            "prefLabel": "PFA 4%",
+            "uri": "http://purl.humanatlas.io/valueset/RDXeyhRkzgtsJkPHsDuYppJ",
+            "prefLabel": "PFA (4%)",
             "type": "OntologyClass",
-            "label": "PFA 4%",
-            "source": "HUSAT"
+            "label": "PFA (4%)",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/BufferedFormalin-10pcNBF-store",
-            "prefLabel": "Buffered Formalin (10% NBF)",
+            "uri": "http://purl.obolibrary.org/obo/OBIB_0000213",
+            "prefLabel": "Buffered formalin (10% NBF)",
             "type": "OntologyClass",
-            "label": "Buffered Formalin (10% NBF)",
-            "source": "HUSAT"
+            "label": "Buffered formalin (10% NBF)",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/Non-BufferedFormalin-FOR-store",
-            "prefLabel": "Non-Buffered Formalin (FOR)",
+            "uri": "http://purl.humanatlas.io/valueset/R7wmumB7L0c6loPVH18aQBB",
+            "prefLabel": "Non-buffered formalin (FOR)",
             "type": "OntologyClass",
-            "label": "Non-Buffered Formalin (FOR)",
-            "source": "HUSAT"
+            "label": "Non-buffered formalin (FOR)",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/1xPBS-store",
+            "uri": "http://purl.humanatlas.io/valueset/R29zLLugL85QKYJ6yoYhMm",
             "prefLabel": "1 x PBS",
             "type": "OntologyClass",
             "label": "1 x PBS",
-            "source": "HUSAT"
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/OCTEmbedded",
-            "prefLabel": "OCT Embedded",
+            "uri": "http://purl.obolibrary.org/obo/XCO_0000445",
+            "prefLabel": "PBS + 0.05% Azide",
             "type": "OntologyClass",
-            "label": "OCT Embedded",
-            "source": "HUSAT"
+            "label": "PBS + 0.05% Azide",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/CMCEmbedded",
-            "prefLabel": "CMC Embedded",
+            "uri": "http://purl.humanatlas.io/valueset/RCJHZj0L0mLyUe9O0bYh7uX",
+            "prefLabel": "Antifreeze (50% PBS + 50% Glycerol + 0.05% Azide)",
             "type": "OntologyClass",
-            "label": "CMC Embedded",
-            "source": "HUSAT"
+            "label": "Antifreeze (50% PBS + 50% Glycerol + 0.05% Azide)",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/OCTEmbeddedCryoprotected-sucrose",
-            "prefLabel": "OCT Embedded Cryoprotected (sucrose)",
+            "uri": "http://purl.humanatlas.io/valueset/R9zXUQEyP2ln6rvh8vOEls5",
+            "prefLabel": "Paraffin embedded",
             "type": "OntologyClass",
-            "label": "OCT Embedded Cryoprotected (sucrose)",
-            "source": "HUSAT"
+            "label": "Paraffin embedded",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/ParaffinEmbedded",
-            "prefLabel": "Paraffin Embedded",
+            "uri": "http://purl.humanatlas.io/valueset/RBc8uopT0IpfZPx86br4eVg",
+            "prefLabel": "OCT embedded",
             "type": "OntologyClass",
-            "label": "Paraffin Embedded",
-            "source": "HUSAT"
+            "label": "OCT embedded",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/mACSTissueStorageSolution-store",
-            "prefLabel": "MACS Tissue Storage Solution",
+            "uri": "http://purl.humanatlas.io/valueset/RCWYYYa4RfK5frDrZwPtavn",
+            "prefLabel": "CMC embedded",
             "type": "OntologyClass",
-            "label": "MACS Tissue Storage Solution",
-            "source": "HUSAT"
+            "label": "CMC embedded",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/RDy7gG7HRLwd0cDan2umBgg",
+            "prefLabel": "OCT embedded cryoprotected (sucrose)",
+            "type": "OntologyClass",
+            "label": "OCT embedded cryoprotected (sucrose)",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/R7Ls93P9LB6JfLVUM9VvUl0",
+            "prefLabel": "MACS tissue storage solution",
+            "type": "OntologyClass",
+            "label": "MACS tissue storage solution",
+            "source": "HRAVS"
           },
           {
             "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63348",
-            "prefLabel": "RNALater",
+            "prefLabel": "RNAlater",
             "type": "OntologyClass",
-            "label": "RNALater",
-            "source": "NCIT"
+            "label": "RNAlater",
+            "source": "HRAVS"
           },
           {
-            "uri": "http://purl.bioontology.org/ontology/MESH/D000432",
-            "prefLabel": "Methanol",
+            "uri": "http://purl.humanatlas.io/valueset/R3FpnKu8qdCimWQGdBtHSD",
+            "prefLabel": "Methanol (80%)",
             "type": "OntologyClass",
-            "label": "Methanol",
-            "source": "MESH"
+            "label": "Methanol (80%)",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/Tris-EDTA",
+            "uri": "http://purl.humanatlas.io/valueset/R9sUUnDRj2LfajZ6ycXLV30",
+            "prefLabel": "Ethanol (70%)",
+            "type": "OntologyClass",
+            "label": "Ethanol (70%)",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.humanatlas.io/valueset/RDDClVxQqe4FFG1Tc9fSZbl",
             "prefLabel": "Tris-EDTA",
             "type": "OntologyClass",
             "label": "Tris-EDTA",
-            "source": "HUSAT"
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/70pcEthanol",
-            "prefLabel": "70% Ethanol",
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C437",
+            "prefLabel": "DMSO (no serum)",
             "type": "OntologyClass",
-            "label": "70% Ethanol",
-            "source": "HUSAT"
+            "label": "DMSO (no serum)",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/SerumplusDMSO",
-            "prefLabel": "Serum + DMSO",
+            "uri": "http://purl.humanatlas.io/valueset/RB2J3EJtfuRpZW3NmQrX4wP",
+            "prefLabel": "90% serum + 10% DMSO",
             "type": "OntologyClass",
-            "label": "Serum + DMSO",
-            "source": "HUSAT"
+            "label": "90% serum + 10% DMSO",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/DMSO-Noserum",
-            "prefLabel": "DMSO (No serum)",
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C185113",
+            "prefLabel": "PAXgene tissue kit (PXT)",
             "type": "OntologyClass",
-            "label": "DMSO (No serum)",
-            "source": "HUSAT"
+            "label": "PAXgene tissue kit (PXT)",
+            "source": "HRAVS"
           },
           {
-            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C126392",
-            "prefLabel": "PAXgene Blood Tissue System",
+            "uri": "http://purl.humanatlas.io/valueset/R95PHE1u6kibXPQ1ouXV1w8",
+            "prefLabel": "Allprotect tissue reagent (ALL)",
             "type": "OntologyClass",
-            "label": "PAXgene Blood Tissue System",
-            "source": "NCIT"
+            "label": "Allprotect tissue reagent (ALL)",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/allprotectTissueReagent-ALL-store",
-            "prefLabel": "Allprotect Tissue Reagent (ALL)",
+            "uri": "http://purl.humanatlas.io/valueset/R73lhxSnkzpf6OA9hN1wcte",
+            "prefLabel": "Sucrose cryoprotection solution",
             "type": "OntologyClass",
-            "label": "Allprotect Tissue Reagent (ALL)",
-            "source": "HUSAT"
+            "label": "Sucrose cryoprotection solution",
+            "source": "HRAVS"
           },
           {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/SucroseCryoprotectionSolution",
-            "prefLabel": "Sucrose Cryoprotection Solution",
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C83594",
+            "prefLabel": "Carboxymethylcellulose (CMC)",
             "type": "OntologyClass",
-            "label": "Sucrose Cryoprotection Solution",
-            "source": "HUSAT"
-          },
-          {
-            "uri": "https://purl.org/hubmapvoc/samples-voc-additions/CMC-store",
-            "prefLabel": "CMC",
-            "type": "OntologyClass",
-            "label": "CMC",
-            "source": "HUSAT"
+            "label": "Carboxymethylcellulose (CMC)",
+            "source": "HRAVS"
           },
           {
             "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C41132",
             "prefLabel": "None",
             "type": "OntologyClass",
             "label": "None",
-            "source": "NCIT"
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17998",
+            "prefLabel": "Unknown",
+            "type": "OntologyClass",
+            "label": "Unknown",
+            "source": "HRAVS"
           }
         ],
         "branches": [],
@@ -2554,14 +2289,264 @@
       },
       "schema:name": "storage_medium",
       "schema:description": "What was the sample preserved in.",
-      "pav:createdOn": "2022-09-26T11:52:57-07:00",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
       "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-      "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
       "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
       "schema:schemaVersion": "1.6.0",
       "additionalProperties": false,
       "skos:prefLabel": "Storage Medium",
-      "@id": "https://repo.metadatacenter.org/template-fields/ec64179a-9c44-454f-9d76-473f5c554b2d",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "storage_condition": {
+      "@id": "https://repo.metadatacenter.org/template-fields/4be69a0e-b827-42bf-8bf0-b3c1f9efcc53",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "storage_condition field schema",
+      "description": "storage_condition field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "textfield"
+      },
+      "_valueConstraints": {
+        "requiredValue": true,
+        "ontologies": [],
+        "valueSets": [],
+        "classes": [
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C68796",
+            "prefLabel": "Liquid nitrogen",
+            "type": "OntologyClass",
+            "label": "Liquid nitrogen",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C174159",
+            "prefLabel": "Liquid nitrogen vapor",
+            "type": "OntologyClass",
+            "label": "Liquid nitrogen vapor",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63373",
+            "prefLabel": "Dry ice",
+            "type": "OntologyClass",
+            "label": "Dry ice",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C67342",
+            "prefLabel": "Ice",
+            "type": "OntologyClass",
+            "label": "Ice",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/OBI_0000136",
+            "prefLabel": "37 Celsius incubator",
+            "type": "OntologyClass",
+            "label": "37 Celsius incubator",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C178955",
+            "prefLabel": "-80 Celsius freezer",
+            "type": "OntologyClass",
+            "label": "-80 Celsius freezer",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C84327",
+            "prefLabel": "-20 Celsius freezer",
+            "type": "OntologyClass",
+            "label": "-20 Celsius freezer",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C178971",
+            "prefLabel": "Refrigerator",
+            "type": "OntologyClass",
+            "label": "Refrigerator",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://purl.obolibrary.org/obo/XCO_0000058",
+            "prefLabel": "Room temperature",
+            "type": "OntologyClass",
+            "label": "Room temperature",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C41132",
+            "prefLabel": "None",
+            "type": "OntologyClass",
+            "label": "None",
+            "source": "HRAVS"
+          },
+          {
+            "uri": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17998",
+            "prefLabel": "Unknown",
+            "type": "OntologyClass",
+            "label": "Unknown",
+            "source": "HRAVS"
+          }
+        ],
+        "branches": [],
+        "multipleChoice": false
+      },
+      "properties": {
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "@id": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "schema:name": "storage_condition",
+      "schema:description": "The condition or environment under which the sample is stored, after preparation and before the assay is performed.",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Storage Condition",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "processing_time_value": {
+      "@id": "https://repo.metadatacenter.org/template-fields/70fa4d5f-b81e-4e09-a181-2eb4d2da5c77",
+      "@type": "https://schema.metadatacenter.org/core/TemplateField",
+      "@context": {
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "pav": "http://purl.org/pav/",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "skos:prefLabel": {
+          "@type": "xsd:string"
+        },
+        "skos:altLabel": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        },
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        }
+      },
+      "type": "object",
+      "title": "processing_time_value field schema",
+      "description": "processing_time_value field schema generated by the CEDAR Template Editor 2.6.19",
+      "_ui": {
+        "inputType": "numeric"
+      },
+      "_valueConstraints": {
+        "requiredValue": false,
+        "numberType": "xsd:decimal"
+      },
+      "properties": {
+        "@value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rdfs:label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "@type": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "@value",
+        "@type"
+      ],
+      "schema:name": "processing_time_value",
+      "schema:description": "The time the tissue sample was being handled before the initial preservation.",
+      "pav:createdOn": "2023-03-09T11:30:30-08:00",
+      "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
+      "pav:version": "0.0.1",
+      "bibo:status": "bibo:draft",
+      "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
+      "schema:schemaVersion": "1.6.0",
+      "additionalProperties": false,
+      "skos:prefLabel": "Processing Time Value",
       "$schema": "http://json-schema.org/draft-04/schema#"
     }
   },
@@ -2575,36 +2560,34 @@
     "pav:createdBy",
     "pav:lastUpdatedOn",
     "oslc:modifiedBy",
+    "sample_id",
+    "source_storage_time_value",
     "weight_value",
     "volume_value",
     "pathology_distance_value",
-    "sample_id",
-    "source_storage_time_value",
+    "quality_criteria",
+    "histological_report",
+    "notes",
     "source_storage_time_unit",
     "weight_unit",
     "volume_unit",
     "pathology_distance_unit",
     "preparation_medium",
-    "preparation_temperature",
-    "processing_time_value",
+    "preparation_condition",
     "processing_time_unit",
     "storage_medium",
-    "storage_temperature",
-    "notes",
-    "histological_report",
-    "quality_criteria"
+    "storage_condition",
+    "processing_time_value"
   ],
   "schema:name": "Sample Block",
   "schema:description": "",
-  "pav:createdOn": "2022-07-20T13:39:34-07:00",
+  "pav:createdOn": "2022-12-03T15:54:58-08:00",
   "pav:createdBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
-  "pav:lastUpdatedOn": "2022-09-26T11:52:57-07:00",
+  "pav:lastUpdatedOn": "2023-03-09T11:30:30-08:00",
   "oslc:modifiedBy": "https://metadatacenter.org/users/f58ef265-1d78-4687-b1f5-73c932024d68",
   "schema:schemaVersion": "1.6.0",
   "additionalProperties": false,
   "pav:version": "0.0.1",
   "bibo:status": "bibo:draft",
-  "pav:derivedFrom": "https://repo.metadatacenter.org/templates/a776b52d-e0ed-45e0-9373-21603fa83ddb",
-  "@id": "https://repo.metadatacenter.org/templates/e70b6a16-4ce4-43b0-ad08-0611d222f7a7",
   "$schema": "http://json-schema.org/draft-04/schema#"
 }

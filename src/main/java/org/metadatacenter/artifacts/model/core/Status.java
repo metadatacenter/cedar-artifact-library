@@ -3,7 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 public enum Status
 {
   DRAFT("bibo:draft"),
-  RELEASED("bibo:released");
+  PUBLISHED("bibo:published");
 
   private String text;
 

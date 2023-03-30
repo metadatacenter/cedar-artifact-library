@@ -21,11 +21,12 @@ public class FieldSchemaArtifact extends SchemaArtifact
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
   }
 
-
   public FieldUI getFieldUI()
   {
     return fieldUI;
   }
+
+  public boolean isHidden() { return fieldUI.isHidden(); }
 
   public ValueConstraints getValueConstraints()
   {

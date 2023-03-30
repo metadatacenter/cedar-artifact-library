@@ -26,8 +26,6 @@ public class TemplateReporter
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
     ArtifactReader artifactReader = new ArtifactReader(mapper);
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
-
-    System.out.println("Template: " + templateSchemaArtifact);
   }
 
   private static void Usage()

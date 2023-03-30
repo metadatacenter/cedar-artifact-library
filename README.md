@@ -9,7 +9,7 @@ To build the code in this repository you must have the following items installed
 + A tool for checking out a [Git](http://git-scm.com/) repository.
 + Apache's [Maven](http://maven.apache.org/index.html).
 
-First build the [CEDAR parent project](https://github.com/metadatacenter/cedar-parent).
+First build the [CEDAR parent project](https://github.com/metadatacenter/cedar-parent) and the [CEDAR Server Core Library](https://github.com/metadatacenter/cedar-server-core-library).
 
 Get a copy of the latest code:
 

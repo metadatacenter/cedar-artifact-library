@@ -28,6 +28,21 @@ public class FieldUI
     return inputType;
   }
 
+  public boolean isTextField() { return inputType == FieldInputType.TEXTFIELD; }
+  public boolean isTextarea() { return inputType == FieldInputType.TEXTAREA; }
+  public boolean isRadio() { return inputType == FieldInputType.RADIO; }
+  public boolean isCheckbox() { return inputType == FieldInputType.CHECKBOX; }
+  public boolean isTemporal() { return inputType == FieldInputType.TEMPORAL; }
+  public boolean isEmail() { return inputType == FieldInputType.EMAIL; }
+  public boolean isList() { return inputType == FieldInputType.LIST; }
+  public boolean isNumeric() { return inputType == FieldInputType.NUMERIC; }
+  public boolean isPhoneNumber() { return inputType == FieldInputType.PHONE_NUMBER; }
+  public boolean isSectionBreak() { return inputType == FieldInputType.SECTION_BREAK; }
+  public boolean isRichText() { return inputType == FieldInputType.RICHTEXT; }
+  public boolean isImage() { return inputType == FieldInputType.IMAGE; }
+  public boolean isLink() { return inputType == FieldInputType.LINK; }
+  public boolean isYouTube() { return inputType == FieldInputType.YOUTUBE; }
+
   public boolean isValueRecommendationEnabled()
   {
     return valueRecommendationEnabled;
