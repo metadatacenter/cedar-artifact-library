@@ -569,7 +569,7 @@ public class ArtifactReader
     URI uri = readRequiredURIField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_URI);
     String acronym = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_ACRONYM);
     String name = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_NAME);
-    int numTerms = readRequiredIntField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_NUM_TERMS);
+    Optional<Integer> numTerms = readIntegerField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_NUM_TERMS);
 
     return new OntologyValueConstraint(uri, acronym, name, numTerms);
   }
