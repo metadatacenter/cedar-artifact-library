@@ -1,7 +1,7 @@
-CEDAR Artifact Tools
-====================
+CEDAR Artifact Library
+======================
 
-Contains various tools to work with CEDAR model artifacts.
+Contains various tools to work with CEDAR model artifacts (templates, elements, fields, template instances).
 
 To build the code in this repository you must have the following items installed:
 
