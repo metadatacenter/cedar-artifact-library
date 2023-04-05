@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,47 +145,51 @@ public class ArtifactSpreadsheetRenderer
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
     FieldInputType fieldInputType = fieldUI.getInputType();
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
 
     // Only some fields have validation constraints that we can create messages for
     if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
-      if (valueConstraints.getMinLength().isPresent()) {
-        Integer minLength = valueConstraints.getMinLength().get();
-        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
-          Integer maxLength = valueConstraints.getMaxLength().get();
-          return "Value should have a minimum of " + minLength + " characters and a maximum of " + maxLength;
-        } else { // Minimum length present, maximum length not present
-          return "Value should have a minimum of " + minLength + " characters";
+
+      if (valueConstraints.isPresent()) {
+        if (valueConstraints.get().getMinLength().isPresent()) {
+          Integer minLength = valueConstraints.get().getMinLength().get();
+          if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length present, maximum length present
+            Integer maxLength = valueConstraints.get().getMaxLength().get();
+            return "Value should have a minimum of " + minLength + " characters and a maximum of " + maxLength;
+          } else { // Minimum length present, maximum length not present
+            return "Value should have a minimum of " + minLength + " characters";
+          }
+        } else {
+          if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length not present, maximum length present
+            Integer maxLength = valueConstraints.get().getMaxLength().get();
+            return "Value should have a maximum of " + maxLength + " characters";
+          } else { // Minimum length not present, maximum length not present
+            return "";
+          }
         }
-      } else {
-        if (valueConstraints.getMaxLength().isPresent()) { // Minimum length not present, maximum length present
-          Integer maxLength = valueConstraints.getMaxLength().get();
-          return "Value should have a maximum of " + maxLength + " characters";
-        } else { // Minimum length not present, maximum length not present
-          return "";
+      } else if (fieldInputType == FieldInputType.NUMERIC) {
+        if (valueConstraints.get().getMinValue().isPresent()) {
+          Number minValue = valueConstraints.get().getMinValue().get();
+          if (valueConstraints.get().getMaxValue().isPresent()) { // Minimum present, maximum present
+            Number maxValue = valueConstraints.get().getMaxValue().get();
+            return "Value should be between " + minValue + " and " + maxValue;
+          } else { // Minimum present, maximum not present
+            return "Value should be greater than " + minValue;
+          }
+        } else {
+          if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
+            Number maxValue = valueConstraints.get().getMaxValue().get();
+            return "Value should be less than " + maxValue;
+          } else { // Maximum not present, minimum not present
+            return "Value should be a number";
+          }
         }
-      }
-    } else if (fieldInputType == FieldInputType.NUMERIC) {
-      if (valueConstraints.getMinValue().isPresent()) {
-        Number minValue = valueConstraints.getMinValue().get();
-        if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
-          Number maxValue = valueConstraints.getMaxValue().get();
-          return "Value should be between " + minValue + " and " + maxValue;
-        } else { // Minimum present, maximum not present
-          return "Value should be greater than " + minValue;
-        }
-      } else {
-        if (valueConstraints.getMaxValue().isPresent()) { // Maximum present, minimum not present
-          Number maxValue = valueConstraints.getMaxValue().get();
-          return "Value should be less than " + maxValue;
-        } else { // Maximum not present, minimum not present
-          return "Value should be a number";
-        }
-      }
-    } else if (fieldInputType == FieldInputType.TEMPORAL) {
-      String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.getTemporalType(),
-        fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
-      return temporalFormatString;
+      } else if (fieldInputType == FieldInputType.TEMPORAL) {
+        String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.get().getTemporalType(),
+          fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
+        return temporalFormatString;
+      } else
+        return "";
     } else
       return "";
   }
@@ -218,86 +223,96 @@ public class ArtifactSpreadsheetRenderer
   private Optional<DataValidationConstraint> createDecimalDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
     int validationType = DataValidationConstraint.ValidationType.DECIMAL;
 
-    if (valueConstraints.getMinValue().isPresent()) {
-      Number minValue = valueConstraints.getMinValue().get();
-      if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
-        Number maxValue = valueConstraints.getMaxValue().get();
-        return Optional.of(
-          dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-            minValue.toString(), maxValue.toString()));
-      } else { // Minimum present, maximum not present
-        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-          DataValidationConstraint.OperatorType.GREATER_THAN, minValue.toString(), ""));
+    if (valueConstraints.isPresent()) {
+      if (valueConstraints.get().getMinValue().isPresent()) {
+        Number minValue = valueConstraints.get().getMinValue().get();
+        if (valueConstraints.get().getMaxValue().isPresent()) { // Minimum present, maximum present
+          Number maxValue = valueConstraints.get().getMaxValue().get();
+          return Optional.of(
+            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+              minValue.toString(), maxValue.toString()));
+        } else { // Minimum present, maximum not present
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.GREATER_THAN, minValue.toString(), ""));
+        }
+      } else {
+        if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
+          Number maxValue = valueConstraints.get().getMaxValue().get();
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
+        } else { // Maximum not present, minimum not present
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+            String.valueOf(Float.MIN_VALUE), String.valueOf(Float.MAX_VALUE)));
+        }
       }
-    } else {
-      if (valueConstraints.getMaxValue().isPresent()) { // Maximum present, minimum not present
-        Number maxValue = valueConstraints.getMaxValue().get();
-        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-          DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
-      } else { // Maximum not present, minimum not present
-        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-          DataValidationConstraint.OperatorType.BETWEEN, String.valueOf(Float.MIN_VALUE), String.valueOf(Float.MAX_VALUE)));
-      }
-    }
+    } else
+      return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+        String.valueOf(Float.MIN_VALUE), String.valueOf(Float.MAX_VALUE)));
   }
 
   private Optional<DataValidationConstraint> createIntegerDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
     int validationType = DataValidationConstraint.ValidationType.INTEGER;
 
-    if (valueConstraints.getMinValue().isPresent()) {
-      Number minValue = valueConstraints.getMinValue().get();
-      if (valueConstraints.getMaxValue().isPresent()) { // Minimum present, maximum present
-        Number maxValue = valueConstraints.getMaxValue().get();
-        return Optional.of(
-          dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-            minValue.toString(), maxValue.toString()));
-      } else { // Minimum present, maximum not present
-        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-          DataValidationConstraint.OperatorType.GREATER_THAN, minValue.toString(), ""));
+    if (valueConstraints.isPresent()) {
+      if (valueConstraints.get().getMinValue().isPresent()) {
+        Number minValue = valueConstraints.get().getMinValue().get();
+        if (valueConstraints.get().getMaxValue().isPresent()) { // Minimum present, maximum present
+          Number maxValue = valueConstraints.get().getMaxValue().get();
+          return Optional.of(
+            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+              minValue.toString(), maxValue.toString()));
+        } else { // Minimum present, maximum not present
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+            DataValidationConstraint.OperatorType.GREATER_THAN, minValue.toString(), ""));
+        }
+      } else {
+        if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
+          Number maxValue = valueConstraints.get().getMaxValue().get();
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+            DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
+        } else { // Maximum not present, minimum not present
+          return Optional.of(
+            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+              String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
+        }
       }
-    } else {
-      if (valueConstraints.getMaxValue().isPresent()) { // Maximum present, minimum not present
-        Number maxValue = valueConstraints.getMaxValue().get();
-        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-          DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
-      } else { // Maximum not present, minimum not present
-        return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-          DataValidationConstraint.OperatorType.BETWEEN, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
-      }
-    }
+    } else
+      return Optional.of(
+        dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+          String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
   }
 
   private Optional<DataValidationConstraint> createTextLengthDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
 
-    if (valueConstraints.getMinLength().isPresent()) {
-      Integer minLength = valueConstraints.getMinLength().get();
-      if (valueConstraints.getMaxLength().isPresent()) { // Minimum length present, maximum length present
-        Integer maxLength = valueConstraints.getMaxLength().get();
-        return Optional.of(
-          dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN, minLength.toString(), maxLength.toString()));
-      } else { // Minimum length present, maximum length not present
-        return Optional.of(
-          dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN, minLength.toString(), ""));
+    if (valueConstraints.isPresent()) {
+      if (valueConstraints.get().getMinLength().isPresent()) {
+        Integer minLength = valueConstraints.get().getMinLength().get();
+        if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length present, maximum length present
+          Integer maxLength = valueConstraints.get().getMaxLength().get();
+          return Optional.of(
+            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN, minLength.toString(), maxLength.toString()));
+        } else { // Minimum length present, maximum length not present
+          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN,
+            minLength.toString(), ""));
+        }
+      } else {
+        if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length not present, maximum length present
+          Integer maxLength = valueConstraints.get().getMaxLength().get();
+          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL,
+            maxLength.toString(), ""));
+        } else { // Minimum length not present, maximum length not present
+          return Optional.empty();
+        }
       }
-    } else {
-      if (valueConstraints.getMaxLength().isPresent()) { // Minimum length not present, maximum length present
-        Integer maxLength = valueConstraints.getMaxLength().get();
-        return Optional.of(
-          dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxLength.toString(), ""));
-      } else { // Minimum length not present, maximum length not present
-        return Optional.empty();
-      }
-    }
+    } else
+      return Optional.empty();
   }
 
   private Optional<DataValidationConstraint> createDateDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
@@ -358,20 +373,23 @@ public class ArtifactSpreadsheetRenderer
       return Optional.empty();
   }
 
-  private Map<String, String> getPossibleValues(ValueConstraints valueConstraints)
+  private Map<String, String> getPossibleValues(Optional<ValueConstraints> valueConstraints)
   {
-    Map<String, String> values = new HashMap<>();
-    List<String> labels = valueConstraints.getLiterals().stream().map(LiteralValueConstraint::getLabel).collect(Collectors.toList());
+    if (valueConstraints.isPresent()) {
+      Map<String, String> values = new HashMap<>();
+      List<String> labels = valueConstraints.get().getLiterals().stream().map(LiteralValueConstraint::getLabel).collect(Collectors.toList());
 
-    if (valueConstraints.hasOntologyValueBasedConstraints()) {
-      Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints);
-      values.putAll(ontologyBasedValues);
-    }
+      if (valueConstraints.get().hasOntologyValueBasedConstraints()) {
+        Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints.get());
+        values.putAll(ontologyBasedValues);
+      }
 
-    for (String label : labels)
-      values.put(label, "");
+      for (String label : labels)
+        values.put(label, "");
 
-    return values;
+      return values;
+    } else
+      return Collections.emptyMap();
   }
 
   // Return prefLabel->IRI
@@ -409,7 +427,7 @@ public class ArtifactSpreadsheetRenderer
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
     FieldInputType fieldInputType = fieldUI.getInputType();
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
 
     if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
       || fieldInputType == FieldInputType.RICHTEXT || fieldInputType == FieldInputType.EMAIL
@@ -420,15 +438,15 @@ public class ArtifactSpreadsheetRenderer
       fieldInputType == FieldInputType.CHECKBOX) {
       return DataValidationConstraint.ValidationType.FORMULA;
     } else if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
-      if (valueConstraints.hasValueBasedConstraints())
+      if (valueConstraints.isPresent() && valueConstraints.get().hasValueBasedConstraints())
         return DataValidationConstraint.ValidationType.FORMULA;
-      else if (valueConstraints.getMinLength().isPresent() || valueConstraints.getMaxLength().isPresent())
+      else if (valueConstraints.isPresent() && (valueConstraints.get().getMinLength().isPresent() || valueConstraints.get().getMaxLength().isPresent()))
         return DataValidationConstraint.ValidationType.TEXT_LENGTH;
       else
         return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.NUMERIC) {
-      if (valueConstraints.getNumberType().isPresent()) {
-        NumberType numberType = valueConstraints.getNumberType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().getNumberType().isPresent()) {
+        NumberType numberType = valueConstraints.get().getNumberType().get();
 
         if (numberType == NumberType.DECIMAL || numberType == NumberType.DOUBLE || numberType == NumberType.FLOAT) {
           return DataValidationConstraint.ValidationType.DECIMAL;
@@ -440,8 +458,8 @@ public class ArtifactSpreadsheetRenderer
       } else
         throw new RuntimeException("Missing number type for numeric field " + fieldName);
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
-      if (valueConstraints.getTemporalType().isPresent()) {
-        TemporalType temporalType = valueConstraints.getTemporalType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().getTemporalType().isPresent()) {
+        TemporalType temporalType = valueConstraints.get().getTemporalType().get();
 
         if (temporalType == TemporalType.DATE || temporalType == TemporalType.DATETIME)
           return DataValidationConstraint.ValidationType.DATE;
@@ -554,18 +572,28 @@ public class ArtifactSpreadsheetRenderer
   {
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
     DataFormat dataFormat = workbook.createDataFormat();
     CellStyle cellStyle = workbook.createCellStyle();
 
     if (fieldUI.isNumeric()) {
-      String formatString = getNumericFormatString(fieldName, valueConstraints.getNumberType(),
-        valueConstraints.getDecimalPlaces(), valueConstraints.getUnitOfMeasure());
-      cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+      if (valueConstraints.isPresent()) {
+        String formatString = getNumericFormatString(fieldName, valueConstraints.get().getNumberType(),
+          valueConstraints.get().getDecimalPlaces(), valueConstraints.get().getUnitOfMeasure());
+        cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+      } else {
+        String formatString = getNumericFormatString(fieldName, Optional.empty(), Optional.empty(), Optional.empty());
+        cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+      }
     } else if (fieldUI.isTemporal()) {
-      String formatString = getTemporalFormatString(fieldName, valueConstraints.getTemporalType(),
-        fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
-      cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+      if (valueConstraints.isPresent()) {
+        String formatString = getTemporalFormatString(fieldName, valueConstraints.get().getTemporalType(),
+          fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
+        cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+      } else {
+        String formatString = getTemporalFormatString(fieldName, Optional.empty(), fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
+        cellStyle.setDataFormat(dataFormat.getFormat(formatString));
+      }
     }
 
     return cellStyle;

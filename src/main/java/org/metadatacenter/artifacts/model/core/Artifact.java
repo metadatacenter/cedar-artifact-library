@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class Artifact
 {
-  private final URI jsonLDID;
+  private final Optional<URI> jsonLDID;
   private final List<URI> jsonLDTypes;
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
@@ -18,7 +18,7 @@ public class Artifact
   private final Optional<OffsetDateTime> createdOn, lastUpdatedOn;
   private final Map<String, URI> jsonLDContext;
 
-  public Artifact(URI jsonLDID, List<URI> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
+  public Artifact(Optional<URI> jsonLDID, List<URI> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn,
     Optional<OffsetDateTime> lastUpdatedOn, Map<String, URI> jsonLDContext)
@@ -49,7 +49,7 @@ public class Artifact
     this.jsonLDContext = artifact.jsonLDContext;
   }
 
-  public URI getJsonLDID()
+  public Optional<URI> getJsonLDID()
   {
     return jsonLDID;
   }
