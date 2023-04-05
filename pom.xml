@@ -8,7 +8,7 @@
   </parent>
 
   <groupId>org.metadatacenter</groupId>
-  <artifactId>cedar-artifact-tools</artifactId>
+  <artifactId>cedar-artifact-library/artifactId>
   <version>2.6.24-SNAPSHOT</version>
   <packaging>jar</packaging>
 
