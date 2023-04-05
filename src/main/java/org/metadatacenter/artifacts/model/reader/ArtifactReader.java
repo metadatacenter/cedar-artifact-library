@@ -52,17 +52,17 @@ public class ArtifactReader
 
   public TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode)
   {
-    return readTemplateSchemaArtifact(objectNode, "/");
+    return readTemplateSchemaArtifact(objectNode, "");
   }
 
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
   {
-    return readElementSchemaArtifact(objectNode, "/");
+    return readElementSchemaArtifact(objectNode, "");
   }
 
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
   {
-    return readFieldSchemaArtifact(objectNode, "/");
+    return readFieldSchemaArtifact(objectNode, "");
   }
 
   public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
@@ -418,7 +418,7 @@ public class ArtifactReader
 
   private Optional<ValueConstraints> readValueConstraints(ObjectNode objectNode, String path)
   {
-    String vcPath = path + ModelNodeNames.VALUE_CONSTRAINTS;
+    String vcPath = path + "/" + ModelNodeNames.VALUE_CONSTRAINTS;
     ObjectNode vcNode = readValueConstraintsNodeAtPath(objectNode, path);
 
     if (vcNode != null) {
