@@ -8,14 +8,14 @@
   </parent>
 
   <groupId>org.metadatacenter</groupId>
-  <artifactId>cedar-artifact-library/artifactId>
+  <artifactId>cedar-artifact-library</artifactId>
   <version>2.6.24-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:git:https://github.com/metadatacenter/cedar-artifact-tools.git</connection>
-    <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-tools.git</developerConnection>
-    <url>https://github.com/metadatacenter/cedar-artifact-tools</url>
+    <connection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</connection>
+    <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</developerConnection>
+    <url>https://github.com/metadatacenter/cedar-artifact-library</url>
     <tag>HEAD</tag>
   </scm>
 
