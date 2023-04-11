@@ -12,6 +12,9 @@
   <version>2.6.24-SNAPSHOT</version>
   <packaging>jar</packaging>
 
+  <name>CEDAR Artifact Library</name>
+  <description>Library for working with CEDAR artifacts</description>
+
   <scm>
     <connection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</connection>
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</developerConnection>
@@ -23,7 +26,7 @@
 
     <dependency>
       <groupId>org.metadatacenter</groupId>
-      <artifactId>cedar-server-globals</artifactId>
+      <artifactId>cedar-library</artifactId>
     </dependency>
 
     <dependency>
