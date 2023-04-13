@@ -94,20 +94,22 @@ public class TemplateSchemaArtifact2REDCapConvertor
     // TODO
 
     Cell requiredFieldHeaderCell = row.createCell(REDCapConstants.REQUIRED_FIELD_COLUMN_INDEX);
-    requiredFieldHeaderCell.setCellValue(fieldSchemaArtifact.getValueConstraints().isRequiredValue());
-
+    if (fieldSchemaArtifact.getValueConstraints().isPresent())
+      requiredFieldHeaderCell.setCellValue(fieldSchemaArtifact.getValueConstraints().get().isRequiredValue());
+    else
+      requiredFieldHeaderCell.setCellValue(false);
   }
 
   Optional<String> createTextFieldValidationValue(FieldSchemaArtifact fieldSchemaArtifact)
   {
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
-    ValueConstraints valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
 
     switch (fieldInputType) {
     case TEMPORAL:
-      if (valueConstraints.getTemporalType().isPresent()) {
-        TemporalType temporalType = valueConstraints.getTemporalType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().getTemporalType().isPresent()) {
+        TemporalType temporalType = valueConstraints.get().getTemporalType().get();
         Optional<InputTimeFormat> inputTimeFormat = fieldUI.getInputTimeFormat();
         Optional<TemporalGranularity> temporalGranularity = fieldUI.getTemporalGranularity();
 
@@ -154,8 +156,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
       return Optional.of(REDCapConstants.EMAIL_TEXTFIELD_VALIDATION);
     case NUMERIC:
 
-      if (valueConstraints.getNumberType().isPresent()) {
-        NumberType numberType = valueConstraints.getNumberType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().getNumberType().isPresent()) {
+        NumberType numberType = valueConstraints.get().getNumberType().get();
 
         switch (numberType) {
         case INTEGER:
@@ -167,8 +169,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
         case DECIMAL:
         case FLOAT:
         case DOUBLE:
-          if (valueConstraints.getDecimalPlaces().isPresent()) {
-            Integer decimalPlaces = valueConstraints.getDecimalPlaces().get();
+          if (valueConstraints.get().getDecimalPlaces().isPresent()) {
+            Integer decimalPlaces = valueConstraints.get().getDecimalPlaces().get();
             if (decimalPlaces == 1)
               return Optional.of(REDCapConstants.NUMBER_1_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 2)

@@ -17,7 +17,8 @@ public enum FieldInputType
   RICHTEXT(ModelNodeNames.FIELD_INPUT_TYPE_RICH_TEXT),
   IMAGE(ModelNodeNames.FIELD_INPUT_TYPE_IMAGE),
   LINK(ModelNodeNames.FIELD_INPUT_TYPE_LINK),
-  YOUTUBE(ModelNodeNames.FIELD_INPUT_TYPE_YOUTUBE);
+  YOUTUBE(ModelNodeNames.FIELD_INPUT_TYPE_YOUTUBE),
+  ATTRIBUTE_VALUE(ModelNodeNames.FIELD_INPUT_TYPE_ATTRIBUTE_VALUE);
 
   private final String text;
 

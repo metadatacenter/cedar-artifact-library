@@ -7,12 +7,12 @@ import java.util.Optional;
 public class FieldSchemaArtifact extends SchemaArtifact
 {
   private final FieldUI fieldUI;
-  private final ValueConstraints valueConstraints;
+  private final Optional<ValueConstraints> valueConstraints;
   private final Optional<String> skosPrefLabel;
   private final List<String> skosAlternateLabels;
 
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI, ValueConstraints valueConstraints,
-    Optional<String> skosPrefLabel, List<String> skosAlternateLabels)
+  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI,
+    Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels)
   {
     super(schemaArtifact);
     this.valueConstraints = valueConstraints;
@@ -28,7 +28,7 @@ public class FieldSchemaArtifact extends SchemaArtifact
 
   public boolean isHidden() { return fieldUI.isHidden(); }
 
-  public ValueConstraints getValueConstraints()
+  public Optional<ValueConstraints> getValueConstraints()
   {
     return valueConstraints;
   }

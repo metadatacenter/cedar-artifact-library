@@ -1,14 +1,14 @@
 package org.metadatacenter.artifacts.model.tools;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactReader;
 
 import java.io.File;
 import java.io.IOException;
-public class TemplateReporter
+
+public class ElementReporter
 {
   public static void main(String[] args) throws IOException
   {
@@ -23,17 +23,16 @@ public class TemplateReporter
     if (!jsonNode.isObject())
       throw new RuntimeException("Expecting JSON object");
 
-    ObjectNode templateObjectNode = (ObjectNode)jsonNode;
+    ObjectNode elementObjectNode = (ObjectNode)jsonNode;
     ArtifactReader artifactReader = new ArtifactReader(mapper);
-    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
+    ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
-    System.out.println("schema:name: " + templateSchemaArtifact.getName());
-
+    System.out.println("schema:name: " + elementSchemaArtifact.getName());
   }
 
   private static void Usage()
   {
-    System.err.println("Usage: " + TemplateReporter.class.getName() + " [ <templateFileName> ]");
+    System.err.println("Usage: " + ElementReporter.class.getName() + " [ <elementFileName> ]");
     System.exit(1);
   }
 }

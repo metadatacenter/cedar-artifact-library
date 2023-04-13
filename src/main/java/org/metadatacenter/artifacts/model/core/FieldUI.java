@@ -42,6 +42,7 @@ public class FieldUI
   public boolean isImage() { return inputType == FieldInputType.IMAGE; }
   public boolean isLink() { return inputType == FieldInputType.LINK; }
   public boolean isYouTube() { return inputType == FieldInputType.YOUTUBE; }
+  public boolean isAttributeValue() { return inputType == FieldInputType.ATTRIBUTE_VALUE; }
 
   public boolean isValueRecommendationEnabled()
   {
