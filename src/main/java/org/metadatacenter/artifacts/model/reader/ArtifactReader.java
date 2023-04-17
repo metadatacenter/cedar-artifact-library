@@ -147,11 +147,11 @@ public class ArtifactReader
     if (objectNode.isArray()) {
       JsonNode itemsNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_ITEMS);
       if (itemsNode == null || !itemsNode.isArray() || !itemsNode.iterator().hasNext())
-        throw new RuntimeException("Expecting array " + ModelNodeNames.JSON_SCHEMA_ITEMS + " at " + path);
+        throw new ArtifactParseException("Expecting array",  ModelNodeNames.JSON_SCHEMA_ITEMS, path);
 
       JsonNode itemNode = itemsNode.iterator().next();
       if (!itemNode.isObject())
-        throw new RuntimeException("Expecting object as first element of " + ModelNodeNames.JSON_SCHEMA_ITEMS + " at " + path);
+        throw new ArtifactParseException("Expecting object as first element", ModelNodeNames.JSON_SCHEMA_ITEMS, path);
       return  (ObjectNode)itemNode;
     } else
       return objectNode;
@@ -213,7 +213,7 @@ public class ArtifactReader
     JsonNode propertiesNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_PROPERTIES);
 
     if (propertiesNode == null || !propertiesNode.isObject())
-      throw new RuntimeException("Invalid JSON Schema properties node at " + path);
+      throw new ArtifactParseException("Invalid JSON Schema properties node", ModelNodeNames.JSON_SCHEMA_PROPERTIES, path);
 
     Iterator<String> jsonFieldNames = propertiesNode.fieldNames();
 
@@ -236,15 +236,14 @@ public class ArtifactReader
             jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode
               .get(ModelNodeNames.JSON_SCHEMA_ITEMS);
             if (jsonFieldOrElementSchemaArtifactNode == null)
-              throw new RuntimeException("No items field in array at " + fieldOrElementPath);
+              throw new ArtifactParseException("No items field in array", ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
 
             fieldOrElementPath += "/items";
 
             if (!jsonFieldOrElementSchemaArtifactNode.isObject())
-              throw new RuntimeException("Non-object items content in array at " + fieldOrElementPath);
+              throw new ArtifactParseException("Non-object items content in array", ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
           } else if (!jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_OBJECT)) {
-            throw new RuntimeException(
-              "Expecting array or object at location " + fieldOrElementPath + ", got " + jsonSchemaType);
+            throw new ArtifactParseException("Expecting array or object, got " + jsonSchemaType, ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
           }
 
           List<URI> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
@@ -255,7 +254,7 @@ public class ArtifactReader
           URI subSchemaArtifactJsonLDType = subSchemaArtifactJsonLDTypes.get(0);
 
           if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            throw new RuntimeException("Invalid nesting of template schema artifact at location " + fieldOrElementPath);
+            throw new ArtifactParseException("Invalid nesting of template schema artifact", jsonFieldName, fieldOrElementPath);
 
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
             ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
@@ -268,13 +267,11 @@ public class ArtifactReader
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
             // TODO: We do not yet handle these
           } else
-            throw new RuntimeException(
-              "Unknown JSON-LD @type " + subSchemaArtifactJsonLDType + "for field " + jsonFieldName + " at location "
-                + fieldOrElementPath);
+            throw new ArtifactParseException(
+              "Unknown JSON-LD @type " + subSchemaArtifactJsonLDType, jsonFieldName, fieldOrElementPath);
 
         } else {
-          throw new RuntimeException(
-            "Unknown non-object schema artifact field " + jsonFieldName + " at location " + fieldOrElementPath);
+          throw new ArtifactParseException("Unknown non-object schema artifact", jsonFieldName, fieldOrElementPath);
         }
       }
     }
@@ -306,24 +303,22 @@ public class ArtifactReader
             String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
             JsonNode jsonNode = nodeIterator.next();
             if (jsonNode == null || jsonNode.isNull()) {
-              throw new RuntimeException("Expecting field or element instance artifact entry in array at location "
-                + arrayEnclosedInstanceArtifactPath + "], got null");
+              throw new ArtifactParseException("Expecting field or element instance artifact entry in array, got null",
+                instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
             } else {
               if (!jsonNode.isObject())
-                throw new RuntimeException("Expecting nested field or element instance artifact in array at location "
-                  + arrayEnclosedInstanceArtifactPath);
+                throw new ArtifactParseException("Expecting nested field or element instance artifact in array",
+                  instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
 
               ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)jsonNode;
               readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
                 arrayEnclosedInstanceArtifactNode, elements, fields);
             }
+            arrayIndex++;
           }
-          arrayIndex++;
         }
       } else
-        throw new RuntimeException(
-          "Unknown non-object instance artifact field " + instanceArtifactFieldName + " at location "
-            + instanceArtifactFieldName);
+        throw new ArtifactParseException("Unknown non-object instance artifact", instanceArtifactFieldName, path);
     }
   }
 
@@ -348,18 +343,18 @@ public class ArtifactReader
   private void checkSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
   {
     if (schemaArtifactJsonLDTypes.isEmpty())
-      throw new RuntimeException("Unknown object at location " + path + " - must be a JSON-LD type or array of types");
+      throw new ArtifactParseException("Unknown object - must be a JSON-LD type or array of types", ModelNodeNames.JSON_LD_TYPE, path);
 
     if (schemaArtifactJsonLDTypes.size() != 1)
-      throw new RuntimeException(
-        "Expecting single JSON-LD @type field for schema artifact, got " + schemaArtifactJsonLDTypes.size()
-          + " at location " + path);
+      throw new ArtifactParseException(
+        "Expecting single JSON-LD @type field for schema artifact, got " + schemaArtifactJsonLDTypes.size(),
+        ModelNodeNames.JSON_LD_TYPE, path);
 
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
     if (!ModelNodeNames.SCHEMA_ARTIFACT_TYPE_IRIS.contains(schemaArtifactJsonLDType.toString()))
-      throw new RuntimeException(
-        "Unexpected schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
+      throw new ArtifactParseException("Unexpected schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
+        ModelNodeNames.JSON_LD_TYPE, path);
   }
 
   private void checkTemplateSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
@@ -369,9 +364,8 @@ public class ArtifactReader
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
     if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
-      throw new RuntimeException(
-        "Unexpected template schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
-
+      throw new ArtifactParseException("Unexpected template schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
+        ModelNodeNames.JSON_LD_TYPE, path);
   }
 
   private void checkElementSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
@@ -381,8 +375,8 @@ public class ArtifactReader
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
     if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
-      throw new RuntimeException(
-        "Unexpected element schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
+      throw new ArtifactParseException("Unexpected element schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
+        ModelNodeNames.JSON_LD_TYPE, path);
   }
 
   private void checkFieldSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
@@ -392,8 +386,8 @@ public class ArtifactReader
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
     if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
-      throw new RuntimeException(
-        "Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType + " at location " + path);
+      throw new ArtifactParseException("Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
+        ModelNodeNames.JSON_LD_TYPE, path);
   }
 
   private List<URI> readJsonLDTypeField(ObjectNode objectNode, String path)
@@ -411,7 +405,7 @@ public class ArtifactReader
     List<String> jsonLDTypes = readStringFieldValues(objectNode, path, ModelNodeNames.JSON_LD_TYPE);
 
     if (jsonLDTypes.isEmpty())
-      throw new RuntimeException("No JSON-LD @type for artifact at location " + path);
+      throw new ArtifactParseException("No JSON-LD @type for artifact", ModelNodeNames.JSON_LD_TYPE, path);
     else
       return jsonLDTypes;
   }
@@ -480,14 +474,13 @@ public class ArtifactReader
         JsonNode valueConstraintNode = nodeIterator.next();
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
-            throw new RuntimeException(
-              "Value in array field " + ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES + " at location " + path + " must be an object");
-          OntologyValueConstraint ontologyValueConstraint = readOntologyValueConstraint((ObjectNode)valueConstraintNode, path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES);
+            throw new ArtifactParseException("Value in array must be an object", ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES, path);
+          OntologyValueConstraint ontologyValueConstraint = readOntologyValueConstraint((ObjectNode)valueConstraintNode,
+            path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES);
           ontologyValueConstraints.add(ontologyValueConstraint);
         }
       }
     }
-
     return ontologyValueConstraints;
   }
 
@@ -504,14 +497,13 @@ public class ArtifactReader
         JsonNode valueConstraintNode = nodeIterator.next();
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
-            throw new RuntimeException(
-              "Value in array field " + ModelNodeNames.VALUE_CONSTRAINTS_CLASSES + " at location " + path + " must be an object");
+            throw new ArtifactParseException(
+              "Value in array must be an object", ModelNodeNames.VALUE_CONSTRAINTS_CLASSES, path);
           ClassValueConstraint classValueConstraint = readClassValueConstraint((ObjectNode)valueConstraintNode, path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_CLASSES);
           classValueConstraints.add(classValueConstraint);
         }
       }
     }
-
     return classValueConstraints;
   }
 
@@ -528,14 +520,13 @@ public class ArtifactReader
         JsonNode valueConstraintNode = nodeIterator.next();
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
-            throw new RuntimeException(
-              "Value in array field " + ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS + " at location " + path + " must be an object");
-          ValueSetValueConstraint valueSetValueConstraint = readValueSetValueConstraint((ObjectNode)valueConstraintNode, path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS);
+            throw new ArtifactParseException("Value in array must be an object", ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS, path);
+          ValueSetValueConstraint valueSetValueConstraint = readValueSetValueConstraint((ObjectNode)valueConstraintNode,
+            path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS);
           valueSetValueConstraints.add(valueSetValueConstraint);
         }
       }
     }
-
     return valueSetValueConstraints;
   }
 
@@ -552,8 +543,8 @@ public class ArtifactReader
         JsonNode valueConstraintNode = nodeIterator.next();
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
-            throw new RuntimeException(
-              "Value in array field " + ModelNodeNames.VALUE_CONSTRAINTS_BRANCHES + " at location " + path + " must be an object");
+            throw new ArtifactParseException(
+              "Value in array must be an object", ModelNodeNames.VALUE_CONSTRAINTS_BRANCHES, path);
           BranchValueConstraint branchValueConstraint = readBranchValueConstraint((ObjectNode)valueConstraintNode, path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_BRANCHES);
           branchValueConstraints.add(branchValueConstraint);
         }
@@ -576,14 +567,13 @@ public class ArtifactReader
         JsonNode valueConstraintNode = nodeIterator.next();
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
-            throw new RuntimeException(
-              "Value in array field " + ModelNodeNames.VALUE_CONSTRAINTS_LITERALS + " at location " + path + " must be an object");
-          LiteralValueConstraint literalValueConstraint = readLiteralValueConstraint((ObjectNode)valueConstraintNode, path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_LITERALS);
+            throw new ArtifactParseException("Value in array must be an object", ModelNodeNames.VALUE_CONSTRAINTS_LITERALS, path);
+          LiteralValueConstraint literalValueConstraint = readLiteralValueConstraint((ObjectNode)valueConstraintNode,
+            path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_LITERALS);
           literalValueConstraints.add(literalValueConstraint);
         }
       }
     }
-
     return literalValueConstraints;
   }
 
@@ -690,7 +680,7 @@ public class ArtifactReader
       return Optional.empty();
 
     if (!jsonNode.isTextual())
-      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be a string");
+      throw new ArtifactParseException("Value must be a string", fieldName, path);
 
     return Optional.of(jsonNode.asText());
   }
@@ -703,7 +693,7 @@ public class ArtifactReader
       return Optional.empty();
 
     if (!jsonNode.isInt())
-      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be an integer");
+      throw new ArtifactParseException("Value must be an integer", fieldName, path);
 
     return Optional.of(jsonNode.asInt());
   }
@@ -716,7 +706,7 @@ public class ArtifactReader
       return Optional.empty();
 
     if (!jsonNode.isNumber())
-      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be a number");
+      throw new ArtifactParseException("Value must be a number", fieldName, path);
 
     if (jsonNode.isIntegralNumber())
        return Optional.of(jsonNode.asLong());
@@ -732,7 +722,7 @@ public class ArtifactReader
       return Optional.empty();
 
     if (!jsonNode.isBoolean())
-      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be boolean");
+      throw new ArtifactParseException("Value must be a boolean", fieldName, path);
 
     return Optional.of(jsonNode.asBoolean());
   }
@@ -742,13 +732,13 @@ public class ArtifactReader
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new RuntimeException("Field " + fieldName + " at location " + path + " must be present");
+      throw new ArtifactParseException("Field must be present", fieldName, path);
 
     if (jsonNode.isNull())
-      throw new RuntimeException("Field " + fieldName + " at location " + path + " must not be null");
+      throw new ArtifactParseException("Field must not be null", fieldName, path);
 
     if (!jsonNode.isBoolean())
-      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be boolean");
+      throw new ArtifactParseException("Value must be boolean", fieldName, path);
 
     return jsonNode.asBoolean();
   }
@@ -761,7 +751,7 @@ public class ArtifactReader
       return defaultValue;
 
     if (!jsonNode.isBoolean())
-      throw new RuntimeException("Value of field " + fieldName + " at location " + path + " must be boolean");
+      throw new ArtifactParseException("Value must be boolean", fieldName, path);
 
     return jsonNode.asBoolean();
   }
@@ -771,7 +761,7 @@ public class ArtifactReader
     String inputType = readRequiredStringField(objectNode, path, ModelNodeNames.UI_FIELD_INPUT_TYPE);
 
     if (!ModelNodeNames.INPUT_TYPES.contains(inputType))
-      throw new RuntimeException("Invalid field input type " + inputType + " at location " + path);
+      throw new ArtifactParseException("Invalid field input type " + inputType, ModelNodeNames.UI_FIELD_INPUT_TYPE, path);
 
     return FieldInputType.fromString(inputType);
   }
@@ -784,7 +774,7 @@ public class ArtifactReader
       return Optional.empty();
 
     if (!ModelNodeValues.TEMPORAL_GRANULARITIES.contains(granularity.get()))
-      throw new RuntimeException("Invalid granularity " + granularity.get() + " at location " + path);
+      throw new ArtifactParseException("Invalid granularity " + granularity.get(), ModelNodeNames.UI_TEMPORAL_GRANULARITY, path);
 
     return Optional.of(TemporalGranularity.fromString(granularity.get()));
   }
@@ -797,7 +787,7 @@ public class ArtifactReader
       return Optional.empty();
 
     if (!ModelNodeValues.TIME_FORMATS.contains(timeFormat.get()))
-      throw new RuntimeException("Invalid time format " + timeFormat.get() + " at location " + path);
+      throw new ArtifactParseException("Invalid time format " + timeFormat.get(), ModelNodeNames.UI_INPUT_TIME_FORMAT, path);
 
     return Optional.of(InputTimeFormat.fromString(timeFormat.get()));
   }
@@ -815,12 +805,11 @@ public class ArtifactReader
     JsonNode jsonNode = objectNode.get(ModelNodeNames.UI);
 
     if (jsonNode == null)
-      throw new RuntimeException("No " + ModelNodeNames.UI + " field at location " + path);
+      throw new ArtifactParseException("No " + ModelNodeNames.UI + " field", ModelNodeNames.UI, path);
     else if (jsonNode.isNull())
-      throw new RuntimeException("Null " + ModelNodeNames.UI + " field at location " + path);
+      throw new ArtifactParseException("Null " + ModelNodeNames.UI + " field", ModelNodeNames.UI, path);
     else if (!jsonNode.isObject())
-      throw new RuntimeException(
-        "Value of field " + ModelNodeNames.UI + " at location " + path + " must be an object");
+      throw new ArtifactParseException("Value of field must be an object", ModelNodeNames.UI, path);
 
      return (ObjectNode)jsonNode;
   }
@@ -834,8 +823,7 @@ public class ArtifactReader
     else if (jsonNode.isNull())
       return null;
     else if (!jsonNode.isObject())
-      throw new RuntimeException(
-        "Value of field " + ModelNodeNames.VALUE_CONSTRAINTS + " at location " + path + " must be an object");
+      throw new ArtifactParseException("Value of field must be an object", ModelNodeNames.VALUE_CONSTRAINTS, path);
 
     return (ObjectNode)jsonNode;
   }
@@ -849,8 +837,7 @@ public class ArtifactReader
     if (jsonNode != null || jsonNode.isNull()) {
 
       if (!jsonNode.isObject())
-        throw new RuntimeException(
-          "Value of field " + fieldName + " at location " + path + " must be an object");
+        throw new ArtifactParseException("Value of field  must be an object", fieldName, path);
 
       Iterator<Map.Entry<String, JsonNode>> fieldEntries = jsonNode.fields();
 
@@ -864,7 +851,7 @@ public class ArtifactReader
           if (currentFieldValue != null && !currentFieldValue.isEmpty())
             fieldNameStringValueMap.put(currentFieldName, currentFieldValue);
         } else
-            throw new RuntimeException("Object in field " + fieldName + " at location " + path + " must contain string values");
+            throw new ArtifactParseException("Object in field must contain string values", fieldName, path);
       }
     }
     return fieldNameStringValueMap;
@@ -879,8 +866,7 @@ public class ArtifactReader
     if (jsonNode != null) {
 
       if (!jsonNode.isObject())
-        throw new RuntimeException(
-          "Value of field " + fieldName + " at location " + path + " must be an object");
+        throw new ArtifactParseException("Value of field must be an object", fieldName, path);
 
       Iterator<Map.Entry<String, JsonNode>> fieldEntries = jsonNode.fields();
 
@@ -896,7 +882,7 @@ public class ArtifactReader
             URI currentFieldURIValue = new URI(currentFieldValue);
             fieldNameStringValueMap.put(currentFieldName, currentFieldURIValue);
           } catch (Exception e) {
-            throw new RuntimeException("Object in field " + fieldName + " at location " + path + " must contain URI values");
+            throw new ArtifactParseException("Object in field must contain URI values", fieldName, path);
           }
         }
       }
@@ -999,9 +985,8 @@ public class ArtifactReader
       else
         return Optional.empty();
     } catch (DateTimeParseException e) {
-      throw new RuntimeException(
-        "Invalid offset datetime value " + dateTimeValue + " in field " + fieldName + " at location " + path + ":" + e
-          .getMessage());
+      throw new ArtifactParseException(
+        "Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(), fieldName, path);
     }
   }
 
@@ -1012,9 +997,8 @@ public class ArtifactReader
     try {
       return OffsetDateTime.parse(dateTimeValue);
     } catch (DateTimeParseException e) {
-      throw new RuntimeException(
-        "Invalid offset datetime value " + dateTimeValue + " in field " + fieldName + " at location " + path + ":" + e
-          .getMessage());
+      throw new ArtifactParseException(
+        "Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(), fieldName, path);
     }
   }
 
@@ -1026,12 +1010,12 @@ public class ArtifactReader
       return Optional.empty();
 
     if (!jsonNode.isTextual())
-      throw new RuntimeException("Value of URI field " + fieldName + " at location " + path + " must be textual");
+      throw new ArtifactParseException("Value of URI field must be textual", fieldName, path);
 
     try {
       return Optional.of(new URI(jsonNode.asText()));
     } catch (Exception e) {
-      throw new RuntimeException("Value of URI field " + fieldName + " at location " + path + " must be a URI");
+      throw new ArtifactParseException("Value of URI field must be a valid URI", fieldName, path);
     }
   }
 
@@ -1042,7 +1026,7 @@ public class ArtifactReader
     if (jsonNode == null || jsonNode.isNull())
       return Optional.empty();
     else if (!jsonNode.isTextual())
-      throw new RuntimeException("Value of text field " + fieldName + " at location " + path + " must be textual");
+      throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
     else
       return Optional.of(jsonNode.asText());
   }
@@ -1054,7 +1038,7 @@ public class ArtifactReader
     if (jsonNode == null || jsonNode.isNull())
       return defaultValue;
     else if (!jsonNode.isTextual())
-      throw new RuntimeException("Value of text field " + fieldName + " at location " + path + " must be textual");
+      throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
     else
       return jsonNode.asText();
   }
@@ -1064,12 +1048,12 @@ public class ArtifactReader
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new RuntimeException("No value for text field " + fieldName + " at location " + path);
+      throw new ArtifactParseException("No value for text field", fieldName, path);
     else if (jsonNode.isNull())
-      throw new RuntimeException("Null value for text field " + fieldName + " at location " + path);
+      throw new ArtifactParseException("Null value for text field", fieldName, path);
     else {
       if (!jsonNode.isTextual())
-        throw new RuntimeException("Value of text field " + fieldName + " at location " + path + " must be textual");
+        throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
 
       return jsonNode.asText();
     }
@@ -1080,12 +1064,12 @@ public class ArtifactReader
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new RuntimeException("No value for int field " + fieldName + " at location " + path);
+      throw new ArtifactParseException("No value for int field", fieldName,  path);
     else if (jsonNode.isNull())
-      throw new RuntimeException("Null value for int field " + fieldName + " at location " + path);
+      throw new ArtifactParseException("Null value for int field", fieldName, path);
     else {
       if (!jsonNode.isInt())
-        throw new RuntimeException("Value of int field " + fieldName + " at location " + path + " must be an int");
+        throw new ArtifactParseException("Value of int field must be an int", fieldName, path);
 
       return jsonNode.asInt();
     }
@@ -1096,17 +1080,17 @@ public class ArtifactReader
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new RuntimeException("No value for URI field " + fieldName + " at location " + path);
+      throw new ArtifactParseException("No value for URI field", fieldName, path);
     else if (jsonNode.isNull())
-      throw new RuntimeException("Null value for URI field " + fieldName + " at location " + path);
+      throw new ArtifactParseException("Null value for URI field", fieldName, path);
     else {
       if (!jsonNode.isTextual())
-        throw new RuntimeException("Value of URI field " + fieldName + " at location " + path + " must be textual");
+        throw new ArtifactParseException("Value of URI field must be textual", fieldName, path);
 
       try {
         return new URI(jsonNode.asText());
       } catch (Exception e) {
-        throw new RuntimeException("Value of URI field " + fieldName + " at location " + path + " must be a URI");
+        throw new ArtifactParseException("Value of URI field must be a valid URI", fieldName, path);
       }
     }
   }
@@ -1120,15 +1104,17 @@ public class ArtifactReader
       if (jsonNode.isArray()) {
         Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
+        int arrayIndex = 0;
         while (nodeIterator.hasNext()) {
           JsonNode jsonValueNode = nodeIterator.next();
           if (jsonValueNode != null) {
             if (!jsonValueNode.isTextual())
-              throw new RuntimeException("Value in text array field " + fieldName + " at location " + path + " must be textual");
+              throw new ArtifactParseException("Value in text array at index " + arrayIndex + " must be textual", fieldName, path);
             String textValue = jsonValueNode.asText();
             if (!textValue.isEmpty())
               textValues.add(textValue);
           }
+          arrayIndex++;
         }
       } else {
         String textValue = readStringField(objectNode, path, fieldName, "");
@@ -1148,18 +1134,20 @@ public class ArtifactReader
       if (jsonNode.isArray()) {
         Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
+        int arrayIndex = 0;
         while (nodeIterator.hasNext()) {
           JsonNode itemNode = nodeIterator.next();
           if (itemNode != null) {
             if (!itemNode.isTextual())
-              throw new RuntimeException("Value in URI array field " + fieldName + " at location " + path + " must be textual");
+              throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must be textual", fieldName, path);
             try {
               URI uriValue = new URI(itemNode.asText());
               uriValues.add(uriValue);
             } catch (Exception e) {
-              throw new RuntimeException("Value in URI array field " + fieldName + " at location " + path + " must be textual");
+              throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must a valid URI", fieldName, path);
             }
           }
+          arrayIndex++;
         }
       } else {
         Optional<URI> uriValue = readURIField(objectNode, path, fieldName);
@@ -1175,7 +1163,7 @@ public class ArtifactReader
     List<String> textValues = readStringFieldValues(objectNode, path, fieldName);
 
     if (textValues.isEmpty())
-      throw new RuntimeException("No value for text field " + fieldName + " at location " + path);
+      throw new ArtifactParseException("No value for text field", fieldName, path);
     else
       return textValues;
   }

@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
 import org.metadatacenter.artifacts.model.reader.ArtifactReader;
 
 import java.io.File;
@@ -25,9 +26,14 @@ public class ElementReporter
 
     ObjectNode elementObjectNode = (ObjectNode)jsonNode;
     ArtifactReader artifactReader = new ArtifactReader(mapper);
-    ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
-    System.out.println("schema:name: " + elementSchemaArtifact.getName());
+    try {
+      ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
+      System.out.println("schema:name: " + elementSchemaArtifact.getName());
+    } catch (ArtifactParseException e) {
+      System.err.println(
+        "Parse error '" + e.getParseErrorMessage() + "' processing field " + e.getFieldName() + " at path " + e.getPath());
+    }
   }
 
   private static void Usage()
