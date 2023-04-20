@@ -5,7 +5,7 @@ Contains various tools to work with CEDAR model artifacts (templates, elements, 
 
 To build the code in this repository you must have the following items installed:
 
-+ [Java 19](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
++ [Java 17](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 + A tool for checking out a [Git](http://git-scm.com/) repository.
 + Apache's [Maven](http://maven.apache.org/index.html).
 

@@ -635,7 +635,7 @@ public class ArtifactSpreadsheetRenderer
       os.flush();
       int responseCode = connection.getResponseCode();
       if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-        String message = "Error running integrated search. Payload: " + payload;
+        String message = "Error running integrated search. Response code: " + responseCode + "; Payload: " + payload;
         throw new RuntimeException(message);
       } else {
         String response = ConnectionUtil.readResponseMessage(connection.getInputStream());
