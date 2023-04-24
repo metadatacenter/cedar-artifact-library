@@ -27,5 +27,5 @@ To generate an Excel spreadsheet from a CEDAR template:
 
    mvn exec:java -Dexec.args="<Input_template_filename.json> <Output_Excel_filename.xlsx> https://terminology.metadatacenter.org/bioportal/integrated-search/ <CEDAR API key>"
 
-This will a JSON-Schema-based template and convert it into an Excel file.
+This will read a JSON-Schema-based template and convert it into an Excel file.
 
