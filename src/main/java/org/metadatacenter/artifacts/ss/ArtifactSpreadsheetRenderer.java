@@ -34,6 +34,9 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,6 +61,10 @@ public class ArtifactSpreadsheetRenderer
   private final Short LIGHT_CORNFLOUR_BLUE = IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex();
 
   private final CellStyle headerCellstyle;
+
+  public static final String xsdDateTimeFormatterString = "uuuu-MM-dd'T'HH:mm:ssZZZZZ";
+  public static final DateTimeFormatter xsdDateTimeFormatter =
+    DateTimeFormatter.ofPattern(xsdDateTimeFormatterString).withZone(ZoneId.systemDefault());
 
   public ArtifactSpreadsheetRenderer(Workbook workbook, String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
   {
@@ -125,7 +132,7 @@ public class ArtifactSpreadsheetRenderer
   private void setColumnDataValidationConstraintIfRequired(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, int firstRow)
   {
     DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
-    Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldSchemaArtifact, columnIndex,
+    Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldSchemaArtifact,
       dataValidationHelper);
 
     if (constraint.isPresent()) {
@@ -195,7 +202,7 @@ public class ArtifactSpreadsheetRenderer
   }
 
   private Optional<DataValidationConstraint> createDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
-    int columnIndex, DataValidationHelper dataValidationHelper)
+    DataValidationHelper dataValidationHelper)
   {
     String fieldName = fieldSchemaArtifact.getName();
 
@@ -215,7 +222,7 @@ public class ArtifactSpreadsheetRenderer
     else if (validationType == DataValidationConstraint.ValidationType.TIME)
       return createTimeDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
     else if (validationType == DataValidationConstraint.ValidationType.FORMULA) {
-      return createFormulaDataValidationConstraint(fieldSchemaArtifact, columnIndex, dataValidationHelper);
+      return createFormulaDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
     } else
       throw new RuntimeException("Do no know how to handle data validation type " + validationType + " for field " + fieldName);
   }
@@ -340,14 +347,13 @@ public class ArtifactSpreadsheetRenderer
   // See: https://stackoverflow.com/questions/27630507/is-there-a-max-number-items-while-generating-drop-down-list-in-excel-using-apach/27639609#27639609
 
   private Optional<DataValidationConstraint> createFormulaDataValidationConstraint(FieldSchemaArtifact fieldSchemaArtifact,
-    int columnIndex, DataValidationHelper dataValidationHelper)
+    DataValidationHelper dataValidationHelper)
   {
     Map<String, String> values = getPossibleValues(fieldSchemaArtifact.getValueConstraints());
 
     if (!values.isEmpty()) {
-      String sheetName = fieldSchemaArtifact.getName() + " " + columnIndex;
+      String sheetName = fieldSchemaArtifact.getName();
       Sheet valueSheet = workbook.createSheet(sheetName);
-      int valueSheetIndex = workbook.getSheetIndex(valueSheet);
       int numberOfValues = values.keySet().size();
       String formula = "'" + sheetName + "'!$A$1:$A$" + numberOfValues;
 
@@ -629,7 +635,7 @@ public class ArtifactSpreadsheetRenderer
       os.flush();
       int responseCode = connection.getResponseCode();
       if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-        String message = "Error running integrated search. Payload: " + payload;
+        String message = "Error running integrated search. Response code: " + responseCode + "; Payload: " + payload;
         throw new RuntimeException(message);
       } else {
         String response = ConnectionUtil.readResponseMessage(connection.getInputStream());
@@ -649,52 +655,36 @@ public class ArtifactSpreadsheetRenderer
     Row headerRow = metadataSheet.createRow(0);
     Row dataRow = metadataSheet.createRow(1);
 
-    Cell schemaNameHeaderCell = headerRow.createCell(0);
-    schemaNameHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_NAME);
+    Cell schemaTitleHeaderCell = headerRow.createCell(0);
+    schemaTitleHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_TITLE);
 
-    Cell schemaNameDataCell = dataRow.createCell(0);
-    schemaNameDataCell.setCellValue(templateSchemaArtifact.getName());
-
-    Cell schemaDescriptionHeaderCell = headerRow.createCell(1);
-    schemaDescriptionHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
-
-    Cell schemaDescriptionDataCell = dataRow.createCell(1);
-    schemaDescriptionDataCell.setCellValue(templateSchemaArtifact.getDescription());
+    Cell schemaTitleDataCell = dataRow.createCell(0);
+    schemaTitleDataCell.setCellValue(templateSchemaArtifact.getName());
 
     if (templateSchemaArtifact.getVersion().isPresent()) {
-      Cell schemaVersionHeaderCell = headerRow.createCell(2);
-      schemaVersionHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
-      Cell schemaVersionDataCell = dataRow.createCell(2);
-      schemaVersionDataCell.setCellValue(templateSchemaArtifact.getVersion().get().toString());
+      Cell pavVersionHeaderCell = headerRow.createCell(1);
+      pavVersionHeaderCell.setCellValue(ModelNodeNames.PAV_VERSION);
+      Cell pavVersionDataCell = dataRow.createCell(1);
+      pavVersionDataCell.setCellValue(templateSchemaArtifact.getVersion().get().toString());
     } else
       throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
 
-    if (templateSchemaArtifact.getCreatedOn().isPresent()) {
-      Cell pavCreatedOnHeaderCell = headerRow.createCell(3);
-      pavCreatedOnHeaderCell.setCellValue(ModelNodeNames.PAV_CREATED_ON);
-      Cell pavCreatedOnDataCell = dataRow.createCell(3);
-      pavCreatedOnDataCell.setCellValue(templateSchemaArtifact.getCreatedOn().get().toString());
-    } else
-      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.PAV_CREATED_ON);
+    Cell pavCreatedOnHeaderCell = headerRow.createCell(2);
+    pavCreatedOnHeaderCell.setCellValue(ModelNodeNames.PAV_CREATED_ON);
+    Cell pavCreatedOnDataCell = dataRow.createCell(2);
+    pavCreatedOnDataCell.setCellValue(ZonedDateTime.now( ZoneId.systemDefault()).format(xsdDateTimeFormatter));
 
-    if (templateSchemaArtifact.getCreatedBy().isPresent()) {
-      Cell pavCreatedByHeaderCell = headerRow.createCell(4);
-      pavCreatedByHeaderCell.setCellValue(ModelNodeNames.PAV_CREATED_BY);
-      Cell pavCreatedByDataCell = dataRow.createCell(4);
-      pavCreatedByDataCell.setCellValue(templateSchemaArtifact.getCreatedBy().get().toString());
+    if (templateSchemaArtifact.getJsonLDID().isPresent()) {
+      Cell derivedFromHeaderCell = headerRow.createCell(3);
+      derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
+      Cell derivedFromDataCell = dataRow.createCell(3);
+      derivedFromDataCell.setCellValue(templateSchemaArtifact.getJsonLDID().get().toString());
     } else
-      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.PAV_CREATED_BY);
-
-    Cell derivedFromHeaderCell = headerRow.createCell(5);
-    derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
-    Cell derivedFromDataCell = dataRow.createCell(5);
-    derivedFromDataCell.setCellValue(templateSchemaArtifact.getJsonLDID().toString());
+      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.JSON_LD_ID);
 
     metadataSheet.autoSizeColumn(0);
     metadataSheet.autoSizeColumn(1);
     metadataSheet.autoSizeColumn(2);
     metadataSheet.autoSizeColumn(3);
-    metadataSheet.autoSizeColumn(4);
-    metadataSheet.autoSizeColumn(5);
   }
 }
