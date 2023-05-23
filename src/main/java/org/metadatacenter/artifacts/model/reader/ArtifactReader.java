@@ -138,10 +138,11 @@ public class ArtifactReader
     Optional<ValueConstraints> valueConstraints = readValueConstraints(fieldNode, path);
     Optional<String> skosPrefLabel = readSKOSPrefLabelField(fieldNode, path);
     List<String> skosAlternateLabels = readSKOSAltLabelField(fieldNode, path);
+    boolean isMultiple = false; // TODO
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
-    return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels);
+    return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels, isMultiple);
   }
 
   /**

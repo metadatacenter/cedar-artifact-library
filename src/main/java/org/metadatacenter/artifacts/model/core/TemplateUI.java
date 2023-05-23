@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public final class TemplateUI implements UI, EnclosingArtifactUI
+public final class TemplateUI implements UI, ParentArtifactUI
 {
   private final List<String> order;
   private final List<String> pages;
@@ -26,7 +26,8 @@ public final class TemplateUI implements UI, EnclosingArtifactUI
   }
 
   @Override public UIType getUIType() { return UIType.TEMPLATE_UI; }
-  public List<String> getOrder()
+
+  @Override public List<String> getOrder()
   {
     return order;
   }
@@ -36,22 +37,22 @@ public final class TemplateUI implements UI, EnclosingArtifactUI
     return pages;
   }
 
-  public Map<String, String> getPropertyLabels()
+  @Override public Map<String, String> getPropertyLabels()
   {
     return propertyLabels;
   }
 
-  public Map<String, String> getPropertyDescriptions()
+  @Override public Map<String, String> getPropertyDescriptions()
   {
     return propertyDescriptions;
   }
 
-  public Optional<String> getHeader()
+  @Override public Optional<String> getHeader()
   {
     return header;
   }
 
-  public Optional<String> getFooter()
+  @Override public Optional<String> getFooter()
   {
     return footer;
   }
