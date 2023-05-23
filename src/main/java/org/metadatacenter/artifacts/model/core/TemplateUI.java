@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TemplateUI
+public final class TemplateUI implements UI, EnclosingArtifactUI
 {
   private final List<String> order;
   private final List<String> pages;
@@ -25,6 +25,7 @@ public class TemplateUI
     this.footer = footer;
   }
 
+  @Override public UIType getUIType() { return UIType.TEMPLATE_UI; }
   public List<String> getOrder()
   {
     return order;

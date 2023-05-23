@@ -2,7 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.util.Optional;
 
-public class FieldUI
+public final class FieldUI implements UI
 {
   private final FieldInputType inputType;
   private final boolean valueRecommendationEnabled;
@@ -22,6 +22,8 @@ public class FieldUI
     this.temporalGranularity = temporalGranularity;
     this.inputTimeFormat = inputTimeFormat;
   }
+
+  @Override public UIType getUIType() { return UIType.FIELD_UI; }
 
   public FieldInputType getInputType()
   {

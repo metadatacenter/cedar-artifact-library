@@ -674,11 +674,11 @@ public class ArtifactSpreadsheetRenderer
     Cell pavCreatedOnDataCell = dataRow.createCell(2);
     pavCreatedOnDataCell.setCellValue(ZonedDateTime.now( ZoneId.systemDefault()).format(xsdDateTimeFormatter));
 
-    if (templateSchemaArtifact.getJsonLDID().isPresent()) {
+    if (templateSchemaArtifact.getJsonLdId().isPresent()) {
       Cell derivedFromHeaderCell = headerRow.createCell(3);
       derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
       Cell derivedFromDataCell = dataRow.createCell(3);
-      derivedFromDataCell.setCellValue(templateSchemaArtifact.getJsonLDID().get().toString());
+      derivedFromDataCell.setCellValue(templateSchemaArtifact.getJsonLdId().get().toString());
     } else
       throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.JSON_LD_ID);
 

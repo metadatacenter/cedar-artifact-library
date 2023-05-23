@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ElementUI
+public final class ElementUI implements UI, EnclosingArtifactUI
 {
   private final List<String> order;
   private final Map<String, String> propertyLabels;
@@ -23,6 +23,7 @@ public class ElementUI
     this.footer = footer;
   }
 
+  @Override public UIType getUIType() { return UIType.FIELD_UI; }
   public List<String> getOrder()
   {
     return order;

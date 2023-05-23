@@ -3,9 +3,11 @@ package org.metadatacenter.artifacts.model.reader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.tuple.Pair;
 import org.metadatacenter.artifacts.model.core.Artifact;
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
+import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementUI;
@@ -17,14 +19,17 @@ import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.InstanceArtifact;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
+import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.StringDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUI;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.URIStringPairDefaultValue;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.Version;
@@ -117,7 +122,7 @@ public class ArtifactReader
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     TemplateUI templateUI = readTemplateUI(objectNode, path);
 
-    checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
+    checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
@@ -134,7 +139,7 @@ public class ArtifactReader
     Optional<String> skosPrefLabel = readSKOSPrefLabelField(fieldNode, path);
     List<String> skosAlternateLabels = readSKOSAltLabelField(fieldNode, path);
 
-    checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
+    checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
     return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels);
   }
@@ -166,7 +171,7 @@ public class ArtifactReader
     ElementUI elementUI = readElementUI(objectNode, path);
     boolean isMultiple = false; // TODO
 
-    checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLDTypes(), path);
+    checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
@@ -432,13 +437,33 @@ public class ArtifactReader
       List<ClassValueConstraint> classes = readClassValueConstraints(vcNode, vcPath);
       List<BranchValueConstraint> branches = readBranchValueConstraints(vcNode, vcPath);
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath);
-      Optional<String> defaultValue = readOptionalStringField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE);
+      Optional<DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE);
 
       return Optional.of(new ValueConstraints(requiredValue, multipleChoice, numberType, unitOfMeasure, minValue, maxValue,
         decimalPlaces, minLength, maxLength, temporalType, ontologies, valueSets, classes, branches, literals,
         defaultValue));
     } else
       return Optional.empty();
+  }
+
+  private Optional<DefaultValue> readDefaultValueField(ObjectNode objectNode, String path, String fieldName)
+  {
+    JsonNode jsonNode = objectNode.get(fieldName);
+
+    if (jsonNode == null || jsonNode.isNull())
+      return Optional.empty();
+    else if (jsonNode.isObject()) {
+      String nestedPath = path + fieldName;
+      ObjectNode defaultValueNode = (ObjectNode)jsonNode;
+      URI termUri = readRequiredURIField(defaultValueNode, nestedPath, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
+      String rdfsLabel = readRequiredStringField(defaultValueNode, nestedPath, ModelNodeNames.RDFS_LABEL);
+      return Optional.of(new URIStringPairDefaultValue(Pair.of(termUri, rdfsLabel)));
+    } else if (jsonNode.isNumber())
+      return Optional.of(new NumericDefaultValue(jsonNode.asDouble()));
+    else if (jsonNode.isTextual())
+      return Optional.of(new StringDefaultValue(jsonNode.asText()));
+    else
+      throw new ArtifactParseException("default value must be a string, a number, or an object containing URI/string pair", fieldName, path);
   }
 
   private Optional<TemporalType> readTemporalTypeField(ObjectNode objectNode, String path)

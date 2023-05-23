@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public class SchemaArtifact extends Artifact
 {
-  private final URI jsonSchemaSchemaURI;
+  private final URI jsonSchemaSchemaUri;
   private final Version modelVersion;
   private final String name;
   private final String description;
@@ -14,12 +14,12 @@ public class SchemaArtifact extends Artifact
   private final Optional<Version> previousVersion;
   private final Optional<URI> derivedFrom;
 
-  public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaURI, Version modelVersion, String name,
+  public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaUri, Version modelVersion, String name,
     String description, Optional<Version> version, Optional<Status> status, Optional<Version> previousVersion,
     Optional<URI> derivedFrom)
   {
     super(artifact);
-    this.jsonSchemaSchemaURI = jsonSchemaSchemaURI;
+    this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
     this.name = name;
     this.description = description;
     this.modelVersion = modelVersion;
@@ -32,7 +32,7 @@ public class SchemaArtifact extends Artifact
   public SchemaArtifact(SchemaArtifact schemaArtifact)
   {
     super(schemaArtifact);
-    this.jsonSchemaSchemaURI = schemaArtifact.jsonSchemaSchemaURI;
+    this.jsonSchemaSchemaUri = schemaArtifact.jsonSchemaSchemaUri;
     this.name = schemaArtifact.name;
     this.description = schemaArtifact.description;
     this.modelVersion = schemaArtifact.modelVersion;
@@ -42,9 +42,9 @@ public class SchemaArtifact extends Artifact
     this.derivedFrom = schemaArtifact.derivedFrom;
   }
 
-  public URI getJsonSchemaSchemaURI()
+  public URI getJsonSchemaSchemaUri()
   {
-    return jsonSchemaSchemaURI;
+    return jsonSchemaSchemaUri;
   }
 
   public String getName()
@@ -84,7 +84,7 @@ public class SchemaArtifact extends Artifact
 
   @Override public String toString()
   {
-    return "SchemaArtifact{" + "jsonSchemaSchemaURI=" + jsonSchemaSchemaURI + ", modelVersion=" + modelVersion
+    return "SchemaArtifact{" + "jsonSchemaSchemaURI=" + jsonSchemaSchemaUri + ", modelVersion=" + modelVersion
       + ", name='" + name + '\'' + ", description='" + description + '\'' + ", version=" + version + ", status="
       + status + ", previousVersion=" + previousVersion + ", derivedFrom=" + derivedFrom + '}';
   }
