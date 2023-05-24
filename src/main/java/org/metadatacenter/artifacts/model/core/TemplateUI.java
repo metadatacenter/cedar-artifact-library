@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TemplateUI
+public final class TemplateUI implements UI, ParentArtifactUI
 {
   private final List<String> order;
   private final List<String> pages;
@@ -25,7 +25,9 @@ public class TemplateUI
     this.footer = footer;
   }
 
-  public List<String> getOrder()
+  @Override public UIType getUIType() { return UIType.TEMPLATE_UI; }
+
+  @Override public List<String> getOrder()
   {
     return order;
   }
@@ -35,22 +37,22 @@ public class TemplateUI
     return pages;
   }
 
-  public Map<String, String> getPropertyLabels()
+  @Override public Map<String, String> getPropertyLabels()
   {
     return propertyLabels;
   }
 
-  public Map<String, String> getPropertyDescriptions()
+  @Override public Map<String, String> getPropertyDescriptions()
   {
     return propertyDescriptions;
   }
 
-  public Optional<String> getHeader()
+  @Override public Optional<String> getHeader()
   {
     return header;
   }
 
-  public Optional<String> getFooter()
+  @Override public Optional<String> getFooter()
   {
     return footer;
   }

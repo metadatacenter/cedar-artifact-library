@@ -21,14 +21,14 @@ public class ValueConstraints
   private final List<ClassValueConstraint> classes;
   private final List<BranchValueConstraint> branches;
   private final List<LiteralValueConstraint> literals;
-  private final Optional<String> defaultValue;
+  private final Optional<DefaultValue> defaultValue;
 
   public ValueConstraints(boolean requiredValue, boolean multipleChoice, Optional<NumberType> numberType,
     Optional<String> unitOfMeasure, Optional<Number> minValue, Optional<Number> maxValue,
     Optional<Integer> decimalPlaces, Optional<Integer> minLength, Optional<Integer> maxLength,
     Optional<TemporalType> temporalType, List<OntologyValueConstraint> ontologies, List<ValueSetValueConstraint> valueSets,
     List<ClassValueConstraint> classes, List<BranchValueConstraint> branches, List<LiteralValueConstraint> literals,
-    Optional<String> defaultValue)
+    Optional<DefaultValue> defaultValue)
   {
     this.requiredValue = requiredValue;
     this.multipleChoice = multipleChoice;
@@ -133,7 +133,7 @@ public class ValueConstraints
     return !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty();
   }
 
-  public Optional<String> getDefaultValue()
+  public Optional<DefaultValue> getDefaultValue()
   {
     return defaultValue;
   }

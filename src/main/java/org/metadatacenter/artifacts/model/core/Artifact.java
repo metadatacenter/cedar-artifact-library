@@ -9,22 +9,22 @@ import java.util.Optional;
 
 public class Artifact
 {
-  private final Optional<URI> jsonLDID;
-  private final List<URI> jsonLDTypes;
+  private final Optional<URI> jsonLdId;
+  private final List<URI> jsonLdTypes;
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
   private final String jsonSchemaDescription;
   private final Optional<URI> createdBy, modifiedBy;
   private final Optional<OffsetDateTime> createdOn, lastUpdatedOn;
-  private final Map<String, URI> jsonLDContext;
+  private final Map<String, URI> jsonLdContext;
 
-  public Artifact(Optional<URI> jsonLDID, List<URI> jsonLDTypes, String jsonSchemaType, String jsonSchemaTitle,
+  public Artifact(Optional<URI> jsonLdId, List<URI> jsonLdTypes, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn,
-    Optional<OffsetDateTime> lastUpdatedOn, Map<String, URI> jsonLDContext)
+    Optional<OffsetDateTime> lastUpdatedOn, Map<String, URI> jsonLdContext)
   {
-    this.jsonLDID = jsonLDID;
-    this.jsonLDTypes = Collections.unmodifiableList(jsonLDTypes);
+    this.jsonLdId = jsonLdId;
+    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
     this.jsonSchemaDescription = jsonSchemaDescription;
@@ -32,13 +32,13 @@ public class Artifact
     this.modifiedBy = modifiedBy;
     this.createdOn = createdOn;
     this.lastUpdatedOn = lastUpdatedOn;
-    this.jsonLDContext = Collections.unmodifiableMap(jsonLDContext);
+    this.jsonLdContext = Collections.unmodifiableMap(jsonLdContext);
   }
 
   public Artifact(Artifact artifact)
   {
-    this.jsonLDID = artifact.jsonLDID;
-    this.jsonLDTypes = artifact.jsonLDTypes;
+    this.jsonLdId = artifact.jsonLdId;
+    this.jsonLdTypes = artifact.jsonLdTypes;
     this.jsonSchemaType = artifact.jsonSchemaType;
     this.jsonSchemaTitle = artifact.jsonSchemaTitle;
     this.jsonSchemaDescription = artifact.jsonSchemaDescription;
@@ -46,17 +46,17 @@ public class Artifact
     this.modifiedBy = artifact.modifiedBy;
     this.createdOn = artifact.createdOn;
     this.lastUpdatedOn = artifact.lastUpdatedOn;
-    this.jsonLDContext = artifact.jsonLDContext;
+    this.jsonLdContext = artifact.jsonLdContext;
   }
 
-  public Optional<URI> getJsonLDID()
+  public Optional<URI> getJsonLdId()
   {
-    return jsonLDID;
+    return jsonLdId;
   }
 
-  public List<URI> getJsonLDTypes()
+  public List<URI> getJsonLdTypes()
   {
-    return jsonLDTypes;
+    return jsonLdTypes;
   }
 
   public String getJsonSchemaType()
@@ -94,16 +94,16 @@ public class Artifact
     return lastUpdatedOn;
   }
 
-  public Map<String, URI> getJsonLDContext()
+  public Map<String, URI> getJsonLdContext()
   {
-    return jsonLDContext;
+    return jsonLdContext;
   }
 
   @Override public String toString()
   {
-    return "Artifact{" + "jsonLDID='" + jsonLDID + '\'' + ", jsonLDTypes=" + jsonLDTypes + ", jsonSchemaType='"
+    return "Artifact{" + "jsonLdId='" + jsonLdId + '\'' + ", jsonLdTypes=" + jsonLdTypes + ", jsonSchemaType='"
       + jsonSchemaType + '\'' + ", jsonSchemaTitle='" + jsonSchemaTitle + '\'' + ", jsonSchemaDescription='"
       + jsonSchemaDescription + '\'' + ", createdBy='" + createdBy + '\'' + ", modifiedBy='" + modifiedBy + '\''
-      + ", createdOn=" + createdOn + ", lastUpdatedOn=" + lastUpdatedOn + ", jsonLDContext=" + jsonLDContext + '}';
+      + ", createdOn=" + createdOn + ", lastUpdatedOn=" + lastUpdatedOn + ", jsonLdContext=" + jsonLdContext + '}';
   }
 }

@@ -1,11 +1,10 @@
 package org.metadatacenter.artifacts.model.core;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TemplateSchemaArtifact extends SchemaArtifact
+public final class TemplateSchemaArtifact extends SchemaArtifact implements ParentSchemaArtifact
 {
   private final Map<String, FieldSchemaArtifact> fieldSchemas;
   private final Map<String, ElementSchemaArtifact> elementSchemas;
@@ -28,17 +27,29 @@ public class TemplateSchemaArtifact extends SchemaArtifact
     this.templateUI = templateSchemaArtifact.templateUI;
   }
 
-  public Map<String, FieldSchemaArtifact> getFieldSchemas()
+  @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
   {
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
+
+    for (String fieldName: getUI().getOrder()) {
+      if (fieldSchemas.containsKey(fieldName))
+        fieldSchemas.put(fieldName, fieldSchemas.get(fieldName));
+    }
     return fieldSchemas;
   }
 
-  public Map<String, ElementSchemaArtifact> getElementSchemas()
+  @Override public LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas()
   {
+    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+
+    for (String elementName: getUI().getOrder()) {
+      if (elementSchemas.containsKey(elementName))
+        elementSchemas.put(elementName, elementSchemas.get(elementName));
+    }
     return elementSchemas;
   }
 
-  public FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  @Override public FieldSchemaArtifact getFieldSchemaArtifact(String name)
   {
     if (fieldSchemas.containsKey(name))
       return fieldSchemas.get(name);
@@ -46,7 +57,7 @@ public class TemplateSchemaArtifact extends SchemaArtifact
       throw new IllegalArgumentException("Field " + name + "not present in template " + getName());
   }
 
-  public ElementSchemaArtifact getElementSchemaArtifact(String name)
+  @Override public ElementSchemaArtifact getElementSchemaArtifact(String name)
   {
     if (elementSchemas.containsKey(name))
       return elementSchemas.get(name);
@@ -54,41 +65,20 @@ public class TemplateSchemaArtifact extends SchemaArtifact
       throw new IllegalArgumentException("Element " + name + "not present in template " + getName());
   }
 
-  public boolean hasFields() { return !fieldSchemas.isEmpty(); }
+  @Override public boolean hasFields() { return !fieldSchemas.isEmpty(); }
 
-  public boolean hasElements() { return !elementSchemas.isEmpty(); }
+  @Override public boolean hasElements() { return !elementSchemas.isEmpty(); }
+
+  @Override public boolean isField(String name) { return fieldSchemas.containsKey(name); }
+
+  @Override public boolean isElement(String name) { return elementSchemas.containsKey(name); }
+
+  @Override public ParentArtifactUI getUI() { return templateUI; }
 
   public TemplateUI getTemplateUI()
   {
     return templateUI;
   }
-
-  public boolean isField(String name) { return fieldSchemas.containsKey(name); }
-
-  public boolean isElement(String name) { return elementSchemas.containsKey(name); }
-
-  public List<String> getFieldNames()
-  {
-    ArrayList<String> fieldNames = new ArrayList<>();
-
-    for (String name: templateUI.getOrder())
-      if (isField(name))
-        fieldNames.add(name);
-
-    return fieldNames;
-  }
-
-  public List<String> getElementNames()
-  {
-    ArrayList<String> elementNames = new ArrayList<>();
-
-    for (String name: templateUI.getOrder())
-      if (isElement(name))
-        elementNames.add(name);
-
-    return elementNames;
-  }
-
   @Override public String toString()
   {
     return super.toString() + "\n TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
