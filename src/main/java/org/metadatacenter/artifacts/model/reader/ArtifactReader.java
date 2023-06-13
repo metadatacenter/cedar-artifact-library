@@ -182,18 +182,12 @@ public class ArtifactReader
   private Artifact readArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> context = readFieldNameURIValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
-    List<URI> jsonLDTypes = readJsonLDTypeField(objectNode, path);
-    Optional<URI> jsonLDID = readJsonLDIDField(objectNode, path);
-    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
-    String name = readJsonSchemaTitleField(objectNode, path);
-    String description = readJsonSchemaDescriptionField(objectNode, path);
     Optional<URI> createdBy = readCreatedByField(objectNode, path);
     Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
     Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
     Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
 
-    return new Artifact(jsonLDID, jsonLDTypes, jsonSchemaType,
-      name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, context);
+    return new Artifact(context, createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
   private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
@@ -201,15 +195,23 @@ public class ArtifactReader
     Artifact artifact = readArtifact(objectNode, path);
 
     URI jsonSchemaSchemaURI = readJsonSchemaSchemaURIField(objectNode, path);
+    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
+    String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
+    String jsonSchemaDescription = readJsonSchemaDescriptionField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
     Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
-    String name = readSchemaOrgNameField(objectNode, path);
-    String description = readSchemaOrgDescriptionField(objectNode, path);
-    Optional<Version> version = readPAVVersionField(objectNode, path);
-    Optional<Status> status = readBIBOStatusField(objectNode, path);
+    String schemaOrgName = readSchemaOrgNameField(objectNode, path);
+    String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
+    Optional<Version> artifactVersion = readPAVVersionField(objectNode, path);
+    Optional<Status> artifactVersionStatus = readBIBOStatusField(objectNode, path);
     Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
 
-    return new SchemaArtifact(artifact, jsonSchemaSchemaURI, modelVersion, name, description, version, status,
+    return new SchemaArtifact(artifact,
+      jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      jsonLdId, jsonLdTypes,
+      schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
       previousVersion, derivedFrom);
   }
 
@@ -1209,7 +1211,7 @@ public class ArtifactReader
     return readRequiredStringField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
   }
 
-  private Optional<URI> readJsonLDIDField(ObjectNode objectNode, String path)
+  private Optional<URI> readOptionalJsonLDIDField(ObjectNode objectNode, String path)
   {
     return readURIField(objectNode, path, ModelNodeNames.JSON_LD_ID);
   }

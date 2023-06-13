@@ -1,31 +1,46 @@
 package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class SchemaArtifact extends Artifact
 {
   private final URI jsonSchemaSchemaUri;
+  private final String jsonSchemaType;
+  private final String jsonSchemaTitle;
+  private final String jsonSchemaDescription;
+  private final Optional<URI> jsonLdId;
+  private final List<URI> jsonLdTypes;
+  private final String schemaOrgName;
+  private final String schemaOrgDescription;
   private final Version modelVersion;
-  private final String name;
-  private final String description;
-  private final Optional<Version> version;
-  private final Optional<Status> status;
-  private final Optional<Version> previousVersion;
+  private final Optional<Version> artifactVersion;
+  private final Optional<Status> artifactVersionStatus;
+  private final Optional<Version> previousArtifactVersion;
   private final Optional<URI> derivedFrom;
 
-  public SchemaArtifact(Artifact artifact, URI jsonSchemaSchemaUri, Version modelVersion, String name,
-    String description, Optional<Version> version, Optional<Status> status, Optional<Version> previousVersion,
-    Optional<URI> derivedFrom)
+  public SchemaArtifact(Artifact artifact,
+    URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+    Optional<URI> jsonLdId, List<URI> jsonLdTypes,
+    String schemaOrgName, String schemaOrgDescription,
+    Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
+    Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom)
   {
     super(artifact);
     this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
-    this.name = name;
-    this.description = description;
+    this.jsonSchemaType = jsonSchemaType;
+    this.jsonSchemaTitle = jsonSchemaTitle;
+    this.jsonSchemaDescription = jsonSchemaDescription;
+    this.jsonLdId = jsonLdId;
+    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
+    this.schemaOrgName = schemaOrgName;
+    this.schemaOrgDescription = schemaOrgDescription;
     this.modelVersion = modelVersion;
-    this.version = version;
-    this.status = status;
-    this.previousVersion = previousVersion;
+    this.artifactVersion = artifactVersion;
+    this.artifactVersionStatus = artifactVersionStatus;
+    this.previousArtifactVersion = previousArtifactVersion;
     this.derivedFrom = derivedFrom;
   }
 
@@ -33,12 +48,17 @@ public class SchemaArtifact extends Artifact
   {
     super(schemaArtifact);
     this.jsonSchemaSchemaUri = schemaArtifact.jsonSchemaSchemaUri;
-    this.name = schemaArtifact.name;
-    this.description = schemaArtifact.description;
+    this.jsonSchemaType = schemaArtifact.jsonSchemaType;
+    this.jsonSchemaTitle = schemaArtifact.jsonSchemaTitle;
+    this.jsonSchemaDescription = schemaArtifact.jsonSchemaDescription;
+    this.jsonLdId = schemaArtifact.jsonLdId;
+    this.jsonLdTypes = Collections.unmodifiableList(schemaArtifact.jsonLdTypes);
+    this.schemaOrgName = schemaArtifact.schemaOrgName;
+    this.schemaOrgDescription = schemaArtifact.schemaOrgDescription;
     this.modelVersion = schemaArtifact.modelVersion;
-    this.version = schemaArtifact.version;
-    this.status = schemaArtifact.status;
-    this.previousVersion = schemaArtifact.previousVersion;
+    this.artifactVersion = schemaArtifact.artifactVersion;
+    this.artifactVersionStatus = schemaArtifact.artifactVersionStatus;
+    this.previousArtifactVersion = schemaArtifact.previousArtifactVersion;
     this.derivedFrom = schemaArtifact.derivedFrom;
   }
 
@@ -47,14 +67,39 @@ public class SchemaArtifact extends Artifact
     return jsonSchemaSchemaUri;
   }
 
+  public String getJsonSchemaType()
+  {
+    return jsonSchemaType;
+  }
+
+  public String getJsonSchemaTitle()
+  {
+    return jsonSchemaTitle;
+  }
+
+  public String getJsonSchemaDescription()
+  {
+    return jsonSchemaDescription;
+  }
+
+  public Optional<URI> getJsonLdId()
+  {
+    return jsonLdId;
+  }
+
+  public List<URI> getJsonLdTypes()
+  {
+    return jsonLdTypes;
+  }
+
   public String getName()
   {
-    return name;
+    return schemaOrgName;
   }
 
   public String getDescription()
   {
-    return description;
+    return schemaOrgDescription;
   }
 
   public Version getModelVersion()
@@ -64,17 +109,17 @@ public class SchemaArtifact extends Artifact
 
   public Optional<Version> getVersion()
   {
-    return version;
+    return artifactVersion;
   }
 
   public Optional<Status> getStatus()
   {
-    return status;
+    return artifactVersionStatus;
   }
 
   public Optional<Version> getPreviousVersion()
   {
-    return previousVersion;
+    return previousArtifactVersion;
   }
 
   public Optional<URI> getDerivedFrom()
@@ -84,8 +129,11 @@ public class SchemaArtifact extends Artifact
 
   @Override public String toString()
   {
-    return "SchemaArtifact{" + "jsonSchemaSchemaURI=" + jsonSchemaSchemaUri + ", modelVersion=" + modelVersion
-      + ", name='" + name + '\'' + ", description='" + description + '\'' + ", version=" + version + ", status="
-      + status + ", previousVersion=" + previousVersion + ", derivedFrom=" + derivedFrom + '}';
+    return "SchemaArtifact{" + "jsonSchemaSchemaUri=" + jsonSchemaSchemaUri + ", jsonSchemaType='" + jsonSchemaType
+      + '\'' + ", jsonSchemaTitle='" + jsonSchemaTitle + '\'' + ", jsonSchemaDescription='" + jsonSchemaDescription
+      + '\'' + ", jsonLdId=" + jsonLdId + ", jsonLdTypes=" + jsonLdTypes + ", schemaOrgName='" + schemaOrgName + '\''
+      + ", schemaOrgDescription='" + schemaOrgDescription + '\'' + ", modelVersion=" + modelVersion
+      + ", artifactVersion=" + artifactVersion + ", artifactVersionStatus=" + artifactVersionStatus
+      + ", previousArtifactVersion=" + previousArtifactVersion + ", derivedFrom=" + derivedFrom + '}';
   }
 }

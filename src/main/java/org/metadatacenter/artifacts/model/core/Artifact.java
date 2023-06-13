@@ -9,69 +9,27 @@ import java.util.Optional;
 
 public class Artifact
 {
-  private final Optional<URI> jsonLdId;
-  private final List<URI> jsonLdTypes;
-  private final String jsonSchemaType;
-  private final String jsonSchemaTitle;
-  private final String jsonSchemaDescription;
   private final Optional<URI> createdBy, modifiedBy;
   private final Optional<OffsetDateTime> createdOn, lastUpdatedOn;
   private final Map<String, URI> jsonLdContext;
 
-  public Artifact(Optional<URI> jsonLdId, List<URI> jsonLdTypes, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn,
-    Optional<OffsetDateTime> lastUpdatedOn, Map<String, URI> jsonLdContext)
+  public Artifact(Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
   {
-    this.jsonLdId = jsonLdId;
-    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
-    this.jsonSchemaType = jsonSchemaType;
-    this.jsonSchemaTitle = jsonSchemaTitle;
-    this.jsonSchemaDescription = jsonSchemaDescription;
+    this.jsonLdContext = Collections.unmodifiableMap(jsonLdContext);
     this.createdBy = createdBy;
     this.modifiedBy = modifiedBy;
     this.createdOn = createdOn;
     this.lastUpdatedOn = lastUpdatedOn;
-    this.jsonLdContext = Collections.unmodifiableMap(jsonLdContext);
   }
 
   public Artifact(Artifact artifact)
   {
-    this.jsonLdId = artifact.jsonLdId;
-    this.jsonLdTypes = artifact.jsonLdTypes;
-    this.jsonSchemaType = artifact.jsonSchemaType;
-    this.jsonSchemaTitle = artifact.jsonSchemaTitle;
-    this.jsonSchemaDescription = artifact.jsonSchemaDescription;
+    this.jsonLdContext = artifact.jsonLdContext;
     this.createdBy = artifact.createdBy;
     this.modifiedBy = artifact.modifiedBy;
     this.createdOn = artifact.createdOn;
     this.lastUpdatedOn = artifact.lastUpdatedOn;
-    this.jsonLdContext = artifact.jsonLdContext;
-  }
-
-  public Optional<URI> getJsonLdId()
-  {
-    return jsonLdId;
-  }
-
-  public List<URI> getJsonLdTypes()
-  {
-    return jsonLdTypes;
-  }
-
-  public String getJsonSchemaType()
-  {
-    return jsonSchemaType;
-  }
-
-  public String getJsonSchemaTitle()
-  {
-    return jsonSchemaTitle;
-  }
-
-  public String getJsonSchemaDescription()
-  {
-    return jsonSchemaDescription;
   }
 
   public Optional<URI> getCreatedBy()
@@ -101,9 +59,7 @@ public class Artifact
 
   @Override public String toString()
   {
-    return "Artifact{" + "jsonLdId='" + jsonLdId + '\'' + ", jsonLdTypes=" + jsonLdTypes + ", jsonSchemaType='"
-      + jsonSchemaType + '\'' + ", jsonSchemaTitle='" + jsonSchemaTitle + '\'' + ", jsonSchemaDescription='"
-      + jsonSchemaDescription + '\'' + ", createdBy='" + createdBy + '\'' + ", modifiedBy='" + modifiedBy + '\''
-      + ", createdOn=" + createdOn + ", lastUpdatedOn=" + lastUpdatedOn + ", jsonLdContext=" + jsonLdContext + '}';
+    return "Artifact{" + "createdBy=" + createdBy + ", modifiedBy=" + modifiedBy + ", createdOn=" + createdOn
+      + ", lastUpdatedOn=" + lastUpdatedOn + ", jsonLdContext=" + jsonLdContext + '}';
   }
 }
