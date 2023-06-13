@@ -9,13 +9,16 @@ import java.util.Optional;
 
 public class Artifact
 {
+  private final Optional<URI> jsonLdId;
+  private final Map<String, URI> jsonLdContext;
   private final Optional<URI> createdBy, modifiedBy;
   private final Optional<OffsetDateTime> createdOn, lastUpdatedOn;
-  private final Map<String, URI> jsonLdContext;
 
-  public Artifact(Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
+  public Artifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+    Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
   {
+    this.jsonLdId = jsonLdId;
     this.jsonLdContext = Collections.unmodifiableMap(jsonLdContext);
     this.createdBy = createdBy;
     this.modifiedBy = modifiedBy;
@@ -25,6 +28,7 @@ public class Artifact
 
   public Artifact(Artifact artifact)
   {
+    this.jsonLdId = artifact.jsonLdId;
     this.jsonLdContext = artifact.jsonLdContext;
     this.createdBy = artifact.createdBy;
     this.modifiedBy = artifact.modifiedBy;
@@ -32,6 +36,14 @@ public class Artifact
     this.lastUpdatedOn = artifact.lastUpdatedOn;
   }
 
+  public Optional<URI> getJsonLdId()
+  {
+    return jsonLdId;
+  }
+  public Map<String, URI> getJsonLdContext()
+  {
+    return jsonLdContext;
+  }
   public Optional<URI> getCreatedBy()
   {
     return createdBy;
@@ -52,14 +64,9 @@ public class Artifact
     return lastUpdatedOn;
   }
 
-  public Map<String, URI> getJsonLdContext()
-  {
-    return jsonLdContext;
-  }
-
   @Override public String toString()
   {
-    return "Artifact{" + "createdBy=" + createdBy + ", modifiedBy=" + modifiedBy + ", createdOn=" + createdOn
-      + ", lastUpdatedOn=" + lastUpdatedOn + ", jsonLdContext=" + jsonLdContext + '}';
+    return "Artifact{" + "jsonLdId=" + jsonLdId + ", jsonLdContext=" + jsonLdContext + ", createdBy=" + createdBy
+      + ", modifiedBy=" + modifiedBy + ", createdOn=" + createdOn + ", lastUpdatedOn=" + lastUpdatedOn + '}';
   }
 }

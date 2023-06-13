@@ -9,12 +9,12 @@ import java.util.Optional;
 public class FieldInstanceArtifact extends InstanceArtifact
 {
   private final String value;
-  private final String label;
+  private final Optional<String> label;
   private final Optional<String> notation;
   private final Optional<String> prefLabel;
 
-  public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String value, String label,
-    Optional<String> notation, Optional<String> prefLabel)
+  public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String value,
+    Optional<String> label, Optional<String> notation, Optional<String> prefLabel)
   {
     super(instanceArtifact);
     this.value = value;
@@ -37,7 +37,7 @@ public class FieldInstanceArtifact extends InstanceArtifact
     return value;
   }
 
-  public String getLabel()
+  public Optional<String> getLabel()
   {
     return label;
   }

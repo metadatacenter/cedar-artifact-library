@@ -97,12 +97,12 @@ public class ArtifactReader
   public FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
   {
     InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
-    String jsonLDValue = readJsonLDValueField(objectNode, path);
-    String rdfsLabel = readRDFSLabelField(objectNode, path);
+    String jsonLdValue = readJsonLDValueField(objectNode, path);
+    Optional<String> rdfsLabel = readOptionalRDFSLabelField(objectNode, path);
     Optional<String> skosNotation = readSKOSNotationField(objectNode, path);
     Optional<String> skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
 
-    FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLDValue, rdfsLabel,
+    FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLdValue, rdfsLabel,
       skosNotation, skosPrefLabel);
 
     return fieldInstanceArtifact;
@@ -181,13 +181,14 @@ public class ArtifactReader
 
   private Artifact readArtifact(ObjectNode objectNode, String path)
   {
-    Map<String, URI> context = readFieldNameURIValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
     Optional<URI> createdBy = readCreatedByField(objectNode, path);
     Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
     Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
     Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
 
-    return new Artifact(context, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return new Artifact(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
   private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
@@ -198,7 +199,6 @@ public class ArtifactReader
     String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
     String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
     String jsonSchemaDescription = readJsonSchemaDescriptionField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
     List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
     Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
     String schemaOrgName = readSchemaOrgNameField(objectNode, path);
@@ -210,7 +210,7 @@ public class ArtifactReader
 
     return new SchemaArtifact(artifact,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdId, jsonLdTypes,
+      jsonLdTypes,
       schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
       previousVersion, derivedFrom);
   }
@@ -1226,9 +1226,9 @@ public class ArtifactReader
     return readStringField(objectNode, path, ModelNodeNames.JSON_LD_VALUE, null);
   }
 
-  private String readRDFSLabelField(ObjectNode objectNode, String path)
+  private Optional<String> readOptionalRDFSLabelField(ObjectNode objectNode, String path)
   {
-    return readStringField(objectNode, path, ModelNodeNames.RDFS_LABEL, null);
+    return readOptionalStringField(objectNode, path, ModelNodeNames.RDFS_LABEL);
   }
 
   private Optional<String> readSKOSNotationField(ObjectNode objectNode, String path)

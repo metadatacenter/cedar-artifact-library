@@ -11,7 +11,6 @@ public class SchemaArtifact extends Artifact
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
   private final String jsonSchemaDescription;
-  private final Optional<URI> jsonLdId;
   private final List<URI> jsonLdTypes;
   private final String schemaOrgName;
   private final String schemaOrgDescription;
@@ -23,7 +22,7 @@ public class SchemaArtifact extends Artifact
 
   public SchemaArtifact(Artifact artifact,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    Optional<URI> jsonLdId, List<URI> jsonLdTypes,
+    List<URI> jsonLdTypes,
     String schemaOrgName, String schemaOrgDescription,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom)
@@ -33,7 +32,6 @@ public class SchemaArtifact extends Artifact
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
     this.jsonSchemaDescription = jsonSchemaDescription;
-    this.jsonLdId = jsonLdId;
     this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
     this.schemaOrgName = schemaOrgName;
     this.schemaOrgDescription = schemaOrgDescription;
@@ -51,7 +49,6 @@ public class SchemaArtifact extends Artifact
     this.jsonSchemaType = schemaArtifact.jsonSchemaType;
     this.jsonSchemaTitle = schemaArtifact.jsonSchemaTitle;
     this.jsonSchemaDescription = schemaArtifact.jsonSchemaDescription;
-    this.jsonLdId = schemaArtifact.jsonLdId;
     this.jsonLdTypes = Collections.unmodifiableList(schemaArtifact.jsonLdTypes);
     this.schemaOrgName = schemaArtifact.schemaOrgName;
     this.schemaOrgDescription = schemaArtifact.schemaOrgDescription;
@@ -80,11 +77,6 @@ public class SchemaArtifact extends Artifact
   public String getJsonSchemaDescription()
   {
     return jsonSchemaDescription;
-  }
-
-  public Optional<URI> getJsonLdId()
-  {
-    return jsonLdId;
   }
 
   public List<URI> getJsonLdTypes()
@@ -131,9 +123,9 @@ public class SchemaArtifact extends Artifact
   {
     return "SchemaArtifact{" + "jsonSchemaSchemaUri=" + jsonSchemaSchemaUri + ", jsonSchemaType='" + jsonSchemaType
       + '\'' + ", jsonSchemaTitle='" + jsonSchemaTitle + '\'' + ", jsonSchemaDescription='" + jsonSchemaDescription
-      + '\'' + ", jsonLdId=" + jsonLdId + ", jsonLdTypes=" + jsonLdTypes + ", schemaOrgName='" + schemaOrgName + '\''
-      + ", schemaOrgDescription='" + schemaOrgDescription + '\'' + ", modelVersion=" + modelVersion
-      + ", artifactVersion=" + artifactVersion + ", artifactVersionStatus=" + artifactVersionStatus
-      + ", previousArtifactVersion=" + previousArtifactVersion + ", derivedFrom=" + derivedFrom + '}';
+      + '\'' + ", jsonLdTypes=" + jsonLdTypes + ", schemaOrgName='" + schemaOrgName + '\'' + ", schemaOrgDescription='"
+      + schemaOrgDescription + '\'' + ", modelVersion=" + modelVersion + ", artifactVersion=" + artifactVersion
+      + ", artifactVersionStatus=" + artifactVersionStatus + ", previousArtifactVersion=" + previousArtifactVersion
+      + ", derivedFrom=" + derivedFrom + '}';
   }
 }
