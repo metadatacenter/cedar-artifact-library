@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class TemplateInstanceArtifact extends InstanceArtifact
+public final class TemplateInstanceArtifact extends InstanceArtifact implements ParentInstanceArtifact
 {
   private final String isBasedOn;
   private final Map<String, List<ElementInstanceArtifact>> elementInstances;
@@ -20,7 +20,6 @@ public class TemplateInstanceArtifact extends InstanceArtifact
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
   }
 
-
   public TemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
   {
     super(templateInstanceArtifact);
@@ -34,12 +33,12 @@ public class TemplateInstanceArtifact extends InstanceArtifact
     return isBasedOn;
   }
 
-  public Map<String, List<ElementInstanceArtifact>> getElementInstances()
+  @Override public Map<String, List<ElementInstanceArtifact>> getElementInstances()
   {
     return elementInstances;
   }
 
-  public Map<String, List<FieldInstanceArtifact>> getFieldInstances()
+  @Override public Map<String, List<FieldInstanceArtifact>> getFieldInstances()
   {
     return fieldInstances;
   }
