@@ -36,14 +36,13 @@ public class Artifact
     this.lastUpdatedOn = artifact.lastUpdatedOn;
   }
 
-  public Optional<URI> getJsonLdId()
-  {
-    return jsonLdId;
-  }
+  public Optional<URI> getJsonLdId() { return jsonLdId; }
+
   public Map<String, URI> getJsonLdContext()
   {
     return jsonLdContext;
   }
+
   public Optional<URI> getCreatedBy()
   {
     return createdBy;

@@ -1,8 +1,10 @@
 package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class SchemaArtifact extends Artifact
@@ -28,6 +30,30 @@ public class SchemaArtifact extends Artifact
     Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom)
   {
     super(artifact);
+    this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
+    this.jsonSchemaType = jsonSchemaType;
+    this.jsonSchemaTitle = jsonSchemaTitle;
+    this.jsonSchemaDescription = jsonSchemaDescription;
+    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
+    this.schemaOrgName = schemaOrgName;
+    this.schemaOrgDescription = schemaOrgDescription;
+    this.modelVersion = modelVersion;
+    this.artifactVersion = artifactVersion;
+    this.artifactVersionStatus = artifactVersionStatus;
+    this.previousArtifactVersion = previousArtifactVersion;
+    this.derivedFrom = derivedFrom;
+  }
+
+  public SchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+    Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+    List<URI> jsonLdTypes,
+    String schemaOrgName, String schemaOrgDescription,
+    Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
+    Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom)
+  {
+    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
     this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;

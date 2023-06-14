@@ -1,8 +1,11 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public final class TemplateInstanceArtifact extends InstanceArtifact implements ParentInstanceArtifact
 {
@@ -20,12 +23,30 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
   }
 
+  public TemplateInstanceArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, String isBasedOn,
+    Map<String, List<ElementInstanceArtifact>> elementInstances,
+    Map<String, List<FieldInstanceArtifact>> fieldInstances)
+  {
+    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    this.isBasedOn = isBasedOn;
+    this.elementInstances = Collections.unmodifiableMap(elementInstances);
+    this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
+  }
+
   public TemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
   {
     super(templateInstanceArtifact);
     this.isBasedOn = templateInstanceArtifact.isBasedOn;
     this.elementInstances = templateInstanceArtifact.elementInstances;
     this.fieldInstances = templateInstanceArtifact.fieldInstances;
+  }
+
+  private TemplateInstanceArtifact(Builder builder) {
+    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
+    this.isBasedOn = builder.isBasedOn;
+    this.elementInstances = Collections.unmodifiableMap(builder.elementInstances);
+    this.fieldInstances = Collections.unmodifiableMap(builder.fieldInstances);
   }
 
   public String getIsBasedOn()
@@ -47,5 +68,66 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
   {
     return super.toString() + "\n TemplateInstanceArtifact{" + "isBasedOn='" + isBasedOn + '\'' + ", elementInstances=" + elementInstances
       + ", fieldInstances=" + fieldInstances + '}';
+  }
+
+  public static class Builder {
+    private Optional<URI> jsonLdId = Optional.empty();
+    private Map<String, URI> jsonLdContext = Collections.emptyMap();
+    private Optional<URI> createdBy = Optional.empty();
+    private Optional<URI> modifiedBy = Optional.empty();
+    private Optional<OffsetDateTime> createdOn = Optional.empty();
+    private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
+    private String isBasedOn;
+    private Map<String, List<ElementInstanceArtifact>> elementInstances = Collections.emptyMap();
+    private Map<String, List<FieldInstanceArtifact>> fieldInstances = Collections.emptyMap();
+
+    public Builder withJsonLdId(Optional<URI> jsonLdId) {
+      this.jsonLdId = jsonLdId;
+      return this;
+    }
+
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext) {
+      this.jsonLdContext = jsonLdContext;
+      return this;
+    }
+
+    public Builder withCreatedBy(Optional<URI> createdBy) {
+      this.createdBy = createdBy;
+      return this;
+    }
+
+    public Builder withModifiedBy(Optional<URI> modifiedBy) {
+      this.modifiedBy = modifiedBy;
+      return this;
+    }
+
+    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
+      this.createdOn = createdOn;
+      return this;
+    }
+
+    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
+      this.lastUpdatedOn = lastUpdatedOn;
+      return this;
+    }
+
+    public Builder withIsBasedOn(String isBasedOn) {
+      this.isBasedOn = isBasedOn;
+      return this;
+    }
+
+    public Builder withElementInstances(Map<String, List<ElementInstanceArtifact>> elementInstances) {
+      this.elementInstances = elementInstances;
+      return this;
+    }
+
+    public Builder withFieldInstances(Map<String, List<FieldInstanceArtifact>> fieldInstances) {
+      this.fieldInstances = fieldInstances;
+      return this;
+    }
+
+    public TemplateInstanceArtifact build() {
+      return new TemplateInstanceArtifact(this);
+    }
   }
 }
