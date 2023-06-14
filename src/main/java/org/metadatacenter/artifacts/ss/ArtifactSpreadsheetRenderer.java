@@ -112,12 +112,18 @@ public class ArtifactSpreadsheetRenderer
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
+    boolean isRequiredValue = fieldSchemaArtifact.getValueConstraints().isPresent() ?
+      fieldSchemaArtifact.getValueConstraints().get().isRequiredValue() : false;
 
     //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
     //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
     //    else
     columnNameHeaderCell.setCellValue(fieldName);
     columnNameHeaderCell.setCellStyle(headerCellstyle);
+
+    if (isRequiredValue)
+      fieldDescription = "(Required)" + fieldDescription;
+
     setCellComment(columnNameHeaderCell, fieldDescription);
 
     sheet.setDefaultColumnStyle(columnIndex, cellStyle);
