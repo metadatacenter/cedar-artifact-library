@@ -70,6 +70,10 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
       + ", fieldInstances=" + fieldInstances + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder {
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
@@ -80,6 +84,9 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     private String isBasedOn;
     private Map<String, List<ElementInstanceArtifact>> elementInstances = Collections.emptyMap();
     private Map<String, List<FieldInstanceArtifact>> fieldInstances = Collections.emptyMap();
+
+    private Builder() {
+    }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId) {
       this.jsonLdId = jsonLdId;

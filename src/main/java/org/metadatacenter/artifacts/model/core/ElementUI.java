@@ -66,6 +66,10 @@ public final class ElementUI implements UI, ParentArtifactUI
       + propertyDescriptions + ", header=" + header + ", footer=" + footer + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder {
     private List<String> order = new ArrayList<>();
     private Map<String, String> propertyLabels = new HashMap<>();

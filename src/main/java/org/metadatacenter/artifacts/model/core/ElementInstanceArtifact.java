@@ -65,6 +65,10 @@ public final class ElementInstanceArtifact extends InstanceArtifact implements P
       + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder {
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
@@ -74,6 +78,9 @@ public final class ElementInstanceArtifact extends InstanceArtifact implements P
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
     private Map<String, List<FieldInstanceArtifact>> fieldInstances;
     private Map<String, List<ElementInstanceArtifact>> elementInstances;
+
+    private Builder() {
+    }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId) {
       this.jsonLdId = jsonLdId;

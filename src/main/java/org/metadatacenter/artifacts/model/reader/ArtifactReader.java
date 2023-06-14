@@ -120,13 +120,14 @@ public class ArtifactReader
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    Map<String, URI> childPropertyURIs = new HashMap<>();
     TemplateUI templateUI = readTemplateUI(objectNode, path);
 
     checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
-    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, templateUI);
+    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, templateUI);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
@@ -169,6 +170,7 @@ public class ArtifactReader
 
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    Map<String, URI> childPropertyURIs = new HashMap<>();
     ElementUI elementUI = readElementUI(objectNode, path);
     boolean isMultiple = false; // TODO
 
@@ -176,7 +178,7 @@ public class ArtifactReader
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
-    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, isMultiple, elementUI);
+    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, isMultiple, elementUI);
   }
 
   private Artifact readArtifact(ObjectNode objectNode, String path)

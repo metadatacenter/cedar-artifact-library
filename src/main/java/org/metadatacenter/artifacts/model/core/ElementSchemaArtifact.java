@@ -15,15 +15,18 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 {
   private final Map<String, FieldSchemaArtifact> fieldSchemas;
   private final Map<String, ElementSchemaArtifact> elementSchemas;
+  private final Map<String, URI> childPropertyURIs;
   private final boolean isMultiple;
   private final ElementUI elementUI;
 
   public ElementSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple, ElementUI elementUI)
+    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs,
+    boolean isMultiple, ElementUI elementUI)
   {
     super(schemaArtifact);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
+    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
     this.isMultiple = isMultiple;
     this.elementUI = elementUI;
   }
@@ -33,13 +36,14 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     List<URI> jsonLdTypes, String schemaOrgName, String schemaOrgDescription, Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple, ElementUI elementUI)
+    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
   {
     super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
       jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription, modelVersion,
       artifactVersion, artifactVersionStatus, previousArtifactVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
+    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
     this.isMultiple = isMultiple;
     this.elementUI = elementUI;
   }
@@ -47,8 +51,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
   public ElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
     super(elementSchemaArtifact);
-    this.fieldSchemas = elementSchemaArtifact.fieldSchemas;
-    this.elementSchemas = elementSchemaArtifact.elementSchemas;
+    this.fieldSchemas = Collections.unmodifiableMap(elementSchemaArtifact.fieldSchemas);
+    this.elementSchemas = Collections.unmodifiableMap(elementSchemaArtifact.elementSchemas);
+    this.childPropertyURIs = Collections.unmodifiableMap(elementSchemaArtifact.childPropertyURIs);
     this.isMultiple = elementSchemaArtifact.isMultiple;
     this.elementUI = elementSchemaArtifact.elementUI;
   }
@@ -62,6 +67,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
+    this.childPropertyURIs = Collections.unmodifiableMap(builder.childPropertyURIs);
     this.isMultiple = builder.isMultiple;
     this.elementUI = builder.elementUI;
   }
@@ -104,6 +110,11 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       throw new IllegalArgumentException("Field " + name + "not present in element " + getName());
   }
 
+  @Override public Map<String, URI> getChildPropertyURIs()
+  {
+    return Collections.unmodifiableMap(childPropertyURIs);
+  }
+
   @Override public boolean hasFields() {return !fieldSchemas.isEmpty();}
 
   @Override public boolean hasElements() {return !elementSchemas.isEmpty();}
@@ -130,6 +141,10 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       + ", isMultiple=" + isMultiple + ", elementUI=" + elementUI + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder
   {
     private Optional<URI> jsonLdId = Optional.empty();
@@ -152,8 +167,12 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private Optional<URI> derivedFrom = Optional.empty();
     private Map<String, FieldSchemaArtifact> fieldSchemas;
     private Map<String, ElementSchemaArtifact> elementSchemas;
+    private Map<String, URI> childPropertyURIs;
     private boolean isMultiple;
     private ElementUI elementUI;
+
+    private Builder() {
+    }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId)
     {
@@ -272,6 +291,12 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas)
     {
       this.elementSchemas = elementSchemas;
+      return this;
+    }
+
+    public Builder withChildPropertyURIs(Map<String, URI> childPropertyURIs)
+    {
+      this.childPropertyURIs = childPropertyURIs;
       return this;
     }
 

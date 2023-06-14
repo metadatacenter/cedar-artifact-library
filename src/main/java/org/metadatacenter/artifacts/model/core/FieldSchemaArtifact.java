@@ -91,6 +91,10 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       + skosPrefLabel + ", skosAlternateLabels=" + skosAlternateLabels + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder {
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
@@ -115,6 +119,9 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Optional<String> skosPrefLabel = Optional.empty();
     private List<String> skosAlternateLabels = Collections.emptyList();
     private boolean isMultiple;
+
+    private Builder() {
+    }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId) {
       this.jsonLdId = jsonLdId;

@@ -13,13 +13,15 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   private final Map<String, FieldSchemaArtifact> fieldSchemas;
   private final Map<String, ElementSchemaArtifact> elementSchemas;
   private final TemplateUI templateUI;
+  private final Map<String, URI> childPropertyURIs;
 
   public TemplateSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, TemplateUI templateUI)
+    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
   {
     super(schemaArtifact);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
+    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
     this.templateUI = templateUI;
   }
 
@@ -30,13 +32,14 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     List<URI> jsonLdTypes, String schemaOrgName, String schemaOrgDescription,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, TemplateUI templateUI)
+    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
   {
     super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
       jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription, modelVersion,
       artifactVersion, artifactVersionStatus, previousArtifactVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
+    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
     this.templateUI = templateUI;
   }
 
@@ -45,6 +48,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     super(templateSchemaArtifact);
     this.fieldSchemas = templateSchemaArtifact.fieldSchemas;
     this.elementSchemas = templateSchemaArtifact.elementSchemas;
+    this.childPropertyURIs = templateSchemaArtifact.childPropertyURIs;
     this.templateUI = templateSchemaArtifact.templateUI;
   }
 
@@ -56,6 +60,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
+    this.childPropertyURIs = Collections.unmodifiableMap(builder.childPropertyURIs);
     this.templateUI = builder.templateUI;
   }
 
@@ -79,6 +84,11 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
         elementSchemas.put(elementName, elementSchemas.get(elementName));
     }
     return elementSchemas;
+  }
+
+  @Override public Map<String, URI> getChildPropertyURIs()
+  {
+    return Collections.unmodifiableMap(childPropertyURIs);
   }
 
   @Override public FieldSchemaArtifact getFieldSchemaArtifact(String name)
@@ -111,12 +121,16 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   {
     return templateUI;
   }
+
   @Override public String toString()
   {
     return super.toString() + "\n TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
       + ", templateUI=" + templateUI + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
 
   public static class Builder {
     private Optional<URI> jsonLdId = Optional.empty();
@@ -139,7 +153,11 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Optional<URI> derivedFrom = Optional.empty();
     private Map<String, FieldSchemaArtifact> fieldSchemas;
     private Map<String, ElementSchemaArtifact> elementSchemas;
+    private Map<String, URI> childPropertyURIs;
     private TemplateUI templateUI;
+
+    private Builder() {
+    }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId) {
       this.jsonLdId = jsonLdId;
@@ -238,6 +256,12 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
     public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas) {
       this.elementSchemas = elementSchemas;
+      return this;
+    }
+
+    public Builder withChildPropertyURIs(Map<String, URI> childPropertyURIs)
+    {
+      this.childPropertyURIs = childPropertyURIs;
       return this;
     }
 

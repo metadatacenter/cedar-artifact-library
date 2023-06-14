@@ -101,6 +101,10 @@ public final class FieldUI implements UI
       + ", inputTimeFormat=" + inputTimeFormat + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder {
     private FieldInputType inputType;
     private boolean valueRecommendationEnabled;

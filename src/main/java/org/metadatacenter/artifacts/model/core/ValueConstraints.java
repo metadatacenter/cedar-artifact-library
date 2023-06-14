@@ -167,6 +167,10 @@ public class ValueConstraints
       + classes + ", branches=" + branches + ", literals=" + literals + ", defaultValue=" + defaultValue + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder {
     private boolean requiredValue;
     private boolean multipleChoice;
@@ -185,87 +189,91 @@ public class ValueConstraints
     private List<LiteralValueConstraint> literals = new ArrayList<>();
     private Optional<DefaultValue> defaultValue = Optional.empty();
 
-    public Builder setRequiredValue(boolean requiredValue) {
+    private Builder() {
+    }
+
+    public Builder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder setMultipleChoice(boolean multipleChoice) {
+    public Builder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }
 
-    public Builder setNumberType(Optional<NumberType> numberType) {
+    public Builder withNumberType(Optional<NumberType> numberType) {
       this.numberType = numberType;
       return this;
     }
 
-    public Builder setUnitOfMeasure(Optional<String> unitOfMeasure) {
+    public Builder withUnitOfMeasure(Optional<String> unitOfMeasure) {
       this.unitOfMeasure = unitOfMeasure;
       return this;
     }
 
-    public Builder setMinValue(Optional<Number> minValue) {
+    public Builder withMinValue(Optional<Number> minValue) {
       this.minValue = minValue;
       return this;
     }
 
-    public Builder setMaxValue(Optional<Number> maxValue) {
+    public Builder withMaxValue(Optional<Number> maxValue) {
       this.maxValue = maxValue;
       return this;
     }
 
-    public Builder setDecimalPlaces(Optional<Integer> decimalPlaces) {
+    public Builder withDecimalPlaces(Optional<Integer> decimalPlaces) {
       this.decimalPlaces = decimalPlaces;
       return this;
     }
 
-    public Builder setMinLength(Optional<Integer> minLength) {
+    public Builder withMinLength(Optional<Integer> minLength) {
       this.minLength = minLength;
       return this;
     }
 
-    public Builder setMaxLength(Optional<Integer> maxLength) {
+    public Builder withMaxLength(Optional<Integer> maxLength) {
       this.maxLength = maxLength;
       return this;
     }
 
-    public Builder setTemporalType(Optional<TemporalType> temporalType) {
+    public Builder withTemporalType(Optional<TemporalType> temporalType) {
       this.temporalType = temporalType;
       return this;
     }
 
-    public Builder addOntologyValueConstraint(OntologyValueConstraint constraint) {
+    public Builder withOntologyValueConstraint(OntologyValueConstraint constraint) {
       ontologies.add(constraint);
       return this;
     }
 
-    public Builder addValueSetValueConstraint(ValueSetValueConstraint constraint) {
+    public Builder withValueSetValueConstraint(ValueSetValueConstraint constraint) {
       valueSets.add(constraint);
       return this;
     }
 
-    public Builder addClassValueConstraint(ClassValueConstraint constraint) {
+    public Builder withClassValueConstraint(ClassValueConstraint constraint) {
       classes.add(constraint);
       return this;
     }
 
-    public Builder addBranchValueConstraint(BranchValueConstraint constraint) {
+    public Builder withBranchValueConstraint(BranchValueConstraint constraint) {
       branches.add(constraint);
       return this;
     }
 
-    public Builder addLiteralValueConstraint(LiteralValueConstraint constraint) {
+    public Builder withLiteralValueConstraint(LiteralValueConstraint constraint) {
       literals.add(constraint);
       return this;
     }
 
-    public Builder setDefaultValue(Optional<DefaultValue> defaultValue) {
+    public Builder withDefaultValue(Optional<DefaultValue> defaultValue) {
       this.defaultValue = defaultValue;
       return this;
     }
 
-    public ValueConstraints build() {
+    public ValueConstraints build()
+    {
       return new ValueConstraints(this);
     }
   }

@@ -74,6 +74,10 @@ public final class TemplateUI implements UI, ParentArtifactUI
       + '}';
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder {
     private List<String> order = new ArrayList<>();
     private List<String> pages = new ArrayList<>();
