@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,15 @@ public final class TemplateUI implements UI, ParentArtifactUI
     this.propertyDescriptions = Collections.unmodifiableMap(propertyDescriptions);
     this.header = header;
     this.footer = footer;
+  }
+
+  private TemplateUI(Builder builder) {
+    this.order = Collections.unmodifiableList(builder.order);
+    this.pages = Collections.unmodifiableList(builder.pages);
+    this.propertyLabels = Collections.unmodifiableMap(builder.propertyLabels);
+    this.propertyDescriptions = Collections.unmodifiableMap(builder.propertyDescriptions);
+    this.header = builder.header;
+    this.footer = builder.footer;
   }
 
   @Override public UIType getUIType() { return UIType.TEMPLATE_UI; }
@@ -62,5 +72,51 @@ public final class TemplateUI implements UI, ParentArtifactUI
     return "TemplateUI{" + "order=" + order + ", pages=" + pages + ", propertyLabels=" + propertyLabels
       + ", propertyDescriptions=" + propertyDescriptions + ", header='" + header + '\'' + ", footer='" + footer + '\''
       + '}';
+  }
+
+  public static class Builder {
+    private List<String> order = new ArrayList<>();
+    private List<String> pages = new ArrayList<>();
+    private Map<String, String> propertyLabels = Collections.emptyMap();
+    private Map<String, String> propertyDescriptions = Collections.emptyMap();
+    private Optional<String> header = Optional.empty();
+    private Optional<String> footer = Optional.empty();
+
+    private Builder() {
+    }
+
+    public Builder withOrder(List<String> order) {
+      this.order = new ArrayList<>(order);
+      return this;
+    }
+
+    public Builder withPages(List<String> pages) {
+      this.pages = new ArrayList<>(pages);
+      return this;
+    }
+
+    public Builder withPropertyLabels(Map<String, String> propertyLabels) {
+      this.propertyLabels = propertyLabels;
+      return this;
+    }
+
+    public Builder withPropertyDescriptions(Map<String, String> propertyDescriptions) {
+      this.propertyDescriptions = propertyDescriptions;
+      return this;
+    }
+
+    public Builder withHeader(String header) {
+      this.header = Optional.ofNullable(header);
+      return this;
+    }
+
+    public Builder withFooter(String footer) {
+      this.footer = Optional.ofNullable(footer);
+      return this;
+    }
+
+    public TemplateUI build() {
+      return new TemplateUI(this);
+    }
   }
 }

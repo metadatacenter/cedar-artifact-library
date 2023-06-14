@@ -1,6 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +25,16 @@ public final class ElementUI implements UI, ParentArtifactUI
     this.footer = footer;
   }
 
+  private ElementUI(Builder builder) {
+    this.order = Collections.unmodifiableList(builder.order);
+    this.propertyLabels = Collections.unmodifiableMap(builder.propertyLabels);
+    this.propertyDescriptions = Collections.unmodifiableMap(builder.propertyDescriptions);
+    this.header = builder.header;
+    this.footer = builder.footer;
+  }
+
   @Override public UIType getUIType() { return UIType.ELEMENT_UI; }
+
   @Override public List<String> getOrder()
   {
     return order;
@@ -47,5 +58,51 @@ public final class ElementUI implements UI, ParentArtifactUI
   @Override public Optional<String> getFooter()
   {
     return footer;
+  }
+
+  @Override public String toString()
+  {
+    return "ElementUI{" + "order=" + order + ", propertyLabels=" + propertyLabels + ", propertyDescriptions="
+      + propertyDescriptions + ", header=" + header + ", footer=" + footer + '}';
+  }
+
+  public static class Builder {
+    private List<String> order = new ArrayList<>();
+    private Map<String, String> propertyLabels = new HashMap<>();
+    private Map<String, String> propertyDescriptions = new HashMap<>();
+    private Optional<String> header = Optional.empty();
+    private Optional<String> footer = Optional.empty();
+
+    private Builder() {
+    }
+
+    public Builder withOrder(List<String> order) {
+      this.order = new ArrayList<>(order);
+      return this;
+    }
+
+    public Builder withPropertyLabels(Map<String, String> propertyLabels) {
+      this.propertyLabels = new HashMap<>(propertyLabels);
+      return this;
+    }
+
+    public Builder withPropertyDescriptions(Map<String, String> propertyDescriptions) {
+      this.propertyDescriptions = new HashMap<>(propertyDescriptions);
+      return this;
+    }
+
+    public Builder withHeader(String header) {
+      this.header = Optional.ofNullable(header);
+      return this;
+    }
+
+    public Builder withFooter(String footer) {
+      this.footer = Optional.ofNullable(footer);
+      return this;
+    }
+
+    public ElementUI build() {
+      return new ElementUI(this);
+    }
   }
 }

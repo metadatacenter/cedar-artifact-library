@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,25 @@ public class ValueConstraints
     this.branches = Collections.unmodifiableList(branches);
     this.literals = Collections.unmodifiableList(literals);
     this.defaultValue = defaultValue;
+  }
+
+  private ValueConstraints(Builder builder) {
+    this.requiredValue = builder.requiredValue;
+    this.multipleChoice = builder.multipleChoice;
+    this.numberType = builder.numberType;
+    this.unitOfMeasure = builder.unitOfMeasure;
+    this.minValue = builder.minValue;
+    this.maxValue = builder.maxValue;
+    this.decimalPlaces = builder.decimalPlaces;
+    this.minLength = builder.minLength;
+    this.maxLength = builder.maxLength;
+    this.temporalType = builder.temporalType;
+    this.ontologies = builder.ontologies;
+    this.valueSets = builder.valueSets;
+    this.classes = builder.classes;
+    this.branches = builder.branches;
+    this.literals = builder.literals;
+    this.defaultValue = builder.defaultValue;
   }
 
   public boolean isRequiredValue()
@@ -145,5 +165,108 @@ public class ValueConstraints
       + maxValue + ", decimalPlaces=" + decimalPlaces + ", minLength=" + minLength + ", maxLength=" + maxLength
       + ", temporalType=" + temporalType + ", ontologies=" + ontologies + ", valueSets=" + valueSets + ", classes="
       + classes + ", branches=" + branches + ", literals=" + literals + ", defaultValue=" + defaultValue + '}';
+  }
+
+  public static class Builder {
+    private boolean requiredValue;
+    private boolean multipleChoice;
+    private Optional<NumberType> numberType = Optional.empty();
+    private Optional<String> unitOfMeasure = Optional.empty();
+    private Optional<Number> minValue = Optional.empty();
+    private Optional<Number> maxValue = Optional.empty();
+    private Optional<Integer> decimalPlaces = Optional.empty();
+    private Optional<Integer> minLength = Optional.empty();
+    private Optional<Integer> maxLength = Optional.empty();
+    private Optional<TemporalType> temporalType = Optional.empty();
+    private List<OntologyValueConstraint> ontologies = new ArrayList<>();
+    private List<ValueSetValueConstraint> valueSets = new ArrayList<>();
+    private List<ClassValueConstraint> classes = new ArrayList<>();
+    private List<BranchValueConstraint> branches = new ArrayList<>();
+    private List<LiteralValueConstraint> literals = new ArrayList<>();
+    private Optional<DefaultValue> defaultValue = Optional.empty();
+
+    public Builder setRequiredValue(boolean requiredValue) {
+      this.requiredValue = requiredValue;
+      return this;
+    }
+
+    public Builder setMultipleChoice(boolean multipleChoice) {
+      this.multipleChoice = multipleChoice;
+      return this;
+    }
+
+    public Builder setNumberType(Optional<NumberType> numberType) {
+      this.numberType = numberType;
+      return this;
+    }
+
+    public Builder setUnitOfMeasure(Optional<String> unitOfMeasure) {
+      this.unitOfMeasure = unitOfMeasure;
+      return this;
+    }
+
+    public Builder setMinValue(Optional<Number> minValue) {
+      this.minValue = minValue;
+      return this;
+    }
+
+    public Builder setMaxValue(Optional<Number> maxValue) {
+      this.maxValue = maxValue;
+      return this;
+    }
+
+    public Builder setDecimalPlaces(Optional<Integer> decimalPlaces) {
+      this.decimalPlaces = decimalPlaces;
+      return this;
+    }
+
+    public Builder setMinLength(Optional<Integer> minLength) {
+      this.minLength = minLength;
+      return this;
+    }
+
+    public Builder setMaxLength(Optional<Integer> maxLength) {
+      this.maxLength = maxLength;
+      return this;
+    }
+
+    public Builder setTemporalType(Optional<TemporalType> temporalType) {
+      this.temporalType = temporalType;
+      return this;
+    }
+
+    public Builder addOntologyValueConstraint(OntologyValueConstraint constraint) {
+      ontologies.add(constraint);
+      return this;
+    }
+
+    public Builder addValueSetValueConstraint(ValueSetValueConstraint constraint) {
+      valueSets.add(constraint);
+      return this;
+    }
+
+    public Builder addClassValueConstraint(ClassValueConstraint constraint) {
+      classes.add(constraint);
+      return this;
+    }
+
+    public Builder addBranchValueConstraint(BranchValueConstraint constraint) {
+      branches.add(constraint);
+      return this;
+    }
+
+    public Builder addLiteralValueConstraint(LiteralValueConstraint constraint) {
+      literals.add(constraint);
+      return this;
+    }
+
+    public Builder setDefaultValue(Optional<DefaultValue> defaultValue) {
+      this.defaultValue = defaultValue;
+      return this;
+    }
+
+    public ValueConstraints build() {
+      return new ValueConstraints(this);
+    }
   }
 }
