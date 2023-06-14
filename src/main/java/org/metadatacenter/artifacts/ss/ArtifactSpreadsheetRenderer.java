@@ -122,7 +122,7 @@ public class ArtifactSpreadsheetRenderer
     columnNameHeaderCell.setCellStyle(headerCellstyle);
 
     if (isRequiredValue)
-      fieldDescription = "(Required)" + fieldDescription;
+      fieldDescription = "(Required) " + fieldDescription;
 
     setCellComment(columnNameHeaderCell, fieldDescription);
 
