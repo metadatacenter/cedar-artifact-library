@@ -151,7 +151,7 @@ public class ArtifactReader
   //          "Disease": { "enum": [ "http://semantic-dicom.org/dcm#Disease" ]
   //      }
   //    }
-  private  Map<String, URI> getChildPropertyURIs(ObjectNode objectNode, String path)
+  public  Map<String, URI> getChildPropertyURIs(ObjectNode objectNode, String path)
   {
     Map<String, URI> fieldNames2URI = new HashMap<>();
     String contextPath = "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES + "/" + ModelNodeNames.JSON_LD_CONTEXT;
