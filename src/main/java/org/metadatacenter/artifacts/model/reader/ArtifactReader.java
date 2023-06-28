@@ -32,7 +32,10 @@ import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.URIStringPairDefaultValue;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ValueConstraintsAction;
+import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.ValueType;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.model.ModelNodeNames;
 import org.metadatacenter.model.ModelNodeValues;
@@ -512,10 +515,11 @@ public class ArtifactReader
       List<BranchValueConstraint> branches = readBranchValueConstraints(vcNode, vcPath);
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath);
       Optional<DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE);
+      List<ValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath);
 
       return Optional.of(new ValueConstraints(requiredValue, multipleChoice, numberType, unitOfMeasure, minValue, maxValue,
         decimalPlaces, minLength, maxLength, temporalType, ontologies, valueSets, classes, branches, literals,
-        defaultValue));
+        defaultValue, actions));
     } else
       return Optional.empty();
   }
@@ -663,17 +667,66 @@ public class ArtifactReader
       Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
       while (nodeIterator.hasNext()) {
-        JsonNode valueConstraintNode = nodeIterator.next();
-        if (valueConstraintNode != null) {
-          if (!valueConstraintNode.isObject())
+        JsonNode valueConstraintsNode = nodeIterator.next();
+        if (valueConstraintsNode != null) {
+          if (!valueConstraintsNode.isObject())
             throw new ArtifactParseException("Value in array must be an object", ModelNodeNames.VALUE_CONSTRAINTS_LITERALS, path);
-          LiteralValueConstraint literalValueConstraint = readLiteralValueConstraint((ObjectNode)valueConstraintNode,
+          LiteralValueConstraint literalValueConstraint = readLiteralValueConstraint((ObjectNode)valueConstraintsNode,
             path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_LITERALS);
           literalValueConstraints.add(literalValueConstraint);
         }
       }
     }
     return literalValueConstraints;
+  }
+
+  private List<ValueConstraintsAction> readValueConstraintsActions(ObjectNode objectNode, String path)
+  {
+    List<ValueConstraintsAction> actions = new ArrayList<>();
+
+    JsonNode jsonNode = objectNode.get(ModelNodeNames.VALUE_CONSTRAINTS_ACTIONS);
+
+    if (jsonNode != null && jsonNode.isArray()) {
+      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
+
+      while (nodeIterator.hasNext()) {
+        JsonNode actionNode = nodeIterator.next();
+        if (actionNode != null) {
+          if (!actionNode.isObject())
+            throw new ArtifactParseException("Value in array must be an object", ModelNodeNames.VALUE_CONSTRAINTS_ACTIONS, path);
+          ValueConstraintsAction action = readValueConstraintsAction((ObjectNode)actionNode,
+            path + "/" + ModelNodeNames.VALUE_CONSTRAINTS_ACTIONS);
+          actions.add(action);
+        }
+      }
+    }
+    return actions;
+  }
+
+  private ValueConstraintsAction readValueConstraintsAction(ObjectNode objectNode, String path)
+  {
+    URI termUri = readRequiredURIField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_TERM_URI);
+    Optional<URI> sourceUri = readURIField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_SOURCE_URI);
+    String source = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_SOURCE);
+    Optional<Integer> to = readIntegerField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_ACTION_TO);
+    ValueConstraintsActionType actionType = readValueConstraintsActionType(objectNode, path);
+    ValueType valueType = readValueType(objectNode, path);
+
+    return new ValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
+  }
+
+  private ValueConstraintsActionType readValueConstraintsActionType(ObjectNode objectNode, String path)
+  {
+    String actionType = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_ACTION);
+
+    return ValueConstraintsActionType.fromString(actionType);
+  }
+
+  private ValueType readValueType(ObjectNode objectNode, String path)
+  {
+    String valueType = readRequiredStringField(objectNode, path, ModelNodeNames.VALUE_CONSTRAINTS_TYPE);
+
+    return ValueType.fromString(valueType);
   }
 
   private OntologyValueConstraint readOntologyValueConstraint(ObjectNode objectNode, String path)

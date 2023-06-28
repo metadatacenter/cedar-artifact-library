@@ -407,7 +407,6 @@ public class ArtifactSpreadsheetRenderer
   // Return prefLabel->IRI
   private Map<String, String> getValuesFromTerminologyServer(ValueConstraints valueConstraints)
   {
-
     Map<String, String> values = new HashMap<>();
 
     try {

@@ -23,13 +23,14 @@ public class ValueConstraints
   private final List<BranchValueConstraint> branches;
   private final List<LiteralValueConstraint> literals;
   private final Optional<DefaultValue> defaultValue;
+  private final List<ValueConstraintsAction> actions;
 
   public ValueConstraints(boolean requiredValue, boolean multipleChoice, Optional<NumberType> numberType,
     Optional<String> unitOfMeasure, Optional<Number> minValue, Optional<Number> maxValue,
     Optional<Integer> decimalPlaces, Optional<Integer> minLength, Optional<Integer> maxLength,
     Optional<TemporalType> temporalType, List<OntologyValueConstraint> ontologies, List<ValueSetValueConstraint> valueSets,
     List<ClassValueConstraint> classes, List<BranchValueConstraint> branches, List<LiteralValueConstraint> literals,
-    Optional<DefaultValue> defaultValue)
+    Optional<DefaultValue> defaultValue, List<ValueConstraintsAction> actions)
   {
     this.requiredValue = requiredValue;
     this.multipleChoice = multipleChoice;
@@ -47,6 +48,7 @@ public class ValueConstraints
     this.branches = Collections.unmodifiableList(branches);
     this.literals = Collections.unmodifiableList(literals);
     this.defaultValue = defaultValue;
+    this.actions = Collections.unmodifiableList(actions);
   }
 
   private ValueConstraints(Builder builder) {
@@ -66,6 +68,7 @@ public class ValueConstraints
     this.branches = builder.branches;
     this.literals = builder.literals;
     this.defaultValue = builder.defaultValue;
+    this.actions = builder.actions;
   }
 
   public boolean isRequiredValue()
@@ -143,6 +146,11 @@ public class ValueConstraints
     return literals;
   }
 
+  public List<ValueConstraintsAction> getActions()
+  {
+    return actions;
+  }
+
   public boolean hasValueBasedConstraints()
   {
     return !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty() || !literals.isEmpty();
@@ -164,7 +172,8 @@ public class ValueConstraints
       + ", numberType=" + numberType + ", unitOfMeasure=" + unitOfMeasure + ", minValue=" + minValue + ", maxValue="
       + maxValue + ", decimalPlaces=" + decimalPlaces + ", minLength=" + minLength + ", maxLength=" + maxLength
       + ", temporalType=" + temporalType + ", ontologies=" + ontologies + ", valueSets=" + valueSets + ", classes="
-      + classes + ", branches=" + branches + ", literals=" + literals + ", defaultValue=" + defaultValue + '}';
+      + classes + ", branches=" + branches + ", literals=" + literals + ", defaultValue=" + defaultValue + ", actions="
+      + actions + '}';
   }
 
   public static Builder builder() {
@@ -188,6 +197,7 @@ public class ValueConstraints
     private List<BranchValueConstraint> branches = new ArrayList<>();
     private List<LiteralValueConstraint> literals = new ArrayList<>();
     private Optional<DefaultValue> defaultValue = Optional.empty();
+    private List<ValueConstraintsAction> actions = new ArrayList<>();
 
     private Builder() {
     }
@@ -269,6 +279,11 @@ public class ValueConstraints
 
     public Builder withDefaultValue(Optional<DefaultValue> defaultValue) {
       this.defaultValue = defaultValue;
+      return this;
+    }
+
+    public Builder withValueConstraintsAction(ValueConstraintsAction action) {
+      actions.add(action);
       return this;
     }
 
