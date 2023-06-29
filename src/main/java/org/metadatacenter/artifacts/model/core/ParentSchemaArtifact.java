@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,14 +9,25 @@ import java.util.Map;
 public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
 {
   boolean isField(String name);
+
   boolean isElement(String name);
+
   boolean hasFields();
+
   boolean hasElements();
+
   FieldSchemaArtifact getFieldSchemaArtifact(String name);
+
   ElementSchemaArtifact getElementSchemaArtifact(String name);
+
   LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas();
+
   LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas();
+
+  Map<String, URI> getChildPropertyURIs();
+
   ParentArtifactUI getUI();
+
   default List<ChildSchemaArtifact> getChildSchemas()
   {
     var childSchemas = new ArrayList<ChildSchemaArtifact>();
