@@ -56,8 +56,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   {
     super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
       builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
-      builder.jsonLdTypes, builder.schemaOrgName, builder.schemaOrgDescription, builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousArtifactVersion,
-      builder.derivedFrom);
+      builder.jsonLdTypes, builder.schemaOrgName, builder.schemaOrgDescription, builder.modelVersion, builder.artifactVersion,
+      builder.artifactVersionStatus, builder.previousArtifactVersion, builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(builder.childPropertyURIs);
@@ -124,8 +124,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
   @Override public String toString()
   {
-    return super.toString() + "\n TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
-      + ", templateUI=" + templateUI + '}';
+    return "TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
+      + ", templateUI=" + templateUI + ", childPropertyURIs=" + childPropertyURIs + '}';
   }
 
   public static Builder builder() {
