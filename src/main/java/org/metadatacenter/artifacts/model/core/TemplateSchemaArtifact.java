@@ -66,24 +66,24 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
   @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
   {
-    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
     for (String fieldName: getUI().getOrder()) {
-      if (fieldSchemas.containsKey(fieldName))
-        fieldSchemas.put(fieldName, fieldSchemas.get(fieldName));
+      if (this.fieldSchemas.containsKey(fieldName))
+        orderedFieldSchemas.put(fieldName, this.fieldSchemas.get(fieldName));
     }
-    return fieldSchemas;
+    return orderedFieldSchemas;
   }
 
   @Override public LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas()
   {
-    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
     for (String elementName: getUI().getOrder()) {
-      if (elementSchemas.containsKey(elementName))
-        elementSchemas.put(elementName, elementSchemas.get(elementName));
+      if (this.elementSchemas.containsKey(elementName))
+        orderedElementSchemas.put(elementName, this.elementSchemas.get(elementName));
     }
-    return elementSchemas;
+    return orderedElementSchemas;
   }
 
   @Override public Map<String, URI> getChildPropertyURIs()

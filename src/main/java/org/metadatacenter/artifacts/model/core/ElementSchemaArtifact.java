@@ -51,9 +51,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
   public ElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
     super(elementSchemaArtifact);
-    this.fieldSchemas = Collections.unmodifiableMap(elementSchemaArtifact.fieldSchemas);
-    this.elementSchemas = Collections.unmodifiableMap(elementSchemaArtifact.elementSchemas);
-    this.childPropertyURIs = Collections.unmodifiableMap(elementSchemaArtifact.childPropertyURIs);
+    this.fieldSchemas = elementSchemaArtifact.fieldSchemas;
+    this.elementSchemas = elementSchemaArtifact.elementSchemas;
+    this.childPropertyURIs = elementSchemaArtifact.childPropertyURIs;
     this.isMultiple = elementSchemaArtifact.isMultiple;
     this.elementUI = elementSchemaArtifact.elementUI;
   }
@@ -74,24 +74,24 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
   {
-    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
     for (String fieldName : getUI().getOrder()) {
-      if (fieldSchemas.containsKey(fieldName))
-        fieldSchemas.put(fieldName, fieldSchemas.get(fieldName));
+      if (this.fieldSchemas.containsKey(fieldName))
+        orderedFieldSchemas.put(fieldName, this.fieldSchemas.get(fieldName));
     }
-    return fieldSchemas;
+    return orderedFieldSchemas;
   }
 
   @Override public LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas()
   {
-    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
     for (String elementName : getUI().getOrder()) {
-      if (elementSchemas.containsKey(elementName))
-        elementSchemas.put(elementName, elementSchemas.get(elementName));
+      if (this.elementSchemas.containsKey(elementName))
+        orderedElementSchemas.put(elementName, this.elementSchemas.get(elementName));
     }
-    return elementSchemas;
+    return orderedElementSchemas;
   }
 
   @Override public ElementSchemaArtifact getElementSchemaArtifact(String name)
