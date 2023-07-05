@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.metadatacenter.model.ModelNodeNames;
 
 public enum FieldInputType
@@ -26,6 +27,7 @@ public enum FieldInputType
     this.text = text;
   }
 
+  @JsonValue
   public String getText() {
     return this.text;
   }

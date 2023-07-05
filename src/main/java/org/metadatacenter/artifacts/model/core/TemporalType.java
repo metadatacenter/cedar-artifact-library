@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum TemporalType
 {
   DATE("xsd:date"),
@@ -12,6 +14,7 @@ public enum TemporalType
     this.text = text;
   }
 
+  @JsonValue
   public String getText() {
     return this.text;
   }

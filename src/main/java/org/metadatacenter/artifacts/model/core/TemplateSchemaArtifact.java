@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.model.ModelNodeNames;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -23,6 +25,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
     this.templateUI = templateUI;
+
+    validate();
   }
 
   public TemplateSchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
@@ -41,6 +45,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
     this.templateUI = templateUI;
+
+    validate();
   }
 
   public TemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
@@ -50,6 +56,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     this.elementSchemas = templateSchemaArtifact.elementSchemas;
     this.childPropertyURIs = templateSchemaArtifact.childPropertyURIs;
     this.templateUI = templateSchemaArtifact.templateUI;
+
+    validate();
   }
 
   private TemplateSchemaArtifact(Builder builder)
@@ -62,6 +70,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(builder.childPropertyURIs);
     this.templateUI = builder.templateUI;
+
+    validate();
   }
 
   @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
@@ -126,6 +136,14 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   {
     return "TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
       + ", templateUI=" + templateUI + ", childPropertyURIs=" + childPropertyURIs + '}';
+  }
+
+  private void validate()
+  {
+    validateMapFieldNotNull(fieldSchemas, "fieldSchemas");
+    validateMapFieldNotNull(elementSchemas, "elementSchemas");
+    validateUIFieldNotNull(templateUI, ModelNodeNames.UI);
+    validateMapFieldNotNull(childPropertyURIs, "childPropertyURIs");
   }
 
   public static Builder builder() {

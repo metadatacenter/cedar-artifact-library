@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.metadatacenter.model.ModelNodeNames;
 
 public enum ValueConstraintsActionType
@@ -13,13 +14,14 @@ public enum ValueConstraintsActionType
     this.text = text;
   }
 
+  @JsonValue
   public String getText() {
     return this.text;
   }
 
   public static ValueConstraintsActionType fromString(String text) {
     for (ValueConstraintsActionType f : ValueConstraintsActionType.values()) {
-      if (f.text.equalsIgnoreCase(text)) {
+      if (f.text.equals(text)) {
         return f;
       }
     }
