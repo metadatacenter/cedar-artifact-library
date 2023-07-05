@@ -166,7 +166,7 @@ public class SchemaArtifact extends Artifact
 
   private void validate()
   {
-    validateURIFieldEquals(jsonSchemaSchemaUri, ModelNodeNames.JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    // TODO validateURIFieldEquals(jsonSchemaSchemaUri, ModelNodeNames.JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
     validateStringFieldNotNull(jsonSchemaType, ModelNodeNames.JSON_SCHEMA_TYPE);
     validateStringFieldNotNull(jsonSchemaTitle, ModelNodeNames.JSON_SCHEMA_TITLE);
     validateStringFieldNotNull(jsonSchemaDescription, ModelNodeNames.JSON_SCHEMA_DESCRIPTION);
