@@ -161,7 +161,7 @@ public class ArtifactReader
     JsonNode contextNode = objectNode.at(contextPath);
     Set<String> modelFields = new HashSet<>(ModelNodeNames.SCHEMA_ARTIFACT_KEYWORDS);
 
-    if (contextNode != null || contextNode.isObject()) {
+    if (contextNode != null && contextNode.isObject()) {
       ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;
       Iterator<String> fieldNames = jsonSchemaContextSpecificationNode.fieldNames();
 
@@ -242,7 +242,7 @@ public class ArtifactReader
 
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    Map<String, URI> childPropertyURIs = new HashMap<>();
+    Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
     ElementUI elementUI = readElementUI(objectNode, path);
     boolean isMultiple = false; // TODO
 
@@ -986,7 +986,7 @@ public class ArtifactReader
 
     JsonNode jsonNode = objectNode.get(fieldName);
 
-    if (jsonNode != null || jsonNode.isNull()) {
+    if (jsonNode != null && !jsonNode.isNull()) {
 
       if (!jsonNode.isObject())
         throw new ArtifactParseException("Value of field  must be an object", fieldName, path);
