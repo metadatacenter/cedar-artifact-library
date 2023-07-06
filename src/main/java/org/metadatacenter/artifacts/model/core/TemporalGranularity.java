@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum TemporalGranularity
 {
   YEAR("year"),
@@ -16,6 +18,7 @@ public enum TemporalGranularity
     this.text = text;
   }
 
+  @JsonValue
   public String getText() {
     return this.text;
   }

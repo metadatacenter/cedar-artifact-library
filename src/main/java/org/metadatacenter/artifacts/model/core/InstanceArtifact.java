@@ -16,5 +16,11 @@ public class InstanceArtifact extends Artifact
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
   {
     super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+
+    validate();
+  }
+
+  private void validate()
+  {
   }
 }

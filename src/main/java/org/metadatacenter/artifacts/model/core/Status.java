@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Status
 {
   DRAFT("bibo:draft"),
@@ -11,6 +13,7 @@ public enum Status
     this.text = text;
   }
 
+  @JsonValue
   public String getText() {
     return this.text;
   }

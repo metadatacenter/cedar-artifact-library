@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.apache.poi.ss.formula.functions.Mode;
+import org.metadatacenter.model.ModelNodeNames;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -42,6 +45,8 @@ public class SchemaArtifact extends Artifact
     this.artifactVersionStatus = artifactVersionStatus;
     this.previousArtifactVersion = previousArtifactVersion;
     this.derivedFrom = derivedFrom;
+
+    validate();
   }
 
   public SchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
@@ -66,6 +71,8 @@ public class SchemaArtifact extends Artifact
     this.artifactVersionStatus = artifactVersionStatus;
     this.previousArtifactVersion = previousArtifactVersion;
     this.derivedFrom = derivedFrom;
+
+    validate();
   }
 
   public SchemaArtifact(SchemaArtifact schemaArtifact)
@@ -83,6 +90,8 @@ public class SchemaArtifact extends Artifact
     this.artifactVersionStatus = schemaArtifact.artifactVersionStatus;
     this.previousArtifactVersion = schemaArtifact.previousArtifactVersion;
     this.derivedFrom = schemaArtifact.derivedFrom;
+
+    validate();
   }
 
   public URI getJsonSchemaSchemaUri()
@@ -153,5 +162,21 @@ public class SchemaArtifact extends Artifact
       + schemaOrgDescription + '\'' + ", modelVersion=" + modelVersion + ", artifactVersion=" + artifactVersion
       + ", artifactVersionStatus=" + artifactVersionStatus + ", previousArtifactVersion=" + previousArtifactVersion
       + ", derivedFrom=" + derivedFrom + '}';
+  }
+
+  private void validate()
+  {
+    // TODO validateURIFieldEquals(jsonSchemaSchemaUri, ModelNodeNames.JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    validateStringFieldNotNull(jsonSchemaType, ModelNodeNames.JSON_SCHEMA_TYPE);
+    validateStringFieldNotNull(jsonSchemaTitle, ModelNodeNames.JSON_SCHEMA_TITLE);
+    validateStringFieldNotNull(jsonSchemaDescription, ModelNodeNames.JSON_SCHEMA_DESCRIPTION);
+    validateListFieldNotNull(jsonLdTypes, ModelNodeNames.JSON_LD_TYPE);
+    validateStringFieldNotEmpty(schemaOrgName, ModelNodeNames.SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(schemaOrgDescription, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
+    validateVersionFieldNotNull(modelVersion, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
+    validateOptionalFieldNotNull(artifactVersion, ModelNodeNames.PAV_VERSION);
+    validateOptionalFieldNotNull(artifactVersionStatus, ModelNodeNames.BIBO_STATUS);
+    validateOptionalFieldNotNull(previousArtifactVersion, ModelNodeNames.PAV_PREVIOUS_VERSION);
+    validateOptionalFieldNotNull(derivedFrom, ModelNodeNames.PAV_DERIVED_FROM);
   }
 }

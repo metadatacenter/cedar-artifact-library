@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.bouncycastle.math.raw.Mod;
+import org.metadatacenter.model.ModelNodeNames;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -25,6 +28,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
     this.isMultiple = isMultiple;
+
+    validate();
   }
 
   public FieldSchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
@@ -46,6 +51,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
     this.isMultiple = isMultiple;
+
+    validate();
   }
 
   private FieldSchemaArtifact(Builder builder) {
@@ -59,6 +66,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = builder.skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(builder.skosAlternateLabels);
     this.isMultiple = builder.isMultiple;
+
+    validate();
   }
 
   public FieldUI getFieldUI()
@@ -91,6 +100,14 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       + skosPrefLabel + ", skosAlternateLabels=" + skosAlternateLabels + '}';
   }
 
+  private void validate()
+  {
+    validateUIFieldNotNull(fieldUI, ModelNodeNames.UI);
+    validateOptionalFieldNotNull(valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
+    validateOptionalFieldNotNull(skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
+    validateListFieldNotNull(skosAlternateLabels, ModelNodeNames.SKOS_ALTLABEL);
+  }
+
   public static Builder builder() {
     return new Builder();
   }
@@ -103,12 +120,12 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
     private URI jsonSchemaSchemaUri;
-    private String jsonSchemaType;
+    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle;
-    private String jsonSchemaDescription;
-    private List<URI> jsonLdTypes;
+    private String jsonSchemaDescription = "";
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
-    private String schemaOrgDescription;
+    private String schemaOrgDescription = "";
     private Version modelVersion;
     private Optional<Version> artifactVersion = Optional.empty();
     private Optional<Status> artifactVersionStatus = Optional.empty();
@@ -118,7 +135,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Optional<ValueConstraints> valueConstraints = Optional.empty();
     private Optional<String> skosPrefLabel = Optional.empty();
     private List<String> skosAlternateLabels = Collections.emptyList();
-    private boolean isMultiple;
+    private boolean isMultiple = false;
 
     private Builder() {
     }

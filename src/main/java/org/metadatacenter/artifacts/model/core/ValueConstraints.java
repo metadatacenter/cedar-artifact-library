@@ -151,6 +151,10 @@ public class ValueConstraints
     return actions;
   }
 
+  public boolean hasLiteralBasedConstraint() {
+    return !literals.isEmpty();
+  }
+
   public boolean hasValueBasedConstraints()
   {
     return !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty() || !literals.isEmpty();
