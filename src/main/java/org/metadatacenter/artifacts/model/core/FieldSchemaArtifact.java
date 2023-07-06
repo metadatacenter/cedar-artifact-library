@@ -119,16 +119,16 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri;
+    private URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
     private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
-    private String jsonSchemaTitle;
+    private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
     private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription = "";
-    private Version modelVersion;
-    private Optional<Version> artifactVersion = Optional.empty();
-    private Optional<Status> artifactVersionStatus = Optional.empty();
+    private Version modelVersion = new Version(1, 6, 0); // TODO
+    private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
+    private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     private Optional<Version> previousArtifactVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
     private FieldUI fieldUI;
