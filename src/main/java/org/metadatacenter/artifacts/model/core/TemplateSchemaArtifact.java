@@ -158,10 +158,10 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
     private URI jsonSchemaSchemaUri;
-    private String jsonSchemaType;
+    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle;
     private String jsonSchemaDescription;
-    private List<URI> jsonLdTypes;
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription;
     private Version modelVersion;
@@ -169,9 +169,9 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Optional<Status> artifactVersionStatus = Optional.empty();
     private Optional<Version> previousArtifactVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas;
-    private Map<String, ElementSchemaArtifact> elementSchemas;
-    private Map<String, URI> childPropertyURIs;
+    private Map<String, FieldSchemaArtifact> fieldSchemas = Collections.emptyMap();
+    private Map<String, ElementSchemaArtifact> elementSchemas = Collections.emptyMap();
+    private Map<String, URI> childPropertyURIs = Collections.emptyMap();
     private TemplateUI templateUI;
 
     private Builder() {
