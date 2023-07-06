@@ -130,6 +130,7 @@ public class ArtifactReaderTest {
     objectNode.put(ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
     objectNode.put(ModelNodeNames.SCHEMA_ORG_NAME, name);
     objectNode.put(ModelNodeNames.SCHEMA_ORG_DESCRIPTION, description);
+    objectNode.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     objectNode.put(ModelNodeNames.UI, mapper.createObjectNode());
 

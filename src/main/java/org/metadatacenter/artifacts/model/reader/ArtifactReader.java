@@ -134,10 +134,6 @@ public class ArtifactReader
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
-    // Get all names of nested field and element schemas
-    // Then look inside properties/@Context for name->URI map
-
-
     return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, templateUI);
   }
 
@@ -281,6 +277,11 @@ public class ArtifactReader
     Optional<Status> artifactVersionStatus = readBIBOStatusField(objectNode, path);
     Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
+    boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
+    // TODO: required array
+
+    if (additionalProperties)
+      throw new ArtifactParseException("field must be false", ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, path);
 
     return new SchemaArtifact(artifact,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
