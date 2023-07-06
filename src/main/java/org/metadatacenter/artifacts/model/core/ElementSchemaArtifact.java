@@ -171,9 +171,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
     private URI jsonSchemaSchemaUri;
-    private String jsonSchemaType;
+    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle;
-    private String jsonSchemaDescription;
+    private String jsonSchemaDescription = "";
     private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription;
