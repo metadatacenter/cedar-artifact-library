@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
 
-public class ArtifactSpreadsheetRenderer
+public class ArtifactExcelRenderer
 {
   private final Workbook workbook;
   private final String terminologyServerIntegratedSearchEndpoint;
@@ -66,9 +66,9 @@ public class ArtifactSpreadsheetRenderer
   public static final DateTimeFormatter xsdDateTimeFormatter =
     DateTimeFormatter.ofPattern(xsdDateTimeFormatterString).withZone(ZoneId.systemDefault());
 
-  public ArtifactSpreadsheetRenderer(Workbook workbook, String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
+  public ArtifactExcelRenderer(String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
   {
-    this.workbook = workbook;
+    this.workbook = SpreadsheetFactory.createEmptyWorkbook();
     this.terminologyServerIntegratedSearchEndpoint = terminologyServerIntegratedSearchEndpoint;
     this.terminologyServerAPIKey = terminologyServerAPIKey;
 
@@ -80,7 +80,7 @@ public class ArtifactSpreadsheetRenderer
     this.headerCellstyle = createHeaderCellStyle(workbook);
   }
 
-  public void render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
+  public Workbook render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
   {
     String sheetName = templateSchemaArtifact.getName();
     int columnIndex = headerStartColumnIndex;
@@ -97,14 +97,16 @@ public class ArtifactSpreadsheetRenderer
     }
 
     addMetadataSheet(templateSchemaArtifact);
+
+    return this.workbook;
   }
 
-  public void render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
+  public Workbook render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
   {
     throw new RuntimeException("element rendering not implemented");
   }
 
-  public void render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow)
+  public Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow)
   {
     String fieldName = fieldSchemaArtifact.getName();
     String fieldDescription = fieldSchemaArtifact.getDescription();
@@ -133,6 +135,8 @@ public class ArtifactSpreadsheetRenderer
 
     if (fieldSchemaArtifact.isHidden())
       sheet.setColumnHidden(columnIndex, true);
+
+    return this.workbook;
   }
 
   private void setColumnDataValidationConstraintIfRequired(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, int firstRow)
