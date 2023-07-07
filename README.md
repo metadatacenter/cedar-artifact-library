@@ -31,7 +31,7 @@ This will read a JSON-Schema-based template and convert it into an Excel file.
 
 To generate an TSV from a CEDAR template:
 
-    mvn exec:java -Dexec.args="<Input_template_filename.json> <Output_TSV_filename.xlsx> https://terminology.metadatacenter.org/bioportal/integrated-search/ <CEDAR API key>"
+    mvn exec:java -Dexec.args="<Input_template_filename.json> <Output_TSV_filename.tsv> https://terminology.metadatacenter.org/bioportal/integrated-search/ <CEDAR API key>"
 
 This will read a JSON-Schema-based template and convert it into a TSV file.
 
