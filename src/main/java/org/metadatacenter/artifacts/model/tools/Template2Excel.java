@@ -40,6 +40,9 @@ public class Template2Excel
 
     Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 
+    if (workbook.getNumberOfSheets() == 0)
+      throw new RuntimeException("No sheets in generated workbook");
+
     SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
   }
 
