@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -24,9 +25,12 @@ import org.metadatacenter.artifacts.model.core.FieldUI;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
+import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.StringDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.URIStringPairDefaultValue;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.model.ModelNodeNames;
@@ -34,6 +38,7 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -87,11 +92,12 @@ public class ArtifactExcelRenderer
 
     Sheet sheet = workbook.createSheet(sheetName);
     Row headerRow = sheet.createRow(headerRowNumber);
+    Row firstDataRow = sheet.createRow(headerRowNumber + 1);
 
     for (String fieldName : templateSchemaArtifact.getFieldNames()) {
       FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldName);
 
-      render(fieldSchemaArtifact, sheet, columnIndex, headerRow);
+      render(fieldSchemaArtifact, sheet, columnIndex, headerRow, firstDataRow);
 
       columnIndex += 1;
     }
@@ -106,7 +112,7 @@ public class ArtifactExcelRenderer
     throw new RuntimeException("element rendering not implemented");
   }
 
-  public Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow)
+  public Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow, Row firstDataRow)
   {
     String fieldName = fieldSchemaArtifact.getName();
     String fieldDescription = fieldSchemaArtifact.getDescription();
@@ -116,6 +122,8 @@ public class ArtifactExcelRenderer
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
     boolean isRequiredValue = fieldSchemaArtifact.getValueConstraints().isPresent() ?
       fieldSchemaArtifact.getValueConstraints().get().isRequiredValue() : false;
+    Optional<DefaultValue> defaultValue = fieldSchemaArtifact.getValueConstraints().isPresent() ?
+      fieldSchemaArtifact.getValueConstraints().get().getDefaultValue() : Optional.empty();
 
     //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
     //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
@@ -135,6 +143,29 @@ public class ArtifactExcelRenderer
 
     if (fieldSchemaArtifact.isHidden())
       sheet.setColumnHidden(columnIndex, true);
+
+    if (defaultValue.isPresent()) {
+      DefaultValue value = fieldSchemaArtifact.getValueConstraints().get().getDefaultValue().get();
+      Cell dataCell = firstDataRow.createCell(columnIndex);
+
+      if (value.isNumericDefaultValue()) {
+        NumericDefaultValue numericDefaultValue = value.asNumericDefaultValue();
+        Number n = numericDefaultValue.getValue();
+
+        dataCell.setCellValue(n.doubleValue());
+      } else if (value.isStringDefaultValue()) {
+        StringDefaultValue stringDefaultValue = value.asStringDefaultValue();
+        String s = stringDefaultValue.getValue();
+
+        dataCell.setCellValue(s);
+      } else if (value.isURIStringPairDefaultValue()) {
+        URIStringPairDefaultValue uriStringPairDefaultValue = value.asURIStringPairDefaultValue();
+        URI u = uriStringPairDefaultValue.getValue().getLeft();
+
+        dataCell.setCellValue(u.toString());
+      } else
+        throw new RuntimeException("Unknown default value type" + value.getValueType() + " for field " + fieldName);
+    }
 
     return this.workbook;
   }
