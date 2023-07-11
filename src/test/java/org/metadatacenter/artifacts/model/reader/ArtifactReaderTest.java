@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
@@ -10,9 +11,10 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.model.ModelNodeNames;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +28,46 @@ public class ArtifactReaderTest {
   public void setup() {
     mapper = new ObjectMapper();
     artifactReader = new ArtifactReader(mapper);
+  }
+
+  @Test
+  public void testsReadSampleBlockTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("SampleBlock.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("HuBMAP Sample Block", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testsReadSampleSectionTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("SampleSection.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("Sample Section", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testsReadSampleSuspensionTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("SampleSuspension.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("HuBMAP Sample Suspension", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testsReadADVANCETemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("ADVANCETemplate.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("ADVANCE metadata template", templateSchemaArtifact.getName());
   }
 
   @Test
@@ -137,5 +179,14 @@ public class ArtifactReaderTest {
     objectNode.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
     return objectNode;
+  }
+
+  private ObjectNode getFileContentAsObjectNode(String jsonFileName)
+  {
+    try {
+      return (ObjectNode)mapper.readTree(new File(ArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
+    }
   }
 }
