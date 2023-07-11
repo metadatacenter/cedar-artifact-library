@@ -1,6 +1,10 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.model.ModelNodeNames;
+
 import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 
 public final class FieldUI implements UI
 {
@@ -21,6 +25,8 @@ public final class FieldUI implements UI
     this.timeZoneEnabled = timeZoneEnabled;
     this.temporalGranularity = temporalGranularity;
     this.inputTimeFormat = inputTimeFormat;
+
+    validate();
   }
 
   private FieldUI(Builder builder) {
@@ -30,6 +36,8 @@ public final class FieldUI implements UI
     this.timeZoneEnabled = builder.timeZoneEnabled;
     this.temporalGranularity = builder.temporalGranularity;
     this.inputTimeFormat = builder.inputTimeFormat;
+
+    validate();
   }
 
   @Override public UIType getUIType() { return UIType.FIELD_UI; }
@@ -101,14 +109,36 @@ public final class FieldUI implements UI
       + ", inputTimeFormat=" + inputTimeFormat + '}';
   }
 
+  private void validate()
+  {
+    validateOptionalFieldNotNull(this, timeZoneEnabled, ModelNodeNames.UI_TIMEZONE_ENABLED);
+    validateOptionalFieldNotNull(this, temporalGranularity, ModelNodeNames.UI_TEMPORAL_GRANULARITY);
+    validateOptionalFieldNotNull(this, inputTimeFormat, ModelNodeNames.UI_INPUT_TIME_FORMAT);
+
+    if (inputType == null)
+      throw new IllegalStateException("Field " + ModelNodeNames.UI_FIELD_INPUT_TYPE + " must set in " + this);
+
+    if (inputType == FieldInputType.TEMPORAL) {
+      if (!temporalGranularity.isPresent())
+        throw new IllegalStateException(
+          "Field " + ModelNodeNames.UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
+
+      if (!inputTimeFormat.isPresent())
+        throw new IllegalStateException(
+          "Field " + ModelNodeNames.UI_INPUT_TIME_FORMAT + " must set for temporal fields in " + this);
+    }
+
+    // TODO Other sanity checks
+  }
+
   public static Builder builder() {
     return new Builder();
   }
 
   public static class Builder {
     private FieldInputType inputType;
-    private boolean valueRecommendationEnabled;
-    private boolean hidden;
+    private boolean valueRecommendationEnabled = false;
+    private boolean hidden = false;
     private Optional<Boolean> timeZoneEnabled = Optional.empty();
     private Optional<TemporalGranularity> temporalGranularity = Optional.empty();
     private Optional<InputTimeFormat> inputTimeFormat = Optional.empty();

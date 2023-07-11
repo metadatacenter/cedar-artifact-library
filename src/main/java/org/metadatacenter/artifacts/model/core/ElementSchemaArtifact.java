@@ -1,17 +1,17 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.apache.poi.poifs.property.Child;
-import org.bouncycastle.math.raw.Mod;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 
 public final class ElementSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact, ParentSchemaArtifact
 {
@@ -153,10 +153,10 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   private void validate()
   {
-    validateMapFieldNotNull(fieldSchemas, "fieldSchemas");
-    validateMapFieldNotNull(elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(elementUI, ModelNodeNames.UI);
-    validateMapFieldNotNull(childPropertyURIs, "childPropertyURIs");
+    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
+    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
+    validateUIFieldNotNull(this, elementUI, ModelNodeNames.UI);
+    validateMapFieldNotNull(this, childPropertyURIs, "childPropertyURIs");
   }
 
   public static Builder builder() {

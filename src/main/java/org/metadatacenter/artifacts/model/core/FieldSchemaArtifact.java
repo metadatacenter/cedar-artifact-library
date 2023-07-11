@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+
 public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact
 {
   private final FieldUI fieldUI;
@@ -102,10 +106,10 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
   private void validate()
   {
-    validateUIFieldNotNull(fieldUI, ModelNodeNames.UI);
-    validateOptionalFieldNotNull(valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
-    validateListFieldNotNull(skosAlternateLabels, ModelNodeNames.SKOS_ALTLABEL);
+    validateUIFieldNotNull(this, fieldUI, ModelNodeNames.UI);
+    validateOptionalFieldNotNull(this, valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
+    validateOptionalFieldNotNull(this, skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
+    validateListFieldNotNull(this, skosAlternateLabels, ModelNodeNames.SKOS_ALTLABEL);
   }
 
   public static Builder builder() {

@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+
 public final class TemplateSchemaArtifact extends SchemaArtifact implements ParentSchemaArtifact
 {
   private final Map<String, FieldSchemaArtifact> fieldSchemas;
@@ -140,10 +143,10 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
   private void validate()
   {
-    validateMapFieldNotNull(fieldSchemas, "fieldSchemas");
-    validateMapFieldNotNull(elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(templateUI, ModelNodeNames.UI);
-    validateMapFieldNotNull(childPropertyURIs, "childPropertyURIs");
+    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
+    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
+    validateUIFieldNotNull(this, templateUI, ModelNodeNames.UI);
+    validateMapFieldNotNull(this, childPropertyURIs, "childPropertyURIs");
   }
 
   public static Builder builder() {
