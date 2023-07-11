@@ -1,11 +1,17 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.model.ModelNodeNames;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 
 public final class ElementUI implements UI, ParentArtifactUI
 {
@@ -23,6 +29,8 @@ public final class ElementUI implements UI, ParentArtifactUI
     this.propertyDescriptions = Collections.unmodifiableMap(propertyDescriptions);
     this.header = header;
     this.footer = footer;
+
+    validate();
   }
 
   private ElementUI(Builder builder) {
@@ -31,6 +39,8 @@ public final class ElementUI implements UI, ParentArtifactUI
     this.propertyDescriptions = Collections.unmodifiableMap(builder.propertyDescriptions);
     this.header = builder.header;
     this.footer = builder.footer;
+
+    validate();
   }
 
   @Override public UIType getUIType() { return UIType.ELEMENT_UI; }
@@ -64,6 +74,15 @@ public final class ElementUI implements UI, ParentArtifactUI
   {
     return "ElementUI{" + "order=" + order + ", propertyLabels=" + propertyLabels + ", propertyDescriptions="
       + propertyDescriptions + ", header=" + header + ", footer=" + footer + '}';
+  }
+
+  private void validate()
+  {
+    validateListFieldNotNull(this, order, ModelNodeNames.UI_ORDER);
+    validateMapFieldNotNull(this, propertyLabels, ModelNodeNames.UI_PROPERTY_LABELS);
+    validateMapFieldNotNull(this, propertyDescriptions, ModelNodeNames.UI_PROPERTY_DESCRIPTIONS);
+    validateOptionalFieldNotNull(this, header, ModelNodeNames.UI_HEADER);
+    validateOptionalFieldNotNull(this, footer, ModelNodeNames.UI_FOOTER);
   }
 
   public static Builder builder() {

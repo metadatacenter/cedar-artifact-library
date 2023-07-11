@@ -1,10 +1,16 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.model.ModelNodeNames;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 
 public final class TemplateUI implements UI, ParentArtifactUI
 {
@@ -24,6 +30,8 @@ public final class TemplateUI implements UI, ParentArtifactUI
     this.propertyDescriptions = Collections.unmodifiableMap(propertyDescriptions);
     this.header = header;
     this.footer = footer;
+
+    validate();
   }
 
   private TemplateUI(Builder builder) {
@@ -33,6 +41,8 @@ public final class TemplateUI implements UI, ParentArtifactUI
     this.propertyDescriptions = Collections.unmodifiableMap(builder.propertyDescriptions);
     this.header = builder.header;
     this.footer = builder.footer;
+
+    validate();
   }
 
   @Override public UIType getUIType() { return UIType.TEMPLATE_UI; }
@@ -72,6 +82,15 @@ public final class TemplateUI implements UI, ParentArtifactUI
     return "TemplateUI{" + "order=" + order + ", pages=" + pages + ", propertyLabels=" + propertyLabels
       + ", propertyDescriptions=" + propertyDescriptions + ", header='" + header + '\'' + ", footer='" + footer + '\''
       + '}';
+  }
+
+  private void validate() {
+    validateListFieldNotNull(this, order, ModelNodeNames.UI_ORDER);
+    validateListFieldNotNull(this, pages, ModelNodeNames.UI_PAGES);
+    validateMapFieldNotNull(this, propertyLabels, ModelNodeNames.UI_PROPERTY_LABELS);
+    validateMapFieldNotNull(this, propertyDescriptions, ModelNodeNames.UI_PROPERTY_DESCRIPTIONS);
+    validateOptionalFieldNotNull(this, header, ModelNodeNames.UI_HEADER);
+    validateOptionalFieldNotNull(this, footer, ModelNodeNames.UI_FOOTER);
   }
 
   public static Builder builder() {
