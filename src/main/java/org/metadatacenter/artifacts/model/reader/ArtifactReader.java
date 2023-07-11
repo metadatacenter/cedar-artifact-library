@@ -134,10 +134,6 @@ public class ArtifactReader
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
-    // Get all names of nested field and element schemas
-    // Then look inside properties/@Context for name->URI map
-
-
     return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, templateUI);
   }
 
@@ -161,7 +157,7 @@ public class ArtifactReader
     JsonNode contextNode = objectNode.at(contextPath);
     Set<String> modelFields = new HashSet<>(ModelNodeNames.SCHEMA_ARTIFACT_KEYWORDS);
 
-    if (contextNode != null || contextNode.isObject()) {
+    if (contextNode != null && contextNode.isObject()) {
       ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;
       Iterator<String> fieldNames = jsonSchemaContextSpecificationNode.fieldNames();
 
@@ -242,7 +238,7 @@ public class ArtifactReader
 
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    Map<String, URI> childPropertyURIs = new HashMap<>();
+    Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
     ElementUI elementUI = readElementUI(objectNode, path);
     boolean isMultiple = false; // TODO
 
@@ -281,6 +277,11 @@ public class ArtifactReader
     Optional<Status> artifactVersionStatus = readBIBOStatusField(objectNode, path);
     Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
+    boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
+    // TODO: required array
+
+    if (additionalProperties)
+      throw new ArtifactParseException("field must be false", ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, path);
 
     return new SchemaArtifact(artifact,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -986,7 +987,7 @@ public class ArtifactReader
 
     JsonNode jsonNode = objectNode.get(fieldName);
 
-    if (jsonNode != null || jsonNode.isNull()) {
+    if (jsonNode != null && !jsonNode.isNull()) {
 
       if (!jsonNode.isObject())
         throw new ArtifactParseException("Value of field  must be an object", fieldName, path);

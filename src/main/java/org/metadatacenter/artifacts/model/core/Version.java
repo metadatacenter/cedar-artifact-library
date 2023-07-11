@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,5 +58,20 @@ public class Version
   @Override public String toString()
   {
     return major + "." +  minor + "." + patch;
+  }
+
+  @Override public boolean equals(Object o)
+  {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    Version version = (Version)o;
+    return major == version.major && minor == version.minor && patch == version.patch;
+  }
+
+  @Override public int hashCode()
+  {
+    return Objects.hash(major, minor, patch);
   }
 }

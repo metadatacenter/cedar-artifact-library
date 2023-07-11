@@ -185,8 +185,8 @@ public class ValueConstraints
   }
 
   public static class Builder {
-    private boolean requiredValue;
-    private boolean multipleChoice;
+    private boolean requiredValue = false;
+    private boolean multipleChoice = false;
     private Optional<NumberType> numberType = Optional.empty();
     private Optional<String> unitOfMeasure = Optional.empty();
     private Optional<Number> minValue = Optional.empty();

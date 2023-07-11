@@ -8,7 +8,7 @@ public class ArtifactParseException extends RuntimeException
 
   public ArtifactParseException(String parseErrorMessage, String fieldName, String path)
   {
-    super(parseErrorMessage + " in field " + fieldName + " at " + path);
+    super(parseErrorMessage + " " + fieldName + " at " + path);
     this.parseErrorMessage = parseErrorMessage;
     this.fieldName = fieldName;
     this.path = path;

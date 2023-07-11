@@ -6,8 +6,13 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SpreadSheetUtil
 {
@@ -40,7 +45,6 @@ public class SpreadSheetUtil
   }
 
   /**
-   *
    * @param columnName
    * @return 1-based column number
    */
@@ -62,7 +66,6 @@ public class SpreadSheetUtil
   }
 
   /**
-   *
    * @param columnNumber 1-based
    * @return
    */
@@ -78,7 +81,6 @@ public class SpreadSheetUtil
   }
 
   /**
-   *
    * @param row 1-based
    * @return
    */
@@ -95,7 +97,6 @@ public class SpreadSheetUtil
   }
 
   /**
-   *
    * @param sheet
    * @param columnSpecification
    * @return 1-based column number
@@ -108,7 +109,6 @@ public class SpreadSheetUtil
   }
 
   /**
-   *
    * @param sheet
    * @param rowSpecification
    * @return 1-based row number
@@ -135,7 +135,7 @@ public class SpreadSheetUtil
     Drawing drawingPatriarch = cell.getSheet().createDrawingPatriarch();
     CreationHelper creationHelper = cell.getSheet().getWorkbook().getCreationHelper();
     ClientAnchor clientAnchor = creationHelper.createClientAnchor();
-    String wrappedText  = WordUtils.wrap(commentText, 80);
+    String wrappedText = WordUtils.wrap(commentText, 80);
     int numberOfNewLines = (int)wrappedText.chars().filter(ch -> ch == '\n').count();
 
     clientAnchor.setCol1(cell.getColumnIndex());
@@ -149,8 +149,48 @@ public class SpreadSheetUtil
     cell.setCellComment(newComment);
   }
 
-  private static boolean isAlpha(char c) { return c >= 'A' && c <= 'Z'; }
+  public static StringBuffer convertSheetToTsv(Sheet sheet)
+  {
+    StringBuffer tsvData = new StringBuffer();
+    int rowCount = sheet.getLastRowNum();
+    int colCount = sheet.getRow(0).getLastCellNum();
 
-  private static boolean isNumeric(char c) { return c >= '0' && c <= '9'; }
+    for (int i = 0; i <= rowCount; i++) {
+      Row row = sheet.getRow(i);
+      for (int j = 0; j < colCount; j++) {
+        Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+        String cellValue = "";
+
+        switch (cell.getCellType()) {
+        case STRING:
+          cellValue = cell.getStringCellValue();
+          break;
+        case NUMERIC:
+          cellValue = String.valueOf(cell.getNumericCellValue());
+          break;
+        case BOOLEAN:
+          cellValue = String.valueOf(cell.getBooleanCellValue());
+          break;
+        case FORMULA:
+          cellValue = cell.getCellFormula();
+          break;
+        }
+
+        tsvData.append(cellValue);
+
+        if (j < colCount - 1) {
+          tsvData.append("\t"); // Use tab as the delimiter
+        }
+      }
+
+      tsvData.append(System.lineSeparator());
+    }
+
+    return tsvData;
+  }
+
+  private static boolean isAlpha(char c) {return c >= 'A' && c <= 'Z';}
+
+  private static boolean isNumeric(char c) {return c >= '0' && c <= '9';}
 
 }
