@@ -110,17 +110,17 @@
         <executions>
 
           <execution>
-             <id>template2excel</id>
+            <id>template2excel</id>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Excel</mainClass>
+     	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Excel</mainClass>
             </configuration>
           </execution>
 
           <execution>
-             <id>template2tsv</id>
+            <id>template2tsv</id>
             <goals>
               <goal>java</goal>
             </goals>
