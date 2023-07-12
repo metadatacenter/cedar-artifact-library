@@ -14,6 +14,7 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -88,6 +89,25 @@ public class ArtifactReaderTest {
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
     assertEquals("RADx Metadata Specification", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadMultiInstanceFieldTemplate()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("MultiInstanceFieldTemplate.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("TemplateWithMultiInstanceField", templateSchemaArtifact.getName());
+
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = templateSchemaArtifact.getFieldSchemas();
+
+    assertEquals(fieldSchemas.size(), 1);
+
+    FieldSchemaArtifact fieldSchemaArtifact = fieldSchemas.get("Aliases");
+    assertNotNull(fieldSchemaArtifact);
+
+    assertTrue((fieldSchemaArtifact.isMultiple()));
   }
 
   @Test
