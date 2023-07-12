@@ -71,6 +71,16 @@ public class ArtifactReaderTest {
   }
 
   @Test
+  public void testReadDataCiteTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("DataCiteTemplate.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("DataCite V4.4 without OpenViewUrl field", templateSchemaArtifact.getName());
+  }
+
+  @Test
   public void testReadRADxMetadataSpecificationTemplateSchemaArtifact()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");

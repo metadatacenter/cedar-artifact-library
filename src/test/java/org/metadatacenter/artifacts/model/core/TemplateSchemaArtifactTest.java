@@ -18,6 +18,17 @@ public class TemplateSchemaArtifactTest
   }
 
   @Test
+  public void testMinimalSimpleTemplateSchemaArtifact() {
+
+    TemplateUI templateUI = TemplateUI.builder().build();
+
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withName("Test").withTemplateUI(templateUI).build();
+
+    assertEquals(templateSchemaArtifact.getName(), "Test");
+  }
+
+  @Test
   public void testCreateTemplateSchemaArtifact() {
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
@@ -25,17 +36,18 @@ public class TemplateSchemaArtifactTest
     TemplateUI templateUI = TemplateUI.builder().build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withSchemaOrgName("Test")
+      .withName("Test")
       .withFieldSchemas(fieldSchemas)
       .withElementSchemas(elementSchemas)
       .withChildPropertyURIs(childPropertyURIs)
       .withTemplateUI(templateUI).build();
 
-    //assertEquals(templateSchemaArtifact.getName(), "Test");
+    assertEquals(templateSchemaArtifact.getName(), "Test");
     assertEquals(templateSchemaArtifact.getFieldSchemas(), fieldSchemas);
     assertEquals(templateSchemaArtifact.getElementSchemas(), elementSchemas);
     assertEquals(templateSchemaArtifact.getChildPropertyURIs(), childPropertyURIs);
     assertEquals(templateSchemaArtifact.getTemplateUI(), templateUI);
   }
+
 
 }

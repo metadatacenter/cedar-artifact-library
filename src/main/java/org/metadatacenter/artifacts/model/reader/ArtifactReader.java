@@ -275,7 +275,7 @@ public class ArtifactReader
     String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
     Optional<Version> artifactVersion = readPAVVersionField(objectNode, path);
     Optional<Status> artifactVersionStatus = readBIBOStatusField(objectNode, path);
-    Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
+    Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
     // TODO additionalProperties can be an object for attribute-value fields
     // boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
@@ -1091,14 +1091,9 @@ public class ArtifactReader
       return Optional.of(Version.fromString(version.get()));
   }
 
-  private Optional<Version> readPreviousVersionField(ObjectNode objectNode, String path)
+  private Optional<URI> readPreviousVersionField(ObjectNode objectNode, String path)
   {
-    String previousVersion = readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
-
-    if (previousVersion != null)
-      return Optional.of(Version.fromString(previousVersion));
-    else
-      return Optional.empty();
+    return readURIField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION);
   }
 
   private Optional<URI> readDerivedFromField(ObjectNode objectNode, String path)

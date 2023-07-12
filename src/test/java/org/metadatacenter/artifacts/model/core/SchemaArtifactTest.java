@@ -33,12 +33,12 @@ public class SchemaArtifactTest {
     Version modelVersion = new Version(1, 0, 0);
     Optional<Version> artifactVersion = Optional.of(new Version(2, 0, 0));
     Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
-    Optional<Version> previousArtifactVersion = Optional.of(new Version(1, 0, 0));
+    Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
     SchemaArtifact schemaArtifact = new SchemaArtifact(artifact, jsonSchemaSchemaUri, jsonSchemaType,
       jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription,
-      modelVersion, artifactVersion, artifactVersionStatus, previousArtifactVersion, derivedFrom);
+      modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
 
     Assert.assertEquals(jsonLdId, schemaArtifact.getJsonLdId().get());
     Assert.assertEquals(jsonLdContext, schemaArtifact.getJsonLdContext());
@@ -56,7 +56,7 @@ public class SchemaArtifactTest {
     Assert.assertEquals(modelVersion, schemaArtifact.getModelVersion());
     Assert.assertEquals(artifactVersion, schemaArtifact.getVersion());
     Assert.assertEquals(artifactVersionStatus, schemaArtifact.getStatus());
-    Assert.assertEquals(previousArtifactVersion, schemaArtifact.getPreviousVersion());
+    Assert.assertEquals(previousVersion, schemaArtifact.getPreviousVersion());
     Assert.assertEquals(derivedFrom, schemaArtifact.getDerivedFrom());
   }
 
@@ -80,14 +80,14 @@ public class SchemaArtifactTest {
     Version modelVersion = new Version(1, 0, 0);
     Optional<Version> artifactVersion = Optional.of(new Version(2, 0, 0));
     Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
-    Optional<Version> previousArtifactVersion = Optional.of(new Version(1, 0, 0));
+    Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
     SchemaArtifact schemaArtifact = new SchemaArtifact(Optional.of(jsonLdId), jsonLdContext,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes,
       schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
-      previousArtifactVersion, derivedFrom);
+      previousVersion, derivedFrom);
 
     Assert.assertEquals(jsonLdId, schemaArtifact.getJsonLdId().get());
     Assert.assertEquals(jsonLdContext, schemaArtifact.getJsonLdContext());
@@ -105,7 +105,7 @@ public class SchemaArtifactTest {
     Assert.assertEquals(modelVersion, schemaArtifact.getModelVersion());
     Assert.assertEquals(artifactVersion, schemaArtifact.getVersion());
     Assert.assertEquals(artifactVersionStatus, schemaArtifact.getStatus());
-    Assert.assertEquals(previousArtifactVersion, schemaArtifact.getPreviousVersion());
+    Assert.assertEquals(previousVersion, schemaArtifact.getPreviousVersion());
     Assert.assertEquals(derivedFrom, schemaArtifact.getDerivedFrom());
   }
 }
