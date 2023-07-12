@@ -11,12 +11,6 @@ import static org.junit.Assert.*;
 
 public class TemplateSchemaArtifactTest
 {
-  private TemplateSchemaArtifact templateSchemaArtifact;
-
-  @Before
-  public void setup() {
-  }
-
   @Test
   public void testMinimalSimpleTemplateSchemaArtifact() {
 
@@ -49,5 +43,19 @@ public class TemplateSchemaArtifactTest
     assertEquals(templateSchemaArtifact.getTemplateUI(), templateUI);
   }
 
+
+  @Test(expected = IllegalStateException.class)
+  public void testMissingName()
+  {
+    TemplateUI templateUI = TemplateUI.builder().build();
+
+    TemplateSchemaArtifact.builder().withTemplateUI(templateUI).build();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testMissingUI()
+  {
+    TemplateSchemaArtifact.builder().withName("Test").build();
+  }
 
 }
