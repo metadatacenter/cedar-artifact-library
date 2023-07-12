@@ -31,7 +31,7 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadSampleBlockTemplateSchemaArtifact()
+  public void testReadSampleBlockTemplateSchemaArtifact()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("SampleBlock.json");
 
@@ -41,7 +41,7 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadSampleSectionTemplateSchemaArtifact()
+  public void testReadSampleSectionTemplateSchemaArtifact()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("SampleSection.json");
 
@@ -51,7 +51,7 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadSampleSuspensionTemplateSchemaArtifact()
+  public void testReadSampleSuspensionTemplateSchemaArtifact()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("SampleSuspension.json");
 
@@ -61,7 +61,7 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadADVANCETemplateSchemaArtifact()
+  public void testReadADVANCETemplateSchemaArtifact()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("ADVANCETemplate.json");
 
@@ -71,7 +71,17 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadTemplateSchemaArtifact()
+  public void testReadRADxMetadataSpecificationTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("RADx Metadata Specification", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadTemplateSchemaArtifact()
   {
     ObjectNode objectNode = createBaseTemplateArtifact("Test name", "Test description");
 
@@ -84,7 +94,7 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadElementSchemaArtifact()
+  public void testReadElementSchemaArtifact()
   {
     ObjectNode objectNode = createBaseElementArtifact("Test name", "Test description");
 
