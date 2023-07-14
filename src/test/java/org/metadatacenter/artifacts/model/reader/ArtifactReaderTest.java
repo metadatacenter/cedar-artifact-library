@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
@@ -10,9 +11,11 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.model.ModelNodeNames;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,7 +32,86 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadTemplateSchemaArtifact()
+  public void testReadSampleBlockTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("SampleBlock.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("HuBMAP Sample Block", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadSampleSectionTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("SampleSection.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("Sample Section", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadSampleSuspensionTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("SampleSuspension.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("HuBMAP Sample Suspension", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadADVANCETemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("ADVANCETemplate.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("ADVANCE metadata template", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadDataCiteTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("DataCiteTemplate.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("DataCite V4.4 without OpenViewUrl field", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadRADxMetadataSpecificationTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("RADx Metadata Specification", templateSchemaArtifact.getName());
+  }
+
+  @Test
+  public void testReadMultiInstanceFieldTemplate()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("MultiInstanceFieldTemplate.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("TemplateWithMultiInstanceField", templateSchemaArtifact.getName());
+
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = templateSchemaArtifact.getFieldSchemas();
+
+    assertEquals(fieldSchemas.size(), 1);
+
+    FieldSchemaArtifact fieldSchemaArtifact = fieldSchemas.get("Aliases");
+    assertNotNull(fieldSchemaArtifact);
+
+    assertTrue((fieldSchemaArtifact.isMultiple()));
+  }
+
+  @Test
+  public void testReadTemplateSchemaArtifact()
   {
     ObjectNode objectNode = createBaseTemplateArtifact("Test name", "Test description");
 
@@ -42,7 +124,7 @@ public class ArtifactReaderTest {
   }
 
   @Test
-  public void testsReadElementSchemaArtifact()
+  public void testReadElementSchemaArtifact()
   {
     ObjectNode objectNode = createBaseElementArtifact("Test name", "Test description");
 
@@ -137,5 +219,14 @@ public class ArtifactReaderTest {
     objectNode.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
     return objectNode;
+  }
+
+  private ObjectNode getFileContentAsObjectNode(String jsonFileName)
+  {
+    try {
+      return (ObjectNode)mapper.readTree(new File(ArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
+    }
   }
 }

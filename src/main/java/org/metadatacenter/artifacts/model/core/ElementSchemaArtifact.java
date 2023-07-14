@@ -1,17 +1,17 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.apache.poi.poifs.property.Child;
-import org.bouncycastle.math.raw.Mod;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 
 public final class ElementSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact, ParentSchemaArtifact
 {
@@ -39,12 +39,12 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     List<URI> jsonLdTypes, String schemaOrgName, String schemaOrgDescription, Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
   {
     super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
       jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription, modelVersion,
-      artifactVersion, artifactVersionStatus, previousArtifactVersion, derivedFrom);
+      artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
@@ -71,7 +71,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn,
       builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
       builder.jsonSchemaDescription, builder.jsonLdTypes, builder.schemaOrgName, builder.schemaOrgDescription,
-      builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousArtifactVersion,
+      builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousVersion,
       builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
@@ -153,10 +153,10 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   private void validate()
   {
-    validateMapFieldNotNull(fieldSchemas, "fieldSchemas");
-    validateMapFieldNotNull(elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(elementUI, ModelNodeNames.UI);
-    validateMapFieldNotNull(childPropertyURIs, "childPropertyURIs");
+    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
+    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
+    validateUIFieldNotNull(this, elementUI, ModelNodeNames.UI);
+    validateMapFieldNotNull(this, childPropertyURIs, "childPropertyURIs");
   }
 
   public static Builder builder() {
@@ -181,7 +181,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private Version modelVersion = new Version(1, 6, 0); // TODO
     private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
-    private Optional<Version> previousArtifactVersion = Optional.empty();
+    private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
     private Map<String, FieldSchemaArtifact> fieldSchemas = Collections.emptyMap();
     private Map<String, ElementSchemaArtifact> elementSchemas = Collections.emptyMap();
@@ -288,9 +288,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       return this;
     }
 
-    public Builder withPreviousArtifactVersion(Optional<Version> previousArtifactVersion)
+    public Builder withPreviousVersion(Optional<URI> previousVersion)
     {
-      this.previousArtifactVersion = previousArtifactVersion;
+      this.previousVersion = previousVersion;
       return this;
     }
 

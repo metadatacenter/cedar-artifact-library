@@ -38,6 +38,7 @@ public class FieldUITest {
   public void testIsValueRecommendationEnabled() {
     boolean valueRecommendationEnabled = true;
     FieldUI fieldUI = FieldUI.builder()
+      .withInputType(FieldInputType.TEXTFIELD)
       .withValueRecommendationEnabled(valueRecommendationEnabled)
       .build();
     assertTrue(fieldUI.isValueRecommendationEnabled());
@@ -47,6 +48,7 @@ public class FieldUITest {
   public void testIsHidden() {
     boolean hidden = true;
     FieldUI fieldUI = FieldUI.builder()
+      .withInputType(FieldInputType.TEXTFIELD)
       .withHidden(hidden)
       .build();
     assertTrue(fieldUI.isHidden());
@@ -56,11 +58,16 @@ public class FieldUITest {
   public void testGetTimeZoneEnabled() {
     boolean timeZoneEnabled = true;
     FieldUI fieldUI = FieldUI.builder()
+      .withInputType(FieldInputType.TEMPORAL)
+      .withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOUR)
+      .withTemporalGranularity(TemporalGranularity.SECOND)
       .withTimeZoneEnabled(timeZoneEnabled)
       .build();
     assertEquals(Optional.of(timeZoneEnabled), fieldUI.getTimeZoneEnabled());
   }
 
-  // Add more tests for the other getters
-
+  @Test(expected = IllegalStateException.class)
+  public void testInputTypeNotSet() {
+   FieldUI.builder().build();
+  }
 }

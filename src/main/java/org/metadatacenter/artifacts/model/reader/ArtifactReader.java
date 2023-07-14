@@ -69,12 +69,12 @@ public class ArtifactReader
 
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
   {
-    return readElementSchemaArtifact(objectNode, "");
+    return readElementSchemaArtifact(objectNode, "", false);
   }
 
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
   {
-    return readFieldSchemaArtifact(objectNode, "");
+    return readFieldSchemaArtifact(objectNode, "", false);
   }
 
   public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
@@ -198,7 +198,7 @@ public class ArtifactReader
     return fieldNames2URI;
   }
 
-  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path)
+  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
   {
     ObjectNode fieldNode = getFieldNode(objectNode, path);
 
@@ -207,7 +207,6 @@ public class ArtifactReader
     Optional<ValueConstraints> valueConstraints = readValueConstraints(fieldNode, path);
     Optional<String> skosPrefLabel = readSKOSPrefLabelField(fieldNode, path);
     List<String> skosAlternateLabels = readSKOSAltLabelField(fieldNode, path);
-    boolean isMultiple = false; // TODO
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
@@ -232,7 +231,7 @@ public class ArtifactReader
       return objectNode;
   }
 
-  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path)
+  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
 
@@ -240,7 +239,6 @@ public class ArtifactReader
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
     ElementUI elementUI = readElementUI(objectNode, path);
-    boolean isMultiple = false; // TODO
 
     checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
@@ -275,13 +273,11 @@ public class ArtifactReader
     String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
     Optional<Version> artifactVersion = readPAVVersionField(objectNode, path);
     Optional<Status> artifactVersionStatus = readBIBOStatusField(objectNode, path);
-    Optional<Version> previousVersion = readPreviousVersionField(objectNode, path);
+    Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
-    boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
+    // TODO additionalProperties can be an object for attribute-value fields
+    // boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
     // TODO: required array
-
-    if (additionalProperties)
-      throw new ArtifactParseException("field must be false", ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, path);
 
     return new SchemaArtifact(artifact,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -302,6 +298,7 @@ public class ArtifactReader
 
     while (jsonFieldNames.hasNext()) {
       String jsonFieldName = jsonFieldNames.next();
+      boolean isMultiple = false;
 
       // The /properties field for each schema artifact contains entries constraining fields in instances
       if (!ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)
@@ -316,11 +313,12 @@ public class ArtifactReader
             fieldOrElementPath);
 
           if (jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_ARRAY)) {
-            jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode
-              .get(ModelNodeNames.JSON_SCHEMA_ITEMS);
+            jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode.get(ModelNodeNames.JSON_SCHEMA_ITEMS);
+
             if (jsonFieldOrElementSchemaArtifactNode == null)
               throw new ArtifactParseException("No items field in array", ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
 
+            isMultiple = true;
             fieldOrElementPath += "/items";
 
             if (!jsonFieldOrElementSchemaArtifactNode.isObject())
@@ -341,11 +339,11 @@ public class ArtifactReader
 
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
             ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
-              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
+              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple);
             elementSchemas.put(jsonFieldName, elementSchemaArtifact);
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
             FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
-              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
+              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple);
             fieldSchemas.put(jsonFieldName, fieldSchemaArtifact);
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
             // TODO: We do not yet handle these
@@ -1093,14 +1091,9 @@ public class ArtifactReader
       return Optional.of(Version.fromString(version.get()));
   }
 
-  private Optional<Version> readPreviousVersionField(ObjectNode objectNode, String path)
+  private Optional<URI> readPreviousVersionField(ObjectNode objectNode, String path)
   {
-    String previousVersion = readStringField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION, null);
-
-    if (previousVersion != null)
-      return Optional.of(Version.fromString(previousVersion));
-    else
-      return Optional.empty();
+    return readURIField(objectNode, path, ModelNodeNames.PAV_PREVIOUS_VERSION);
   }
 
   private Optional<URI> readDerivedFromField(ObjectNode objectNode, String path)

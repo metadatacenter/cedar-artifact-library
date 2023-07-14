@@ -4,12 +4,12 @@
   <parent>
     <groupId>org.metadatacenter</groupId>
     <artifactId>cedar-parent</artifactId>
-    <version>2.6.36</version>
+    <version>2.6.37</version>
   </parent>
 
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-artifact-library</artifactId>
-  <version>2.6.36</version>
+  <version>2.6.37</version>
   <packaging>jar</packaging>
 
   <name>CEDAR Artifact Library</name>
@@ -108,15 +108,28 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
+
           <execution>
+            <id>template2excel</id>
             <goals>
               <goal>java</goal>
             </goals>
+            <configuration>
+     	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Excel</mainClass>
+            </configuration>
           </execution>
+
+          <execution>
+            <id>template2tsv</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2TSV</mainClass>
+            </configuration>
+          </execution>
+
         </executions>
-        <configuration>
-	  <mainClass>org.metadatacenter.artifacts.model.tools.Template2Excel</mainClass>
-        </configuration>
       </plugin>
 
     </plugins>

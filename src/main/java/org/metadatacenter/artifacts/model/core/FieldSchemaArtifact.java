@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.bouncycastle.math.raw.Mod;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -9,6 +8,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 
 public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact
 {
@@ -39,13 +42,13 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     List<URI> jsonLdTypes,
     String schemaOrgName, String schemaOrgDescription,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<Version> previousArtifactVersion, Optional<URI> derivedFrom, FieldUI fieldUI,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, FieldUI fieldUI,
     Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     boolean isMultiple)
   {
     super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
       jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription, modelVersion,
-      artifactVersion, artifactVersionStatus, previousArtifactVersion, derivedFrom);
+      artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.valueConstraints = valueConstraints;
     this.fieldUI = fieldUI;
     this.skosPrefLabel = skosPrefLabel;
@@ -60,7 +63,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
       builder.jsonSchemaDescription, builder.jsonLdTypes, builder.schemaOrgName, builder.schemaOrgDescription,
       builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus,
-      builder.previousArtifactVersion, builder.derivedFrom);
+      builder.previousVersion, builder.derivedFrom);
     this.fieldUI = builder.fieldUI;
     this.valueConstraints = builder.valueConstraints;
     this.skosPrefLabel = builder.skosPrefLabel;
@@ -102,10 +105,10 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
   private void validate()
   {
-    validateUIFieldNotNull(fieldUI, ModelNodeNames.UI);
-    validateOptionalFieldNotNull(valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
-    validateListFieldNotNull(skosAlternateLabels, ModelNodeNames.SKOS_ALTLABEL);
+    validateUIFieldNotNull(this, fieldUI, ModelNodeNames.UI);
+    validateOptionalFieldNotNull(this, valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
+    validateOptionalFieldNotNull(this, skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
+    validateListFieldNotNull(this, skosAlternateLabels, ModelNodeNames.SKOS_ALTLABEL);
   }
 
   public static Builder builder() {
@@ -129,7 +132,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Version modelVersion = new Version(1, 6, 0); // TODO
     private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
-    private Optional<Version> previousArtifactVersion = Optional.empty();
+    private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
     private FieldUI fieldUI;
     private Optional<ValueConstraints> valueConstraints = Optional.empty();
@@ -220,8 +223,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       return this;
     }
 
-    public Builder withPreviousArtifactVersion(Optional<Version> previousArtifactVersion) {
-      this.previousArtifactVersion = previousArtifactVersion;
+    public Builder withPreviousVersion(Optional<URI> previousVersion) {
+      this.previousVersion = previousVersion;
       return this;
     }
 
