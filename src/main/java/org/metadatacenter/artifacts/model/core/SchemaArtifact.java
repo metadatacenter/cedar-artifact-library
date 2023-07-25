@@ -4,12 +4,10 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;

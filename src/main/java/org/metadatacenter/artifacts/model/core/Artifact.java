@@ -21,7 +21,8 @@ public class Artifact
   private final Optional<URI> createdBy, modifiedBy;
   private final Optional<OffsetDateTime> createdOn, lastUpdatedOn;
 
-  public Artifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
+  public Artifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+    Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
   {
     this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
