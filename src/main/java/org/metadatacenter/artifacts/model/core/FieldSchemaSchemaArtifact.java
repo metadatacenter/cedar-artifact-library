@@ -13,7 +13,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateL
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 
-public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact
+public final class FieldSchemaSchemaArtifact extends SchemaSchemaArtifact implements ChildSchemaArtifact
 {
   private final FieldUI fieldUI;
   private final Optional<ValueConstraints> valueConstraints;
@@ -21,7 +21,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   private final List<String> skosAlternateLabels;
   private final boolean isMultiple;
 
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI,
+  public FieldSchemaSchemaArtifact(SchemaSchemaArtifact schemaArtifact, FieldUI fieldUI,
     Optional<ValueConstraints> valueConstraints,
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     boolean isMultiple)
@@ -36,7 +36,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     validate();
   }
 
-  public FieldSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public FieldSchemaSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
@@ -59,7 +59,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     validate();
   }
 
-  private FieldSchemaArtifact(Builder builder) {
+  private FieldSchemaSchemaArtifact(Builder builder) {
     super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
       builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
       builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
@@ -266,8 +266,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       return this;
     }
 
-    public FieldSchemaArtifact build() {
-      return new FieldSchemaArtifact(this);
+    public FieldSchemaSchemaArtifact build() {
+      return new FieldSchemaSchemaArtifact(this);
     }
   }
 

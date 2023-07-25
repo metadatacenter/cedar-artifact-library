@@ -13,16 +13,17 @@ import java.util.Optional;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 
-public final class ElementSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact, ParentSchemaArtifact
+public final class ElementSchemaSchemaArtifact extends SchemaSchemaArtifact
+  implements ChildSchemaArtifact, ParentSchemaArtifact
 {
-  private final Map<String, FieldSchemaArtifact> fieldSchemas;
-  private final Map<String, ElementSchemaArtifact> elementSchemas;
+  private final Map<String, FieldSchemaSchemaArtifact> fieldSchemas;
+  private final Map<String, ElementSchemaSchemaArtifact> elementSchemas;
   private final Map<String, URI> childPropertyURIs;
   private final boolean isMultiple;
   private final ElementUI elementUI;
 
-  public ElementSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs,
+  public ElementSchemaSchemaArtifact(SchemaSchemaArtifact schemaArtifact, Map<String, FieldSchemaSchemaArtifact> fieldSchemas,
+    Map<String, ElementSchemaSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs,
     boolean isMultiple, ElementUI elementUI)
   {
     super(schemaArtifact);
@@ -35,13 +36,13 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validate();
   }
 
-  public ElementSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public ElementSchemaSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaSchemaArtifact> fieldSchemas,
+    Map<String, ElementSchemaSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
   {
     super(jsonLdTypes, jsonLdId, jsonLdContext,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -57,7 +58,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validate();
   }
 
-  public ElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  public ElementSchemaSchemaArtifact(ElementSchemaSchemaArtifact elementSchemaArtifact)
   {
     super(elementSchemaArtifact);
     this.fieldSchemas = elementSchemaArtifact.fieldSchemas;
@@ -69,7 +70,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validate();
   }
 
-  private ElementSchemaArtifact(Builder builder)
+  private ElementSchemaSchemaArtifact(Builder builder)
   {
     super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
       builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
@@ -86,9 +87,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validate();
   }
 
-  @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
+  @Override public LinkedHashMap<String, FieldSchemaSchemaArtifact> getFieldSchemas()
   {
-    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, FieldSchemaSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
     for (String fieldName : getUI().getOrder()) {
       if (this.fieldSchemas.containsKey(fieldName))
@@ -97,9 +98,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     return orderedFieldSchemas;
   }
 
-  @Override public LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas()
+  @Override public LinkedHashMap<String, ElementSchemaSchemaArtifact> getElementSchemas()
   {
-    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, ElementSchemaSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
     for (String elementName : getUI().getOrder()) {
       if (this.elementSchemas.containsKey(elementName))
@@ -108,7 +109,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     return orderedElementSchemas;
   }
 
-  @Override public ElementSchemaArtifact getElementSchemaArtifact(String name)
+  @Override public ElementSchemaSchemaArtifact getElementSchemaArtifact(String name)
   {
     if (elementSchemas.containsKey(name))
       return elementSchemas.get(name);
@@ -116,7 +117,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       throw new IllegalArgumentException("Element " + name + "not present in template " + getName());
   }
 
-  @Override public FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  @Override public FieldSchemaSchemaArtifact getFieldSchemaArtifact(String name)
   {
     if (fieldSchemas.containsKey(name))
       return fieldSchemas.get(name);
@@ -188,8 +189,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas = Collections.emptyMap();
-    private Map<String, ElementSchemaArtifact> elementSchemas = Collections.emptyMap();
+    private Map<String, FieldSchemaSchemaArtifact> fieldSchemas = Collections.emptyMap();
+    private Map<String, ElementSchemaSchemaArtifact> elementSchemas = Collections.emptyMap();
     private Map<String, URI> childPropertyURIs  = Collections.emptyMap();
     private boolean isMultiple = false;
     private ElementUI elementUI;
@@ -317,13 +318,13 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       return this;
     }
 
-    public Builder withFieldSchemas(Map<String, FieldSchemaArtifact> fieldSchemas)
+    public Builder withFieldSchemas(Map<String, FieldSchemaSchemaArtifact> fieldSchemas)
     {
       this.fieldSchemas = fieldSchemas;
       return this;
     }
 
-    public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas)
+    public Builder withElementSchemas(Map<String, ElementSchemaSchemaArtifact> elementSchemas)
     {
       this.elementSchemas = elementSchemas;
       return this;
@@ -347,9 +348,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       return this;
     }
 
-    public ElementSchemaArtifact build()
+    public ElementSchemaSchemaArtifact build()
     {
-      return new ElementSchemaArtifact(this);
+      return new ElementSchemaSchemaArtifact(this);
     }
   }
 }

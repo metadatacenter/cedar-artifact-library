@@ -13,7 +13,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateL
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 
-public class Artifact
+public class Artifact implements JsonLdArtifact, ManagedArtifact
 {
   private final List<URI> jsonLdTypes;
   private final Optional<URI> jsonLdId;
@@ -49,10 +49,13 @@ public class Artifact
     validate();
   }
 
+  @Override
   public List<URI> getJsonLdTypes() {return jsonLdTypes;}
 
+  @Override
   public Optional<URI> getJsonLdId() {return jsonLdId;}
 
+  @Override
   public Map<String, URI> getJsonLdContext()
   {
     return jsonLdContext;
@@ -63,15 +66,9 @@ public class Artifact
     return createdBy;
   }
 
-  public Optional<URI> getModifiedBy()
-  {
-    return modifiedBy;
-  }
+  public Optional<URI> getModifiedBy() { return modifiedBy; }
 
-  public Optional<OffsetDateTime> getCreatedOn()
-  {
-    return createdOn;
-  }
+  public Optional<OffsetDateTime> getCreatedOn() { return createdOn; }
 
   public Optional<OffsetDateTime> getLastUpdatedOn()
   {

@@ -3,16 +3,13 @@ package org.metadatacenter.artifacts.model.renderer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.Artifact;
-import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.SchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.SchemaSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.Map;
-import java.util.Optional;
 
 public class ArtifactRenderer
 {
@@ -27,43 +24,43 @@ public class ArtifactRenderer
   {
     ObjectNode templateSchemaArtifactRendering = renderSchemaArtifact(templateSchemaArtifact);
 
-    // @context
+    // TODO @context
 
-    // properties
-    // required
-    // additionalProperties
+    // TODO properties
+    // TODO required
+    // TODO additionalProperties
 
     templateSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(templateSchemaArtifact.getTemplateUI()));
 
     return templateSchemaArtifactRendering;
   }
 
-  public ObjectNode renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  public ObjectNode renderElementSchemaArtifact(ElementSchemaSchemaArtifact elementSchemaArtifact)
   {
     ObjectNode elementSchemaArtifactRendering = renderSchemaArtifact(elementSchemaArtifact);
 
-    // @context
+    // TODO @context
 
-    // properties
-    // required
-    // additionalProperties
+    // TODO properties
+    // TODO required
+    // TODO additionalProperties
 
     elementSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(elementSchemaArtifact.getElementUI()));
 
-    // isMultiple!!!
+    // TODO isMultiple!!!
 
     return elementSchemaArtifactRendering;
   }
 
-  public ObjectNode renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
+  public ObjectNode renderFieldSchemaArtifact(FieldSchemaSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode fieldSchemaArtifactRendering = renderSchemaArtifact(fieldSchemaArtifact);
 
-    // @context
+    // TODO @context
 
-    // properties
-    // required -- @value or @id and optionally @type
-    // additionalProperties
+    // TODO properties
+    // TODO required -- @value or @id and optionally @type
+    // TODO additionalProperties
 
     if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
       fieldSchemaArtifactRendering.put(ModelNodeNames.SKOS_PREFLABEL, fieldSchemaArtifact.getSkosPrefLabel().get().toString());
@@ -77,12 +74,12 @@ public class ArtifactRenderer
     fieldSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(fieldSchemaArtifact.getFieldUI()));
     fieldSchemaArtifactRendering.put(ModelNodeNames.VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.getValueConstraints()));
 
-    // isMultiple!!!
+    // TODO isMultiple!!!
 
     return fieldSchemaArtifactRendering;
   }
 
-  private ObjectNode renderSchemaArtifact(SchemaArtifact schemaArtifact)
+  private ObjectNode renderSchemaArtifact(SchemaSchemaArtifact schemaArtifact)
   {
     ObjectNode schemaArtifactRendering = renderArtifact(schemaArtifact);
 

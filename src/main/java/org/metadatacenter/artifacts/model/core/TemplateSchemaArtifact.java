@@ -13,15 +13,15 @@ import java.util.Optional;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 
-public final class TemplateSchemaArtifact extends SchemaArtifact implements ParentSchemaArtifact
+public final class TemplateSchemaArtifact extends SchemaSchemaArtifact implements ParentSchemaArtifact
 {
-  private final Map<String, FieldSchemaArtifact> fieldSchemas;
-  private final Map<String, ElementSchemaArtifact> elementSchemas;
+  private final Map<String, FieldSchemaSchemaArtifact> fieldSchemas;
+  private final Map<String, ElementSchemaSchemaArtifact> elementSchemas;
   private final TemplateUI templateUI;
   private final Map<String, URI> childPropertyURIs;
 
-  public TemplateSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
+  public TemplateSchemaArtifact(SchemaSchemaArtifact schemaArtifact, Map<String, FieldSchemaSchemaArtifact> fieldSchemas,
+    Map<String, ElementSchemaSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
   {
     super(schemaArtifact);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
@@ -37,8 +37,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription, Optional<String> schemdOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaSchemaArtifact> fieldSchemas,
+    Map<String, ElementSchemaSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
   {
     super(jsonLdTypes, jsonLdId, jsonLdContext,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -79,9 +79,9 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     validate();
   }
 
-  @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
+  @Override public LinkedHashMap<String, FieldSchemaSchemaArtifact> getFieldSchemas()
   {
-    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, FieldSchemaSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
     for (String fieldName: getUI().getOrder()) {
       if (this.fieldSchemas.containsKey(fieldName))
@@ -90,9 +90,9 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     return orderedFieldSchemas;
   }
 
-  @Override public LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas()
+  @Override public LinkedHashMap<String, ElementSchemaSchemaArtifact> getElementSchemas()
   {
-    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
+    LinkedHashMap<String, ElementSchemaSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
     for (String elementName: getUI().getOrder()) {
       if (this.elementSchemas.containsKey(elementName))
@@ -106,7 +106,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     return Collections.unmodifiableMap(childPropertyURIs);
   }
 
-  @Override public FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  @Override public FieldSchemaSchemaArtifact getFieldSchemaArtifact(String name)
   {
     if (fieldSchemas.containsKey(name))
       return fieldSchemas.get(name);
@@ -114,7 +114,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       throw new IllegalArgumentException("Field " + name + "not present in template " + getName());
   }
 
-  @Override public ElementSchemaArtifact getElementSchemaArtifact(String name)
+  @Override public ElementSchemaSchemaArtifact getElementSchemaArtifact(String name)
   {
     if (elementSchemas.containsKey(name))
       return elementSchemas.get(name);
@@ -175,8 +175,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas = Collections.emptyMap();
-    private Map<String, ElementSchemaArtifact> elementSchemas = Collections.emptyMap();
+    private Map<String, FieldSchemaSchemaArtifact> fieldSchemas = Collections.emptyMap();
+    private Map<String, ElementSchemaSchemaArtifact> elementSchemas = Collections.emptyMap();
     private Map<String, URI> childPropertyURIs = Collections.emptyMap();
     private TemplateUI templateUI;
 
@@ -278,12 +278,12 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       return this;
     }
 
-    public Builder withFieldSchemas(Map<String, FieldSchemaArtifact> fieldSchemas) {
+    public Builder withFieldSchemas(Map<String, FieldSchemaSchemaArtifact> fieldSchemas) {
       this.fieldSchemas = fieldSchemas;
       return this;
     }
 
-    public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas) {
+    public Builder withElementSchemas(Map<String, ElementSchemaSchemaArtifact> elementSchemas) {
       this.elementSchemas = elementSchemas;
       return this;
     }

@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
+public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaSchemaArtifact
 {
   boolean isField(String name);
 
@@ -16,13 +16,13 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 
   boolean hasElements();
 
-  FieldSchemaArtifact getFieldSchemaArtifact(String name);
+  FieldSchemaSchemaArtifact getFieldSchemaArtifact(String name);
 
-  ElementSchemaArtifact getElementSchemaArtifact(String name);
+  ElementSchemaSchemaArtifact getElementSchemaArtifact(String name);
 
-  LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas();
+  LinkedHashMap<String, FieldSchemaSchemaArtifact> getFieldSchemas();
 
-  LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas();
+  LinkedHashMap<String, ElementSchemaSchemaArtifact> getElementSchemas();
 
   Map<String, URI> getChildPropertyURIs();
 

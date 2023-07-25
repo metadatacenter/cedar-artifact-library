@@ -14,7 +14,8 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateS
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateURIFieldEquals;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
 
-public class SchemaArtifact extends Artifact
+public class SchemaSchemaArtifact extends Artifact implements JsonSchemaArtifact, SchemaOrgArtifact,
+  ModelSchemaArtifact, VersionedArtifact
 {
   private final URI jsonSchemaSchemaUri;
   private final String jsonSchemaType;
@@ -29,7 +30,7 @@ public class SchemaArtifact extends Artifact
   private final Optional<URI> previousVersion;
   private final Optional<URI> derivedFrom;
 
-  public SchemaArtifact(Artifact artifact,
+  public SchemaSchemaArtifact(Artifact artifact,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
@@ -52,7 +53,7 @@ public class SchemaArtifact extends Artifact
     validate();
   }
 
-  public SchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public SchemaSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
     Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
@@ -77,7 +78,7 @@ public class SchemaArtifact extends Artifact
     validate();
   }
 
-  public SchemaArtifact(SchemaArtifact schemaArtifact)
+  public SchemaSchemaArtifact(SchemaSchemaArtifact schemaArtifact)
   {
     super(schemaArtifact);
     this.jsonSchemaSchemaUri = schemaArtifact.jsonSchemaSchemaUri;
@@ -96,61 +97,73 @@ public class SchemaArtifact extends Artifact
     validate();
   }
 
+  @Override
   public URI getJsonSchemaSchemaUri()
   {
     return jsonSchemaSchemaUri;
   }
 
+  @Override
   public String getJsonSchemaType()
   {
     return jsonSchemaType;
   }
 
+  @Override
   public String getJsonSchemaTitle()
   {
     return jsonSchemaTitle;
   }
 
+  @Override
   public String getJsonSchemaDescription()
   {
     return jsonSchemaDescription;
   }
 
+  @Override
   public String getName()
   {
     return schemaOrgName;
   }
 
+  @Override
   public String getDescription()
   {
     return schemaOrgDescription;
   }
 
+  @Override
   public Optional<String> getIdentifier()
   {
     return schemaOrgIdentifier;
   }
 
+  @Override
   public Version getModelVersion()
   {
     return modelVersion;
   }
 
+  @Override
   public Optional<Version> getVersion()
   {
     return artifactVersion;
   }
 
+  @Override
   public Optional<Status> getStatus()
   {
     return artifactVersionStatus;
   }
 
+  @Override
   public Optional<URI> getPreviousVersion()
   {
     return previousVersion;
   }
 
+  @Override
   public Optional<URI> getDerivedFrom()
   {
     return derivedFrom;

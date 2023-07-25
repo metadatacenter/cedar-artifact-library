@@ -11,7 +11,7 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
     int currentRowNumber = REDCapConstants.HEADER_ROW_NUMBER + 1;
     for (String fieldName : templateSchemaArtifact.getTemplateUI().getOrder()) {
       if (templateSchemaArtifact.getFieldSchemas().containsKey(fieldName)) {
-        FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemas().get(fieldName);
+        FieldSchemaSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemas().get(fieldName);
 
         processFieldSchemaArtifact(fieldSchemaArtifact, sheet, currentRowNumber, templateName, templateDescription);
       } else {
@@ -51,7 +51,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
     }
   }
 
-  private void processFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int rowNumber,
+  private void processFieldSchemaArtifact(FieldSchemaSchemaArtifact fieldSchemaArtifact, Sheet sheet, int rowNumber,
     String templateName, String templateDescription)
   {
 
@@ -100,7 +100,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
       requiredFieldHeaderCell.setCellValue(false);
   }
 
-  Optional<String> createTextFieldValidationValue(FieldSchemaArtifact fieldSchemaArtifact)
+  Optional<String> createTextFieldValidationValue(FieldSchemaSchemaArtifact fieldSchemaArtifact)
   {
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
@@ -210,7 +210,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
   //  public static final int TEXT_VALIDATION_MIN_MAX_COLUMN_INDEX = 8;
   //  public static final int IDENTIFIERS_COLUMN_INDEX = 9;
 
-  private String generateREDCapFieldType(FieldSchemaArtifact fieldSchemaArtifact)
+  private String generateREDCapFieldType(FieldSchemaSchemaArtifact fieldSchemaArtifact)
   {
     FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
 
