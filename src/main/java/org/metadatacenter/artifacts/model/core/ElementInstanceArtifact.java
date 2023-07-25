@@ -25,12 +25,12 @@ public final class ElementInstanceArtifact extends InstanceArtifact implements P
     this.elementInstances = Collections.unmodifiableMap(elementInstances);
   }
 
-  public ElementInstanceArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
+  public ElementInstanceArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Map<String, List<FieldInstanceArtifact>> fieldInstances,
     Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    super(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
     this.elementInstances = Collections.unmodifiableMap(elementInstances);
   }
@@ -44,7 +44,7 @@ public final class ElementInstanceArtifact extends InstanceArtifact implements P
 
   private ElementInstanceArtifact(Builder builder)
   {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
     this.fieldInstances = Collections.unmodifiableMap(builder.fieldInstances);
     this.elementInstances = Collections.unmodifiableMap(builder.elementInstances);
   }
@@ -70,6 +70,7 @@ public final class ElementInstanceArtifact extends InstanceArtifact implements P
   }
 
   public static class Builder {
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
@@ -80,6 +81,11 @@ public final class ElementInstanceArtifact extends InstanceArtifact implements P
     private Map<String, List<ElementInstanceArtifact>> elementInstances;
 
     private Builder() {
+    }
+
+    public Builder withJsonLdType(URI jsonLdType) {
+      this.jsonLdTypes.add(jsonLdType);
+      return this;
     }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId) {

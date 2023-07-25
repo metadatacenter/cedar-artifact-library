@@ -248,6 +248,7 @@ public class ArtifactReader
 
   private Artifact readArtifact(ObjectNode objectNode, String path)
   {
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
     Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
     Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
     Optional<URI> createdBy = readCreatedByField(objectNode, path);
@@ -255,14 +256,13 @@ public class ArtifactReader
     Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
     Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
 
-    return new Artifact(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return new Artifact(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
   private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
   {
     Artifact artifact = readArtifact(objectNode, path);
 
-    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
     URI jsonSchemaSchemaURI = readJsonSchemaSchemaURIField(objectNode, path);
     String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
     String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
@@ -278,7 +278,7 @@ public class ArtifactReader
     // boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
     // TODO: required array
 
-    return new SchemaArtifact(artifact, jsonLdTypes,
+    return new SchemaArtifact(artifact,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
       previousVersion, derivedFrom);

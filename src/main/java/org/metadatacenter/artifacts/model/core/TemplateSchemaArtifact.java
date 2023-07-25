@@ -32,17 +32,18 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     validate();
   }
 
-  public TemplateSchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
-    Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+  public TemplateSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    List<URI> jsonLdTypes, String schemaOrgName, String schemaOrgDescription,
+    String schemaOrgName, String schemaOrgDescription,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
   {
-    super(jsonLdId, jsonLdContext, jsonLdTypes, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription, modelVersion,
+    super(jsonLdTypes, jsonLdId, jsonLdContext,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      schemaOrgName, schemaOrgDescription, modelVersion,
       artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
@@ -65,7 +66,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
   private TemplateSchemaArtifact(Builder builder)
   {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.jsonLdTypes,
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
       builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
       builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
       builder.schemaOrgName, builder.schemaOrgDescription, builder.modelVersion, builder.artifactVersion,

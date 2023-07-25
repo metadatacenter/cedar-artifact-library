@@ -46,10 +46,11 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     boolean isMultiple)
   {
-    super(jsonLdId, jsonLdContext, jsonLdTypes,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription, modelVersion,
-      artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
+    super(jsonLdTypes,jsonLdId, jsonLdContext,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      schemaOrgName, schemaOrgDescription,
+      modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.valueConstraints = valueConstraints;
     this.fieldUI = fieldUI;
     this.skosPrefLabel = skosPrefLabel;
@@ -60,7 +61,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   }
 
   private FieldSchemaArtifact(Builder builder) {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.jsonLdTypes, builder.createdBy, builder.modifiedBy, builder.createdOn,
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn,
       builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
       builder.jsonSchemaDescription, builder.schemaOrgName, builder.schemaOrgDescription,
       builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus,

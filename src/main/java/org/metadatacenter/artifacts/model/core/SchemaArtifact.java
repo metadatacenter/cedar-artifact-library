@@ -18,7 +18,6 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateV
 
 public class SchemaArtifact extends Artifact
 {
-  private final List<URI> jsonLdTypes;
   private final URI jsonSchemaSchemaUri;
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
@@ -31,14 +30,13 @@ public class SchemaArtifact extends Artifact
   private final Optional<URI> previousVersion;
   private final Optional<URI> derivedFrom;
 
-  public SchemaArtifact(Artifact artifact, List<URI> jsonLdTypes,
+  public SchemaArtifact(Artifact artifact,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom)
   {
     super(artifact);
-    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
     this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
@@ -54,7 +52,7 @@ public class SchemaArtifact extends Artifact
     validate();
   }
 
-  public SchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+  public SchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
     Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
@@ -62,8 +60,7 @@ public class SchemaArtifact extends Artifact
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom)
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
-    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
+    super(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
     this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
@@ -82,7 +79,6 @@ public class SchemaArtifact extends Artifact
   public SchemaArtifact(SchemaArtifact schemaArtifact)
   {
     super(schemaArtifact);
-    this.jsonLdTypes = Collections.unmodifiableList(schemaArtifact.jsonLdTypes);
     this.jsonSchemaSchemaUri = schemaArtifact.jsonSchemaSchemaUri;
     this.jsonSchemaType = schemaArtifact.jsonSchemaType;
     this.jsonSchemaTitle = schemaArtifact.jsonSchemaTitle;
@@ -116,11 +112,6 @@ public class SchemaArtifact extends Artifact
   public String getJsonSchemaDescription()
   {
     return jsonSchemaDescription;
-  }
-
-  public List<URI> getJsonLdTypes()
-  {
-    return jsonLdTypes;
   }
 
   public String getName()
@@ -162,10 +153,9 @@ public class SchemaArtifact extends Artifact
   {
     return "SchemaArtifact{" + "jsonSchemaSchemaUri=" + jsonSchemaSchemaUri + ", jsonSchemaType='" + jsonSchemaType
       + '\'' + ", jsonSchemaTitle='" + jsonSchemaTitle + '\'' + ", jsonSchemaDescription='" + jsonSchemaDescription
-      + '\'' + ", jsonLdTypes=" + jsonLdTypes + ", schemaOrgName='" + schemaOrgName + '\'' + ", schemaOrgDescription='"
-      + schemaOrgDescription + '\'' + ", modelVersion=" + modelVersion + ", artifactVersion=" + artifactVersion
-      + ", artifactVersionStatus=" + artifactVersionStatus + ", previousArtifactVersion=" + previousVersion
-      + ", derivedFrom=" + derivedFrom + '}';
+      + '\'' + ", schemaOrgName='" + schemaOrgName + '\'' + ", schemaOrgDescription='" + schemaOrgDescription + '\''
+      + ", modelVersion=" + modelVersion + ", artifactVersion=" + artifactVersion + ", artifactVersionStatus="
+      + artifactVersionStatus + ", previousVersion=" + previousVersion + ", derivedFrom=" + derivedFrom + '}';
   }
 
   private void validate()
@@ -174,7 +164,6 @@ public class SchemaArtifact extends Artifact
     validateStringFieldNotNull(this, jsonSchemaType, ModelNodeNames.JSON_SCHEMA_TYPE);
     validateStringFieldNotNull(this, jsonSchemaTitle, ModelNodeNames.JSON_SCHEMA_TITLE);
     validateStringFieldNotNull(this, jsonSchemaDescription, ModelNodeNames.JSON_SCHEMA_DESCRIPTION);
-    validateListFieldNotNull(this, jsonLdTypes, ModelNodeNames.JSON_LD_TYPE);
     validateStringFieldNotEmpty(this, schemaOrgName, ModelNodeNames.SCHEMA_ORG_NAME);
     validateStringFieldNotNull(this, schemaOrgDescription, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
     validateVersionFieldNotNull(this, modelVersion, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);

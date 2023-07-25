@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,11 +28,11 @@ public final class FieldInstanceArtifact extends InstanceArtifact
     this.prefLabel = prefLabel;
   }
 
-  public FieldInstanceArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
+  public FieldInstanceArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, String jsonLdValue,
     Optional<String> label, Optional<String> notation, Optional<String> prefLabel)
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    super(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
     this.jsonLdValue = jsonLdValue;
     this.label = label;
     this.notation = notation;
@@ -39,7 +40,7 @@ public final class FieldInstanceArtifact extends InstanceArtifact
   }
 
   private FieldInstanceArtifact(Builder builder) {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
     this.jsonLdValue = builder.jsonLdValue;
     this.label = builder.label;
     this.notation = builder.notation;
@@ -87,6 +88,7 @@ public final class FieldInstanceArtifact extends InstanceArtifact
   }
 
   public static class Builder {
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
@@ -99,6 +101,11 @@ public final class FieldInstanceArtifact extends InstanceArtifact
     private Optional<String> prefLabel = Optional.empty();
 
     private Builder() {
+    }
+
+    public Builder withJsonLdType(URI jsonLdType) {
+      this.jsonLdTypes.add(jsonLdType);
+      return this;
     }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId) {

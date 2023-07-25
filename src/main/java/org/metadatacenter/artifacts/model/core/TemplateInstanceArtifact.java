@@ -23,12 +23,12 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
   }
 
-  public TemplateInstanceArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
+  public TemplateInstanceArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, String isBasedOn,
     Map<String, List<ElementInstanceArtifact>> elementInstances,
     Map<String, List<FieldInstanceArtifact>> fieldInstances)
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    super(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
     this.isBasedOn = isBasedOn;
     this.elementInstances = Collections.unmodifiableMap(elementInstances);
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
@@ -43,7 +43,7 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
   }
 
   private TemplateInstanceArtifact(Builder builder) {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
     this.isBasedOn = builder.isBasedOn;
     this.elementInstances = Collections.unmodifiableMap(builder.elementInstances);
     this.fieldInstances = Collections.unmodifiableMap(builder.fieldInstances);
@@ -75,6 +75,7 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
   }
 
   public static class Builder {
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
@@ -86,6 +87,11 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     private Map<String, List<FieldInstanceArtifact>> fieldInstances = Collections.emptyMap();
 
     private Builder() {
+    }
+
+    public Builder withJsonLdType(URI jsonLdType) {
+      this.jsonLdTypes.add(jsonLdType);
+      return this;
     }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId) {

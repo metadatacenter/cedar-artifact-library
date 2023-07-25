@@ -35,14 +35,15 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validate();
   }
 
-  public ElementSchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+  public ElementSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    List<URI> jsonLdTypes, String schemaOrgName, String schemaOrgDescription, Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
+    String schemaOrgName, String schemaOrgDescription,
+    Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
   {
-    super(jsonLdId, jsonLdContext, jsonLdTypes, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
+    super(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
       jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription, modelVersion,
       artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
@@ -68,7 +69,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   private ElementSchemaArtifact(Builder builder)
   {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.jsonLdTypes, builder.createdBy, builder.modifiedBy, builder.createdOn,
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn,
       builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
       builder.jsonSchemaDescription, builder.schemaOrgName, builder.schemaOrgDescription,
       builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousVersion,
@@ -165,6 +166,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   public static class Builder
   {
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
@@ -175,7 +177,6 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
-    private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription = "";
     private Version modelVersion = new Version(1, 6, 0); // TODO
@@ -190,6 +191,12 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private ElementUI elementUI;
 
     private Builder() {
+    }
+
+    public Builder withJsonLdType(URI jsonLdType)
+    {
+      this.jsonLdTypes.add(jsonLdType);
+      return this;
     }
 
     public Builder withJsonLdId(Optional<URI> jsonLdId)
@@ -312,9 +319,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       return this;
     }
 
-    public Builder withChildPropertyURIs(Map<String, URI> childPropertyURIs)
+    public Builder withChildPropertyURI(String childPropertyName, URI childPropertyURI)
     {
-      this.childPropertyURIs = childPropertyURIs;
+      this.childPropertyURIs.put(childPropertyName, childPropertyURI);
       return this;
     }
 
