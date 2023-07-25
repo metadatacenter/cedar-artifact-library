@@ -42,8 +42,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription, modelVersion,
+    super(jsonLdId, jsonLdContext, jsonLdTypes, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
+      jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription, modelVersion,
       artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
@@ -68,9 +68,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   private ElementSchemaArtifact(Builder builder)
   {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn,
+    super(builder.jsonLdId, builder.jsonLdContext, builder.jsonLdTypes, builder.createdBy, builder.modifiedBy, builder.createdOn,
       builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
-      builder.jsonSchemaDescription, builder.jsonLdTypes, builder.schemaOrgName, builder.schemaOrgDescription,
+      builder.jsonSchemaDescription, builder.schemaOrgName, builder.schemaOrgDescription,
       builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousVersion,
       builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);

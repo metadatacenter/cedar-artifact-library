@@ -18,11 +18,11 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateV
 
 public class SchemaArtifact extends Artifact
 {
+  private final List<URI> jsonLdTypes;
   private final URI jsonSchemaSchemaUri;
   private final String jsonSchemaType;
   private final String jsonSchemaTitle;
   private final String jsonSchemaDescription;
-  private final List<URI> jsonLdTypes;
   private final String schemaOrgName;
   private final String schemaOrgDescription;
   private final Version modelVersion;
@@ -31,19 +31,18 @@ public class SchemaArtifact extends Artifact
   private final Optional<URI> previousVersion;
   private final Optional<URI> derivedFrom;
 
-  public SchemaArtifact(Artifact artifact,
+  public SchemaArtifact(Artifact artifact, List<URI> jsonLdTypes,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    List<URI> jsonLdTypes,
     String schemaOrgName, String schemaOrgDescription,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom)
   {
     super(artifact);
+    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
     this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
     this.jsonSchemaDescription = jsonSchemaDescription;
-    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
     this.schemaOrgName = schemaOrgName;
     this.schemaOrgDescription = schemaOrgDescription;
     this.modelVersion = modelVersion;
@@ -55,21 +54,20 @@ public class SchemaArtifact extends Artifact
     validate();
   }
 
-  public SchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public SchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes,
     Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    List<URI> jsonLdTypes,
     String schemaOrgName, String schemaOrgDescription,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom)
   {
     super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
     this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
     this.jsonSchemaDescription = jsonSchemaDescription;
-    this.jsonLdTypes = Collections.unmodifiableList(jsonLdTypes);
     this.schemaOrgName = schemaOrgName;
     this.schemaOrgDescription = schemaOrgDescription;
     this.modelVersion = modelVersion;
@@ -84,11 +82,11 @@ public class SchemaArtifact extends Artifact
   public SchemaArtifact(SchemaArtifact schemaArtifact)
   {
     super(schemaArtifact);
+    this.jsonLdTypes = Collections.unmodifiableList(schemaArtifact.jsonLdTypes);
     this.jsonSchemaSchemaUri = schemaArtifact.jsonSchemaSchemaUri;
     this.jsonSchemaType = schemaArtifact.jsonSchemaType;
     this.jsonSchemaTitle = schemaArtifact.jsonSchemaTitle;
     this.jsonSchemaDescription = schemaArtifact.jsonSchemaDescription;
-    this.jsonLdTypes = Collections.unmodifiableList(schemaArtifact.jsonLdTypes);
     this.schemaOrgName = schemaArtifact.schemaOrgName;
     this.schemaOrgDescription = schemaArtifact.schemaOrgDescription;
     this.modelVersion = schemaArtifact.modelVersion;

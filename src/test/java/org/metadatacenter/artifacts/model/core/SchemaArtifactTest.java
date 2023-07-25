@@ -23,11 +23,11 @@ public class SchemaArtifactTest {
     Artifact artifact = new Artifact(Optional.of(jsonLdId), jsonLdContext,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn));
 
+    List<URI> jsonLdTypes = Collections.singletonList(URI.create("http://example.com/type"));
     URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
-    List<URI> jsonLdTypes = Collections.singletonList(URI.create("http://example.com/type"));
     String schemaOrgName = "schemaOrgName";
     String schemaOrgDescription = "schemaOrgDescription";
     Version modelVersion = new Version(1, 0, 0);
@@ -36,8 +36,8 @@ public class SchemaArtifactTest {
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
-    SchemaArtifact schemaArtifact = new SchemaArtifact(artifact, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription,
+    SchemaArtifact schemaArtifact = new SchemaArtifact(artifact, jsonLdTypes, jsonSchemaSchemaUri, jsonSchemaType,
+      jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription,
       modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
 
     Assert.assertEquals(jsonLdId, schemaArtifact.getJsonLdId().get());
@@ -70,11 +70,11 @@ public class SchemaArtifactTest {
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
 
+    List<URI> jsonLdTypes = Collections.singletonList(URI.create("http://example.com/type"));
     URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
-    List<URI> jsonLdTypes = Collections.singletonList(URI.create("http://example.com/type"));
     String schemaOrgName = "schemaOrgName";
     String schemaOrgDescription = "schemaOrgDescription";
     Version modelVersion = new Version(1, 0, 0);
@@ -83,9 +83,9 @@ public class SchemaArtifactTest {
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
-    SchemaArtifact schemaArtifact = new SchemaArtifact(Optional.of(jsonLdId), jsonLdContext,
+    SchemaArtifact schemaArtifact = new SchemaArtifact(Optional.of(jsonLdId), jsonLdContext, jsonLdTypes,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
       previousVersion, derivedFrom);
 

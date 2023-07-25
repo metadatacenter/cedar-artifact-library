@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.poi.ss.formula.functions.Mode;
 import org.metadatacenter.artifacts.model.core.Artifact;
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
@@ -263,11 +262,11 @@ public class ArtifactReader
   {
     Artifact artifact = readArtifact(objectNode, path);
 
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
     URI jsonSchemaSchemaURI = readJsonSchemaSchemaURIField(objectNode, path);
     String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
     String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
     String jsonSchemaDescription = readJsonSchemaDescriptionField(objectNode, path);
-    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
     Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
     String schemaOrgName = readSchemaOrgNameField(objectNode, path);
     String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
@@ -279,9 +278,8 @@ public class ArtifactReader
     // boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
     // TODO: required array
 
-    return new SchemaArtifact(artifact,
+    return new SchemaArtifact(artifact, jsonLdTypes,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdTypes,
       schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
       previousVersion, derivedFrom);
   }
