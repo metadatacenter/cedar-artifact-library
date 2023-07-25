@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.metadatacenter.model.ModelNodeNames;
@@ -28,16 +27,18 @@ public class SchemaArtifactTest {
     String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
-    String schemaOrgName = "schemaOrgName";
-    String schemaOrgDescription = "schemaOrgDescription";
+    String schemaOrgName = "Schema Org name";
+    String schemaOrgDescription = "Schema Org description";
+    Optional<String> schemaOrgIdentifier = Optional.of("Schema Org identifier");
     Version modelVersion = new Version(1, 0, 0);
     Optional<Version> artifactVersion = Optional.of(new Version(2, 0, 0));
     Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
-    SchemaArtifact schemaArtifact = new SchemaArtifact(artifact, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription,
+    SchemaArtifact schemaArtifact = new SchemaArtifact(artifact,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
 
     Assert.assertEquals(jsonLdTypes, schemaArtifact.getJsonLdTypes());
@@ -53,6 +54,7 @@ public class SchemaArtifactTest {
     Assert.assertEquals(jsonSchemaDescription, schemaArtifact.getJsonSchemaDescription());
     Assert.assertEquals(schemaOrgName, schemaArtifact.getName());
     Assert.assertEquals(schemaOrgDescription, schemaArtifact.getDescription());
+    Assert.assertEquals(schemaOrgIdentifier, schemaArtifact.getIdentifier());
     Assert.assertEquals(modelVersion, schemaArtifact.getModelVersion());
     Assert.assertEquals(artifactVersion, schemaArtifact.getVersion());
     Assert.assertEquals(artifactVersionStatus, schemaArtifact.getStatus());
@@ -75,8 +77,9 @@ public class SchemaArtifactTest {
     String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
-    String schemaOrgName = "schemaOrgName";
-    String schemaOrgDescription = "schemaOrgDescription";
+    String schemaOrgName = "Schema Org name";
+    String schemaOrgDescription = "Schema Org description";
+    Optional<String> schemaOrgIdentifier = Optional.of("Schema Org identifier");
     Version modelVersion = new Version(1, 0, 0);
     Optional<Version> artifactVersion = Optional.of(new Version(2, 0, 0));
     Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
@@ -86,8 +89,8 @@ public class SchemaArtifactTest {
     SchemaArtifact schemaArtifact = new SchemaArtifact(jsonLdTypes, Optional.of(jsonLdId), jsonLdContext,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
-      previousVersion, derivedFrom);
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
+      modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
 
     Assert.assertEquals(jsonLdTypes, schemaArtifact.getJsonLdTypes());
     Assert.assertEquals(jsonLdId, schemaArtifact.getJsonLdId().get());
@@ -102,6 +105,7 @@ public class SchemaArtifactTest {
     Assert.assertEquals(jsonSchemaDescription, schemaArtifact.getJsonSchemaDescription());
     Assert.assertEquals(schemaOrgName, schemaArtifact.getName());
     Assert.assertEquals(schemaOrgDescription, schemaArtifact.getDescription());
+    Assert.assertEquals(schemaOrgIdentifier, schemaArtifact.getIdentifier());
     Assert.assertEquals(modelVersion, schemaArtifact.getModelVersion());
     Assert.assertEquals(artifactVersion, schemaArtifact.getVersion());
     Assert.assertEquals(artifactVersionStatus, schemaArtifact.getStatus());

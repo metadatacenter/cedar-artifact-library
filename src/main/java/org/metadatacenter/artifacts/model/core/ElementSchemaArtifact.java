@@ -38,14 +38,16 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
   public ElementSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String schemaOrgName, String schemaOrgDescription,
+    String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
   {
-    super(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription, modelVersion,
-      artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
+    super(jsonLdTypes, jsonLdId, jsonLdContext,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
+      modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
@@ -69,9 +71,10 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   private ElementSchemaArtifact(Builder builder)
   {
-    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn,
-      builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
-      builder.jsonSchemaDescription, builder.schemaOrgName, builder.schemaOrgDescription,
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
+      builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
+      builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
+      builder.schemaOrgName, builder.schemaOrgDescription, builder.schemaOrgIdentifier,
       builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousVersion,
       builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
@@ -179,6 +182,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private String jsonSchemaDescription = "";
     private String schemaOrgName;
     private String schemaOrgDescription = "";
+    private Optional<String> schemaOrgIdentifier = Optional.empty();
     private Version modelVersion = new Version(1, 6, 0); // TODO
     private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
@@ -274,6 +278,12 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     public Builder withSchemaOrgDescription(String schemaOrgDescription)
     {
       this.schemaOrgDescription = schemaOrgDescription;
+      return this;
+    }
+
+    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier)
+    {
+      this.schemaOrgIdentifier = Optional.of(schemaOrgIdentifier);
       return this;
     }
 

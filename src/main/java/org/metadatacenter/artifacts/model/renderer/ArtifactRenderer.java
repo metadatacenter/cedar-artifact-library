@@ -27,13 +27,13 @@ public class ArtifactRenderer
   {
     ObjectNode templateSchemaArtifactRendering = renderSchemaArtifact(templateSchemaArtifact);
 
-    //  @context
+    // @context
 
     // properties
     // required
     // additionalProperties
 
-    // _ui
+    templateSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(templateSchemaArtifact.getTemplateUI()));
 
     return templateSchemaArtifactRendering;
   }
@@ -48,7 +48,9 @@ public class ArtifactRenderer
     // required
     // additionalProperties
 
-    // _ui
+    elementSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(elementSchemaArtifact.getElementUI()));
+
+    // isMultiple!!!
 
     return elementSchemaArtifactRendering;
   }
@@ -57,20 +59,25 @@ public class ArtifactRenderer
   {
     ObjectNode fieldSchemaArtifactRendering = renderSchemaArtifact(fieldSchemaArtifact);
 
-    // isMultiple!!!
-
-    // properties
-    // required
-    // additionalProperties
-
     // @context
 
-    // skos:prefLabel
-    // skos:identifier
-    // skos:alternateLabels[]
+    // properties
+    // required -- @value or @id and optionally @type
+    // additionalProperties
 
-    // _ui
-    // _valueConstraints
+    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
+      fieldSchemaArtifactRendering.put(ModelNodeNames.SKOS_PREFLABEL, fieldSchemaArtifact.getSkosPrefLabel().get().toString());
+
+    if (!fieldSchemaArtifact.getSkosAlternateLabels().isEmpty()) {
+      fieldSchemaArtifactRendering.put(ModelNodeNames.SKOS_ALTLABEL, mapper.createArrayNode());
+      for (String skosAlternateLabel : fieldSchemaArtifact.getSkosAlternateLabels())
+        fieldSchemaArtifactRendering.withArray(ModelNodeNames.SKOS_ALTLABEL).add(skosAlternateLabel.toString());
+    }
+
+    fieldSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(fieldSchemaArtifact.getFieldUI()));
+    fieldSchemaArtifactRendering.put(ModelNodeNames.VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.getValueConstraints()));
+
+    // isMultiple!!!
 
     return fieldSchemaArtifactRendering;
   }
@@ -86,6 +93,9 @@ public class ArtifactRenderer
     schemaArtifactRendering.put(ModelNodeNames.SCHEMA_ORG_NAME, schemaArtifact.getName());
     schemaArtifactRendering.put(ModelNodeNames.SCHEMA_ORG_DESCRIPTION, schemaArtifact.getDescription());
     schemaArtifactRendering.put(ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.getVersion().toString());
+
+    if (schemaArtifact.getIdentifier().isPresent())
+      schemaArtifactRendering.put(ModelNodeNames.SCHEMA_ORG_IDENTIFIER, schemaArtifact.getIdentifier().get());
 
     if (schemaArtifact.getVersion().isPresent())
       schemaArtifactRendering.put(ModelNodeNames.PAV_VERSION, schemaArtifact.getVersion().get().toString());
@@ -106,7 +116,13 @@ public class ArtifactRenderer
   {
     ObjectNode artifactRendering = mapper.createObjectNode();
 
-    // TODO private final List<URI> jsonLdTypes;
+    if (artifact.getJsonLdTypes().size() == 1) {
+      artifactRendering.put(ModelNodeNames.JSON_LD_TYPE, artifact.getJsonLdTypes().get(0).toString());
+    } else if (artifact.getJsonLdTypes().size() > 1) {
+      artifactRendering.put(ModelNodeNames.JSON_LD_TYPE, mapper.createArrayNode());
+      for (URI jsonLdType : artifact.getJsonLdTypes())
+        artifactRendering.withArray(ModelNodeNames.JSON_LD_TYPE).add(jsonLdType.toString());
+    }
 
     if (artifact.getJsonLdId().isPresent())
       artifactRendering.put(ModelNodeNames.JSON_LD_ID, artifact.getJsonLdId().get().toString());
@@ -120,8 +136,8 @@ public class ArtifactRenderer
     if (artifact.getCreatedOn().isPresent())
       artifactRendering.put(ModelNodeNames.PAV_CREATED_ON, artifact.getCreatedOn().get().toString());
 
-    if (artifact.getCreatedBy().isPresent())
-      artifactRendering.put(ModelNodeNames.PAV_CREATED_BY, artifact.getCreatedBy().get().toString());
+    if (artifact.getLastUpdatedOn().isPresent())
+      artifactRendering.put(ModelNodeNames.PAV_LAST_UPDATED_ON, artifact.getLastUpdatedOn().get().toString());
 
     return artifactRendering;
   }

@@ -270,6 +270,7 @@ public class ArtifactReader
     Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
     String schemaOrgName = readSchemaOrgNameField(objectNode, path);
     String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
+    Optional<String> schemaOrgIdentifier = readSchemaOrgIdentifierField(objectNode, path);
     Optional<Version> artifactVersion = readPAVVersionField(objectNode, path);
     Optional<Status> artifactVersionStatus = readBIBOStatusField(objectNode, path);
     Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
@@ -280,7 +281,7 @@ public class ArtifactReader
 
     return new SchemaArtifact(artifact,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      schemaOrgName, schemaOrgDescription, modelVersion, artifactVersion, artifactVersionStatus,
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus,
       previousVersion, derivedFrom);
   }
 
@@ -1077,6 +1078,11 @@ public class ArtifactReader
   private String readSchemaOrgDescriptionField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
+  }
+
+  private Optional<String> readSchemaOrgIdentifierField(ObjectNode objectNode, String path)
+  {
+    return readStringField(objectNode, path, ModelNodeNames.SCHEMA_ORG_IDENTIFIER);
   }
 
   private Optional<Version> readPAVVersionField(ObjectNode objectNode, String path)

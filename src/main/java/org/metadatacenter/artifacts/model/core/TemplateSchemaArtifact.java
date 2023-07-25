@@ -35,7 +35,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   public TemplateSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String schemaOrgName, String schemaOrgDescription,
+    String schemaOrgName, String schemaOrgDescription, Optional<String> schemdOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
@@ -43,8 +43,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     super(jsonLdTypes, jsonLdId, jsonLdContext,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      schemaOrgName, schemaOrgDescription, modelVersion,
-      artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
+      schemaOrgName, schemaOrgDescription, schemdOrgIdentifier,
+      modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
@@ -69,8 +69,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
       builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
       builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
-      builder.schemaOrgName, builder.schemaOrgDescription, builder.modelVersion, builder.artifactVersion,
-      builder.artifactVersionStatus, builder.previousVersion, builder.derivedFrom);
+      builder.schemaOrgName, builder.schemaOrgDescription, builder.schemaOrgIdentifier,
+      builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousVersion, builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
     this.childPropertyURIs = Collections.unmodifiableMap(builder.childPropertyURIs);
@@ -169,6 +169,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription = "";
+    private Optional<String> schemaOrgIdentifier = Optional.empty();
     private Version modelVersion = new Version(1, 6, 1); // TODO
     private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
@@ -229,6 +230,11 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
     public Builder withJsonSchemaDescription(String jsonSchemaDescription) {
       this.jsonSchemaDescription = jsonSchemaDescription;
+      return this;
+    }
+
+    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier) {
+      this.schemaOrgIdentifier = Optional.of(schemaOrgIdentifier);
       return this;
     }
 

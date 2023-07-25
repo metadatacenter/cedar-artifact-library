@@ -22,6 +22,7 @@ public class SchemaArtifact extends Artifact
   private final String jsonSchemaDescription;
   private final String schemaOrgName;
   private final String schemaOrgDescription;
+  private final Optional<String> schemaOrgIdentifier;
   private final Version modelVersion;
   private final Optional<Version> artifactVersion;
   private final Optional<Status> artifactVersionStatus;
@@ -30,7 +31,7 @@ public class SchemaArtifact extends Artifact
 
   public SchemaArtifact(Artifact artifact,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String schemaOrgName, String schemaOrgDescription,
+    String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom)
   {
@@ -41,6 +42,7 @@ public class SchemaArtifact extends Artifact
     this.jsonSchemaDescription = jsonSchemaDescription;
     this.schemaOrgName = schemaOrgName;
     this.schemaOrgDescription = schemaOrgDescription;
+    this.schemaOrgIdentifier = schemaOrgIdentifier;
     this.modelVersion = modelVersion;
     this.artifactVersion = artifactVersion;
     this.artifactVersionStatus = artifactVersionStatus;
@@ -54,7 +56,7 @@ public class SchemaArtifact extends Artifact
     Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String schemaOrgName, String schemaOrgDescription,
+    String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom)
   {
@@ -65,6 +67,7 @@ public class SchemaArtifact extends Artifact
     this.jsonSchemaDescription = jsonSchemaDescription;
     this.schemaOrgName = schemaOrgName;
     this.schemaOrgDescription = schemaOrgDescription;
+    this.schemaOrgIdentifier = schemaOrgIdentifier;
     this.modelVersion = modelVersion;
     this.artifactVersion = artifactVersion;
     this.artifactVersionStatus = artifactVersionStatus;
@@ -81,6 +84,7 @@ public class SchemaArtifact extends Artifact
     this.jsonSchemaType = schemaArtifact.jsonSchemaType;
     this.jsonSchemaTitle = schemaArtifact.jsonSchemaTitle;
     this.jsonSchemaDescription = schemaArtifact.jsonSchemaDescription;
+    this.schemaOrgIdentifier = schemaArtifact.schemaOrgIdentifier;
     this.schemaOrgName = schemaArtifact.schemaOrgName;
     this.schemaOrgDescription = schemaArtifact.schemaOrgDescription;
     this.modelVersion = schemaArtifact.modelVersion;
@@ -120,6 +124,11 @@ public class SchemaArtifact extends Artifact
   public String getDescription()
   {
     return schemaOrgDescription;
+  }
+
+  public Optional<String> getIdentifier()
+  {
+    return schemaOrgIdentifier;
   }
 
   public Version getModelVersion()

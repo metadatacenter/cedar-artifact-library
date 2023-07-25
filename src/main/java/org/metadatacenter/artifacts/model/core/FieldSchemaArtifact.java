@@ -22,7 +22,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   private final boolean isMultiple;
 
   public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI,
-    Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+    Optional<ValueConstraints> valueConstraints,
+    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     boolean isMultiple)
   {
     super(schemaArtifact);
@@ -35,12 +36,10 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     validate();
   }
 
-  public FieldSchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
-    Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+  public FieldSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    List<URI> jsonLdTypes,
-    String schemaOrgName, String schemaOrgDescription,
+    String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, FieldUI fieldUI,
     Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
@@ -49,7 +48,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     super(jsonLdTypes,jsonLdId, jsonLdContext,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      schemaOrgName, schemaOrgDescription,
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.valueConstraints = valueConstraints;
     this.fieldUI = fieldUI;
@@ -61,9 +60,10 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   }
 
   private FieldSchemaArtifact(Builder builder) {
-    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn,
-      builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
-      builder.jsonSchemaDescription, builder.schemaOrgName, builder.schemaOrgDescription,
+    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
+      builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
+      builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
+      builder.schemaOrgName, builder.schemaOrgDescription, builder.schemaOrgIdentifier,
       builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus,
       builder.previousVersion, builder.derivedFrom);
     this.fieldUI = builder.fieldUI;
@@ -131,6 +131,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription = "";
+    private Optional<String> schemaOrgIdentifier = Optional.empty();
     private Version modelVersion = new Version(1, 6, 0); // TODO
     private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
@@ -207,6 +208,11 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
     public Builder withSchemaOrgDescription(String schemaOrgDescription) {
       this.schemaOrgDescription = schemaOrgDescription;
+      return this;
+    }
+
+    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier) {
+      this.schemaOrgIdentifier = Optional.of(schemaOrgIdentifier);
       return this;
     }
 
