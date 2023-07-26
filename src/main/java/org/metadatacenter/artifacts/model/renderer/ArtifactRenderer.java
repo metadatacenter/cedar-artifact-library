@@ -256,7 +256,7 @@ public class ArtifactRenderer
   }
 
   /**
-   * Generate @context prefixed for schema artifacts.
+   * Generate @context prefixes for schema artifacts.
    * <p>
    * Defined as follows:
    * <pre>
@@ -274,6 +274,7 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
+    // TODO Put these IRIs in the ModelNodeNames class
     rendering.put(ModelNodeNames.XSD, "http://www.w3.org/2001/XMLSchema#");
     rendering.put(ModelNodeNames.PAV, "http://purl.org/pav/");
     rendering.put(ModelNodeNames.BIBO, "http://purl.org/ontology/bibo/");
@@ -285,7 +286,7 @@ public class ArtifactRenderer
   }
 
   /**
-   * Generate a JSON Schema representation a string or null value.
+   * Generate a JSON Schema specification for a string or null value type.
    * <p>
    * Defined as follows:
    * <pre>
@@ -304,7 +305,7 @@ public class ArtifactRenderer
   }
 
   /**
-   * Generate a JSON-LD representation xsd:string @type.
+   * Generate a JSON-LD specification for an xsd:string @type.
    * <p>
    * Defined as follows:
    * <pre>
@@ -321,7 +322,7 @@ public class ArtifactRenderer
   }
 
   /**
-   * Generate a JSON-LD representation xsd:dateTime @type.
+   * Generate a JSON-LD specification for an xsd:dateTime @type.
    * <p>
    * Defined as follows:
    * <pre>
@@ -338,7 +339,7 @@ public class ArtifactRenderer
   }
 
   /**
-   * Generate a JSON-LD representation an IRI @type.
+   * Generate a JSON-LD specification for an IRI @type.
    * <p>
    * Defined as follows:
    * <pre>
@@ -356,7 +357,7 @@ public class ArtifactRenderer
 
 
   /**
-   * Generate a JSON Schema representation a URI-formatted string.
+   * Generate a JSON Schema specification for a URI-formatted string.
    * <p>
    * Defined as follows:
    * <pre>
@@ -369,6 +370,46 @@ public class ArtifactRenderer
 
     rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
     rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema specification for URI-formatted string or URI-formatted string array.
+   * <p>
+   * Defined as follows:
+   * <pre>
+   * {
+   *   "oneOf": [
+   *     { "type": "string", "format": "uri" },
+   *     { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" }, "uniqueItems": true }
+   *   ]
+   * }
+   * </pre>
+   */
+  private ObjectNode renderURIOrURIArrayValueType()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(ModelNodeNames.JSON_SCHEMA_ONE_OF, mapper.createArrayNode());
+    rendering.withArray(ModelNodeNames.JSON_SCHEMA_ONE_OF).add(renderURIValueType());
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema specification for URI-formatted string array.
+   * <p>
+   * Defined as follows:
+   * <pre>
+   * { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" }, "uniqueItems": true }
+   * </pre>
+   */
+  private ObjectNode renderURIArrayValueType()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(ModelNodeNames.JSON_SCHEMA_ONE_OF, mapper.createArrayNode());
 
     return rendering;
   }
