@@ -87,6 +87,8 @@ public final class FieldUI implements UI
     return hidden;
   }
 
+  public boolean isStatic() { return isRichText() || isImage() || isYouTube(); }
+
   public Optional<Boolean> getTimeZoneEnabled()
   {
     return timeZoneEnabled;

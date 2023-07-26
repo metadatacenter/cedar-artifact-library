@@ -70,4 +70,14 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 
     return elementNames;
   }
+
+  default List<String> getChildNames()
+  {
+    ArrayList<String> childNames = new ArrayList<>();
+
+    for (String name : getUI().getOrder())
+      childNames.add(name);
+
+    return childNames;
+  }
 }

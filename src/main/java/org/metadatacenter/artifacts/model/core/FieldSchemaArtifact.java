@@ -82,6 +82,13 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
   public boolean isHidden() { return fieldUI.isHidden(); }
 
+  public boolean isStatic() { return fieldUI.isStatic(); }
+
+  public boolean hasIRIValue()
+  {
+    return valueConstraints.isPresent() ? valueConstraints.get().hasOntologyValueBasedConstraints() : false;
+  }
+
   @Override public boolean isMultiple() { return isMultiple; }
 
   public Optional<ValueConstraints> getValueConstraints()
