@@ -28,7 +28,11 @@ public class ArtifactRenderer
 
     // TODO properties
     // TODO required
-    // TODO additionalProperties
+
+    if (templateSchemaArtifact.hasAttributeValueField())
+      templateSchemaArtifactRendering.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, renderAdditionalPropertiesForAttributeValueField());
+    else
+      templateSchemaArtifactRendering.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     templateSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(templateSchemaArtifact.getTemplateUI()));
 
@@ -43,7 +47,10 @@ public class ArtifactRenderer
 
     // TODO properties
     // TODO required
-    // TODO additionalProperties
+    if (elementSchemaArtifact.hasAttributeValueField())
+      elementSchemaArtifactRendering.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, renderAdditionalPropertiesForAttributeValueField());
+    else
+      elementSchemaArtifactRendering.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     elementSchemaArtifactRendering.put(ModelNodeNames.UI, mapper.valueToTree(elementSchemaArtifact.getElementUI()));
 
@@ -60,7 +67,8 @@ public class ArtifactRenderer
 
     // TODO properties
     // TODO required -- @value or @id and optionally @type
-    // TODO additionalProperties
+
+    fieldSchemaArtifactRendering.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
       fieldSchemaArtifactRendering.put(ModelNodeNames.SKOS_PREFLABEL,
@@ -166,7 +174,7 @@ public class ArtifactRenderer
    * <p>
    * Note that no other additional properties are allowed due to "additionalProperties" being set to false.
    */
-  private ObjectNode renderAdditionalPropertiesForAttributeValueFields()
+  private ObjectNode renderAdditionalPropertiesForAttributeValueField()
   {
     ObjectNode additionalPropertiesRendering = mapper.createObjectNode();
 

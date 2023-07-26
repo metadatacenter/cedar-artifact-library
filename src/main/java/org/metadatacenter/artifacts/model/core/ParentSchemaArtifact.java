@@ -21,13 +21,13 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
     return this.getFieldSchemas().values().stream().anyMatch(fs -> fs.getFieldUI().isAttributeValue());
   }
 
-  FieldSchemaArtifact getFieldSchemaArtifact(String name);
-
-  ElementSchemaArtifact getElementSchemaArtifact(String name);
-
   LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas();
 
   LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas();
+
+  FieldSchemaArtifact getFieldSchemaArtifact(String name);
+
+  ElementSchemaArtifact getElementSchemaArtifact(String name);
 
   Map<String, URI> getChildPropertyURIs();
 
