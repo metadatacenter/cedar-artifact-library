@@ -8,13 +8,18 @@ import java.util.Map;
 
 public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
 {
-  boolean isField(String name);
+  default boolean isField(String name) {return getFieldSchemas().containsKey(name);}
 
-  boolean isElement(String name);
+  default boolean isElement(String name) {return getElementSchemas().containsKey(name);}
 
-  boolean hasFields();
+  default boolean hasFields() {return !getFieldSchemas().isEmpty();}
 
-  boolean hasElements();
+  default boolean hasElements() {return !getElementSchemas().isEmpty();}
+
+  default boolean hasAttributeValueField()
+  {
+    return this.getFieldSchemas().values().stream().anyMatch(fs -> fs.getFieldUI().isAttributeValue());
+  }
 
   FieldSchemaArtifact getFieldSchemaArtifact(String name);
 
@@ -43,11 +48,12 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 
     return childSchemas;
   }
+
   default List<String> getFieldNames()
   {
     ArrayList<String> fieldNames = new ArrayList<>();
 
-    for (String name: getUI().getOrder())
+    for (String name : getUI().getOrder())
       if (isField(name))
         fieldNames.add(name);
 
@@ -58,7 +64,7 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
   {
     ArrayList<String> elementNames = new ArrayList<>();
 
-    for (String name: getUI().getOrder())
+    for (String name : getUI().getOrder())
       if (isElement(name))
         elementNames.add(name);
 

@@ -79,13 +79,18 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     validate();
   }
 
+  @Override public Map<String, URI> getChildPropertyURIs()
+  {
+    return Collections.unmodifiableMap(childPropertyURIs);
+  }
+
   @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
   {
     LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
     for (String fieldName: getUI().getOrder()) {
-      if (this.fieldSchemas.containsKey(fieldName))
-        orderedFieldSchemas.put(fieldName, this.fieldSchemas.get(fieldName));
+      if (fieldSchemas.containsKey(fieldName))
+        orderedFieldSchemas.put(fieldName, fieldSchemas.get(fieldName));
     }
     return orderedFieldSchemas;
   }
@@ -94,16 +99,11 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   {
     LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
-    for (String elementName: getUI().getOrder()) {
-      if (this.elementSchemas.containsKey(elementName))
-        orderedElementSchemas.put(elementName, this.elementSchemas.get(elementName));
+    for (String elementName : getUI().getOrder()) {
+      if (elementSchemas.containsKey(elementName))
+        orderedElementSchemas.put(elementName, elementSchemas.get(elementName));
     }
     return orderedElementSchemas;
-  }
-
-  @Override public Map<String, URI> getChildPropertyURIs()
-  {
-    return Collections.unmodifiableMap(childPropertyURIs);
   }
 
   @Override public FieldSchemaArtifact getFieldSchemaArtifact(String name)
@@ -121,14 +121,6 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     else
       throw new IllegalArgumentException("Element " + name + "not present in template " + getName());
   }
-
-  @Override public boolean hasFields() { return !fieldSchemas.isEmpty(); }
-
-  @Override public boolean hasElements() { return !elementSchemas.isEmpty(); }
-
-  @Override public boolean isField(String name) { return fieldSchemas.containsKey(name); }
-
-  @Override public boolean isElement(String name) { return elementSchemas.containsKey(name); }
 
   @Override public ParentArtifactUI getUI() { return templateUI; }
 

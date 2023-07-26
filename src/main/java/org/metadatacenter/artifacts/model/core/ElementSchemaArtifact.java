@@ -91,9 +91,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact
   {
     LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
-    for (String fieldName : getUI().getOrder()) {
-      if (this.fieldSchemas.containsKey(fieldName))
-        orderedFieldSchemas.put(fieldName, this.fieldSchemas.get(fieldName));
+    for (String fieldName: getUI().getOrder()) {
+      if (fieldSchemas.containsKey(fieldName))
+        orderedFieldSchemas.put(fieldName, fieldSchemas.get(fieldName));
     }
     return orderedFieldSchemas;
   }
@@ -103,8 +103,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact
     LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
     for (String elementName : getUI().getOrder()) {
-      if (this.elementSchemas.containsKey(elementName))
-        orderedElementSchemas.put(elementName, this.elementSchemas.get(elementName));
+      if (elementSchemas.containsKey(elementName))
+        orderedElementSchemas.put(elementName, elementSchemas.get(elementName));
     }
     return orderedElementSchemas;
   }
@@ -130,18 +130,10 @@ public final class ElementSchemaArtifact extends SchemaArtifact
     return Collections.unmodifiableMap(childPropertyURIs);
   }
 
-  @Override public boolean hasFields() {return !fieldSchemas.isEmpty();}
-
-  @Override public boolean hasElements() {return !elementSchemas.isEmpty();}
-
   @Override public boolean isMultiple()
   {
     return isMultiple;
   }
-
-  @Override public boolean isField(String name) {return fieldSchemas.containsKey(name);}
-
-  @Override public boolean isElement(String name) {return elementSchemas.containsKey(name);}
 
   @Override public ParentArtifactUI getUI() {return elementUI;}
 

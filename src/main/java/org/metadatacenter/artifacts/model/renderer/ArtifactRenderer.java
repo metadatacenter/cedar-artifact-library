@@ -63,7 +63,8 @@ public class ArtifactRenderer
     // TODO additionalProperties
 
     if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
-      fieldSchemaArtifactRendering.put(ModelNodeNames.SKOS_PREFLABEL, fieldSchemaArtifact.getSkosPrefLabel().get().toString());
+      fieldSchemaArtifactRendering.put(ModelNodeNames.SKOS_PREFLABEL,
+        fieldSchemaArtifact.getSkosPrefLabel().get().toString());
 
     if (!fieldSchemaArtifact.getSkosAlternateLabels().isEmpty()) {
       fieldSchemaArtifactRendering.put(ModelNodeNames.SKOS_ALTLABEL, mapper.createArrayNode());
@@ -101,7 +102,8 @@ public class ArtifactRenderer
       schemaArtifactRendering.put(ModelNodeNames.BIBO_STATUS, schemaArtifact.getStatus().get().toString());
 
     if (schemaArtifact.getPreviousVersion().isPresent())
-      schemaArtifactRendering.put(ModelNodeNames.PAV_PREVIOUS_VERSION, schemaArtifact.getPreviousVersion().get().toString());
+      schemaArtifactRendering.put(ModelNodeNames.PAV_PREVIOUS_VERSION,
+        schemaArtifact.getPreviousVersion().get().toString());
 
     if (schemaArtifact.getDerivedFrom().isPresent())
       schemaArtifactRendering.put(ModelNodeNames.PAV_DERIVED_FROM, schemaArtifact.getDerivedFrom().get().toString());
@@ -138,4 +140,82 @@ public class ArtifactRenderer
 
     return artifactRendering;
   }
+
+  /**
+   * Generate a JSON Schema representation of an additionalProperties description for a template or element containing
+   * an attribute-value field.
+   * <p>
+   * The additionalProperties are defined as follows:
+   * <pre>
+   * "additionalProperties": {
+   *   "type": "object",
+   *   "properties": {
+   *     "@value": { "type": [ "string", "null" ] },
+   *     "@type": { "type": "string", "format": "uri" }
+   *   },
+   *   "required": [ "@value" ],
+   *   "additionalProperties": false
+   * }
+   * </pre>
+   * The additional properties are of type object and contain two main properties:
+   * - "@value": A string or null value.
+   * - "@type": A string representing a URI.
+   * <p>
+   * The "@value" property is required, while the "@type" property is optional.
+   * The "@value" property can hold a string value or be null, while the "@type" property must be a string in URI format.
+   * <p>
+   * Note that no other additional properties are allowed due to "additionalProperties" being set to false.
+   */
+  private ObjectNode renderAdditionalPropertiesForAttributeValueFields()
+  {
+    ObjectNode additionalPropertiesRendering = mapper.createObjectNode();
+
+    additionalPropertiesRendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
+    additionalPropertiesRendering.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
+    additionalPropertiesRendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_VALUE, renderStringOrNullValueType());
+    additionalPropertiesRendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_TYPE, renderURIValueType());
+    additionalPropertiesRendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
+    additionalPropertiesRendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).withArray(ModelNodeNames.JSON_SCHEMA_REQUIRED).add(ModelNodeNames.JSON_LD_VALUE);
+    additionalPropertiesRendering.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+
+    return additionalPropertiesRendering;
+  }
+
+  /**
+   * Generate a JSON Schema representation a string or null value.
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *   { "type": [ "string", "null" ] }
+   * </pre>
+   */
+  private ObjectNode renderStringOrNullValueType()
+  {
+    ObjectNode stringOrNullValueTypeRendering = mapper.createObjectNode();
+
+    stringOrNullValueTypeRendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, mapper.createArrayNode());
+    stringOrNullValueTypeRendering.withArray(ModelNodeNames.JSON_SCHEMA_TYPE).add("string");
+    stringOrNullValueTypeRendering.withArray(ModelNodeNames.JSON_SCHEMA_TYPE).add("null");
+
+    return stringOrNullValueTypeRendering;
+  }
+
+  /**
+   * Generate a JSON Schema representation a URI-formatted string.
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *   { "type": "string", "format": "uri" }
+   * </pre>
+   */
+  private ObjectNode renderURIValueType()
+  {
+    ObjectNode uriValueTypeRendering = mapper.createObjectNode();
+
+    uriValueTypeRendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
+    uriValueTypeRendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+
+    return uriValueTypeRendering;
+  }
+
 }
