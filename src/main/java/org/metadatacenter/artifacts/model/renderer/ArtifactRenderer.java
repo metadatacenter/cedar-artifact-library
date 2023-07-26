@@ -85,7 +85,8 @@ public class ArtifactRenderer
 
     rendering.put(ModelNodeNames.JSON_LD_CONTEXT, renderSchemaArtifactJsonLdContextPrefixes());
 
-    // Static fields have no JSON Schema fields (properties, required, additionalProperties)
+    // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
+    // value constraints.
     if (!fieldSchemaArtifact.isStatic()) {
 
       if (fieldSchemaArtifact.hasIRIValue()) {
@@ -107,10 +108,10 @@ public class ArtifactRenderer
         for (String skosAlternateLabel : fieldSchemaArtifact.getSkosAlternateLabels())
           rendering.withArray(ModelNodeNames.SKOS_ALTLABEL).add(skosAlternateLabel.toString());
       }
+      rendering.put(ModelNodeNames.VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.getValueConstraints()));
     }
 
     rendering.put(ModelNodeNames.UI, mapper.valueToTree(fieldSchemaArtifact.getFieldUI()));
-    rendering.put(ModelNodeNames.VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.getValueConstraints()));
 
     // TODO isMultiple!!!
 
