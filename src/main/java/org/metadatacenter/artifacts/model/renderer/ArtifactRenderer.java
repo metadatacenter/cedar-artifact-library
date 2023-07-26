@@ -3,9 +3,9 @@ package org.metadatacenter.artifacts.model.renderer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.Artifact;
-import org.metadatacenter.artifacts.model.core.ElementSchemaSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.SchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
 
@@ -35,7 +35,7 @@ public class ArtifactRenderer
     return templateSchemaArtifactRendering;
   }
 
-  public ObjectNode renderElementSchemaArtifact(ElementSchemaSchemaArtifact elementSchemaArtifact)
+  public ObjectNode renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
     ObjectNode elementSchemaArtifactRendering = renderSchemaArtifact(elementSchemaArtifact);
 
@@ -52,7 +52,7 @@ public class ArtifactRenderer
     return elementSchemaArtifactRendering;
   }
 
-  public ObjectNode renderFieldSchemaArtifact(FieldSchemaSchemaArtifact fieldSchemaArtifact)
+  public ObjectNode renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode fieldSchemaArtifactRendering = renderSchemaArtifact(fieldSchemaArtifact);
 
@@ -79,7 +79,7 @@ public class ArtifactRenderer
     return fieldSchemaArtifactRendering;
   }
 
-  private ObjectNode renderSchemaArtifact(SchemaSchemaArtifact schemaArtifact)
+  private ObjectNode renderSchemaArtifact(SchemaArtifact schemaArtifact)
   {
     ObjectNode schemaArtifactRendering = renderArtifact(schemaArtifact);
 

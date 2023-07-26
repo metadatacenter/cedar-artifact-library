@@ -9,11 +9,11 @@ import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.ElementSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementUI;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUI;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.InstanceArtifact;
@@ -21,7 +21,7 @@ import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
-import org.metadatacenter.artifacts.model.core.SchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.StringDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -66,12 +66,12 @@ public class ArtifactReader
     return readTemplateSchemaArtifact(objectNode, "");
   }
 
-  public ElementSchemaSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
+  public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
   {
     return readElementSchemaArtifact(objectNode, "", false);
   }
 
-  public FieldSchemaSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
+  public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
   {
     return readFieldSchemaArtifact(objectNode, "", false);
   }
@@ -123,9 +123,9 @@ public class ArtifactReader
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
   {
-    SchemaSchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-    Map<String, FieldSchemaSchemaArtifact> fieldSchemas = new HashMap<>();
-    Map<String, ElementSchemaSchemaArtifact> elementSchemas = new HashMap<>();
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
     TemplateUI templateUI = readTemplateUI(objectNode, path);
 
@@ -197,11 +197,11 @@ public class ArtifactReader
     return fieldNames2URI;
   }
 
-  private FieldSchemaSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
+  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
   {
     ObjectNode fieldNode = getFieldNode(objectNode, path);
 
-    SchemaSchemaArtifact schemaArtifact = readSchemaArtifact(fieldNode, path);
+    SchemaArtifact schemaArtifact = readSchemaArtifact(fieldNode, path);
     FieldUI fieldUI = readFieldUI(fieldNode, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(fieldNode, path);
     Optional<String> skosPrefLabel = readSKOSPrefLabelField(fieldNode, path);
@@ -209,7 +209,7 @@ public class ArtifactReader
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
-    return new FieldSchemaSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels, isMultiple);
+    return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels, isMultiple);
   }
 
   /**
@@ -230,12 +230,12 @@ public class ArtifactReader
       return objectNode;
   }
 
-  private ElementSchemaSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
+  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
   {
-    SchemaSchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
 
-    Map<String, FieldSchemaSchemaArtifact> fieldSchemas = new HashMap<>();
-    Map<String, ElementSchemaSchemaArtifact> elementSchemas = new HashMap<>();
+    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
     ElementUI elementUI = readElementUI(objectNode, path);
 
@@ -243,7 +243,7 @@ public class ArtifactReader
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
 
-    return new ElementSchemaSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, isMultiple, elementUI);
+    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, isMultiple, elementUI);
   }
 
   private Artifact readArtifact(ObjectNode objectNode, String path)
@@ -259,7 +259,7 @@ public class ArtifactReader
     return new Artifact(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
-  private SchemaSchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
+  private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
   {
     Artifact artifact = readArtifact(objectNode, path);
 
@@ -279,14 +279,14 @@ public class ArtifactReader
     // boolean additionalProperties = readRequiredBooleanField(objectNode, path, ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES);
     // TODO: required array
 
-    return new SchemaSchemaArtifact(artifact,
+    return new SchemaArtifact(artifact,
       jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus,
       previousVersion, derivedFrom);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
-    Map<String, FieldSchemaSchemaArtifact> fieldSchemas, Map<String, ElementSchemaSchemaArtifact> elementSchemas)
+    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas)
   {
     JsonNode propertiesNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_PROPERTIES);
 
@@ -337,11 +337,11 @@ public class ArtifactReader
             throw new ArtifactParseException("Invalid nesting of template schema artifact", jsonFieldName, fieldOrElementPath);
 
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            ElementSchemaSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
+            ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
               (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple);
             elementSchemas.put(jsonFieldName, elementSchemaArtifact);
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            FieldSchemaSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
+            FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
               (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple);
             fieldSchemas.put(jsonFieldName, fieldSchemaArtifact);
           } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {

@@ -2,7 +2,7 @@ package org.metadatacenter.artifacts.model.tools;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.metadatacenter.artifacts.model.core.ElementSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
 import org.metadatacenter.artifacts.model.reader.ArtifactReader;
 
@@ -28,7 +28,7 @@ public class ElementReporter
     ArtifactReader artifactReader = new ArtifactReader(mapper);
 
     try {
-      ElementSchemaSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
+      ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
       System.out.println("schema:name: " + elementSchemaArtifact.getName());
     } catch (ArtifactParseException e) {
       System.err.println(

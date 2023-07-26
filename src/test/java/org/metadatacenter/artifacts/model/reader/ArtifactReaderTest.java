@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.core.ElementSchemaSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.model.ModelNodeNames;
@@ -99,11 +99,11 @@ public class ArtifactReaderTest {
 
     assertEquals("TemplateWithMultiInstanceField", templateSchemaArtifact.getName());
 
-    LinkedHashMap<String, FieldSchemaSchemaArtifact> fieldSchemas = templateSchemaArtifact.getFieldSchemas();
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = templateSchemaArtifact.getFieldSchemas();
 
     assertEquals(fieldSchemas.size(), 1);
 
-    FieldSchemaSchemaArtifact fieldSchemaArtifact = fieldSchemas.get("Aliases");
+    FieldSchemaArtifact fieldSchemaArtifact = fieldSchemas.get("Aliases");
     assertNotNull(fieldSchemaArtifact);
 
     assertTrue((fieldSchemaArtifact.isMultiple()));
@@ -127,7 +127,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseElementArtifact("Test name", "Test description");
 
-    ElementSchemaSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(objectNode);
+    ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(objectNode);
 
     assertEquals(elementSchemaArtifact.getName(), "Test name");
     assertEquals(elementSchemaArtifact.getDescription(), "Test description");
@@ -142,7 +142,7 @@ public class ArtifactReaderTest {
 
     objectNode.with(ModelNodeNames.UI).put(ModelNodeNames.UI_FIELD_INPUT_TYPE, ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD);
 
-    FieldSchemaSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(objectNode);
+    FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(objectNode);
 
     assertEquals(fieldSchemaArtifact.getName(), "Test name");
     assertEquals(fieldSchemaArtifact.getDescription(), "Test description");
@@ -163,7 +163,7 @@ public class ArtifactReaderTest {
     objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).with("field2").put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
     objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).with("field2").withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add("https://example.com/enum2");
 
-    ElementSchemaSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(objectNode);
+    ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(objectNode);
     Map<String, URI> childPropertyURIs = elementSchemaArtifact.getChildPropertyURIs();
 
     assertEquals(2, childPropertyURIs.size());

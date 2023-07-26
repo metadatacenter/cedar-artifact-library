@@ -14,7 +14,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateS
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateURIFieldEquals;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
 
-public class SchemaSchemaArtifact extends Artifact implements JsonSchemaArtifact, SchemaOrgArtifact,
+public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, SchemaOrgArtifact,
   ModelSchemaArtifact, VersionedArtifact
 {
   private final URI jsonSchemaSchemaUri;
@@ -30,7 +30,7 @@ public class SchemaSchemaArtifact extends Artifact implements JsonSchemaArtifact
   private final Optional<URI> previousVersion;
   private final Optional<URI> derivedFrom;
 
-  public SchemaSchemaArtifact(Artifact artifact,
+  public SchemaArtifact(Artifact artifact,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
@@ -53,7 +53,7 @@ public class SchemaSchemaArtifact extends Artifact implements JsonSchemaArtifact
     validate();
   }
 
-  public SchemaSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public SchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
     Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
@@ -78,7 +78,7 @@ public class SchemaSchemaArtifact extends Artifact implements JsonSchemaArtifact
     validate();
   }
 
-  public SchemaSchemaArtifact(SchemaSchemaArtifact schemaArtifact)
+  public SchemaArtifact(SchemaArtifact schemaArtifact)
   {
     super(schemaArtifact);
     this.jsonSchemaSchemaUri = schemaArtifact.jsonSchemaSchemaUri;

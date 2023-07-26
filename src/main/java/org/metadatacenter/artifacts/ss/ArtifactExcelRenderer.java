@@ -18,9 +18,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.metadatacenter.artifacts.model.core.DefaultValue;
-import org.metadatacenter.artifacts.model.core.ElementSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
-import org.metadatacenter.artifacts.model.core.FieldSchemaSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUI;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
@@ -95,7 +95,7 @@ public class ArtifactExcelRenderer
     Row firstDataRow = sheet.createRow(headerRowNumber + 1);
 
     for (String fieldName : templateSchemaArtifact.getFieldNames()) {
-      FieldSchemaSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldName);
+      FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldName);
 
       render(fieldSchemaArtifact, sheet, columnIndex, headerRow, firstDataRow);
 
@@ -107,12 +107,12 @@ public class ArtifactExcelRenderer
     return this.workbook;
   }
 
-  public Workbook render(ElementSchemaSchemaArtifact elementSchemaArtifact, Sheet sheet)
+  public Workbook render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
   {
     throw new RuntimeException("element rendering not implemented");
   }
 
-  public Workbook render(FieldSchemaSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow, Row firstDataRow)
+  public Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow, Row firstDataRow)
   {
     String fieldName = fieldSchemaArtifact.getName();
     String fieldDescription = fieldSchemaArtifact.getDescription();
@@ -170,7 +170,7 @@ public class ArtifactExcelRenderer
     return this.workbook;
   }
 
-  private void setColumnDataValidationConstraintIfRequired(FieldSchemaSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, int firstRow)
+  private void setColumnDataValidationConstraintIfRequired(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, int firstRow)
   {
     DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
     Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldSchemaArtifact,
@@ -188,7 +188,7 @@ public class ArtifactExcelRenderer
     }
   }
 
-  private String createDataValidationMessage(FieldSchemaSchemaArtifact fieldSchemaArtifact)
+  private String createDataValidationMessage(FieldSchemaArtifact fieldSchemaArtifact)
   {
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
@@ -243,7 +243,7 @@ public class ArtifactExcelRenderer
   }
 
   private Optional<DataValidationConstraint> createDataValidationConstraint(
-    FieldSchemaSchemaArtifact fieldSchemaArtifact,
+    FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     String fieldName = fieldSchemaArtifact.getName();
@@ -270,7 +270,7 @@ public class ArtifactExcelRenderer
   }
 
   private Optional<DataValidationConstraint> createDecimalDataValidationConstraint(
-    FieldSchemaSchemaArtifact fieldSchemaArtifact,
+    FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
@@ -302,7 +302,7 @@ public class ArtifactExcelRenderer
   }
 
   private Optional<DataValidationConstraint> createIntegerDataValidationConstraint(
-    FieldSchemaSchemaArtifact fieldSchemaArtifact,
+    FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
@@ -338,7 +338,7 @@ public class ArtifactExcelRenderer
   }
 
   private Optional<DataValidationConstraint> createTextLengthDataValidationConstraint(
-    FieldSchemaSchemaArtifact fieldSchemaArtifact,
+    FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
@@ -368,7 +368,7 @@ public class ArtifactExcelRenderer
   }
 
   private Optional<DataValidationConstraint> createDateDataValidationConstraint(
-    FieldSchemaSchemaArtifact fieldSchemaArtifact,
+    FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     if (fieldSchemaArtifact.getFieldUI().isTemporal())
@@ -380,7 +380,7 @@ public class ArtifactExcelRenderer
   }
 
   private Optional<DataValidationConstraint> createTimeDataValidationConstraint(
-    FieldSchemaSchemaArtifact fieldSchemaArtifact,
+    FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     if (fieldSchemaArtifact.getFieldUI().isTemporal())
@@ -394,7 +394,7 @@ public class ArtifactExcelRenderer
   // See: https://stackoverflow.com/questions/27630507/is-there-a-max-number-items-while-generating-drop-down-list-in-excel-using-apach/27639609#27639609
 
   private Optional<DataValidationConstraint> createFormulaDataValidationConstraint(
-    FieldSchemaSchemaArtifact fieldSchemaArtifact,
+    FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
     Map<String, String> values = getPossibleValues(fieldSchemaArtifact.getValueConstraints());
@@ -475,7 +475,7 @@ public class ArtifactExcelRenderer
   }
 
   // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
-  private int getValidationType(FieldSchemaSchemaArtifact fieldSchemaArtifact)
+  private int getValidationType(FieldSchemaArtifact fieldSchemaArtifact)
   {
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
@@ -621,7 +621,7 @@ public class ArtifactExcelRenderer
     return temporalFormatString;
   }
 
-  private CellStyle createCellStyle(FieldSchemaSchemaArtifact fieldSchemaArtifact)
+  private CellStyle createCellStyle(FieldSchemaArtifact fieldSchemaArtifact)
   {
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();

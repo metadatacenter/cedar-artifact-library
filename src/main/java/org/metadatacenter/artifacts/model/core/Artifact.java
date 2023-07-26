@@ -13,7 +13,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateL
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 
-public class Artifact implements JsonLdArtifact, ManagedArtifact
+public class Artifact implements JsonLdArtifact, MonitoredArtifact
 {
   private final List<URI> jsonLdTypes;
   private final Optional<URI> jsonLdId;

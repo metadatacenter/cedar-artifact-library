@@ -23,8 +23,8 @@ public class TemplateSchemaArtifactTest
 
   @Test
   public void testCreateTemplateSchemaArtifact() {
-    Map<String, FieldSchemaSchemaArtifact> fieldSchemas = new HashMap<>();
-    Map<String, ElementSchemaSchemaArtifact> elementSchemas = new HashMap<>();
+    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     Map<String, URI> childPropertyURIs = new HashMap<>();
     TemplateUI templateUI = TemplateUI.builder().build();
 

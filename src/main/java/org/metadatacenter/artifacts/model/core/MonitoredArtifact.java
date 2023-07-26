@@ -4,7 +4,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
-public interface ManagedArtifact
+public interface MonitoredArtifact
 {
   Optional<URI> getCreatedBy();
 

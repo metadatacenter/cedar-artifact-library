@@ -36,7 +36,7 @@ public class SchemaArtifactTest {
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
-    SchemaSchemaArtifact schemaArtifact = new SchemaSchemaArtifact(artifact,
+    SchemaArtifact schemaArtifact = new SchemaArtifact(artifact,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
@@ -86,7 +86,7 @@ public class SchemaArtifactTest {
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
-    SchemaSchemaArtifact schemaArtifact = new SchemaSchemaArtifact(jsonLdTypes, Optional.of(jsonLdId), jsonLdContext,
+    SchemaArtifact schemaArtifact = new SchemaArtifact(jsonLdTypes, Optional.of(jsonLdId), jsonLdContext,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
