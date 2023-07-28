@@ -6,6 +6,7 @@ import org.metadatacenter.artifacts.model.core.Artifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
+import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
@@ -252,7 +253,7 @@ public class ArtifactRenderer
    *         "schema:isBasedOn": { "type": "object", "properties": {"@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "schema:name": { "type": "object", "properties": {"@type": { "type": "string",  "enum": ["xsd:string"] }}},
    *         "schema:description": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:string"] }}},
-   *         "pav:derivedFrom": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"  ] }}},
+   *         "pav:derivedFrom": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "pav:createdOn": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:dateTime"] }}},
    *         "pav:createdBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "pav:lastUpdatedOn": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:dateTime"] }}},
@@ -269,10 +270,116 @@ public class ArtifactRenderer
    *     }
    * </pre>
    */
-  private ObjectNode renderParentSchemaArtifactsPropertiesJsonSchemaSpecification()
+  private ObjectNode renderTemplateSchemaArtifactsPropertiesJsonSchemaSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
+
+    return rendering;
+  }
+
+  /**
+   *
+   * <pre>
+   *   {
+   *         "rdfs": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
+   *         "xsd": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
+   *         "pav": { "type": "string", "format": "uri", "enum": ["http://purl.org/pav/"] },
+   *         "schema": { "type": "string", "format": "uri", "enum": ["http://schema.org/"] },
+   *         "oslc": { "type": "string", "format": "uri", "enum": ["http://open-services.net/ns/core#"] },
+   *         "skos": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
+   *         "rdfs:label": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
+   *         "schema:isBasedOn": { "type": "object", "properties": {"@type": {  "type": "string",  "enum": ["@id"] }}},
+   *         "schema:name": { "type": "object", "properties": {"@type": { "type": "string",  "enum": ["xsd:string"] }}},
+   *         "schema:description": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:string"] }}},
+   *         "pav:derivedFrom": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }}},
+   *         "pav:createdOn": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:dateTime"] }}},
+   *         "pav:createdBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }}},
+   *         "pav:lastUpdatedOn": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:dateTime"] }}},
+   *         "oslc:modifiedBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }} },
+   *         "skos:notation": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
+   *         "<Child Name 1>": { "enum": [ "<PROPERTY_URI_1>"] },
+   *         ...
+   *         "<Child Name n>": { "enum": [ "<PROPERTY_URI_n>"] }
+   *     }
+   * </pre>
+   */
+  private ObjectNode renderParentSchemaArtifactContextPropertiesJsonSchemaSpecification(ParentSchemaArtifact parentSchemaArtifact)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(ModelNodeNames.RDFS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2000/01/rdf-schema#"));
+    rendering.put(ModelNodeNames.XSD, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2001/XMLSchema#"));
+    rendering.put(ModelNodeNames.PAV, renderJsonSchemaUriEnumSpecification("http://purl.org/pav/"));
+    rendering.put(ModelNodeNames.SCHEMA, renderJsonSchemaUriEnumSpecification("http://schema.org/"));
+    rendering.put(ModelNodeNames.OSLC, renderJsonSchemaUriEnumSpecification("http://open-services.net/ns/core#"));
+    rendering.put(ModelNodeNames.SKOS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2004/02/skos/core#"));
+
+    rendering.put(ModelNodeNames.RDFS_LABEL, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+    rendering.put(ModelNodeNames.SCHEMA_IS_BASED_ON, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.put(ModelNodeNames.SCHEMA_ORG_NAME, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+    rendering.put(ModelNodeNames.SCHEMA_ORG_DESCRIPTION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+    rendering.put(ModelNodeNames.PAV_DERIVED_FROM, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.put(ModelNodeNames.PAV_CREATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
+    rendering.put(ModelNodeNames.PAV_CREATED_BY, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.put(ModelNodeNames.PAV_LAST_UPDATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
+    rendering.put(ModelNodeNames.OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.put(ModelNodeNames.SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+
+    // TODO get property URIs
+    
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema specification for a URI-formatted string value with a specific value.
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   * { "type": "string", "format": "uri", "enum": ["<IRI>"] }
+   * </pre>
+   * A conforming value could look as follows:
+   * <pre>
+   *   "http://purl.org/pav/"
+   * </pre>
+   */
+  private ObjectNode renderJsonSchemaUriEnumSpecification(String uri)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
+    rendering.withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(uri);
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema specification for a JSON-LD @type datatype specification
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   * { "type": "object", "properties": { "@type": { "type": "string", "enum": ["<DATATYPE>"] }}},
+   * </pre>
+   * A conforming value could look as follows:
+   * <pre>
+   *   { "@type": "xsd:string" }
+   * </pre>
+   */
+  private ObjectNode renderJsonSchemaJsonLdDatatypeSpecification(String datatype)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
+    rendering.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
+    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_TYPE, mapper.createObjectNode());
+    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject(ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
+    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject(ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
+    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject(ModelNodeNames.JSON_LD_TYPE).withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(datatype);
 
     return rendering;
   }
