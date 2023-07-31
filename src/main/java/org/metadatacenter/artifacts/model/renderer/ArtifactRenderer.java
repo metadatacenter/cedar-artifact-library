@@ -479,6 +479,7 @@ public class ArtifactRenderer
    * Defined as follows:
    * <pre>
    *   {
+   *     "properties": {
    *         "rdfs": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
    *         "xsd": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
    *         "pav": { "type": "string", "format": "uri", "enum": ["http://purl.org/pav/"] },
@@ -499,6 +500,7 @@ public class ArtifactRenderer
    *         ...
    *         "<Child Name n>": { "enum": [ "<PROPERTY_URI_n>"] }
    *     }
+   *   }
    * </pre>
    * A conforming instance should look as follows:
    * <pre>
@@ -528,28 +530,31 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(ModelNodeNames.RDFS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2000/01/rdf-schema#"));
-    rendering.put(ModelNodeNames.XSD, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2001/XMLSchema#"));
-    rendering.put(ModelNodeNames.PAV, renderJsonSchemaUriEnumSpecification("http://purl.org/pav/"));
-    rendering.put(ModelNodeNames.SCHEMA, renderJsonSchemaUriEnumSpecification("http://schema.org/"));
-    rendering.put(ModelNodeNames.OSLC, renderJsonSchemaUriEnumSpecification("http://open-services.net/ns/core#"));
-    rendering.put(ModelNodeNames.SKOS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2004/02/skos/core#"));
+    rendering.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
-    rendering.put(ModelNodeNames.RDFS_LABEL, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
-    rendering.put(ModelNodeNames.SCHEMA_IS_BASED_ON, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
-    rendering.put(ModelNodeNames.SCHEMA_ORG_NAME, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
-    rendering.put(ModelNodeNames.SCHEMA_ORG_DESCRIPTION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
-    rendering.put(ModelNodeNames.PAV_DERIVED_FROM, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
-    rendering.put(ModelNodeNames.PAV_CREATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
-    rendering.put(ModelNodeNames.PAV_CREATED_BY, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
-    rendering.put(ModelNodeNames.PAV_LAST_UPDATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
-    rendering.put(ModelNodeNames.OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
-    rendering.put(ModelNodeNames.SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.RDFS,
+      renderJsonSchemaUriEnumSpecification("http://www.w3.org/2000/01/rdf-schema#"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.XSD, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2001/XMLSchema#"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.PAV, renderJsonSchemaUriEnumSpecification("http://purl.org/pav/"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SCHEMA, renderJsonSchemaUriEnumSpecification("http://schema.org/"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.OSLC, renderJsonSchemaUriEnumSpecification("http://open-services.net/ns/core#"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SKOS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2004/02/skos/core#"));
+
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.RDFS_LABEL, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SCHEMA_IS_BASED_ON, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SCHEMA_ORG_NAME, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SCHEMA_ORG_DESCRIPTION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.PAV_DERIVED_FROM, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.PAV_CREATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.PAV_CREATED_BY, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.PAV_LAST_UPDATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(ModelNodeNames.JSON_LD_ID));
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
 
     for (Map.Entry<String, URI> entry : parentSchemaArtifact.getChildPropertyURIs().entrySet()) {
       String childName = entry.getKey();
       URI propertyURI = entry.getValue();
-      rendering.put(childName, propertyURI.toString());
+      rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(childName, propertyURI.toString());
     }
     
     return rendering;
@@ -598,12 +603,12 @@ public class ArtifactRenderer
     rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
     rendering.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
     rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_TYPE, mapper.createObjectNode());
-    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
-      .withObject("/" + "/" + ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
-    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
-      .withObject("/" + "/" + ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
-    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
-      .withObject("/" + "/" + ModelNodeNames.JSON_LD_TYPE).withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(datatype);
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject("/" + ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject("/" + ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject( "/" + ModelNodeNames.JSON_LD_TYPE).withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(datatype);
 
     return rendering;
   }
@@ -872,8 +877,8 @@ public class ArtifactRenderer
     rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_ARRAY);
     rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
-    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
-    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;
