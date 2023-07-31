@@ -27,4 +27,9 @@ public enum ValueType
     }
     throw new IllegalArgumentException("No value type constant with text " + text + " found");
   }
+
+  @Override public String toString()
+  {
+    return text;
+  }
 }

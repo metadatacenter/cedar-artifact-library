@@ -27,4 +27,9 @@ public enum ValueConstraintsActionType
     }
     throw new IllegalArgumentException("No value constraints action type constant with text " + text + " found");
   }
+
+  @Override public String toString()
+  {
+    return text;
+  }
 }

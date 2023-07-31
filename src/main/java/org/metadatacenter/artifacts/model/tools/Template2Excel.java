@@ -32,7 +32,7 @@ public class Template2Excel
 
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
 
-    ArtifactReader artifactReader = new ArtifactReader(mapper);
+    ArtifactReader artifactReader = new ArtifactReader();
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
     ArtifactExcelRenderer renderer

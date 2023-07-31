@@ -1,8 +1,10 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.apache.commons.lang3.tuple.Pair;
 import org.metadatacenter.artifacts.model.core.Artifact;
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
@@ -56,9 +58,9 @@ public class ArtifactReader
 {
   private final ObjectMapper mapper;
 
-  public ArtifactReader(ObjectMapper mapper)
+  public ArtifactReader()
   {
-    this.mapper = mapper;
+    this.mapper = new ObjectMapper();
   }
 
   public TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode)

@@ -26,8 +26,7 @@ public class ArtifactReaderTest {
 
   @Before
   public void setup() {
-    mapper = new ObjectMapper();
-    artifactReader = new ArtifactReader(mapper);
+    artifactReader = new ArtifactReader();
   }
 
   @Test

@@ -31,4 +31,9 @@ public enum TemporalGranularity
     }
     throw new IllegalArgumentException("No temporal granularity constant with text " + text + " found");
   }
+
+  @Override public String toString()
+  {
+    return text;
+  }
 }

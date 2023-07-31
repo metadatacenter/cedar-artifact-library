@@ -25,7 +25,7 @@ public class TemplateReporter
       throw new RuntimeException("Expecting JSON object");
 
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
-    ArtifactReader artifactReader = new ArtifactReader(mapper);
+    ArtifactReader artifactReader = new ArtifactReader();
 
     try {
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);

@@ -1,14 +1,16 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public sealed interface UI permits TemplateUI, ElementUI, FieldUI
 {
-  UIType getUIType();
+  @JsonIgnore UIType getUIType();
 
-  default boolean isTemplateUI() { return getUIType() == UIType.TEMPLATE_UI; }
+  @JsonIgnore default boolean isTemplateUI() { return getUIType() == UIType.TEMPLATE_UI; }
 
-  default boolean isElementUI() { return getUIType() == UIType.ELEMENT_UI; }
+  @JsonIgnore default boolean isElementUI() { return getUIType() == UIType.ELEMENT_UI; }
 
-  default boolean isFieldUI() { return getUIType() == UIType.FIELD_UI; }
+  @JsonIgnore default boolean isFieldUI() { return getUIType() == UIType.FIELD_UI; }
 
   default TemplateUI asTemplateUI()
   {

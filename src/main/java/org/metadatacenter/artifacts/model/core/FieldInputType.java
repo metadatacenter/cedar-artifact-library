@@ -40,4 +40,9 @@ public enum FieldInputType
     }
     throw new IllegalArgumentException("No field input type constant with text " + text + " found");
   }
+
+  @Override public String toString()
+  {
+    return text;
+  }
 }

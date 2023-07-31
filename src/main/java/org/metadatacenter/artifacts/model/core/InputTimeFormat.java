@@ -23,4 +23,9 @@ public enum InputTimeFormat
     }
     throw new IllegalArgumentException("No input time format constant with text " + text + " found");
   }
+
+  @Override public String toString()
+  {
+    return text;
+  }
 }

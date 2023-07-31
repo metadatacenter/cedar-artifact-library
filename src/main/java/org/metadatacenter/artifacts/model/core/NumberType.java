@@ -32,4 +32,9 @@ public enum NumberType
     }
     throw new IllegalArgumentException("No number type constant with text " + text + " found");
   }
+
+  @Override public String toString()
+  {
+    return text;
+  }
 }

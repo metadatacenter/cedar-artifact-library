@@ -1,16 +1,16 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.Artifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
-import org.metadatacenter.artifacts.model.core.ParentArtifactUI;
 import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TemplateUI;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -20,9 +20,11 @@ public class ArtifactRenderer
 {
   private final ObjectMapper mapper;
 
-  public ArtifactRenderer(ObjectMapper mapper)
+  public ArtifactRenderer()
   {
-    this.mapper = mapper;
+    this.mapper = new ObjectMapper();
+    mapper.registerModule(new Jdk8Module());
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
   }
 
   /**
@@ -253,7 +255,9 @@ public class ArtifactRenderer
     rendering.put(ModelNodeNames.JSON_SCHEMA_DESCRIPTION, schemaArtifact.getJsonSchemaDescription());
     rendering.put(ModelNodeNames.SCHEMA_ORG_NAME, schemaArtifact.getName());
     rendering.put(ModelNodeNames.SCHEMA_ORG_DESCRIPTION, schemaArtifact.getDescription());
-    rendering.put(ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.getVersion().toString());
+
+    if (schemaArtifact.getVersion().isPresent())
+    rendering.put(ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.getVersion().get().toString());
 
     if (schemaArtifact.getIdentifier().isPresent())
       rendering.put(ModelNodeNames.SCHEMA_ORG_IDENTIFIER, schemaArtifact.getIdentifier().get());
@@ -368,10 +372,10 @@ public class ArtifactRenderer
 
     rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
     rendering.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_VALUE, renderStringOrNullJsonSchemaSpecification());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_TYPE, renderURIValueJsonSchemaSpecification());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).withArray(ModelNodeNames.JSON_SCHEMA_REQUIRED).add(ModelNodeNames.JSON_LD_VALUE);
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_VALUE, renderStringOrNullJsonSchemaSpecification());
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_TYPE, renderURIValueJsonSchemaSpecification());
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).withArray(ModelNodeNames.JSON_SCHEMA_REQUIRED).add(ModelNodeNames.JSON_LD_VALUE);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     return rendering;
@@ -593,13 +597,13 @@ public class ArtifactRenderer
 
     rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
     rendering.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_TYPE, mapper.createObjectNode());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES)
-      .withObject(ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES)
-      .withObject(ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_PROPERTIES)
-      .withObject(ModelNodeNames.JSON_LD_TYPE).withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(datatype);
+    rendering.withObject("/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.JSON_LD_TYPE, mapper.createObjectNode());
+    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject("/" + "/" + ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
+    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject("/" + "/" + ModelNodeNames.JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
+    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES)
+      .withObject("/" + "/" + ModelNodeNames.JSON_LD_TYPE).withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(datatype);
 
     return rendering;
   }
@@ -868,8 +872,8 @@ public class ArtifactRenderer
     rendering.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_ARRAY);
     rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
-    rendering.withObject(ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_TYPE, "string");
+    rendering.withObject("/" + "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;

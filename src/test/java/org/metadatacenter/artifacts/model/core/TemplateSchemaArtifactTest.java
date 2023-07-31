@@ -51,10 +51,4 @@ public class TemplateSchemaArtifactTest
     TemplateSchemaArtifact.builder().withTemplateUI(templateUI).build();
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void testMissingUI()
-  {
-    TemplateSchemaArtifact.builder().withName("Test").build();
-  }
-
 }

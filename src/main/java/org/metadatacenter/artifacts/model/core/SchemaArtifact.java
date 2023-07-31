@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -121,19 +122,16 @@ public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, Sche
     return jsonSchemaDescription;
   }
 
-  @Override
   public String getName()
   {
     return schemaOrgName;
   }
 
-  @Override
   public String getDescription()
   {
     return schemaOrgDescription;
   }
 
-  @Override
   public Optional<String> getIdentifier()
   {
     return schemaOrgIdentifier;
@@ -145,13 +143,11 @@ public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, Sche
     return modelVersion;
   }
 
-  @Override
   public Optional<Version> getVersion()
   {
     return artifactVersion;
   }
 
-  @Override
   public Optional<Status> getStatus()
   {
     return artifactVersionStatus;

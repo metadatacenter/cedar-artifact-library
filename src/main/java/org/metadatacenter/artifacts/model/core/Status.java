@@ -26,4 +26,9 @@ public enum Status
     }
     throw new IllegalArgumentException("No status constant with text " + text + " found");
   }
+
+  @Override public String toString()
+  {
+    return text;
+  }
 }

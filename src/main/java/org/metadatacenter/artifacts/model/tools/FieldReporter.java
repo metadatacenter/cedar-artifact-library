@@ -25,7 +25,7 @@ public class FieldReporter
       throw new RuntimeException("Expecting JSON object");
 
     ObjectNode fieldObjectNode = (ObjectNode)jsonNode;
-    ArtifactReader artifactReader = new ArtifactReader(mapper);
+    ArtifactReader artifactReader = new ArtifactReader();
 
     try {
       FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);

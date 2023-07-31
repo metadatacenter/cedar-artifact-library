@@ -25,7 +25,7 @@ public class ElementReporter
       throw new RuntimeException("Expecting JSON object");
 
     ObjectNode elementObjectNode = (ObjectNode)jsonNode;
-    ArtifactReader artifactReader = new ArtifactReader(mapper);
+    ArtifactReader artifactReader = new ArtifactReader();
 
     try {
       ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
