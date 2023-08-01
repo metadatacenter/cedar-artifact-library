@@ -23,6 +23,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_FORMAT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_LENGTH;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_REQUIRED;
@@ -396,8 +398,8 @@ public class ArtifactRenderer
 
     rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_VALUE, renderStringOrNullJsonSchemaSpecification());
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_TYPE, renderURIValueJsonSchemaSpecification());
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_VALUE, renderStringOrNullJsonSchemaTypeSpecification());
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_VALUE);
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
@@ -494,29 +496,17 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_CONTEXT,
-      renderParentSchemaArtifactContextPropertiesJsonSchemaSpecification(parentSchemaArtifact));
-
-    // TODO Put this set of core required fields in ModelNodeNames
-    rendering.withObject("/" + JSON_LD_CONTEXT).put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.XSD);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.PAV);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.SCHEMA);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.OSLC);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_NAME);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_DESCRIPTION);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_ON);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_BY);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
-    rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
-
-    // TODO Check that all children have an IRI mapping
-    for (String childName : parentSchemaArtifact.getChildPropertyURIs().keySet())
-      rendering.withObject("/" + JSON_LD_CONTEXT).withArray(JSON_SCHEMA_REQUIRED).add(childName);
-
-
-
-    rendering.withObject("/" + JSON_LD_CONTEXT).put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+    rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextPropertiesJsonSchemaSpecification(parentSchemaArtifact));
+    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
+    rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
+    rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
+    rendering.put(SCHEMA_ORG_DESCRIPTION, renderStringJsonSchemaTypeSpecification(0));
+    rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
+    rendering.put(PAV_CREATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
+    rendering.put(PAV_CREATED_BY, renderUriOrNullJsonSchemaTypeSpecification());
+    rendering.put(PAV_LAST_UPDATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
+    rendering.put(OSLC_MODIFIED_BY, renderUriOrNullJsonSchemaTypeSpecification());
 
     return rendering;
   }
@@ -608,7 +598,26 @@ public class ArtifactRenderer
       URI propertyURI = entry.getValue();
       rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, propertyURI.toString());
     }
-    
+
+    // TODO Put this set of core required fields in ModelNodeNames
+    rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.XSD);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.PAV);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.SCHEMA);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.OSLC);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_NAME);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_DESCRIPTION);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_ON);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_BY);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
+
+    // TODO Check that all children have an IRI mapping
+    for (String childName : parentSchemaArtifact.getChildPropertyURIs().keySet())
+      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
+
+    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+
     return rendering;
   }
 
@@ -690,12 +699,12 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = renderSchemaArtifactContextPrefixesJsonLdSpecification();
 
-    rendering.put(SCHEMA_ORG_NAME, renderXSDStringJsonLdSpecification());
-    rendering.put(SCHEMA_ORG_DESCRIPTION, renderXSDStringJsonLdSpecification());
-    rendering.put(PAV_CREATED_ON, renderXSDDateTimeJsonLdSpecification());
-    rendering.put(PAV_CREATED_BY, renderIRIJsonLdSpecification());
-    rendering.put(PAV_LAST_UPDATED_ON, renderXSDDateTimeJsonLdSpecification());
-    rendering.put(OSLC_MODIFIED_BY, renderIRIJsonLdSpecification());
+    rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
+    rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
+    rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
+    rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
 
     return rendering;
   }
@@ -759,9 +768,9 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_TYPE, renderURIOrURIArrayJsonSchemaSpecification(1, true));
-    rendering.put(ModelNodeNames.RDFS_LABEL, renderStringOrNullJsonSchemaSpecification());
-    rendering.put(JSON_LD_VALUE, renderStringOrNullJsonSchemaSpecification());
+    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(ModelNodeNames.RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
+    rendering.put(JSON_LD_VALUE, renderStringOrNullJsonSchemaTypeSpecification());
 
     return rendering;
   }
@@ -795,28 +804,69 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_TYPE, renderURIOrURIArrayJsonSchemaSpecification(1, true));
-    rendering.put(ModelNodeNames.RDFS_LABEL, renderStringOrNullJsonSchemaSpecification());
-    rendering.put(JSON_LD_ID, renderURIValueJsonSchemaSpecification());
+    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(ModelNodeNames.RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
+    rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
 
     return rendering;
   }
 
   /**
-   * Generate a JSON Schema specification for a string or null value
+   * Generate a JSON Schema type specification for a string value
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *   { "type": "string", "minLength": [minLength] }
+   * </pre>
+   */
+  private ObjectNode renderStringJsonSchemaTypeSpecification(int minLength)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_SCHEMA_TYPE, "string");
+
+    if (minLength > 0)
+     rendering.put(JSON_SCHEMA_MIN_LENGTH, minLength);
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema type specification for a string or null value
    * <p>
    * Defined as follows:
    * <pre>
    *   { "type": [ "string", "null" ] }
    * </pre>
    */
-  private ObjectNode renderStringOrNullJsonSchemaSpecification()
+  private ObjectNode renderStringOrNullJsonSchemaTypeSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_TYPE).add("string");
     rendering.withArray(JSON_SCHEMA_TYPE).add("null");
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema type specification for a URI-formatted string or null value
+   * <p>
+   * Defined as follows:
+   * <pre>
+   //   { "type": [ "string", "null" ], "format": "uri" },
+   * </pre>
+   */
+  private ObjectNode renderUriOrNullJsonSchemaTypeSpecification()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
+    rendering.withArray(JSON_SCHEMA_TYPE).add("string");
+    rendering.withArray(JSON_SCHEMA_TYPE).add("null");
+
+    rendering.put(JSON_SCHEMA_FORMAT, "uri");
 
     return rendering;
   }
@@ -829,7 +879,7 @@ public class ArtifactRenderer
    *   { "@type": "xsd:string" }
    * </pre>
    */
-  private ObjectNode renderXSDStringJsonLdSpecification()
+  private ObjectNode renderXsdStringJsonLdSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
@@ -846,7 +896,7 @@ public class ArtifactRenderer
    *   { "@type": "xsd:dateTime" }
    * </pre>
    */
-  private ObjectNode renderXSDDateTimeJsonLdSpecification()
+  private ObjectNode renderXsdDateTimeJsonLdSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
@@ -863,7 +913,7 @@ public class ArtifactRenderer
    *   { "@type": "@id" }
    * </pre>
    */
-  private ObjectNode renderIRIJsonLdSpecification()
+  private ObjectNode renderIriJsonLdSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
@@ -873,6 +923,27 @@ public class ArtifactRenderer
   }
 
   /**
+   * Generate a JSON Schema type specification for a date-time or null value
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *  { "type": [ "string", "null" ], "format": "date-time" },
+   * </pre>
+   */
+  private ObjectNode renderDateTimeOrNullJsonSchemaTypeSpecification()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
+    rendering.withArray(JSON_SCHEMA_TYPE).add("string");
+    rendering.withArray(JSON_SCHEMA_TYPE).add("null");
+    rendering.put(JSON_SCHEMA_FORMAT, "date-time");
+
+    return rendering;
+  }
+
+
+  /**
    * Generate a JSON Schema specification for a URI-formatted string
    * <p>
    * Defined as follows:
@@ -880,7 +951,7 @@ public class ArtifactRenderer
    *   { "type": "string", "format": "uri" }
    * </pre>
    */
-  private ObjectNode renderURIValueJsonSchemaSpecification()
+  private ObjectNode renderUriJsonSchemaTypeSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
@@ -903,13 +974,13 @@ public class ArtifactRenderer
    * }
    * </pre>
    */
-  private ObjectNode renderURIOrURIArrayJsonSchemaSpecification(int minItems, boolean uniqueItems)
+  private ObjectNode renderUriOrUriArrayJsonSchemaSpecification(int minItems, boolean uniqueItems)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(ModelNodeNames.JSON_SCHEMA_ONE_OF, mapper.createArrayNode());
-    rendering.withArray(ModelNodeNames.JSON_SCHEMA_ONE_OF).add(renderURIValueJsonSchemaSpecification());
-    rendering.withArray(ModelNodeNames.JSON_SCHEMA_ONE_OF).add(renderURIArrayJsonSchemaSpecification(1, true));
+    rendering.withArray(ModelNodeNames.JSON_SCHEMA_ONE_OF).add(renderUriJsonSchemaTypeSpecification());
+    rendering.withArray(ModelNodeNames.JSON_SCHEMA_ONE_OF).add(renderUriArrayJsonSchemaTypeSpecification(1, true));
 
     return rendering;
   }
@@ -919,10 +990,10 @@ public class ArtifactRenderer
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" }, "uniqueItems": true }
+   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "uri" }, "uniqueItems": [uniqueItems] }
    * </pre>
    */
-  private ObjectNode renderURIArrayJsonSchemaSpecification(int minItems, boolean uniqueItems)
+  private ObjectNode renderUriArrayJsonSchemaTypeSpecification(int minItems, boolean uniqueItems)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
