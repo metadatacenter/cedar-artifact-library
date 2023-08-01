@@ -27,6 +27,8 @@ public class ArtifactRendererTest
 
     assertEquals(rendering.get(ModelNodeNames.JSON_SCHEMA_SCHEMA).textValue(), ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
 
+    System.out.println(rendering.toPrettyString());
+
   }
 
   @Test
