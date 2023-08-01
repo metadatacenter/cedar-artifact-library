@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public final class TemplateInstanceArtifact extends InstanceArtifact implements ParentInstanceArtifact
 {
-  private final String isBasedOn;
+  private final URI isBasedOn;
   private final Map<String, List<ElementInstanceArtifact>> elementInstances;
   private final Map<String, List<FieldInstanceArtifact>> fieldInstances;
 
-  public TemplateInstanceArtifact(InstanceArtifact instanceArtifact, String isBasedOn,
+  public TemplateInstanceArtifact(InstanceArtifact instanceArtifact, URI isBasedOn,
     Map<String, List<ElementInstanceArtifact>> elementInstances,
     Map<String, List<FieldInstanceArtifact>> fieldInstances)
   {
@@ -23,8 +23,10 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
   }
 
-  public TemplateInstanceArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, String isBasedOn,
+  public TemplateInstanceArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+    Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    URI isBasedOn,
     Map<String, List<ElementInstanceArtifact>> elementInstances,
     Map<String, List<FieldInstanceArtifact>> fieldInstances)
   {
@@ -49,7 +51,7 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     this.fieldInstances = Collections.unmodifiableMap(builder.fieldInstances);
   }
 
-  public String getIsBasedOn()
+  public URI getIsBasedOn()
   {
     return isBasedOn;
   }
@@ -82,7 +84,7 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private String isBasedOn;
+    private URI isBasedOn;
     private Map<String, List<ElementInstanceArtifact>> elementInstances = Collections.emptyMap();
     private Map<String, List<FieldInstanceArtifact>> fieldInstances = Collections.emptyMap();
 
@@ -104,27 +106,27 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
+    public Builder withCreatedBy(URI createdBy) {
+      this.createdBy = Optional.of(createdBy);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
+    public Builder withModifiedBy(URI modifiedBy) {
+      this.modifiedBy = Optional.of(modifiedBy);
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
+    public Builder withCreatedOn(OffsetDateTime createdOn) {
+      this.createdOn = Optional.of(createdOn);
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn) {
+      this.lastUpdatedOn = Optional.of(lastUpdatedOn);
       return this;
     }
 
-    public Builder withIsBasedOn(String isBasedOn) {
+    public Builder withIsBasedOn(URI isBasedOn) {
       this.isBasedOn = isBasedOn;
       return this;
     }

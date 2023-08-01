@@ -10,12 +10,14 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
 import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
@@ -31,22 +33,28 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_REQUIRED;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.OSLC;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PAV;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
 import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
 import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
 import static org.metadatacenter.model.ModelNodeNames.PAV_PREVIOUS_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.RDFS;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_IDENTIFIER;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.SKOS;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.XSD;
 
 public class ArtifactRenderer
 {
@@ -246,6 +254,47 @@ public class ArtifactRenderer
     return rendering;
   }
 
+  /**
+   * Generate a template instance artifact
+   * <p></p>
+   * An example template instance artifact could look as follows:
+   * <pre>
+   *   {
+   *   "@context": {
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     "pav": "http://purl.org/pav/",
+   *     "schema": "http://schema.org/",
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "skos": "http://www.w3.org/2004/02/skos/core#",
+   *     "schema:name": {"@type": "xsd:string" },
+   *     "schema:description": { "@type": "xsd:string" },
+   *     "pav:derivedFrom": { "@type": "@id" },
+   *     "pav:createdOn": { "@type": "xsd:dateTime" },
+   *     "pav:createdBy": { "@type": "@id" },
+   *     "pav:lastUpdatedOn": { "@type": "xsd:dateTime" },
+   *     "oslc:modifiedBy": { "@type": "@id" },
+   *     "schema:isBasedOn": { "@type": "@id" },
+   *     "skos:notation": { "@type": "xsd:string" },
+   *     "rdfs:label": { "@type": "xsd:string" },
+   *   },
+   *   "@id": "https://repo.metadatacenter.org/template-instances/66776767"
+   *   "schema:isBasedOn": "https://repo.metadatacenter.org/templates/5454545",
+   *   "schema:name": "Study metadata", "schema:description": "",
+   *   "pav:createdOn": "2023-08-01T11:03:05-07:00",
+   *   "pav:createdBy": "https://metadatacenter.org/users/344343",
+   *   "pav:lastUpdatedOn": "2023-08-01T11:03:05-07:00",
+   *   "oslc:modifiedBy": "https://metadatacenter.org/users/5666565",
+   * }
+   * </pre>
+   */
+  public ObjectNode renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_LD_CONTEXT, renderArtifactContextJsonLdSpecification());
+
+    return rendering;
+  }
   /**
    * Generate a base schema artifact rendering. In addition to core artifact fields (@type, @id, pav:createdOn,
    * pav:createdBy, pav:lastUpdatedOn, and oslc:modifiedBy), it will have JSON Schema fields (@schema, type,
@@ -570,13 +619,13 @@ public class ArtifactRenderer
 
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.RDFS,
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(RDFS,
       renderJsonSchemaUriEnumSpecification("http://www.w3.org/2000/01/rdf-schema#"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.XSD, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2001/XMLSchema#"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.PAV, renderJsonSchemaUriEnumSpecification("http://purl.org/pav/"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SCHEMA, renderJsonSchemaUriEnumSpecification("http://schema.org/"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.OSLC, renderJsonSchemaUriEnumSpecification("http://open-services.net/ns/core#"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SKOS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2004/02/skos/core#"));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(XSD, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2001/XMLSchema#"));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV, renderJsonSchemaUriEnumSpecification("http://purl.org/pav/"));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SCHEMA, renderJsonSchemaUriEnumSpecification("http://schema.org/"));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC, renderJsonSchemaUriEnumSpecification("http://open-services.net/ns/core#"));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2004/02/skos/core#"));
 
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.RDFS_LABEL, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SCHEMA_IS_BASED_ON, renderJsonSchemaJsonLdDatatypeSpecification(
@@ -601,10 +650,10 @@ public class ArtifactRenderer
 
     // TODO Put this set of core required fields in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.XSD);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.PAV);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.SCHEMA);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(ModelNodeNames.OSLC);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(XSD);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_NAME);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_DESCRIPTION);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_ON);
@@ -679,7 +728,7 @@ public class ArtifactRenderer
    * <p>
    * Defined as follows:
    * <pre>
-   *   "@context": {
+   *   {
    *     "xsd": "http://www.w3.org/2001/XMLSchema#",
    *     "pav": "http://purl.org/pav/",
    *     "bibo": "http://purl.org/ontology/bibo/",
@@ -710,6 +759,44 @@ public class ArtifactRenderer
   }
 
   /**
+   * Generate a JSON-LD @context for instance artifacts
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *   {
+   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     "pav": "http://purl.org/pav/",
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "schema": "http://schema.org/",
+   *     "skos": "http://www.w3.org/2004/02/skos/core#",
+   *     "schema:name": { "@type": "xsd:string" },
+   *     "schema:description": { "@type": "xsd:string" },
+   *     "pav:createdOn": { "@type": "xsd:dateTime" },
+   *     "pav:createdBy": { "@type": "@id" },
+   *     "pav:lastUpdatedOn": { "@type": "xsd:dateTime" },
+   *     "oslc:modifiedBy": { "@type": "@id" },
+   *     "rdfs:label": { "@type": "xsd:string" },
+   *     "skos:notation": { "@type": "xsd:string" }
+   *     "schema:isBasedOn": { "@type": "@id" }
+   *   }
+   * </pre>
+   */
+  private ObjectNode renderInstanceArtifactContextJsonLdSpecification()
+  {
+    ObjectNode rendering = renderInstanceArtifactContextPrefixesJsonLdSpecification();
+
+    rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
+    rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
+    rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
+    rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
+
+    return rendering;
+  }
+
+  /**
    * Generate JSON-LD @context prefix specification for schema artifacts
    * <p></p>
    * Defined as follows:
@@ -728,17 +815,45 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    // TODO Put these IRIs in the ModelNodeNames class
-    rendering.put(ModelNodeNames.XSD, "http://www.w3.org/2001/XMLSchema#");
-    rendering.put(ModelNodeNames.PAV, "http://purl.org/pav/");
-    rendering.put(ModelNodeNames.BIBO, "http://purl.org/ontology/bibo/");
-    rendering.put(ModelNodeNames.OSLC, "http://open-services.net/ns/core#");
-    rendering.put(ModelNodeNames.SCHEMA, "http://schema.org/");
-    rendering.put(ModelNodeNames.SKOS, "http://www.w3.org/2004/02/skos/core#");
+    rendering.put(XSD, "http://www.w3.org/2001/XMLSchema#");
+    rendering.put(PAV, "http://purl.org/pav/");
+    rendering.put(OSLC, "http://open-services.net/ns/core#");
+    rendering.put(SCHEMA, "http://schema.org/");
+    rendering.put(SKOS, "http://www.w3.org/2004/02/skos/core#");
+    rendering.put(BIBO, "http://purl.org/ontology/bibo/");
 
     return rendering;
   }
 
+  /**
+   * Generate JSON-LD @context prefix specification for instance artifacts
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   *   "@context": {
+   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     "pav": "http://purl.org/pav/",
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "schema": "http://schema.org/",
+   *     "skos": "http://www.w3.org/2004/02/skos/core#"
+   *   }
+   * </pre>
+   */
+  private ObjectNode renderInstanceArtifactContextPrefixesJsonLdSpecification()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    // TODO Put these IRIs in the ModelNodeNames class
+    rendering.put(RDFS, "http://www.w3.org/2000/01/rdf-schema#");
+    rendering.put(XSD, "http://www.w3.org/2001/XMLSchema#");
+    rendering.put(PAV, "http://purl.org/pav/");
+    rendering.put(OSLC, "http://open-services.net/ns/core#");
+    rendering.put(SCHEMA, "http://schema.org/");
+    rendering.put(SKOS, "http://www.w3.org/2004/02/skos/core#");
+
+    return rendering;
+  }
 
   /**
    * Generate a JSON Schema properties specification for a literal-valued field

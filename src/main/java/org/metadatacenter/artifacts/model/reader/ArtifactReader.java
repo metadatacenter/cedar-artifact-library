@@ -81,7 +81,7 @@ public class ArtifactReader
   public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
   {
     InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
-    String isBasedOn = readRequiredIsBasedOnField(objectNode, path);
+    URI isBasedOn = readRequiredIsBasedOnField(objectNode, path);
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
 
@@ -1330,9 +1330,9 @@ public class ArtifactReader
     return readRequiredURIField(objectNode, path, ModelNodeNames.SCHEMA_IS_BASED_ON);
   }
 
-  private String readRequiredIsBasedOnField(ObjectNode objectNode, String path)
+  private URI readRequiredIsBasedOnField(ObjectNode objectNode, String path)
   {
-    return readRequiredStringField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
+    return readRequiredURIField(objectNode, ModelNodeNames.SCHEMA_IS_BASED_ON, path);
   }
 
   private Optional<URI> readOptionalJsonLDIDField(ObjectNode objectNode, String path)
