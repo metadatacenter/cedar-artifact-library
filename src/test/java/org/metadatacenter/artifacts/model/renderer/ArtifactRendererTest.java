@@ -109,6 +109,20 @@ public class ArtifactRendererTest
     //System.out.println(templateRendering.toPrettyString());
   }
 
+  @Test
+  public void testRenderRADxMetadataSpecificationTemplateSchemaArtifact()
+  {
+    ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    ObjectNode templateRendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+
+    assertTrue(validateJSONSchema(templateRendering));
+
+    //System.out.println(templateRendering.toPrettyString());
+  }
+
   private boolean validateJSONSchema(ObjectNode schemaNode)
   {
     try {

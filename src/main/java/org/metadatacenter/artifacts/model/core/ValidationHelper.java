@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
-
 public class ValidationHelper
 {
   public static void validateStringFieldNotNull(Object obj, String field, String fieldName)
@@ -37,20 +35,20 @@ public class ValidationHelper
       throw new IllegalStateException("URI field " + fieldName + " is null in " + obj);
   }
 
-  public static void validateUriFieldEquals(Object obj, URI field, String fieldName, String fieldValue)
+  public static void validateUriFieldEquals(Object obj, URI field, String fieldName, URI value)
   {
     validateUriFieldNotNull(obj, field, fieldName);
 
-    if (!field.toString().equals(fieldValue))
-      throw new IllegalStateException("URI field " + fieldName + " must equal " + fieldValue + " in " + obj);
+    if (!field.equals(value))
+      throw new IllegalStateException("URI field " + fieldName + " must equal " + value + " in " + obj);
   }
 
-  public static void validateUriListContains(Object obj, List<URI> uriListField, String fieldName, URI uri)
+  public static void validateUriListContains(Object obj, List<URI> uriListField, String fieldName, URI value)
   {
     validateListFieldNotNull(obj, uriListField, fieldName);
 
-    if (!uriListField.contains(uri))
-      throw new IllegalStateException("URI list field " + fieldName + " must contain " + uri + " in " + obj);
+    if (!uriListField.contains(value))
+      throw new IllegalStateException("URI list field " + fieldName + " must contain " + value + " in " + obj);
   }
 
   public static void validateVersionFieldNotNull(Object obj, Version field, String fieldName)

@@ -13,6 +13,18 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateS
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldEquals;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
+import static org.metadatacenter.model.ModelNodeNames.PAV_PREVIOUS_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 
 public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, SchemaOrgArtifact,
   ModelSchemaArtifact, VersionedArtifact
@@ -175,16 +187,16 @@ public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, Sche
 
   private void validate()
   {
-    validateUriFieldEquals(this, jsonSchemaSchemaUri, ModelNodeNames.JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    validateStringFieldNotNull(this, jsonSchemaType, ModelNodeNames.JSON_SCHEMA_TYPE);
-    validateStringFieldNotNull(this, jsonSchemaTitle, ModelNodeNames.JSON_SCHEMA_TITLE);
-    validateStringFieldNotNull(this, jsonSchemaDescription, ModelNodeNames.JSON_SCHEMA_DESCRIPTION);
-    validateStringFieldNotEmpty(this, schemaOrgName, ModelNodeNames.SCHEMA_ORG_NAME);
-    validateStringFieldNotNull(this, schemaOrgDescription, ModelNodeNames.SCHEMA_ORG_DESCRIPTION);
-    validateVersionFieldNotNull(this, modelVersion, ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
-    validateOptionalFieldNotNull(this, artifactVersion, ModelNodeNames.PAV_VERSION);
-    validateOptionalFieldNotNull(this, artifactVersionStatus, ModelNodeNames.BIBO_STATUS);
-    validateOptionalFieldNotNull(this, previousVersion, ModelNodeNames.PAV_PREVIOUS_VERSION);
-    validateOptionalFieldNotNull(this, derivedFrom, ModelNodeNames.PAV_DERIVED_FROM);
+    validateUriFieldEquals(this, jsonSchemaSchemaUri, JSON_SCHEMA_SCHEMA, URI.create(JSON_SCHEMA_SCHEMA_IRI));
+    validateStringFieldNotNull(this, jsonSchemaType, JSON_SCHEMA_TYPE);
+    validateStringFieldNotNull(this, jsonSchemaTitle, JSON_SCHEMA_TITLE);
+    validateStringFieldNotNull(this, jsonSchemaDescription, JSON_SCHEMA_DESCRIPTION);
+    validateStringFieldNotEmpty(this, schemaOrgName, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, schemaOrgDescription, SCHEMA_ORG_DESCRIPTION);
+    validateVersionFieldNotNull(this, modelVersion, SCHEMA_ORG_SCHEMA_VERSION);
+    validateOptionalFieldNotNull(this, artifactVersion, PAV_VERSION);
+    validateOptionalFieldNotNull(this, artifactVersionStatus, BIBO_STATUS);
+    validateOptionalFieldNotNull(this, previousVersion, PAV_PREVIOUS_VERSION);
+    validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
   }
 }
