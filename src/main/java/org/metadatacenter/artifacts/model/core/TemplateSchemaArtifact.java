@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -141,7 +142,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
   private void validate()
   {
-    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
+    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, templateUI, ModelNodeNames.UI);
@@ -153,7 +154,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   }
 
   public static class Builder {
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
+    private Map<String, URI> jsonLdContext = new HashMap<>();
     private List<URI> jsonLdTypes = Arrays.asList(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
@@ -172,9 +173,9 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas = Collections.emptyMap();
-    private Map<String, ElementSchemaArtifact> elementSchemas = Collections.emptyMap();
-    private Map<String, URI> childPropertyURIs = Collections.emptyMap();
+    private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    private Map<String, URI> childPropertyURIs = new HashMap<>();
     private TemplateUI templateUI = TemplateUI.builder().build();
 
     private Builder() {

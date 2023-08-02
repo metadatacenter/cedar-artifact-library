@@ -45,12 +45,12 @@ public class ValidationHelper
       throw new IllegalStateException("URI field " + fieldName + " must equal " + fieldValue + " in " + obj);
   }
 
-  public static void validateUriListContains(Object obj, List<URI> uriListField, String fieldName, String uriValue)
+  public static void validateUriListContains(Object obj, List<URI> uriListField, String fieldName, URI uri)
   {
     validateListFieldNotNull(obj, uriListField, fieldName);
 
-    if (!uriListField.stream().anyMatch(t -> t.toString().equals(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)))
-      throw new IllegalStateException("URI list field " + fieldName + " must contain " + uriValue + " in " + obj);
+    if (!uriListField.contains(uri))
+      throw new IllegalStateException("URI list field " + fieldName + " must contain " + uri + " in " + obj);
   }
 
   public static void validateVersionFieldNotNull(Object obj, Version field, String fieldName)

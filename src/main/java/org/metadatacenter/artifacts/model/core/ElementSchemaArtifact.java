@@ -155,7 +155,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact
 
   private void validate()
   {
-    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI);
+    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, elementUI, ModelNodeNames.UI);
@@ -170,7 +170,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact
   {
     private List<URI> jsonLdTypes = Arrays.asList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
+    private Map<String, URI> jsonLdContext = new HashMap<>();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();

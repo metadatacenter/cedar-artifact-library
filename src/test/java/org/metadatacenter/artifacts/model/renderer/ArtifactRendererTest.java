@@ -57,7 +57,7 @@ public class ArtifactRendererTest
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "Study");
 
-    System.out.println(rendering.toPrettyString());
+    //System.out.println(rendering.toPrettyString());
   }
 
   @Test
@@ -72,7 +72,7 @@ public class ArtifactRendererTest
 
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "SDY232");
 
-    System.out.println(rendering.toPrettyString());
+    //System.out.println(rendering.toPrettyString());
   }
 
   @Test
@@ -106,7 +106,7 @@ public class ArtifactRendererTest
 
     assertTrue(validateJSONSchema(templateRendering));
 
-    System.out.println(templateRendering.toPrettyString());
+    //System.out.println(templateRendering.toPrettyString());
   }
 
   private boolean validateJSONSchema(ObjectNode schemaNode)

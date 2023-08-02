@@ -1,10 +1,8 @@
 package org.metadatacenter.artifacts.model.reader;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.apache.commons.lang3.tuple.Pair;
 import org.metadatacenter.artifacts.model.core.Artifact;
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
@@ -31,7 +29,7 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUI;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.URIStringPairDefaultValue;
+import org.metadatacenter.artifacts.model.core.UriStringPairDefaultValue;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
@@ -538,7 +536,7 @@ public class ArtifactReader
       ObjectNode defaultValueNode = (ObjectNode)jsonNode;
       URI termUri = readRequiredURIField(defaultValueNode, nestedPath, ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       String rdfsLabel = readRequiredStringField(defaultValueNode, nestedPath, ModelNodeNames.RDFS_LABEL);
-      return Optional.of(new URIStringPairDefaultValue(Pair.of(termUri, rdfsLabel)));
+      return Optional.of(new UriStringPairDefaultValue(Pair.of(termUri, rdfsLabel)));
     } else if (jsonNode.isNumber())
       return Optional.of(new NumericDefaultValue(jsonNode.asDouble()));
     else if (jsonNode.isTextual())

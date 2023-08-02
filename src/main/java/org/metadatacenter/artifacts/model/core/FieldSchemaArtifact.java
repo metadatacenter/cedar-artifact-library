@@ -6,6 +6,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -118,7 +119,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
   private void validate()
   {
-    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
+    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
     validateUIFieldNotNull(this, fieldUI, ModelNodeNames.UI);
     validateOptionalFieldNotNull(this, valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
@@ -132,7 +133,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   public static class Builder {
     private List<URI> jsonLdTypes = Arrays.asList(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
+    private Map<String, URI> jsonLdContext = new HashMap<>();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();

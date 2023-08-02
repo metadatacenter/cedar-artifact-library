@@ -30,7 +30,7 @@ import org.metadatacenter.artifacts.model.core.StringDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.URIStringPairDefaultValue;
+import org.metadatacenter.artifacts.model.core.UriStringPairDefaultValue;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.model.ModelNodeNames;
@@ -43,7 +43,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,8 +157,8 @@ public class ArtifactExcelRenderer
         String s = stringDefaultValue.getValue();
 
         dataCell.setCellValue(s);
-      } else if (value.isURIStringPairDefaultValue()) {
-        URIStringPairDefaultValue uriStringPairDefaultValue = value.asURIStringPairDefaultValue();
+      } else if (value.isUriStringPairDefaultValue()) {
+        UriStringPairDefaultValue uriStringPairDefaultValue = value.asURIStringPairDefaultValue();
         URI u = uriStringPairDefaultValue.getValue().getLeft();
 
         dataCell.setCellValue(u.toString());
@@ -443,7 +442,7 @@ public class ArtifactExcelRenderer
 
       return values;
     } else
-      return Collections.emptyMap();
+      return new HashMap<>();
   }
 
   // Return prefLabel->IRI

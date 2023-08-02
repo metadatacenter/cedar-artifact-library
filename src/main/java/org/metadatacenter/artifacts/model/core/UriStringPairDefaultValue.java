@@ -4,11 +4,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.net.URI;
 
-public final class URIStringPairDefaultValue implements DefaultValue<Pair<URI, String>>
+public final class UriStringPairDefaultValue implements DefaultValue<Pair<URI, String>>
 {
   private Pair<URI, String> value;
 
-  public URIStringPairDefaultValue(Pair<URI, String> value)
+  public UriStringPairDefaultValue(Pair<URI, String> value)
   {
     this.value = value;
   }

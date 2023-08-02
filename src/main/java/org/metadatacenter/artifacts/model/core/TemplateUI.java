@@ -4,6 +4,7 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -100,8 +101,8 @@ public final class TemplateUI implements UI, ParentArtifactUI
   public static class Builder {
     private List<String> order = new ArrayList<>();
     private List<String> pages = new ArrayList<>();
-    private Map<String, String> propertyLabels = Collections.emptyMap();
-    private Map<String, String> propertyDescriptions = Collections.emptyMap();
+    private Map<String, String> propertyLabels = new HashMap<>();
+    private Map<String, String> propertyDescriptions = new HashMap<>();
     private Optional<String> header = Optional.empty();
     private Optional<String> footer = Optional.empty();
 

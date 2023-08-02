@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -90,7 +91,7 @@ public final class FieldInstanceArtifact extends InstanceArtifact
   public static class Builder {
     private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
+    private Map<String, URI> jsonLdContext = new HashMap<>();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();

@@ -1,7 +1,7 @@
 
 package org.metadatacenter.artifacts.model.core;
 
-public sealed interface DefaultValue<T> permits StringDefaultValue, NumericDefaultValue, URIStringPairDefaultValue
+public sealed interface DefaultValue<T> permits StringDefaultValue, NumericDefaultValue, UriStringPairDefaultValue
 {
    DefaultValueType getValueType();
 
@@ -11,7 +11,7 @@ public sealed interface DefaultValue<T> permits StringDefaultValue, NumericDefau
 
    default boolean isNumericDefaultValue() { return getValueType() == DefaultValueType.NUMERIC; }
 
-   default boolean isURIStringPairDefaultValue() { return getValueType() == DefaultValueType.URI_STRING_PAIR; }
+   default boolean isUriStringPairDefaultValue() { return getValueType() == DefaultValueType.URI_STRING_PAIR; }
 
    default StringDefaultValue asStringDefaultValue()
    {
@@ -29,11 +29,11 @@ public sealed interface DefaultValue<T> permits StringDefaultValue, NumericDefau
          throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + NumericDefaultValue.class.getName());
    }
 
-   default URIStringPairDefaultValue asURIStringPairDefaultValue()
+   default UriStringPairDefaultValue asURIStringPairDefaultValue()
    {
       if (getValueType() == DefaultValueType.URI_STRING_PAIR)
-         return (URIStringPairDefaultValue)this;
+         return (UriStringPairDefaultValue)this;
       else
-         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + URIStringPairDefaultValue.class.getName());
+         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + UriStringPairDefaultValue.class.getName());
    }
 }
