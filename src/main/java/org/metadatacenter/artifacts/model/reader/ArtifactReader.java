@@ -81,11 +81,14 @@ public class ArtifactReader
   public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
   {
     InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    String schemaOrgName = readSchemaOrgNameField(objectNode, path);
+    String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
     URI isBasedOn = readRequiredIsBasedOnField(objectNode, path);
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
 
-    return new TemplateInstanceArtifact(instanceArtifact, isBasedOn, elementInstances, fieldInstances);
+    return new TemplateInstanceArtifact(instanceArtifact, schemaOrgName, schemaOrgDescription, isBasedOn,
+      elementInstances, fieldInstances);
   }
 
   public ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)

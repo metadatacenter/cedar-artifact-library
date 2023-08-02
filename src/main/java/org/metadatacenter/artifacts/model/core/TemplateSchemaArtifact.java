@@ -175,8 +175,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Builder() {
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId) {
-      this.jsonLdId = jsonLdId;
+    public Builder withJsonLdId(URI jsonLdId) {
+      this.jsonLdId = Optional.of(jsonLdId);
       return this;
     }
 
@@ -185,23 +185,23 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
+    public Builder withCreatedBy(URI createdBy) {
+      this.createdBy = Optional.of(createdBy);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
+    public Builder withModifiedBy(URI modifiedBy) {
+      this.modifiedBy = Optional.of(modifiedBy);
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
+    public Builder withCreatedOn(OffsetDateTime createdOn) {
+      this.createdOn = Optional.of(createdOn);
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn) {
+      this.lastUpdatedOn = Optional.of(lastUpdatedOn);
       return this;
     }
 
@@ -258,23 +258,23 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       return this;
     }
 
-    public Builder withArtifactVersion(Optional<Version> artifactVersion) {
-      this.artifactVersion = artifactVersion;
+    public Builder withArtifactVersion(Version artifactVersion) {
+      this.artifactVersion = Optional.of(artifactVersion);
       return this;
     }
 
-    public Builder withArtifactVersionStatus(Optional<Status> artifactVersionStatus) {
-      this.artifactVersionStatus = artifactVersionStatus;
+    public Builder withArtifactVersionStatus(Status artifactVersionStatus) {
+      this.artifactVersionStatus = Optional.of(artifactVersionStatus);
       return this;
     }
 
-    public Builder withPreviousVersion(Optional<URI> previousVersion) {
-      this.previousVersion = previousVersion;
+    public Builder withPreviousVersion(URI previousVersion) {
+      this.previousVersion = Optional.of(previousVersion);
       return this;
     }
 
-    public Builder withDerivedFrom(Optional<URI> derivedFrom) {
-      this.derivedFrom = derivedFrom;
+    public Builder withDerivedFrom(URI derivedFrom) {
+      this.derivedFrom = Optional.of(derivedFrom);
       return this;
     }
 

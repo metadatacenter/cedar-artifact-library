@@ -105,6 +105,7 @@ public class ArtifactRenderer
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderParentSchemaArtifactPropertiesJsonSchemaSpecification(templateSchemaArtifact));
 
+    // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_CONTEXT);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_ID);
@@ -283,7 +284,7 @@ public class ArtifactRenderer
    *   "pav:createdOn": "2023-08-01T11:03:05-07:00",
    *   "pav:createdBy": "https://metadatacenter.org/users/344343",
    *   "pav:lastUpdatedOn": "2023-08-01T11:03:05-07:00",
-   *   "oslc:modifiedBy": "https://metadatacenter.org/users/5666565",
+   *   "oslc:modifiedBy": "https://metadatacenter.org/users/5666565"
    * }
    * </pre>
    */
@@ -291,7 +292,35 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_CONTEXT, renderArtifactContextJsonLdSpecification());
+    rendering.put(JSON_LD_CONTEXT, renderInstanceArtifactContextJsonLdSpecification());
+
+    if (templateInstanceArtifact.getJsonLdId().isPresent())
+      rendering.put(JSON_LD_ID, templateInstanceArtifact.getJsonLdId().get().toString());
+    else
+      rendering.putNull(JSON_LD_ID);
+
+    rendering.put(SCHEMA_IS_BASED_ON, templateInstanceArtifact.getIsBasedOn().toString());
+    rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.getName());
+    rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.getDescription());
+
+    if (templateInstanceArtifact.getCreatedBy().isPresent())
+      rendering.put(PAV_CREATED_BY, templateInstanceArtifact.getCreatedBy().get().toString());
+    else
+      rendering.putNull(PAV_CREATED_BY);
+
+    if (templateInstanceArtifact.getModifiedBy().isPresent())
+      rendering.put(OSLC_MODIFIED_BY, templateInstanceArtifact.getModifiedBy().get().toString());
+    else
+      rendering.putNull(OSLC_MODIFIED_BY);
+
+    if (templateInstanceArtifact.getCreatedOn().isPresent())
+      rendering.put(PAV_CREATED_ON, templateInstanceArtifact.getCreatedOn().get().toString());
+    else
+      rendering.putNull(PAV_CREATED_BY);
+    if (templateInstanceArtifact.getLastUpdatedOn().isPresent())
+      rendering.put(PAV_LAST_UPDATED_ON, templateInstanceArtifact.getLastUpdatedOn().get().toString());
+    else
+      rendering.putNull(PAV_LAST_UPDATED_ON);
 
     return rendering;
   }
@@ -331,8 +360,7 @@ public class ArtifactRenderer
     rendering.put(SCHEMA_ORG_NAME, schemaArtifact.getName());
     rendering.put(SCHEMA_ORG_DESCRIPTION, schemaArtifact.getDescription());
 
-    if (schemaArtifact.getVersion().isPresent())
-    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.getVersion().get().toString());
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.getModelVersion().toString());
 
     if (schemaArtifact.getIdentifier().isPresent())
       rendering.put(SCHEMA_ORG_IDENTIFIER, schemaArtifact.getIdentifier().get());

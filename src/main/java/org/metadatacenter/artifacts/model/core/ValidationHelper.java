@@ -29,7 +29,7 @@ public class ValidationHelper
       throw new IllegalStateException("field " + fieldName + " must equal " + fieldValue + " in " + obj);
   }
 
-  public static void validateURIFieldNotNull(Object obj, URI field, String fieldName)
+  public static void validateUriFieldNotNull(Object obj, URI field, String fieldName)
   {
     if (field == null)
       throw new IllegalStateException("URI field " + fieldName + " is null in " + obj);
@@ -37,7 +37,7 @@ public class ValidationHelper
 
   public static void validateURIFieldEquals(Object obj, URI field, String fieldName, String fieldValue)
   {
-    validateURIFieldNotNull(obj, field, fieldName);
+    validateUriFieldNotNull(obj, field, fieldName);
 
     if (!field.toString().equals(fieldValue))
       throw new IllegalStateException("URI field " + fieldName + " must equal " + fieldValue + " in " + obj);
