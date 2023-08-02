@@ -151,10 +151,7 @@ public class ArtifactRenderer
    *   "pav:lastUpdatedOn": "2023-07-28T11:10:41-07:00", "oslc:modifiedBy": "https://metadatacenter.org/users/524332",
    *   "@context": { ... },
    *   "properties": { ... },
-   *   "required": [ "xsd", "pav", "schema", "oslc", "bibo",
-   *                 "schema:isBasedOn", "schema:name", "schema:description",
-   *                 "pav:createdOn", "pav:createdBy", "pav:lastUpdatedOn", "oslc:modifiedBy",
-   *                 "Child Name 1", ... "Child Name n"],
+   *   "required": [ "@context", "@id", "Child Name 1", ... "Child Name n"],
    *   "additionalProperties": false,
    *   "_ui": { ... }
    *  }
@@ -168,6 +165,7 @@ public class ArtifactRenderer
 
     rendering.put(JSON_SCHEMA_PROPERTIES, renderParentSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
 
+    // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_CONTEXT);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_ID);
