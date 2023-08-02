@@ -86,7 +86,7 @@ public class SchemaArtifactTest {
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
 
-    SchemaArtifact schemaArtifact = new SchemaArtifact(jsonLdTypes, Optional.of(jsonLdId), jsonLdContext,
+    SchemaArtifact schemaArtifact = new SchemaArtifact(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,

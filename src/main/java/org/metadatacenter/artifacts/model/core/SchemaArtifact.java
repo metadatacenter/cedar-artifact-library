@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -12,7 +11,7 @@ import java.util.Optional;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateURIFieldEquals;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldEquals;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
 
 public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, SchemaOrgArtifact,
@@ -54,7 +53,7 @@ public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, Sche
     validate();
   }
 
-  public SchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public SchemaArtifact(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
@@ -176,7 +175,7 @@ public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, Sche
 
   private void validate()
   {
-    validateURIFieldEquals(this, jsonSchemaSchemaUri, ModelNodeNames.JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    validateUriFieldEquals(this, jsonSchemaSchemaUri, ModelNodeNames.JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
     validateStringFieldNotNull(this, jsonSchemaType, ModelNodeNames.JSON_SCHEMA_TYPE);
     validateStringFieldNotNull(this, jsonSchemaTitle, ModelNodeNames.JSON_SCHEMA_TITLE);
     validateStringFieldNotNull(this, jsonSchemaDescription, ModelNodeNames.JSON_SCHEMA_DESCRIPTION);

@@ -4,6 +4,7 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +13,9 @@ import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public final class TemplateSchemaArtifact extends SchemaArtifact implements ParentSchemaArtifact
 {
@@ -32,7 +36,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     validate();
   }
 
-  public TemplateSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public TemplateSchemaArtifact(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription, Optional<String> schemdOrgIdentifier,
@@ -40,7 +44,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
   {
-    super(jsonLdTypes, jsonLdId, jsonLdContext,
+    super( jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, schemdOrgIdentifier,
@@ -66,7 +70,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
   private TemplateSchemaArtifact(Builder builder)
   {
-    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
+    super(builder.jsonLdContext, builder.jsonLdTypes, builder.jsonLdId,
       builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
       builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
       builder.schemaOrgName, builder.schemaOrgDescription, builder.schemaOrgIdentifier,
@@ -137,6 +141,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
   private void validate()
   {
+    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, templateUI, ModelNodeNames.UI);
@@ -148,8 +153,9 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   }
 
   public static class Builder {
-    private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
+    private List<URI> jsonLdTypes = Arrays.asList(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
+    private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
@@ -158,7 +164,6 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
-    private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription = "";
     private Optional<String> schemaOrgIdentifier = Optional.empty();
@@ -283,8 +288,21 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       return this;
     }
 
-    public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas) {
+    public Builder withFieldSchema(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
+    {
+      this.fieldSchemas.put(fieldName, fieldSchemaArtifact);
+      return this;
+    }
+
+    public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas)
+    {
       this.elementSchemas = elementSchemas;
+      return this;
+    }
+
+    public Builder withElementSchema(String elementName, ElementSchemaArtifact elementSchemaArtifact)
+    {
+      this.elementSchemas.put(elementName, elementSchemaArtifact);
       return this;
     }
 

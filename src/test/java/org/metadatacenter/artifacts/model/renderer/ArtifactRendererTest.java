@@ -20,7 +20,13 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public class ArtifactRendererTest
 {
@@ -46,7 +52,10 @@ public class ArtifactRendererTest
 
     assertTrue(validateJSONSchema(rendering));
 
-    assertEquals(rendering.get(ModelNodeNames.JSON_SCHEMA_SCHEMA).textValue(), ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    assertEquals(rendering.get(JSON_SCHEMA_SCHEMA).textValue(), JSON_SCHEMA_SCHEMA_IRI);
+    assertEquals(rendering.get(JSON_SCHEMA_TYPE).textValue(), JSON_SCHEMA_OBJECT);
+    assertEquals(rendering.get(JSON_LD_TYPE).textValue(), TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
+    assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "Study");
 
     System.out.println(rendering.toPrettyString());
   }

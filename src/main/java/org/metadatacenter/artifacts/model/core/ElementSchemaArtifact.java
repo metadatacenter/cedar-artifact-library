@@ -4,7 +4,9 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,9 @@ import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public final class ElementSchemaArtifact extends SchemaArtifact
   implements ChildSchemaArtifact, ParentSchemaArtifact
@@ -44,7 +49,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
     Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, boolean isMultiple, ElementUI elementUI)
   {
-    super(jsonLdTypes, jsonLdId, jsonLdContext,
+    super(jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
@@ -72,7 +77,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact
 
   private ElementSchemaArtifact(Builder builder)
   {
-    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
+    super(builder.jsonLdContext, builder.jsonLdTypes, builder.jsonLdId,
       builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
       builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
       builder.schemaOrgName, builder.schemaOrgDescription, builder.schemaOrgIdentifier,
@@ -150,6 +155,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact
 
   private void validate()
   {
+    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI);
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, elementUI, ModelNodeNames.UI);
@@ -162,7 +168,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact
 
   public static class Builder
   {
-    private List<URI> jsonLdTypes = Collections.emptyList();
+    private List<URI> jsonLdTypes = Arrays.asList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
@@ -181,9 +187,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact
     private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas = Collections.emptyMap();
-    private Map<String, ElementSchemaArtifact> elementSchemas = Collections.emptyMap();
-    private Map<String, URI> childPropertyURIs  = Collections.emptyMap();
+    private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    private Map<String, URI> childPropertyURIs  = new HashMap<>();
     private boolean isMultiple = false;
     private ElementUI elementUI;
 
@@ -196,9 +202,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact
       return this;
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId)
+    public Builder withJsonLdId(URI jsonLdId)
     {
-      this.jsonLdId = jsonLdId;
+      this.jsonLdId = Optional.of(jsonLdId);
       return this;
     }
 
@@ -208,27 +214,27 @@ public final class ElementSchemaArtifact extends SchemaArtifact
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy)
+    public Builder withCreatedBy(URI createdBy)
     {
-      this.createdBy = createdBy;
+      this.createdBy = Optional.of(createdBy);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy)
+    public Builder withModifiedBy(URI modifiedBy)
     {
-      this.modifiedBy = modifiedBy;
+      this.modifiedBy = Optional.of(modifiedBy);
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn)
+    public Builder withCreatedOn(OffsetDateTime createdOn)
     {
-      this.createdOn = createdOn;
+      this.createdOn = Optional.of(createdOn);
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn)
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
     {
-      this.lastUpdatedOn = lastUpdatedOn;
+      this.lastUpdatedOn = Optional.of(lastUpdatedOn);
       return this;
     }
 
@@ -293,27 +299,27 @@ public final class ElementSchemaArtifact extends SchemaArtifact
       return this;
     }
 
-    public Builder withArtifactVersion(Optional<Version> artifactVersion)
+    public Builder withArtifactVersion(Version artifactVersion)
     {
-      this.artifactVersion = artifactVersion;
+      this.artifactVersion = Optional.of(artifactVersion);
       return this;
     }
 
-    public Builder withArtifactVersionStatus(Optional<Status> artifactVersionStatus)
+    public Builder withArtifactVersionStatus(Status artifactVersionStatus)
     {
-      this.artifactVersionStatus = artifactVersionStatus;
+      this.artifactVersionStatus = Optional.of(artifactVersionStatus);
       return this;
     }
 
-    public Builder withPreviousVersion(Optional<URI> previousVersion)
+    public Builder withPreviousVersion(URI previousVersion)
     {
-      this.previousVersion = previousVersion;
+      this.previousVersion = Optional.of(previousVersion);
       return this;
     }
 
-    public Builder withDerivedFrom(Optional<URI> derivedFrom)
+    public Builder withDerivedFrom(URI derivedFrom)
     {
-      this.derivedFrom = derivedFrom;
+      this.derivedFrom = Optional.of(derivedFrom);
       return this;
     }
 
@@ -323,9 +329,21 @@ public final class ElementSchemaArtifact extends SchemaArtifact
       return this;
     }
 
+    public Builder withFieldSchema(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
+    {
+      this.fieldSchemas.put(fieldName, fieldSchemaArtifact);
+      return this;
+    }
+
     public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas)
     {
       this.elementSchemas = elementSchemas;
+      return this;
+    }
+
+    public Builder withElementSchema(String elementName, ElementSchemaArtifact elementSchemaArtifact)
+    {
+      this.elementSchemas.put(elementName, elementSchemaArtifact);
       return this;
     }
 

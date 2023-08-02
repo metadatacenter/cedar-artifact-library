@@ -4,6 +4,7 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,9 @@ import java.util.Optional;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact
 {
@@ -45,7 +49,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     boolean isMultiple)
   {
-    super(jsonLdTypes,jsonLdId, jsonLdContext,
+    super(jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
@@ -60,7 +64,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   }
 
   private FieldSchemaArtifact(Builder builder) {
-    super(builder.jsonLdTypes, builder.jsonLdId, builder.jsonLdContext,
+    super(builder.jsonLdContext, builder.jsonLdTypes, builder.jsonLdId,
       builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
       builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
       builder.schemaOrgName, builder.schemaOrgDescription, builder.schemaOrgIdentifier,
@@ -114,6 +118,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
   private void validate()
   {
+    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
     validateUIFieldNotNull(this, fieldUI, ModelNodeNames.UI);
     validateOptionalFieldNotNull(this, valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
@@ -125,6 +130,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   }
 
   public static class Builder {
+    private List<URI> jsonLdTypes = Arrays.asList(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
@@ -135,7 +141,6 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
-    private List<URI> jsonLdTypes = Collections.emptyList();
     private String schemaOrgName;
     private String schemaOrgDescription = "";
     private Optional<String> schemaOrgIdentifier = Optional.empty();
@@ -235,23 +240,23 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       return this;
     }
 
-    public Builder withArtifactVersion(Optional<Version> artifactVersion) {
-      this.artifactVersion = artifactVersion;
+    public Builder withArtifactVersion(Version artifactVersion) {
+      this.artifactVersion = Optional.of(artifactVersion);
       return this;
     }
 
-    public Builder withArtifactVersionStatus(Optional<Status> artifactVersionStatus) {
-      this.artifactVersionStatus = artifactVersionStatus;
+    public Builder withArtifactVersionStatus(Status artifactVersionStatus) {
+      this.artifactVersionStatus = Optional.of(artifactVersionStatus);
       return this;
     }
 
-    public Builder withPreviousVersion(Optional<URI> previousVersion) {
-      this.previousVersion = previousVersion;
+    public Builder withPreviousVersion(URI previousVersion) {
+      this.previousVersion = Optional.of(previousVersion);
       return this;
     }
 
-    public Builder withDerivedFrom(Optional<URI> derivedFrom) {
-      this.derivedFrom = derivedFrom;
+    public Builder withDerivedFrom(URI derivedFrom) {
+      this.derivedFrom = Optional.of(derivedFrom);
       return this;
     }
 
@@ -260,13 +265,13 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       return this;
     }
 
-    public Builder withValueConstraints(Optional<ValueConstraints> valueConstraints) {
-      this.valueConstraints = valueConstraints;
+    public Builder withValueConstraints(ValueConstraints valueConstraints) {
+      this.valueConstraints = Optional.of(valueConstraints);
       return this;
     }
 
-    public Builder withSkosPrefLabel(Optional<String> skosPrefLabel) {
-      this.skosPrefLabel = skosPrefLabel;
+    public Builder withSkosPrefLabel(String skosPrefLabel) {
+      this.skosPrefLabel = Optional.of(skosPrefLabel);
       return this;
     }
 
