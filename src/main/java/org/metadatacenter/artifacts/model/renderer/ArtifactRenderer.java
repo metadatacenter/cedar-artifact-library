@@ -55,6 +55,13 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.XSD;
+import static org.metadatacenter.model.ModelNodeValues.BIBO_IRI;
+import static org.metadatacenter.model.ModelNodeValues.OSLC_IRI;
+import static org.metadatacenter.model.ModelNodeValues.PAV_IRI;
+import static org.metadatacenter.model.ModelNodeValues.RDFS_IRI;
+import static org.metadatacenter.model.ModelNodeValues.SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeValues.SKOS_IRI;
+import static org.metadatacenter.model.ModelNodeValues.XSD_IRI;
 
 public class ArtifactRenderer
 {
@@ -674,12 +681,12 @@ public class ArtifactRenderer
       rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, propertyURI.toString());
     }
 
-    // TODO Put this set of core required fields in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(XSD);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC);
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_IS_BASED_ON);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_NAME);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_DESCRIPTION);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_ON);
@@ -760,7 +767,6 @@ public class ArtifactRenderer
    *     "bibo": "http://purl.org/ontology/bibo/",
    *     "oslc": "http://open-services.net/ns/core#",
    *     "schema": "http://schema.org/",
-   *     "skos": "http://www.w3.org/2004/02/skos/core#",
    *     "schema:name": { "@type": "xsd:string" },
    *     "schema:description": { "@type": "xsd:string" },
    *     "pav:createdOn": { "@type": "xsd:dateTime" },
@@ -832,8 +838,7 @@ public class ArtifactRenderer
    *     "pav": "http://purl.org/pav/",
    *     "bibo": "http://purl.org/ontology/bibo/",
    *     "oslc": "http://open-services.net/ns/core#",
-   *     "schema": "http://schema.org/",
-   *     "skos": "http://www.w3.org/2004/02/skos/core#"
+   *     "schema": "http://schema.org/"
    *   }
    * </pre>
    */
@@ -841,12 +846,11 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(XSD, "http://www.w3.org/2001/XMLSchema#");
-    rendering.put(PAV, "http://purl.org/pav/");
-    rendering.put(OSLC, "http://open-services.net/ns/core#");
-    rendering.put(SCHEMA, "http://schema.org/");
-    rendering.put(SKOS, "http://www.w3.org/2004/02/skos/core#");
-    rendering.put(BIBO, "http://purl.org/ontology/bibo/");
+    rendering.put(XSD, XSD_IRI);
+    rendering.put(PAV, PAV_IRI);
+    rendering.put(OSLC, OSLC_IRI);
+    rendering.put(SCHEMA, SCHEMA_IRI);
+    rendering.put(BIBO, BIBO_IRI);
 
     return rendering;
   }
@@ -870,13 +874,12 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    // TODO Put these IRIs in the ModelNodeNames class
-    rendering.put(RDFS, "http://www.w3.org/2000/01/rdf-schema#");
-    rendering.put(XSD, "http://www.w3.org/2001/XMLSchema#");
-    rendering.put(PAV, "http://purl.org/pav/");
-    rendering.put(OSLC, "http://open-services.net/ns/core#");
-    rendering.put(SCHEMA, "http://schema.org/");
-    rendering.put(SKOS, "http://www.w3.org/2004/02/skos/core#");
+    rendering.put(RDFS, RDFS_IRI);
+    rendering.put(XSD, XSD_IRI);
+    rendering.put(PAV, PAV_IRI);
+    rendering.put(OSLC, OSLC_IRI);
+    rendering.put(SCHEMA, SCHEMA_IRI);
+    rendering.put(SKOS, SKOS_IRI);
 
     return rendering;
   }
