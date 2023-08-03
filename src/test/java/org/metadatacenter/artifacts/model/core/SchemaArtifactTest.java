@@ -12,15 +12,15 @@ public class SchemaArtifactTest {
 
   @Test
   public void testConstructorWithArtifact() {
-    List<URI> jsonLdTypes = Collections.singletonList(URI.create("http://example.com/type"));
-    URI jsonLdId = URI.create("http://example.com/artifact");
     Map<String, URI> jsonLdContext = new HashMap<>();
     jsonLdContext.put("key", URI.create("http://example.com/context"));
+    List<URI> jsonLdTypes = Collections.singletonList(URI.create("http://example.com/type"));
+    URI jsonLdId = URI.create("http://example.com/artifact");
     URI createdBy = URI.create("http://example.com/user");
     URI modifiedBy = URI.create("http://example.com/user");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    Artifact artifact = new Artifact(jsonLdTypes, Optional.of(jsonLdId), jsonLdContext,
+    Artifact artifact = new Artifact(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn));
 
     URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);

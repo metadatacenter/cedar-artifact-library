@@ -15,7 +15,7 @@ public class ArtifactTest {
   @Test
   public void testGetJsonLdId() {
     URI jsonLdId = URI.create("http://example.com/artifact");
-    Artifact artifact = new Artifact(Collections.emptyList(), Optional.of(jsonLdId), Collections.emptyMap(),
+    Artifact artifact = new Artifact(Collections.emptyMap(), Collections.emptyList(), Optional.of(jsonLdId),
       Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
     Assert.assertEquals(Optional.of(jsonLdId), artifact.getJsonLdId());
   }
@@ -24,7 +24,7 @@ public class ArtifactTest {
   public void testGetJsonLdContext() {
     Map<String, URI> jsonLdContext = new HashMap<>();
     jsonLdContext.put("key", URI.create("http://example.com/context"));
-    Artifact artifact = new Artifact(Collections.emptyList(), Optional.empty(), jsonLdContext,
+    Artifact artifact = new Artifact(jsonLdContext, Collections.emptyList(), Optional.empty(),
       Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
     Assert.assertEquals(jsonLdContext, artifact.getJsonLdContext());
   }
@@ -32,7 +32,7 @@ public class ArtifactTest {
   @Test
   public void testGetCreatedBy() {
     URI createdBy = URI.create("http://example.com/user");
-    Artifact artifact = new Artifact(Collections.emptyList(), Optional.empty(), Collections.emptyMap(),
+    Artifact artifact = new Artifact(Collections.emptyMap(), Collections.emptyList(), Optional.empty(),
       Optional.of(createdBy), Optional.empty(), Optional.empty(), Optional.empty());
     Assert.assertEquals(Optional.of(createdBy), artifact.getCreatedBy());
   }
@@ -40,7 +40,7 @@ public class ArtifactTest {
   @Test
   public void testGetModifiedBy() {
     URI modifiedBy = URI.create("http://example.com/user");
-    Artifact artifact = new Artifact(Collections.emptyList(), Optional.empty(), Collections.emptyMap(),
+    Artifact artifact = new Artifact(Collections.emptyMap(), Collections.emptyList(), Optional.empty(),
       Optional.empty(), Optional.of(modifiedBy), Optional.empty(), Optional.empty());
     Assert.assertEquals(Optional.of(modifiedBy), artifact.getModifiedBy());
   }
@@ -48,7 +48,7 @@ public class ArtifactTest {
   @Test
   public void testGetCreatedOn() {
     OffsetDateTime createdOn = OffsetDateTime.now();
-    Artifact artifact = new Artifact(Collections.emptyList(), Optional.empty(), Collections.emptyMap(),
+    Artifact artifact = new Artifact(Collections.emptyMap(), Collections.emptyList(), Optional.empty(),
       Optional.empty(), Optional.empty(), Optional.of(createdOn), Optional.empty());
     Assert.assertEquals(Optional.of(createdOn), artifact.getCreatedOn());
   }
@@ -56,7 +56,7 @@ public class ArtifactTest {
   @Test
   public void testGetLastUpdatedOn() {
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    Artifact artifact = new Artifact(Collections.emptyList(), Optional.empty(), Collections.emptyMap(),
+    Artifact artifact = new Artifact(Collections.emptyMap(), Collections.emptyList(), Optional.empty(),
       Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(lastUpdatedOn));
     Assert.assertEquals(Optional.of(lastUpdatedOn), artifact.getLastUpdatedOn());
   }

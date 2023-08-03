@@ -259,7 +259,7 @@ public class ArtifactReader
     Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
     Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
 
-    return new Artifact(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return new Artifact(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
   private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)

@@ -73,7 +73,7 @@ public class SchemaArtifact extends Artifact implements JsonSchemaArtifact, Sche
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom)
   {
-    super(jsonLdTypes, jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    super(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn, lastUpdatedOn);
     this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
     this.jsonSchemaType = jsonSchemaType;
     this.jsonSchemaTitle = jsonSchemaTitle;
