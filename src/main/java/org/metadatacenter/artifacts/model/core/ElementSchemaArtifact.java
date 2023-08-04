@@ -323,21 +323,17 @@ public final class ElementSchemaArtifact extends SchemaArtifact
       return this;
     }
 
-    public Builder withFieldSchemas(Map<String, FieldSchemaArtifact> fieldSchemas)
-    {
-      this.fieldSchemas = fieldSchemas;
-      return this;
-    }
-
     public Builder withFieldSchema(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
     {
+      // TODO _ui.order[ ... fieldName ... ]
+      // TODO _ui.propertyLabels: { ... fieldName: "" ... }
+      // TODO _ui.propertyDescriptions: { ... fieldName: "" ... }
+      // TODO properties.@context.properties: { ... fieldName: { enum: https://
+      // TODO properties.@context.required[]
+      // TODO properties.fieldName: { ... }
+      // TODO properties.fieldName.schema:Name: "fieldName"
+      // TODO required: [ ... fieldName ... ]
       this.fieldSchemas.put(fieldName, fieldSchemaArtifact);
-      return this;
-    }
-
-    public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas)
-    {
-      this.elementSchemas = elementSchemas;
       return this;
     }
 

@@ -284,20 +284,9 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       return this;
     }
 
-    public Builder withFieldSchemas(Map<String, FieldSchemaArtifact> fieldSchemas) {
-      this.fieldSchemas = fieldSchemas;
-      return this;
-    }
-
     public Builder withFieldSchema(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
     {
       this.fieldSchemas.put(fieldName, fieldSchemaArtifact);
-      return this;
-    }
-
-    public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas)
-    {
-      this.elementSchemas = elementSchemas;
       return this;
     }
 
