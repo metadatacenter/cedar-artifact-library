@@ -1,9 +1,11 @@
 package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class ValidationHelper
 {
@@ -86,6 +88,34 @@ public class ValidationHelper
   public static <T> void validateListFieldNotNull(Object obj, List<T> field, String fieldName)
   {
     if (field == null)
-      throw new IllegalStateException("List field " + fieldName + " is null in " + obj);
+      throw new IllegalStateException("Field " + fieldName + " is null in " + obj);
   }
+
+  public static <T> void validateSetFieldNotNull(Object obj, Set<T> field, String fieldName)
+  {
+    if (field == null)
+      throw new IllegalStateException("Field " + fieldName + " is null in " + obj);
+  }
+
+  public static <T> void validateListFieldDoesNotHaveDuplicates(Object obj, List<T> field, String fieldName)
+  {
+    validateListFieldNotNull(obj, field, fieldName);
+
+    if (hasDuplicates(field))
+      throw new IllegalStateException("List field " + fieldName + " has duplicates in " + obj);
+  }
+
+  private static <T> boolean hasDuplicates(List<T> list)
+  {
+    Set<T> elementsSoFar = new HashSet<>();
+
+    for (T element : list) {
+      if (elementsSoFar.contains(element))
+        return true;
+      else
+        elementsSoFar.add(element);
+    }
+    return false;
+  }
+
 }

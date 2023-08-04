@@ -16,7 +16,6 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateM
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public final class ElementSchemaArtifact extends SchemaArtifact
   implements ChildSchemaArtifact, ParentSchemaArtifact
@@ -325,14 +324,6 @@ public final class ElementSchemaArtifact extends SchemaArtifact
 
     public Builder withFieldSchema(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
     {
-      // TODO _ui.order[ ... fieldName ... ]
-      // TODO _ui.propertyLabels: { ... fieldName: "" ... }
-      // TODO _ui.propertyDescriptions: { ... fieldName: "" ... }
-      // TODO properties.@context.properties: { ... fieldName: { enum: https://
-      // TODO properties.@context.required[]
-      // TODO properties.fieldName: { ... }
-      // TODO properties.fieldName.schema:Name: "fieldName"
-      // TODO required: [ ... fieldName ... ]
       this.fieldSchemas.put(fieldName, fieldSchemaArtifact);
       return this;
     }

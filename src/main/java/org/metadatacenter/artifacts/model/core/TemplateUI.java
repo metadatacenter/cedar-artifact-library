@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
@@ -86,12 +88,21 @@ public final class TemplateUI implements UI, ParentArtifactUI
   }
 
   private void validate() {
-    validateListFieldNotNull(this, order, ModelNodeNames.UI_ORDER);
+    validateListFieldDoesNotHaveDuplicates(this, order, ModelNodeNames.UI_ORDER);
     validateListFieldNotNull(this, pages, ModelNodeNames.UI_PAGES);
     validateMapFieldNotNull(this, propertyLabels, ModelNodeNames.UI_PROPERTY_LABELS);
     validateMapFieldNotNull(this, propertyDescriptions, ModelNodeNames.UI_PROPERTY_DESCRIPTIONS);
     validateOptionalFieldNotNull(this, header, ModelNodeNames.UI_HEADER);
     validateOptionalFieldNotNull(this, footer, ModelNodeNames.UI_FOOTER);
+
+    if (!order.stream().collect(Collectors.toSet()).containsAll(propertyLabels.keySet()))
+      throw new IllegalStateException("propertyLabels field must contain only entries present in the order field in " +
+        TemplateUI.class.getName() + ": " + this.toString());
+
+    if (!order.stream().collect(Collectors.toSet()).containsAll(propertyDescriptions.keySet()))
+      throw new IllegalStateException("propertyDescriptions field must contain only entries present in the order field in " +
+        TemplateUI.class.getName() + ": " + this.toString());
+
   }
 
   public static Builder builder() {

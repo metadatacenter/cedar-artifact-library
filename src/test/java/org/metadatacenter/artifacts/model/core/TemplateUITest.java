@@ -35,10 +35,12 @@ public class TemplateUITest {
 
   @Test
   public void testGetPropertyLabels() {
+    List<String> order = Arrays.asList("field1", "field2", "field3");
     Map<String, String> propertyLabels = new HashMap<>();
-    propertyLabels.put("property1", "Label 1");
-    propertyLabels.put("property2", "Label 2");
+    propertyLabels.put("field1", "Label 1");
+    propertyLabels.put("field2", "Label 2");
     TemplateUI templateUI = TemplateUI.builder()
+      .withOrder(order)
       .withPropertyLabels(propertyLabels)
       .build();
     assertEquals(propertyLabels, templateUI.getPropertyLabels());
@@ -46,10 +48,12 @@ public class TemplateUITest {
 
   @Test
   public void testGetPropertyDescriptions() {
+    List<String> order = Arrays.asList("field1", "field2", "field3");
     Map<String, String> propertyDescriptions = new HashMap<>();
-    propertyDescriptions.put("property1", "Description 1");
-    propertyDescriptions.put("property2", "Description 2");
+    propertyDescriptions.put("field1", "Description 1");
+    propertyDescriptions.put("field2", "Description 2");
     TemplateUI templateUI = TemplateUI.builder()
+      .withOrder(order)
       .withPropertyDescriptions(propertyDescriptions)
       .build();
     assertEquals(propertyDescriptions, templateUI.getPropertyDescriptions());
