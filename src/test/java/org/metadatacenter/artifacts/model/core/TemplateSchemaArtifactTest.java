@@ -30,14 +30,10 @@ public class TemplateSchemaArtifactTest
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName("Test")
-      .withFieldSchemas(fieldSchemas)
-      .withElementSchemas(elementSchemas)
       .withChildPropertyURIs(childPropertyURIs)
       .withTemplateUI(templateUI).build();
 
     assertEquals(templateSchemaArtifact.getName(), "Test");
-    assertEquals(templateSchemaArtifact.getFieldSchemas(), fieldSchemas);
-    assertEquals(templateSchemaArtifact.getElementSchemas(), elementSchemas);
     assertEquals(templateSchemaArtifact.getChildPropertyURIs(), childPropertyURIs);
     assertEquals(templateSchemaArtifact.getTemplateUI(), templateUI);
   }

@@ -159,9 +159,9 @@ public class ArtifactExcelRenderer
         dataCell.setCellValue(s);
       } else if (value.isUriStringPairDefaultValue()) {
         UriStringPairDefaultValue uriStringPairDefaultValue = value.asURIStringPairDefaultValue();
-        URI u = uriStringPairDefaultValue.getValue().getLeft();
+        String label = uriStringPairDefaultValue.getValue().getRight();
 
-        dataCell.setCellValue(u.toString());
+        dataCell.setCellValue(label);
       } else
         throw new RuntimeException("Unknown default value type" + value.getValueType() + " for field " + fieldName);
     }
