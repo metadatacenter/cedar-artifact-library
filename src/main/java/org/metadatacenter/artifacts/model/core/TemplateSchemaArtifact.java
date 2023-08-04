@@ -6,16 +6,17 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
-import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public final class TemplateSchemaArtifact extends SchemaArtifact implements ParentSchemaArtifact
@@ -147,6 +148,13 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, templateUI, ModelNodeNames.UI);
     validateMapFieldNotNull(this, childPropertyURIs, "childPropertyURIs");
+
+    Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
+    Set<String> childNames = getChildNames().stream().collect(Collectors.toSet());
+
+    if (!order.equals(childNames))
+      throw new IllegalStateException("UI order field must contain an entry for all child fields and elements in " +
+        this.toString() + "; missing fields: " + childNames.removeAll(order));
   }
 
   public static Builder builder() {

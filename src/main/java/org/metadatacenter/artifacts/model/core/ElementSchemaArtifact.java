@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
@@ -159,6 +161,13 @@ public final class ElementSchemaArtifact extends SchemaArtifact
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, elementUI, ModelNodeNames.UI);
     validateMapFieldNotNull(this, childPropertyURIs, "childPropertyURIs");
+
+    Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
+    Set<String> childNames = getChildNames().stream().collect(Collectors.toSet());
+
+    if (!order.equals(childNames))
+      throw new IllegalStateException("UI order field must contain an entry for all child fields and elements in " +
+        this.toString() + "; missing fields: " + childNames.removeAll(order));
   }
 
   public static Builder builder() {
