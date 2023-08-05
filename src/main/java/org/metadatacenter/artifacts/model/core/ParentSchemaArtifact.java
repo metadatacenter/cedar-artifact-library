@@ -8,6 +8,8 @@ import java.util.Map;
 
 public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
 {
+  String getName();
+
   default boolean isField(String name) {return getFieldSchemas().containsKey(name);}
 
   default boolean isElement(String name) {return getElementSchemas().containsKey(name);}
@@ -32,6 +34,19 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
   Map<String, URI> getChildPropertyURIs();
 
   ParentArtifactUI getUI();
+
+  default void addChild(ChildSchemaArtifact childSchemaArtifact)
+  {
+    String childName = childSchemaArtifact.getName();
+
+    if (getChildNames().contains(childSchemaArtifact.getName()))
+      throw new IllegalArgumentException("schema artifact " + getName() + " already has a child named " + childName);
+
+    // TODO UI.order
+    // TODO UI.propertyLabels
+    // TODO UI.propertyDescriptions
+    // TODO childPropertyURIs
+  }
 
   default List<ChildSchemaArtifact> getChildSchemas()
   {

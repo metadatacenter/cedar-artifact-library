@@ -167,7 +167,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact
 
     if (!order.equals(childNames))
       throw new IllegalStateException("UI order field must contain an entry for all child fields and elements in " +
-        this.toString() + "; missing fields: " + childNames.removeAll(order));
+        "element schema artifact " + getName() + "; missing fields: " + childNames.removeAll(order));
   }
 
   public static Builder builder() {
@@ -340,12 +340,6 @@ public final class ElementSchemaArtifact extends SchemaArtifact
     public Builder withElementSchema(String elementName, ElementSchemaArtifact elementSchemaArtifact)
     {
       this.elementSchemas.put(elementName, elementSchemaArtifact);
-      return this;
-    }
-
-    public Builder withChildPropertyURI(String childPropertyName, URI childPropertyURI)
-    {
-      this.childPropertyURIs.put(childPropertyName, childPropertyURI);
       return this;
     }
 

@@ -154,7 +154,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
 
     if (!order.equals(childNames))
       throw new IllegalStateException("UI order field must contain an entry for all child fields and elements in " +
-        this.toString() + "; missing fields: " + childNames.removeAll(order));
+        "template schema artifact " + getName() + "; missing fields: " + childNames.removeAll(order));
   }
 
   public static Builder builder() {
