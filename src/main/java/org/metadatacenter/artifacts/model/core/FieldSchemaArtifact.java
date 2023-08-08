@@ -41,7 +41,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     validate();
   }
 
-  public FieldSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  public FieldSchemaArtifact(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
@@ -91,7 +91,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
   public boolean hasIRIValue()
   {
-    return valueConstraints.isPresent() ? valueConstraints.get().hasOntologyValueBasedConstraints() : false;
+    return (getFieldUI().isTextField() && valueConstraints.isPresent() && valueConstraints.get().hasOntologyValueBasedConstraints()) ||
+      getFieldUI().isLink() || getFieldUI().isImage() || getFieldUI().isYouTube();
   }
 
   @Override public boolean isMultiple() { return isMultiple; }
@@ -159,8 +160,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Builder() {
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId) {
-      this.jsonLdId = jsonLdId;
+    public Builder withJsonLdId(URI jsonLdId) {
+      this.jsonLdId = Optional.of(jsonLdId);
       return this;
     }
 
@@ -169,23 +170,23 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
+    public Builder withCreatedBy(URI createdBy) {
+      this.createdBy = Optional.of(createdBy);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
+    public Builder withModifiedBy(URI modifiedBy) {
+      this.modifiedBy = Optional.of(modifiedBy);
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
+    public Builder withCreatedOn(OffsetDateTime createdOn) {
+      this.createdOn = Optional.of(createdOn);
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn) {
+      this.lastUpdatedOn = Optional.of(lastUpdatedOn);
       return this;
     }
 
