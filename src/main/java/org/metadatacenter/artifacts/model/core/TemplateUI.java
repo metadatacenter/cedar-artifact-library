@@ -14,6 +14,12 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateL
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
+import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
+import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
+import static org.metadatacenter.model.ModelNodeNames.UI_PAGES;
+import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_DESCRIPTIONS;
+import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 
 public final class TemplateUI implements UI, ParentArtifactUI
 {
@@ -88,12 +94,12 @@ public final class TemplateUI implements UI, ParentArtifactUI
   }
 
   private void validate() {
-    validateListFieldDoesNotHaveDuplicates(this, order, ModelNodeNames.UI_ORDER);
-    validateListFieldNotNull(this, pages, ModelNodeNames.UI_PAGES);
-    validateMapFieldNotNull(this, propertyLabels, ModelNodeNames.UI_PROPERTY_LABELS);
-    validateMapFieldNotNull(this, propertyDescriptions, ModelNodeNames.UI_PROPERTY_DESCRIPTIONS);
-    validateOptionalFieldNotNull(this, header, ModelNodeNames.UI_HEADER);
-    validateOptionalFieldNotNull(this, footer, ModelNodeNames.UI_FOOTER);
+    validateListFieldDoesNotHaveDuplicates(this, order, UI_ORDER);
+    validateListFieldNotNull(this, pages, UI_PAGES);
+    validateMapFieldNotNull(this, propertyLabels, UI_PROPERTY_LABELS);
+    validateMapFieldNotNull(this, propertyDescriptions, UI_PROPERTY_DESCRIPTIONS);
+    validateOptionalFieldNotNull(this, header, UI_HEADER);
+    validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
     if (!order.stream().collect(Collectors.toSet()).containsAll(propertyLabels.keySet()))
       throw new IllegalStateException("propertyLabels field must contain only entries present in the order field in " +

@@ -5,6 +5,10 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.UI_INPUT_TIME_FORMAT;
+import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
+import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
 
 public final class FieldUI implements UI
 {
@@ -114,42 +118,42 @@ public final class FieldUI implements UI
   private void validate()
   {
     if (inputType == null)
-      throw new IllegalStateException("Field " + ModelNodeNames.UI_FIELD_INPUT_TYPE + " must set in " + this);
+      throw new IllegalStateException("Field " + UI_FIELD_INPUT_TYPE + " must set in " + this);
 
-    validateOptionalFieldNotNull(this, timeZoneEnabled, ModelNodeNames.UI_TIMEZONE_ENABLED);
-    validateOptionalFieldNotNull(this, temporalGranularity, ModelNodeNames.UI_TEMPORAL_GRANULARITY);
-    validateOptionalFieldNotNull(this, inputTimeFormat, ModelNodeNames.UI_INPUT_TIME_FORMAT);
+    validateOptionalFieldNotNull(this, timeZoneEnabled, UI_TIMEZONE_ENABLED);
+    validateOptionalFieldNotNull(this, temporalGranularity, UI_TEMPORAL_GRANULARITY);
+    validateOptionalFieldNotNull(this, inputTimeFormat, UI_INPUT_TIME_FORMAT);
 
     if (inputType == FieldInputType.TEMPORAL) {
       if (!temporalGranularity.isPresent())
         throw new IllegalStateException(
-          "Field " + ModelNodeNames.UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
+          "Field " + UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
 
       // TODO Disable for moment until verify with Matthew that he is adding this to temporal fields
 //      if (!inputTimeFormat.isPresent())
 //        throw new IllegalStateException(
-//          "Field " + ModelNodeNames.UI_INPUT_TIME_FORMAT + " must be set for temporal fields in " + this);
+//          "Field " + UI_INPUT_TIME_FORMAT + " must be set for temporal fields in " + this);
 
     } else { // Non-temporal fields
       if (timeZoneEnabled.isPresent())
         throw new IllegalStateException(
-          "Field " + ModelNodeNames.UI_TIMEZONE_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
+          "Field " + UI_TIMEZONE_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
 
       if (temporalGranularity.isPresent())
         throw new IllegalStateException(
-          "Field " + ModelNodeNames.UI_TEMPORAL_GRANULARITY + " cannot be set for fields of type " + inputType + " in "
+          "Field " + UI_TEMPORAL_GRANULARITY + " cannot be set for fields of type " + inputType + " in "
             + this);
 
       if (inputTimeFormat.isPresent())
         throw new IllegalStateException(
-          "Field " + ModelNodeNames.UI_INPUT_TIME_FORMAT + " cannot be set for fields of type " + inputType + " in " + this);
+          "Field " + UI_INPUT_TIME_FORMAT + " cannot be set for fields of type " + inputType + " in " + this);
     }
 
     // TODO Disable for moment until verify with Matthew that he is adding this to temporal fields
 //    if (inputType != FieldInputType.TEXTFIELD) {
 //      if (valueRecommendationEnabled)
 //        throw new IllegalStateException(
-//          "Field " + ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
+//          "Field " + UI_VALUE_RECOMMENDATION_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
 //    }
   }
 

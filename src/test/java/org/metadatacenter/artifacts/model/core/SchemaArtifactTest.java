@@ -8,6 +8,8 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+
 public class SchemaArtifactTest {
 
   @Test
@@ -23,7 +25,7 @@ public class SchemaArtifactTest {
     Artifact artifact = new Artifact(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn));
 
-    URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
@@ -73,7 +75,7 @@ public class SchemaArtifactTest {
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
 
     List<URI> jsonLdTypes = Collections.singletonList(URI.create("http://example.com/type"));
-    URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";

@@ -8,32 +8,32 @@ import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ENUM;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
+import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 
 public class ArtifactReaderTest {
   private ArtifactReader artifactReader;
@@ -156,7 +156,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseFieldArtifact("Test name", "Test description");
 
-    objectNode.with(UI).put(ModelNodeNames.UI_FIELD_INPUT_TYPE, ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD);
+    objectNode.with(UI).put(UI_FIELD_INPUT_TYPE, FIELD_INPUT_TYPE_TEXTFIELD);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(objectNode);
 
@@ -170,7 +170,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
-    objectNode.put(JSON_LD_TYPE, ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
+    objectNode.put(JSON_LD_TYPE, TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
   }
@@ -197,8 +197,8 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
-    objectNode.put(JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    objectNode.put(JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
+    objectNode.put(JSON_SCHEMA_SCHEMA, JSON_SCHEMA_SCHEMA_IRI);
+    objectNode.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
     objectNode.put(JSON_SCHEMA_TITLE, "Test JSON Schema title");
     objectNode.put(JSON_SCHEMA_DESCRIPTION, "Test JSON Schema description");
     objectNode.put(SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");

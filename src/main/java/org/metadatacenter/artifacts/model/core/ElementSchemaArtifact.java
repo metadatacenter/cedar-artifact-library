@@ -19,6 +19,9 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateO
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public final class ElementSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact, ParentSchemaArtifact
 {
@@ -160,7 +163,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(this, elementUI, ModelNodeNames.UI);
+    validateUIFieldNotNull(this, elementUI, UI);
     validateOptionalFieldNotNull(this, propertyURI, "propertyURI");
 
     Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
@@ -184,8 +187,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
+    private URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
+    private String jsonSchemaType = JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
     private String schemaOrgName;

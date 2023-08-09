@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.model.ModelNodeNames;
-
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -17,7 +15,10 @@ import java.util.stream.Collectors;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public final class TemplateSchemaArtifact extends SchemaArtifact implements ParentSchemaArtifact
 {
@@ -131,7 +132,7 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(this, templateUI, ModelNodeNames.UI);
+    validateUIFieldNotNull(this, templateUI, UI);
 
     Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
     Set<String> childNames = getChildNames().stream().collect(Collectors.toSet());
@@ -159,8 +160,8 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
+    private URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
+    private String jsonSchemaType = JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
     private String schemaOrgName;

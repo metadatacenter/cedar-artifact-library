@@ -13,6 +13,11 @@ import java.util.stream.Collectors;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
+import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
+import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
+import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_DESCRIPTIONS;
+import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 
 public final class ElementUI implements UI, ParentArtifactUI
 {
@@ -79,11 +84,11 @@ public final class ElementUI implements UI, ParentArtifactUI
 
   private void validate()
   {
-    validateListFieldDoesNotHaveDuplicates(this, order, ModelNodeNames.UI_ORDER);
-    validateMapFieldNotNull(this, propertyLabels, ModelNodeNames.UI_PROPERTY_LABELS);
-    validateMapFieldNotNull(this, propertyDescriptions, ModelNodeNames.UI_PROPERTY_DESCRIPTIONS);
-    validateOptionalFieldNotNull(this, header, ModelNodeNames.UI_HEADER);
-    validateOptionalFieldNotNull(this, footer, ModelNodeNames.UI_FOOTER);
+    validateListFieldDoesNotHaveDuplicates(this, order, UI_ORDER);
+    validateMapFieldNotNull(this, propertyLabels, UI_PROPERTY_LABELS);
+    validateMapFieldNotNull(this, propertyDescriptions, UI_PROPERTY_DESCRIPTIONS);
+    validateOptionalFieldNotNull(this, header, UI_HEADER);
+    validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
     if (!order.stream().collect(Collectors.toSet()).containsAll(propertyLabels.keySet()))
       throw new IllegalStateException("propertyLabels field must contain only entries present in the order field in " +

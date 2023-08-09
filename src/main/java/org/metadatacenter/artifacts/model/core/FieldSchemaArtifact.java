@@ -16,9 +16,12 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateO
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact
 {
@@ -132,7 +135,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   private void validate()
   {
     validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
-    validateUIFieldNotNull(this, fieldUI, ModelNodeNames.UI);
+    validateUIFieldNotNull(this, fieldUI, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
@@ -151,8 +154,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
+    private URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
+    private String jsonSchemaType = JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
     private String schemaOrgName;

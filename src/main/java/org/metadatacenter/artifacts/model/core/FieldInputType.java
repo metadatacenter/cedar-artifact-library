@@ -3,23 +3,39 @@ package org.metadatacenter.artifacts.model.core;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.metadatacenter.model.ModelNodeNames;
 
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_ATTRIBUTE_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_CHECKBOX;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_EMAIL;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_IMAGE;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_LINK;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_LIST;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_NUMERIC;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_PHONE_NUMBER;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_RADIO;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_RICH_TEXT;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_SECTION_BREAK;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEMPORAL;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEXTAREA;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_YOUTUBE;
+
 public enum FieldInputType
 {
-  TEXTFIELD(ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD),
-  TEXTAREA(ModelNodeNames.FIELD_INPUT_TYPE_TEXTAREA),
-  RADIO(ModelNodeNames.FIELD_INPUT_TYPE_RADIO),
-  CHECKBOX(ModelNodeNames.FIELD_INPUT_TYPE_CHECKBOX),
-  TEMPORAL(ModelNodeNames.FIELD_INPUT_TYPE_TEMPORAL),
-  EMAIL(ModelNodeNames.FIELD_INPUT_TYPE_EMAIL),
-  LIST(ModelNodeNames.FIELD_INPUT_TYPE_LIST),
-  NUMERIC(ModelNodeNames.FIELD_INPUT_TYPE_NUMERIC),
-  PHONE_NUMBER(ModelNodeNames.FIELD_INPUT_TYPE_PHONE_NUMBER),
-  SECTION_BREAK(ModelNodeNames.FIELD_INPUT_TYPE_SECTION_BREAK),
-  RICHTEXT(ModelNodeNames.FIELD_INPUT_TYPE_RICH_TEXT),
-  IMAGE(ModelNodeNames.FIELD_INPUT_TYPE_IMAGE),
-  LINK(ModelNodeNames.FIELD_INPUT_TYPE_LINK),
-  YOUTUBE(ModelNodeNames.FIELD_INPUT_TYPE_YOUTUBE),
-  ATTRIBUTE_VALUE(ModelNodeNames.FIELD_INPUT_TYPE_ATTRIBUTE_VALUE);
+  TEXTFIELD(FIELD_INPUT_TYPE_TEXTFIELD),
+  TEXTAREA(FIELD_INPUT_TYPE_TEXTAREA),
+  RADIO(FIELD_INPUT_TYPE_RADIO),
+  CHECKBOX(FIELD_INPUT_TYPE_CHECKBOX),
+  TEMPORAL(FIELD_INPUT_TYPE_TEMPORAL),
+  EMAIL(FIELD_INPUT_TYPE_EMAIL),
+  LIST(FIELD_INPUT_TYPE_LIST),
+  NUMERIC(FIELD_INPUT_TYPE_NUMERIC),
+  PHONE_NUMBER(FIELD_INPUT_TYPE_PHONE_NUMBER),
+  SECTION_BREAK(FIELD_INPUT_TYPE_SECTION_BREAK),
+  RICHTEXT(FIELD_INPUT_TYPE_RICH_TEXT),
+  IMAGE(FIELD_INPUT_TYPE_IMAGE),
+  LINK(FIELD_INPUT_TYPE_LINK),
+  YOUTUBE(FIELD_INPUT_TYPE_YOUTUBE),
+  ATTRIBUTE_VALUE(FIELD_INPUT_TYPE_ATTRIBUTE_VALUE);
 
   private final String text;
 
