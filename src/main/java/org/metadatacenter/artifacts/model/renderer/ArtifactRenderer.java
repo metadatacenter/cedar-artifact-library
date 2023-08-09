@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.Artifact;
+import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
@@ -515,14 +516,13 @@ public class ArtifactRenderer
    *         "pav:createdBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "pav:lastUpdatedOn": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:dateTime"] }}},
    *         "oslc:modifiedBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }} },
-   *         "skos:notation": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
-   *         "<Child Name 1>": { "enum": [ "<CHILD_PROPERTY_URI_1>"] },
+   *         "[Child Name 1]": { "enum": [ "[CHILD_PROPERTY_URI_1]"] },
    *         ...
-   *         "<Child Name n>": { "enum": [ "<CHILD_PROPERTY_URI_n>"] }
+   *         "[Child Name n]": { "enum": [ "[CHILD_PROPERTY_URI_n]"] }
    *       },
    *       "required": [ "xsd", "pav", "schema", "oslc", "schema:isBasedOn", "schema:name", "schema:description",
    *                     "pav:createdOn", "pav:createdBy", "pav:lastUpdatedOn", "oslc:modifiedBy",
-   *                     "<Child Name 1>", ... "<Child Name n>" ],
+   *                     "[Child Name 1]", ... "[Child Name n]" ],
    *       "additionalProperties": false
    *     },
    *     "@id": { "type": [ "string", "null" ], "format": "uri" },
@@ -537,6 +537,9 @@ public class ArtifactRenderer
    *     "pav:createdBy": { "type": [ "string", "null" ], "format": "uri" },
    *     "pav:lastUpdatedOn": {  "type": [ "string", "null" ], "format": "date-time" },
    *     "oslc:modifiedBy": { "type": [ "string", "null" ], "format": "uri" }
+   *     "[Child Name 1]": { [Child JSON Schema 1] },
+   *     ...
+   *     "[Child Name n]": { [Child JSON Schema n] }
    *   }
    * </pre>
    * A conforming instance should look as follows:
@@ -557,7 +560,6 @@ public class ArtifactRenderer
    *     "pav:createdOn": {  "@type": "xsd:dateTime" },
    *     "pav:createdBy": { "@type": "@id" },
    *     "oslc:modifiedBy": { "@type": "@id" },
-   *     "skos:notation": { "@type": "xsd:string" },
    *     "Child Name 1": "https://myschema.org/property/p1"
    *     ...
    *     "Child Name n": "https://myschema.org/property/pn"
@@ -568,9 +570,9 @@ public class ArtifactRenderer
    *   "schema:name": "Study SDY232", "schema:description": "Metadata for SDY232 study",
    *   "pav:createdOn": "2023-07-28T11:10:41-07:00", "pav:createdBy": "https://metadatacenter.org/users/656433",
    *   "pav:lastUpdatedOn": "2023-07-28T11:10:41-07:00", "oslc:modifiedBy": "https://metadatacenter.org/users/524332",
-   *   "Child Name 1": { ... },
+   *   "Child Name 1": { [Child JSON-LD 1] },
    *   ...
-   *   "Child Name n": { ... }
+   *   "Child Name n": { [Child JSON-LD n] }
    * }
    * </pre>
    */
@@ -590,11 +592,15 @@ public class ArtifactRenderer
     rendering.put(PAV_LAST_UPDATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderUriOrNullJsonSchemaTypeSpecification());
 
+    for (ChildSchemaArtifact childSchemaArtifact : parentSchemaArtifact.getChildSchemas()) {
+      // TODO Add child schema
+    }
+
     return rendering;
   }
 
   /**
-   * Generate a JSON Schema specification for a @context properties specification in a parent artifact.
+   * Generate a JSON Schema specification for a @context properties specification in a parent artifact
    * <p></p>
    * Defined as follows:
    * <pre>
@@ -615,7 +621,6 @@ public class ArtifactRenderer
    *         "pav:createdBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "pav:lastUpdatedOn": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:dateTime"] }}},
    *         "oslc:modifiedBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }} },
-   *         "skos:notation": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
    *         "<Child Name 1>": { "enum": [ "<PROPERTY_URI_1>"] },
    *         ...
    *         "<Child Name n>": { "enum": [ "<PROPERTY_URI_n>"] }
@@ -639,7 +644,6 @@ public class ArtifactRenderer
    *     "pav:createdOn": {  "@type": "xsd:dateTime" },
    *     "pav:createdBy": { "@type": "@id" },
    *     "oslc:modifiedBy": { "@type": "@id" },
-   *     "skos:notation": { "@type": "xsd:string" },
    *     "Child Name 1": "https://myschema.org/property/p1"
    *     ...
    *     "Child Name n": "https://myschema.org/property/pn"
@@ -652,13 +656,12 @@ public class ArtifactRenderer
 
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(RDFS,
-      renderJsonSchemaUriEnumSpecification("http://www.w3.org/2000/01/rdf-schema#"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(XSD, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2001/XMLSchema#"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV, renderJsonSchemaUriEnumSpecification("http://purl.org/pav/"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SCHEMA, renderJsonSchemaUriEnumSpecification("http://schema.org/"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC, renderJsonSchemaUriEnumSpecification("http://open-services.net/ns/core#"));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS, renderJsonSchemaUriEnumSpecification("http://www.w3.org/2004/02/skos/core#"));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(RDFS, renderJsonSchemaUriEnumSpecification(RDFS_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(XSD, renderJsonSchemaUriEnumSpecification(XSD_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV, renderJsonSchemaUriEnumSpecification(PAV_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SCHEMA, renderJsonSchemaUriEnumSpecification(SCHEMA_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC, renderJsonSchemaUriEnumSpecification(OSLC_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS, renderJsonSchemaUriEnumSpecification(SKOS_IRI));
 
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.RDFS_LABEL, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SCHEMA_IS_BASED_ON, renderJsonSchemaJsonLdDatatypeSpecification(
@@ -673,7 +676,6 @@ public class ArtifactRenderer
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV_LAST_UPDATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(
       JSON_LD_ID));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(ModelNodeNames.SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
 
     for (Map.Entry<String, URI> entry : parentSchemaArtifact.getChildPropertyURIs().entrySet()) {
       String childName = entry.getKey();
