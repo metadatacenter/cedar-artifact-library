@@ -16,7 +16,9 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateO
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
+import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact
 {
@@ -25,11 +27,12 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   private final Optional<String> skosPrefLabel;
   private final List<String> skosAlternateLabels;
   private final boolean isMultiple;
+  private final Optional<URI> propertyURI;
 
   public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI,
     Optional<ValueConstraints> valueConstraints,
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    boolean isMultiple)
+    boolean isMultiple, Optional<URI> propertyURI)
   {
     super(schemaArtifact);
     this.valueConstraints = valueConstraints;
@@ -37,6 +40,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
     this.isMultiple = isMultiple;
+    this.propertyURI = propertyURI;
 
     validate();
   }
@@ -48,7 +52,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, FieldUI fieldUI,
     Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    boolean isMultiple)
+    boolean isMultiple, Optional<URI> propertyURI)
   {
     super(jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -60,6 +64,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
     this.isMultiple = isMultiple;
+    this.propertyURI = propertyURI;
 
     validate();
   }
@@ -76,6 +81,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = builder.skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(builder.skosAlternateLabels);
     this.isMultiple = builder.isMultiple;
+    this.propertyURI = builder.propertyURI;
 
     validate();
   }
@@ -96,6 +102,11 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   }
 
   @Override public boolean isMultiple() { return isMultiple; }
+
+  @Override public Optional<URI> getPropertyURI()
+  {
+    return propertyURI;
+  }
 
   public Optional<ValueConstraints> getValueConstraints()
   {
@@ -122,9 +133,10 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   {
     validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
     validateUIFieldNotNull(this, fieldUI, ModelNodeNames.UI);
-    validateOptionalFieldNotNull(this, valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(this, skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
-    validateListFieldNotNull(this, skosAlternateLabels, ModelNodeNames.SKOS_ALTLABEL);
+    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
+    validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
+    validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
+    validateOptionalFieldNotNull(this, propertyURI, "propertyURI");
   }
 
   public static Builder builder() {
@@ -156,6 +168,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Optional<String> skosPrefLabel = Optional.empty();
     private List<String> skosAlternateLabels = Collections.emptyList();
     private boolean isMultiple = false;
+    private Optional<URI> propertyURI = Optional.empty();
 
     private Builder() {
     }
@@ -284,6 +297,11 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
     public Builder withIsMultiple(boolean isMultiple) {
       this.isMultiple = isMultiple;
+      return this;
+    }
+
+    public Builder withPropertyURI(URI propertyURI) {
+      this.propertyURI = Optional.of(propertyURI);
       return this;
     }
 

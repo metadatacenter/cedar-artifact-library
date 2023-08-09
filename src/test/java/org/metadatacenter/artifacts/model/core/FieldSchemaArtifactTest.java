@@ -40,13 +40,14 @@ public class FieldSchemaArtifactTest
     Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/template-fields/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("https://repo.metadatacenter.org/fields/7666"));
+    Optional<URI> propertyURI = Optional.of(URI.create("https://schema.metadatacenter.org/properties/854"));
 
     FieldSchemaArtifact fieldSchemaArtifact = new FieldSchemaArtifact(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription,
       schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom,
       FieldUI.builder().withInputType(FieldInputType.TEXTFIELD).build(),
-      Optional.empty(), Optional.empty(), Collections.emptyList(), false);
+      Optional.empty(), Optional.empty(), Collections.emptyList(), false, propertyURI);
 
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.getJsonLdTypes());
     Assert.assertEquals(jsonLdId, fieldSchemaArtifact.getJsonLdId().get());
@@ -67,6 +68,7 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(artifactVersionStatus, fieldSchemaArtifact.getStatus());
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.getPreviousVersion());
     Assert.assertEquals(derivedFrom, fieldSchemaArtifact.getDerivedFrom());
+    Assert.assertEquals(propertyURI, fieldSchemaArtifact.getPropertyURI());
   }
 
   @Test public void testCreateFieldSchemaWithBuilder()
@@ -88,6 +90,7 @@ public class FieldSchemaArtifactTest
     Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
     URI previousVersion = URI.create("https://repo.metadatacenter.org/fields/3232");
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
+    Optional<URI> propertyURI = Optional.of(URI.create("https://schema.metadatacenter.org/properties/854"));
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.builder().
       withJsonLdId(jsonLdId).
@@ -99,6 +102,7 @@ public class FieldSchemaArtifactTest
       withArtifactVersion(artifactVersion).
       withPreviousVersion(previousVersion).
       withDerivedFrom(derivedFrom).
+      withPropertyURI(propertyURI.get()).
       build();
 
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.getJsonLdTypes());
@@ -117,6 +121,7 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(artifactVersionStatus, fieldSchemaArtifact.getStatus());
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.getPreviousVersion().get());
     Assert.assertEquals(derivedFrom, fieldSchemaArtifact.getDerivedFrom().get());
+    Assert.assertEquals(propertyURI, fieldSchemaArtifact.getPropertyURI());
 
   }
 

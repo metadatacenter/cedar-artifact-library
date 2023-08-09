@@ -23,18 +23,13 @@ public class TemplateSchemaArtifactTest
 
   @Test
   public void testCreateTemplateSchemaArtifact() {
-    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    Map<String, URI> childPropertyURIs = new HashMap<>();
     TemplateUI templateUI = TemplateUI.builder().build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName("Test")
-      .withChildPropertyURIs(childPropertyURIs)
       .withTemplateUI(templateUI).build();
 
     assertEquals(templateSchemaArtifact.getName(), "Test");
-    assertEquals(templateSchemaArtifact.getChildPropertyURIs(), childPropertyURIs);
     assertEquals(templateSchemaArtifact.getTemplateUI(), templateUI);
   }
 

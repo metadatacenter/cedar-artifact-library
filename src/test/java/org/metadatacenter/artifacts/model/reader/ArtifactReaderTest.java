@@ -19,6 +19,21 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ENUM;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public class ArtifactReaderTest {
   private ArtifactReader artifactReader;
@@ -141,7 +156,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseFieldArtifact("Test name", "Test description");
 
-    objectNode.with(ModelNodeNames.UI).put(ModelNodeNames.UI_FIELD_INPUT_TYPE, ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD);
+    objectNode.with(UI).put(ModelNodeNames.UI_FIELD_INPUT_TYPE, ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(objectNode);
 
@@ -151,34 +166,11 @@ public class ArtifactReaderTest {
     assertNotNull(fieldSchemaArtifact.getFieldUI());
   }
 
-  @Test
-  public void testsChildPropertyIRIs()
-  {
-    ObjectNode objectNode = createBaseElementArtifact("Test name", "Test description");
-
-    objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).set(ModelNodeNames.JSON_LD_CONTEXT, mapper.createObjectNode());
-    objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).put("field1", mapper.createObjectNode());
-    objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).put("field2", mapper.createObjectNode());
-    objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).with("field1").put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
-    objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).with("field1").withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add("https://example.com/enum1");
-    objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).with("field2").put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
-    objectNode.with(ModelNodeNames.JSON_SCHEMA_PROPERTIES).with(ModelNodeNames.JSON_LD_CONTEXT).with("field2").withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add("https://example.com/enum2");
-
-    ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(objectNode);
-    Map<String, URI> childPropertyURIs = elementSchemaArtifact.getChildPropertyURIs();
-
-    assertEquals(2, childPropertyURIs.size());
-    assertTrue(childPropertyURIs.containsKey("field1"));
-    assertTrue(childPropertyURIs.containsKey("field2"));
-    assertEquals("https://example.com/enum1", childPropertyURIs.get("field1").toString());
-    assertEquals("https://example.com/enum2", childPropertyURIs.get("field2").toString());
-  }
-
   private ObjectNode createBaseTemplateArtifact(String title, String description)
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
-    objectNode.put(ModelNodeNames.JSON_LD_TYPE, ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
+    objectNode.put(JSON_LD_TYPE, ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
   }
@@ -187,7 +179,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
-    objectNode.put(ModelNodeNames.JSON_LD_TYPE, ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI);
+    objectNode.put(JSON_LD_TYPE, ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
   }
@@ -196,7 +188,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
-    objectNode.put(ModelNodeNames.JSON_LD_TYPE, ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
+    objectNode.put(JSON_LD_TYPE, FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
   }
@@ -205,18 +197,18 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
-    objectNode.put(ModelNodeNames.JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    objectNode.put(ModelNodeNames.JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
-    objectNode.put(ModelNodeNames.JSON_SCHEMA_TITLE, "Test JSON Schema title");
-    objectNode.put(ModelNodeNames.JSON_SCHEMA_DESCRIPTION, "Test JSON Schema description");
-    objectNode.put(ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
-    objectNode.put(ModelNodeNames.SCHEMA_ORG_NAME, name);
-    objectNode.put(ModelNodeNames.SCHEMA_ORG_DESCRIPTION, description);
-    objectNode.put(ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+    objectNode.put(JSON_SCHEMA_SCHEMA, ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    objectNode.put(JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_OBJECT);
+    objectNode.put(JSON_SCHEMA_TITLE, "Test JSON Schema title");
+    objectNode.put(JSON_SCHEMA_DESCRIPTION, "Test JSON Schema description");
+    objectNode.put(SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
+    objectNode.put(SCHEMA_ORG_NAME, name);
+    objectNode.put(SCHEMA_ORG_DESCRIPTION, description);
+    objectNode.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
-    objectNode.put(ModelNodeNames.UI, mapper.createObjectNode());
+    objectNode.put(UI, mapper.createObjectNode());
 
-    objectNode.put(ModelNodeNames.JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
+    objectNode.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
     return objectNode;
   }

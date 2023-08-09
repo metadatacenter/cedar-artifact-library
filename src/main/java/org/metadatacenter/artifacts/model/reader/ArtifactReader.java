@@ -52,6 +52,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.metadatacenter.model.ModelNodeNames.ARTIFACT_CONTEXT_ENTRIES;
+import static org.metadatacenter.model.ModelNodeNames.ARTIFACT_CONTEXT_FIELDS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ENUM;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
+
 public class ArtifactReader
 {
   private final ObjectMapper mapper;
@@ -68,12 +82,12 @@ public class ArtifactReader
 
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
   {
-    return readElementSchemaArtifact(objectNode, "", false);
+    return readElementSchemaArtifact(objectNode, "", false, Optional.empty());
   }
 
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
   {
-    return readFieldSchemaArtifact(objectNode, "", false);
+    return readFieldSchemaArtifact(objectNode, "", false, Optional.empty());
   }
 
   public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
@@ -134,13 +148,14 @@ public class ArtifactReader
 
     checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
-    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
+    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyURIs);
 
-    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, templateUI);
+    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, templateUI);
   }
 
-  // A schema artifact's JSON Schema 'properties' object can contain a specification for a JSON-LD @context for
-  // the corresponding instance; this @context maps field names to a URI that represents a property specifications for each field.
+  // A parent schema artifact's JSON Schema 'properties' object can contain a specification for a JSON-LD @context for
+  // the corresponding instance; this @context maps child names to a URI that represents a property specifications
+  // for each child.
   //
   // e.g.,
   //
@@ -154,53 +169,54 @@ public class ArtifactReader
   //    }
   public  Map<String, URI> getChildPropertyURIs(ObjectNode objectNode, String path)
   {
-    Map<String, URI> fieldNames2URI = new HashMap<>();
-    String contextPath = "/" + ModelNodeNames.JSON_SCHEMA_PROPERTIES + "/" + ModelNodeNames.JSON_LD_CONTEXT;
+    Map<String, URI> childName2URI = new HashMap<>();
+    String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;
     JsonNode contextNode = objectNode.at(contextPath);
-    Set<String> modelFields = new HashSet<>(ModelNodeNames.SCHEMA_ARTIFACT_KEYWORDS);
+    Set<String> contextFieldNames = new HashSet<>(ARTIFACT_CONTEXT_ENTRIES);
 
     if (contextNode != null && contextNode.isObject()) {
       ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;
-      Iterator<String> fieldNames = jsonSchemaContextSpecificationNode.fieldNames();
+      Iterator<String> childNames = jsonSchemaContextSpecificationNode.fieldNames();
 
-      while (fieldNames.hasNext()) {
-        String fieldName = fieldNames.next();
-        if (!modelFields.contains(fieldName)) {
-          JsonNode enumNode = jsonSchemaContextSpecificationNode.get(fieldName);
+      while (childNames.hasNext()) {
+        String childName = childNames.next();
+        if (!contextFieldNames.contains(childName)) {
+          JsonNode enumNode = jsonSchemaContextSpecificationNode.get(childName);
 
           if (enumNode == null || !enumNode.isObject())
-            throw new ArtifactParseException("Expecting object node with enum specification", fieldName, path + contextPath);
+            throw new ArtifactParseException("Expecting object node with enum specification", childName, path + contextPath);
 
-          JsonNode enumArray = enumNode.get(ModelNodeNames.JSON_SCHEMA_ENUM);
+          JsonNode enumArray = enumNode.get(JSON_SCHEMA_ENUM);
 
           if (enumArray == null || !enumArray.isArray())
-            throw new ArtifactParseException("Expecting array for enum specification", ModelNodeNames.JSON_SCHEMA_ENUM,
-              path + contextPath + fieldName);
+            throw new ArtifactParseException("Expecting array for enum specification", JSON_SCHEMA_ENUM,
+              path + contextPath + childName);
 
           if (enumArray.size() != 1)
             throw new ArtifactParseException("Expecting exactly one value for enum specification, got " + enumArray.size(),
-              ModelNodeNames.JSON_SCHEMA_ENUM, path + contextPath + fieldName);
+              JSON_SCHEMA_ENUM, path + contextPath + childName);
 
           JsonNode elementNode = enumArray.get(0);
 
           if (!elementNode.isTextual())
             throw new ArtifactParseException("Expecting text node for enum specification, got " + elementNode.getNodeType(),
-              ModelNodeNames.JSON_SCHEMA_ENUM, path + contextPath + fieldName);
+              JSON_SCHEMA_ENUM, path + contextPath + childName);
 
           try {
             URI propertyURI = new URI(elementNode.asText());
-            fieldNames2URI.put(fieldName, propertyURI);
+            childName2URI.put(childName, propertyURI);
           } catch (URISyntaxException e) {
             throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
-              ModelNodeNames.JSON_SCHEMA_ENUM, path + contextPath + fieldName);
+              JSON_SCHEMA_ENUM, path + contextPath + childName);
           }
         }
       }
     }
-    return fieldNames2URI;
+    return childName2URI;
   }
 
-  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
+  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path,
+    boolean isMultiple, Optional<URI> propertyURI)
   {
     ObjectNode fieldNode = getFieldNode(objectNode, path);
 
@@ -212,48 +228,33 @@ public class ArtifactReader
 
     checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
 
-    return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels, isMultiple);
+    return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels,
+      isMultiple, propertyURI);
   }
 
-  /**
-   * Attribute-value fields are defined inside the first element of an "items" array
-   */
-  private ObjectNode getFieldNode(ObjectNode objectNode, String path)
-  {
-    if (objectNode.isArray()) {
-      JsonNode itemsNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_ITEMS);
-      if (itemsNode == null || !itemsNode.isArray() || !itemsNode.iterator().hasNext())
-        throw new ArtifactParseException("Expecting array",  ModelNodeNames.JSON_SCHEMA_ITEMS, path);
 
-      JsonNode itemNode = itemsNode.iterator().next();
-      if (!itemNode.isObject())
-        throw new ArtifactParseException("Expecting object as first element", ModelNodeNames.JSON_SCHEMA_ITEMS, path);
-      return  (ObjectNode)itemNode;
-    } else
-      return objectNode;
-  }
-
-  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path, boolean isMultiple)
+  private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path,
+    boolean isMultiple, Optional<URI> propertyURI)
   {
     SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
 
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
     ElementUI elementUI = readElementUI(objectNode, path);
+    Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
 
-    checkElementSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
+    checkElementSchemaArtifactJsonLdType(schemaArtifact.getJsonLdTypes(), path);
 
-    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas);
+    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyURIs);
 
-    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, childPropertyURIs, isMultiple, elementUI);
+    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, elementUI, isMultiple, propertyURI);
   }
 
   private Artifact readArtifact(ObjectNode objectNode, String path)
   {
     List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
     Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
-    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, ModelNodeNames.JSON_LD_CONTEXT);
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
     Optional<URI> createdBy = readCreatedByField(objectNode, path);
     Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
     Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
@@ -289,74 +290,83 @@ public class ArtifactReader
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
-    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas)
+    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
+    Map<String, URI> childPropertyURIs)
   {
-    JsonNode propertiesNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_PROPERTIES);
+    JsonNode propertiesNode = objectNode.get(JSON_SCHEMA_PROPERTIES);
 
     if (propertiesNode == null || !propertiesNode.isObject())
-      throw new ArtifactParseException("Invalid JSON Schema properties node", ModelNodeNames.JSON_SCHEMA_PROPERTIES, path);
+      throw new ArtifactParseException("Invalid JSON Schema properties node", JSON_SCHEMA_PROPERTIES, path);
 
-    Iterator<String> jsonFieldNames = propertiesNode.fieldNames();
+    Iterator<String> jsonChildNames = propertiesNode.fieldNames();
 
-    while (jsonFieldNames.hasNext()) {
-      String jsonFieldName = jsonFieldNames.next();
+    while (jsonChildNames.hasNext()) {
+      String jsonChildName = jsonChildNames.next();
       boolean isMultiple = false;
 
       // The /properties field for each schema artifact contains entries constraining fields in instances
-      if (!ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)
-        && !ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)
-        && !ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonFieldName)) {
-        JsonNode jsonFieldOrElementSchemaArtifactNode = propertiesNode.get(jsonFieldName);
-        String fieldOrElementPath = path + "/properties/" + jsonFieldName;
+      if (!TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonChildName))
+        if (!FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(jsonChildName) && !ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(
+          jsonChildName)) {
+          JsonNode jsonFieldOrElementSchemaArtifactNode = propertiesNode.get(jsonChildName);
+          String fieldOrElementPath = path + "/properties/" + jsonChildName;
 
-        if (jsonFieldOrElementSchemaArtifactNode.isObject()) {
+          if (jsonFieldOrElementSchemaArtifactNode.isObject()) {
 
-          String jsonSchemaType = readJsonSchemaTypeField((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
-            fieldOrElementPath);
+            String jsonSchemaType = readJsonSchemaTypeField((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
+              fieldOrElementPath);
 
-          if (jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_ARRAY)) {
-            jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode.get(ModelNodeNames.JSON_SCHEMA_ITEMS);
+            if (jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_ARRAY)) {
+              jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode.get(
+                ModelNodeNames.JSON_SCHEMA_ITEMS);
 
-            if (jsonFieldOrElementSchemaArtifactNode == null)
-              throw new ArtifactParseException("No items field in array", ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
+              if (jsonFieldOrElementSchemaArtifactNode == null)
+                throw new ArtifactParseException("No items field in array", ModelNodeNames.JSON_SCHEMA_ITEMS,
+                  fieldOrElementPath);
 
-            isMultiple = true;
-            fieldOrElementPath += "/items";
+              isMultiple = true;
+              fieldOrElementPath += "/items";
 
-            if (!jsonFieldOrElementSchemaArtifactNode.isObject())
-              throw new ArtifactParseException("Non-object items content in array", ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
-          } else if (!jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_OBJECT)) {
-            throw new ArtifactParseException("Expecting array or object, got " + jsonSchemaType, ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
+              if (!jsonFieldOrElementSchemaArtifactNode.isObject())
+                throw new ArtifactParseException("Non-object items content in array", ModelNodeNames.JSON_SCHEMA_ITEMS,
+                  fieldOrElementPath);
+            } else if (!jsonSchemaType.equals(ModelNodeNames.JSON_SCHEMA_OBJECT)) {
+              throw new ArtifactParseException("Expecting array or object, got " + jsonSchemaType,
+                ModelNodeNames.JSON_SCHEMA_ITEMS, fieldOrElementPath);
+            }
+
+            List<URI> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
+              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
+
+            checkSchemaArtifactJSONLDType(subSchemaArtifactJsonLDTypes, fieldOrElementPath);
+
+            URI subSchemaArtifactJsonLDType = subSchemaArtifactJsonLDTypes.get(0);
+            Optional<URI> propertyURI = childPropertyURIs.containsKey(jsonChildName) ?
+              Optional.of(childPropertyURIs.get(jsonChildName)) :
+              Optional.empty();
+
+            if (subSchemaArtifactJsonLDType.toString().equals(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
+              throw new ArtifactParseException("Invalid nesting of template schema artifact", jsonChildName,
+                fieldOrElementPath);
+
+            } else if (subSchemaArtifactJsonLDType.toString().equals(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
+              ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
+                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, propertyURI);
+              elementSchemas.put(jsonChildName, elementSchemaArtifact);
+            } else if (subSchemaArtifactJsonLDType.toString().equals(FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
+              FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
+                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, propertyURI);
+              fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
+            } else if (subSchemaArtifactJsonLDType.toString().equals(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
+              // TODO: We do not yet handle these
+            } else
+              throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLDType, jsonChildName,
+                fieldOrElementPath);
+
+          } else {
+            throw new ArtifactParseException("Unknown non-object schema artifact", jsonChildName, fieldOrElementPath);
           }
-
-          List<URI> subSchemaArtifactJsonLDTypes = readJsonLDTypeField(
-            (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath);
-
-          checkSchemaArtifactJSONLDType(subSchemaArtifactJsonLDTypes, fieldOrElementPath);
-
-          URI subSchemaArtifactJsonLDType = subSchemaArtifactJsonLDTypes.get(0);
-
-          if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            throw new ArtifactParseException("Invalid nesting of template schema artifact", jsonFieldName, fieldOrElementPath);
-
-          } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
-              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple);
-            elementSchemas.put(jsonFieldName, elementSchemaArtifact);
-          } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
-              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple);
-            fieldSchemas.put(jsonFieldName, fieldSchemaArtifact);
-          } else if (subSchemaArtifactJsonLDType.toString().equals(ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
-            // TODO: We do not yet handle these
-          } else
-            throw new ArtifactParseException(
-              "Unknown JSON-LD @type " + subSchemaArtifactJsonLDType, jsonFieldName, fieldOrElementPath);
-
-        } else {
-          throw new ArtifactParseException("Unknown non-object schema artifact", jsonFieldName, fieldOrElementPath);
         }
-      }
     }
   }
 
@@ -446,18 +456,18 @@ public class ArtifactReader
 
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.toString().equals(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new ArtifactParseException("Unexpected template schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
         ModelNodeNames.JSON_LD_TYPE, path);
   }
 
-  private void checkElementSchemaArtifactJSONLDType(List<URI> schemaArtifactJsonLDTypes, String path)
+  private void checkElementSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLDTypes, String path)
   {
     checkSchemaArtifactJSONLDType(schemaArtifactJsonLDTypes, path);
 
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.toString().equals(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new ArtifactParseException("Unexpected element schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
         ModelNodeNames.JSON_LD_TYPE, path);
   }
@@ -468,7 +478,7 @@ public class ArtifactReader
 
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!schemaArtifactJsonLDType.toString().equals(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.toString().equals(FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new ArtifactParseException("Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
         ModelNodeNames.JSON_LD_TYPE, path);
   }
@@ -1043,6 +1053,24 @@ public class ArtifactReader
     return fieldNameStringValueMap;
   }
 
+  /**
+   * Attribute-value fields are defined inside the first element of an "items" array
+   */
+  private ObjectNode getFieldNode(ObjectNode objectNode, String path)
+  {
+    if (objectNode.isArray()) {
+      JsonNode itemsNode = objectNode.get(ModelNodeNames.JSON_SCHEMA_ITEMS);
+      if (itemsNode == null || !itemsNode.isArray() || !itemsNode.iterator().hasNext())
+        throw new ArtifactParseException("Expecting array",  ModelNodeNames.JSON_SCHEMA_ITEMS, path);
+
+      JsonNode itemNode = itemsNode.iterator().next();
+      if (!itemNode.isObject())
+        throw new ArtifactParseException("Expecting object as first element", ModelNodeNames.JSON_SCHEMA_ITEMS, path);
+      return  (ObjectNode)itemNode;
+    } else
+      return objectNode;
+  }
+
   private String readJsonSchemaTitleField(ObjectNode objectNode, String path)
   {
     return readRequiredStringField(objectNode, path, ModelNodeNames.JSON_SCHEMA_TITLE);
@@ -1323,7 +1351,7 @@ public class ArtifactReader
 
   private boolean hasJSONLDContextField(ObjectNode objectNode)
   {
-    return objectNode.get(ModelNodeNames.JSON_LD_CONTEXT) != null;
+    return objectNode.get(JSON_LD_CONTEXT) != null;
   }
 
   private URI readIsBasedOnField(ObjectNode objectNode, String path)

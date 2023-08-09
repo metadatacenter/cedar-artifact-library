@@ -24,16 +24,15 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   private final Map<String, FieldSchemaArtifact> fieldSchemas;
   private final Map<String, ElementSchemaArtifact> elementSchemas;
   private final TemplateUI templateUI;
-  private final Map<String, URI> childPropertyURIs;
 
-  public TemplateSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
+  public TemplateSchemaArtifact(SchemaArtifact schemaArtifact,
+    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
+    TemplateUI templateUI)
   {
     super(schemaArtifact);
+    this.templateUI = templateUI;
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
-    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
-    this.templateUI = templateUI;
 
     validate();
   }
@@ -41,19 +40,18 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
   public TemplateSchemaArtifact(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String schemaOrgName, String schemaOrgDescription, Optional<String> schemdOrgIdentifier,
+    String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
+    Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas, TemplateUI templateUI)
   {
     super( jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      schemaOrgName, schemaOrgDescription, schemdOrgIdentifier,
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
-    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
     this.templateUI = templateUI;
 
     validate();
@@ -64,7 +62,6 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     super(templateSchemaArtifact);
     this.fieldSchemas = templateSchemaArtifact.fieldSchemas;
     this.elementSchemas = templateSchemaArtifact.elementSchemas;
-    this.childPropertyURIs = templateSchemaArtifact.childPropertyURIs;
     this.templateUI = templateSchemaArtifact.templateUI;
 
     validate();
@@ -79,15 +76,9 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
       builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousVersion, builder.derivedFrom);
     this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
-    this.childPropertyURIs = Collections.unmodifiableMap(builder.childPropertyURIs);
     this.templateUI = builder.templateUI;
 
     validate();
-  }
-
-  @Override public Map<String, URI> getChildPropertyURIs()
-  {
-    return Collections.unmodifiableMap(childPropertyURIs);
   }
 
   @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
@@ -135,19 +126,12 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     return templateUI;
   }
 
-  @Override public String toString()
-  {
-    return "TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
-      + ", templateUI=" + templateUI + ", childPropertyURIs=" + childPropertyURIs + '}';
-  }
-
   private void validate()
   {
     validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, templateUI, ModelNodeNames.UI);
-    validateMapFieldNotNull(this, childPropertyURIs, "childPropertyURIs");
 
     Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
     Set<String> childNames = getChildNames().stream().collect(Collectors.toSet());
@@ -155,6 +139,12 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     if (!order.equals(childNames))
       throw new IllegalStateException("UI order field must contain an entry for all child fields and elements in " +
         "template schema artifact " + getName() + "; missing fields: " + childNames.removeAll(order));
+  }
+
+  @Override public String toString()
+  {
+    return "TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
+      + ", templateUI=" + templateUI + '}';
   }
 
   public static Builder builder() {
@@ -183,7 +173,6 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     private Optional<URI> derivedFrom = Optional.empty();
     private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    private Map<String, URI> childPropertyURIs = new HashMap<>();
     private TemplateUI templateUI = TemplateUI.builder().build();
 
     private Builder() {
@@ -301,12 +290,6 @@ public final class TemplateSchemaArtifact extends SchemaArtifact implements Pare
     public Builder withElementSchema(String elementName, ElementSchemaArtifact elementSchemaArtifact)
     {
       this.elementSchemas.put(elementName, elementSchemaArtifact);
-      return this;
-    }
-
-    public Builder withChildPropertyURIs(Map<String, URI> childPropertyURIs)
-    {
-      this.childPropertyURIs = childPropertyURIs;
       return this;
     }
 
