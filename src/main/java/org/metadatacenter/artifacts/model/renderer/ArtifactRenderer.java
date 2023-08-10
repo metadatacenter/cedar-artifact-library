@@ -189,7 +189,7 @@ public class ArtifactRenderer
 
     rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.getElementUI()));
 
-    // TODO isMultiple!!!
+    // TODO isMultiple, minItem, maxItems
 
     return rendering;
   }
@@ -256,7 +256,7 @@ public class ArtifactRenderer
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.getFieldUI()));
 
-    // TODO isMultiple!!!
+    // TODO isMultiple, minItem, maxItems
 
     return rendering;
   }

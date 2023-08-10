@@ -47,7 +47,8 @@ public class FieldSchemaArtifactTest
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription,
       schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom,
       FieldUI.builder().withInputType(FieldInputType.TEXTFIELD).build(),
-      Optional.empty(), Optional.empty(), Collections.emptyList(), false, propertyURI);
+      Optional.empty(), Optional.empty(), Collections.emptyList(),
+      false, Optional.empty(), Optional.empty(), propertyURI);
 
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.getJsonLdTypes());
     Assert.assertEquals(jsonLdId, fieldSchemaArtifact.getJsonLdId().get());

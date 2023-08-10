@@ -9,5 +9,9 @@ public sealed interface ChildSchemaArtifact permits ElementSchemaArtifact, Field
 
   boolean isMultiple();
 
+  Optional<Integer> getMinItems();
+
+  Optional<Integer> getMaxItems();
+
   Optional<URI> getPropertyURI();
 }

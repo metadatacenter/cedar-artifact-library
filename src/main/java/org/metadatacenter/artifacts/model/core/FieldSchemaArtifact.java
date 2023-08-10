@@ -30,12 +30,14 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   private final Optional<String> skosPrefLabel;
   private final List<String> skosAlternateLabels;
   private final boolean isMultiple;
+  private final Optional<Integer> minItems;
+  private final Optional<Integer> maxItems;
   private final Optional<URI> propertyURI;
 
   public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI,
     Optional<ValueConstraints> valueConstraints,
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    boolean isMultiple, Optional<URI> propertyURI)
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
   {
     super(schemaArtifact);
     this.valueConstraints = valueConstraints;
@@ -43,6 +45,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
     this.isMultiple = isMultiple;
+    this.minItems = minItems;
+    this.maxItems = maxItems;
     this.propertyURI = propertyURI;
 
     validate();
@@ -55,7 +59,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, FieldUI fieldUI,
     Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    boolean isMultiple, Optional<URI> propertyURI)
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
   {
     super(jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -67,6 +71,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
     this.isMultiple = isMultiple;
+    this.minItems = minItems;
+    this.maxItems = maxItems;
     this.propertyURI = propertyURI;
 
     validate();
@@ -84,6 +90,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     this.skosPrefLabel = builder.skosPrefLabel;
     this.skosAlternateLabels = Collections.unmodifiableList(builder.skosAlternateLabels);
     this.isMultiple = builder.isMultiple;
+    this.minItems = builder.minItems;
+    this.maxItems = builder.maxItems;
     this.propertyURI = builder.propertyURI;
 
     validate();
@@ -105,6 +113,10 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
   }
 
   @Override public boolean isMultiple() { return isMultiple; }
+
+  @Override public Optional<Integer> getMinItems() { return minItems; }
+
+  @Override public Optional<Integer> getMaxItems() { return minItems; }
 
   @Override public Optional<URI> getPropertyURI()
   {
@@ -139,6 +151,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
+    validateOptionalFieldNotNull(this, minItems, "minItems");
+    validateOptionalFieldNotNull(this, maxItems, "maxItems");
     validateOptionalFieldNotNull(this, propertyURI, "propertyURI");
   }
 
@@ -171,6 +185,8 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
     private Optional<String> skosPrefLabel = Optional.empty();
     private List<String> skosAlternateLabels = Collections.emptyList();
     private boolean isMultiple = false;
+    private Optional<Integer> minItems = Optional.empty();
+    private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyURI = Optional.empty();
 
     private Builder() {
@@ -300,6 +316,18 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
     public Builder withIsMultiple(boolean isMultiple) {
       this.isMultiple = isMultiple;
+      return this;
+    }
+
+    public FieldSchemaArtifact.Builder withMinItems(Integer minItems)
+    {
+      this.minItems = Optional.of(minItems);
+      return this;
+    }
+
+    public FieldSchemaArtifact.Builder withMaxItems(Integer maxItems)
+    {
+      this.minItems = Optional.of(maxItems);
       return this;
     }
 

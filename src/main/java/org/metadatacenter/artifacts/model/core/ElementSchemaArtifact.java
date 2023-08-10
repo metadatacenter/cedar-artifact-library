@@ -27,17 +27,21 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
   private final Map<String, ElementSchemaArtifact> elementSchemas;
   private final ElementUI elementUI;
   private final boolean isMultiple;
+  private final Optional<Integer> minItems;
+  private final Optional<Integer> maxItems;
   private final Optional<URI> propertyURI;
 
   public ElementSchemaArtifact(SchemaArtifact schemaArtifact,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas, ElementUI elementUI,
-    boolean isMultiple, Optional<URI> propertyURI)
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
   {
     super(schemaArtifact);
     this.elementUI = elementUI;
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.isMultiple = isMultiple;
+    this.minItems = minItems;
+    this.maxItems = maxItems;
     this.propertyURI = propertyURI;
 
     validate();
@@ -50,7 +54,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas, ElementUI elementUI,
-    boolean isMultiple, Optional<URI> propertyURI)
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
   {
     super(jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -61,6 +65,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
     this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
     this.isMultiple = isMultiple;
+    this.minItems = minItems;
+    this.maxItems = maxItems;
     this.propertyURI = propertyURI;
 
     validate();
@@ -73,6 +79,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     this.elementSchemas = elementSchemaArtifact.elementSchemas;
     this.elementUI = elementSchemaArtifact.elementUI;
     this.isMultiple = elementSchemaArtifact.isMultiple;
+    this.minItems = elementSchemaArtifact.minItems;
+    this.maxItems = elementSchemaArtifact.maxItems;
     this.propertyURI = elementSchemaArtifact.propertyURI;
 
     validate();
@@ -90,6 +98,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
     this.elementUI = builder.elementUI;
     this.isMultiple = builder.isMultiple;
+    this.minItems = builder.minItems;
+    this.maxItems = builder.maxItems;
     this.propertyURI = builder.propertyURI;
 
     validate();
@@ -138,6 +148,10 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     return isMultiple;
   }
 
+  @Override public Optional<Integer> getMinItems() { return minItems; }
+
+  @Override public Optional<Integer> getMaxItems() { return minItems; }
+
   @Override public Optional<URI> getPropertyURI()
   {
     return propertyURI;
@@ -152,8 +166,9 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   @Override public String toString()
   {
-    return "ElementSchemaArtifact{" + "elementUI=" + elementUI + ", fieldSchemas=" + fieldSchemas + ", elementSchemas="
-      + elementSchemas + ", isMultiple=" + isMultiple + ", propertyURI=" + propertyURI + '}';
+    return "ElementSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
+      + ", elementUI=" + elementUI + ", isMultiple=" + isMultiple + ", minItems=" + minItems + ", maxItems=" + maxItems
+      + ", propertyURI=" + propertyURI + '}';
   }
 
   private void validate()
@@ -163,6 +178,10 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUIFieldNotNull(this, elementUI, UI);
     validateOptionalFieldNotNull(this, propertyURI, "propertyURI");
+    validateOptionalFieldNotNull(this, minItems, "minItems");
+    validateOptionalFieldNotNull(this, maxItems, "maxItems");
+
+    // TODO Validate that min <= max
 
     Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
     Set<String> childNames = getChildNames().stream().collect(Collectors.toSet());
@@ -201,6 +220,8 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     private boolean isMultiple = false;
+    private Optional<Integer> minItems = Optional.empty();
+    private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyURI = Optional.empty();
 
     private Builder() {
@@ -354,6 +375,18 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     public Builder withIsMultiple(boolean isMultiple)
     {
       this.isMultiple = isMultiple;
+      return this;
+    }
+
+    public Builder withMinItems(Integer minItems)
+    {
+      this.minItems = Optional.of(minItems);
+      return this;
+    }
+
+    public Builder withMaxItems(Integer maxItems)
+    {
+      this.minItems = Optional.of(maxItems);
       return this;
     }
 
