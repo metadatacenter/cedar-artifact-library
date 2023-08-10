@@ -181,7 +181,14 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     validateOptionalFieldNotNull(this, minItems, "minItems");
     validateOptionalFieldNotNull(this, maxItems, "maxItems");
 
-    // TODO Validate that min <= max
+    if (minItems.isPresent() && minItems.get() < 0)
+      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + getName());
+
+    if (maxItems.isPresent() && maxItems.get() < 1)
+      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + getName());
+
+    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
+      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + getName());
 
     Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
     Set<String> childNames = getChildNames().stream().collect(Collectors.toSet());
