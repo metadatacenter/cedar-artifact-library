@@ -284,7 +284,7 @@ public class ArtifactExcelRenderer
             dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
               minValue.toString(), maxValue.toString()));
         } else { // Minimum present, maximum not present
-          return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.GREATER_THAN, minValue.toString(), ""));
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
         }
       } else {
         if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
@@ -317,7 +317,7 @@ public class ArtifactExcelRenderer
               minValue.toString(), maxValue.toString()));
         } else { // Minimum present, maximum not present
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-            DataValidationConstraint.OperatorType.GREATER_THAN, minValue.toString(), ""));
+            DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
         }
       } else {
         if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
