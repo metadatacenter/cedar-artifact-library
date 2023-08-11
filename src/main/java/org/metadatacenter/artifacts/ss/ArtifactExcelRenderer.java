@@ -292,12 +292,12 @@ public class ArtifactExcelRenderer
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
         } else { // Maximum not present, minimum not present
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-            String.valueOf(Float.MIN_VALUE), String.valueOf(Float.MAX_VALUE)));
+            String.valueOf(- Float.MAX_VALUE), String.valueOf(Float.MAX_VALUE)));
         }
       }
     } else
       return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-        String.valueOf(Float.MIN_VALUE), String.valueOf(Float.MAX_VALUE)));
+        String.valueOf(- Float.MAX_VALUE), String.valueOf(Float.MAX_VALUE)));
   }
 
   private Optional<DataValidationConstraint> createIntegerDataValidationConstraint(
