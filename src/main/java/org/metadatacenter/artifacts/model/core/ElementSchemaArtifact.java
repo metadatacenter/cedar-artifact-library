@@ -150,7 +150,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
   @Override public Optional<Integer> getMinItems() { return minItems; }
 
-  @Override public Optional<Integer> getMaxItems() { return minItems; }
+  @Override public Optional<Integer> getMaxItems() { return maxItems; }
 
   @Override public Optional<URI> getPropertyURI()
   {

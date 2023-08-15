@@ -116,7 +116,7 @@ public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSc
 
   @Override public Optional<Integer> getMinItems() { return minItems; }
 
-  @Override public Optional<Integer> getMaxItems() { return minItems; }
+  @Override public Optional<Integer> getMaxItems() { return maxItems; }
 
   @Override public Optional<URI> getPropertyURI()
   {
