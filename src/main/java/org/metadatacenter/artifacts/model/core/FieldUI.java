@@ -195,7 +195,7 @@ public final class FieldUI implements UI
     }
 
     public Builder withTimeZoneEnabled(boolean timeZoneEnabled) {
-      this.timeZoneEnabled = Optional.of(timeZoneEnabled);
+      this.timeZoneEnabled = Optional.ofNullable(timeZoneEnabled);
       return this;
     }
 

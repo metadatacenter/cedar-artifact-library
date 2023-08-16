@@ -242,7 +242,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
     public Builder withJsonLdId(URI jsonLdId)
     {
-      this.jsonLdId = Optional.of(jsonLdId);
+      this.jsonLdId = Optional.ofNullable(jsonLdId);
       return this;
     }
 
@@ -254,25 +254,25 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
     public Builder withCreatedBy(URI createdBy)
     {
-      this.createdBy = Optional.of(createdBy);
+      this.createdBy = Optional.ofNullable(createdBy);
       return this;
     }
 
     public Builder withModifiedBy(URI modifiedBy)
     {
-      this.modifiedBy = Optional.of(modifiedBy);
+      this.modifiedBy = Optional.ofNullable(modifiedBy);
       return this;
     }
 
     public Builder withCreatedOn(OffsetDateTime createdOn)
     {
-      this.createdOn = Optional.of(createdOn);
+      this.createdOn = Optional.ofNullable(createdOn);
       return this;
     }
 
     public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
     {
-      this.lastUpdatedOn = Optional.of(lastUpdatedOn);
+      this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
       return this;
     }
 
@@ -327,7 +327,7 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
     public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier)
     {
-      this.schemaOrgIdentifier = Optional.of(schemaOrgIdentifier);
+      this.schemaOrgIdentifier = Optional.ofNullable(schemaOrgIdentifier);
       return this;
     }
 
@@ -339,25 +339,25 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
     public Builder withArtifactVersion(Version artifactVersion)
     {
-      this.artifactVersion = Optional.of(artifactVersion);
+      this.artifactVersion = Optional.ofNullable(artifactVersion);
       return this;
     }
 
     public Builder withArtifactVersionStatus(Status artifactVersionStatus)
     {
-      this.artifactVersionStatus = Optional.of(artifactVersionStatus);
+      this.artifactVersionStatus = Optional.ofNullable(artifactVersionStatus);
       return this;
     }
 
     public Builder withPreviousVersion(URI previousVersion)
     {
-      this.previousVersion = Optional.of(previousVersion);
+      this.previousVersion = Optional.ofNullable(previousVersion);
       return this;
     }
 
     public Builder withDerivedFrom(URI derivedFrom)
     {
-      this.derivedFrom = Optional.of(derivedFrom);
+      this.derivedFrom = Optional.ofNullable(derivedFrom);
       return this;
     }
 
@@ -387,19 +387,19 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
     public Builder withMinItems(Integer minItems)
     {
-      this.minItems = Optional.of(minItems);
+      this.minItems = Optional.ofNullable(minItems);
       return this;
     }
 
     public Builder withMaxItems(Integer maxItems)
     {
-      this.minItems = Optional.of(maxItems);
+      this.minItems = Optional.ofNullable(maxItems);
       return this;
     }
 
     public Builder withPropertyURI(URI propertyURI)
     {
-      this.propertyURI = Optional.of(propertyURI);
+      this.propertyURI = Optional.ofNullable(propertyURI);
       return this;
     }
 

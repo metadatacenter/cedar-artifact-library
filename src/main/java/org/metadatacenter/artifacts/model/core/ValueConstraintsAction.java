@@ -80,7 +80,7 @@ public class ValueConstraintsAction
 
         public Builder sourceUri(URI sourceUri)
         {
-            this.sourceUri = Optional.of(sourceUri);
+            this.sourceUri = Optional.ofNullable(sourceUri);
             return this;
         }
 

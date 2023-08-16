@@ -132,7 +132,7 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     }
 
     public Builder withJsonLdId(URI jsonLdId) {
-      this.jsonLdId = Optional.of(jsonLdId);
+      this.jsonLdId = Optional.ofNullable(jsonLdId);
       return this;
     }
 
@@ -142,22 +142,22 @@ public final class TemplateInstanceArtifact extends InstanceArtifact implements 
     }
 
     public Builder withCreatedBy(URI createdBy) {
-      this.createdBy = Optional.of(createdBy);
+      this.createdBy = Optional.ofNullable(createdBy);
       return this;
     }
 
     public Builder withModifiedBy(URI modifiedBy) {
-      this.modifiedBy = Optional.of(modifiedBy);
+      this.modifiedBy = Optional.ofNullable(modifiedBy);
       return this;
     }
 
     public Builder withCreatedOn(OffsetDateTime createdOn) {
-      this.createdOn = Optional.of(createdOn);
+      this.createdOn = Optional.ofNullable(createdOn);
       return this;
     }
 
     public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn) {
-      this.lastUpdatedOn = Optional.of(lastUpdatedOn);
+      this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
       return this;
     }
 
