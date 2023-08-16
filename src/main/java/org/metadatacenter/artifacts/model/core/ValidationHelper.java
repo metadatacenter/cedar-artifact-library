@@ -53,6 +53,14 @@ public class ValidationHelper
       throw new IllegalStateException("URI list field " + fieldName + " must contain " + value + " in " + obj);
   }
 
+  public static void validateUriListContainsOneOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
+  {
+    validateListFieldNotNull(obj, uriListField, fieldName);
+
+    if (!uriListField.stream().anyMatch(values::contains))
+      throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values + " in " + obj);
+  }
+
   public static void validateVersionFieldNotNull(Object obj, Version field, String fieldName)
   {
     if (field == null)

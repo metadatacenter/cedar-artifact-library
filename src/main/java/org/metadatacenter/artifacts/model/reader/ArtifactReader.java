@@ -98,6 +98,7 @@ import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
+import static org.metadatacenter.model.ModelNodeNames.UI_CONTENT;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
 import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
@@ -448,7 +449,10 @@ public class ArtifactReader
                 propertyURI);
               fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
             } else if (subSchemaArtifactJsonLDType.toString().equals(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
-              // TODO: We do not yet handle these
+              FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
+                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, minItems, maxItems,
+                propertyURI);
+              fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
             } else
               throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLDType, jsonChildName,
                 fieldOrElementPath);
@@ -568,7 +572,8 @@ public class ArtifactReader
 
     URI schemaArtifactJsonLDType = schemaArtifactJsonLDTypes.get(0);
 
-    if (!schemaArtifactJsonLDType.toString().equals(FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLDType.toString().equals(FIELD_SCHEMA_ARTIFACT_TYPE_IRI) &&
+        !schemaArtifactJsonLDType.toString().equals(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
       throw new ArtifactParseException("Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLDType,
         JSON_LD_TYPE, path);
   }
@@ -891,8 +896,10 @@ public class ArtifactReader
 
     Optional<TemporalGranularity> temporalGranularity = readTemporalGranularity(uiNode, uiPath);
     Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(uiNode, uiPath);
+    Optional<String> content = readStringField(uiNode, uiPath, UI_CONTENT);
 
-    return new FieldUI(fieldInputType, isValueRecommendationEnabled, hidden, timeZoneEnabled, temporalGranularity, inputTimeFormat);
+    return new FieldUI(fieldInputType, isValueRecommendationEnabled, hidden, timeZoneEnabled,
+      temporalGranularity, inputTimeFormat, content);
   }
 
   private ElementUI readElementUI(ObjectNode objectNode, String path)

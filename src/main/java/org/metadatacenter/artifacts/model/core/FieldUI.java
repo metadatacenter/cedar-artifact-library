@@ -5,6 +5,7 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContainsOneOf;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.UI_INPUT_TIME_FORMAT;
 import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
@@ -18,10 +19,11 @@ public final class FieldUI implements UI
   private final Optional<Boolean> timeZoneEnabled;
   private final Optional<TemporalGranularity> temporalGranularity;
   private final Optional<InputTimeFormat> inputTimeFormat;
+  private final Optional<String> _content;
 
   public FieldUI(FieldInputType inputType, boolean valueRecommendationEnabled, boolean hidden,
     Optional<Boolean> timeZoneEnabled, Optional<TemporalGranularity> temporalGranularity,
-    Optional<InputTimeFormat> inputTimeFormat)
+    Optional<InputTimeFormat> inputTimeFormat, Optional<String> content)
   {
     this.inputType = inputType;
     this.valueRecommendationEnabled = valueRecommendationEnabled;
@@ -29,6 +31,7 @@ public final class FieldUI implements UI
     this.timeZoneEnabled = timeZoneEnabled;
     this.temporalGranularity = temporalGranularity;
     this.inputTimeFormat = inputTimeFormat;
+    this._content = content;
 
     validate();
   }
@@ -40,6 +43,7 @@ public final class FieldUI implements UI
     this.timeZoneEnabled = builder.timeZoneEnabled;
     this.temporalGranularity = builder.temporalGranularity;
     this.inputTimeFormat = builder.inputTimeFormat;
+    this._content = builder.content;
 
     validate();
   }
@@ -108,11 +112,13 @@ public final class FieldUI implements UI
     return inputTimeFormat;
   }
 
+  public Optional<String> getContent() { return _content; }
+
   @Override public String toString()
   {
     return "FieldUI{" + "inputType=" + inputType + ", valueRecommendationEnabled=" + valueRecommendationEnabled
       + ", hidden=" + hidden + ", timeZoneEnabled=" + timeZoneEnabled + ", temporalGranularity=" + temporalGranularity
-      + ", inputTimeFormat=" + inputTimeFormat + '}';
+      + ", inputTimeFormat=" + inputTimeFormat + ", _content=" + _content + '}';
   }
 
   private void validate()
@@ -168,6 +174,7 @@ public final class FieldUI implements UI
     private Optional<Boolean> timeZoneEnabled = Optional.empty();
     private Optional<TemporalGranularity> temporalGranularity = Optional.empty();
     private Optional<InputTimeFormat> inputTimeFormat = Optional.empty();
+    private Optional<String> content = Optional.empty();
 
     private Builder() {
     }
@@ -199,6 +206,11 @@ public final class FieldUI implements UI
 
     public Builder withInputTimeFormat(InputTimeFormat inputTimeFormat) {
       this.inputTimeFormat = Optional.ofNullable(inputTimeFormat);
+      return this;
+    }
+
+    public Builder withContent(String content) {
+      this.content = Optional.ofNullable(content);
       return this;
     }
 
