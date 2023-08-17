@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 public record Version(int major, int minor, int patch)
 {
-
   public Version
   {
     if (major < 0)
