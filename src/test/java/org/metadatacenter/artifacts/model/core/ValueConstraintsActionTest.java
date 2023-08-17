@@ -15,23 +15,23 @@ public class ValueConstraintsActionTest
     URI termUri = URI.create("https://purl.org/datacite/v4.4/TranslatedTitle");
     URI sourceUri = URI.create("https://purl.org/datacite/v4.4/TitleType");
     String source = "DATACITE-VOCAB";
-    ValueType type = ValueType.ONTOLOGY_CLASS;
+    ValueType valueType = ValueType.ONTOLOGY_CLASS;
     ValueConstraintsActionType action = ValueConstraintsActionType.DELETE;
     Optional<Integer> to = Optional.of(123);
 
     ValueConstraintsAction valueConstraintsAction = new ValueConstraintsAction.Builder()
-      .termUri(termUri)
-      .sourceUri(sourceUri)
-      .source(source)
-      .type(type)
-      .action(action)
-      .to(123)
+      .withTermUri(termUri)
+      .withSourceUri(sourceUri)
+      .withSource(source)
+      .withValueType(valueType)
+      .withAction(action)
+      .withTo(123)
       .build();
 
     assertEquals(termUri, valueConstraintsAction.termUri());
     assertEquals(sourceUri, valueConstraintsAction.sourceUri().get());
     assertEquals(source, valueConstraintsAction.source());
-    assertEquals(type, valueConstraintsAction.type());
+    assertEquals(valueType, valueConstraintsAction.type());
     assertEquals(action, valueConstraintsAction.action());
     assertEquals(to, valueConstraintsAction.to());
   }

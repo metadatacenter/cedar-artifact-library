@@ -15,37 +15,37 @@ public record ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, Strin
         private ValueConstraintsActionType action;
         private Optional<Integer> to = Optional.empty();
 
-        public Builder termUri(URI termUri)
+        public Builder withTermUri(URI termUri)
         {
             this.termUri = termUri;
             return this;
         }
 
-        public Builder sourceUri(URI sourceUri)
+        public Builder withSourceUri(URI sourceUri)
         {
             this.sourceUri = Optional.ofNullable(sourceUri);
             return this;
         }
 
-        public Builder source(String source)
+        public Builder withSource(String source)
         {
             this.source = source;
             return this;
         }
 
-        public Builder type(ValueType type)
+        public Builder withValueType(ValueType type)
         {
             this.type = type;
             return this;
         }
 
-        public Builder action(ValueConstraintsActionType action)
+        public Builder withAction(ValueConstraintsActionType action)
         {
             this.action = action;
             return this;
         }
 
-        public Builder to(int to)
+        public Builder withTo(int to)
         {
             this.to = Optional.of(to);
             return this;
