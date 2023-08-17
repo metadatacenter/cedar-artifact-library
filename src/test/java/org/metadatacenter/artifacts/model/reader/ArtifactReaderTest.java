@@ -129,7 +129,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = createBaseTemplateArtifact("Test name", "Test description");
+    ObjectNode objectNode = createBaseTemplateSchemaArtifact("Test name", "Test description");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -142,7 +142,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadElementSchemaArtifact()
   {
-    ObjectNode objectNode = createBaseElementArtifact("Test name", "Test description");
+    ObjectNode objectNode = createBaseElementSchemaArtifact("Test name", "Test description");
 
     ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(objectNode);
 
@@ -155,7 +155,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadFieldSchemaArtifact()
   {
-    ObjectNode objectNode = createBaseFieldArtifact("Test name", "Test description");
+    ObjectNode objectNode = createBaseFieldSchemaArtifact("Test name", "Test description");
 
     objectNode.with(UI).put(UI_FIELD_INPUT_TYPE, FIELD_INPUT_TYPE_TEXTFIELD);
 
@@ -167,7 +167,7 @@ public class ArtifactReaderTest {
     assertNotNull(fieldSchemaArtifact.getFieldUI());
   }
 
-  private ObjectNode createBaseTemplateArtifact(String title, String description)
+  private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
@@ -176,7 +176,7 @@ public class ArtifactReaderTest {
     return objectNode;
   }
 
-  private ObjectNode createBaseElementArtifact(String title, String description)
+  private ObjectNode createBaseElementSchemaArtifact(String title, String description)
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
@@ -185,7 +185,7 @@ public class ArtifactReaderTest {
     return objectNode;
   }
 
-  private ObjectNode createBaseFieldArtifact(String title, String description)
+  private ObjectNode createBaseFieldSchemaArtifact(String title, String description)
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 

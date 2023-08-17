@@ -4,13 +4,14 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Version
-{
-  private final int major;
-  private final int minor;
-  private final int patch;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-  public Version(int major, int minor, int patch)
+public record Version(int major, int minor, int patch)
+{
+
+  public Version
   {
     if (major < 0)
       throw new IllegalArgumentException("major must be 0 or greater");
@@ -20,29 +21,10 @@ public class Version
 
     if (patch < 0)
       throw new IllegalArgumentException("patch must be 0 or greater");
-
-    this.major = major;
-    this.minor = minor;
-    this.patch = patch;
   }
 
-  public int getMinor()
+  public static Version fromString(String versionText)
   {
-    return minor;
-  }
-
-  public int getPatch()
-  {
-    return patch;
-  }
-
-  public int getMajor()
-  {
-    return major;
-  }
-
-  public static Version fromString(String versionText) {
-
     Matcher m = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)").matcher(versionText);
 
     if (!m.matches())
@@ -53,25 +35,5 @@ public class Version
     int patch = Integer.parseInt(m.group(3));
 
     return new Version(major, minor, patch);
-  }
-
-  @Override public String toString()
-  {
-    return major + "." +  minor + "." + patch;
-  }
-
-  @Override public boolean equals(Object o)
-  {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-    Version version = (Version)o;
-    return major == version.major && minor == version.minor && patch == version.patch;
-  }
-
-  @Override public int hashCode()
-  {
-    return Objects.hash(major, minor, patch);
   }
 }
