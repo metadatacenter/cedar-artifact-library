@@ -216,43 +216,43 @@ public class ValueConstraints
       return this;
     }
 
-    public Builder withNumberType(Optional<NumberType> numberType) {
-      this.numberType = numberType;
+    public Builder withNumberType(NumberType numberType) {
+      this.numberType = Optional.ofNullable(numberType);
       return this;
     }
 
-    public Builder withUnitOfMeasure(Optional<String> unitOfMeasure) {
-      this.unitOfMeasure = unitOfMeasure;
+    public Builder withUnitOfMeasure(String unitOfMeasure) {
+      this.unitOfMeasure = Optional.ofNullable(unitOfMeasure);
       return this;
     }
 
-    public Builder withMinValue(Optional<Number> minValue) {
-      this.minValue = minValue;
+    public Builder withMinValue(Number minValue) {
+      this.minValue = Optional.ofNullable(minValue);
       return this;
     }
 
-    public Builder withMaxValue(Optional<Number> maxValue) {
-      this.maxValue = maxValue;
+    public Builder withMaxValue(Number maxValue) {
+      this.maxValue = Optional.ofNullable(maxValue);
       return this;
     }
 
-    public Builder withDecimalPlaces(Optional<Integer> decimalPlaces) {
-      this.decimalPlaces = decimalPlaces;
+    public Builder withDecimalPlaces(Integer decimalPlaces) {
+      this.decimalPlaces = Optional.ofNullable(decimalPlaces);
       return this;
     }
 
-    public Builder withMinLength(Optional<Integer> minLength) {
-      this.minLength = minLength;
+    public Builder withMinLength(Integer minLength) {
+      this.minLength = Optional.ofNullable(minLength);
       return this;
     }
 
-    public Builder withMaxLength(Optional<Integer> maxLength) {
-      this.maxLength = maxLength;
+    public Builder withMaxLength(Integer maxLength) {
+      this.maxLength = Optional.ofNullable(maxLength);
       return this;
     }
 
-    public Builder withTemporalType(Optional<TemporalType> temporalType) {
-      this.temporalType = temporalType;
+    public Builder withTemporalType(TemporalType temporalType) {
+      this.temporalType = Optional.ofNullable(temporalType);
       return this;
     }
 
@@ -281,8 +281,8 @@ public class ValueConstraints
       return this;
     }
 
-    public Builder withDefaultValue(Optional<DefaultValue> defaultValue) {
-      this.defaultValue = defaultValue;
+    public Builder withDefaultValue(DefaultValue defaultValue) {
+      this.defaultValue = Optional.ofNullable(defaultValue);
       return this;
     }
 
