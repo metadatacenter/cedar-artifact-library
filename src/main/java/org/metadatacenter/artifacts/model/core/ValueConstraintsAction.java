@@ -3,66 +3,9 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.util.Optional;
 
-public class ValueConstraintsAction
+public record ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, String source,
+                                     ValueType type, ValueConstraintsActionType action, Optional<Integer> to)
 {
-    private final URI termUri;
-    private final Optional<URI> sourceUri;
-    private final String source;
-    private final ValueType type;
-    private final ValueConstraintsActionType action;
-    private final Optional<Integer> to;
-
-    public ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, String source, ValueType type,
-      ValueConstraintsActionType actionType, Optional<Integer> to)
-    {
-        this.termUri = termUri;
-        this.sourceUri = sourceUri;
-        this.source = source;
-        this.type = type;
-        this.action = actionType;
-        this.to = to;
-    }
-
-    private ValueConstraintsAction(Builder builder)
-    {
-        this.termUri = builder.termUri;
-        this.sourceUri = builder.sourceUri;
-        this.source = builder.source;
-        this.type = builder.type;
-        this.action = builder.action;
-        this.to = builder.to;
-    }
-
-    public URI getTermUri()
-    {
-        return termUri;
-    }
-
-    public Optional<URI> getSourceUri()
-    {
-        return sourceUri;
-    }
-
-    public String getSource()
-    {
-        return source;
-    }
-
-    public ValueType getType()
-    {
-        return type;
-    }
-
-    public ValueConstraintsActionType getAction()
-    {
-        return action;
-    }
-
-    public Optional<Integer> getTo()
-    {
-        return to;
-    }
-
     public static class Builder
     {
         private URI termUri;
@@ -110,7 +53,7 @@ public class ValueConstraintsAction
 
         public ValueConstraintsAction build()
         {
-            return new ValueConstraintsAction(this);
+            return new ValueConstraintsAction(termUri, sourceUri, source, type, action, to);
         }
     }
 }
