@@ -46,7 +46,7 @@ public class ClassValueConstraint
 
   @Override public String toString()
   {
-    return "ClassValueConstraint{" + "uri=" + uri + ", prefLabel='" + prefLabel + '\'' + ", type='" + type + '\''
+    return "ClassValueConstraint{" + "uri=" + uri + ", prefLabel='" + prefLabel + '\'' + ", valueType='" + type + '\''
       + ", label='" + label + '\'' + ", source='" + source + '\'' + '}';
   }
 }

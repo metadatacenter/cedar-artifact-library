@@ -25,7 +25,7 @@ public enum TemporalType
         return t;
       }
     }
-    throw new IllegalArgumentException("No temporal type constant with text " + text + " found");
+    throw new IllegalArgumentException("No temporal valueType constant with text " + text + " found");
   }
 
   @Override public String toString()

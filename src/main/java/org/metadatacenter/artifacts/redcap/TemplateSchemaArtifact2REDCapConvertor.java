@@ -233,13 +233,13 @@ public class TemplateSchemaArtifact2REDCapConvertor
     else if (fieldInputType == FieldInputType.RICHTEXT)
       return REDCapConstants.DESCRIPTIVE_FIELD_TYPE;
     else if (fieldInputType == FieldInputType.IMAGE)
-      throw new RuntimeException("CEDAR image field type not currently mappable to REDCap");
+      throw new RuntimeException("CEDAR image field valueType not currently mappable to REDCap");
     else if (fieldInputType == FieldInputType.LINK)
       return REDCapConstants.TEXT_FIELD_TYPE;
     else if (fieldInputType == FieldInputType.YOUTUBE)
-      throw new RuntimeException("CEDAR YouTube field type not currently mappable to REDCap");
+      throw new RuntimeException("CEDAR YouTube field valueType not currently mappable to REDCap");
     else
-      throw new RuntimeException("Unknown CEDAR field input type " + fieldInputType);
+      throw new RuntimeException("Unknown CEDAR field input valueType " + fieldInputType);
   }
 
   private void createHeader(Sheet sheet)

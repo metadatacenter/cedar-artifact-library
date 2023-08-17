@@ -143,23 +143,23 @@ public final class FieldUI implements UI
     } else { // Non-temporal fields
       if (timeZoneEnabled.isPresent())
         throw new IllegalStateException(
-          "Field " + UI_TIMEZONE_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
+          "Field " + UI_TIMEZONE_ENABLED + " cannot be set for fields of valueType " + inputType + " in " + this);
 
       if (temporalGranularity.isPresent())
         throw new IllegalStateException(
-          "Field " + UI_TEMPORAL_GRANULARITY + " cannot be set for fields of type " + inputType + " in "
+          "Field " + UI_TEMPORAL_GRANULARITY + " cannot be set for fields of valueType " + inputType + " in "
             + this);
 
       if (inputTimeFormat.isPresent())
         throw new IllegalStateException(
-          "Field " + UI_INPUT_TIME_FORMAT + " cannot be set for fields of type " + inputType + " in " + this);
+          "Field " + UI_INPUT_TIME_FORMAT + " cannot be set for fields of valueType " + inputType + " in " + this);
     }
 
     // TODO Disable for moment until verify with Matthew that he is adding this to temporal fields
 //    if (inputType != FieldInputType.TEXTFIELD) {
 //      if (valueRecommendationEnabled)
 //        throw new IllegalStateException(
-//          "Field " + UI_VALUE_RECOMMENDATION_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
+//          "Field " + UI_VALUE_RECOMMENDATION_ENABLED + " cannot be set for fields of valueType " + inputType + " in " + this);
 //    }
   }
 

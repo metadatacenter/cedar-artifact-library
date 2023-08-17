@@ -28,7 +28,7 @@ public enum ValueType
         return f;
       }
     }
-    throw new IllegalArgumentException("No value type constant with text " + text + " found");
+    throw new IllegalArgumentException("No value valueType constant with text " + text + " found");
   }
 
   @Override public String toString()

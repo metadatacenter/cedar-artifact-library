@@ -3,16 +3,31 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.util.Optional;
 
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTION_TO;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE_URI;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TERM_URI;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
+
 public record ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, String source,
-                                     ValueType type, ValueConstraintsActionType action, Optional<Integer> to)
+                                     ValueType valueType, ValueConstraintsActionType actionType, Optional<Integer> to)
 {
+    public ValueConstraintsAction {
+        validateUriFieldNotNull(this, termUri, VALUE_CONSTRAINTS_TERM_URI);
+        validateOptionalFieldNotNull(this, sourceUri, VALUE_CONSTRAINTS_SOURCE_URI);
+        validateStringFieldNotNull(this, source, VALUE_CONSTRAINTS_SOURCE);
+        validateOptionalFieldNotNull(this, to, VALUE_CONSTRAINTS_ACTION_TO);
+    }
+
     public static class Builder
     {
         private URI termUri;
-        private Optional<URI> sourceUri;
+        private Optional<URI> sourceUri = Optional.empty();
         private String source;
-        private ValueType type;
-        private ValueConstraintsActionType action;
+        private ValueType valueType;
+        private ValueConstraintsActionType actionType;
         private Optional<Integer> to = Optional.empty();
 
         public Builder withTermUri(URI termUri)
@@ -33,15 +48,15 @@ public record ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, Strin
             return this;
         }
 
-        public Builder withValueType(ValueType type)
+        public Builder withValueType(ValueType valueType)
         {
-            this.type = type;
+            this.valueType = valueType;
             return this;
         }
 
-        public Builder withAction(ValueConstraintsActionType action)
+        public Builder withActionType(ValueConstraintsActionType actionType)
         {
-            this.action = action;
+            this.actionType = actionType;
             return this;
         }
 
@@ -53,7 +68,7 @@ public record ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, Strin
 
         public ValueConstraintsAction build()
         {
-            return new ValueConstraintsAction(termUri, sourceUri, source, type, action, to);
+            return new ValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
         }
     }
 }

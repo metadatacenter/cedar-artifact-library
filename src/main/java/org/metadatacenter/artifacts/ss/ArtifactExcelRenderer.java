@@ -163,7 +163,7 @@ public class ArtifactExcelRenderer
 
         dataCell.setCellValue(label);
       } else
-        throw new RuntimeException("Unknown default value type" + value.getValueType() + " for field " + fieldName);
+        throw new RuntimeException("Unknown default value valueType" + value.getValueType() + " for field " + fieldName);
     }
 
     return this.workbook;
@@ -265,7 +265,7 @@ public class ArtifactExcelRenderer
     else if (validationType == DataValidationConstraint.ValidationType.FORMULA) {
       return createFormulaDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
     } else
-      throw new RuntimeException("Do no know how to handle data validation type " + validationType + " for field " + fieldName);
+      throw new RuntimeException("Do no know how to handle data validation valueType " + validationType + " for field " + fieldName);
   }
 
   private Optional<DataValidationConstraint> createDecimalDataValidationConstraint(
@@ -506,9 +506,9 @@ public class ArtifactExcelRenderer
           || numberType == NumberType.SHORT || numberType == NumberType.BYTE) {
           return DataValidationConstraint.ValidationType.INTEGER;
         } else
-          throw new RuntimeException("Invalid number type " + numberType + " for numeric field " + fieldName);
+          throw new RuntimeException("Invalid number valueType " + numberType + " for numeric field " + fieldName);
       } else
-        throw new RuntimeException("Missing number type for numeric field " + fieldName);
+        throw new RuntimeException("Missing number valueType for numeric field " + fieldName);
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
       if (valueConstraints.isPresent() && valueConstraints.get().getTemporalType().isPresent()) {
         TemporalType temporalType = valueConstraints.get().getTemporalType().get();
@@ -518,11 +518,11 @@ public class ArtifactExcelRenderer
         else if (temporalType == TemporalType.TIME)
           return DataValidationConstraint.ValidationType.TIME;
         else
-          throw new RuntimeException("Invalid temporal type " + temporalType + " for temporal field " + fieldName);
+          throw new RuntimeException("Invalid temporal valueType " + temporalType + " for temporal field " + fieldName);
       } else
-        throw new RuntimeException("Missing temporal type for temporal field " + fieldName);
+        throw new RuntimeException("Missing temporal valueType for temporal field " + fieldName);
     } else
-      throw new RuntimeException("Invalid field input type " + fieldInputType + " for field " + fieldName);
+      throw new RuntimeException("Invalid field input valueType " + fieldInputType + " for field " + fieldName);
   }
 
   private String getNumericFormatString(String fieldName, Optional<NumberType> numberType,
@@ -546,9 +546,9 @@ public class ArtifactExcelRenderer
       } else if (numberType.get() == NumberType.SHORT) {
       } else if (numberType.get() == NumberType.BYTE) {
       } else
-        throw new RuntimeException("Invalid number type " + numberType + " for numeric field " + fieldName);
+        throw new RuntimeException("Invalid number valueType " + numberType + " for numeric field " + fieldName);
     } else
-      throw new RuntimeException("Number type is not present for numeric field " + fieldName);
+      throw new RuntimeException("Number valueType is not present for numeric field " + fieldName);
 
     if (unitOfMeasure.isPresent()) {
       // TODO
@@ -609,10 +609,10 @@ public class ArtifactExcelRenderer
             "Invalid temporal granularity " + temporalGranularity.get() + " specified for time temporal field " + fieldName);
       } else
         throw new RuntimeException(
-          "Unknown temporal type " + temporalType.get() + " specified for temporal field " + fieldName);
+          "Unknown temporal valueType " + temporalType.get() + " specified for temporal field " + fieldName);
 
     } else
-      throw new RuntimeException("No temporal type specified for temporal field " + fieldName);
+      throw new RuntimeException("No temporal valueType specified for temporal field " + fieldName);
 
     if (inputTimeFormat.isPresent() && inputTimeFormat.get() == InputTimeFormat.TWELVE_HOUR)
       temporalFormatString += " AM/PM";
