@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
@@ -49,7 +50,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadSampleBlockTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("SampleBlock.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("SampleBlock.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -59,7 +60,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadSampleSectionTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("SampleSection.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("SampleSection.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -69,7 +70,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadSampleSuspensionTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("SampleSuspension.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("SampleSuspension.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -79,7 +80,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadADVANCETemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("ADVANCETemplate.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("ADVANCETemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -89,7 +90,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadDataCiteTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("DataCiteTemplate.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("DataCiteTemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -99,7 +100,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadRADxMetadataSpecificationTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("RADxMetadataSpecification.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -109,7 +110,7 @@ public class ArtifactReaderTest {
   @Test
   public void testReadMultiInstanceFieldTemplate()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("MultiInstanceFieldTemplate.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("MultiInstanceFieldTemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -197,26 +198,31 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
+    objectNode.put(SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
+    objectNode.put(SCHEMA_ORG_NAME, name);
+    objectNode.put(SCHEMA_ORG_DESCRIPTION, description);
+
     objectNode.put(JSON_SCHEMA_SCHEMA, JSON_SCHEMA_SCHEMA_IRI);
     objectNode.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
     objectNode.put(JSON_SCHEMA_TITLE, "Test JSON Schema title");
     objectNode.put(JSON_SCHEMA_DESCRIPTION, "Test JSON Schema description");
-    objectNode.put(SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
-    objectNode.put(SCHEMA_ORG_NAME, name);
-    objectNode.put(SCHEMA_ORG_DESCRIPTION, description);
+    objectNode.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
     objectNode.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     objectNode.put(UI, mapper.createObjectNode());
 
-    objectNode.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
-
     return objectNode;
   }
 
-  private ObjectNode getFileContentAsObjectNode(String jsonFileName)
+  private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
   {
     try {
-      return (ObjectNode)mapper.readTree(new File(ArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+      JsonNode jsonNode = mapper.readTree(new File(ArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+
+      if (jsonNode.isObject())
+        return (ObjectNode)jsonNode;
+      else
+        throw new RuntimeException("Error reading JSON file " + jsonFileName + ": root node is not an ObjectNode");
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
     }
