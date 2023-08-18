@@ -2,51 +2,21 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 
-public class ClassValueConstraint
-{
-  private final URI uri;
-  private final String prefLabel;
-  private final String type;
-  private final String label;
-  private final String source;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LABEL;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_PREFLABEL;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_URI;
 
-  public ClassValueConstraint(URI uri, String prefLabel, String type, String label, String source)
-  {
-    this.uri = uri;
-    this.prefLabel = prefLabel;
-    this.type = type;
-    this.label = label;
-    this.source = source;
-  }
+public record ClassValueConstraint(URI uri, String prefLabel, String type, String label, String source) {
 
-  public URI getUri()
-  {
-    return uri;
-  }
-
-  public String getPrefLabel()
-  {
-    return prefLabel;
-  }
-
-  public String getType()
-  {
-    return type;
-  }
-
-  public String getLabel()
-  {
-    return label;
-  }
-
-  public String getSource()
-  {
-    return source;
-  }
-
-  @Override public String toString()
-  {
-    return "ClassValueConstraint{" + "uri=" + uri + ", prefLabel='" + prefLabel + '\'' + ", valueType='" + type + '\''
-      + ", label='" + label + '\'' + ", source='" + source + '\'' + '}';
+  public ClassValueConstraint {
+    validateUriFieldNotNull(this, uri, VALUE_CONSTRAINTS_URI);
+    validateStringFieldNotNull(this, prefLabel, VALUE_CONSTRAINTS_PREFLABEL);
+    validateStringFieldNotNull(this, type, VALUE_CONSTRAINTS_TYPE);
+    validateStringFieldNotNull(this, label, VALUE_CONSTRAINTS_LABEL);
+    validateStringFieldNotNull(this, source, VALUE_CONSTRAINTS_SOURCE);
   }
 }
