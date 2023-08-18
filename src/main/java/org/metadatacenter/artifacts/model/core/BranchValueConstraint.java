@@ -2,52 +2,19 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 
-public class BranchValueConstraint
-{
-  private final String source;
-  private final String acronym;
-  private final URI uri;
-  private final String name;
-  private final int maxDepth;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACRONYM;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_URI;
 
-  public BranchValueConstraint(String source, String acronym, URI uri, String name, int maxDepth)
-  {
-    this.source = source;
-    this.acronym = acronym;
-    this.uri = uri;
-    this.name = name;
-    this.maxDepth = maxDepth;
-  }
+public record BranchValueConstraint(String source, String acronym, URI uri, String name, int maxDepth) {
 
-  public String getSource()
+  public BranchValueConstraint
   {
-    return source;
-  }
-
-  public String getAcronym()
-  {
-    return acronym;
-  }
-
-  public URI getUri()
-  {
-    return uri;
-  }
-
-  public String getName()
-  {
-    return name;
-  }
-
-  public int getMaxDepth()
-  {
-    return maxDepth;
-  }
-
-  @Override public String toString()
-  {
-    return "BranchValueConstraint{" + "source='" + source + '\'' + ", acronym='" + acronym + '\'' + ", uri=" + uri
-      + ", name='" + name + '\'' + ", maxDepth=" + maxDepth + '}';
+    validateStringFieldNotNull(this, source, VALUE_CONSTRAINTS_SOURCE);
+    validateStringFieldNotNull(this, acronym, VALUE_CONSTRAINTS_ACRONYM);
+    validateUriFieldNotNull(this, uri, VALUE_CONSTRAINTS_URI);
   }
 }
 
