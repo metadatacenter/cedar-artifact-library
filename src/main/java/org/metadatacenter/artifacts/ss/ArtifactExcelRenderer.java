@@ -115,7 +115,7 @@ public class ArtifactExcelRenderer
   {
     String fieldName = fieldSchemaArtifact.getName();
     String fieldDescription = fieldSchemaArtifact.getDescription();
-    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
+    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().inputType();
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
@@ -191,7 +191,7 @@ public class ArtifactExcelRenderer
   {
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
-    FieldInputType fieldInputType = fieldUI.getInputType();
+    FieldInputType fieldInputType = fieldUI.inputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
 
     // Only some fields have validation constraints that we can create messages for
@@ -233,7 +233,7 @@ public class ArtifactExcelRenderer
         }
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
         String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.get().getTemporalType(),
-          fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
+          fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
         return temporalFormatString;
       } else
         return "";
@@ -478,7 +478,7 @@ public class ArtifactExcelRenderer
   {
     String fieldName = fieldSchemaArtifact.getName();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
-    FieldInputType fieldInputType = fieldUI.getInputType();
+    FieldInputType fieldInputType = fieldUI.inputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
 
     if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
@@ -640,10 +640,10 @@ public class ArtifactExcelRenderer
     } else if (fieldUI.isTemporal()) {
       if (valueConstraints.isPresent()) {
         String formatString = getTemporalFormatString(fieldName, valueConstraints.get().getTemporalType(),
-          fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
+          fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {
-        String formatString = getTemporalFormatString(fieldName, Optional.empty(), fieldUI.getTemporalGranularity(), fieldUI.getInputTimeFormat(), fieldUI.getTimeZoneEnabled());
+        String formatString = getTemporalFormatString(fieldName, Optional.empty(), fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     }

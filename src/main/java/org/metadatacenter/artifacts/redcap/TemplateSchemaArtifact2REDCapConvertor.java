@@ -102,7 +102,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   Optional<String> createTextFieldValidationValue(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
+    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().inputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
     FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
 
@@ -110,8 +110,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
     case TEMPORAL:
       if (valueConstraints.isPresent() && valueConstraints.get().getTemporalType().isPresent()) {
         TemporalType temporalType = valueConstraints.get().getTemporalType().get();
-        Optional<InputTimeFormat> inputTimeFormat = fieldUI.getInputTimeFormat();
-        Optional<TemporalGranularity> temporalGranularity = fieldUI.getTemporalGranularity();
+        Optional<InputTimeFormat> inputTimeFormat = fieldUI.inputTimeFormat();
+        Optional<TemporalGranularity> temporalGranularity = fieldUI.temporalGranularity();
 
         switch (temporalType) {
         case DATE:
@@ -212,7 +212,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   private String generateREDCapFieldType(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().getInputType();
+    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().inputType();
 
     if (fieldInputType == FieldInputType.TEXTFIELD)
       return REDCapConstants.TEXT_FIELD_TYPE;

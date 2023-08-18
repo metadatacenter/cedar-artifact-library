@@ -20,7 +20,7 @@ public class FieldUITest {
     FieldUI fieldUI = FieldUI.builder()
       .withInputType(inputType)
       .build();
-    assertEquals(inputType, fieldUI.getInputType());
+    assertEquals(inputType, fieldUI.inputType());
   }
 
   @Test
