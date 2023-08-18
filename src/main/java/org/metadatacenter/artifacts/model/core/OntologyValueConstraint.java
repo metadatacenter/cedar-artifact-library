@@ -3,44 +3,20 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.util.Optional;
 
-public class OntologyValueConstraint
-{
-  private final URI uri;
-  private final String acronym;
-  private final String name;
-  private final Optional<Integer> numTerms;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACRONYM;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NAME;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUM_TERMS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_URI;
 
-  public OntologyValueConstraint(URI uri, String acronym, String name, Optional<Integer> numTerms)
-  {
-    this.uri = uri;
-    this.acronym = acronym;
-    this.name = name;
-    this.numTerms = numTerms;
-  }
+public record OntologyValueConstraint(URI uri, String acronym, String name, Optional<Integer> numTerms) {
 
-  public URI getUri()
-  {
-    return uri;
-  }
-
-  public String getAcronym()
-  {
-    return acronym;
-  }
-
-  public String getName()
-  {
-    return name;
-  }
-
-  public Optional<Integer> getNumTerms()
-  {
-    return numTerms;
-  }
-
-  @Override public String toString()
-  {
-    return "OntologyValueConstraint{" + "uri=" + uri + ", acronym='" + acronym + '\'' + ", name='" + name + '\''
-      + ", numTerms=" + numTerms + '}';
+  public OntologyValueConstraint {
+    validateUriFieldNotNull(this, uri, VALUE_CONSTRAINTS_URI);
+    validateStringFieldNotNull(this, acronym, VALUE_CONSTRAINTS_ACRONYM);
+    validateStringFieldNotNull(this, name, VALUE_CONSTRAINTS_NAME);
+    validateOptionalFieldNotNull(this, numTerms, VALUE_CONSTRAINTS_NUM_TERMS);
   }
 }

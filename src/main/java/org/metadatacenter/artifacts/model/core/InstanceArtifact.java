@@ -23,5 +23,6 @@ public class InstanceArtifact extends Artifact
 
   private void validate()
   {
+    // TODO Validation
   }
 }
