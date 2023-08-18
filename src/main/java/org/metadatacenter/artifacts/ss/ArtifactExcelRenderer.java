@@ -38,7 +38,6 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -120,9 +119,9 @@ public class ArtifactExcelRenderer
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
     boolean isRequiredValue = fieldSchemaArtifact.getValueConstraints().isPresent() ?
-      fieldSchemaArtifact.getValueConstraints().get().isRequiredValue() : false;
+      fieldSchemaArtifact.getValueConstraints().get().requiredValue() : false;
     Optional<DefaultValue> defaultValue = fieldSchemaArtifact.getValueConstraints().isPresent() ?
-      fieldSchemaArtifact.getValueConstraints().get().getDefaultValue() : Optional.empty();
+      fieldSchemaArtifact.getValueConstraints().get().defaultValue() : Optional.empty();
 
     //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
     //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
@@ -144,7 +143,7 @@ public class ArtifactExcelRenderer
       sheet.setColumnHidden(columnIndex, true);
 
     if (defaultValue.isPresent()) {
-      DefaultValue value = fieldSchemaArtifact.getValueConstraints().get().getDefaultValue().get();
+      DefaultValue value = fieldSchemaArtifact.getValueConstraints().get().defaultValue().get();
       Cell dataCell = firstDataRow.createCell(columnIndex);
 
       if (value.isNumericDefaultValue()) {
@@ -198,41 +197,41 @@ public class ArtifactExcelRenderer
     if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
 
       if (valueConstraints.isPresent()) {
-        if (valueConstraints.get().getMinLength().isPresent()) {
-          Integer minLength = valueConstraints.get().getMinLength().get();
-          if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length present, maximum length present
-            Integer maxLength = valueConstraints.get().getMaxLength().get();
+        if (valueConstraints.get().minLength().isPresent()) {
+          Integer minLength = valueConstraints.get().minLength().get();
+          if (valueConstraints.get().maxLength().isPresent()) { // Minimum length present, maximum length present
+            Integer maxLength = valueConstraints.get().maxLength().get();
             return "Value should have a minimum of " + minLength + " characters and a maximum of " + maxLength;
           } else { // Minimum length present, maximum length not present
             return "Value should have a minimum of " + minLength + " characters";
           }
         } else {
-          if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length not present, maximum length present
-            Integer maxLength = valueConstraints.get().getMaxLength().get();
+          if (valueConstraints.get().maxLength().isPresent()) { // Minimum length not present, maximum length present
+            Integer maxLength = valueConstraints.get().maxLength().get();
             return "Value should have a maximum of " + maxLength + " characters";
           } else { // Minimum length not present, maximum length not present
             return "";
           }
         }
       } else if (fieldInputType == FieldInputType.NUMERIC) {
-        if (valueConstraints.get().getMinValue().isPresent()) {
-          Number minValue = valueConstraints.get().getMinValue().get();
-          if (valueConstraints.get().getMaxValue().isPresent()) { // Minimum present, maximum present
-            Number maxValue = valueConstraints.get().getMaxValue().get();
+        if (valueConstraints.get().minValue().isPresent()) {
+          Number minValue = valueConstraints.get().minValue().get();
+          if (valueConstraints.get().maxValue().isPresent()) { // Minimum present, maximum present
+            Number maxValue = valueConstraints.get().maxValue().get();
             return "Value should be between " + minValue + " and " + maxValue;
           } else { // Minimum present, maximum not present
             return "Value should be greater than " + minValue;
           }
         } else {
-          if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
-            Number maxValue = valueConstraints.get().getMaxValue().get();
+          if (valueConstraints.get().maxValue().isPresent()) { // Maximum present, minimum not present
+            Number maxValue = valueConstraints.get().maxValue().get();
             return "Value should be less than " + maxValue;
           } else { // Maximum not present, minimum not present
             return "Value should be a number";
           }
         }
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
-        String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.get().getTemporalType(),
+        String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType(),
           fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
         return temporalFormatString;
       } else
@@ -276,10 +275,10 @@ public class ArtifactExcelRenderer
     int validationType = DataValidationConstraint.ValidationType.DECIMAL;
 
     if (valueConstraints.isPresent()) {
-      if (valueConstraints.get().getMinValue().isPresent()) {
-        Number minValue = valueConstraints.get().getMinValue().get();
-        if (valueConstraints.get().getMaxValue().isPresent()) { // Minimum present, maximum present
-          Number maxValue = valueConstraints.get().getMaxValue().get();
+      if (valueConstraints.get().minValue().isPresent()) {
+        Number minValue = valueConstraints.get().minValue().get();
+        if (valueConstraints.get().maxValue().isPresent()) { // Minimum present, maximum present
+          Number maxValue = valueConstraints.get().maxValue().get();
           return Optional.of(
             dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
               minValue.toString(), maxValue.toString()));
@@ -287,8 +286,8 @@ public class ArtifactExcelRenderer
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
         }
       } else {
-        if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
-          Number maxValue = valueConstraints.get().getMaxValue().get();
+        if (valueConstraints.get().maxValue().isPresent()) { // Maximum present, minimum not present
+          Number maxValue = valueConstraints.get().maxValue().get();
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
         } else { // Maximum not present, minimum not present
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
@@ -308,10 +307,10 @@ public class ArtifactExcelRenderer
     int validationType = DataValidationConstraint.ValidationType.INTEGER;
 
     if (valueConstraints.isPresent()) {
-      if (valueConstraints.get().getMinValue().isPresent()) {
-        Number minValue = valueConstraints.get().getMinValue().get();
-        if (valueConstraints.get().getMaxValue().isPresent()) { // Minimum present, maximum present
-          Number maxValue = valueConstraints.get().getMaxValue().get();
+      if (valueConstraints.get().minValue().isPresent()) {
+        Number minValue = valueConstraints.get().minValue().get();
+        if (valueConstraints.get().maxValue().isPresent()) { // Minimum present, maximum present
+          Number maxValue = valueConstraints.get().maxValue().get();
           return Optional.of(
             dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
               minValue.toString(), maxValue.toString()));
@@ -320,8 +319,8 @@ public class ArtifactExcelRenderer
             DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
         }
       } else {
-        if (valueConstraints.get().getMaxValue().isPresent()) { // Maximum present, minimum not present
-          Number maxValue = valueConstraints.get().getMaxValue().get();
+        if (valueConstraints.get().maxValue().isPresent()) { // Maximum present, minimum not present
+          Number maxValue = valueConstraints.get().maxValue().get();
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
             DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
         } else { // Maximum not present, minimum not present
@@ -343,10 +342,10 @@ public class ArtifactExcelRenderer
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
 
     if (valueConstraints.isPresent()) {
-      if (valueConstraints.get().getMinLength().isPresent()) {
-        Integer minLength = valueConstraints.get().getMinLength().get();
-        if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length present, maximum length present
-          Integer maxLength = valueConstraints.get().getMaxLength().get();
+      if (valueConstraints.get().minLength().isPresent()) {
+        Integer minLength = valueConstraints.get().minLength().get();
+        if (valueConstraints.get().maxLength().isPresent()) { // Minimum length present, maximum length present
+          Integer maxLength = valueConstraints.get().maxLength().get();
           return Optional.of(
             dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN, minLength.toString(), maxLength.toString()));
         } else { // Minimum length present, maximum length not present
@@ -354,8 +353,8 @@ public class ArtifactExcelRenderer
             minLength.toString(), ""));
         }
       } else {
-        if (valueConstraints.get().getMaxLength().isPresent()) { // Minimum length not present, maximum length present
-          Integer maxLength = valueConstraints.get().getMaxLength().get();
+        if (valueConstraints.get().maxLength().isPresent()) { // Minimum length not present, maximum length present
+          Integer maxLength = valueConstraints.get().maxLength().get();
           return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL,
             maxLength.toString(), ""));
         } else { // Minimum length not present, maximum length not present
@@ -430,7 +429,7 @@ public class ArtifactExcelRenderer
   {
     if (valueConstraints.isPresent()) {
       Map<String, String> values = new HashMap<>();
-      List<String> labels = valueConstraints.get().getLiterals().stream().map(LiteralValueConstraint::label).collect(Collectors.toList());
+      List<String> labels = valueConstraints.get().literals().stream().map(LiteralValueConstraint::label).collect(Collectors.toList());
 
       if (valueConstraints.get().hasOntologyValueBasedConstraints()) {
         Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints.get());
@@ -492,13 +491,13 @@ public class ArtifactExcelRenderer
     } else if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
       if (valueConstraints.isPresent() && valueConstraints.get().hasValueBasedConstraints())
         return DataValidationConstraint.ValidationType.FORMULA;
-      else if (valueConstraints.isPresent() && (valueConstraints.get().getMinLength().isPresent() || valueConstraints.get().getMaxLength().isPresent()))
+      else if (valueConstraints.isPresent() && (valueConstraints.get().minLength().isPresent() || valueConstraints.get().maxLength().isPresent()))
         return DataValidationConstraint.ValidationType.TEXT_LENGTH;
       else
         return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.NUMERIC) {
-      if (valueConstraints.isPresent() && valueConstraints.get().getNumberType().isPresent()) {
-        NumberType numberType = valueConstraints.get().getNumberType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().numberType().isPresent()) {
+        NumberType numberType = valueConstraints.get().numberType().get();
 
         if (numberType == NumberType.DECIMAL || numberType == NumberType.DOUBLE || numberType == NumberType.FLOAT) {
           return DataValidationConstraint.ValidationType.DECIMAL;
@@ -510,8 +509,8 @@ public class ArtifactExcelRenderer
       } else
         throw new RuntimeException("Missing number valueType for numeric field " + fieldName);
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
-      if (valueConstraints.isPresent() && valueConstraints.get().getTemporalType().isPresent()) {
-        TemporalType temporalType = valueConstraints.get().getTemporalType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().temporalType().isPresent()) {
+        TemporalType temporalType = valueConstraints.get().temporalType().get();
 
         if (temporalType == TemporalType.DATE || temporalType == TemporalType.DATETIME)
           return DataValidationConstraint.ValidationType.DATE;
@@ -630,8 +629,8 @@ public class ArtifactExcelRenderer
 
     if (fieldUI.isNumeric()) {
       if (valueConstraints.isPresent()) {
-        String formatString = getNumericFormatString(fieldName, valueConstraints.get().getNumberType(),
-          valueConstraints.get().getDecimalPlaces(), valueConstraints.get().getUnitOfMeasure());
+        String formatString = getNumericFormatString(fieldName, valueConstraints.get().numberType(),
+          valueConstraints.get().decimalPlaces(), valueConstraints.get().unitOfMeasure());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {
         String formatString = getNumericFormatString(fieldName, Optional.empty(), Optional.empty(), Optional.empty());
@@ -639,7 +638,7 @@ public class ArtifactExcelRenderer
       }
     } else if (fieldUI.isTemporal()) {
       if (valueConstraints.isPresent()) {
-        String formatString = getTemporalFormatString(fieldName, valueConstraints.get().getTemporalType(),
+        String formatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType(),
           fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {

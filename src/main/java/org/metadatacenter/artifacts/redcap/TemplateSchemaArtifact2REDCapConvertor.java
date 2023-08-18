@@ -95,7 +95,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
     Cell requiredFieldHeaderCell = row.createCell(REDCapConstants.REQUIRED_FIELD_COLUMN_INDEX);
     if (fieldSchemaArtifact.getValueConstraints().isPresent())
-      requiredFieldHeaderCell.setCellValue(fieldSchemaArtifact.getValueConstraints().get().isRequiredValue());
+      requiredFieldHeaderCell.setCellValue(fieldSchemaArtifact.getValueConstraints().get().requiredValue());
     else
       requiredFieldHeaderCell.setCellValue(false);
   }
@@ -108,8 +108,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
     switch (fieldInputType) {
     case TEMPORAL:
-      if (valueConstraints.isPresent() && valueConstraints.get().getTemporalType().isPresent()) {
-        TemporalType temporalType = valueConstraints.get().getTemporalType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().temporalType().isPresent()) {
+        TemporalType temporalType = valueConstraints.get().temporalType().get();
         Optional<InputTimeFormat> inputTimeFormat = fieldUI.inputTimeFormat();
         Optional<TemporalGranularity> temporalGranularity = fieldUI.temporalGranularity();
 
@@ -156,8 +156,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
       return Optional.of(REDCapConstants.EMAIL_TEXTFIELD_VALIDATION);
     case NUMERIC:
 
-      if (valueConstraints.isPresent() && valueConstraints.get().getNumberType().isPresent()) {
-        NumberType numberType = valueConstraints.get().getNumberType().get();
+      if (valueConstraints.isPresent() && valueConstraints.get().numberType().isPresent()) {
+        NumberType numberType = valueConstraints.get().numberType().get();
 
         switch (numberType) {
         case INTEGER:
@@ -169,8 +169,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
         case DECIMAL:
         case FLOAT:
         case DOUBLE:
-          if (valueConstraints.get().getDecimalPlaces().isPresent()) {
-            Integer decimalPlaces = valueConstraints.get().getDecimalPlaces().get();
+          if (valueConstraints.get().decimalPlaces().isPresent()) {
+            Integer decimalPlaces = valueConstraints.get().decimalPlaces().get();
             if (decimalPlaces == 1)
               return Optional.of(REDCapConstants.NUMBER_1_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 2)

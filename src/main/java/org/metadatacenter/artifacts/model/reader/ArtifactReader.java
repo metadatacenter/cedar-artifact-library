@@ -623,9 +623,10 @@ public class ArtifactReader
       Optional<DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
       List<ValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath);
 
-      return Optional.of(new ValueConstraints(requiredValue, multipleChoice, numberType, unitOfMeasure, minValue, maxValue,
-        decimalPlaces, minLength, maxLength, temporalType, ontologies, valueSets, classes, branches, literals,
-        defaultValue, actions));
+      return Optional.of(
+        ValueConstraints.create(requiredValue, multipleChoice, numberType, unitOfMeasure, minValue, maxValue,
+          decimalPlaces, minLength, maxLength, temporalType, ontologies, valueSets, classes, branches, literals,
+          defaultValue, actions));
     } else
       return Optional.empty();
   }
