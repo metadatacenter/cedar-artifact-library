@@ -430,7 +430,7 @@ public class ArtifactExcelRenderer
   {
     if (valueConstraints.isPresent()) {
       Map<String, String> values = new HashMap<>();
-      List<String> labels = valueConstraints.get().getLiterals().stream().map(LiteralValueConstraint::getLabel).collect(Collectors.toList());
+      List<String> labels = valueConstraints.get().getLiterals().stream().map(LiteralValueConstraint::label).collect(Collectors.toList());
 
       if (valueConstraints.get().hasOntologyValueBasedConstraints()) {
         Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints.get());

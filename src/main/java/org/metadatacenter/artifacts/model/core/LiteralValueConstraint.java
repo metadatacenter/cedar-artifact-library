@@ -1,28 +1,12 @@
 package org.metadatacenter.artifacts.model.core;
 
-public class LiteralValueConstraint
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LABEL;
+
+public record LiteralValueConstraint(String label, boolean selectedByDefault)
 {
-  private final String label;
-  private final boolean selectedByDefault;
-
-  public LiteralValueConstraint(String label, boolean selectedByDefault)
+  public LiteralValueConstraint
   {
-    this.label = label;
-    this.selectedByDefault = selectedByDefault;
-  }
-
-  public String getLabel()
-  {
-    return label;
-  }
-
-  public boolean isSelectedByDefault()
-  {
-    return selectedByDefault;
-  }
-
-  @Override public String toString()
-  {
-    return "LiteralValueConstraint{" + "label='" + label + '\'' + ", selectedByDefault=" + selectedByDefault + '}';
+    validateStringFieldNotNull(this, label, VALUE_CONSTRAINTS_LABEL);
   }
 }
