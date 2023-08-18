@@ -149,17 +149,17 @@ public class ArtifactExcelRenderer
 
       if (value.isNumericDefaultValue()) {
         NumericDefaultValue numericDefaultValue = value.asNumericDefaultValue();
-        Number n = numericDefaultValue.getValue();
+        Number n = numericDefaultValue.value();
 
         dataCell.setCellValue(n.doubleValue());
       } else if (value.isStringDefaultValue()) {
         StringDefaultValue stringDefaultValue = value.asStringDefaultValue();
-        String s = stringDefaultValue.getValue();
+        String s = stringDefaultValue.value();
 
         dataCell.setCellValue(s);
       } else if (value.isUriStringPairDefaultValue()) {
         UriStringPairDefaultValue uriStringPairDefaultValue = value.asURIStringPairDefaultValue();
-        String label = uriStringPairDefaultValue.getValue().getRight();
+        String label = uriStringPairDefaultValue.value().getRight();
 
         dataCell.setCellValue(label);
       } else

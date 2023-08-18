@@ -5,7 +5,7 @@ public sealed interface DefaultValue<T> permits StringDefaultValue, NumericDefau
 {
    DefaultValueType getValueType();
 
-   T getValue();
+   T value();
 
    default boolean isStringDefaultValue() { return getValueType() == DefaultValueType.STRING; }
 
