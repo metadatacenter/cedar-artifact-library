@@ -93,7 +93,8 @@ public class FieldSchemaArtifactTest
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.builder().
       withJsonLdId(jsonLdId).
       withName(schemaOrgName).
-      withDescription(schemaOrgDescription).withIdentifier(schemaOrgIdentifier).withFieldUi(FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build()).
+      withDescription(schemaOrgDescription).withIdentifier(schemaOrgIdentifier).
+      withFieldUi(FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build()).
       withCreatedBy(createdBy).withCreatedOn(createdOn).withModifiedBy(modifiedBy).withLastUpdatedOn(lastUpdatedOn).
       withVersion(version).
       withPreviousVersion(previousVersion).
