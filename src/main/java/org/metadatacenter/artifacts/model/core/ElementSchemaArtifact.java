@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
@@ -32,24 +31,24 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     String name, String description, Optional<String> identifier,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-    ElementUI elementUI,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
+    ElementUi elementUi,
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     return new ElementSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
-      identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, elementUI,
-      isMultiple, minItems, maxItems, propertyURI);
+      identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, elementUi,
+      isMultiple, minItems, maxItems, propertyUri);
   }
 
-  default ParentArtifactUI getUI() { return elementUI(); }
+  default ParentArtifactUi getUi() { return elementUi(); }
 
-  ElementUI elementUI();
+  ElementUi elementUi();
 
   default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
   {
     LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
-    for (String fieldName: getUI().order()) {
+    for (String fieldName: getUi().order()) {
       if (fieldSchemas().containsKey(fieldName))
         orderedFieldSchemas.put(fieldName, fieldSchemas().get(fieldName));
     }
@@ -60,7 +59,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
   {
     LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
-    for (String elementName : getUI().order()) {
+    for (String elementName : getUi().order()) {
       if (elementSchemas().containsKey(elementName))
         orderedElementSchemas.put(elementName, elementSchemas().get(elementName));
     }
@@ -108,13 +107,13 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private ElementUI elementUI;
+    private ElementUi elementUi;
     private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     private boolean isMultiple = false;
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
-    private Optional<URI> propertyURI = Optional.empty();
+    private Optional<URI> propertyUri = Optional.empty();
 
     private Builder() {
     }
@@ -246,9 +245,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
-    public Builder withElementUI(ElementUI elementUI)
+    public Builder withElementUi(ElementUi elementUi)
     {
-      this.elementUI = elementUI;
+      this.elementUi = elementUi;
       return this;
     }
 
@@ -284,7 +283,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
     public Builder withPropertyURI(URI propertyURI)
     {
-      this.propertyURI = Optional.ofNullable(propertyURI);
+      this.propertyUri = Optional.ofNullable(propertyURI);
       return this;
     }
 
@@ -292,28 +291,29 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     {
       return new ElementSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
-        identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, elementUI,
-        isMultiple, minItems, maxItems, propertyURI);
+        identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas,
+        elementUi,
+        isMultiple, minItems, maxItems, propertyUri);
     }
   }
 }
 
 record ElementSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-  Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-  URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-  String name, String description, Optional<String> identifier,
-  Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-  Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-  ElementUI elementUI, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-  Optional<URI> propertyURI)  implements ElementSchemaArtifact
+                                   Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                   URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                                   String name, String description, Optional<String> identifier,
+                                   Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                   Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
+                                   ElementUi elementUi, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                                   Optional<URI> propertyUri)  implements ElementSchemaArtifact
 {
   public ElementSchemaArtifactRecord
   {
     validateUriListContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(this, elementUI, UI);
-    validateOptionalFieldNotNull(this, propertyURI, "propertyURI");
+    validateUIFieldNotNull(this, elementUi, UI);
+    validateOptionalFieldNotNull(this, propertyUri, "propertyUri");
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
 
@@ -326,7 +326,7 @@ record ElementSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jso
     if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
       throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name());
 
-    Set<String> order = elementUI.order().stream().collect(toSet());
+    Set<String> order = elementUi.order().stream().collect(toSet());
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
     if (!order.equals(childNames))

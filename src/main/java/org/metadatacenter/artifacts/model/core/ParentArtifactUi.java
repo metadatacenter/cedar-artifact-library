@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public sealed interface ParentArtifactUI permits TemplateUI, ElementUI
+public sealed interface ParentArtifactUi permits TemplateUi, ElementUi
 {
   List<String> order();
 

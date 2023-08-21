@@ -134,7 +134,7 @@ public class ArtifactRenderer
     else
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
-    rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUI()));
+    rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
     return rendering;
   }
@@ -187,7 +187,7 @@ public class ArtifactRenderer
     else
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
-    rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUI()));
+    rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
 
     // TODO isMultiple, minItem, maxItems
 
@@ -254,7 +254,7 @@ public class ArtifactRenderer
       rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints()));
     }
 
-    rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUI()));
+    rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
     // TODO isMultiple, minItem, maxItems
 

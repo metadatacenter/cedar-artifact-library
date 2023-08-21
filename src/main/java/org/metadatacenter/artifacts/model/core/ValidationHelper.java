@@ -81,7 +81,7 @@ public class ValidationHelper
       throw new IllegalStateException("Required Optional field " + fieldName + " is empty in " + obj);
   }
 
-  public static void validateUIFieldNotNull(Object obj, UI field, String fieldName)
+  public static void validateUIFieldNotNull(Object obj, Ui field, String fieldName)
   {
     if (field == null)
       throw new IllegalStateException("UI field " + fieldName + " is null in " + obj);

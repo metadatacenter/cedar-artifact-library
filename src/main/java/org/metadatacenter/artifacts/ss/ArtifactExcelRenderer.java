@@ -21,7 +21,7 @@ import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldUI;
+import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
@@ -114,7 +114,7 @@ public class ArtifactExcelRenderer
   {
     String fieldName = fieldSchemaArtifact.name();
     String fieldDescription = fieldSchemaArtifact.description();
-    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUI().inputType();
+    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUi().inputType();
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
@@ -189,8 +189,8 @@ public class ArtifactExcelRenderer
   private String createDataValidationMessage(FieldSchemaArtifact fieldSchemaArtifact)
   {
     String fieldName = fieldSchemaArtifact.name();
-    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
-    FieldInputType fieldInputType = fieldUI.inputType();
+    FieldUi fieldUi = fieldSchemaArtifact.fieldUi();
+    FieldInputType fieldInputType = fieldUi.inputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     // Only some fields have validation constraints that we can create messages for
@@ -232,7 +232,7 @@ public class ArtifactExcelRenderer
         }
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
         String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType(),
-          fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
+          fieldUi.temporalGranularity(), fieldUi.inputTimeFormat(), fieldUi.getTimeZoneEnabled());
         return temporalFormatString;
       } else
         return "";
@@ -369,7 +369,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    if (fieldSchemaArtifact.fieldUI().isTemporal())
+    if (fieldSchemaArtifact.fieldUi().isTemporal())
       return Optional.of(
         dataValidationHelper.createDateConstraint(DataValidationConstraint.OperatorType.BETWEEN, "Date(1, 1, 1)",
           "Date(9999,12,31)", "dd/mm/yyyy"));
@@ -381,7 +381,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    if (fieldSchemaArtifact.fieldUI().isTemporal())
+    if (fieldSchemaArtifact.fieldUi().isTemporal())
       return Optional.of(
         dataValidationHelper.createTimeConstraint(DataValidationConstraint.OperatorType.BETWEEN, "=TIME(0,0,0)",
           "=TIME(23,59,59)"));
@@ -476,8 +476,8 @@ public class ArtifactExcelRenderer
   private int getValidationType(FieldSchemaArtifact fieldSchemaArtifact)
   {
     String fieldName = fieldSchemaArtifact.name();
-    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
-    FieldInputType fieldInputType = fieldUI.inputType();
+    FieldUi fieldUi = fieldSchemaArtifact.fieldUi();
+    FieldInputType fieldInputType = fieldUi.inputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
@@ -622,12 +622,12 @@ public class ArtifactExcelRenderer
   private CellStyle createCellStyle(FieldSchemaArtifact fieldSchemaArtifact)
   {
     String fieldName = fieldSchemaArtifact.name();
-    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
+    FieldUi fieldUi = fieldSchemaArtifact.fieldUi();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
     DataFormat dataFormat = workbook.createDataFormat();
     CellStyle cellStyle = workbook.createCellStyle();
 
-    if (fieldUI.isNumeric()) {
+    if (fieldUi.isNumeric()) {
       if (valueConstraints.isPresent()) {
         String formatString = getNumericFormatString(fieldName, valueConstraints.get().numberType(),
           valueConstraints.get().decimalPlaces(), valueConstraints.get().unitOfMeasure());
@@ -636,13 +636,13 @@ public class ArtifactExcelRenderer
         String formatString = getNumericFormatString(fieldName, Optional.empty(), Optional.empty(), Optional.empty());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
-    } else if (fieldUI.isTemporal()) {
+    } else if (fieldUi.isTemporal()) {
       if (valueConstraints.isPresent()) {
         String formatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType(),
-          fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
+          fieldUi.temporalGranularity(), fieldUi.inputTimeFormat(), fieldUi.getTimeZoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {
-        String formatString = getTemporalFormatString(fieldName, Optional.empty(), fieldUI.temporalGranularity(), fieldUI.inputTimeFormat(), fieldUI.getTimeZoneEnabled());
+        String formatString = getTemporalFormatString(fieldName, Optional.empty(), fieldUi.temporalGranularity(), fieldUi.inputTimeFormat(), fieldUi.getTimeZoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     }

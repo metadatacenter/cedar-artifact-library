@@ -12,7 +12,6 @@ import org.metadatacenter.artifacts.model.core.Version;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -137,7 +136,7 @@ public class ArtifactReaderTest {
     assertEquals(templateSchemaArtifact.name(), "Test name");
     assertEquals(templateSchemaArtifact.description(), "Test description");
     assertEquals(templateSchemaArtifact.modelVersion(), new Version(1, 6, 0));
-    assertNotNull(templateSchemaArtifact.templateUI());
+    assertNotNull(templateSchemaArtifact.templateUi());
   }
 
   @Test
@@ -150,7 +149,7 @@ public class ArtifactReaderTest {
     assertEquals(elementSchemaArtifact.name(), "Test name");
     assertEquals(elementSchemaArtifact.description(), "Test description");
     assertEquals(elementSchemaArtifact.modelVersion(), new Version(1, 6, 0));
-    assertNotNull(elementSchemaArtifact.elementUI());
+    assertNotNull(elementSchemaArtifact.elementUi());
   }
 
   @Test
@@ -165,7 +164,7 @@ public class ArtifactReaderTest {
     assertEquals(fieldSchemaArtifact.name(), "Test name");
     assertEquals(fieldSchemaArtifact.description(), "Test description");
     assertEquals(fieldSchemaArtifact.modelVersion(), new Version(1, 6, 0));
-    assertNotNull(fieldSchemaArtifact.fieldUI());
+    assertNotNull(fieldSchemaArtifact.fieldUi());
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

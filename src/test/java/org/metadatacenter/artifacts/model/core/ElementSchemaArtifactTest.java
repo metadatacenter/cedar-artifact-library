@@ -2,7 +2,6 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -47,7 +46,7 @@ public class ElementSchemaArtifactTest
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn), jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, name, description, identifier, modelVersion, version, status, previousVersion, derivedFrom,
-      Collections.emptyMap(), Collections.emptyMap(), ElementUI.builder().build(), false, minItems, maxItems,
+      Collections.emptyMap(), Collections.emptyMap(), ElementUi.builder().build(), false, minItems, maxItems,
       propertyURI);
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
@@ -69,6 +68,6 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(status, elementSchemaArtifact.status());
     Assert.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());
     Assert.assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom());
-    Assert.assertEquals(propertyURI, elementSchemaArtifact.propertyURI());
+    Assert.assertEquals(propertyURI, elementSchemaArtifact.propertyUri());
   }
 }

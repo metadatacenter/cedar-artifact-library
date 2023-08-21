@@ -4,32 +4,33 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.Optional;
 
-public class FieldUITest {
+public class FieldUiTest
+{
 
   @Test
   public void testGetUIType() {
-    FieldUI fieldUI = FieldUI.builder()
+    FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEXTFIELD)
       .build();
-    assertEquals(UIType.FIELD_UI, fieldUI.getUIType());
+    assertEquals(UiType.FIELD_UI, fieldUi.getUiType());
   }
 
   @Test
   public void testGetInputType() {
     FieldInputType inputType = FieldInputType.TEXTAREA;
-    FieldUI fieldUI = FieldUI.builder()
+    FieldUi fieldUi = FieldUi.builder()
       .withInputType(inputType)
       .build();
-    assertEquals(inputType, fieldUI.inputType());
+    assertEquals(inputType, fieldUi.inputType());
   }
 
   @Test
   public void testIsTextField() {
-    FieldUI fieldUI = FieldUI.builder()
+    FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEXTFIELD)
       .build();
-    assertTrue(fieldUI.isTextField());
-    assertFalse(fieldUI.isTextarea());
+    assertTrue(fieldUi.isTextField());
+    assertFalse(fieldUi.isTextarea());
   }
 
   // Add more tests for the other isX() methods
@@ -37,37 +38,37 @@ public class FieldUITest {
   @Test
   public void testIsValueRecommendationEnabled() {
     boolean valueRecommendationEnabled = true;
-    FieldUI fieldUI = FieldUI.builder()
+    FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEXTFIELD)
       .withValueRecommendationEnabled(valueRecommendationEnabled)
       .build();
-    assertTrue(fieldUI.isValueRecommendationEnabled());
+    assertTrue(fieldUi.isValueRecommendationEnabled());
   }
 
   @Test
   public void testIsHidden() {
     boolean hidden = true;
-    FieldUI fieldUI = FieldUI.builder()
+    FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEXTFIELD)
       .withHidden(hidden)
       .build();
-    assertTrue(fieldUI.isHidden());
+    assertTrue(fieldUi.isHidden());
   }
 
   @Test
   public void testGetTimeZoneEnabled() {
     boolean timeZoneEnabled = true;
-    FieldUI fieldUI = FieldUI.builder()
+    FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEMPORAL)
       .withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOUR)
       .withTemporalGranularity(TemporalGranularity.SECOND)
       .withTimeZoneEnabled(timeZoneEnabled)
       .build();
-    assertEquals(Optional.of(timeZoneEnabled), fieldUI.getTimeZoneEnabled());
+    assertEquals(Optional.of(timeZoneEnabled), fieldUi.getTimeZoneEnabled());
   }
 
   @Test(expected = IllegalStateException.class)
   public void testInputTypeNotSet() {
-   FieldUI.builder().build();
+   FieldUi.builder().build();
   }
 }

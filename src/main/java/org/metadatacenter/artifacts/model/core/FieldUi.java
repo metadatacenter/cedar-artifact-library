@@ -8,11 +8,12 @@ import static org.metadatacenter.model.ModelNodeNames.UI_INPUT_TIME_FORMAT;
 import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
 import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
 
-public record FieldUI(FieldInputType inputType, boolean valueRecommendationEnabled, boolean hidden,
+public record FieldUi(FieldInputType inputType, boolean valueRecommendationEnabled, boolean hidden,
                       Optional<Boolean> timeZoneEnabled, Optional<TemporalGranularity> temporalGranularity,
-                      Optional<InputTimeFormat> inputTimeFormat, Optional<String> content) implements UI
+                      Optional<InputTimeFormat> inputTimeFormat, Optional<String> content) implements Ui
 {
-  public FieldUI {
+  public FieldUi
+  {
     if (inputType == null)
       throw new IllegalStateException("Field " + UI_FIELD_INPUT_TYPE + " must set in " + this);
 
@@ -53,7 +54,7 @@ public record FieldUI(FieldInputType inputType, boolean valueRecommendationEnabl
 
   }
 
-  public UIType getUIType() { return UIType.FIELD_UI; }
+  public UiType getUiType() { return UiType.FIELD_UI; }
 
   public boolean isTextField() {return inputType == FieldInputType.TEXTFIELD;}
 
@@ -163,9 +164,9 @@ public record FieldUI(FieldInputType inputType, boolean valueRecommendationEnabl
       return this;
     }
 
-    public FieldUI build()
+    public FieldUi build()
     {
-      return new FieldUI(inputType, valueRecommendationEnabled, hidden, timeZoneEnabled, temporalGranularity,
+      return new FieldUi(inputType, valueRecommendationEnabled, hidden, timeZoneEnabled, temporalGranularity,
         inputTimeFormat, content);
     }
   }

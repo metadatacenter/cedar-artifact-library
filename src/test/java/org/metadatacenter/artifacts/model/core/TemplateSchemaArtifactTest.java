@@ -9,33 +9,33 @@ public class TemplateSchemaArtifactTest
   @Test
   public void testMinimalSimpleTemplateSchemaArtifact() {
 
-    TemplateUI templateUI = TemplateUI.builder().build();
+    TemplateUi templateUi = TemplateUi.builder().build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withName("Test").withTemplateUI(templateUI).build();
+      .withName("Test").withTemplateUi(templateUi).build();
 
     assertEquals(templateSchemaArtifact.name(), "Test");
   }
 
   @Test
   public void testCreateTemplateSchemaArtifact() {
-    TemplateUI templateUI = TemplateUI.builder().build();
+    TemplateUi templateUi = TemplateUi.builder().build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName("Test")
-      .withTemplateUI(templateUI).build();
+      .withTemplateUi(templateUi).build();
 
     assertEquals(templateSchemaArtifact.name(), "Test");
-    assertEquals(templateSchemaArtifact.templateUI(), templateUI);
+    assertEquals(templateSchemaArtifact.templateUi(), templateUi);
   }
 
 
   @Test(expected = IllegalStateException.class)
   public void testMissingName()
   {
-    TemplateUI templateUI = TemplateUI.builder().build();
+    TemplateUi templateUi = TemplateUi.builder().build();
 
-    TemplateSchemaArtifact.builder().withTemplateUI(templateUI).build();
+    TemplateSchemaArtifact.builder().withTemplateUi(templateUi).build();
   }
 
 }

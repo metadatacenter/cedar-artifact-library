@@ -21,7 +21,7 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 
   default boolean hasAttributeValueField()
   {
-    return this.fieldSchemas().values().stream().anyMatch(fs -> fs.fieldUI().isAttributeValue());
+    return this.fieldSchemas().values().stream().anyMatch(fs -> fs.fieldUi().isAttributeValue());
   }
 
   Map<String, FieldSchemaArtifact> fieldSchemas();
@@ -41,13 +41,13 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
     Map<String, URI> childPropertyURIs = new HashMap<>();
 
     for (ChildSchemaArtifact childSchemaArtifact : getChildSchemas())
-      if (childSchemaArtifact.propertyURI().isPresent())
-        childPropertyURIs.put(childSchemaArtifact.name(), childSchemaArtifact.propertyURI().get());
+      if (childSchemaArtifact.propertyUri().isPresent())
+        childPropertyURIs.put(childSchemaArtifact.name(), childSchemaArtifact.propertyUri().get());
 
     return childPropertyURIs;
   }
 
-  ParentArtifactUI getUI();
+  ParentArtifactUi getUi();
 
   default void addChild(ChildSchemaArtifact childSchemaArtifact)
   {
@@ -66,7 +66,7 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
   {
     var childSchemas = new ArrayList<ChildSchemaArtifact>();
 
-    for (String childName : getUI().order()) {
+    for (String childName : getUi().order()) {
       if (elementSchemas().containsKey(childName))
         childSchemas.add(elementSchemas().get(childName));
       else if (fieldSchemas().containsKey(childName))
@@ -82,7 +82,7 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
   {
     ArrayList<String> fieldNames = new ArrayList<>();
 
-    for (String name : getUI().order())
+    for (String name : getUi().order())
       if (isField(name))
         fieldNames.add(name);
 
@@ -93,7 +93,7 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
   {
     ArrayList<String> elementNames = new ArrayList<>();
 
-    for (String name : getUI().order())
+    for (String name : getUi().order())
       if (isElement(name))
         elementNames.add(name);
 
@@ -104,7 +104,7 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
   {
     ArrayList<String> childNames = new ArrayList<>();
 
-    for (String name : getUI().order())
+    for (String name : getUi().order())
       childNames.add(name);
 
     return childNames;

@@ -44,19 +44,19 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
     Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-    TemplateUI templateUI)
+    TemplateUi templateUi)
   {
     return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, schemaOrgName,
       schemaOrgDescription, schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus, previousVersion,
-      derivedFrom, fieldSchemas, elementSchemas, templateUI);
+      derivedFrom, fieldSchemas, elementSchemas, templateUi);
   }
 
   default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
   {
     LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
-    for (String fieldName: getUI().order()) {
+    for (String fieldName: getUi().order()) {
       if (fieldSchemas().containsKey(fieldName))
         orderedFieldSchemas.put(fieldName, fieldSchemas().get(fieldName));
     }
@@ -67,7 +67,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
   {
     LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
-    for (String elementName : getUI().order()) {
+    for (String elementName : getUi().order()) {
       if (elementSchemas().containsKey(elementName))
         orderedElementSchemas.put(elementName, elementSchemas().get(elementName));
     }
@@ -90,9 +90,9 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       throw new IllegalArgumentException("Element " + name + "not present in template " + name());
   }
 
-  TemplateUI templateUI();
+  TemplateUi templateUi();
 
-  default ParentArtifactUI getUI() { return templateUI(); }
+  default ParentArtifactUi getUi() { return templateUi(); }
 
   static Builder builder() {
     return new Builder();
@@ -120,7 +120,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<URI> derivedFrom = Optional.empty();
     private LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     private LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
-    private TemplateUI templateUI = TemplateUI.builder().build();
+    private TemplateUi templateUi = TemplateUi.builder().build();
 
     private Builder() {
     }
@@ -245,8 +245,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
-    public Builder withTemplateUI(TemplateUI templateUI) {
-      this.templateUI = templateUI;
+    public Builder withTemplateUi(TemplateUi templateUi) {
+      this.templateUi = templateUi;
       return this;
     }
 
@@ -255,7 +255,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description, schemaOrgIdentifier, modelVersion,
         version, status, previousVersion,
-        derivedFrom, fieldSchemas, elementSchemas, templateUI);
+        derivedFrom, fieldSchemas, elementSchemas, templateUi);
     }
   }
 }
@@ -268,7 +268,7 @@ record TemplateSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> js
                                     Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                     Map<String, FieldSchemaArtifact> fieldSchemas,
                                     Map<String, ElementSchemaArtifact> elementSchemas,
-                                    TemplateUI templateUI) implements TemplateSchemaArtifact
+                                    TemplateUi templateUi) implements TemplateSchemaArtifact
 {
   public TemplateSchemaArtifactRecord {
     validateUriFieldEquals(this, jsonSchemaSchemaUri, JSON_SCHEMA_SCHEMA, URI.create(JSON_SCHEMA_SCHEMA_IRI));
@@ -285,9 +285,9 @@ record TemplateSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> js
     validateUriListContains(this, jsonLdTypes, "jsonLdTypes", URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(this, templateUI, UI);
+    validateUIFieldNotNull(this, templateUi, UI);
 
-    Set<String> order = templateUI.order().stream().collect(toSet());
+    Set<String> order = templateUi.order().stream().collect(toSet());
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
     if (!order.equals(childNames))

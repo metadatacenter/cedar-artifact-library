@@ -4,33 +4,34 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.*;
 
-public class TemplateUITest {
+public class TemplateUiTest
+{
 
   @Test
   public void testGetUIType() {
-    TemplateUI templateUI = TemplateUI.builder()
+    TemplateUi templateUi = TemplateUi.builder()
       .withOrder(Collections.singletonList("order1"))
       .withPages(Collections.singletonList("page1"))
       .build();
-    assertEquals(UIType.TEMPLATE_UI, templateUI.getUIType());
+    assertEquals(UiType.TEMPLATE_UI, templateUi.getUiType());
   }
 
   @Test
   public void testGetOrder() {
     List<String> order = List.of("order1", "order2", "order3");
-    TemplateUI templateUI = TemplateUI.builder()
+    TemplateUi templateUi = TemplateUi.builder()
       .withOrder(order)
       .build();
-    assertEquals(order, templateUI.order());
+    assertEquals(order, templateUi.order());
   }
 
   @Test
   public void testGetPages() {
     List<String> pages = List.of("page1", "page2", "page3");
-    TemplateUI templateUI = TemplateUI.builder()
+    TemplateUi templateUi = TemplateUi.builder()
       .withPages(pages)
       .build();
-    assertEquals(pages, templateUI.pages());
+    assertEquals(pages, templateUi.pages());
   }
 
   @Test
@@ -39,11 +40,11 @@ public class TemplateUITest {
     Map<String, String> propertyLabels = new HashMap<>();
     propertyLabels.put("field1", "Label 1");
     propertyLabels.put("field2", "Label 2");
-    TemplateUI templateUI = TemplateUI.builder()
+    TemplateUi templateUi = TemplateUi.builder()
       .withOrder(order)
       .withPropertyLabels(propertyLabels)
       .build();
-    assertEquals(propertyLabels, templateUI.propertyLabels());
+    assertEquals(propertyLabels, templateUi.propertyLabels());
   }
 
   @Test
@@ -52,28 +53,28 @@ public class TemplateUITest {
     Map<String, String> propertyDescriptions = new HashMap<>();
     propertyDescriptions.put("field1", "Description 1");
     propertyDescriptions.put("field2", "Description 2");
-    TemplateUI templateUI = TemplateUI.builder()
+    TemplateUi templateUi = TemplateUi.builder()
       .withOrder(order)
       .withPropertyDescriptions(propertyDescriptions)
       .build();
-    assertEquals(propertyDescriptions, templateUI.propertyDescriptions());
+    assertEquals(propertyDescriptions, templateUi.propertyDescriptions());
   }
 
   @Test
   public void testGetHeader() {
     Optional<String> header = Optional.of("Header");
-    TemplateUI templateUI = TemplateUI.builder()
+    TemplateUi templateUi = TemplateUi.builder()
       .withHeader(header.get())
       .build();
-    assertEquals(header, templateUI.header());
+    assertEquals(header, templateUi.header());
   }
 
   @Test
   public void testGetFooter() {
     Optional<String> footer = Optional.of("Footer");
-    TemplateUI templateUI = TemplateUI.builder()
+    TemplateUi templateUi = TemplateUi.builder()
       .withFooter(footer.get())
       .build();
-    assertEquals(footer, templateUI.footer());
+    assertEquals(footer, templateUi.footer());
   }
 }

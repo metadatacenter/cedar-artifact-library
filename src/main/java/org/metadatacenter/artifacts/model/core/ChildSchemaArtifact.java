@@ -13,5 +13,5 @@ public sealed interface ChildSchemaArtifact permits ElementSchemaArtifact, Field
 
   Optional<Integer> maxItems();
 
-  Optional<URI> propertyURI();
+  Optional<URI> propertyUri();
 }

@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
-import org.metadatacenter.artifacts.model.core.FieldUI;
+import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
@@ -38,7 +38,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
     createHeader(sheet);
 
     int currentRowNumber = REDCapConstants.HEADER_ROW_NUMBER + 1;
-    for (String fieldName : templateSchemaArtifact.templateUI().order()) {
+    for (String fieldName : templateSchemaArtifact.templateUi().order()) {
       if (templateSchemaArtifact.fieldSchemas().containsKey(fieldName)) {
         FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.fieldSchemas().get(fieldName);
 
@@ -102,16 +102,16 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   Optional<String> createTextFieldValidationValue(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUI().inputType();
+    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUi().inputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
-    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
+    FieldUi fieldUi = fieldSchemaArtifact.fieldUi();
 
     switch (fieldInputType) {
     case TEMPORAL:
       if (valueConstraints.isPresent() && valueConstraints.get().temporalType().isPresent()) {
         TemporalType temporalType = valueConstraints.get().temporalType().get();
-        Optional<InputTimeFormat> inputTimeFormat = fieldUI.inputTimeFormat();
-        Optional<TemporalGranularity> temporalGranularity = fieldUI.temporalGranularity();
+        Optional<InputTimeFormat> inputTimeFormat = fieldUi.inputTimeFormat();
+        Optional<TemporalGranularity> temporalGranularity = fieldUi.temporalGranularity();
 
         switch (temporalType) {
         case DATE:
@@ -212,7 +212,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   private String generateREDCapFieldType(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUI().inputType();
+    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUi().inputType();
 
     if (fieldInputType == FieldInputType.TEXTFIELD)
       return REDCapConstants.TEXT_FIELD_TYPE;

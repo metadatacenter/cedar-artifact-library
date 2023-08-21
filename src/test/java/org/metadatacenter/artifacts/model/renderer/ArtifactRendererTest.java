@@ -1,7 +1,6 @@
 package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
@@ -12,7 +11,6 @@ import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactReader;
 import org.metadatacenter.artifacts.model.reader.ArtifactReaderTest;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +48,7 @@ public class ArtifactRendererTest
 
     ObjectNode rendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
-    assertTrue(validateJSONSchema(rendering));
+    assertTrue(validateJsonSchema(rendering));
 
     assertEquals(rendering.get(JSON_SCHEMA_SCHEMA).textValue(), JSON_SCHEMA_SCHEMA_IRI);
     assertEquals(rendering.get(JSON_SCHEMA_TYPE).textValue(), JSON_SCHEMA_OBJECT);
@@ -92,7 +90,7 @@ public class ArtifactRendererTest
 
     ObjectNode instanceRendering = artifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
-    assertTrue(validateJSONSchema(templateRendering, instanceRendering));
+    assertTrue(validateJsonSchema(templateRendering, instanceRendering));
   }
 
   @Test
@@ -104,7 +102,7 @@ public class ArtifactRendererTest
 
     ObjectNode templateRendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
-    assertTrue(validateJSONSchema(templateRendering));
+    assertTrue(validateJsonSchema(templateRendering));
 
     //System.out.println(templateRendering.toPrettyString());
   }
@@ -118,12 +116,12 @@ public class ArtifactRendererTest
 
     ObjectNode templateRendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
-    assertTrue(validateJSONSchema(templateRendering));
+    assertTrue(validateJsonSchema(templateRendering));
 
     //System.out.println(templateRendering.toPrettyString());
   }
 
-  private boolean validateJSONSchema(ObjectNode schemaNode)
+  private boolean validateJsonSchema(ObjectNode schemaNode)
   {
     try {
       JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
@@ -133,7 +131,7 @@ public class ArtifactRendererTest
     }
   }
 
-  private boolean validateJSONSchema(ObjectNode schemaNode, ObjectNode instanceNode)
+  private boolean validateJsonSchema(ObjectNode schemaNode, ObjectNode instanceNode)
   {
     try {
       JsonSchema schema = JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
