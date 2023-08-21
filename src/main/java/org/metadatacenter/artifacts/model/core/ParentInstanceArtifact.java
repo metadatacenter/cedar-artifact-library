@@ -5,7 +5,11 @@ import java.util.Map;
 
 public sealed interface ParentInstanceArtifact permits TemplateInstanceArtifact, ElementInstanceArtifact
 {
-  Map<String, List<FieldInstanceArtifact>> getFieldInstances();
+  String name();
 
-  Map<String, List<ElementInstanceArtifact>> getElementInstances();
+  String description();
+
+  Map<String, List<FieldInstanceArtifact>> fieldInstances();
+
+  Map<String, List<ElementInstanceArtifact>> elementInstances();
 }

@@ -17,25 +17,25 @@ public class TemplateUITest {
 
   @Test
   public void testGetOrder() {
-    List<String> order = Arrays.asList("order1", "order2", "order3");
+    List<String> order = List.of("order1", "order2", "order3");
     TemplateUI templateUI = TemplateUI.builder()
       .withOrder(order)
       .build();
-    assertEquals(order, templateUI.getOrder());
+    assertEquals(order, templateUI.order());
   }
 
   @Test
   public void testGetPages() {
-    List<String> pages = Arrays.asList("page1", "page2", "page3");
+    List<String> pages = List.of("page1", "page2", "page3");
     TemplateUI templateUI = TemplateUI.builder()
       .withPages(pages)
       .build();
-    assertEquals(pages, templateUI.getPages());
+    assertEquals(pages, templateUI.pages());
   }
 
   @Test
   public void testGetPropertyLabels() {
-    List<String> order = Arrays.asList("field1", "field2", "field3");
+    List<String> order = List.of("field1", "field2", "field3");
     Map<String, String> propertyLabels = new HashMap<>();
     propertyLabels.put("field1", "Label 1");
     propertyLabels.put("field2", "Label 2");
@@ -43,12 +43,12 @@ public class TemplateUITest {
       .withOrder(order)
       .withPropertyLabels(propertyLabels)
       .build();
-    assertEquals(propertyLabels, templateUI.getPropertyLabels());
+    assertEquals(propertyLabels, templateUI.propertyLabels());
   }
 
   @Test
   public void testGetPropertyDescriptions() {
-    List<String> order = Arrays.asList("field1", "field2", "field3");
+    List<String> order = List.of("field1", "field2", "field3");
     Map<String, String> propertyDescriptions = new HashMap<>();
     propertyDescriptions.put("field1", "Description 1");
     propertyDescriptions.put("field2", "Description 2");
@@ -56,7 +56,7 @@ public class TemplateUITest {
       .withOrder(order)
       .withPropertyDescriptions(propertyDescriptions)
       .build();
-    assertEquals(propertyDescriptions, templateUI.getPropertyDescriptions());
+    assertEquals(propertyDescriptions, templateUI.propertyDescriptions());
   }
 
   @Test
@@ -65,7 +65,7 @@ public class TemplateUITest {
     TemplateUI templateUI = TemplateUI.builder()
       .withHeader(header.get())
       .build();
-    assertEquals(header, templateUI.getHeader());
+    assertEquals(header, templateUI.header());
   }
 
   @Test
@@ -74,6 +74,6 @@ public class TemplateUITest {
     TemplateUI templateUI = TemplateUI.builder()
       .withFooter(footer.get())
       .build();
-    assertEquals(footer, templateUI.getFooter());
+    assertEquals(footer, templateUI.footer());
   }
 }

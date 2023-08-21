@@ -172,65 +172,99 @@ public class ArtifactReader
 
   public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
   {
-    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
-    String schemaOrgName = readSchemaOrgNameField(objectNode, path);
-    String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    Optional<URI> createdBy = readCreatedByField(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
     URI isBasedOn = readRequiredIsBasedOnField(objectNode, path);
+    String name = readSchemaOrgNameField(objectNode, path);
+    String description = readSchemaOrgDescriptionField(objectNode, path);
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
 
-    return new TemplateInstanceArtifact(instanceArtifact, schemaOrgName, schemaOrgDescription, isBasedOn,
-      elementInstances, fieldInstances);
+    return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, isBasedOn, name, description, elementInstances, fieldInstances);
   }
 
   public ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
   {
-    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    Optional<URI> createdBy = readCreatedByField(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
+    String name = readSchemaOrgNameField(objectNode, path);
+    String description = readSchemaOrgDescriptionField(objectNode, path);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
     readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
 
-    ElementInstanceArtifact elementInstanceArtifact = new ElementInstanceArtifact(instanceArtifact, fieldInstances,
-      elementInstances);
+    ElementInstanceArtifact elementInstanceArtifact
+      = ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, name, description, fieldInstances, elementInstances);
 
     return elementInstanceArtifact;
   }
 
   public FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
   {
-    InstanceArtifact instanceArtifact = readInstanceArtifact(objectNode, path);
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    Optional<URI> createdBy = readCreatedByField(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
     String jsonLdValue = readJsonLDValueField(objectNode, path);
     Optional<String> rdfsLabel = readOptionalRDFSLabelField(objectNode, path);
     Optional<String> skosNotation = readSKOSNotationField(objectNode, path);
     Optional<String> skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
 
-    FieldInstanceArtifact fieldInstanceArtifact = new FieldInstanceArtifact(instanceArtifact, jsonLdValue, rdfsLabel,
-      skosNotation, skosPrefLabel);
+    FieldInstanceArtifact fieldInstanceArtifact = FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel);
 
     return fieldInstanceArtifact;
   }
 
-  private InstanceArtifact readInstanceArtifact(ObjectNode objectNode, String path)
-  {
-    Artifact artifact = readArtifact(objectNode, path);
-
-    return new InstanceArtifact(artifact);
-  }
-
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
   {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    Optional<URI> createdBy = readCreatedByField(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
+    URI jsonSchemaSchemaUri = readJsonSchemaSchemaURIField(objectNode, path);
+    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
+    String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
+    String jsonSchemaDescription = readJsonSchemaDescriptionField(objectNode, path);
+    Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
+    String name = readSchemaOrgNameField(objectNode, path);
+    String description = readSchemaOrgDescriptionField(objectNode, path);
+    Optional<String> identifier = readSchemaOrgIdentifierField(objectNode, path);
+    Optional<Version> version = readPAVVersionField(objectNode, path);
+    Optional<Status> status = readBIBOStatusField(objectNode, path);
+    Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
+    Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
     TemplateUI templateUI = readTemplateUI(objectNode, path);
 
-    checkTemplateSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
+    checkTemplateSchemaArtifactJSONLDType(jsonLdTypes, path);
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyURIs);
 
-    return new TemplateSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, templateUI);
+    return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
+      identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, templateUI);
   }
 
   // A parent schema artifact's JSON Schema 'properties' object can contain a specification for a JSON-LD @context for
@@ -298,17 +332,38 @@ public class ArtifactReader
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
   {
-    ObjectNode fieldNode = getFieldNode(objectNode, path);
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    Optional<URI> createdBy = readCreatedByField(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
+    URI jsonSchemaSchemaUri = readJsonSchemaSchemaURIField(objectNode, path);
+    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
+    String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
+    String jsonSchemaDescription = readJsonSchemaDescriptionField(objectNode, path);
+    Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
+    String name = readSchemaOrgNameField(objectNode, path);
+    String description = readSchemaOrgDescriptionField(objectNode, path);
+    Optional<String> identifier = readSchemaOrgIdentifierField(objectNode, path);
+    Optional<Version> version = readPAVVersionField(objectNode, path);
+    Optional<Status> status = readBIBOStatusField(objectNode, path);
+    Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
+    Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
+    FieldUI fieldUI = readFieldUI(objectNode, path);
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path);
+    Optional<String> skosPrefLabel = readSKOSPrefLabelField(objectNode, path);
+    List<String> skosAlternateLabels = readSKOSAltLabelField(objectNode, path);
 
-    SchemaArtifact schemaArtifact = readSchemaArtifact(fieldNode, path);
-    FieldUI fieldUI = readFieldUI(fieldNode, path);
-    Optional<ValueConstraints> valueConstraints = readValueConstraints(fieldNode, path);
-    Optional<String> skosPrefLabel = readSKOSPrefLabelField(fieldNode, path);
-    List<String> skosAlternateLabels = readSKOSAltLabelField(fieldNode, path);
+    checkFieldSchemaArtifactJSONLDType(jsonLdTypes, path);
 
-    checkFieldSchemaArtifactJSONLDType(schemaArtifact.getJsonLdTypes(), path);
-
-    return new FieldSchemaArtifact(schemaArtifact, fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels,
+    return FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      name, description, identifier,
+      modelVersion, version, status, previousVersion, derivedFrom,
+      fieldUI, valueConstraints, skosPrefLabel, skosAlternateLabels,
       isMultiple, minItems, maxItems, propertyURI);
   }
 
@@ -316,58 +371,38 @@ public class ArtifactReader
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
   {
-    SchemaArtifact schemaArtifact = readSchemaArtifact(objectNode, path);
-
+    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
+    Optional<URI> createdBy = readCreatedByField(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
+    URI jsonSchemaSchemaUri = readJsonSchemaSchemaURIField(objectNode, path);
+    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
+    String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
+    String jsonSchemaDescription = readJsonSchemaDescriptionField(objectNode, path);
+    Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
+    String name = readSchemaOrgNameField(objectNode, path);
+    String description = readSchemaOrgDescriptionField(objectNode, path);
+    Optional<String> identifier = readSchemaOrgIdentifierField(objectNode, path);
+    Optional<Version> version = readPAVVersionField(objectNode, path);
+    Optional<Status> status = readBIBOStatusField(objectNode, path);
+    Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
+    Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     ElementUI elementUI = readElementUI(objectNode, path);
     Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
 
-    checkElementSchemaArtifactJsonLdType(schemaArtifact.getJsonLdTypes(), path);
+    checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
 
     readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyURIs);
 
-    return new ElementSchemaArtifact(schemaArtifact, fieldSchemas, elementSchemas, elementUI,
+    return ElementSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
+      identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, elementUI,
       isMultiple, minItems, maxItems, propertyURI);
-  }
-
-  private Artifact readArtifact(ObjectNode objectNode, String path)
-  {
-    List<URI> jsonLdTypes = readJsonLDTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLDIDField(objectNode, path);
-    Map<String, URI> jsonLdContext = readFieldNameURIValueMap(objectNode, path, JSON_LD_CONTEXT);
-    Optional<URI> createdBy = readCreatedByField(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedByField(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOnField(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOnField(objectNode, path);
-
-    return new Artifact(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn, lastUpdatedOn);
-  }
-
-  private SchemaArtifact readSchemaArtifact(ObjectNode objectNode, String path)
-  {
-    Artifact artifact = readArtifact(objectNode, path);
-
-    URI jsonSchemaSchemaURI = readJsonSchemaSchemaURIField(objectNode, path);
-    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
-    String jsonSchemaTitle = readJsonSchemaTitleField(objectNode, path);
-    String jsonSchemaDescription = readJsonSchemaDescriptionField(objectNode, path);
-    Version modelVersion = readSchemaOrgSchemaVersionField(objectNode, path);
-    String schemaOrgName = readSchemaOrgNameField(objectNode, path);
-    String schemaOrgDescription = readSchemaOrgDescriptionField(objectNode, path);
-    Optional<String> schemaOrgIdentifier = readSchemaOrgIdentifierField(objectNode, path);
-    Optional<Version> artifactVersion = readPAVVersionField(objectNode, path);
-    Optional<Status> artifactVersionStatus = readBIBOStatusField(objectNode, path);
-    Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
-    Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
-    // TODO additionalProperties can be an object for attribute-value fields
-    // boolean additionalProperties = readRequiredBooleanField(objectNode, path, JSON_SCHEMA_ADDITIONAL_PROPERTIES);
-    // TODO: required array
-
-    return new SchemaArtifact(artifact,
-      jsonSchemaSchemaURI, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus,
-      previousVersion, derivedFrom);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
@@ -434,28 +469,31 @@ public class ArtifactReader
               Optional.of(childPropertyURIs.get(jsonChildName)) :
               Optional.empty();
 
-            if (subSchemaArtifactJsonLDType.toString().equals(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
+            switch (subSchemaArtifactJsonLDType.toString()) {
+            case TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI ->
               throw new ArtifactParseException("Invalid nesting of template schema artifact", jsonChildName,
                 fieldOrElementPath);
-
-            } else if (subSchemaArtifactJsonLDType.toString().equals(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
+            case ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI -> {
               ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, minItems, maxItems,
                 propertyURI);
               elementSchemas.put(jsonChildName, elementSchemaArtifact);
-            } else if (subSchemaArtifactJsonLDType.toString().equals(FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
+            }
+            case FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, minItems, maxItems,
                 propertyURI);
               fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
-            } else if (subSchemaArtifactJsonLDType.toString().equals(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
+            }
+            case STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, minItems, maxItems,
                 propertyURI);
               fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
-            } else
-              throw new ArtifactParseException("Unknown JSON-LD @valueType " + subSchemaArtifactJsonLDType, jsonChildName,
-                fieldOrElementPath);
+            }
+            default -> throw new ArtifactParseException("Unknown JSON-LD @valueType " + subSchemaArtifactJsonLDType,
+              jsonChildName, fieldOrElementPath);
+            }
 
           } else {
             throw new ArtifactParseException("Unknown non-object schema artifact", jsonChildName, fieldOrElementPath);
@@ -914,7 +952,7 @@ public class ArtifactReader
     Optional<String> header = readOptionalStringField(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readOptionalStringField(uiNode, uiPath, UI_FOOTER);
 
-    return new ElementUI(order, propertyLabels, propertyDescriptions, header, footer);
+    return ElementUI.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
 
@@ -930,7 +968,7 @@ public class ArtifactReader
     Optional<String> header = readOptionalStringField(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readOptionalStringField(uiNode, uiPath, UI_FOOTER);
 
-    return new TemplateUI(order, pages, propertyLabels, propertyDescriptions, header, footer);
+    return TemplateUI.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
   }
 
   private Optional<String> readOptionalStringField(ObjectNode objectNode, String path, String fieldName)

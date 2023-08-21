@@ -5,11 +5,11 @@ import java.util.Optional;
 
 public interface VersionedArtifact
 {
-  Optional<Version> getVersion();
+  Optional<Version> version();
 
-  Optional<Status> getStatus();
+  Optional<Status> status();
 
-  Optional<URI> getPreviousVersion();
+  Optional<URI> previousVersion();
 
-  Optional<URI> getDerivedFrom();
+  Optional<URI> derivedFrom();
 }

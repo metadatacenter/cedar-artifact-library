@@ -15,16 +15,16 @@ public class ElementUITest {
 
   @Test
   public void testGetOrder() {
-    List<String> order = Arrays.asList("field1", "field2", "field3");
+    List<String> order = List.of("field1", "field2", "field3");
     ElementUI elementUI = ElementUI.builder()
       .withOrder(order)
       .build();
-    assertEquals(order, elementUI.getOrder());
+    assertEquals(order, elementUI.order());
   }
 
   @Test
   public void testGetPropertyLabels() {
-    List<String> order = Arrays.asList("field1", "field2", "field3");
+    List<String> order = List.of("field1", "field2", "field3");
     Map<String, String> propertyLabels = new HashMap<>();
     propertyLabels.put("field1", "Label 1");
     propertyLabels.put("field2", "Label 2");
@@ -32,12 +32,12 @@ public class ElementUITest {
       .withOrder(order)
       .withPropertyLabels(propertyLabels)
       .build();
-    assertEquals(propertyLabels, elementUI.getPropertyLabels());
+    assertEquals(propertyLabels, elementUI.propertyLabels());
   }
 
   @Test
   public void testGetPropertyDescriptions() {
-    List<String> order = Arrays.asList("field1", "field2", "field3");
+    List<String> order = List.of("field1", "field2", "field3");
     Map<String, String> propertyDescriptions = new HashMap<>();
     propertyDescriptions.put("field1", "Description 1");
     propertyDescriptions.put("field2", "Description 2");
@@ -45,7 +45,7 @@ public class ElementUITest {
       .withOrder(order)
       .withPropertyDescriptions(propertyDescriptions)
       .build();
-    assertEquals(propertyDescriptions, elementUI.getPropertyDescriptions());
+    assertEquals(propertyDescriptions, elementUI.propertyDescriptions());
   }
 
   @Test
@@ -54,7 +54,7 @@ public class ElementUITest {
     ElementUI elementUI = ElementUI.builder()
       .withHeader(header)
       .build();
-    assertEquals(Optional.of(header), elementUI.getHeader());
+    assertEquals(Optional.of(header), elementUI.header());
   }
 
   @Test
@@ -63,6 +63,6 @@ public class ElementUITest {
     ElementUI elementUI = ElementUI.builder()
       .withFooter(footer)
       .build();
-    assertEquals(Optional.of(footer), elementUI.getFooter());
+    assertEquals(Optional.of(footer), elementUI.footer());
   }
 }

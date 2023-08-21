@@ -2,8 +2,6 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,200 +9,87 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 
-public final class ElementSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact, ParentSchemaArtifact
+public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact, ParentSchemaArtifact
 {
-  private final Map<String, FieldSchemaArtifact> fieldSchemas;
-  private final Map<String, ElementSchemaArtifact> elementSchemas;
-  private final ElementUI elementUI;
-  private final boolean isMultiple;
-  private final Optional<Integer> minItems;
-  private final Optional<Integer> maxItems;
-  private final Optional<URI> propertyURI;
-
-  public ElementSchemaArtifact(SchemaArtifact schemaArtifact,
-    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas, ElementUI elementUI,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
-  {
-    super(schemaArtifact);
-    this.elementUI = elementUI;
-    this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
-    this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
-    this.isMultiple = isMultiple;
-    this.minItems = minItems;
-    this.maxItems = maxItems;
-    this.propertyURI = propertyURI;
-
-    validate();
-  }
-
-  public ElementSchemaArtifact(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
+  static ElementSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
-    Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas, ElementUI elementUI,
+    String name, String description, Optional<String> identifier,
+    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
+    ElementUI elementUI,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
   {
-    super(jsonLdContext, jsonLdTypes, jsonLdId,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
-      modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
-    this.elementUI = elementUI;
-    this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
-    this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
-    this.isMultiple = isMultiple;
-    this.minItems = minItems;
-    this.maxItems = maxItems;
-    this.propertyURI = propertyURI;
-
-    validate();
+    return new ElementSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
+      identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, elementUI,
+      isMultiple, minItems, maxItems, propertyURI);
   }
 
-  public ElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
-  {
-    super(elementSchemaArtifact);
-    this.fieldSchemas = elementSchemaArtifact.fieldSchemas;
-    this.elementSchemas = elementSchemaArtifact.elementSchemas;
-    this.elementUI = elementSchemaArtifact.elementUI;
-    this.isMultiple = elementSchemaArtifact.isMultiple;
-    this.minItems = elementSchemaArtifact.minItems;
-    this.maxItems = elementSchemaArtifact.maxItems;
-    this.propertyURI = elementSchemaArtifact.propertyURI;
+  default ParentArtifactUI getUI() { return elementUI(); }
 
-    validate();
-  }
+  ElementUI elementUI();
 
-  private ElementSchemaArtifact(Builder builder)
-  {
-    super(builder.jsonLdContext, builder.jsonLdTypes, builder.jsonLdId,
-      builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
-      builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
-      builder.schemaOrgName, builder.schemaOrgDescription, builder.schemaOrgIdentifier,
-      builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus, builder.previousVersion,
-      builder.derivedFrom);
-    this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
-    this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
-    this.elementUI = builder.elementUI;
-    this.isMultiple = builder.isMultiple;
-    this.minItems = builder.minItems;
-    this.maxItems = builder.maxItems;
-    this.propertyURI = builder.propertyURI;
-
-    validate();
-  }
-
-  @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
+  default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
   {
     LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
-    for (String fieldName: getUI().getOrder()) {
-      if (fieldSchemas.containsKey(fieldName))
-        orderedFieldSchemas.put(fieldName, fieldSchemas.get(fieldName));
+    for (String fieldName: getUI().order()) {
+      if (fieldSchemas().containsKey(fieldName))
+        orderedFieldSchemas.put(fieldName, fieldSchemas().get(fieldName));
     }
     return orderedFieldSchemas;
   }
 
-  @Override public LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas()
+  default LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas()
   {
     LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
-    for (String elementName : getUI().getOrder()) {
-      if (elementSchemas.containsKey(elementName))
-        orderedElementSchemas.put(elementName, elementSchemas.get(elementName));
+    for (String elementName : getUI().order()) {
+      if (elementSchemas().containsKey(elementName))
+        orderedElementSchemas.put(elementName, elementSchemas().get(elementName));
     }
     return orderedElementSchemas;
   }
 
-  @Override public ElementSchemaArtifact getElementSchemaArtifact(String name)
+  default ElementSchemaArtifact getElementSchemaArtifact(String name)
   {
-    if (elementSchemas.containsKey(name))
-      return elementSchemas.get(name);
+    if (elementSchemas().containsKey(name))
+      return elementSchemas().get(name);
     else
-      throw new IllegalArgumentException("Element " + name + "not present in template " + getName());
+      throw new IllegalArgumentException("Element " + name + "not present in template " + name());
   }
 
-  @Override public FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  default FieldSchemaArtifact getFieldSchemaArtifact(String name)
   {
-    if (fieldSchemas.containsKey(name))
-      return fieldSchemas.get(name);
+    if (fieldSchemas().containsKey(name))
+      return fieldSchemas().get(name);
     else
-      throw new IllegalArgumentException("Field " + name + "not present in element " + getName());
+      throw new IllegalArgumentException("Field " + name + "not present in element " + name());
   }
 
-  @Override public boolean isMultiple()
-  {
-    return isMultiple;
-  }
-
-  @Override public Optional<Integer> getMinItems() { return minItems; }
-
-  @Override public Optional<Integer> getMaxItems() { return maxItems; }
-
-  @Override public Optional<URI> getPropertyURI()
-  {
-    return propertyURI;
-  }
-
-  @Override public ParentArtifactUI getUI() { return elementUI; }
-
-  public ElementUI getElementUI()
-  {
-    return elementUI;
-  }
-
-  @Override public String toString()
-  {
-    return "ElementSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
-      + ", elementUI=" + elementUI + ", isMultiple=" + isMultiple + ", minItems=" + minItems + ", maxItems=" + maxItems
-      + ", propertyURI=" + propertyURI + '}';
-  }
-
-  private void validate()
-  {
-    validateUriListContains(this, getJsonLdTypes(), "jsonLdTypes", URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
-    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
-    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(this, elementUI, UI);
-    validateOptionalFieldNotNull(this, propertyURI, "propertyURI");
-    validateOptionalFieldNotNull(this, minItems, "minItems");
-    validateOptionalFieldNotNull(this, maxItems, "maxItems");
-
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + getName());
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + getName());
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + getName());
-
-    Set<String> order = getUI().getOrder().stream().collect(Collectors.toSet());
-    Set<String> childNames = getChildNames().stream().collect(Collectors.toSet());
-
-    if (!order.equals(childNames))
-      throw new IllegalStateException("UI order field must contain an entry for all child fields and elements in " +
-        "element schema artifact " + getName() + "; missing fields: " + childNames.removeAll(order));
-  }
-
-  public static Builder builder() {
+  static Builder builder() {
     return new Builder();
   }
 
-  public static class Builder
+  class Builder
   {
-    private List<URI> jsonLdTypes = Arrays.asList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
+    private List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = new HashMap<>();
     private Optional<URI> createdBy = Optional.empty();
@@ -215,12 +100,12 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
     private String jsonSchemaType = JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
-    private String schemaOrgName;
-    private String schemaOrgDescription = "";
-    private Optional<String> schemaOrgIdentifier = Optional.empty();
-    private Version modelVersion = new Version(1, 6, 0); // TODO
-    private Optional<Version> artifactVersion = Optional.of(new Version(0, 0, 1)); // TODO
-    private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
+    private String name;
+    private String description = "";
+    private Optional<String> identifier = Optional.empty();
+    private Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
+    private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1 in ModelNodeNames
+    private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
     private ElementUI elementUI;
@@ -306,28 +191,28 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       return this;
     }
 
-    public Builder withName(String schemaOrgName)
+    public Builder withName(String name)
     {
-      this.schemaOrgName = schemaOrgName;
+      this.name = name;
 
       if (this.jsonSchemaTitle.isEmpty())
-        this.jsonSchemaTitle = schemaOrgName + " element schema";
+        this.jsonSchemaTitle = name + " element schema";
 
       if (this.jsonSchemaDescription.isEmpty())
-        this.jsonSchemaDescription = schemaOrgName + " element schema generated by the CEDAR Artifact Library";
+        this.jsonSchemaDescription = name + " element schema generated by the CEDAR Artifact Library";
 
       return this;
     }
 
-    public Builder withDescription(String schemaOrgDescription)
+    public Builder withDescription(String description)
     {
-      this.schemaOrgDescription = schemaOrgDescription;
+      this.description = description;
       return this;
     }
 
-    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier)
+    public Builder withSchemaOrgIdentifier(String identifier)
     {
-      this.schemaOrgIdentifier = Optional.ofNullable(schemaOrgIdentifier);
+      this.identifier = Optional.ofNullable(identifier);
       return this;
     }
 
@@ -337,15 +222,15 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
       return this;
     }
 
-    public Builder withArtifactVersion(Version artifactVersion)
+    public Builder withVersion(Version version)
     {
-      this.artifactVersion = Optional.ofNullable(artifactVersion);
+      this.version = Optional.ofNullable(version);
       return this;
     }
 
-    public Builder withArtifactVersionStatus(Status artifactVersionStatus)
+    public Builder withStatus(Status status)
     {
-      this.artifactVersionStatus = Optional.ofNullable(artifactVersionStatus);
+      this.status = Optional.ofNullable(status);
       return this;
     }
 
@@ -405,7 +290,53 @@ public final class ElementSchemaArtifact extends SchemaArtifact implements Child
 
     public ElementSchemaArtifact build()
     {
-      return new ElementSchemaArtifact(this);
+      return new ElementSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
+        identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, elementUI,
+        isMultiple, minItems, maxItems, propertyURI);
     }
   }
 }
+
+record ElementSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+  Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+  URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+  String name, String description, Optional<String> identifier,
+  Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+  Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
+  ElementUI elementUI, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+  Optional<URI> propertyURI)  implements ElementSchemaArtifact
+{
+  public ElementSchemaArtifactRecord
+  {
+    validateUriListContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
+    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
+    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
+    validateUIFieldNotNull(this, elementUI, UI);
+    validateOptionalFieldNotNull(this, propertyURI, "propertyURI");
+    validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
+    validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
+
+    if (minItems.isPresent() && minItems.get() < 0)
+      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name());
+
+    if (maxItems.isPresent() && maxItems.get() < 1)
+      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name());
+
+    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
+      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name());
+
+    Set<String> order = elementUI.order().stream().collect(toSet());
+    Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
+
+    if (!order.equals(childNames))
+      throw new IllegalStateException(
+        "UI order field must contain an entry for all child fields and elements in " + "element schema artifact " + name() + "; missing fields: " + childNames.removeAll(order));
+
+    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdTypes = List.copyOf(jsonLdTypes);
+    fieldSchemas = Map.copyOf(fieldSchemas);
+    elementSchemas = Map.copyOf(elementSchemas);
+  }
+}
+

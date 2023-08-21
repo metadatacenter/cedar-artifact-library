@@ -6,11 +6,11 @@ import java.util.Optional;
 
 public interface MonitoredArtifact
 {
-  Optional<URI> getCreatedBy();
+  Optional<URI> createdBy();
 
-  Optional<URI> getModifiedBy();
+  Optional<URI> modifiedBy();
 
-  Optional<OffsetDateTime> getCreatedOn();
+  Optional<OffsetDateTime> createdOn();
 
-  Optional<OffsetDateTime> getLastUpdatedOn();
+  Optional<OffsetDateTime> lastUpdatedOn();
 }

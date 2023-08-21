@@ -29,7 +29,7 @@ public class TemplateReporter
 
     try {
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
-      System.out.println("schema:name: " + templateSchemaArtifact.getName());
+      System.out.println("schema:name: " + templateSchemaArtifact.name());
     } catch (ArtifactParseException e) {
       System.err.println(
         "Parse error '" + e.getParseErrorMessage() + "' processing field " + e.getFieldName() + " at path " + e.getPath());

@@ -29,7 +29,7 @@ public class ElementReporter
 
     try {
       ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
-      System.out.println("schema:name: " + elementSchemaArtifact.getName());
+      System.out.println("schema:name: " + elementSchemaArtifact.name());
     } catch (ArtifactParseException e) {
       System.err.println(
         "Parse error '" + e.getParseErrorMessage() + "' processing field " + e.getFieldName() + " at path " + e.getPath());

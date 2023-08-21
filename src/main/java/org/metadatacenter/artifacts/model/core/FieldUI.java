@@ -53,7 +53,7 @@ public record FieldUI(FieldInputType inputType, boolean valueRecommendationEnabl
 
   }
 
-  @Override public UIType getUIType() { return UIType.FIELD_UI; }
+  public UIType getUIType() { return UIType.FIELD_UI; }
 
   public boolean isTextField() {return inputType == FieldInputType.TEXTFIELD;}
 

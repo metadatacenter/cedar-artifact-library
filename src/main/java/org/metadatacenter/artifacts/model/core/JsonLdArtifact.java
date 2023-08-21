@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface JsonLdArtifact
 {
-  List<URI> getJsonLdTypes();
+  List<URI> jsonLdTypes();
 
-  Optional<URI> getJsonLdId();
+  Optional<URI> jsonLdId();
 
-  Map<String, URI> getJsonLdContext();
+  Map<String, URI> jsonLdContext();
 }

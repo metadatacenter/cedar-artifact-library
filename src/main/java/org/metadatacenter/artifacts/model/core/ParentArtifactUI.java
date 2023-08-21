@@ -6,13 +6,13 @@ import java.util.Optional;
 
 public sealed interface ParentArtifactUI permits TemplateUI, ElementUI
 {
-  List<String> getOrder();
+  List<String> order();
 
-  Map<String, String> getPropertyLabels();
+  Map<String, String> propertyLabels();
 
-  Map<String, String> getPropertyDescriptions();
+  Map<String, String> propertyDescriptions();
 
-  Optional<String> getHeader();
+  Optional<String> header();
 
-  Optional<String> getFooter();
+  Optional<String> footer();
 }

@@ -2,11 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.net.URI;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TemplateSchemaArtifactTest
 {
@@ -18,7 +14,7 @@ public class TemplateSchemaArtifactTest
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName("Test").withTemplateUI(templateUI).build();
 
-    assertEquals(templateSchemaArtifact.getName(), "Test");
+    assertEquals(templateSchemaArtifact.name(), "Test");
   }
 
   @Test
@@ -29,8 +25,8 @@ public class TemplateSchemaArtifactTest
       .withName("Test")
       .withTemplateUI(templateUI).build();
 
-    assertEquals(templateSchemaArtifact.getName(), "Test");
-    assertEquals(templateSchemaArtifact.getTemplateUI(), templateUI);
+    assertEquals(templateSchemaArtifact.name(), "Test");
+    assertEquals(templateSchemaArtifact.templateUI(), templateUI);
   }
 
 

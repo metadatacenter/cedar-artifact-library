@@ -5,13 +5,13 @@ import java.util.Optional;
 
 public sealed interface ChildSchemaArtifact permits ElementSchemaArtifact, FieldSchemaArtifact
 {
-  String getName();
+  String name();
 
   boolean isMultiple();
 
-  Optional<Integer> getMinItems();
+  Optional<Integer> minItems();
 
-  Optional<Integer> getMaxItems();
+  Optional<Integer> maxItems();
 
-  Optional<URI> getPropertyURI();
+  Optional<URI> propertyURI();
 }

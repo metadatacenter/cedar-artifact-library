@@ -4,11 +4,11 @@ import java.net.URI;
 
 public interface JsonSchemaArtifact
 {
-  URI getJsonSchemaSchemaUri();
+  URI jsonSchemaSchemaUri();
 
-  String getJsonSchemaType();
+  String jsonSchemaType();
 
-  String getJsonSchemaTitle();
+  String jsonSchemaTitle();
 
-  String getJsonSchemaDescription();
+  String jsonSchemaDescription();
 }

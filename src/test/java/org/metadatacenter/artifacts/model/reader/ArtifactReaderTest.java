@@ -13,6 +13,7 @@ import org.metadatacenter.artifacts.model.core.Version;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,7 +55,7 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("HuBMAP Sample Block", templateSchemaArtifact.getName());
+    assertEquals("HuBMAP Sample Block", templateSchemaArtifact.name());
   }
 
   @Test
@@ -64,7 +65,7 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("Sample Section", templateSchemaArtifact.getName());
+    assertEquals("Sample Section", templateSchemaArtifact.name());
   }
 
   @Test
@@ -74,7 +75,7 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("HuBMAP Sample Suspension", templateSchemaArtifact.getName());
+    assertEquals("HuBMAP Sample Suspension", templateSchemaArtifact.name());
   }
 
   @Test
@@ -84,7 +85,7 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("ADVANCE metadata template", templateSchemaArtifact.getName());
+    assertEquals("ADVANCE metadata template", templateSchemaArtifact.name());
   }
 
   @Test
@@ -94,7 +95,7 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("DataCite V4.4 without OpenViewUrl field", templateSchemaArtifact.getName());
+    assertEquals("DataCite V4.4 without OpenViewUrl field", templateSchemaArtifact.name());
   }
 
   @Test
@@ -104,7 +105,7 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("RADx Metadata Specification", templateSchemaArtifact.getName());
+    assertEquals("RADx Metadata Specification", templateSchemaArtifact.name());
   }
 
   @Test
@@ -114,9 +115,9 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("TemplateWithMultiInstanceField", templateSchemaArtifact.getName());
+    assertEquals("TemplateWithMultiInstanceField", templateSchemaArtifact.name());
 
-    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = templateSchemaArtifact.getFieldSchemas();
+    Map<String, FieldSchemaArtifact> fieldSchemas = templateSchemaArtifact.fieldSchemas();
 
     assertEquals(fieldSchemas.size(), 1);
 
@@ -133,10 +134,10 @@ public class ArtifactReaderTest {
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals(templateSchemaArtifact.getName(), "Test name");
-    assertEquals(templateSchemaArtifact.getDescription(), "Test description");
-    assertEquals(templateSchemaArtifact.getModelVersion(), new Version(1, 6, 0));
-    assertNotNull(templateSchemaArtifact.getTemplateUI());
+    assertEquals(templateSchemaArtifact.name(), "Test name");
+    assertEquals(templateSchemaArtifact.description(), "Test description");
+    assertEquals(templateSchemaArtifact.modelVersion(), new Version(1, 6, 0));
+    assertNotNull(templateSchemaArtifact.templateUI());
   }
 
   @Test
@@ -146,10 +147,10 @@ public class ArtifactReaderTest {
 
     ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(objectNode);
 
-    assertEquals(elementSchemaArtifact.getName(), "Test name");
-    assertEquals(elementSchemaArtifact.getDescription(), "Test description");
-    assertEquals(elementSchemaArtifact.getModelVersion(), new Version(1, 6, 0));
-    assertNotNull(elementSchemaArtifact.getElementUI());
+    assertEquals(elementSchemaArtifact.name(), "Test name");
+    assertEquals(elementSchemaArtifact.description(), "Test description");
+    assertEquals(elementSchemaArtifact.modelVersion(), new Version(1, 6, 0));
+    assertNotNull(elementSchemaArtifact.elementUI());
   }
 
   @Test
@@ -161,10 +162,10 @@ public class ArtifactReaderTest {
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(objectNode);
 
-    assertEquals(fieldSchemaArtifact.getName(), "Test name");
-    assertEquals(fieldSchemaArtifact.getDescription(), "Test description");
-    assertEquals(fieldSchemaArtifact.getModelVersion(), new Version(1, 6, 0));
-    assertNotNull(fieldSchemaArtifact.getFieldUI());
+    assertEquals(fieldSchemaArtifact.name(), "Test name");
+    assertEquals(fieldSchemaArtifact.description(), "Test description");
+    assertEquals(fieldSchemaArtifact.modelVersion(), new Version(1, 6, 0));
+    assertNotNull(fieldSchemaArtifact.fieldUI());
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

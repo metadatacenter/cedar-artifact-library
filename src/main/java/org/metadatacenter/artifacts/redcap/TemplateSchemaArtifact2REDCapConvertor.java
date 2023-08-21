@@ -32,15 +32,15 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   private void processTemplateSchemaArtifact(Workbook workbook)
   {
-    String templateName = templateSchemaArtifact.getJsonSchemaTitle();
-    String templateDescription = templateSchemaArtifact.getJsonSchemaDescription();
+    String templateName = templateSchemaArtifact.jsonSchemaTitle();
+    String templateDescription = templateSchemaArtifact.jsonSchemaDescription();
     Sheet sheet = workbook.createSheet(templateName);
     createHeader(sheet);
 
     int currentRowNumber = REDCapConstants.HEADER_ROW_NUMBER + 1;
-    for (String fieldName : templateSchemaArtifact.getTemplateUI().getOrder()) {
-      if (templateSchemaArtifact.getFieldSchemas().containsKey(fieldName)) {
-        FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemas().get(fieldName);
+    for (String fieldName : templateSchemaArtifact.templateUI().order()) {
+      if (templateSchemaArtifact.fieldSchemas().containsKey(fieldName)) {
+        FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.fieldSchemas().get(fieldName);
 
         processFieldSchemaArtifact(fieldSchemaArtifact, sheet, currentRowNumber, templateName, templateDescription);
       } else {
@@ -56,7 +56,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
   {
 
     Row row = sheet.createRow(rowNumber);
-    String fieldName = fieldSchemaArtifact.getName();
+    String fieldName = fieldSchemaArtifact.name();
 
     Cell variableNameCell = row.createCell(REDCapConstants.VARIABLE_NAME_COLUMN_INDEX);
     // TODO fieldName will have to be processed to allow only valid REDCap variable names
@@ -81,7 +81,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
     // TODO
 
     Cell fieldNotesHeaderCell = row.createCell(REDCapConstants.FIELD_NOTES_COLUMN_INDEX);
-    fieldNotesHeaderCell.setCellValue(fieldSchemaArtifact.getDescription());
+    fieldNotesHeaderCell.setCellValue(fieldSchemaArtifact.description());
 
     Cell textValidationTypeORShowSliderNumberHeaderCell = row.createCell(REDCapConstants.TEXT_VALIDATION_TYPE_OR_SHOW_SLIDER_NUMBER_COLUMN_INDEX);
     if (fieldType == REDCapConstants.TEXT_FIELD_TYPE) {
@@ -94,17 +94,17 @@ public class TemplateSchemaArtifact2REDCapConvertor
     // TODO
 
     Cell requiredFieldHeaderCell = row.createCell(REDCapConstants.REQUIRED_FIELD_COLUMN_INDEX);
-    if (fieldSchemaArtifact.getValueConstraints().isPresent())
-      requiredFieldHeaderCell.setCellValue(fieldSchemaArtifact.getValueConstraints().get().requiredValue());
+    if (fieldSchemaArtifact.valueConstraints().isPresent())
+      requiredFieldHeaderCell.setCellValue(fieldSchemaArtifact.valueConstraints().get().requiredValue());
     else
       requiredFieldHeaderCell.setCellValue(false);
   }
 
   Optional<String> createTextFieldValidationValue(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().inputType();
-    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
-    FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
+    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUI().inputType();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
+    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
 
     switch (fieldInputType) {
     case TEMPORAL:
@@ -150,7 +150,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
             return Optional.of(REDCapConstants.TIME_TEXTFIELD_VALIDATION);
         }
       } else
-        throw new RuntimeException("Missing temporalType value in value constraint for numeric field " + fieldSchemaArtifact.getName());
+        throw new RuntimeException("Missing temporalType value in value constraint for numeric field " + fieldSchemaArtifact.name());
 
     case EMAIL:
       return Optional.of(REDCapConstants.EMAIL_TEXTFIELD_VALIDATION);
@@ -186,7 +186,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
           }
         }
       } else
-        throw new RuntimeException("Missing numberType value in value constraint  for numeric field " + fieldSchemaArtifact.getName());
+        throw new RuntimeException("Missing numberType value in value constraint  for numeric field " + fieldSchemaArtifact.name());
 
     case PHONE_NUMBER:
       return Optional.of(REDCapConstants.PHONE_TEXTFIELD_VALIDATION);
@@ -212,7 +212,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   private String generateREDCapFieldType(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().inputType();
+    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUI().inputType();
 
     if (fieldInputType == FieldInputType.TEXTFIELD)
       return REDCapConstants.TEXT_FIELD_TYPE;

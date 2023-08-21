@@ -29,7 +29,7 @@ public class FieldReporter
 
     try {
       FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
-      System.out.println("schema:name: " + fieldSchemaArtifact.getName());
+      System.out.println("schema:name: " + fieldSchemaArtifact.name());
     } catch (ArtifactParseException e) {
       System.err.println(
         "Parse error '" + e.getParseErrorMessage() + "' processing field " + e.getFieldName() + " at path " + e.getPath());

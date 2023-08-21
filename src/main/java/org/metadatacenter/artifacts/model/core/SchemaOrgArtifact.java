@@ -4,9 +4,9 @@ import java.util.Optional;
 
 public interface SchemaOrgArtifact
 {
-  String getName();
+  String name();
 
-  String getDescription();
+  String description();
 
-  Optional<String> getIdentifier();
+  Optional<String> identifier();
 }

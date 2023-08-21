@@ -85,7 +85,7 @@ public class ArtifactExcelRenderer
 
   public Workbook render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
   {
-    String sheetName = templateSchemaArtifact.getName();
+    String sheetName = templateSchemaArtifact.name();
     int columnIndex = headerStartColumnIndex;
 
     Sheet sheet = workbook.createSheet(sheetName);
@@ -112,16 +112,16 @@ public class ArtifactExcelRenderer
 
   public Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow, Row firstDataRow)
   {
-    String fieldName = fieldSchemaArtifact.getName();
-    String fieldDescription = fieldSchemaArtifact.getDescription();
-    FieldInputType fieldInputType = fieldSchemaArtifact.getFieldUI().inputType();
+    String fieldName = fieldSchemaArtifact.name();
+    String fieldDescription = fieldSchemaArtifact.description();
+    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUI().inputType();
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
-    boolean isRequiredValue = fieldSchemaArtifact.getValueConstraints().isPresent() ?
-      fieldSchemaArtifact.getValueConstraints().get().requiredValue() : false;
-    Optional<DefaultValue> defaultValue = fieldSchemaArtifact.getValueConstraints().isPresent() ?
-      fieldSchemaArtifact.getValueConstraints().get().defaultValue() : Optional.empty();
+    boolean isRequiredValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
+      fieldSchemaArtifact.valueConstraints().get().requiredValue() : false;
+    Optional<DefaultValue> defaultValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
+      fieldSchemaArtifact.valueConstraints().get().defaultValue() : Optional.empty();
 
     //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
     //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
@@ -143,7 +143,7 @@ public class ArtifactExcelRenderer
       sheet.setColumnHidden(columnIndex, true);
 
     if (defaultValue.isPresent()) {
-      DefaultValue value = fieldSchemaArtifact.getValueConstraints().get().defaultValue().get();
+      DefaultValue value = fieldSchemaArtifact.valueConstraints().get().defaultValue().get();
       Cell dataCell = firstDataRow.createCell(columnIndex);
 
       if (value.isNumericDefaultValue()) {
@@ -188,10 +188,10 @@ public class ArtifactExcelRenderer
 
   private String createDataValidationMessage(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    String fieldName = fieldSchemaArtifact.getName();
-    FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
+    String fieldName = fieldSchemaArtifact.name();
+    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
     FieldInputType fieldInputType = fieldUI.inputType();
-    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     // Only some fields have validation constraints that we can create messages for
     if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
@@ -244,7 +244,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    String fieldName = fieldSchemaArtifact.getName();
+    String fieldName = fieldSchemaArtifact.name();
 
     int validationType = getValidationType(fieldSchemaArtifact);
 
@@ -271,7 +271,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
     int validationType = DataValidationConstraint.ValidationType.DECIMAL;
 
     if (valueConstraints.isPresent()) {
@@ -303,7 +303,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
     int validationType = DataValidationConstraint.ValidationType.INTEGER;
 
     if (valueConstraints.isPresent()) {
@@ -339,7 +339,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     if (valueConstraints.isPresent()) {
       if (valueConstraints.get().minLength().isPresent()) {
@@ -369,7 +369,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    if (fieldSchemaArtifact.getFieldUI().isTemporal())
+    if (fieldSchemaArtifact.fieldUI().isTemporal())
       return Optional.of(
         dataValidationHelper.createDateConstraint(DataValidationConstraint.OperatorType.BETWEEN, "Date(1, 1, 1)",
           "Date(9999,12,31)", "dd/mm/yyyy"));
@@ -381,7 +381,7 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    if (fieldSchemaArtifact.getFieldUI().isTemporal())
+    if (fieldSchemaArtifact.fieldUI().isTemporal())
       return Optional.of(
         dataValidationHelper.createTimeConstraint(DataValidationConstraint.OperatorType.BETWEEN, "=TIME(0,0,0)",
           "=TIME(23,59,59)"));
@@ -395,10 +395,10 @@ public class ArtifactExcelRenderer
     FieldSchemaArtifact fieldSchemaArtifact,
     DataValidationHelper dataValidationHelper)
   {
-    Map<String, String> values = getPossibleValues(fieldSchemaArtifact.getValueConstraints());
+    Map<String, String> values = getPossibleValues(fieldSchemaArtifact.valueConstraints());
 
     if (!values.isEmpty()) {
-      String sheetName = fieldSchemaArtifact.getName();
+      String sheetName = fieldSchemaArtifact.name();
       Sheet valueSheet = workbook.createSheet(sheetName);
       int numberOfValues = values.keySet().size();
       String formula = "'" + sheetName + "'!$A$1:$A$" + numberOfValues;
@@ -475,10 +475,10 @@ public class ArtifactExcelRenderer
   // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
   private int getValidationType(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    String fieldName = fieldSchemaArtifact.getName();
-    FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
+    String fieldName = fieldSchemaArtifact.name();
+    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
     FieldInputType fieldInputType = fieldUI.inputType();
-    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
       || fieldInputType == FieldInputType.RICHTEXT || fieldInputType == FieldInputType.EMAIL
@@ -621,9 +621,9 @@ public class ArtifactExcelRenderer
 
   private CellStyle createCellStyle(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    String fieldName = fieldSchemaArtifact.getName();
-    FieldUI fieldUI = fieldSchemaArtifact.getFieldUI();
-    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.getValueConstraints();
+    String fieldName = fieldSchemaArtifact.name();
+    FieldUI fieldUI = fieldSchemaArtifact.fieldUI();
+    Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
     DataFormat dataFormat = workbook.createDataFormat();
     CellStyle cellStyle = workbook.createCellStyle();
 
@@ -704,28 +704,28 @@ public class ArtifactExcelRenderer
     schemaTitleHeaderCell.setCellValue(ModelNodeNames.SCHEMA_ORG_TITLE);
 
     Cell schemaTitleDataCell = dataRow.createCell(0);
-    schemaTitleDataCell.setCellValue(templateSchemaArtifact.getName());
+    schemaTitleDataCell.setCellValue(templateSchemaArtifact.name());
 
-    if (templateSchemaArtifact.getVersion().isPresent()) {
+    if (templateSchemaArtifact.version().isPresent()) {
       Cell pavVersionHeaderCell = headerRow.createCell(1);
       pavVersionHeaderCell.setCellValue(ModelNodeNames.PAV_VERSION);
       Cell pavVersionDataCell = dataRow.createCell(1);
-      pavVersionDataCell.setCellValue(templateSchemaArtifact.getVersion().get().toString());
+      pavVersionDataCell.setCellValue(templateSchemaArtifact.version().get().toString());
     } else
-      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
+      throw new RuntimeException("template " + templateSchemaArtifact.name() + " has no field " + ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
 
     Cell pavCreatedOnHeaderCell = headerRow.createCell(2);
     pavCreatedOnHeaderCell.setCellValue(ModelNodeNames.PAV_CREATED_ON);
     Cell pavCreatedOnDataCell = dataRow.createCell(2);
     pavCreatedOnDataCell.setCellValue(ZonedDateTime.now( ZoneId.systemDefault()).format(xsdDateTimeFormatter));
 
-    if (templateSchemaArtifact.getJsonLdId().isPresent()) {
+    if (templateSchemaArtifact.jsonLdId().isPresent()) {
       Cell derivedFromHeaderCell = headerRow.createCell(3);
       derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
       Cell derivedFromDataCell = dataRow.createCell(3);
-      derivedFromDataCell.setCellValue(templateSchemaArtifact.getJsonLdId().get().toString());
+      derivedFromDataCell.setCellValue(templateSchemaArtifact.jsonLdId().get().toString());
     } else
-      throw new RuntimeException("template " + templateSchemaArtifact.getName() + " has no field " + ModelNodeNames.JSON_LD_ID);
+      throw new RuntimeException("template " + templateSchemaArtifact.name() + " has no field " + ModelNodeNames.JSON_LD_ID);
 
     metadataSheet.autoSizeColumn(0);
     metadataSheet.autoSizeColumn(1);
