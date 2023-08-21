@@ -47,44 +47,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
   ElementUi elementUi();
 
-  default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
-  {
-    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
-
-    for (String fieldName: getUi().order()) {
-      if (fieldSchemas().containsKey(fieldName))
-        orderedFieldSchemas.put(fieldName, fieldSchemas().get(fieldName));
-    }
-    return orderedFieldSchemas;
-  }
-
-  default LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas()
-  {
-    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
-
-    for (String elementName : getUi().order()) {
-      if (elementSchemas().containsKey(elementName))
-        orderedElementSchemas.put(elementName, elementSchemas().get(elementName));
-    }
-    return orderedElementSchemas;
-  }
-
-  default ElementSchemaArtifact getElementSchemaArtifact(String name)
-  {
-    if (elementSchemas().containsKey(name))
-      return elementSchemas().get(name);
-    else
-      throw new IllegalArgumentException("Element " + name + "not present in template " + name());
-  }
-
-  default FieldSchemaArtifact getFieldSchemaArtifact(String name)
-  {
-    if (fieldSchemas().containsKey(name))
-      return fieldSchemas().get(name);
-    else
-      throw new IllegalArgumentException("Field " + name + "not present in element " + name());
-  }
-
   static Builder builder() {
     return new Builder();
   }

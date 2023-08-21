@@ -28,13 +28,43 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 
   Map<String, ElementSchemaArtifact> elementSchemas();
 
-  LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas();
+  default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
+  {
+    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
-  LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas();
+    for (String fieldName: getUi().order()) {
+      if (fieldSchemas().containsKey(fieldName))
+        orderedFieldSchemas.put(fieldName, fieldSchemas().get(fieldName));
+    }
+    return orderedFieldSchemas;
+  }
 
-  FieldSchemaArtifact getFieldSchemaArtifact(String name);
+  default LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas()
+  {
+    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
-  ElementSchemaArtifact getElementSchemaArtifact(String name);
+    for (String elementName : getUi().order()) {
+      if (elementSchemas().containsKey(elementName))
+        orderedElementSchemas.put(elementName, elementSchemas().get(elementName));
+    }
+    return orderedElementSchemas;
+  }
+
+  default ElementSchemaArtifact getElementSchemaArtifact(String name)
+  {
+    if (elementSchemas().containsKey(name))
+      return elementSchemas().get(name);
+    else
+      throw new IllegalArgumentException("Element " + name + "not present in template " + name());
+  }
+
+  default FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  {
+    if (fieldSchemas().containsKey(name))
+      return fieldSchemas().get(name);
+    else
+      throw new IllegalArgumentException("Field " + name + "not present in element " + name());
+  }
 
   default Map<String, URI> getChildPropertyURIs()
   {
