@@ -11,22 +11,24 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 {
   String name();
 
-  default boolean isField(String name) {return fieldSchemas().containsKey(name);}
+  ParentArtifactUi getUi();
 
-  default boolean isElement(String name) {return elementSchemas().containsKey(name);}
+  Map<String, FieldSchemaArtifact> fieldSchemas();
 
-  default boolean hasFields() {return !fieldSchemas().isEmpty();}
+  Map<String, ElementSchemaArtifact> elementSchemas();
 
-  default boolean hasElements() {return !elementSchemas().isEmpty();}
+  default boolean isField(String name) { return fieldSchemas().containsKey(name); }
+
+  default boolean isElement(String name) { return elementSchemas().containsKey(name); }
+
+  default boolean hasFields() { return !fieldSchemas().isEmpty(); }
+
+  default boolean hasElements() { return !elementSchemas().isEmpty(); }
 
   default boolean hasAttributeValueField()
   {
     return this.fieldSchemas().values().stream().anyMatch(fs -> fs.fieldUi().isAttributeValue());
   }
-
-  Map<String, FieldSchemaArtifact> fieldSchemas();
-
-  Map<String, ElementSchemaArtifact> elementSchemas();
 
   default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
   {
@@ -76,8 +78,6 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 
     return childPropertyURIs;
   }
-
-  ParentArtifactUi getUi();
 
   default void addChild(ChildSchemaArtifact childSchemaArtifact)
   {

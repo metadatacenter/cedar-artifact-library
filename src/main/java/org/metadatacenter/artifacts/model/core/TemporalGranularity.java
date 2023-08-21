@@ -29,7 +29,7 @@ public enum TemporalGranularity
         return tg;
       }
     }
-    throw new IllegalArgumentException("No temporal granularity constant with text " + text + " found");
+    throw new IllegalArgumentException("No temporal granularity constant with name " + text + " found");
   }
 
   @Override public String toString()

@@ -10,7 +10,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
 
 public record FieldUi(FieldInputType inputType, boolean valueRecommendationEnabled, boolean hidden,
                       Optional<Boolean> timeZoneEnabled, Optional<TemporalGranularity> temporalGranularity,
-                      Optional<InputTimeFormat> inputTimeFormat, Optional<String> content) implements Ui
+                      Optional<InputTimeFormat> inputTimeFormat, Optional<String> _content) implements Ui
 {
   public FieldUi
   {

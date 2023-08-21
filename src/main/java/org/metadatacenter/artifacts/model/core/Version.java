@@ -1,10 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

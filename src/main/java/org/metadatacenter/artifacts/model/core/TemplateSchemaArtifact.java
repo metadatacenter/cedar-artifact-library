@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.model.ModelNodeNames;
-
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -18,7 +16,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateM
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldEquals;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
@@ -34,10 +32,10 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
 import static org.metadatacenter.model.ModelNodeNames.PAV_PREVIOUS_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 
@@ -254,7 +252,7 @@ record TemplateSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> js
     validateUriListContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(this, templateUi, UI);
+    validateUiFieldNotNull(this, templateUi, UI);
 
     Set<String> order = templateUi.order().stream().collect(toSet());
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
