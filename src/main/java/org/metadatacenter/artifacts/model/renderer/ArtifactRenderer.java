@@ -17,6 +17,9 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -89,13 +92,12 @@ public class ArtifactRenderer
    *   "pav:version": "0.0.1", "bibo:status": "bibo:draft",
    *   "pav:previousVersion": "https://repo.metadatacenter.org/templates/54343",
    *   "pav:derivedFrom": "https://repo.metadatacenter.org/templates/232323",
-   *   "@valueType": "https://schema.metadatacenter.org/core/Template",
    *   "@id": "https://repo.metadatacenter.org/templates/474378",
    *   "pav:createdOn": "2023-07-28T11:10:41-07:00", "pav:createdBy": "https://metadatacenter.org/users/656433",
    *   "pav:lastUpdatedOn": "2023-07-28T11:10:41-07:00", "oslc:modifiedBy": "https://metadatacenter.org/users/524332",
    *   "@context": { ... },
    *   "properties": { ... },
-   *   "required": [ "xsd", "pav", "schema", "oslc", "bibo",
+   *   "required": [ "@context", "@id",
    *                 "schema:isBasedOn", "schema:name", "schema:description",
    *                 "pav:createdOn", "pav:createdBy", "pav:lastUpdatedOn", "oslc:modifiedBy",
    *                 "Child Name 1", ... "Child Name n"],
@@ -140,9 +142,9 @@ public class ArtifactRenderer
   }
 
   /**
-   * Generate a specification for an element schema artifact
+   * Generate a JSON Schema specification for an element schema artifact
    * <p></p>
-   * An example artifact specification could look as follows:
+   * An example JSON Schema artifact specification could look as follows:
    * <pre>
    * {
    *   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -195,9 +197,9 @@ public class ArtifactRenderer
   }
 
   /**
-   * Generate a specification for a field schema artifact
+   * Generate a JSON Schema specification for a field schema artifact
    * <p></p>
-   * An example artifact could look as follows:
+   * An example JSON Schema artifact could look as follows:
    * <pre>
    * {
    *   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -226,6 +228,7 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = renderSchemaArtifact(fieldSchemaArtifact);
 
+    // TODO This will create prefix mappings for schema, pav, bibo, oslc. Some fields need xsd, rdfs, skos
     rendering.put(JSON_LD_CONTEXT, renderSchemaArtifactContextPrefixesJsonLdSpecification());
 
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
@@ -797,11 +800,11 @@ public class ArtifactRenderer
    * Defined as follows:
    * <pre>
    *   {
+   *     "schema": "http://schema.org/",
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "pav": "http://purl.org/pav/",
    *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
    *     "xsd": "http://www.w3.org/2001/XMLSchema#",
-   *     "pav": "http://purl.org/pav/",
-   *     "oslc": "http://open-services.net/ns/core#",
-   *     "schema": "http://schema.org/",
    *     "skos": "http://www.w3.org/2004/02/skos/core#",
    *     "schema:name": { "@valueType": "xsd:string" },
    *     "schema:description": { "@valueType": "xsd:string" },
@@ -837,8 +840,8 @@ public class ArtifactRenderer
    *   "@context": {
    *     "schema": "http://schema.org/",
    *     "pav": "http://purl.org/pav/",
-   *     "bibo": "http://purl.org/ontology/bibo/",
-   *     "oslc": "http://open-services.net/ns/core#"
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "bibo": "http://purl.org/ontology/bibo/"
    *   }
    * </pre>
    */
@@ -848,8 +851,8 @@ public class ArtifactRenderer
 
     rendering.put(SCHEMA, SCHEMA_IRI);
     rendering.put(PAV, PAV_IRI);
-    rendering.put(BIBO, BIBO_IRI);
     rendering.put(OSLC, OSLC_IRI);
+    rendering.put(BIBO, BIBO_IRI);
 
     return rendering;
   }
@@ -860,9 +863,9 @@ public class ArtifactRenderer
    * Defined as follows:
    * <pre>
    *   "@context": {
+   *     "schema": "http://schema.org/",
    *     "pav": "http://purl.org/pav/",
    *     "oslc": "http://open-services.net/ns/core#",
-   *     "schema": "http://schema.org/",
    *     "skos": "http://www.w3.org/2004/02/skos/core#",
    *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
    *     "xsd": "http://www.w3.org/2001/XMLSchema#"
@@ -873,11 +876,11 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(RDFS, RDFS_IRI);
-    rendering.put(XSD, XSD_IRI);
+    rendering.put(SCHEMA, SCHEMA_IRI);
     rendering.put(PAV, PAV_IRI);
     rendering.put(OSLC, OSLC_IRI);
-    rendering.put(SCHEMA, SCHEMA_IRI);
+    rendering.put(RDFS, RDFS_IRI);
+    rendering.put(XSD, XSD_IRI);
     rendering.put(SKOS, SKOS_IRI);
 
     return rendering;

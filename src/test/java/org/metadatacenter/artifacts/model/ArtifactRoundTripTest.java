@@ -98,7 +98,7 @@ public class ArtifactRoundTripTest
 
     assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
-  
+
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
   {
     try {
