@@ -1,7 +1,9 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.bouncycastle.math.raw.Mod;
 import org.junit.Assert;
 import org.junit.Test;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -13,20 +15,20 @@ import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public class ElementSchemaArtifactTest
 {
 
   @Test public void testConstructor()
   {
+    Map<String, URI> jsonLdContext = SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+    List<URI> jsonLdTypes = Collections.singletonList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     URI jsonLdId = URI.create("http://example.com/artifact");
-    Map<String, URI> jsonLdContext = new HashMap<>();
-    jsonLdContext.put("key", URI.create("http://example.com/context"));
     URI createdBy = URI.create("http://example.com/user");
     URI modifiedBy = URI.create("http://example.com/user");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    List<URI> jsonLdTypes = Collections.singletonList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";

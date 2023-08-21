@@ -280,7 +280,7 @@ public class ArtifactReader
     Map<String, URI> childName2URI = new HashMap<>();
     String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;
     JsonNode contextNode = objectNode.at(contextPath);
-    Set<String> contextFieldNames = new HashSet<>(ARTIFACT_CONTEXT_ENTRIES);
+    Set<String> contextFieldNames = ARTIFACT_CONTEXT_ENTRIES;
 
     if (contextNode != null && contextNode.isObject()) {
       ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;

@@ -35,4 +35,9 @@ public record Version(int major, int minor, int patch)
 
     return new Version(major, minor, patch);
   }
+
+  @Override public String toString()
+  {
+    return major + "." + minor + "." + patch;
+  }
 }

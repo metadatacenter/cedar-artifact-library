@@ -17,8 +17,7 @@ public class FieldSchemaArtifactTest
 
   @Test public void testCreateFieldSchemaArtifact()
   {
-    Map<String, URI> jsonLdContext = new HashMap<>();
-    jsonLdContext.put("key", URI.create("http://example.com/context"));
+    Map<String, URI> jsonLdContext = ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
     List<URI> jsonLdTypes = Collections.singletonList(URI.create("https://schema.metadatacenter.org/core/TemplateField"));
     URI jsonLdId = URI.create("https://repo.metadatacenter.org/fields/4455");
     URI createdBy = URI.create("http://example.com/user");

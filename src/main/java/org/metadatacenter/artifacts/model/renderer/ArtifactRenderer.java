@@ -764,11 +764,10 @@ public class ArtifactRenderer
    * Defined as follows:
    * <pre>
    *   {
-   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     "schema": "http://schema.org/",
+   *     "oslc": "http://open-services.net/ns/core#",
    *     "pav": "http://purl.org/pav/",
    *     "bibo": "http://purl.org/ontology/bibo/",
-   *     "oslc": "http://open-services.net/ns/core#",
-   *     "schema": "http://schema.org/",
    *     "schema:name": { "@valueType": "xsd:string" },
    *     "schema:description": { "@valueType": "xsd:string" },
    *     "pav:createdOn": { "@valueType": "xsd:dateTime" },
@@ -836,11 +835,10 @@ public class ArtifactRenderer
    * Defined as follows:
    * <pre>
    *   "@context": {
-   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     "schema": "http://schema.org/",
    *     "pav": "http://purl.org/pav/",
    *     "bibo": "http://purl.org/ontology/bibo/",
-   *     "oslc": "http://open-services.net/ns/core#",
-   *     "schema": "http://schema.org/"
+   *     "oslc": "http://open-services.net/ns/core#"
    *   }
    * </pre>
    */
@@ -848,11 +846,10 @@ public class ArtifactRenderer
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(XSD, XSD_IRI);
-    rendering.put(PAV, PAV_IRI);
-    rendering.put(OSLC, OSLC_IRI);
     rendering.put(SCHEMA, SCHEMA_IRI);
+    rendering.put(PAV, PAV_IRI);
     rendering.put(BIBO, BIBO_IRI);
+    rendering.put(OSLC, OSLC_IRI);
 
     return rendering;
   }
@@ -863,12 +860,12 @@ public class ArtifactRenderer
    * Defined as follows:
    * <pre>
    *   "@context": {
-   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
    *     "pav": "http://purl.org/pav/",
    *     "oslc": "http://open-services.net/ns/core#",
    *     "schema": "http://schema.org/",
-   *     "skos": "http://www.w3.org/2004/02/skos/core#"
+   *     "skos": "http://www.w3.org/2004/02/skos/core#",
+   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#"
    *   }
    * </pre>
    */

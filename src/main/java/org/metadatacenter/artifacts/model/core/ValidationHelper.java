@@ -61,6 +61,20 @@ public class ValidationHelper
       throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values + " in " + obj);
   }
 
+  public static void validateUriListContainsAllOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
+  {
+    validateListFieldNotNull(obj, uriListField, fieldName);
+
+    if (!uriListField.containsAll(values))
+      throw new IllegalStateException("URI list field " + fieldName + " must contain all values " + values + " in " + obj);
+  }
+
+  public static <K, V> void validateMapContainsAll(Object obj, Map<K, V> field, String fieldName, Map<K, V> values)
+  {
+    if (!field.entrySet().containsAll(values.entrySet()))
+      throw new IllegalStateException("Map field " + fieldName + " must contain all entries " + values + " in " + obj);
+  }
+
   public static void validateVersionFieldNotNull(Object obj, Version field, String fieldName)
   {
     if (field == null)

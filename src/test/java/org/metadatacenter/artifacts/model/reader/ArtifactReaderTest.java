@@ -12,14 +12,17 @@ import org.metadatacenter.artifacts.model.core.Version;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
@@ -171,6 +174,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
+    objectNode.put(JSON_LD_CONTEXT, createContextMap(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     objectNode.put(JSON_LD_TYPE, TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
@@ -180,6 +184,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
+    objectNode.put(JSON_LD_CONTEXT, createContextMap(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     objectNode.put(JSON_LD_TYPE, ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
@@ -189,6 +194,7 @@ public class ArtifactReaderTest {
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
+    objectNode.put(JSON_LD_CONTEXT, createContextMap(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     objectNode.put(JSON_LD_TYPE, FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
@@ -210,6 +216,16 @@ public class ArtifactReaderTest {
     objectNode.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     objectNode.put(UI, mapper.createObjectNode());
+
+    return objectNode;
+  }
+
+  private ObjectNode createContextMap(Map<String, URI> contextMap)
+  {
+    ObjectNode objectNode = mapper.createObjectNode();
+
+    for (Map.Entry<String, URI> entry : contextMap.entrySet())
+      objectNode.put(entry.getKey(), entry.getValue().toString());
 
     return objectNode;
   }
