@@ -269,7 +269,7 @@ public class ArtifactReader
   //
   //    "properties": {
   //      "@context": {
-  //         "valueType": "object",
+  //         "type": "object",
   //          ....
   //          "Study ID": { "enum": [ "http://semantic-dicom.org/dcm#StudyID" ]
   //          "Disease": { "enum": [ "http://semantic-dicom.org/dcm#Disease" ]
@@ -485,7 +485,7 @@ public class ArtifactReader
                 propertyURI);
               fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
             }
-            default -> throw new ArtifactParseException("Unknown JSON-LD @valueType " + subSchemaArtifactJsonLdType,
+            default -> throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType,
               jsonChildName, fieldOrElementPath);
             }
 
@@ -562,17 +562,17 @@ public class ArtifactReader
   private void checkSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path)
   {
     if (schemaArtifactJsonLdTypes.isEmpty())
-      throw new ArtifactParseException("Unknown object - must be a JSON-LD valueType or array of types", JSON_LD_TYPE, path);
+      throw new ArtifactParseException("Unknown object - must be a JSON-LD type or array of types", JSON_LD_TYPE, path);
 
     if (schemaArtifactJsonLdTypes.size() != 1)
       throw new ArtifactParseException(
-        "Expecting single JSON-LD @valueType field for schema artifact, got " + schemaArtifactJsonLdTypes.size(),
+        "Expecting single JSON-LD @type field for schema artifact, got " + schemaArtifactJsonLdTypes.size(),
         JSON_LD_TYPE, path);
 
     URI schemaArtifactJsonLdType = schemaArtifactJsonLdTypes.get(0);
 
     if (!SCHEMA_ARTIFACT_TYPE_IRIS.contains(schemaArtifactJsonLdType.toString()))
-      throw new ArtifactParseException("Unexpected schema artifact JSON-LD @valueType " + schemaArtifactJsonLdType,
+      throw new ArtifactParseException("Unexpected schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
         JSON_LD_TYPE, path);
   }
 
@@ -583,7 +583,7 @@ public class ArtifactReader
     URI schemaArtifactJsonLdType = schemaArtifactJsonLdTypes.get(0);
 
     if (!schemaArtifactJsonLdType.toString().equals(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
-      throw new ArtifactParseException("Unexpected template schema artifact JSON-LD @valueType " + schemaArtifactJsonLdType,
+      throw new ArtifactParseException("Unexpected template schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
         JSON_LD_TYPE, path);
   }
 
@@ -594,7 +594,7 @@ public class ArtifactReader
     URI schemaArtifactJsonLdType = schemaArtifactJsonLdTypes.get(0);
 
     if (!schemaArtifactJsonLdType.toString().equals(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
-      throw new ArtifactParseException("Unexpected element schema artifact JSON-LD @valueType " + schemaArtifactJsonLdType,
+      throw new ArtifactParseException("Unexpected element schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
         JSON_LD_TYPE, path);
   }
 
@@ -606,7 +606,7 @@ public class ArtifactReader
 
     if (!schemaArtifactJsonLdType.toString().equals(FIELD_SCHEMA_ARTIFACT_TYPE_IRI) &&
         !schemaArtifactJsonLdType.toString().equals(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
-      throw new ArtifactParseException("Unexpected field schema artifact JSON-LD @valueType " + schemaArtifactJsonLdType,
+      throw new ArtifactParseException("Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
         JSON_LD_TYPE, path);
   }
 
@@ -625,7 +625,7 @@ public class ArtifactReader
     List<String> jsonLdTypes = readStringFieldValues(objectNode, path, JSON_LD_TYPE);
 
     if (jsonLdTypes.isEmpty())
-      throw new ArtifactParseException("No JSON-LD @valueType for artifact", JSON_LD_TYPE, path);
+      throw new ArtifactParseException("No JSON-LD @type for artifact", JSON_LD_TYPE, path);
     else
       return jsonLdTypes;
   }
@@ -1054,7 +1054,7 @@ public class ArtifactReader
     String inputType = readRequiredStringField(objectNode, path, UI_FIELD_INPUT_TYPE);
 
     if (!INPUT_TYPES.contains(inputType))
-      throw new ArtifactParseException("Invalid field input valueType " + inputType, UI_FIELD_INPUT_TYPE, path);
+      throw new ArtifactParseException("Invalid field input type " + inputType, UI_FIELD_INPUT_TYPE, path);
 
     return FieldInputType.fromString(inputType);
   }

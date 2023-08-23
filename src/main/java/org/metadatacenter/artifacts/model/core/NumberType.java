@@ -30,7 +30,7 @@ public enum NumberType
         return n;
       }
     }
-    throw new IllegalArgumentException("No number valueType constant with text " + text + " found");
+    throw new IllegalArgumentException("No number type constant with text " + text + " found");
   }
 
   @Override public String toString()
