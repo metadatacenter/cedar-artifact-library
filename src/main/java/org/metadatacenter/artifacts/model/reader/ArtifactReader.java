@@ -176,11 +176,11 @@ public class ArtifactReader
     URI isBasedOn = readRequiredIsBasedOnField(objectNode, path);
     String name = readSchemaOrgNameField(objectNode, path);
     String description = readSchemaOrgDescriptionField(objectNode, path);
-    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
-    return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, isBasedOn, name, description, elementInstances, fieldInstances);
+    return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
   }
 
   public ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
@@ -199,9 +199,8 @@ public class ArtifactReader
 
     readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
 
-    ElementInstanceArtifact elementInstanceArtifact
-      = ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, name, description, fieldInstances, elementInstances);
+    ElementInstanceArtifact elementInstanceArtifact = ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes,
+      jsonLdId, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
 
     return elementInstanceArtifact;
   }

@@ -27,14 +27,15 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
   static TemplateInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description,
     Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    URI isBasedOn, String name, String description,
-    Map<String, List<ElementInstanceArtifact>> elementInstances,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances)
+    URI isBasedOn,
+    Map<String, List<FieldInstanceArtifact>> fieldInstances,
+    Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
-    return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, isBasedOn, name, description, elementInstances, fieldInstances);
+    return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
   }
 
   URI isBasedOn();
@@ -56,11 +57,17 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private URI isBasedOn;
     private String name;
     private String description = "";
-    private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
     private Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
     private Builder()
     {
+    }
+
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    {
+      this.jsonLdContext = Map.copyOf(jsonLdContext);
+      return this;
     }
 
     public Builder withJsonLdType(URI jsonLdType)
@@ -75,9 +82,15 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    public Builder withName(String name)
     {
-      this.jsonLdContext = Map.copyOf(jsonLdContext);
+      this.name = name;
+      return this;
+    }
+
+    public Builder withDescription(String description)
+    {
+      this.description = description;
       return this;
     }
 
@@ -105,18 +118,6 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withName(String name)
-    {
-      this.name = name;
-      return this;
-    }
-
-    public Builder withDescription(String description)
-    {
-      this.description = description;
-      return this;
-    }
-
     public Builder withIsBasedOn(URI isBasedOn)
     {
       this.isBasedOn = isBasedOn;
@@ -137,31 +138,34 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
     public TemplateInstanceArtifact build()
     {
-      return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, isBasedOn, name, description, elementInstances, fieldInstances);
+      return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
     }
   }
 }
 
 record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                      URI isBasedOn, String name, String description,
-    Map<String, List<ElementInstanceArtifact>> elementInstances,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances) implements TemplateInstanceArtifact
+                                      String name, String description,
+                                      Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                      Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                      URI isBasedOn,
+                                      Map<String, List<FieldInstanceArtifact>> fieldInstances,
+                                      Map<String, List<ElementInstanceArtifact>> elementInstances) implements TemplateInstanceArtifact
 {
   public TemplateInstanceArtifactRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateStringFieldNotNull(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
     validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
     validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
     validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
     validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
     validateUriFieldNotNull(this, isBasedOn, SCHEMA_IS_BASED_ON);
-    validateStringFieldNotNull(this, name, SCHEMA_ORG_NAME);
-    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
+    validateMapFieldNotNull(this, fieldInstances, "fieldInstances");
+    validateMapFieldNotNull(this, elementInstances, "elementInstances");
 
     jsonLdContext = Map.copyOf(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

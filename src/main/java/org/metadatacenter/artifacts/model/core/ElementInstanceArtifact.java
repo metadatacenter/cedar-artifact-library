@@ -11,8 +11,8 @@ import java.util.Optional;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
@@ -20,7 +20,6 @@ import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
 import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 
@@ -31,12 +30,12 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
   static ElementInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     String name, String description,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Map<String, List<FieldInstanceArtifact>> fieldInstances, Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
-    return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, name, description, fieldInstances, elementInstances);
+    return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
   }
 
   static Builder builder()
@@ -62,6 +61,12 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     {
     }
 
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    {
+      this.jsonLdContext = Map.copyOf(jsonLdContext);
+      return this;
+    }
+
     public Builder withJsonLdType(URI jsonLdType)
     {
       this.jsonLdTypes.add(jsonLdType);
@@ -74,9 +79,15 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    public Builder withName(String name)
     {
-      this.jsonLdContext = Map.copyOf(jsonLdContext);
+      this.name = name;
+      return this;
+    }
+
+    public Builder withDescription(String description)
+    {
+      this.description = description;
       return this;
     }
 
@@ -118,16 +129,16 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
 
     public ElementInstanceArtifact build()
     {
-      return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, name, description, fieldInstances, elementInstances);
+      return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, fieldInstances, elementInstances);
     }
   }
 }
 
 record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                     String name, String description,
                                       Optional<URI> createdBy, Optional<URI> modifiedBy,
                                       Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                      String name, String description,
                                       Map<String, List<FieldInstanceArtifact>> fieldInstances,
                                       Map<String, List<ElementInstanceArtifact>> elementInstances) implements ElementInstanceArtifact
 {
@@ -136,6 +147,8 @@ record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> j
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
     validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
     validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
     validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
