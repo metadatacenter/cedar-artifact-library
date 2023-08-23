@@ -44,15 +44,15 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
   static TemplateSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String schemaOrgName, String schemaOrgDescription, Optional<String> schemaOrgIdentifier,
-    Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
+    String name, String description, Optional<String> identifier,
+    Version modelVersion, Optional<Version> version, Optional<Status> status,
     Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
     TemplateUi templateUi)
   {
     return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, schemaOrgName,
-      schemaOrgDescription, schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus, previousVersion,
+      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name,
+      description, identifier, modelVersion, version, status, previousVersion,
       derivedFrom, fieldSchemas, elementSchemas, templateUi);
   }
 

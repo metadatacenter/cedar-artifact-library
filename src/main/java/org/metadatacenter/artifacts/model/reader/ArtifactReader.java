@@ -261,7 +261,7 @@ public class ArtifactReader
       identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, templateUi);
   }
 
-  // A parent schema artifact's JSON Schema 'properties' object can contain a specification for a JSON-LD @context for
+  // A parent schema artifact's JSON Schema 'properties' object contains a specification for a JSON-LD @context for
   // the corresponding instance; this @context maps child names to a URI that represents a property specifications
   // for each child.
   //

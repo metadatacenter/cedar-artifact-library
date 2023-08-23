@@ -547,15 +547,15 @@ public class ArtifactRenderer
    *     "[Child Name n]": { [Child JSON Schema n] }
    *   }
    * </pre>
-   * A conforming instance should look as follows:
+   * A conforming instance chould look as follows:
    * <pre>
    * {
    *   "@context": {
-   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-   *     "pav": "http://purl.org/pav/",
-   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
    *     "schema": "https://schema.org/",
    *     "oslc": "http://open-services.net/ns/core#",
+   *     "pav": "http://purl.org/pav/",
+   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
    *     "skos": "http://www.w3.org/2004/02/skos/core#",
    *     "rdfs:label": { "@type": "xsd:string" },
    *     "schema:isBasedOn": { "@type": "@id" },
@@ -626,9 +626,9 @@ public class ArtifactRenderer
    *         "pav:createdBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "pav:lastUpdatedOn": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["xsd:dateTime"] }}},
    *         "oslc:modifiedBy": { "type": "object", "properties": { "@type": {  "type": "string",  "enum": ["@id"] }} },
-   *         "<Child Name 1>": { "enum": [ "<PROPERTY_URI_1>"] },
+   *         "<Child Name 1>": { "enum": [ "<PROPERTY URI 1>"] },
    *         ...
-   *         "<Child Name n>": { "enum": [ "<PROPERTY_URI_n>"] }
+   *         "<Child Name n>": { "enum": [ "<PROPERTY URI n>"] }
    *     }
    *   }
    * </pre>
@@ -661,11 +661,13 @@ public class ArtifactRenderer
 
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(RDFS, renderJsonSchemaUriEnumSpecification(RDFS_IRI));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(XSD, renderJsonSchemaUriEnumSpecification(XSD_IRI));
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV, renderJsonSchemaUriEnumSpecification(PAV_IRI));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SCHEMA, renderJsonSchemaUriEnumSpecification(SCHEMA_IRI));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC, renderJsonSchemaUriEnumSpecification(OSLC_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV, renderJsonSchemaUriEnumSpecification(PAV_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(BIBO, renderJsonSchemaUriEnumSpecification(BIBO_IRI));
+
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(RDFS, renderJsonSchemaUriEnumSpecification(RDFS_IRI));
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(XSD, renderJsonSchemaUriEnumSpecification(XSD_IRI));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS, renderJsonSchemaUriEnumSpecification(SKOS_IRI));
 
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(RDFS_LABEL, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
