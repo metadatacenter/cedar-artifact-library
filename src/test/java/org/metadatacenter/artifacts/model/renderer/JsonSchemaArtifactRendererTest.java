@@ -26,16 +26,16 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 
-public class ArtifactRendererTest
+public class JsonSchemaArtifactRendererTest
 {
   private ArtifactReader artifactReader = new ArtifactReader();
-  private ArtifactRenderer artifactRenderer;
+  private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
 
   @Before
   public void setUp() {
     artifactReader = new ArtifactReader();
-    artifactRenderer = new ArtifactRenderer();
+    jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
   }
 
@@ -46,7 +46,7 @@ public class ArtifactRendererTest
       withName("Study").
       build();
 
-    ObjectNode rendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -66,7 +66,7 @@ public class ArtifactRendererTest
       withName("SDY232").
       build();
 
-    ObjectNode rendering = artifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "SDY232");
 
@@ -80,7 +80,7 @@ public class ArtifactRendererTest
       withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
       build();
 
-    ObjectNode templateRendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    ObjectNode templateRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder().
       withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/123")).
@@ -88,7 +88,7 @@ public class ArtifactRendererTest
       withName("SDY232").
       build();
 
-    ObjectNode instanceRendering = artifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+    ObjectNode instanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
     assertTrue(validateJsonSchema(templateRendering, instanceRendering));
   }
@@ -100,7 +100,7 @@ public class ArtifactRendererTest
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    ObjectNode templateRendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    ObjectNode templateRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     assertTrue(validateJsonSchema(templateRendering));
 
@@ -114,7 +114,7 @@ public class ArtifactRendererTest
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    ObjectNode templateRendering = artifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    ObjectNode templateRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     assertTrue(validateJsonSchema(templateRendering));
 
