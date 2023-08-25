@@ -27,21 +27,25 @@ public class FieldSchemaArtifactTest
     String description = "My Field description";
     String identifier = "id3443";
     Version version = new Version(2, 0, 0);
-    Optional<Status> status = Optional.of(Status.DRAFT);
+    Status status = Status.DRAFT;
     URI previousVersion = URI.create("https://repo.metadatacenter.org/fields/3232");
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
-    Optional<URI> propertyURI = Optional.of(URI.create("https://schema.metadatacenter.org/properties/854"));
+    URI propertyURI = URI.create("https://schema.metadatacenter.org/properties/854");
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.builder().
       withJsonLdId(jsonLdId).
       withName(name).
       withDescription(description).withIdentifier(identifier).
-      withFieldUi(FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build()).
-      withCreatedBy(createdBy).withCreatedOn(createdOn).withModifiedBy(modifiedBy).withLastUpdatedOn(lastUpdatedOn).
       withVersion(version).
+      withStatus(status).
+      withCreatedBy(createdBy).
+      withCreatedOn(createdOn).
+      withModifiedBy(modifiedBy).
+      withLastUpdatedOn(lastUpdatedOn).
       withPreviousVersion(previousVersion).
       withDerivedFrom(derivedFrom).
-      withPropertyURI(propertyURI.get()).
+      withPropertyURI(propertyURI).
+      withFieldUi(FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build()).
       build();
 
     Assert.assertEquals(jsonLdId, fieldSchemaArtifact.jsonLdId().get());
@@ -53,10 +57,10 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(identifier, fieldSchemaArtifact.identifier().get());
     Assert.assertEquals(version, fieldSchemaArtifact.version().get());
-    Assert.assertEquals(status, fieldSchemaArtifact.status());
+    Assert.assertEquals(status, fieldSchemaArtifact.status().get());
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion().get());
     Assert.assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom().get());
-    Assert.assertEquals(propertyURI, fieldSchemaArtifact.propertyUri());
+    Assert.assertEquals(propertyURI, fieldSchemaArtifact.propertyUri().get());
   }
 
 
