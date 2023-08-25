@@ -17,17 +17,16 @@ public class FieldSchemaArtifactTest
 
   @Test public void testCreateFieldSchemaWithBuilder()
   {
-    URI jsonLdId = URI.create("https://repo.metadatacenter.org/template-fields/4455");
-    URI createdBy = URI.create("http://example.com/user/1");
-    URI modifiedBy = URI.create("http://example.com/user/2");
-    OffsetDateTime createdOn = OffsetDateTime.now();
-    OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-
     String name = "My Field";
     String description = "My Field description";
     String identifier = "id3443";
     Version version = new Version(2, 0, 0);
     Status status = Status.DRAFT;
+    URI jsonLdId = URI.create("https://repo.metadatacenter.org/template-fields/4455");
+    URI createdBy = URI.create("http://example.com/user/1");
+    URI modifiedBy = URI.create("http://example.com/user/2");
+    OffsetDateTime createdOn = OffsetDateTime.now();
+    OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
     URI previousVersion = URI.create("https://repo.metadatacenter.org/fields/3232");
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
     URI propertyURI = URI.create("https://schema.metadatacenter.org/properties/854");
@@ -35,7 +34,8 @@ public class FieldSchemaArtifactTest
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.builder().
       withJsonLdId(jsonLdId).
       withName(name).
-      withDescription(description).withIdentifier(identifier).
+      withDescription(description).
+      withIdentifier(identifier).
       withVersion(version).
       withStatus(status).
       withCreatedBy(createdBy).
