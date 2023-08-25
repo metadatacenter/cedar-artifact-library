@@ -24,14 +24,11 @@ public class FieldSchemaArtifactTest
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
 
-    URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    String jsonSchemaType = "object";
     String schemaOrgName = "My Field";
     String schemaOrgDescription = "My Field description";
     String schemaOrgIdentifier = "id3443";
-    Version modelVersion = new Version(1, 6, 0);
     Version version = new Version(2, 0, 0);
-    Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
+    Optional<Status> status = Optional.of(Status.DRAFT);
     URI previousVersion = URI.create("https://repo.metadatacenter.org/fields/3232");
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
     Optional<URI> propertyURI = Optional.of(URI.create("https://schema.metadatacenter.org/properties/854"));
@@ -54,14 +51,11 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(modifiedBy, fieldSchemaArtifact.modifiedBy().get());
     Assert.assertEquals(createdOn, fieldSchemaArtifact.createdOn().get());
     Assert.assertEquals(lastUpdatedOn, fieldSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(jsonSchemaSchemaUri, fieldSchemaArtifact.jsonSchemaSchemaUri());
-    Assert.assertEquals(jsonSchemaType, fieldSchemaArtifact.jsonSchemaType());
     Assert.assertEquals(schemaOrgName, fieldSchemaArtifact.name());
     Assert.assertEquals(schemaOrgDescription, fieldSchemaArtifact.description());
     Assert.assertEquals(schemaOrgIdentifier, fieldSchemaArtifact.identifier().get());
-    Assert.assertEquals(modelVersion, fieldSchemaArtifact.modelVersion());
     Assert.assertEquals(version, fieldSchemaArtifact.version().get());
-    Assert.assertEquals(artifactVersionStatus, fieldSchemaArtifact.status());
+    Assert.assertEquals(status, fieldSchemaArtifact.status());
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion().get());
     Assert.assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom().get());
     Assert.assertEquals(propertyURI, fieldSchemaArtifact.propertyUri());
@@ -86,8 +80,8 @@ public class FieldSchemaArtifactTest
     String schemaOrgDescription = "Schema Org description";
     Optional<String> schemaOrgIdentifier = Optional.of("Schema Org identifier");
     Version modelVersion = new Version(1, 6, 0);
-    Optional<Version> artifactVersion = Optional.of(new Version(2, 0, 0));
-    Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
+    Optional<Version> version = Optional.of(new Version(2, 0, 0));
+    Optional<Status> status = Optional.of(Status.DRAFT);
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/template-fields/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("https://repo.metadatacenter.org/fields/7666"));
     Optional<URI> propertyURI = Optional.of(URI.create("https://schema.metadatacenter.org/properties/854"));
@@ -95,7 +89,7 @@ public class FieldSchemaArtifactTest
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, schemaOrgName, schemaOrgDescription,
-      schemaOrgIdentifier, modelVersion, artifactVersion, artifactVersionStatus, previousVersion, derivedFrom,
+      schemaOrgIdentifier, modelVersion, version, status, previousVersion, derivedFrom,
       FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(),
       Optional.empty(), Optional.empty(), Collections.emptyList(),
       false, Optional.empty(), Optional.empty(), propertyURI);
@@ -115,8 +109,8 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(schemaOrgDescription, fieldSchemaArtifact.description());
     Assert.assertEquals(schemaOrgIdentifier, fieldSchemaArtifact.identifier());
     Assert.assertEquals(modelVersion, fieldSchemaArtifact.modelVersion());
-    Assert.assertEquals(artifactVersion, fieldSchemaArtifact.version());
-    Assert.assertEquals(artifactVersionStatus, fieldSchemaArtifact.status());
+    Assert.assertEquals(version, fieldSchemaArtifact.version());
+    Assert.assertEquals(status, fieldSchemaArtifact.status());
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion());
     Assert.assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom());
     Assert.assertEquals(propertyURI, fieldSchemaArtifact.propertyUri());
