@@ -12,57 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Example YAML rendering of a template schema artifact:
- * <pre>
- * template: Study
- * description: Study template
- * identifier: SFY343
- * version: 1.0.0
- * status: published
- *
- * children:
- *
- *   - field: Study Name
- *     description: Study name field
- *     type: textfield
- *     required: true
- *
- *   - field: Study ID
- *     description: Study ID field
- *     type: textfield
- *     required: true
- *     minLength: 2
- *
- *   - element: Address
- *     description: Address element
- *     isMultiple: true
- *     minItems: 0
- *     maxItems: 4
- *
- *     children:
- *       - field: Address 1
- *         type: textfield
- *       - field: ZIP
- *         type: textfield
- *         minLength: 5
- *         maxLength: 5
- *
- *   - field: Disease
- *     type: IRI
- *     values:
- *       - ontology: Human Disease Ontology
- *         acronym: DOID
- *         uri: "https://data.bioontology.org/ontologies/DOID"
- *       - branch: Disease
- *         acronym: DPCO
- *         uri: "http://purl.org/twc/dpo/ont/Disease"
- *       - class: Translated Title
- *         source: DATACITE-VOCAB
- *         uri: "http://purl.org/datacite/v4.4/TranslatedTitle"
- *         type: OntologyClass
- * </pre>
- */
 public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object>>
 {
   private static String TEMPLATE = "template";
@@ -103,6 +52,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   private static String HEADER = "header";
   private static String FOOTER = "footer";
   private static String CONTENT = "content";
+  private static int CONTENT_PREVIEW_LENGTH = 40;
 
   private final boolean isExpanded;
 
@@ -111,6 +61,46 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     this.isExpanded = isExpanded;
   }
 
+
+  /**
+   * Generate YAML rendering of a template schema artifact
+   *
+   * e.g.,
+   * <pre>
+   * template: Study
+   * description: Study template
+   * identifier: SFY343
+   * version: 1.0.0
+   * status: published
+   *
+   * children:
+   *
+   *   - field: Study Name
+   *     description: Study name field
+   *     type: textfield
+   *     required: true
+   *
+   *   - field: Study ID
+   *     description: Study ID field
+   *     type: textfield
+   *     required: true
+   *     minLength: 2
+   *
+   *   - element: Address
+   *     description: Address element
+   *     isMultiple: true
+   *     minItems: 0
+   *     maxItems: 4
+   *
+   *     children:
+   *       - field: Address 1
+   *         type: textfield
+   *       - field: ZIP
+   *         type: textfield
+   *         minLength: 5
+   *         maxLength: 5
+   * </pre>
+   */
   public Map<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
     Map<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
@@ -124,6 +114,28 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     return rendering;
   }
 
+  /**
+   * Generate YAML rendering of an element schema artifact
+   *
+   * e.g.,
+   * <pre>
+   * element: Address
+   * description: Address element
+   * isMultiple: true
+   * minItems: 0
+   * maxItems: 4
+   *
+   * children:
+   *   - field: Address 1
+   *     type: textfield
+   *
+   *  - field: ZIP
+   *     type: textfield
+   *     minLength: 5
+   *     maxLength: 5
+   *
+   * </pre>
+   */
   public Map<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
     Map<String, Object> rendering = renderChildSchemaArtifact(elementSchemaArtifact, ELEMENT);
@@ -137,31 +149,56 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     return rendering;
   }
 
+  /**
+   * Generate YAML rendering of a field schema artifact
+   *
+   * e.g.,
+   * <pre>
+   * field: Disease
+   * type: IRI
+   * values:
+   *       - ontology: Human Disease Ontology
+   *         acronym: DOID
+   *         uri: "https://data.bioontology.org/ontologies/DOID"
+   *       - branch: Disease
+   *         acronym: DPCO
+   *         uri: "http://purl.org/twc/dpo/ont/Disease"
+   *       - class: Translated Title
+   *         source: DATACITE-VOCAB
+   *         uri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *         type: OntologyClass
+   * </pre>
+   */
   public Map<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
     Map<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
 
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
     // value constraints.
+    rendering.put(TYPE, fieldSchemaArtifact.fieldUi().inputType());
+
     if (fieldSchemaArtifact.isStatic()) {
       if (fieldSchemaArtifact.fieldUi()._content().isPresent()) {
-        rendering.put(CONTENT, fieldSchemaArtifact.fieldUi()._content());
-      } else {
-        if (fieldSchemaArtifact.hasIRIValue()) {
-        } else {
-          // Non-IRI fields may have en empty object as a value so there are no required fields
-        }
-
-        if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-          rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
-
-        if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-          // for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
-          // TODO AltLabel
-        }
-        // TODO ValueConstraint
-
+        if (isExpanded)
+          rendering.put(CONTENT, fieldSchemaArtifact.fieldUi()._content().get());
+        else
+          rendering.put(CONTENT, fieldSchemaArtifact.fieldUi()._content().get().substring(0, CONTENT_PREVIEW_LENGTH) + "...");
       }
+    } else {
+
+      if (fieldSchemaArtifact.hasIRIValue()) {
+      } else {
+        // Non-IRI fields may have en empty object as a value so there are no required fields
+      }
+
+      if (fieldSchemaArtifact.skosPrefLabel().isPresent())
+        rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+
+      if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
+        // for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
+        // TODO AltLabel
+      }
+      // TODO ValueConstraint
     }
     return rendering;
   }
