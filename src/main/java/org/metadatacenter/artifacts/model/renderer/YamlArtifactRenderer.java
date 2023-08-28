@@ -7,7 +7,7 @@ import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,10 +61,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     this.isExpanded = isExpanded;
   }
 
-
   /**
    * Generate YAML rendering of a template schema artifact
-   *
+   * <p>
    * e.g.,
    * <pre>
    * template: Study
@@ -101,9 +100,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *         maxLength: 5
    * </pre>
    */
-  public Map<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
+  public LinkedHashMap<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    Map<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
 
     // TODO UI: propertyLabels, propertyDescriptions
     // TODO childPropertyUris
@@ -136,9 +135,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *
    * </pre>
    */
-  public Map<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
-    Map<String, Object> rendering = renderChildSchemaArtifact(elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> rendering = renderChildSchemaArtifact(elementSchemaArtifact, ELEMENT);
 
     // TODO UI: propertyLabels, propertyDescriptions
     // TODO childPropertyUris
@@ -169,9 +168,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *         type: OntologyClass
    * </pre>
    */
-  public Map<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
+  public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    Map<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
+    LinkedHashMap<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
 
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
     // value constraints.
@@ -230,25 +229,27 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     return rendering;
   }
 
-  private Map<String, Object> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {
-    Map<String, Object> childSchemasRendering = new HashMap<>();
+  private List<LinkedHashMap<String, Object>> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {
+    List<LinkedHashMap<String, Object>> childSchemasRendering = new ArrayList<>();
 
     for (ChildSchemaArtifact childSchemaArtifact : childSchemaArtifacts) {
       if (childSchemaArtifact instanceof FieldSchemaArtifact) {
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
-        childSchemasRendering.put(fieldSchemaArtifact.name(), renderFieldSchemaArtifact(fieldSchemaArtifact));
+        LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(fieldSchemaArtifact);
+        childSchemasRendering.add(fieldSchemaRendering);
       } else if (childSchemaArtifact instanceof ElementSchemaArtifact) {
         ElementSchemaArtifact elementSchemaArtifact = (ElementSchemaArtifact)childSchemaArtifact;
-        childSchemasRendering.put(elementSchemaArtifact.name(), renderElementSchemaArtifact(elementSchemaArtifact));
+        LinkedHashMap<String, Object> elementSchemaRendering = renderElementSchemaArtifact(elementSchemaArtifact);
+        childSchemasRendering.add(elementSchemaRendering);
       }
     }
 
     return childSchemasRendering;
   }
 
-  private Map<String, Object> renderChildSchemaArtifact(ChildSchemaArtifact childSchemaArtifact, String artifactTypeName)
+  private LinkedHashMap<String, Object> renderChildSchemaArtifact(ChildSchemaArtifact childSchemaArtifact, String artifactTypeName)
   {
-    Map<String, Object> rendering = renderSchemaArtifact(childSchemaArtifact, artifactTypeName);
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifact(childSchemaArtifact, artifactTypeName);
 
     if (childSchemaArtifact.isMultiple())
       rendering.put(IS_MULTIPLE, true);
@@ -262,9 +263,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     return rendering;
   }
 
-  private Map<String, Object> renderSchemaArtifact(SchemaArtifact schemaArtifact, String artifactTypeName)
+  private LinkedHashMap<String, Object> renderSchemaArtifact(SchemaArtifact schemaArtifact, String artifactTypeName)
   {
-    Map<String, Object> rendering = new HashMap<>();
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(artifactTypeName, schemaArtifact.name());
     rendering.put(DESCRIPTION, schemaArtifact.description());
