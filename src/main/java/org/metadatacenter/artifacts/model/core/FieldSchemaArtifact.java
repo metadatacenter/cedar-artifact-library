@@ -92,7 +92,7 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
     private boolean isMultiple = false;
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
-    private Optional<URI> propertyURI = Optional.empty();
+    private Optional<URI> propertyUri = Optional.empty();
 
     private Builder() {}
 
@@ -259,18 +259,20 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
       return this;
     }
 
-    public Builder withPropertyURI(URI propertyURI)
+    public Builder withPropertyUri(URI propertyUri)
     {
-      this.propertyURI = Optional.ofNullable(propertyURI);
+      this.propertyUri = Optional.ofNullable(propertyUri);
       return this;
     }
 
     public FieldSchemaArtifact build()
     {
-      return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
-        identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldUi, valueConstraints,
-        skosPrefLabel, skosAlternateLabels, isMultiple, minItems, maxItems, propertyURI);
+      return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+        name, description, identifier,
+        modelVersion, version, status, previousVersion, derivedFrom, fieldUi, valueConstraints,
+        skosPrefLabel, skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri);
     }
   }
 }

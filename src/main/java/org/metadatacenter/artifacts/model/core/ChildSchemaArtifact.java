@@ -3,7 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.util.Optional;
 
-public sealed interface ChildSchemaArtifact permits ElementSchemaArtifact, FieldSchemaArtifact
+public sealed interface ChildSchemaArtifact extends SchemaArtifact permits ElementSchemaArtifact, FieldSchemaArtifact
 {
   String name();
 

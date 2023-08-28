@@ -43,13 +43,13 @@ public class ElementSchemaArtifactTest
     Optional<URI> derivedFrom = Optional.of(URI.create("http://example.com/derived"));
     Optional<Integer> minItems = Optional.of(1);
     Optional<Integer> maxItems = Optional.of(3);
-    Optional<URI> propertyURI = Optional.of(URI.create("https://schema.metadatacenter.org/properties/434"));
+    Optional<URI> propertyUri = Optional.of(URI.create("https://schema.metadatacenter.org/properties/434"));
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn), jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, name, description, identifier, modelVersion, version, status, previousVersion, derivedFrom,
       Collections.emptyMap(), Collections.emptyMap(), ElementUi.builder().build(), false, minItems, maxItems,
-      propertyURI);
+      propertyUri);
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
@@ -70,6 +70,6 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(status, elementSchemaArtifact.status());
     Assert.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());
     Assert.assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom());
-    Assert.assertEquals(propertyURI, elementSchemaArtifact.propertyUri());
+    Assert.assertEquals(propertyUri, elementSchemaArtifact.propertyUri());
   }
 }

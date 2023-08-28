@@ -68,15 +68,15 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
       throw new IllegalArgumentException("Field " + name + "not present in element " + name());
   }
 
-  default Map<String, URI> getChildPropertyURIs()
+  default Map<String, URI> getChildPropertyUris()
   {
-    Map<String, URI> childPropertyURIs = new HashMap<>();
+    Map<String, URI> childPropertyUris = new HashMap<>();
 
     for (ChildSchemaArtifact childSchemaArtifact : getChildSchemas())
       if (childSchemaArtifact.propertyUri().isPresent())
-        childPropertyURIs.put(childSchemaArtifact.name(), childSchemaArtifact.propertyUri().get());
+        childPropertyUris.put(childSchemaArtifact.name(), childSchemaArtifact.propertyUri().get());
 
-    return childPropertyURIs;
+    return childPropertyUris;
   }
 
   default void addChild(ChildSchemaArtifact childSchemaArtifact)
@@ -89,7 +89,12 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
     // TODO UI.order
     // TODO UI.propertyLabels
     // TODO UI.propertyDescriptions
-    // TODO childPropertyURIs
+    // TODO childPropertyUris
+  }
+
+  default boolean hasChildren()
+  {
+    return !elementSchemas().isEmpty() || !fieldSchemas().isEmpty();
   }
 
   default List<ChildSchemaArtifact> getChildSchemas()

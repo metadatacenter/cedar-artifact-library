@@ -17,7 +17,6 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -682,10 +681,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(
       JSON_LD_ID));
 
-    for (Map.Entry<String, URI> entry : parentSchemaArtifact.getChildPropertyURIs().entrySet()) {
+    for (Map.Entry<String, URI> entry : parentSchemaArtifact.getChildPropertyUris().entrySet()) {
       String childName = entry.getKey();
-      URI propertyURI = entry.getValue();
-      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, propertyURI.toString());
+      URI propertyUri = entry.getValue();
+      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, propertyUri.toString());
     }
 
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -702,7 +701,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
 
     // TODO Check that all children have an IRI mapping
-    for (String childName : parentSchemaArtifact.getChildPropertyURIs().keySet())
+    for (String childName : parentSchemaArtifact.getChildPropertyUris().keySet())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);

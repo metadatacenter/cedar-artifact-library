@@ -245,9 +245,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
-    public Builder withPropertyURI(URI propertyURI)
+    public Builder withPropertyUri(URI propertyUri)
     {
-      this.propertyUri = Optional.ofNullable(propertyURI);
+      this.propertyUri = Optional.ofNullable(propertyUri);
       return this;
     }
 

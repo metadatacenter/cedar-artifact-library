@@ -29,7 +29,6 @@ public class TemplateSchemaArtifactTest
     assertEquals(templateSchemaArtifact.templateUi(), templateUi);
   }
 
-
   @Test(expected = IllegalStateException.class)
   public void testMissingName()
   {

@@ -41,7 +41,6 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -248,12 +247,12 @@ public class ArtifactReader
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
+    Map<String, URI> childPropertyUris = getChildPropertyUris(objectNode, path);
     TemplateUi templateUi = readTemplateUi(objectNode, path);
 
     checkTemplateSchemaArtifactJsonLdType(jsonLdTypes, path);
 
-    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyURIs);
+    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyUris);
 
     return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
@@ -274,7 +273,7 @@ public class ArtifactReader
   //          "Disease": { "enum": [ "http://semantic-dicom.org/dcm#Disease" ]
   //      }
   //    }
-  public  Map<String, URI> getChildPropertyURIs(ObjectNode objectNode, String path)
+  public  Map<String, URI> getChildPropertyUris(ObjectNode objectNode, String path)
   {
     Map<String, URI> childName2URI = new HashMap<>();
     String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;
@@ -310,8 +309,8 @@ public class ArtifactReader
               JSON_SCHEMA_ENUM, path + contextPath + childName);
 
           try {
-            URI propertyURI = new URI(elementNode.asText());
-            childName2URI.put(childName, propertyURI);
+            URI propertyUri = new URI(elementNode.asText());
+            childName2URI.put(childName, propertyUri);
           } catch (URISyntaxException e) {
             throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
               JSON_SCHEMA_ENUM, path + contextPath + childName);
@@ -323,7 +322,7 @@ public class ArtifactReader
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
@@ -357,12 +356,12 @@ public class ArtifactReader
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       fieldUi, valueConstraints, skosPrefLabel, skosAlternateLabels,
-      isMultiple, minItems, maxItems, propertyURI);
+      isMultiple, minItems, maxItems, propertyUri);
   }
 
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyURI)
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
@@ -386,21 +385,21 @@ public class ArtifactReader
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     ElementUi elementUi = readElementUi(objectNode, path);
-    Map<String, URI> childPropertyURIs = getChildPropertyURIs(objectNode, path);
+    Map<String, URI> childPropertyUris = getChildPropertyUris(objectNode, path);
 
     checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
 
-    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyURIs);
+    readNestedFieldAndElementSchemaArtifacts(objectNode, path, fieldSchemas, elementSchemas, childPropertyUris);
 
     return ElementSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
       identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, elementUi,
-      isMultiple, minItems, maxItems, propertyURI);
+      isMultiple, minItems, maxItems, propertyUri);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-    Map<String, URI> childPropertyURIs)
+    Map<String, URI> childPropertyUris)
   {
     JsonNode propertiesNode = objectNode.get(JSON_SCHEMA_PROPERTIES);
 
@@ -458,8 +457,8 @@ public class ArtifactReader
             checkSchemaArtifactJsonLdType(subSchemaArtifactJsonLdTypes, fieldOrElementPath);
 
             URI subSchemaArtifactJsonLdType = subSchemaArtifactJsonLdTypes.get(0);
-            Optional<URI> propertyURI = childPropertyURIs.containsKey(jsonChildName) ?
-              Optional.of(childPropertyURIs.get(jsonChildName)) :
+            Optional<URI> propertyUri = childPropertyUris.containsKey(jsonChildName) ?
+              Optional.of(childPropertyUris.get(jsonChildName)) :
               Optional.empty();
 
             switch (subSchemaArtifactJsonLdType.toString()) {
@@ -469,19 +468,19 @@ public class ArtifactReader
             case ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI -> {
               ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, minItems, maxItems,
-                propertyURI);
+                propertyUri);
               elementSchemas.put(jsonChildName, elementSchemaArtifact);
             }
             case FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, minItems, maxItems,
-                propertyURI);
+                propertyUri);
               fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
             }
             case STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, isMultiple, minItems, maxItems,
-                propertyURI);
+                propertyUri);
               fieldSchemas.put(jsonChildName, fieldSchemaArtifact);
             }
             default -> throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType,

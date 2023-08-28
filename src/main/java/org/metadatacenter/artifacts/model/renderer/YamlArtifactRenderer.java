@@ -1,12 +1,15 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,7 +69,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   private static String ELEMENT = "element";
   private static String FIELD = "field";
   private static String INSTANCE = "instance";
-  private static String ID = "description";
+  private static String ID = "id";
   private static String DESCRIPTION = "description";
   private static String IDENTIFIER = "identifier";
   private static String VERSION = "version";
@@ -77,6 +80,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   private static String REQUIRED = "required";
   private static String STATUS = "status";
   private static String IS_MULTIPLE = "isMultiple";
+  private static String MIN_ITEMS = "minItems";
+  private static String MAX_ITEMS = "maxItems";
   private static String MIN_LENGTH = "minLength";
   private static String MAX_LENGTH = "maxLength";
   private static String VALUES = "values";
@@ -95,6 +100,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   private static String LAST_UPDATED_ON = "lastUpdatedOn";
   private static String PREF_LABEL = "prefLabel";
   private static String ALT_LABEL = "altLabel";
+  private static String HEADER = "header";
+  private static String FOOTER = "footer";
+  private static String CONTENT = "content";
 
   private final boolean isExpanded;
 
@@ -105,121 +113,56 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   public Map<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    Map<String, Object> rendering = new HashMap<>();
+    Map<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
 
-    rendering.put(TEMPLATE, templateSchemaArtifact.name());
-    rendering.put(DESCRIPTION, templateSchemaArtifact.description());
+    // TODO UI: propertyLabels, propertyDescriptions
+    // TODO childPropertyUris
 
-    // TODO UI
-
-    if (templateSchemaArtifact.identifier().isPresent())
-      rendering.put(IDENTIFIER, templateSchemaArtifact.identifier().get());
-
-    if (templateSchemaArtifact.version().isPresent())
-      rendering.put(VERSION, templateSchemaArtifact.version().get().toString());
-
-    if (templateSchemaArtifact.status().isPresent())
-      rendering.put(STATUS, templateSchemaArtifact.status().get().toString());
-
-    if (isExpanded)
-      rendering.put(MODEL_VERSION, templateSchemaArtifact.modelVersion().toString());
-
-    if (isExpanded && templateSchemaArtifact.previousVersion().isPresent())
-      rendering.put(PREVIOUS_VERSION, templateSchemaArtifact.previousVersion().get().toString());
-
-    if (isExpanded && templateSchemaArtifact.derivedFrom().isPresent())
-      rendering.put(DERIVED_FROM, templateSchemaArtifact.derivedFrom().get().toString());
-
-    // TODO Children
-    // for (ChildSchemaArtifact childSchemaArtifact : templateSchemaArtifact.getChildSchemas())
+    if (templateSchemaArtifact.hasChildren())
+      rendering.put(CHILDREN, getChildSchemasRendering(templateSchemaArtifact.getChildSchemas()));
 
     return rendering;
   }
 
   public Map<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
-    Map<String, Object> rendering = new HashMap<>();
+    Map<String, Object> rendering = renderChildSchemaArtifact(elementSchemaArtifact, ELEMENT);
 
-    rendering.put(TEMPLATE, elementSchemaArtifact.name());
-    rendering.put(DESCRIPTION, elementSchemaArtifact.description());
+    // TODO UI: propertyLabels, propertyDescriptions
+    // TODO childPropertyUris
 
-    // TODO UI
-    //rendering.put(TYPE, ui.fieldinputtype
-
-    if (elementSchemaArtifact.identifier().isPresent())
-      rendering.put(IDENTIFIER, elementSchemaArtifact.identifier().get());
-
-    if (isExpanded && elementSchemaArtifact.version().isPresent())
-      rendering.put(VERSION, elementSchemaArtifact.version().get().toString());
-
-    if (isExpanded && elementSchemaArtifact.status().isPresent())
-      rendering.put(STATUS, elementSchemaArtifact.status().get().toString());
-
-    if (isExpanded)
-      rendering.put(MODEL_VERSION, elementSchemaArtifact.modelVersion().toString());
-
-    if (isExpanded && elementSchemaArtifact.previousVersion().isPresent())
-      rendering.put(PREVIOUS_VERSION, elementSchemaArtifact.previousVersion().get().toString());
-
-    if (isExpanded && elementSchemaArtifact.derivedFrom().isPresent())
-      rendering.put(DERIVED_FROM, elementSchemaArtifact.derivedFrom().get().toString());
-
-    // TODO Children
-    // for (ChildSchemaArtifact childSchemaArtifact : templateSchemaArtifact.getChildSchemas())
-
-    // TODO isMultiple, minItem, maxItems
+    if (elementSchemaArtifact.hasChildren())
+      rendering.put(CHILDREN, getChildSchemasRendering(elementSchemaArtifact.getChildSchemas()));
 
     return rendering;
   }
 
   public Map<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    Map<String, Object> rendering = new HashMap<>();
-
-    rendering.put(FIELD, fieldSchemaArtifact.name());
-    rendering.put(DESCRIPTION, fieldSchemaArtifact.description());
-
-    // TODO UI
-    //rendering.put(TYPE, ui.fieldinputtype
-
-    if (fieldSchemaArtifact.identifier().isPresent())
-      rendering.put(IDENTIFIER, fieldSchemaArtifact.identifier().get());
-
-    if (isExpanded && fieldSchemaArtifact.version().isPresent())
-      rendering.put(VERSION, fieldSchemaArtifact.version().get().toString());
-
-    if (isExpanded && fieldSchemaArtifact.status().isPresent())
-      rendering.put(STATUS, fieldSchemaArtifact.status().get().toString());
-
-    if (isExpanded)
-      rendering.put(MODEL_VERSION, fieldSchemaArtifact.modelVersion().toString());
-
-    if (isExpanded && fieldSchemaArtifact.previousVersion().isPresent())
-      rendering.put(PREVIOUS_VERSION, fieldSchemaArtifact.previousVersion().get().toString());
-
-    if (isExpanded && fieldSchemaArtifact.derivedFrom().isPresent())
-      rendering.put(DERIVED_FROM, fieldSchemaArtifact.derivedFrom().get().toString());
+    Map<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
 
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
     // value constraints.
-    if (!fieldSchemaArtifact.isStatic()) {
-
-      if (fieldSchemaArtifact.hasIRIValue()) {
+    if (fieldSchemaArtifact.isStatic()) {
+      if (fieldSchemaArtifact.fieldUi()._content().isPresent()) {
+        rendering.put(CONTENT, fieldSchemaArtifact.fieldUi()._content());
       } else {
-        // Non-IRI fields may have en empty object as a value so there are no required fields
-      }
+        if (fieldSchemaArtifact.hasIRIValue()) {
+        } else {
+          // Non-IRI fields may have en empty object as a value so there are no required fields
+        }
 
-      if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-        rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+        if (fieldSchemaArtifact.skosPrefLabel().isPresent())
+          rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
 
-      if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-        // for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
-        // TODO AltLabel
+        if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
+          // for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
+          // TODO AltLabel
+        }
+        // TODO ValueConstraint
+
       }
-      // TODO ValueConstraint
     }
-
-    // TODO isMultiple, minItem, maxItems
     return rendering;
   }
 
@@ -246,6 +189,69 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (templateInstanceArtifact.lastUpdatedOn().isPresent())
       rendering.put(LAST_UPDATED_ON, templateInstanceArtifact.lastUpdatedOn().get().toString());
+
+    return rendering;
+  }
+
+  private Map<String, Object> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {
+    Map<String, Object> childSchemasRendering = new HashMap<>();
+
+    for (ChildSchemaArtifact childSchemaArtifact : childSchemaArtifacts) {
+      if (childSchemaArtifact instanceof FieldSchemaArtifact) {
+        FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
+        childSchemasRendering.put(fieldSchemaArtifact.name(), renderFieldSchemaArtifact(fieldSchemaArtifact));
+      } else if (childSchemaArtifact instanceof ElementSchemaArtifact) {
+        ElementSchemaArtifact elementSchemaArtifact = (ElementSchemaArtifact)childSchemaArtifact;
+        childSchemasRendering.put(elementSchemaArtifact.name(), renderElementSchemaArtifact(elementSchemaArtifact));
+      }
+    }
+
+    return childSchemasRendering;
+  }
+
+  private Map<String, Object> renderChildSchemaArtifact(ChildSchemaArtifact childSchemaArtifact, String artifactTypeName)
+  {
+    Map<String, Object> rendering = renderSchemaArtifact(childSchemaArtifact, artifactTypeName);
+
+    if (childSchemaArtifact.isMultiple())
+      rendering.put(IS_MULTIPLE, true);
+
+    if (childSchemaArtifact.minItems().isPresent())
+      rendering.put(MIN_ITEMS, childSchemaArtifact.minItems().get());
+
+    if (childSchemaArtifact.maxItems().isPresent())
+      rendering.put(MAX_ITEMS, childSchemaArtifact.maxItems().get());
+
+    return rendering;
+  }
+
+  private Map<String, Object> renderSchemaArtifact(SchemaArtifact schemaArtifact, String artifactTypeName)
+  {
+    Map<String, Object> rendering = new HashMap<>();
+
+    rendering.put(artifactTypeName, schemaArtifact.name());
+    rendering.put(DESCRIPTION, schemaArtifact.description());
+
+    if (isExpanded && schemaArtifact.jsonLdId().isPresent())
+      rendering.put(ID, schemaArtifact.jsonLdId().get());
+
+    if (schemaArtifact.identifier().isPresent())
+      rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
+
+    if (isExpanded && schemaArtifact.version().isPresent())
+      rendering.put(VERSION, schemaArtifact.version().get().toString());
+
+    if (isExpanded && schemaArtifact.status().isPresent())
+      rendering.put(STATUS, schemaArtifact.status().get().toString());
+
+    if (isExpanded)
+      rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
+
+    if (isExpanded && schemaArtifact.previousVersion().isPresent())
+      rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
+
+    if (isExpanded && schemaArtifact.derivedFrom().isPresent())
+      rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
     return rendering;
   }
