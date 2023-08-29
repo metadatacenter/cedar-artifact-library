@@ -14,45 +14,45 @@ import java.util.Map;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object>>
 {
-  private static String TEMPLATE = "template";
-  private static String ELEMENT = "element";
-  private static String FIELD = "field";
-  private static String INSTANCE = "instance";
-  private static String ID = "id";
-  private static String DESCRIPTION = "description";
-  private static String IDENTIFIER = "identifier";
-  private static String VERSION = "version";
-  private static String CHILDREN = "children";
-  private static String TYPE = "type";
-  private static String TEXTFIELD_TYPE = "textfield";
-  private static String IRI_TYPE = "IRI";
-  private static String REQUIRED = "required";
-  private static String STATUS = "status";
-  private static String IS_MULTIPLE = "isMultiple";
-  private static String MIN_ITEMS = "minItems";
-  private static String MAX_ITEMS = "maxItems";
-  private static String MIN_LENGTH = "minLength";
-  private static String MAX_LENGTH = "maxLength";
-  private static String VALUES = "values";
-  private static String URI = "uri";
-  private static String SOURCE = "source";
-  private static String ACRONYM = "acronym";
-  private static String ONTOLOGY = "ontology";
-  private static String BRANCH = "branch";
-  private static String MODEL_VERSION = "modelVersion";
-  private static String PREVIOUS_VERSION = "previousVersion";
-  private static String IS_BASED_ON = "isBasedOn";
-  private static String DERIVED_FROM = "derivedFrom";
-  private static String CREATED_BY = "createdBy";
-  private static String MODIFIED_BY = "modifiedBy";
-  private static String CREATED_ON = "createdOn";
-  private static String LAST_UPDATED_ON = "lastUpdatedOn";
-  private static String PREF_LABEL = "prefLabel";
-  private static String ALT_LABEL = "altLabel";
-  private static String HEADER = "header";
-  private static String FOOTER = "footer";
-  private static String CONTENT = "content";
-  private static int CONTENT_PREVIEW_LENGTH = 40;
+  public static String TEMPLATE = "template";
+  public static String ELEMENT = "element";
+  public static String FIELD = "field";
+  public static String INSTANCE = "instance";
+  public static String ID = "id";
+  public static String DESCRIPTION = "description";
+  public static String IDENTIFIER = "identifier";
+  public static String VERSION = "version";
+  public static String CHILDREN = "children";
+  public static String TYPE = "type";
+  public static String TEXTFIELD_TYPE = "textfield";
+  public static String IRI_TYPE = "IRI";
+  public static String REQUIRED = "required";
+  public static String STATUS = "status";
+  public static String IS_MULTIPLE = "isMultiple";
+  public static String MIN_ITEMS = "minItems";
+  public static String MAX_ITEMS = "maxItems";
+  public static String MIN_LENGTH = "minLength";
+  public static String MAX_LENGTH = "maxLength";
+  public static String VALUES = "values";
+  public static String URI = "uri";
+  public static String SOURCE = "source";
+  public static String ACRONYM = "acronym";
+  public static String ONTOLOGY = "ontology";
+  public static String BRANCH = "branch";
+  public static String MODEL_VERSION = "modelVersion";
+  public static String PREVIOUS_VERSION = "previousVersion";
+  public static String IS_BASED_ON = "isBasedOn";
+  public static String DERIVED_FROM = "derivedFrom";
+  public static String CREATED_BY = "createdBy";
+  public static String MODIFIED_BY = "modifiedBy";
+  public static String CREATED_ON = "createdOn";
+  public static String LAST_UPDATED_ON = "lastUpdatedOn";
+  public static String PREF_LABEL = "prefLabel";
+  public static String ALT_LABEL = "altLabel";
+  public static String HEADER = "header";
+  public static String FOOTER = "footer";
+  public static String CONTENT = "content";
+  public static int CONTENT_PREVIEW_LENGTH = 40;
 
   private final boolean isExpanded;
 
@@ -183,9 +183,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         else
           rendering.put(CONTENT, fieldSchemaArtifact.fieldUi()._content().get().substring(0, CONTENT_PREVIEW_LENGTH) + "...");
       }
-    } else {
+    } else { // Non-static fields
 
       if (fieldSchemaArtifact.hasIRIValue()) {
+        // TODO
       } else {
         // Non-IRI fields may have en empty object as a value so there are no required fields
       }
@@ -198,6 +199,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         // TODO AltLabel
       }
       // TODO ValueConstraint
+      // required,
+      // defaultValue
+      // multipleChoice,
+      // numberType,
+      // temporalType
+      // unitOfMeasure,
+      // minValue, maxValue, decimalPlaces,
+      // minLength, maxLength,
+      // ontologies, valueSets, classes, branches, literals
     }
     return rendering;
   }
