@@ -39,13 +39,14 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_T
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 
-public class ArtifactReaderTest {
-  private ArtifactReader artifactReader;
+public class JsonSchemaArtifactReaderTest
+{
+  private JsonSchemaArtifactReader artifactReader;
   private ObjectMapper mapper;
 
   @Before
   public void setup() {
-    artifactReader = new ArtifactReader();
+    artifactReader = new JsonSchemaArtifactReader();
     mapper = new ObjectMapper();
 
   }
@@ -233,7 +234,8 @@ public class ArtifactReaderTest {
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
   {
     try {
-      JsonNode jsonNode = mapper.readTree(new File(ArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+      JsonNode jsonNode = mapper.readTree(new File(
+        JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
 
       if (jsonNode.isObject())
         return (ObjectNode)jsonNode;

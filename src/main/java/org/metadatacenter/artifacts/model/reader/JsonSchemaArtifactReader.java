@@ -49,6 +49,10 @@ import java.util.Set;
 
 import static org.metadatacenter.model.ModelNodeNames.ARTIFACT_CONTEXT_ENTRIES;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.INPUT_TYPES;
 import static org.metadatacenter.model.ModelNodeNames.INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
@@ -83,12 +87,8 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
-import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS;
-import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
-import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.UI_CONTENT;
@@ -139,11 +139,11 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_URI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLECTION;
 
-public class ArtifactReader
+public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 {
   private final ObjectMapper mapper;
 
-  public ArtifactReader()
+  public JsonSchemaArtifactReader()
   {
     this.mapper = new ObjectMapper();
   }
@@ -163,7 +163,12 @@ public class ArtifactReader
     return readFieldSchemaArtifact(objectNode, "", false, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
-  public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
+  public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode)
+  {
+    return readTemplateInstanceArtifact(objectNode, "");
+  }
+
+  private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
@@ -182,7 +187,7 @@ public class ArtifactReader
       modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
   }
 
-  public ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
+  private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
@@ -204,7 +209,7 @@ public class ArtifactReader
     return elementInstanceArtifact;
   }
 
-  public FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
+  private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
@@ -273,7 +278,7 @@ public class ArtifactReader
   //          "Disease": { "enum": [ "http://semantic-dicom.org/dcm#Disease" ]
   //      }
   //    }
-  public  Map<String, URI> getChildPropertyUris(ObjectNode objectNode, String path)
+  private Map<String, URI> getChildPropertyUris(ObjectNode objectNode, String path)
   {
     Map<String, URI> childName2URI = new HashMap<>();
     String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;

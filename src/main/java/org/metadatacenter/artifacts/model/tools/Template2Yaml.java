@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.reader.ArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.io.File;
@@ -31,7 +31,7 @@ public class Template2Yaml
 
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
 
-    ArtifactReader artifactReader = new ArtifactReader();
+    JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
     YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(false);

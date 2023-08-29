@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.reader.ArtifactReader;
-import org.metadatacenter.artifacts.model.reader.ArtifactReaderTest;
+import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,13 +28,13 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_T
 
 public class JsonSchemaArtifactRendererTest
 {
-  private ArtifactReader artifactReader = new ArtifactReader();
+  private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
   private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
 
   @Before
   public void setUp() {
-    artifactReader = new ArtifactReader();
+    artifactReader = new JsonSchemaArtifactReader();
     jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
   }
@@ -155,7 +155,8 @@ public class JsonSchemaArtifactRendererTest
   private ObjectNode getFileContentAsObjectNode(String jsonFileName)
   {
     try {
-      return (ObjectNode)mapper.readTree(new File(ArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+      return (ObjectNode)mapper.readTree(new File(
+        JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
     }

@@ -1,9 +1,6 @@
 package org.metadatacenter.artifacts.model.renderer;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;

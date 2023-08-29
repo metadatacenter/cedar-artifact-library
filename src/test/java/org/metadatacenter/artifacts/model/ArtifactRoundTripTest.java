@@ -13,8 +13,8 @@ import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.reader.ArtifactReader;
-import org.metadatacenter.artifacts.model.reader.ArtifactReaderTest;
+import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
 
 import java.io.File;
@@ -26,13 +26,13 @@ import static org.junit.Assert.assertTrue;
 
 public class ArtifactRoundTripTest
 {
-  private ArtifactReader artifactReader = new ArtifactReader();
+  private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
   private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
 
   @Before
   public void setUp() {
-    artifactReader = new ArtifactReader();
+    artifactReader = new JsonSchemaArtifactReader();
     jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
   }
@@ -102,7 +102,8 @@ public class ArtifactRoundTripTest
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
   {
     try {
-      JsonNode jsonNode = mapper.readTree(new File(ArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+      JsonNode jsonNode = mapper.readTree(new File(
+        JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
 
       if (jsonNode.isObject())
         return (ObjectNode)jsonNode;
