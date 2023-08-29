@@ -3,14 +3,18 @@ package org.metadatacenter.artifacts.model.renderer;
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
+import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
+import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
+import org.metadatacenter.artifacts.model.core.StringDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.UriStringPairDefaultValue;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 
@@ -52,7 +56,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String GRANULARITY = "granularity";
   public static String TIME_FORMAT = "timeFormat";
   public static String REQUIRED = "required";
-  public static String UNIT = "default";
+  public static String UNIT = "unit";
   public static String DEFAULT = "default";
   public static String MULTIPLE = "multiple";
   public static String MIN_ITEMS = "minItems";
@@ -333,6 +337,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (valueConstraints.requiredValue())
       rendering.put(REQUIRED, true);
 
+    if (valueConstraints.defaultValue().isPresent()) {
+      DefaultValue defaultValue = valueConstraints.defaultValue().get();
+      if (defaultValue.isStringDefaultValue()) {
+        StringDefaultValue stringDefaultValue = defaultValue.asStringDefaultValue();
+        rendering.put(DEFAULT, stringDefaultValue.value());
+      } else if (defaultValue.isNumericDefaultValue()) {
+        NumericDefaultValue numericDefaultValue = defaultValue.asNumericDefaultValue();
+        rendering.put(DEFAULT, numericDefaultValue.value());
+      } else if (defaultValue.isUriStringPairDefaultValue()) {
+        UriStringPairDefaultValue uriStringPairDefaultValue = defaultValue.asURIStringPairDefaultValue();
+        rendering.put(DEFAULT, uriStringPairDefaultValue.value().getLeft());
+      }
+    }
+
     if (valueConstraints.multipleChoice())
       rendering.put(MULTIPLE_CHOICE, true);
 
@@ -350,9 +368,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (valueConstraints.temporalType().isPresent())
       rendering.put(TEMPORAL_TYPE, valueConstraints.temporalType().get());
-
-    if (valueConstraints.defaultValue().isPresent())
-      rendering.put(DEFAULT, valueConstraints.defaultValue().get());
 
     if (valueConstraints.unitOfMeasure().isPresent())
       rendering.put(UNIT, valueConstraints.unitOfMeasure().get());
