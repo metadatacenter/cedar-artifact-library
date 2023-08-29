@@ -711,10 +711,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_ONTOLOGIES);
 
     if (jsonNode != null && !jsonNode.isNull() && jsonNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode valueConstraintNode = nodeIterator.next();
+      for (JsonNode valueConstraintNode : jsonNode) {
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
             throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_ONTOLOGIES, path);
@@ -734,15 +732,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_CLASSES);
 
     if (jsonNode != null && !jsonNode.isNull() && jsonNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode valueConstraintNode = nodeIterator.next();
+      for (JsonNode valueConstraintNode : jsonNode) {
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
-            throw new ArtifactParseException(
-              "Value in array must be an object", VALUE_CONSTRAINTS_CLASSES, path);
-          ClassValueConstraint classValueConstraint = readClassValueConstraint((ObjectNode)valueConstraintNode, path + "/" + VALUE_CONSTRAINTS_CLASSES);
+            throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_CLASSES, path);
+          ClassValueConstraint classValueConstraint = readClassValueConstraint((ObjectNode)valueConstraintNode,
+            path + "/" + VALUE_CONSTRAINTS_CLASSES);
           classValueConstraints.add(classValueConstraint);
         }
       }
@@ -757,10 +753,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_VALUE_SETS);
 
     if (jsonNode != null && jsonNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode valueConstraintNode = nodeIterator.next();
+      for (JsonNode valueConstraintNode : jsonNode) {
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
             throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_VALUE_SETS, path);
@@ -780,15 +774,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_BRANCHES);
 
     if (jsonNode != null && jsonNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode valueConstraintNode = nodeIterator.next();
+      for (JsonNode valueConstraintNode : jsonNode) {
         if (valueConstraintNode != null) {
           if (!valueConstraintNode.isObject())
-            throw new ArtifactParseException(
-              "Value in array must be an object", VALUE_CONSTRAINTS_BRANCHES, path);
-          BranchValueConstraint branchValueConstraint = readBranchValueConstraint((ObjectNode)valueConstraintNode, path + "/" + VALUE_CONSTRAINTS_BRANCHES);
+            throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_BRANCHES, path);
+          BranchValueConstraint branchValueConstraint = readBranchValueConstraint((ObjectNode)valueConstraintNode,
+            path + "/" + VALUE_CONSTRAINTS_BRANCHES);
           branchValueConstraints.add(branchValueConstraint);
         }
       }
@@ -804,10 +796,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_LITERALS);
 
     if (jsonNode != null && jsonNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode valueConstraintsNode = nodeIterator.next();
+      for (JsonNode valueConstraintsNode : jsonNode) {
         if (valueConstraintsNode != null) {
           if (!valueConstraintsNode.isObject())
             throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_LITERALS, path);
@@ -827,10 +817,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_ACTIONS);
 
     if (jsonNode != null && jsonNode.isArray()) {
-      Iterator<JsonNode> nodeIterator = jsonNode.iterator();
 
-      while (nodeIterator.hasNext()) {
-        JsonNode actionNode = nodeIterator.next();
+      for (JsonNode actionNode : jsonNode) {
         if (actionNode != null) {
           if (!actionNode.isObject())
             throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_ACTIONS, path);
@@ -1064,7 +1052,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   {
     Optional<String> granularity = readStringField(objectNode, path, UI_TEMPORAL_GRANULARITY);
 
-    if (!granularity.isPresent())
+    if (granularity.isEmpty())
       return Optional.empty();
 
     if (!ModelNodeValues.TEMPORAL_GRANULARITIES.contains(granularity.get()))
@@ -1077,7 +1065,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   {
     Optional<String> timeFormat = readStringField(objectNode, path, UI_INPUT_TIME_FORMAT);
 
-    if (!timeFormat.isPresent())
+    if (timeFormat.isEmpty())
       return Optional.empty();
 
     if (!ModelNodeValues.TIME_FORMATS.contains(timeFormat.get()))
@@ -1089,6 +1077,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private String readDefaultValue(ObjectNode objectNode, String path)
   {
     ObjectNode valueConstraintsNode = readValueConstraintsNodeAtPath(objectNode, path);
+
+    if (valueConstraintsNode == null)
+      throw new ArtifactParseException("No " + VALUE_CONSTRAINTS + " field", VALUE_CONSTRAINTS, path);
+
     String subPath = path + "/" + VALUE_CONSTRAINTS;
 
     return readRequiredStringField(valueConstraintsNode, subPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
@@ -1251,7 +1243,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   {
     Optional<String> version = readStringField(objectNode, path, PAV_VERSION);
 
-    if (!version.isPresent())
+    if (version.isEmpty())
       return Optional.empty();
     else
       return Optional.of(Version.fromString(version.get()));
