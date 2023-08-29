@@ -20,7 +20,9 @@ public class Template2Yaml
     if (args.length != 2)
       Usage();
 
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+    YAMLFactory yamlFactory = new YAMLFactory().
+      disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+    ObjectMapper mapper = new ObjectMapper(yamlFactory);
     File templateFile = new File(args[0]);
     File yamlFile = new File(args[1]);
 

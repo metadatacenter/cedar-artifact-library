@@ -43,14 +43,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String CREATED_ON = "createdOn";
   public static String CHILDREN = "children";
   public static String LAST_UPDATED_ON = "lastUpdatedOn";
-  public static String PREF_LABEL = "prefLabel";
+  public static String PREF_LABEL = "label";
   public static String ALT_LABEL = "altLabel";
   public static String TYPE = "type";
   public static String IRI_VALUE = "IRI";
   public static String HIDDEN = "hidden";
   public static String VALUE_RECOMMENDATION_ENABLED = "valueRecommendationEnabled";
   public static String MULTIPLE_CHOICE = "multipleChoice";
-  public static String NUMBER_TYPE = "numberType";
+  public static String NUMERIC_TYPE = "numericType";
   public static String TEMPORAL_TYPE = "temporalType";
   public static String TIME_ZONE = "timeZone";
   public static String GRANULARITY = "granularity";
@@ -81,7 +81,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String HEADER = "header";
   public static String FOOTER = "footer";
   public static String CONTENT = "content";
-  public static int CONTENT_PREVIEW_LENGTH = 40;
 
   private final boolean isExpanded;
 
@@ -238,12 +237,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (isExpanded && fieldUi.valueRecommendationEnabled())
       rendering.put(VALUE_RECOMMENDATION_ENABLED, true);
 
-    if (fieldUi._content().isPresent()) {
-      if (isExpanded)
+    if (fieldUi._content().isPresent())
         rendering.put(CONTENT, fieldUi._content().get());
-      else
-        rendering.put(CONTENT, fieldUi._content().get().substring(0, CONTENT_PREVIEW_LENGTH) + "...");
-    }
 
     if (fieldUi.timeZoneEnabled().isPresent())
       rendering.put(TIME_ZONE, fieldUi.timeZoneEnabled().get());
@@ -355,7 +350,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       rendering.put(MULTIPLE_CHOICE, true);
 
     if (valueConstraints.numberType().isPresent())
-      rendering.put(NUMBER_TYPE, valueConstraints.numberType().get());
+      rendering.put(NUMERIC_TYPE, valueConstraints.numberType().get());
 
     if (valueConstraints.minValue().isPresent())
       rendering.put(MIN_VALUE, valueConstraints.minValue().get());
