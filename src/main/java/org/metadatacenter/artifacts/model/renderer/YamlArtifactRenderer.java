@@ -451,7 +451,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (isExpanded && schemaArtifact.jsonLdId().isPresent())
       rendering.put(ID, schemaArtifact.jsonLdId().get());
 
-    if (schemaArtifact.identifier().isPresent())
+    if (isExpanded && schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
     if (isExpanded && schemaArtifact.version().isPresent())
