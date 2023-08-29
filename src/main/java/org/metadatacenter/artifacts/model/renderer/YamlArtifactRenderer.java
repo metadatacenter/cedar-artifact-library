@@ -1,16 +1,24 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import org.apache.regexp.RE;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldUi;
+import org.metadatacenter.artifacts.model.core.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
+import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ValueConstraints;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object>>
 {
@@ -22,23 +30,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String DESCRIPTION = "description";
   public static String IDENTIFIER = "identifier";
   public static String VERSION = "version";
-  public static String CHILDREN = "children";
-  public static String TYPE = "type";
-  public static String TEXTFIELD_TYPE = "textfield";
-  public static String IRI_TYPE = "IRI";
-  public static String REQUIRED = "required";
   public static String STATUS = "status";
-  public static String IS_MULTIPLE = "isMultiple";
-  public static String MIN_ITEMS = "minItems";
-  public static String MAX_ITEMS = "maxItems";
-  public static String MIN_LENGTH = "minLength";
-  public static String MAX_LENGTH = "maxLength";
-  public static String VALUES = "values";
-  public static String URI = "uri";
-  public static String SOURCE = "source";
-  public static String ACRONYM = "acronym";
-  public static String ONTOLOGY = "ontology";
-  public static String BRANCH = "branch";
   public static String MODEL_VERSION = "modelVersion";
   public static String PREVIOUS_VERSION = "previousVersion";
   public static String IS_BASED_ON = "isBasedOn";
@@ -46,9 +38,35 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String CREATED_BY = "createdBy";
   public static String MODIFIED_BY = "modifiedBy";
   public static String CREATED_ON = "createdOn";
+  public static String CHILDREN = "children";
   public static String LAST_UPDATED_ON = "lastUpdatedOn";
   public static String PREF_LABEL = "prefLabel";
   public static String ALT_LABEL = "altLabel";
+  public static String TYPE = "type";
+  public static String HIDDEN = "hidden";
+  public static String VALUE_RECOMMENDATION_ENABLED = "valueRecommendationEnabled";
+  public static String MULTIPLE_CHOICE = "multipleChoice";
+  public static String NUMBER_TYPE = "numberType";
+  public static String TEMPORAL_TYPE = "temporalType";
+  public static String TIME_ZONE = "timeZone";
+  public static String GRANULARITY = "granularity";
+  public static String TIME_FORMAT = "timeFormat";
+  public static String REQUIRED = "required";
+  public static String UNIT = "default";
+  public static String DEFAULT = "default";
+  public static String MULTIPLE = "multiple";
+  public static String MIN_ITEMS = "minItems";
+  public static String MAX_ITEMS = "maxItems";
+  public static String MIN_VALUE = "minValue";
+  public static String MAX_VALUE = "maxValue";
+  public static String DECIMAL_PLACES = "decimalPlaces";
+  public static String MIN_LENGTH = "minLength";
+  public static String MAX_LENGTH = "maxLength";
+  public static String URI = "uri";
+  public static String SOURCE = "source";
+  public static String ACRONYM = "acronym";
+  public static String ONTOLOGY = "ontology";
+  public static String BRANCH = "branch";
   public static String HEADER = "header";
   public static String FOOTER = "footer";
   public static String CONTENT = "content";
@@ -172,44 +190,109 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
 
-    // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
-    // value constraints.
-    rendering.put(TYPE, fieldSchemaArtifact.fieldUi().inputType());
+    renderFieldUi(fieldSchemaArtifact.fieldUi(), rendering);
 
-    if (fieldSchemaArtifact.isStatic()) {
-      if (fieldSchemaArtifact.fieldUi()._content().isPresent()) {
-        if (isExpanded)
-          rendering.put(CONTENT, fieldSchemaArtifact.fieldUi()._content().get());
-        else
-          rendering.put(CONTENT, fieldSchemaArtifact.fieldUi()._content().get().substring(0, CONTENT_PREVIEW_LENGTH) + "...");
-      }
-    } else { // Non-static fields
+    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
 
-      if (fieldSchemaArtifact.hasIRIValue()) {
-        // TODO
-      } else {
-        // Non-IRI fields may have en empty object as a value so there are no required fields
-      }
+    if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
+      List<Object> skosAlternateLabelRendering = new ArrayList<>();
+      for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
+        skosAlternateLabelRendering.add(skosAlternateLabel);
+      rendering.put(ALT_LABEL, skosAlternateLabelRendering);
+    }
 
-      if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-        rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
-
-      if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-        // for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
-        // TODO AltLabel
-      }
-      // TODO ValueConstraint
-      // required,
-      // defaultValue
-      // multipleChoice,
-      // numberType,
-      // temporalType
-      // unitOfMeasure,
-      // minValue, maxValue, decimalPlaces,
-      // minLength, maxLength,
-      // ontologies, valueSets, classes, branches, literals
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderValueConstraints(valueConstraints, rendering);
     }
     return rendering;
+  }
+
+  private void renderFieldUi(FieldUi fieldUi, LinkedHashMap<String, Object> rendering)
+  {
+    rendering.put(TYPE, fieldUi.inputType());
+
+    if (fieldUi.hidden())
+      rendering.put(HIDDEN, true);
+
+    if (isExpanded && fieldUi.valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION_ENABLED, true);
+
+    if (fieldUi._content().isPresent()) {
+      if (isExpanded)
+        rendering.put(CONTENT, fieldUi._content().get());
+      else
+        rendering.put(CONTENT, fieldUi._content().get().substring(0, CONTENT_PREVIEW_LENGTH) + "...");
+    }
+
+    if (fieldUi.timeZoneEnabled().isPresent())
+      rendering.put(TIME_ZONE, fieldUi.timeZoneEnabled().get());
+
+    if (fieldUi.temporalGranularity().isPresent())
+      rendering.put(GRANULARITY, fieldUi.temporalGranularity().get());
+
+    if (fieldUi.inputTimeFormat().isPresent())
+      rendering.put(TIME_FORMAT, fieldUi.inputTimeFormat().get());
+
+  }
+
+  private void renderValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  {
+    renderCoreValueConstraints(valueConstraints, rendering);
+
+    // TODO
+    // ontologies, valueSets, classes, branches
+    if (valueConstraints.hasOntologyValueBasedConstraints()) {
+      for (OntologyValueConstraint ontologyValueConstraint : valueConstraints.ontologies()) {
+
+      }
+    } else {
+      // literals
+      if (valueConstraints.hasLiteralBasedConstraint()) {
+        List<Object> literalsRendering = new ArrayList<>();
+        for (LiteralValueConstraint literalValueConstraint : valueConstraints.literals()) {
+
+        }
+      }
+
+    }
+  }
+
+  private void renderCoreValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  {
+    if (valueConstraints.requiredValue())
+      rendering.put(REQUIRED, true);
+
+    if (valueConstraints.multipleChoice())
+      rendering.put(MULTIPLE_CHOICE, true);
+
+    if (valueConstraints.numberType().isPresent())
+      rendering.put(NUMBER_TYPE, valueConstraints.numberType().get());
+
+    if (valueConstraints.minValue().isPresent())
+      rendering.put(MIN_VALUE, valueConstraints.minValue().get());
+
+    if (valueConstraints.maxValue().isPresent())
+      rendering.put(MAX_VALUE, valueConstraints.maxValue().get());
+
+    if (valueConstraints.defaultValue().isPresent())
+      rendering.put(DECIMAL_PLACES, valueConstraints.decimalPlaces().get());
+
+    if (valueConstraints.temporalType().isPresent())
+      rendering.put(TEMPORAL_TYPE, valueConstraints.temporalType().get());
+
+    if (valueConstraints.defaultValue().isPresent())
+      rendering.put(DEFAULT, valueConstraints.defaultValue().get());
+
+    if (valueConstraints.unitOfMeasure().isPresent())
+      rendering.put(UNIT, valueConstraints.unitOfMeasure().get());
+
+    if (valueConstraints.minLength().isPresent())
+      rendering.put(MIN_LENGTH, valueConstraints.minLength().get());
+
+    if (valueConstraints.maxLength().isPresent())
+      rendering.put(MAX_LENGTH, valueConstraints.maxLength().get());
   }
 
   public LinkedHashMap<String, Object> renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
@@ -262,7 +345,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = renderSchemaArtifact(childSchemaArtifact, artifactTypeName);
 
     if (childSchemaArtifact.isMultiple())
-      rendering.put(IS_MULTIPLE, true);
+      rendering.put(MULTIPLE, true);
 
     if (childSchemaArtifact.minItems().isPresent())
       rendering.put(MIN_ITEMS, childSchemaArtifact.minItems().get());
