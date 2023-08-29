@@ -203,10 +203,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
 
-    ElementInstanceArtifact elementInstanceArtifact = ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes,
+    return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes,
       jsonLdId, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
-
-    return elementInstanceArtifact;
   }
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
@@ -223,10 +221,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> skosNotation = readSkosNotationField(objectNode, path);
     Optional<String> skosPrefLabel = readSkosPrefLabelField(objectNode, path);
 
-    FieldInstanceArtifact fieldInstanceArtifact = FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel);
-
-    return fieldInstanceArtifact;
+    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel);
   }
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
@@ -655,7 +651,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       List<ClassValueConstraint> classes = readClassValueConstraints(vcNode, vcPath);
       List<BranchValueConstraint> branches = readBranchValueConstraints(vcNode, vcPath);
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath);
-      Optional<DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
+      Optional<DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath);
       List<ValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath);
 
       return Optional.of(
@@ -666,14 +662,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.empty();
   }
 
-  private Optional<DefaultValue> readDefaultValueField(ObjectNode objectNode, String path, String fieldName)
+  private Optional<DefaultValue> readDefaultValueField(ObjectNode objectNode, String path)
   {
-    JsonNode jsonNode = objectNode.get(fieldName);
+    JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_DEFAULT_VALUE);
 
     if (jsonNode == null || jsonNode.isNull())
       return Optional.empty();
     else if (jsonNode.isObject()) {
-      String nestedPath = path + fieldName;
+      String nestedPath = path + VALUE_CONSTRAINTS_DEFAULT_VALUE;
       ObjectNode defaultValueNode = (ObjectNode)jsonNode;
       URI termUri = readRequiredURIField(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       String rdfsLabel = readRequiredStringField(defaultValueNode, nestedPath, RDFS_LABEL);
@@ -683,7 +679,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     else if (jsonNode.isTextual())
       return Optional.of(new StringDefaultValue(jsonNode.asText()));
     else
-      throw new ArtifactParseException("default value must be a string, a number, or an object containing URI/string pair", fieldName, path);
+      throw new ArtifactParseException(
+        "default value must be a string, a number, or an object containing URI/string pair",
+        VALUE_CONSTRAINTS_DEFAULT_VALUE, path);
   }
 
   private Optional<TemporalType> readTemporalTypeField(ObjectNode objectNode, String path)
