@@ -43,7 +43,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String CREATED_ON = "createdOn";
   public static String CHILDREN = "children";
   public static String LAST_UPDATED_ON = "lastUpdatedOn";
-  public static String PREF_LABEL = "label";
+  public static String SKOS_PREF_LABEL = "label";
   public static String ALT_LABEL = "altLabel";
   public static String TYPE = "type";
   public static String IRI_VALUE = "IRI";
@@ -201,14 +201,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
 
+    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
+      rendering.put(SKOS_PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+
     if (fieldSchemaArtifact.valueConstraints().isPresent() &&
     fieldSchemaArtifact.valueConstraints().get().hasOntologyValueBasedConstraints())
       rendering.put(TYPE, IRI_VALUE);
     else
       rendering.put(TYPE, fieldSchemaArtifact.fieldUi().inputType());
 
-    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderCoreValueConstraints(valueConstraints, rendering);
+    }
 
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
       List<Object> skosAlternateLabelRendering = new ArrayList<>();
@@ -221,7 +226,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderValueConstraints(valueConstraints, rendering);
+      renderValueConstraintValues(valueConstraints, rendering);
     }
 
     // TODO _valueConstraints.actions
@@ -268,11 +273,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *         type: OntologyClass
    * </pre>
    */
-  private void renderValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  private void renderValueConstraintValues(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
-
-    renderCoreValueConstraints(valueConstraints, rendering);
 
     if (valueConstraints.hasOntologyValueBasedConstraints()) {
 
@@ -296,7 +299,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
         classValueConstraintRendering.put(CLASS, classValueConstraint.label());
         classValueConstraintRendering.put(URI, classValueConstraint.uri());
-        classValueConstraintRendering.put(PREF_LABEL, classValueConstraint.prefLabel());
+        classValueConstraintRendering.put(SKOS_PREF_LABEL, classValueConstraint.prefLabel());
         classValueConstraintRendering.put(TYPE, classValueConstraint.type());
         classValueConstraintRendering.put(SOURCE, classValueConstraint.source());
         valuesRendering.add(classValueConstraintRendering);
@@ -329,8 +332,17 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   private void renderCoreValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
+    if (valueConstraints.numberType().isPresent())
+      rendering.put(NUMERIC_TYPE, valueConstraints.numberType().get());
+
+    if (valueConstraints.temporalType().isPresent())
+      rendering.put(TEMPORAL_TYPE, valueConstraints.temporalType().get());
+
     if (valueConstraints.requiredValue())
       rendering.put(REQUIRED, true);
+
+    if (valueConstraints.multipleChoice())
+      rendering.put(MULTIPLE_CHOICE, true);
 
     if (valueConstraints.defaultValue().isPresent()) {
       DefaultValue defaultValue = valueConstraints.defaultValue().get();
@@ -346,12 +358,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       }
     }
 
-    if (valueConstraints.multipleChoice())
-      rendering.put(MULTIPLE_CHOICE, true);
-
-    if (valueConstraints.numberType().isPresent())
-      rendering.put(NUMERIC_TYPE, valueConstraints.numberType().get());
-
     if (valueConstraints.minValue().isPresent())
       rendering.put(MIN_VALUE, valueConstraints.minValue().get());
 
@@ -360,9 +366,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (valueConstraints.decimalPlaces().isPresent())
       rendering.put(DECIMAL_PLACES, valueConstraints.decimalPlaces().get());
-
-    if (valueConstraints.temporalType().isPresent())
-      rendering.put(TEMPORAL_TYPE, valueConstraints.temporalType().get());
 
     if (valueConstraints.unitOfMeasure().isPresent())
       rendering.put(UNIT, valueConstraints.unitOfMeasure().get());
