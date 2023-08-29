@@ -141,11 +141,8 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLE
 
 public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 {
-  private final ObjectMapper mapper;
-
   public JsonSchemaArtifactReader()
   {
-    this.mapper = new ObjectMapper();
   }
 
   public TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode)
@@ -1526,10 +1523,4 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   {
     return readStringField(objectNode, path, SKOS_PREFLABEL, null);
   }
-
-  private ObjectMapper getMapper()
-  {
-    return this.mapper;
-  }
-
 }
