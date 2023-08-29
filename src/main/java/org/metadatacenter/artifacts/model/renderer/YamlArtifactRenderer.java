@@ -204,8 +204,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     else
       rendering.put(TYPE, fieldSchemaArtifact.fieldUi().inputType());
 
-    renderFieldUi(fieldSchemaArtifact.fieldUi(), rendering);
-
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
 
@@ -215,6 +213,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         skosAlternateLabelRendering.add(skosAlternateLabel);
       rendering.put(ALT_LABEL, skosAlternateLabelRendering);
     }
+
+    renderFieldUi(fieldSchemaArtifact.fieldUi(), rendering);
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
@@ -369,7 +369,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(INSTANCE, templateInstanceArtifact.name());
-    rendering.put(DESCRIPTION, templateInstanceArtifact.description());
+    if (!templateInstanceArtifact.description().isEmpty())
+      rendering.put(DESCRIPTION, templateInstanceArtifact.description());
 
     if (isExpanded && templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
@@ -430,7 +431,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(artifactTypeName, schemaArtifact.name());
-    rendering.put(DESCRIPTION, schemaArtifact.description());
+
+    if (!schemaArtifact.description().isEmpty())
+      rendering.put(DESCRIPTION, schemaArtifact.description());
 
     if (isExpanded && schemaArtifact.jsonLdId().isPresent())
       rendering.put(ID, schemaArtifact.jsonLdId().get());
