@@ -20,8 +20,7 @@ public class Template2Yaml
     if (args.length != 2)
       Usage();
 
-    YAMLFactory yamlFactory = new YAMLFactory().
-      disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+    YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).disable(YAMLGenerator.Feature.SPLIT_LINES);
     ObjectMapper mapper = new ObjectMapper(yamlFactory);
     File templateFile = new File(args[0]);
     File yamlFile = new File(args[1]);
@@ -36,7 +35,7 @@ public class Template2Yaml
     JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-    YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(false);
+    YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
