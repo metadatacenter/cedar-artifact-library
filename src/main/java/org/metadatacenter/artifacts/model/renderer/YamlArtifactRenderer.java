@@ -354,7 +354,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       DefaultValue defaultValue = valueConstraints.defaultValue().get();
       if (defaultValue.isStringDefaultValue()) {
         StringDefaultValue stringDefaultValue = defaultValue.asStringDefaultValue();
-        rendering.put(DEFAULT, stringDefaultValue.value());
+        if (!stringDefaultValue.value().isEmpty())
+          rendering.put(DEFAULT, stringDefaultValue.value());
       } else if (defaultValue.isNumericDefaultValue()) {
         NumericDefaultValue numericDefaultValue = defaultValue.asNumericDefaultValue();
         rendering.put(DEFAULT, numericDefaultValue.value());
