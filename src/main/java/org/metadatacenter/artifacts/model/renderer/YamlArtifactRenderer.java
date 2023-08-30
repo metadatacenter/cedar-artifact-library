@@ -45,13 +45,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String LAST_UPDATED_ON = "lastUpdatedOn";
   public static String SKOS_PREF_LABEL = "label";
   public static String ALT_LABEL = "altLabel";
-  public static String TYPE = "type";
-  public static String IRI_VALUE = "IRI";
+  public static String INPUT_TYPE = "inputType";
   public static String HIDDEN = "hidden";
   public static String VALUE_RECOMMENDATION_ENABLED = "valueRecommendationEnabled";
   public static String MULTIPLE_CHOICE = "multipleChoice";
-  public static String NUMERIC_TYPE = "numericType";
-  public static String TEMPORAL_TYPE = "temporalType";
+  public static String DATATYPE = "datatype";
+  public static String XSD_ANYURI = "xsd:anyURI";
+  public static String XSD_STRING = "xsd:string";
   public static String TIME_ZONE = "timeZone";
   public static String GRANULARITY = "granularity";
   public static String TIME_FORMAT = "timeFormat";
@@ -104,12 +104,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *
    *   - field: Study Name
    *     description: Study name field
-   *     type: textfield
+   *     inputType: textfield
+   *     datatype: xsd:string
    *     required: true
    *
    *   - field: Study ID
    *     description: Study ID field
-   *     type: textfield
+   *     inputType: textfield
+   *     datatype: xsd:string
    *     required: true
    *     minLength: 2
    *
@@ -121,9 +123,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *
    *     children:
    *       - field: Address 1
-   *         type: textfield
+   *         inputType: textfield
+   *         datatype: xsd:string
    *       - field: ZIP
-   *         type: textfield
+   *         inputType: textfield
+   *         datatype: xsd:string
    *         minLength: 5
    *         maxLength: 5
    * </pre>
@@ -155,12 +159,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *
    * children:
    *   - field: Address 1
-   *     type: textfield
+   *     inputType: textfield
+   *     datatype: xsd:string
    *
-   *  - field: ZIP
-   *    type: textfield
-   *    minLength: 5
-   *    maxLength: 5
+   *   - field: ZIP
+   *     inputType: textfield
+   *     datatype: xsd:string
+   *     minLength: 5
+   *     maxLength: 5
    *
    * </pre>
    */
@@ -183,7 +189,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    * e.g.,
    * <pre>
    * field: Disease
-   * type: IRI
+   * inputType: textfield
+   * datatype: xsd:anyURI
    * values:
    *       - ontology: Human Disease Ontology
    *         acronym: DOID
@@ -204,11 +211,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(SKOS_PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
 
-    if (fieldSchemaArtifact.valueConstraints().isPresent() &&
-    fieldSchemaArtifact.valueConstraints().get().hasOntologyValueBasedConstraints())
-      rendering.put(TYPE, IRI_VALUE);
-    else
-      rendering.put(TYPE, fieldSchemaArtifact.fieldUi().inputType());
+    rendering.put(INPUT_TYPE, fieldSchemaArtifact.fieldUi().inputType());
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
@@ -300,7 +303,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         classValueConstraintRendering.put(CLASS, classValueConstraint.label());
         classValueConstraintRendering.put(URI, classValueConstraint.uri());
         classValueConstraintRendering.put(SKOS_PREF_LABEL, classValueConstraint.prefLabel());
-        classValueConstraintRendering.put(TYPE, classValueConstraint.type());
+        classValueConstraintRendering.put(INPUT_TYPE, classValueConstraint.type());
         classValueConstraintRendering.put(SOURCE, classValueConstraint.source());
         valuesRendering.add(classValueConstraintRendering);
       }
@@ -333,10 +336,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   private void renderCoreValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
     if (valueConstraints.numberType().isPresent())
-      rendering.put(NUMERIC_TYPE, valueConstraints.numberType().get());
-
-    if (valueConstraints.temporalType().isPresent())
-      rendering.put(TEMPORAL_TYPE, valueConstraints.temporalType().get());
+      rendering.put(DATATYPE, valueConstraints.numberType().get());
+    else if (valueConstraints.temporalType().isPresent())
+      rendering.put(DATATYPE, valueConstraints.temporalType().get());
+    else if (valueConstraints.hasOntologyValueBasedConstraints())
+      rendering.put(DATATYPE, XSD_ANYURI);
+    else
+      rendering.put(DATATYPE, XSD_STRING);
 
     if (valueConstraints.requiredValue())
       rendering.put(REQUIRED, true);

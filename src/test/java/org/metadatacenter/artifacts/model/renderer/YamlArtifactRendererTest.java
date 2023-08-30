@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.renderer;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
-import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -82,7 +81,7 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(YamlArtifactRenderer.FIELD, name);
     expectedRendering.put(YamlArtifactRenderer.DESCRIPTION, description);
-    expectedRendering.put(YamlArtifactRenderer.TYPE, fieldInputType);
+    expectedRendering.put(YamlArtifactRenderer.INPUT_TYPE, fieldInputType);
 
     assertEquals(expectedRendering, rendering);
   }
