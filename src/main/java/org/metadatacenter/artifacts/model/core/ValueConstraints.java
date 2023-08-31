@@ -81,15 +81,15 @@ public interface ValueConstraints
   class Builder {
     private boolean requiredValue = false;
     private boolean multipleChoice = false;
+    private Optional<DefaultValue> defaultValue = Optional.empty();
+    private Optional<TemporalType> temporalType = Optional.empty();
     private Optional<NumberType> numberType = Optional.empty();
-    private Optional<String> unitOfMeasure = Optional.empty();
     private Optional<Number> minValue = Optional.empty();
     private Optional<Number> maxValue = Optional.empty();
     private Optional<Integer> decimalPlaces = Optional.empty();
+    private Optional<String> unitOfMeasure = Optional.empty();
     private Optional<Integer> minLength = Optional.empty();
     private Optional<Integer> maxLength = Optional.empty();
-    private Optional<TemporalType> temporalType = Optional.empty();
-    private Optional<DefaultValue> defaultValue = Optional.empty();
     private List<OntologyValueConstraint> ontologies = new ArrayList<>();
     private List<ValueSetValueConstraint> valueSets = new ArrayList<>();
     private List<ClassValueConstraint> classes = new ArrayList<>();
