@@ -89,12 +89,12 @@ public interface ValueConstraints
     private Optional<Integer> minLength = Optional.empty();
     private Optional<Integer> maxLength = Optional.empty();
     private Optional<TemporalType> temporalType = Optional.empty();
+    private Optional<DefaultValue> defaultValue = Optional.empty();
     private List<OntologyValueConstraint> ontologies = new ArrayList<>();
     private List<ValueSetValueConstraint> valueSets = new ArrayList<>();
     private List<ClassValueConstraint> classes = new ArrayList<>();
     private List<BranchValueConstraint> branches = new ArrayList<>();
     private List<LiteralValueConstraint> literals = new ArrayList<>();
-    private Optional<DefaultValue> defaultValue = Optional.empty();
     private List<ValueConstraintsAction> actions = new ArrayList<>();
 
     private Builder() {
