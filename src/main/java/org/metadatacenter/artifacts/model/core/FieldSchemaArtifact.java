@@ -53,7 +53,7 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   List<String> skosAlternateLabels();
 
-  default boolean isHidden() { return fieldUi().isHidden(); }
+  default boolean hidden() { return fieldUi().hidden(); }
 
   default boolean isStatic() { return fieldUi().isStatic(); }
 

@@ -5,14 +5,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
+import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 
 import java.util.Optional;
 
@@ -110,33 +111,28 @@ public class TemplateSchemaArtifact2REDCapConvertor
     case TEMPORAL:
       if (valueConstraints.isPresent() && valueConstraints.get().temporalType().isPresent()) {
         TemporalType temporalType = valueConstraints.get().temporalType().get();
-        Optional<InputTimeFormat> inputTimeFormat = fieldUi.inputTimeFormat();
-        Optional<TemporalGranularity> temporalGranularity = fieldUi.temporalGranularity();
+        TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
+        Optional<InputTimeFormat> inputTimeFormat = temporalFieldUi.inputTimeFormat();
+        TemporalGranularity temporalGranularity = temporalFieldUi.temporalGranularity();
 
         switch (temporalType) {
         case DATE:
-          if (temporalGranularity.isPresent()) {
-            if (temporalGranularity.get() == TemporalGranularity.MONTH)
+            if (temporalGranularity == TemporalGranularity.MONTH)
               return Optional.of(REDCapConstants.DATE_MY_TEXTFIELD_VALIDATION);
-            else if (temporalGranularity.get() == TemporalGranularity.DAY)
+            else if (temporalGranularity == TemporalGranularity.DAY)
               return Optional.of(REDCapConstants.DATE_DY_TEXTFIELD_VALIDATION);
             else
               return Optional.of(REDCapConstants.DATE_YMD_TEXTFIELD_VALIDATION);
-          } else
-            return Optional.of(REDCapConstants.DATE_YMD_TEXTFIELD_VALIDATION);
 
           // CEDAR has no way of specifying the following REDCap validations:
           // DATE_MDY_TEXTFIELD_VALIDATION = "DATE_MDY";
           // DATE_DMY_TEXTFIELD_VALIDATION = "DATE_DMY";
           // MD_TEXTFIELD_VALIDATION = "MD";
         case DATETIME:
-          if (temporalGranularity.isPresent()) {
-            if (temporalGranularity.get() == TemporalGranularity.SECOND)
+            if (temporalGranularity == TemporalGranularity.SECOND)
               return Optional.of(REDCapConstants.DATETIME_SECONDS_Y_TEXTFIELD_VALIDATION);
             else
               return Optional.of(REDCapConstants.DATETIME_YMD_TEXTFIELD_VALIDATION);
-          } else
-            return Optional.of(REDCapConstants.DATETIME_YMD_TEXTFIELD_VALIDATION);
           // CEDAR has no way of specifying the following REDCap validations:
           // DATETIME_SECONDS_M_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_M";
           // DATETIME_SECONDS_D_TEXTFIELD_VALIDATION = "DATETIME_SECONDS_D";
@@ -144,7 +140,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
           // DATETIME_YMD_FIELD_VALIDATION = "DATETIME_YMD";
           // DATETIME_MDY_FIELD_VALIDATION = "DATETIME_MDY";
         case TIME:
-          if (temporalGranularity.isPresent() && temporalGranularity.get() == TemporalGranularity.SECOND)
+          if (temporalGranularity == TemporalGranularity.SECOND)
             return Optional.of(REDCapConstants.TIME_MM_SS_TEXTFIELD_VALIDATION);
           else
             return Optional.of(REDCapConstants.TIME_TEXTFIELD_VALIDATION);
@@ -160,15 +156,10 @@ public class TemplateSchemaArtifact2REDCapConvertor
         NumberType numberType = valueConstraints.get().numberType().get();
 
         switch (numberType) {
-        case INTEGER:
-        case LONG:
-        case INT:
-        case SHORT:
-        case BYTE:
+        case INTEGER, LONG, INT, SHORT, BYTE -> {
           return Optional.of(REDCapConstants.INTEGER_TEXTFIELD_VALIDATION);
-        case DECIMAL:
-        case FLOAT:
-        case DOUBLE:
+        }
+        case DECIMAL, FLOAT, DOUBLE -> {
           if (valueConstraints.get().decimalPlaces().isPresent()) {
             Integer decimalPlaces = valueConstraints.get().decimalPlaces().get();
             if (decimalPlaces == 1)
@@ -184,6 +175,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
           } else {
             return Optional.of(REDCapConstants.NUMBER_TEXTFIELD_VALIDATION);
           }
+        }
         }
       } else
         throw new RuntimeException("Missing numberType value in value constraint  for numeric field " + fieldSchemaArtifact.name());

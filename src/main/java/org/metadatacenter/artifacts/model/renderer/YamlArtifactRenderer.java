@@ -245,17 +245,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (isExpanded && fieldUi.valueRecommendationEnabled())
       rendering.put(VALUE_RECOMMENDATION_ENABLED, true);
 
-    if (fieldUi._content().isPresent())
-        rendering.put(CONTENT, fieldUi._content().get());
+    if (fieldUi.isStatic())
+      rendering.put(CONTENT, fieldUi.asStaticFieldUi()._content());
+    else if (fieldUi.isTemporal()) {
 
-    if (fieldUi.timeZoneEnabled().isPresent())
-      rendering.put(TIME_ZONE, fieldUi.timeZoneEnabled().get());
+      rendering.put(TIME_ZONE, fieldUi.asTemporalFieldUi().timeZoneEnabled());
 
-    if (fieldUi.temporalGranularity().isPresent())
-      rendering.put(GRANULARITY, fieldUi.temporalGranularity().get());
+      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity());
 
-    if (fieldUi.inputTimeFormat().isPresent())
-      rendering.put(TIME_FORMAT, fieldUi.inputTimeFormat().get());
+      rendering.put(TIME_FORMAT, fieldUi.asTemporalFieldUi().inputTimeFormat());
+    }
   }
 
   /**

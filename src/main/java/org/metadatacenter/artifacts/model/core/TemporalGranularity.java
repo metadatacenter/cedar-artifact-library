@@ -18,6 +18,20 @@ public enum TemporalGranularity
     this.text = text;
   }
 
+  public boolean isYear() { return this == YEAR; }
+
+  public boolean isMonth() { return this == MONTH; }
+
+  public boolean isDay() { return this == DAY; }
+
+  public boolean isHour() { return this == HOUR; }
+
+  public boolean isMinute() { return this == MINUTE; }
+
+  public boolean isSecond() { return this == SECOND; }
+
+  public boolean isDecimalSecond() { return this == DECIMAL_SECOND; }
+
   @JsonValue
   public String getText() {
     return this.text;

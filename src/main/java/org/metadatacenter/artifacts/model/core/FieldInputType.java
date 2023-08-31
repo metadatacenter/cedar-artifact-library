@@ -25,16 +25,19 @@ public enum FieldInputType
   TEXTAREA(FIELD_INPUT_TYPE_TEXTAREA),
   RADIO(FIELD_INPUT_TYPE_RADIO),
   CHECKBOX(FIELD_INPUT_TYPE_CHECKBOX),
-  TEMPORAL(FIELD_INPUT_TYPE_TEMPORAL),
   EMAIL(FIELD_INPUT_TYPE_EMAIL),
   LIST(FIELD_INPUT_TYPE_LIST),
   NUMERIC(FIELD_INPUT_TYPE_NUMERIC),
   PHONE_NUMBER(FIELD_INPUT_TYPE_PHONE_NUMBER),
+  LINK(FIELD_INPUT_TYPE_LINK),
+
+  TEMPORAL(FIELD_INPUT_TYPE_TEMPORAL),
+
   SECTION_BREAK(FIELD_INPUT_TYPE_SECTION_BREAK),
   RICHTEXT(FIELD_INPUT_TYPE_RICH_TEXT),
   IMAGE(FIELD_INPUT_TYPE_IMAGE),
-  LINK(FIELD_INPUT_TYPE_LINK),
   YOUTUBE(FIELD_INPUT_TYPE_YOUTUBE),
+
   ATTRIBUTE_VALUE(FIELD_INPUT_TYPE_ATTRIBUTE_VALUE);
 
   private final String text;
@@ -47,6 +50,10 @@ public enum FieldInputType
   public String getText() {
     return this.text;
   }
+
+  public boolean isTemporal() { return this == TEMPORAL; }
+
+  public boolean isStatic() { return this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }
 
   public static FieldInputType fromString(String text) {
     for (FieldInputType f : FieldInputType.values()) {

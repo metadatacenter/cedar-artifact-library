@@ -1,122 +1,76 @@
 package org.metadatacenter.artifacts.model.core;
 
-import java.util.Optional;
-
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.UI_INPUT_TIME_FORMAT;
-import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
-import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
-
-public record FieldUi(FieldInputType inputType, boolean valueRecommendationEnabled, boolean hidden,
-                      Optional<Boolean> timeZoneEnabled, Optional<TemporalGranularity> temporalGranularity,
-                      Optional<InputTimeFormat> inputTimeFormat, Optional<String> _content) implements Ui
+public sealed interface FieldUi extends Ui permits TemporalFieldUi, StaticFieldUi, FieldUiRecord
 {
-  public FieldUi
+  FieldInputType inputType();
+
+  boolean hidden();
+
+  default boolean isStatic() { return false; }
+
+  boolean valueRecommendationEnabled();
+
+  default TemporalFieldUi asTemporalFieldUi()
   {
-    if (inputType == null)
-      throw new IllegalStateException("Field " + UI_FIELD_INPUT_TYPE + " must set in " + this);
-
-    validateOptionalFieldNotNull(this, timeZoneEnabled, UI_TIMEZONE_ENABLED);
-    validateOptionalFieldNotNull(this, temporalGranularity, UI_TEMPORAL_GRANULARITY);
-    validateOptionalFieldNotNull(this, inputTimeFormat, UI_INPUT_TIME_FORMAT);
-
-    if (inputType == FieldInputType.TEMPORAL) {
-      if (!temporalGranularity.isPresent())
-        throw new IllegalStateException(
-          "Field " + UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
-
-      // TODO Disable for moment until verify with Matthew that he is adding this to temporal fields
-      //      if (!inputTimeFormat.isPresent())
-      //        throw new IllegalStateException(
-      //          "Field " + UI_INPUT_TIME_FORMAT + " must be set for temporal fields in " + this);
-
-    } else { // Non-temporal fields
-      if (timeZoneEnabled.isPresent())
-        throw new IllegalStateException(
-          "Field " + UI_TIMEZONE_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
-
-      if (temporalGranularity.isPresent())
-        throw new IllegalStateException(
-          "Field " + UI_TEMPORAL_GRANULARITY + " cannot be set for fields of type " + inputType + " in " + this);
-
-      if (inputTimeFormat.isPresent())
-        throw new IllegalStateException(
-          "Field " + UI_INPUT_TIME_FORMAT + " cannot be set for fields of type " + inputType + " in " + this);
-    }
-
-    // TODO Disable for moment until verify with Matthew that he is adding this to temporal fields
-    //    if (inputType != FieldInputType.TEXTFIELD) {
-    //      if (valueRecommendationEnabled)
-    //        throw new IllegalStateException(
-    //          "Field " + UI_VALUE_RECOMMENDATION_ENABLED + " cannot be set for fields of type " + inputType + " in " + this);
-    //    }
-
+    if (inputType().isTemporal())
+      return (TemporalFieldUi)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TemporalFieldUi.class.getName());
   }
 
-  public UiType getUiType() { return UiType.FIELD_UI; }
-
-  public boolean isTextField() {return inputType == FieldInputType.TEXTFIELD;}
-
-  public boolean isTextarea() {return inputType == FieldInputType.TEXTAREA;}
-
-  public boolean isRadio() {return inputType == FieldInputType.RADIO;}
-
-  public boolean isCheckbox() {return inputType == FieldInputType.CHECKBOX;}
-
-  public boolean isTemporal() {return inputType == FieldInputType.TEMPORAL;}
-
-  public boolean isEmail() {return inputType == FieldInputType.EMAIL;}
-
-  public boolean isList() {return inputType == FieldInputType.LIST;}
-
-  public boolean isNumeric() {return inputType == FieldInputType.NUMERIC;}
-
-  public boolean isPhoneNumber() {return inputType == FieldInputType.PHONE_NUMBER;}
-
-  public boolean isSectionBreak() {return inputType == FieldInputType.SECTION_BREAK;}
-
-  public boolean isRichText() {return inputType == FieldInputType.RICHTEXT;}
-
-  public boolean isImage() {return inputType == FieldInputType.IMAGE;}
-
-  public boolean isLink() {return inputType == FieldInputType.LINK;}
-
-  public boolean isYouTube() {return inputType == FieldInputType.YOUTUBE;}
-
-  public boolean isAttributeValue() {return inputType == FieldInputType.ATTRIBUTE_VALUE;}
-
-  public boolean isValueRecommendationEnabled()
+  default StaticFieldUi asStaticFieldUi()
   {
-    return valueRecommendationEnabled;
+    if (inputType().isStatic())
+      return (StaticFieldUi)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + StaticFieldUi.class.getName());
   }
 
-  public boolean isHidden()
+  default boolean isTextField() {return inputType() == FieldInputType.TEXTFIELD;}
+
+  default boolean isTextarea() {return inputType() == FieldInputType.TEXTAREA;}
+
+  default boolean isRadio() {return inputType() == FieldInputType.RADIO;}
+
+  default boolean isCheckbox() {return inputType() == FieldInputType.CHECKBOX;}
+
+  default boolean isTemporal() {return inputType() == FieldInputType.TEMPORAL;}
+
+  default boolean isEmail() {return inputType() == FieldInputType.EMAIL;}
+
+  default boolean isList() {return inputType() == FieldInputType.LIST;}
+
+  default boolean isNumeric() {return inputType() == FieldInputType.NUMERIC;}
+
+  default boolean isPhoneNumber() {return inputType() == FieldInputType.PHONE_NUMBER;}
+
+  default boolean isSectionBreak() {return inputType() == FieldInputType.SECTION_BREAK;}
+
+  default boolean isRichText() {return inputType() == FieldInputType.RICHTEXT;}
+
+  default boolean isImage() {return inputType() == FieldInputType.IMAGE;}
+
+  default boolean isLink() {return inputType() == FieldInputType.LINK;}
+
+  default boolean isYouTube() {return inputType() == FieldInputType.YOUTUBE;}
+
+  default boolean isAttributeValue() {return inputType() == FieldInputType.ATTRIBUTE_VALUE;}
+
+  static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendationEnabled)
   {
-    return hidden;
+    return new FieldUiRecord(fieldInputType, hidden, valueRecommendationEnabled);
   }
 
-  public boolean isStatic() {return isRichText() || isImage() || isYouTube();}
-
-  public Optional<Boolean> getTimeZoneEnabled()
-  {
-    return timeZoneEnabled;
-  }
-
-  public static Builder builder()
+  static Builder builder()
   {
     return new Builder();
   }
 
-  public static class Builder
+  class Builder
   {
     private FieldInputType inputType;
     private boolean valueRecommendationEnabled = false;
     private boolean hidden = false;
-    private Optional<Boolean> timeZoneEnabled = Optional.empty();
-    private Optional<TemporalGranularity> temporalGranularity = Optional.empty();
-    private Optional<InputTimeFormat> inputTimeFormat = Optional.empty();
-    private Optional<String> content = Optional.empty();
 
     private Builder()
     {
@@ -140,35 +94,22 @@ public record FieldUi(FieldInputType inputType, boolean valueRecommendationEnabl
       return this;
     }
 
-    public Builder withTimeZoneEnabled(boolean timeZoneEnabled)
-    {
-      this.timeZoneEnabled = Optional.of(timeZoneEnabled);
-      return this;
-    }
-
-    public Builder withTemporalGranularity(TemporalGranularity temporalGranularity)
-    {
-      this.temporalGranularity = Optional.ofNullable(temporalGranularity);
-      return this;
-    }
-
-    public Builder withInputTimeFormat(InputTimeFormat inputTimeFormat)
-    {
-      this.inputTimeFormat = Optional.ofNullable(inputTimeFormat);
-      return this;
-    }
-
-    public Builder withContent(String content)
-    {
-      this.content = Optional.ofNullable(content);
-      return this;
-    }
-
     public FieldUi build()
     {
-      return new FieldUi(inputType, valueRecommendationEnabled, hidden, timeZoneEnabled, temporalGranularity,
-        inputTimeFormat, content);
+      return new FieldUiRecord(inputType, hidden, valueRecommendationEnabled);
     }
+  }
+
+}
+
+record FieldUiRecord(FieldInputType inputType, boolean hidden, boolean valueRecommendationEnabled) implements FieldUi
+{
+  public FieldUiRecord {
+    if (inputType.isStatic())
+      throw new IllegalArgumentException("Static fields should use the " + StaticFieldUi.class.getName() + " class");
+
+    if (inputType.isTemporal())
+      throw new IllegalArgumentException("Temporal fields should use the " + TemporalFieldUi.class.getName() + " class");
   }
 }
 

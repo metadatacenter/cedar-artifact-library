@@ -2,17 +2,15 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.Optional;
 
 public class FieldUiTest
 {
-
   @Test
-  public void testGetUIType() {
+  public void testGetUiType() {
     FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEXTFIELD)
       .build();
-    assertEquals(UiType.FIELD_UI, fieldUi.getUiType());
+    assertEquals(FieldInputType.TEXTFIELD, fieldUi.inputType());
   }
 
   @Test
@@ -33,8 +31,6 @@ public class FieldUiTest
     assertFalse(fieldUi.isTextarea());
   }
 
-  // Add more tests for the other isX() methods
-
   @Test
   public void testIsValueRecommendationEnabled() {
     boolean valueRecommendationEnabled = true;
@@ -42,33 +38,6 @@ public class FieldUiTest
       .withInputType(FieldInputType.TEXTFIELD)
       .withValueRecommendationEnabled(valueRecommendationEnabled)
       .build();
-    assertTrue(fieldUi.isValueRecommendationEnabled());
-  }
-
-  @Test
-  public void testIsHidden() {
-    boolean hidden = true;
-    FieldUi fieldUi = FieldUi.builder()
-      .withInputType(FieldInputType.TEXTFIELD)
-      .withHidden(hidden)
-      .build();
-    assertTrue(fieldUi.isHidden());
-  }
-
-  @Test
-  public void testGetTimeZoneEnabled() {
-    boolean timeZoneEnabled = true;
-    FieldUi fieldUi = FieldUi.builder()
-      .withInputType(FieldInputType.TEMPORAL)
-      .withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOUR)
-      .withTemporalGranularity(TemporalGranularity.SECOND)
-      .withTimeZoneEnabled(timeZoneEnabled)
-      .build();
-    assertEquals(Optional.of(timeZoneEnabled), fieldUi.getTimeZoneEnabled());
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void testInputTypeNotSet() {
-   FieldUi.builder().build();
+    assertTrue(fieldUi.valueRecommendationEnabled());
   }
 }

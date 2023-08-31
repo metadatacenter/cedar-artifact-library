@@ -18,11 +18,13 @@ import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
+import org.metadatacenter.artifacts.model.core.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.StringDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUi;
+import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.UriStringPairDefaultValue;
@@ -908,16 +910,20 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + UI;
 
     FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath);
-    boolean isValueRecommendationEnabled = readBooleanField(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
+    boolean valueRecommendationEnabled = readBooleanField(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBooleanField(uiNode, uiPath, UI_HIDDEN, false);
-    Optional<Boolean> timeZoneEnabled = readOptionalBooleanField(uiNode, uiPath, UI_TIMEZONE_ENABLED);
 
-    Optional<TemporalGranularity> temporalGranularity = readTemporalGranularity(uiNode, uiPath);
-    Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(uiNode, uiPath);
-    Optional<String> content = readStringField(uiNode, uiPath, UI_CONTENT);
+    if (fieldInputType.isTemporal()) {
+      TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath);
+      Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(uiNode, uiPath);
+      boolean timeZoneEnabled = readBooleanField(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
 
-    return new FieldUi(fieldInputType, isValueRecommendationEnabled, hidden, timeZoneEnabled,
-      temporalGranularity, inputTimeFormat, content);
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+    } else if (fieldInputType.isStatic()) {
+      String content = readRequiredStringField(uiNode, uiPath, UI_CONTENT);
+      return StaticFieldUi.create(fieldInputType, content, hidden);
+    } else
+      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
   }
 
   private ElementUi readElementUi(ObjectNode objectNode, String path)
@@ -933,7 +939,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
-
 
   private TemplateUi readTemplateUi(ObjectNode objectNode, String path)
   {
@@ -1044,24 +1049,21 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return FieldInputType.fromString(inputType);
   }
 
-  private Optional<TemporalGranularity> readTemporalGranularity(ObjectNode objectNode, String path)
+  private TemporalGranularity readTemporalGranularity(ObjectNode objectNode, String path)
   {
-    Optional<String> granularity = readStringField(objectNode, path, UI_TEMPORAL_GRANULARITY);
+    String granularity = readRequiredStringField(objectNode, path, UI_TEMPORAL_GRANULARITY);
 
-    if (granularity.isEmpty())
-      return Optional.empty();
+    if (!ModelNodeValues.TEMPORAL_GRANULARITIES.contains(granularity))
+      throw new ArtifactParseException("Invalid granularity " + granularity, UI_TEMPORAL_GRANULARITY, path);
 
-    if (!ModelNodeValues.TEMPORAL_GRANULARITIES.contains(granularity.get()))
-      throw new ArtifactParseException("Invalid granularity " + granularity.get(), UI_TEMPORAL_GRANULARITY, path);
-
-    return Optional.of(TemporalGranularity.fromString(granularity.get()));
+    return TemporalGranularity.fromString(granularity);
   }
 
   private Optional<InputTimeFormat> readInputTimeFormat(ObjectNode objectNode, String path)
   {
     Optional<String> timeFormat = readStringField(objectNode, path, UI_INPUT_TIME_FORMAT);
 
-    if (timeFormat.isEmpty())
+    if (!timeFormat.isPresent())
       return Optional.empty();
 
     if (!ModelNodeValues.TIME_FORMATS.contains(timeFormat.get()))

@@ -28,6 +28,7 @@ import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.StringDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.UriStringPairDefaultValue;
@@ -139,7 +140,7 @@ public class ArtifactExcelRenderer
 
     setColumnDataValidationConstraintIfRequired(fieldSchemaArtifact, sheet, columnIndex, rowIndex);
 
-    if (fieldSchemaArtifact.isHidden())
+    if (fieldSchemaArtifact.hidden())
       sheet.setColumnHidden(columnIndex, true);
 
     if (defaultValue.isPresent()) {
@@ -231,9 +232,15 @@ public class ArtifactExcelRenderer
           }
         }
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
-        String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType(),
-          fieldUi.temporalGranularity(), fieldUi.inputTimeFormat(), fieldUi.getTimeZoneEnabled());
-        return temporalFormatString;
+        TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi(); // TODO Temporary until we use typed switch
+        if (valueConstraints.isPresent() && valueConstraints.get().temporalType().isPresent()) {
+          String temporalFormatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType().get(),
+            temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timeZoneEnabled());
+          return temporalFormatString;
+        } else
+          throw new RuntimeException(
+            "Field " + ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE + " must be present in the" + ModelNodeNames.VALUE_CONSTRAINTS + " object for temporal field " + fieldName);
+
       } else
         return "";
     } else
@@ -411,7 +418,7 @@ public class ArtifactExcelRenderer
         valueCell.setCellValue(prefLabel);
 
         // Even though we don't use them we put the IRI in the second column
-        if (iri != null || !iri.isEmpty()) {
+        if (iri != null && !iri.isEmpty()) {
           Cell iriCell = row.createCell(1);
           iriCell.setCellValue(iri);
         }
@@ -556,64 +563,55 @@ public class ArtifactExcelRenderer
     return numericFormatString;
   }
 
-  private String getTemporalFormatString(String fieldName, Optional<TemporalType> temporalType,
-    Optional<TemporalGranularity> temporalGranularity, Optional<InputTimeFormat> inputTimeFormat,
-    Optional<Boolean> timeZoneEnabled)
+  private String getTemporalFormatString(String fieldName, TemporalType temporalType,
+    TemporalGranularity temporalGranularity, Optional<InputTimeFormat> inputTimeFormat, boolean timeZoneEnabled)
   {
     String temporalFormatString = "";
 
-    if (temporalType.isPresent()) {
-      if (temporalType.get() == TemporalType.DATETIME) {
-        if (temporalGranularity.isPresent()) {
-          if (temporalGranularity.get() == TemporalGranularity.YEAR)
-            temporalFormatString += "yyyy";
-          else if (temporalGranularity.get() == TemporalGranularity.MONTH)
-            temporalFormatString += "yyyy/m";
-          else if (temporalGranularity.get() == TemporalGranularity.DAY)
-            temporalFormatString += "yyyy/m/d";
-          else if (temporalGranularity.get() == TemporalGranularity.HOUR)
-            temporalFormatString += "yyyy/m/d hh";
-          else if (temporalGranularity.get() == TemporalGranularity.MINUTE)
-            temporalFormatString += "yyyy/m/d hh:mm";
-          else if (temporalGranularity.get() == TemporalGranularity.SECOND)
-            temporalFormatString += "yyyy/m/d hh:mm:ss";
-          else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
-            temporalFormatString += "yyyy/m/d hh:mm:ss.000";
-          else
-            throw new RuntimeException(
-              "Unknown temporal granularity " + temporalGranularity.get() + " specified for temporal field " + fieldName);
-        } else
-          throw new RuntimeException("No granularity specified for temporal field " + fieldName);
-      } else if (temporalType.get() == TemporalType.DATE) {
-        if (temporalGranularity.get() == TemporalGranularity.YEAR)
-          temporalFormatString += "yyyy";
-        else if (temporalGranularity.get() == TemporalGranularity.MONTH)
-          temporalFormatString += "yyyy/m";
-        else if (temporalGranularity.get() == TemporalGranularity.DAY)
-          temporalFormatString += "yyyy/m/d";
-        else
-          throw new RuntimeException(
-            "Invalid temporal granularity " + temporalGranularity.get() + " specified for date temporal field " + fieldName);
-      } else if (temporalType.get() == TemporalType.TIME) {
-        if (temporalGranularity.get() == TemporalGranularity.HOUR)
-          temporalFormatString += "hh";
-        else if (temporalGranularity.get() == TemporalGranularity.MINUTE)
-          temporalFormatString += "hh:mm";
-        else if (temporalGranularity.get() == TemporalGranularity.SECOND)
-          temporalFormatString += "hh:mm:ss";
-        else if (temporalGranularity.get() == TemporalGranularity.DECIMAL_SECOND)
-          temporalFormatString += "hh:mm:ss.000";
-        else
-          throw new RuntimeException(
-            "Invalid temporal granularity " + temporalGranularity.get() + " specified for time temporal field " + fieldName);
-      } else
+    if (temporalType == TemporalType.DATETIME) {
+      if (temporalGranularity == TemporalGranularity.YEAR)
+        temporalFormatString += "yyyy";
+      else if (temporalGranularity == TemporalGranularity.MONTH)
+        temporalFormatString += "yyyy/m";
+      else if (temporalGranularity == TemporalGranularity.DAY)
+        temporalFormatString += "yyyy/m/d";
+      else if (temporalGranularity == TemporalGranularity.HOUR)
+        temporalFormatString += "yyyy/m/d hh";
+      else if (temporalGranularity == TemporalGranularity.MINUTE)
+        temporalFormatString += "yyyy/m/d hh:mm";
+      else if (temporalGranularity == TemporalGranularity.SECOND)
+        temporalFormatString += "yyyy/m/d hh:mm:ss";
+      else if (temporalGranularity == TemporalGranularity.DECIMAL_SECOND)
+        temporalFormatString += "yyyy/m/d hh:mm:ss.000";
+      else
         throw new RuntimeException(
-          "Unknown temporal type " + temporalType.get() + " specified for temporal field " + fieldName);
-
+          "Unknown temporal granularity " + temporalGranularity + " specified for temporal field " + fieldName);
+    } else if (temporalType == TemporalType.DATE) {
+      if (temporalGranularity == TemporalGranularity.YEAR)
+        temporalFormatString += "yyyy";
+      else if (temporalGranularity == TemporalGranularity.MONTH)
+        temporalFormatString += "yyyy/m";
+      else if (temporalGranularity == TemporalGranularity.DAY)
+        temporalFormatString += "yyyy/m/d";
+      else
+        throw new RuntimeException(
+          "Invalid temporal granularity " + temporalGranularity + " specified for date temporal field " + fieldName);
+    } else if (temporalType == TemporalType.TIME) {
+      if (temporalGranularity == TemporalGranularity.HOUR)
+        temporalFormatString += "hh";
+      else if (temporalGranularity == TemporalGranularity.MINUTE)
+        temporalFormatString += "hh:mm";
+      else if (temporalGranularity == TemporalGranularity.SECOND)
+        temporalFormatString += "hh:mm:ss";
+      else if (temporalGranularity == TemporalGranularity.DECIMAL_SECOND)
+        temporalFormatString += "hh:mm:ss.000";
+      else
+        throw new RuntimeException(
+          "Invalid temporal granularity " + temporalGranularity + " specified for time temporal field " + fieldName);
     } else
-      throw new RuntimeException("No temporal type specified for temporal field " + fieldName);
+      throw new RuntimeException("Unknown temporal type " + temporalType + " specified for temporal field " + fieldName);
 
-    if (inputTimeFormat.isPresent() && inputTimeFormat.get() == InputTimeFormat.TWELVE_HOUR)
+    if (inputTimeFormat.isPresent() && inputTimeFormat.get().isTwelveHour())
       temporalFormatString += " AM/PM";
 
     return temporalFormatString;
@@ -637,29 +635,28 @@ public class ArtifactExcelRenderer
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     } else if (fieldUi.isTemporal()) {
-      if (valueConstraints.isPresent()) {
-        String formatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType(),
-          fieldUi.temporalGranularity(), fieldUi.inputTimeFormat(), fieldUi.getTimeZoneEnabled());
+      TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
+      if (valueConstraints.isPresent() && valueConstraints.get().temporalType().isPresent()) {
+        String formatString = getTemporalFormatString(fieldName, valueConstraints.get().temporalType().get(),
+          temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timeZoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
-      } else {
-        String formatString = getTemporalFormatString(fieldName, Optional.empty(), fieldUi.temporalGranularity(), fieldUi.inputTimeFormat(), fieldUi.getTimeZoneEnabled());
-        cellStyle.setDataFormat(dataFormat.getFormat(formatString));
-      }
+      } else
+        throw new RuntimeException("Field " + ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE + " must be present in the"
+          + ModelNodeNames.VALUE_CONSTRAINTS + " object for temporal field " + fieldName);
     }
-
     return cellStyle;
   }
 
   private CellStyle createHeaderCellStyle(Workbook workbook)
-  {
-    CellStyle headerCellStyle = workbook.createCellStyle();
-    headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
-    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-    headerCellStyle.setFillForegroundColor(LIGHT_CORNFLOUR_BLUE);
-    headerCellStyle.setFillBackgroundColor(LIGHT_CORNFLOUR_BLUE);
+    {
+      CellStyle headerCellStyle = workbook.createCellStyle();
+      headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+      headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+      headerCellStyle.setFillForegroundColor(LIGHT_CORNFLOUR_BLUE);
+      headerCellStyle.setFillBackgroundColor(LIGHT_CORNFLOUR_BLUE);
 
-    return headerCellStyle;
-  }
+      return headerCellStyle;
+    }
 
   private Map<String, Object> integratedSearch(Map<String, Object> valueConstraints,
     Integer page, Integer pageSize, String integratedSearchEndpoint, String apiKey) throws IOException, RuntimeException

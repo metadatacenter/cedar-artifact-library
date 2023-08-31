@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.apache.poi.ss.formula.functions.T;
+
 public enum InputTimeFormat
 {
   TWELVE_HOUR("12h"),
@@ -10,6 +12,10 @@ public enum InputTimeFormat
   InputTimeFormat(String text) {
     this.text = text;
   }
+
+  public boolean isTwelveHour() { return this == TWELVE_HOUR; }
+
+  public boolean isTwentyFourHour() { return this == TWENTY_FOUR_HOUR; }
 
   public String getText() {
     return this.text;
