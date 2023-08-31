@@ -13,17 +13,35 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   boolean hidden();
 
-  default boolean isStatic() { return true; }
+  default boolean isStatic() {return true;}
 
-  default boolean valueRecommendationEnabled() { return false; }
+  default boolean valueRecommendationEnabled() {return false;}
 
   static StaticFieldUi create(FieldInputType fieldInputType, String content, boolean hidden)
   {
     return new StaticFieldUiRecord(fieldInputType, content, hidden);
   }
 
-  static Builder builder() {
+  static Builder builder()
+  {
     return new Builder();
+  }
+
+  static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder()
+  {
+    return new SectionBreakFieldUiBuilder();
+  }
+
+  static RichTextFieldUiBuilder richTextFieldUiBuilder() { return new RichTextFieldUiBuilder(); }
+
+  static ImageFieldUiBuilder imageFieldUiBuilder()
+  {
+    return new ImageFieldUiBuilder();
+  }
+
+  static YouTubeFieldUiBuilder youTubeFieldUiBuilder()
+  {
+    return new YouTubeFieldUiBuilder();
   }
 
   class Builder
@@ -48,7 +66,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-
     public Builder withHidden(boolean hidden)
     {
       this.hidden = hidden;
@@ -60,11 +77,114 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return new StaticFieldUiRecord(fieldInputType, content, hidden);
     }
   }
+
+  class SectionBreakFieldUiBuilder
+  {
+    private String content;
+
+    private SectionBreakFieldUiBuilder()
+    {
+    }
+
+    public SectionBreakFieldUiBuilder withContent(String content)
+    {
+      this.content = content;
+      return this;
+    }
+
+    public StaticFieldUi build()
+    {
+      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, false);
+    }
+  }
+
+  class RichTextFieldUiBuilder
+  {
+    private String content;
+    private boolean hidden = false;
+
+    private RichTextFieldUiBuilder()
+    {
+    }
+
+    public RichTextFieldUiBuilder withContent(String content)
+    {
+      this.content = content;
+      return this;
+    }
+
+    public RichTextFieldUiBuilder withHidden(boolean hidden)
+    {
+      this.hidden = hidden;
+      return this;
+    }
+
+    public StaticFieldUi build()
+    {
+      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden);
+    }
+  }
+
+  class ImageFieldUiBuilder
+  {
+    private String content;
+    private boolean hidden = false;
+
+    private ImageFieldUiBuilder()
+    {
+    }
+
+    public ImageFieldUiBuilder withContent(String content)
+    {
+      this.content = content;
+      return this;
+    }
+
+    public ImageFieldUiBuilder withHidden(boolean hidden)
+    {
+      this.hidden = hidden;
+      return this;
+    }
+
+    public StaticFieldUi build()
+    {
+      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden);
+    }
+  }
+
+  class YouTubeFieldUiBuilder
+  {
+    private String content;
+    private boolean hidden = false;
+
+    private YouTubeFieldUiBuilder()
+    {
+    }
+
+    public YouTubeFieldUiBuilder withContent(String content)
+    {
+      this.content = content;
+      return this;
+    }
+
+    public YouTubeFieldUiBuilder withHidden(boolean hidden)
+    {
+      this.hidden = hidden;
+      return this;
+    }
+
+    public StaticFieldUi build()
+    {
+      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden);
+    }
+  }
+
 }
 
 record StaticFieldUiRecord(FieldInputType inputType, String _content, boolean hidden) implements StaticFieldUi
 {
-  public StaticFieldUiRecord {
+  public StaticFieldUiRecord
+  {
 
     validateStringFieldNotNull(this, _content, ModelNodeNames.UI_CONTENT);
 
