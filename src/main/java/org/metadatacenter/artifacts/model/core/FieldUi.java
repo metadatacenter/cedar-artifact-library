@@ -99,17 +99,16 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, StaticFieldU
       return new FieldUiRecord(inputType, hidden, valueRecommendationEnabled);
     }
   }
-
 }
 
 record FieldUiRecord(FieldInputType inputType, boolean hidden, boolean valueRecommendationEnabled) implements FieldUi
 {
   public FieldUiRecord {
     if (inputType.isStatic())
-      throw new IllegalArgumentException("Static fields should use the " + StaticFieldUi.class.getName() + " class");
+      throw new IllegalArgumentException("The " + StaticFieldUi.class.getName() + " class should be used for static field UIs");
 
     if (inputType.isTemporal())
-      throw new IllegalArgumentException("Temporal fields should use the " + TemporalFieldUi.class.getName() + " class");
+      throw new IllegalArgumentException("The " + TemporalFieldUi.class.getName() + " class should be used for temporal field UIs");
   }
 }
 
