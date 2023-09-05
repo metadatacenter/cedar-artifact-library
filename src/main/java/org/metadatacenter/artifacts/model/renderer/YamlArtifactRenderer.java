@@ -414,6 +414,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   private List<LinkedHashMap<String, Object>> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {
     List<LinkedHashMap<String, Object>> childSchemasRendering = new ArrayList<>();
 
+    // TODO Use typesafe switch when available
     for (ChildSchemaArtifact childSchemaArtifact : childSchemaArtifacts) {
       if (childSchemaArtifact instanceof FieldSchemaArtifact) {
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;

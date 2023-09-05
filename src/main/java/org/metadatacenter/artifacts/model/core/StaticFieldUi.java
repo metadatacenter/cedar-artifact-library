@@ -22,11 +22,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     return new StaticFieldUiRecord(fieldInputType, content, hidden);
   }
 
-  static Builder builder()
-  {
-    return new Builder();
-  }
-
   static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder()
   {
     return new SectionBreakFieldUiBuilder();
@@ -42,40 +37,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   static YouTubeFieldUiBuilder youTubeFieldUiBuilder()
   {
     return new YouTubeFieldUiBuilder();
-  }
-
-  class Builder
-  {
-    private FieldInputType fieldInputType;
-    private String content;
-    private boolean hidden = false;
-
-    private Builder()
-    {
-    }
-
-    public Builder withFieldInputType(FieldInputType fieldInputType)
-    {
-      this.fieldInputType = fieldInputType;
-      return this;
-    }
-
-    public Builder withContent(String content)
-    {
-      this.content = content;
-      return this;
-    }
-
-    public Builder withHidden(boolean hidden)
-    {
-      this.hidden = hidden;
-      return this;
-    }
-
-    public StaticFieldUi build()
-    {
-      return new StaticFieldUiRecord(fieldInputType, content, hidden);
-    }
   }
 
   class SectionBreakFieldUiBuilder

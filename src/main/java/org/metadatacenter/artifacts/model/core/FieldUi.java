@@ -26,36 +26,35 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, StaticFieldU
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + StaticFieldUi.class.getName());
   }
 
-  default boolean isTextField() {return inputType() == FieldInputType.TEXTFIELD;}
+  default boolean isTemporal() { return inputType() == FieldInputType.TEMPORAL; }
 
-  default boolean isTextarea() {return inputType() == FieldInputType.TEXTAREA;}
+  default boolean isNumeric() { return inputType() == FieldInputType.NUMERIC; }
 
-  default boolean isRadio() {return inputType() == FieldInputType.RADIO;}
+  default boolean isTextField() { return inputType() == FieldInputType.TEXTFIELD; }
 
-  default boolean isCheckbox() {return inputType() == FieldInputType.CHECKBOX;}
+  default boolean isTextarea() { return inputType() == FieldInputType.TEXTAREA; }
 
+  default boolean isRadio() { return inputType() == FieldInputType.RADIO; }
 
-  default boolean isEmail() {return inputType() == FieldInputType.EMAIL;}
+  default boolean isCheckbox() { return inputType() == FieldInputType.CHECKBOX; }
 
-  default boolean isList() {return inputType() == FieldInputType.LIST;}
+  default boolean isEmail() { return inputType() == FieldInputType.EMAIL; }
 
-  default boolean isNumeric() {return inputType() == FieldInputType.NUMERIC;}
+  default boolean isList() { return inputType() == FieldInputType.LIST; }
 
-  default boolean isPhoneNumber() {return inputType() == FieldInputType.PHONE_NUMBER;}
+  default boolean isPhoneNumber() { return inputType() == FieldInputType.PHONE_NUMBER; }
 
-  default boolean isLink() {return inputType() == FieldInputType.LINK;}
+  default boolean isLink() { return inputType() == FieldInputType.LINK; }
 
-  default boolean isYouTube() {return inputType() == FieldInputType.YOUTUBE;}
+  default boolean isAttributeValue() { return inputType() == FieldInputType.ATTRIBUTE_VALUE; }
 
-  default boolean isAttributeValue() {return inputType() == FieldInputType.ATTRIBUTE_VALUE;}
+  default boolean isRichText() { return inputType() == FieldInputType.RICHTEXT; }
 
-  default boolean isTemporal() {return inputType() == FieldInputType.TEMPORAL;}
+  default boolean isSectionBreak() { return inputType() == FieldInputType.SECTION_BREAK; }
 
-  default boolean isSectionBreak() {return inputType() == FieldInputType.SECTION_BREAK;}
+  default boolean isImage() { return inputType() == FieldInputType.IMAGE; }
 
-  default boolean isRichText() {return inputType() == FieldInputType.RICHTEXT;}
-
-  default boolean isImage() {return inputType() == FieldInputType.IMAGE;}
+  default boolean isYouTube() { return inputType() == FieldInputType.YOUTUBE; }
 
   static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendationEnabled)
   {
