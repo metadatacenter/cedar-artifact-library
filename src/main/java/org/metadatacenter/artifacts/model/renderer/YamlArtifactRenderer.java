@@ -3,22 +3,27 @@ package org.metadatacenter.artifacts.model.renderer;
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
+import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
-import org.metadatacenter.artifacts.model.core.StringDefaultValue;
+import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
+import org.metadatacenter.artifacts.model.core.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.UriStringPairDefaultValue;
+import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
+import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,9 +284,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
 
-    if (valueConstraints.hasOntologyValueBasedConstraints()) {
+    if (valueConstraints instanceof ControlledTermValueConstraints) {
+      ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
 
-      for (OntologyValueConstraint ontologyValueConstraint : valueConstraints.ontologies()) {
+      for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
         LinkedHashMap<String, Object> ontologyValueConstraintRendering = new LinkedHashMap<>();
         ontologyValueConstraintRendering.put(ONTOLOGY, ontologyValueConstraint.name());
         ontologyValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
@@ -289,7 +295,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         valuesRendering.add(ontologyValueConstraintRendering);
       }
 
-      for (ValueSetValueConstraint valueSetValueConstraint : valueConstraints.valueSets()) {
+      for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
         LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
         valueSetValueConstraintRendering.put(VALUE_SET, valueSetValueConstraint.name());
         valueSetValueConstraintRendering.put(VALUE_SET_COLLECTION, valueSetValueConstraint.valueSetCollection());
@@ -297,7 +303,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         valuesRendering.add(valueSetValueConstraintRendering);
       }
 
-      for (ClassValueConstraint classValueConstraint : valueConstraints.classes()) {
+      for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
         LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
         classValueConstraintRendering.put(CLASS, classValueConstraint.label());
         classValueConstraintRendering.put(URI, classValueConstraint.uri());
@@ -307,7 +313,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         valuesRendering.add(classValueConstraintRendering);
       }
 
-      for (BranchValueConstraint branchValueConstraint : valueConstraints.branches()) {
+      for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
         LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
         branchValueConstraintRendering.put(BRANCH, branchValueConstraint.name());
         branchValueConstraintRendering.put(URI, branchValueConstraint.uri());
@@ -317,10 +323,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         valuesRendering.add(branchValueConstraintRendering);
       }
 
-    } else if (valueConstraints.hasLiteralBasedConstraint()) {
-      for (LiteralValueConstraint literalValueConstraint : valueConstraints.literals()) {
+    } else if (valueConstraints instanceof TextValueConstraints) {
+      TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints;
+
+      for (LiteralValueConstraint literalValueConstraint : textValueConstraints.literals()) {
         LinkedHashMap<String, Object> literalValueConstraintRendering = new LinkedHashMap<>();
-        literalValueConstraintRendering.put(LITERAL, literalValueConstraint.label());
+        literalValueConstraintRendering.put(LITERAL, literalValueConstraint.literal());
         if (literalValueConstraint.selectedByDefault())
           literalValueConstraintRendering.put(SELECTED_BY_DEFAULT, true);
 
@@ -334,11 +342,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   private void renderCoreValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
-    if (valueConstraints.numberType().isPresent())
-      rendering.put(DATATYPE, valueConstraints.numberType().get());
-    else if (valueConstraints.temporalType().isPresent())
-      rendering.put(DATATYPE, valueConstraints.temporalType().get());
-    else if (valueConstraints.hasOntologyValueBasedConstraints())
+    // TODO Use typesafe switch when available
+    if (valueConstraints instanceof NumericValueConstraints) {
+      NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
+      rendering.put(DATATYPE, numericValueConstraints.numberType());
+    } else if (valueConstraints instanceof TemporalValueConstraints) {
+      TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
+      rendering.put(DATATYPE, temporalValueConstraints.temporalType());
+    } else if (valueConstraints instanceof ControlledTermValueConstraints)
       rendering.put(DATATYPE, XSD_ANYURI);
     else
       rendering.put(DATATYPE, XSD_STRING);
@@ -351,36 +362,45 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (valueConstraints.defaultValue().isPresent()) {
       DefaultValue defaultValue = valueConstraints.defaultValue().get();
-      if (defaultValue.isStringDefaultValue()) {
-        StringDefaultValue stringDefaultValue = defaultValue.asStringDefaultValue();
-        if (!stringDefaultValue.value().isEmpty())
-          rendering.put(DEFAULT, stringDefaultValue.value());
+      if (defaultValue.isTextDefaultValue()) {
+        TextDefaultValue textDefaultValue = defaultValue.asTextDefaultValue();
+        if (!textDefaultValue.value().isEmpty())
+          rendering.put(DEFAULT, textDefaultValue.value());
       } else if (defaultValue.isNumericDefaultValue()) {
         NumericDefaultValue numericDefaultValue = defaultValue.asNumericDefaultValue();
         rendering.put(DEFAULT, numericDefaultValue.value());
-      } else if (defaultValue.isUriStringPairDefaultValue()) {
-        UriStringPairDefaultValue uriStringPairDefaultValue = defaultValue.asURIStringPairDefaultValue();
-        rendering.put(DEFAULT, uriStringPairDefaultValue.value().getLeft());
+      } else if (defaultValue.isControlledTermDefaultValue()) {
+        ControlledTermDefaultValue controlledTermDefaultValue = defaultValue.asControlledTermDefaultValue();
+        rendering.put(DEFAULT, controlledTermDefaultValue.value().getLeft());
       }
     }
 
-    if (valueConstraints.minValue().isPresent())
-      rendering.put(MIN_VALUE, valueConstraints.minValue().get());
+    // TODO Use typesafe switch when available
+    if (valueConstraints instanceof NumericValueConstraints) {
+      NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
 
-    if (valueConstraints.maxValue().isPresent())
-      rendering.put(MAX_VALUE, valueConstraints.maxValue().get());
+      if (numericValueConstraints.minValue().isPresent())
+        rendering.put(MIN_VALUE, numericValueConstraints.minValue().get());
 
-    if (valueConstraints.decimalPlaces().isPresent())
-      rendering.put(DECIMAL_PLACES, valueConstraints.decimalPlaces().get());
+      if (numericValueConstraints.maxValue().isPresent())
+        rendering.put(MAX_VALUE, numericValueConstraints.maxValue().get());
 
-    if (valueConstraints.unitOfMeasure().isPresent())
-      rendering.put(UNIT, valueConstraints.unitOfMeasure().get());
+      if (numericValueConstraints.decimalPlaces().isPresent())
+        rendering.put(DECIMAL_PLACES, numericValueConstraints.decimalPlaces().get());
 
-    if (valueConstraints.minLength().isPresent())
-      rendering.put(MIN_LENGTH, valueConstraints.minLength().get());
+      if (numericValueConstraints.unitOfMeasure().isPresent())
+        rendering.put(UNIT, numericValueConstraints.unitOfMeasure().get());
+    }
 
-    if (valueConstraints.maxLength().isPresent())
-      rendering.put(MAX_LENGTH, valueConstraints.maxLength().get());
+    if (valueConstraints instanceof TextValueConstraints) {
+      TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints;
+
+      if (textValueConstraints.minLength().isPresent())
+        rendering.put(MIN_LENGTH, textValueConstraints.minLength().get());
+
+      if (textValueConstraints.maxLength().isPresent())
+        rendering.put(MAX_LENGTH, textValueConstraints.maxLength().get());
+    }
   }
 
   public LinkedHashMap<String, Object> renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)

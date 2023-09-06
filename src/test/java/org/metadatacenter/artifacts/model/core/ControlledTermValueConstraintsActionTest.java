@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-public class ValueConstraintsActionTest
+public class ControlledTermValueConstraintsActionTest
 {
 
   @Test
@@ -19,7 +19,7 @@ public class ValueConstraintsActionTest
     ValueConstraintsActionType actionType = ValueConstraintsActionType.DELETE;
     Optional<Integer> to = Optional.of(123);
 
-    ValueConstraintsAction valueConstraintsAction = new ValueConstraintsAction.Builder()
+    ControlledTermValueConstraintsAction controlledTermValueConstraintsAction = new ControlledTermValueConstraintsAction.Builder()
       .withTermUri(termUri)
       .withSourceUri(sourceUri)
       .withSource(source)
@@ -28,11 +28,11 @@ public class ValueConstraintsActionTest
       .withTo(123)
       .build();
 
-    assertEquals(termUri, valueConstraintsAction.termUri());
-    assertEquals(sourceUri, valueConstraintsAction.sourceUri().get());
-    assertEquals(source, valueConstraintsAction.source());
-    assertEquals(valueType, valueConstraintsAction.valueType());
-    assertEquals(actionType, valueConstraintsAction.actionType());
-    assertEquals(to, valueConstraintsAction.to());
+    assertEquals(termUri, controlledTermValueConstraintsAction.termUri());
+    assertEquals(sourceUri, controlledTermValueConstraintsAction.sourceUri().get());
+    assertEquals(source, controlledTermValueConstraintsAction.source());
+    assertEquals(valueType, controlledTermValueConstraintsAction.valueType());
+    assertEquals(actionType, controlledTermValueConstraintsAction.actionType());
+    assertEquals(to, controlledTermValueConstraintsAction.to());
   }
 }

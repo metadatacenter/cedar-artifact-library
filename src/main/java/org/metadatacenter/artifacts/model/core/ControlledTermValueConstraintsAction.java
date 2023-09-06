@@ -5,16 +5,18 @@ import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTION_TO;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE_URI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TERM_URI;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
 
-public record ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, String source,
-                                     ValueType valueType, ValueConstraintsActionType actionType, Optional<Integer> to)
+public record ControlledTermValueConstraintsAction(URI termUri, Optional<URI> sourceUri, String source,
+                                                   ValueType valueType, ValueConstraintsActionType actionType,
+                                                   Optional<Integer> to)
 {
-    public ValueConstraintsAction {
+    public ControlledTermValueConstraintsAction
+    {
         validateUriFieldNotNull(this, termUri, VALUE_CONSTRAINTS_TERM_URI);
         validateOptionalFieldNotNull(this, sourceUri, VALUE_CONSTRAINTS_SOURCE_URI);
         validateStringFieldNotNull(this, source, VALUE_CONSTRAINTS_SOURCE);
@@ -66,9 +68,9 @@ public record ValueConstraintsAction(URI termUri, Optional<URI> sourceUri, Strin
             return this;
         }
 
-        public ValueConstraintsAction build()
+        public ControlledTermValueConstraintsAction build()
         {
-            return new ValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
+            return new ControlledTermValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
         }
     }
 }

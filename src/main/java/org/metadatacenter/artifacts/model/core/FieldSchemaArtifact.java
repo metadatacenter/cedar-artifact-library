@@ -59,7 +59,8 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   default boolean hasIRIValue()
   {
-    return (fieldUi().isTextField() && valueConstraints().isPresent() && valueConstraints().get().hasOntologyValueBasedConstraints()) || fieldUi().isLink() || fieldUi().isImage() || fieldUi().isYouTube();
+    return (fieldUi().isTextField() && (valueConstraints().isPresent() && valueConstraints().get() instanceof ControlledTermValueConstraints))
+      || fieldUi().isLink() || fieldUi().isImage() || fieldUi().isYouTube();
   }
 
   static Builder builder() { return new Builder(); }

@@ -20,16 +20,16 @@ import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.StringDefaultValue;
+import org.metadatacenter.artifacts.model.core.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUi;
 import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.UriStringPairDefaultValue;
+import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ValueConstraintsAction;
+import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.ValueType;
@@ -650,7 +650,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       List<BranchValueConstraint> branches = readBranchValueConstraints(vcNode, vcPath);
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath);
       Optional<DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath);
-      List<ValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath);
+      List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath);
 
       return Optional.of(
         ValueConstraints.create(requiredValue, multipleChoice, numberType, unitOfMeasure, minValue, maxValue,
@@ -671,11 +671,11 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       ObjectNode defaultValueNode = (ObjectNode)jsonNode;
       URI termUri = readRequiredURIField(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       String rdfsLabel = readRequiredStringField(defaultValueNode, nestedPath, RDFS_LABEL);
-      return Optional.of(new UriStringPairDefaultValue(Pair.of(termUri, rdfsLabel)));
+      return Optional.of(new ControlledTermDefaultValue(Pair.of(termUri, rdfsLabel)));
     } else if (jsonNode.isNumber())
       return Optional.of(new NumericDefaultValue(jsonNode.asDouble()));
     else if (jsonNode.isTextual())
-      return Optional.of(new StringDefaultValue(jsonNode.asText()));
+      return Optional.of(new TextDefaultValue(jsonNode.asText()));
     else
       throw new ArtifactParseException(
         "default value must be a string, a number, or an object containing URI/string pair",
@@ -808,9 +808,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return literalValueConstraints;
   }
 
-  private List<ValueConstraintsAction> readValueConstraintsActions(ObjectNode objectNode, String path)
+  private List<ControlledTermValueConstraintsAction> readValueConstraintsActions(ObjectNode objectNode, String path)
   {
-    List<ValueConstraintsAction> actions = new ArrayList<>();
+    List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
 
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_ACTIONS);
 
@@ -820,7 +820,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         if (actionNode != null) {
           if (!actionNode.isObject())
             throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_ACTIONS, path);
-          ValueConstraintsAction action = readValueConstraintsAction((ObjectNode)actionNode,
+          ControlledTermValueConstraintsAction action = readValueConstraintsAction((ObjectNode)actionNode,
             path + "/" + VALUE_CONSTRAINTS_ACTIONS);
           actions.add(action);
         }
@@ -829,7 +829,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return actions;
   }
 
-  private ValueConstraintsAction readValueConstraintsAction(ObjectNode objectNode, String path)
+  private ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode objectNode, String path)
   {
     URI termUri = readRequiredURIField(objectNode, path, VALUE_CONSTRAINTS_TERM_URI);
     Optional<URI> sourceUri = readURIField(objectNode, path, VALUE_CONSTRAINTS_SOURCE_URI);
@@ -838,7 +838,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     ValueConstraintsActionType actionType = readValueConstraintsActionType(objectNode, path);
     ValueType valueType = readValueType(objectNode, path);
 
-    return new ValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
+    return new ControlledTermValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
   }
 
   private ValueConstraintsActionType readValueConstraintsActionType(ObjectNode objectNode, String path)

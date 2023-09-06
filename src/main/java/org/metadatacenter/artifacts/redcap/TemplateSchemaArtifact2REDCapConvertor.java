@@ -9,10 +9,12 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.NumberType;
+import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 
 import java.util.Optional;
@@ -109,8 +111,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
     switch (fieldInputType) {
     case TEMPORAL:
-      if (valueConstraints.isPresent() && valueConstraints.get().temporalType().isPresent()) {
-        TemporalType temporalType = valueConstraints.get().temporalType().get();
+      if (valueConstraints.isPresent() && (valueConstraints.get() instanceof TemporalValueConstraints)) {
+        TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
+        TemporalType temporalType = temporalValueConstraints.temporalType();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
         Optional<InputTimeFormat> inputTimeFormat = temporalFieldUi.inputTimeFormat();
         TemporalGranularity temporalGranularity = temporalFieldUi.temporalGranularity();
@@ -152,16 +155,17 @@ public class TemplateSchemaArtifact2REDCapConvertor
       return Optional.of(REDCapConstants.EMAIL_TEXTFIELD_VALIDATION);
     case NUMERIC:
 
-      if (valueConstraints.isPresent() && valueConstraints.get().numberType().isPresent()) {
-        NumberType numberType = valueConstraints.get().numberType().get();
+      if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) {
+        NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get();
+        NumberType numberType = numericValueConstraints.numberType();
 
         switch (numberType) {
         case INTEGER, LONG, INT, SHORT, BYTE -> {
           return Optional.of(REDCapConstants.INTEGER_TEXTFIELD_VALIDATION);
         }
         case DECIMAL, FLOAT, DOUBLE -> {
-          if (valueConstraints.get().decimalPlaces().isPresent()) {
-            Integer decimalPlaces = valueConstraints.get().decimalPlaces().get();
+          if (numericValueConstraints.decimalPlaces().isPresent()) {
+            Integer decimalPlaces = numericValueConstraints.decimalPlaces().get();
             if (decimalPlaces == 1)
               return Optional.of(REDCapConstants.NUMBER_1_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 2)
