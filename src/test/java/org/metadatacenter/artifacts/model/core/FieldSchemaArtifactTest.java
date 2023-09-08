@@ -90,9 +90,9 @@ public class FieldSchemaArtifactTest
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
       identifier, modelVersion, version, status, previousVersion, derivedFrom,
-      FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(),
-      Optional.empty(), Optional.empty(), Collections.emptyList(),
-      false, Optional.empty(), Optional.empty(), propertyUri);
+      Optional.empty(), Collections.emptyList(),
+      false, Optional.empty(), Optional.empty(), propertyUri,
+      FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty());
 
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, fieldSchemaArtifact.jsonLdId().get());

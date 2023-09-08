@@ -36,13 +36,14 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String name, String description, Optional<String> identifier,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
     return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
-      identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldUi, valueConstraints, skosPrefLabel,
-      skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri);
+      identifier, modelVersion, version, status, previousVersion, derivedFrom, skosPrefLabel,
+      skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri, fieldUi, valueConstraints);
   }
 
   FieldUi fieldUi();
@@ -86,14 +87,14 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private FieldUi fieldUi;
-    private Optional<ValueConstraints> valueConstraints = Optional.empty();
     private Optional<String> skosPrefLabel = Optional.empty();
     private List<String> skosAlternateLabels = Collections.emptyList();
     private boolean isMultiple = false;
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
+    private FieldUi fieldUi;
+    private Optional<ValueConstraints> valueConstraints = Optional.empty();
 
     private Builder() {}
 
@@ -272,8 +273,9 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         name, description, identifier,
-        modelVersion, version, status, previousVersion, derivedFrom, fieldUi, valueConstraints,
-        skosPrefLabel, skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri);
+        modelVersion, version, status, previousVersion, derivedFrom,
+        skosPrefLabel, skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri,
+        fieldUi, valueConstraints);
     }
   }
 }
@@ -285,23 +287,23 @@ record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonL
                                  String name, String description, Optional<String> identifier,
                                  Version modelVersion, Optional<Version> version, Optional<Status> status,
                                  Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                 FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
                                  Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
                                  boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                 Optional<URI> propertyUri)
+                                 Optional<URI> propertyUri,
+                                 FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements FieldSchemaArtifact
 {
   public FieldSchemaArtifactRecord
   {
     validateMapContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     validateUriListContainsOneOf(this, jsonLdTypes, ModelNodeNames.JSON_LD_TYPE, Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
-    validateUiFieldNotNull(this, fieldUi, UI);
-    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateUiFieldNotNull(this, fieldUi, UI);
+    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
 
     if (minItems.isPresent() && minItems.get() < 0)
       throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);

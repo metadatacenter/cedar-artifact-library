@@ -347,10 +347,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<Status> status = readBIBOStatusField(objectNode, path);
     Optional<URI> previousVersion = readPreviousVersionField(objectNode, path);
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
-    FieldUi fieldUi = readFieldUi(objectNode, path);
-    Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path);
     Optional<String> skosPrefLabel = readSkosPrefLabelField(objectNode, path);
     List<String> skosAlternateLabels = readSkosAltLabelField(objectNode, path);
+    FieldUi fieldUi = readFieldUi(objectNode, path);
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path);
 
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
 
@@ -359,8 +359,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
-      fieldUi, valueConstraints, skosPrefLabel, skosAlternateLabels,
-      isMultiple, minItems, maxItems, propertyUri);
+      skosPrefLabel, skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri,
+      fieldUi, valueConstraints);
   }
 
 
