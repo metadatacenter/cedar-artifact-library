@@ -22,6 +22,10 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
   List<ControlledTermValueConstraintsAction> actions();
 
+  default boolean hasValues() {
+    return !ontologies().isEmpty() || !valueSets().isEmpty() || !classes().isEmpty() || !branches().isEmpty();
+  }
+
   @Override Optional<ControlledTermDefaultValue> defaultValue();
 
   static ValueConstraints create(List<OntologyValueConstraint> ontologies, List<ValueSetValueConstraint> valueSets, List<ClassValueConstraint> classes, List<BranchValueConstraint> branches,

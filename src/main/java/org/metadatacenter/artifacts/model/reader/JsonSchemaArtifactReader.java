@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.tuple.Pair;
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
+import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
@@ -17,9 +18,12 @@ import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumberType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.TemporalDefaultValue;
+import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -28,6 +32,7 @@ import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
+import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
@@ -627,6 +632,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return jsonLdTypes;
   }
 
+  // TODO Pass the expected valueConstraints type in (based on field type)
   private Optional<ValueConstraints> readValueConstraints(ObjectNode objectNode, String path)
   {
     String vcPath = path + "/" + VALUE_CONSTRAINTS;
@@ -637,25 +643,46 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       boolean requiredValue = readBooleanField(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean multipleChoice = readBooleanField(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
       Optional<NumberType> numberType = readNumberTypeField(vcNode, vcPath);
+      Optional<TemporalType> temporalType = readTemporalTypeField(vcNode, vcPath);
       Optional<String> unitOfMeasure = readStringField(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
       Optional<Number> minValue = readNumberField(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
       Optional<Number> maxValue = readNumberField(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);
       Optional<Integer> decimalPlaces = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_DECIMAL_PLACE);
       Optional<Integer> minLength = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
       Optional<Integer> maxLength = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
-      Optional<TemporalType> temporalType = readTemporalTypeField(vcNode, vcPath);
+      Optional<? extends DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath);
       List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath);
       List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(vcNode, vcPath);
       List<ClassValueConstraint> classes = readClassValueConstraints(vcNode, vcPath);
       List<BranchValueConstraint> branches = readBranchValueConstraints(vcNode, vcPath);
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath);
-      Optional<DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath);
       List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath);
 
-      return Optional.of(
-        ValueConstraints.create(requiredValue, multipleChoice, numberType, unitOfMeasure, minValue, maxValue,
-          decimalPlaces, minLength, maxLength, temporalType, ontologies, valueSets, classes, branches, literals,
-          defaultValue, actions));
+      if (numberType.isPresent()) {
+        Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ? Optional.of(defaultValue.get()
+          .asNumericDefaultValue()) : Optional.empty();
+        return Optional.of(
+          NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
+            numericDefaultValue, requiredValue, multipleChoice));
+      } else if (temporalType.isPresent()) {
+        Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ? Optional.of(defaultValue.get()
+          .asTemporalDefaultValue()) : Optional.empty();
+        return Optional.of(TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, multipleChoice));
+
+      } else if (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()) {
+        Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
+          Optional.empty();
+        return Optional.of(
+          ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
+            actions, requiredValue, multipleChoice));
+      } else {
+        Optional<TextDefaultValue> textDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asTextDefaultValue()) :
+          Optional.empty();
+        return Optional.of(TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue,
+          multipleChoice));
+      }
     } else
       return Optional.empty();
   }

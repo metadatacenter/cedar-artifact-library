@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -17,6 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
@@ -433,18 +435,28 @@ public class ArtifactExcelRenderer
   private Map<String, String> getPossibleValues(Optional<ValueConstraints> valueConstraints)
   {
     if (valueConstraints.isPresent()) {
-      Map<String, String> values = new HashMap<>();
-      List<String> labels = valueConstraints.get().literals().stream().map(LiteralValueConstraint::literal).collect(Collectors.toList());
+      Map<String, String> possibleValues = new HashMap<>();
 
-      if (valueConstraints.get().hasOntologyValueBasedConstraints()) {
-        Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints.get());
-        values.putAll(ontologyBasedValues);
+      if (valueConstraints.get() instanceof TextValueConstraints) {
+        TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
+
+        List<String> labels = textValueConstraints.literals().stream().map(LiteralValueConstraint::literal).collect(Collectors.toList());
+
+        for (String label : labels)
+          possibleValues.put(label, "");
       }
 
-      for (String label : labels)
-        values.put(label, "");
+      if (valueConstraints.get() instanceof ControlledTermValueConstraints) {
+        ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints.get();
 
-      return values;
+        if (controlledTermValueConstraints.hasValues()) {
+          Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints.get());
+          possibleValues.putAll(ontologyBasedValues);
+        }
+      }
+
+
+      return possibleValues;
     } else
       return Collections.emptyMap();
   }
@@ -490,18 +502,20 @@ public class ArtifactExcelRenderer
       || fieldInputType == FieldInputType.IMAGE || fieldInputType == FieldInputType.LINK
       || fieldInputType == FieldInputType.YOUTUBE) {
       return DataValidationConstraint.ValidationType.ANY;
-    } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO ||
-      fieldInputType == FieldInputType.CHECKBOX) {
+    } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO || fieldInputType == FieldInputType.CHECKBOX) {
       return DataValidationConstraint.ValidationType.FORMULA;
     } else if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
-      if (valueConstraints.isPresent() && valueConstraints.get().hasValueBasedConstraints())
-        return DataValidationConstraint.ValidationType.FORMULA;
-      else if (valueConstraints.isPresent() && (valueConstraints.get().minLength().isPresent() || valueConstraints.get().maxLength().isPresent()))
-        return DataValidationConstraint.ValidationType.TEXT_LENGTH;
-      else
-        return DataValidationConstraint.ValidationType.ANY;
+      if (valueConstraints.isPresent() && (valueConstraints.get() instanceof TextValueConstraints)) {
+        TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
+        if (!textValueConstraints.literals().isEmpty())
+          return DataValidationConstraint.ValidationType.FORMULA;
+        else if (textValueConstraints.minLength().isPresent() || textValueConstraints.maxLength().isPresent())
+          return DataValidationConstraint.ValidationType.TEXT_LENGTH;
+      }
+      return DataValidationConstraint.ValidationType.ANY;
+
     } else if (fieldInputType == FieldInputType.NUMERIC) {
-      if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) {
+      if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) { // TODO Use typesafe switch
         NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get();
         NumberType numberType = numericValueConstraints.numberType();
 
