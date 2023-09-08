@@ -1,4 +1,10 @@
-package org.metadatacenter.artifacts.model.core;
+package org.metadatacenter.artifacts.model.core.builders;
+
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldUi;
+import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.Version;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -13,7 +19,10 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
-public class FieldSchemaArtifactBuilder
+public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder, TextAreaFieldBuilder, TemporalFieldBuilder,
+  RadioFieldBuilder, PhoneNumberFieldBuilder, NumericFieldBuilder, ListFieldBuilder, LinkFieldBuilder,
+  EmailFieldBuilder, ControlledTermFieldBuilder, CheckboxFieldBuilder,
+  SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
 {
   private Map<String, URI> jsonLdContext = new HashMap<>(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
   private List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
@@ -166,18 +175,6 @@ public class FieldSchemaArtifactBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
-  {
-    this.fieldUi = fieldUi;
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
-  {
-    this.valueConstraints = Optional.ofNullable(valueConstraints);
-    return this;
-  }
-
   public FieldSchemaArtifactBuilder withSkosPrefLabel(String skosPrefLabel)
   {
     this.skosPrefLabel = Optional.ofNullable(skosPrefLabel);
@@ -211,6 +208,18 @@ public class FieldSchemaArtifactBuilder
   public FieldSchemaArtifactBuilder withPropertyUri(URI propertyUri)
   {
     this.propertyUri = Optional.ofNullable(propertyUri);
+    return this;
+  }
+
+  protected FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
+  {
+    this.fieldUi = fieldUi;
+    return this;
+  }
+
+  protected FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
+  {
+    this.valueConstraints = Optional.ofNullable(valueConstraints);
     return this;
   }
 

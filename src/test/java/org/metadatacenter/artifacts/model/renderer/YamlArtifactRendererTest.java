@@ -6,6 +6,8 @@ import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.model.ModelNodeNames;
+import org.yaml.snakeyaml.Yaml;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -61,17 +63,15 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testRenderFieldSchemaArtifact() {
+  public void testRenderTextField() {
 
     String name = "Study Name";
     String description = "Study name field";
-    FieldInputType fieldInputType = FieldInputType.TEXTFIELD;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.builder().
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
       withName(name).
       withDescription(description).
-      withFieldUi(FieldUi.builder().withInputType(fieldInputType).build()).
       build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
@@ -81,7 +81,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(YamlArtifactRenderer.FIELD, name);
     expectedRendering.put(YamlArtifactRenderer.DESCRIPTION, description);
-    expectedRendering.put(YamlArtifactRenderer.INPUT_TYPE, fieldInputType);
+    expectedRendering.put(YamlArtifactRenderer.INPUT_TYPE, FieldInputType.TEXTFIELD);
+    expectedRendering.put(YamlArtifactRenderer.DATATYPE, YamlArtifactRenderer.XSD_STRING);
 
     assertEquals(expectedRendering, rendering);
   }

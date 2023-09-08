@@ -79,11 +79,10 @@ public class ArtifactRoundTripTest
   }
 
   @Test
-  public void testRoundTripFieldSchemaArtifact() {
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.builder().
+  public void testRoundTripTextFieldSchemaArtifact() {
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
       withName("Study").
-      withFieldUi(FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build()).
       build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);

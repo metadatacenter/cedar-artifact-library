@@ -1,6 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
-public sealed interface FieldUi extends Ui permits TemporalFieldUi, StaticFieldUi, FieldUiRecord
+public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericFieldUi, StaticFieldUi, FieldUiRecord
 {
   FieldInputType inputType();
 

@@ -14,7 +14,7 @@ import java.util.Optional;
 public class FieldSchemaArtifactTest
 {
 
-  @Test public void testCreateFieldSchemaWithBuilder()
+  @Test public void testCreateTextFieldWithBuilder()
   {
     String name = "My Field";
     String description = "My Field description";
@@ -30,7 +30,7 @@ public class FieldSchemaArtifactTest
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
     URI propertyUri = URI.create("https://schema.metadatacenter.org/properties/854");
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.builder().
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
       withJsonLdId(jsonLdId).
       withName(name).
       withDescription(description).
@@ -43,7 +43,6 @@ public class FieldSchemaArtifactTest
       withLastUpdatedOn(lastUpdatedOn).
       withPreviousVersion(previousVersion).
       withDerivedFrom(derivedFrom).withPropertyUri(propertyUri).
-      withFieldUi(FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build()).
       build();
 
     Assert.assertEquals(jsonLdId, fieldSchemaArtifact.jsonLdId().get());

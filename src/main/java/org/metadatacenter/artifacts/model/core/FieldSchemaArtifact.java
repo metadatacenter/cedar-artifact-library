@@ -1,5 +1,19 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.builders.CheckboxFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ControlledTermFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.EmailFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ImageFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.LinkFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ListFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.NumericFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.PhoneNumberFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.RadioFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.RichTextFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TemporalFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.lang.reflect.Field;
@@ -66,8 +80,34 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
       || fieldUi().isLink() || fieldUi().isImage() || fieldUi().isYouTube();
   }
 
-  static FieldSchemaArtifactBuilder builder() { return new FieldSchemaArtifactBuilder(); }
+  static TextFieldBuilder textFieldBuilder() { return new TextFieldBuilder(); }
 
+  static TextAreaFieldBuilder textAreaFieldBuilder() { return new TextAreaFieldBuilder(); }
+
+  static ControlledTermFieldBuilder controlledTermFieldBuilder() { return new ControlledTermFieldBuilder(); }
+
+  static NumericFieldBuilder numericFieldBuilder() { return new NumericFieldBuilder(); }
+
+  static TemporalFieldBuilder temporalFieldBuilder() { return new TemporalFieldBuilder(); }
+
+  static CheckboxFieldBuilder checkboxFieldBuilder() { return new CheckboxFieldBuilder(); }
+
+  static EmailFieldBuilder emailFieldBuilder() { return new EmailFieldBuilder(); }
+
+  static ImageFieldBuilder imageFieldBuilder() { return new ImageFieldBuilder(); }
+
+  static LinkFieldBuilder linkFieldBuilder() { return new LinkFieldBuilder(); }
+
+  static ListFieldBuilder listFieldBuilder() { return new ListFieldBuilder(); }
+
+
+  static PhoneNumberFieldBuilder phoneNumberFieldBuilder() { return new PhoneNumberFieldBuilder(); }
+
+  static RadioFieldBuilder radioFieldBuilder() { return new RadioFieldBuilder(); }
+
+  static RichTextFieldBuilder richTextFieldBuilder() { return new RichTextFieldBuilder(); }
+
+  static YouTubeFieldBuilder youTubeFieldBuilder() { return new YouTubeFieldBuilder(); }
 }
 
 record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,

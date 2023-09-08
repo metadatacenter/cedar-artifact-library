@@ -42,14 +42,19 @@ public non-sealed interface StaticFieldUi extends FieldUi
   class SectionBreakFieldUiBuilder
   {
     private String content;
+    private boolean hidden = false;
 
-    private SectionBreakFieldUiBuilder()
-    {
-    }
+    private SectionBreakFieldUiBuilder() {}
 
     public SectionBreakFieldUiBuilder withContent(String content)
     {
       this.content = content;
+      return this;
+    }
+
+    public SectionBreakFieldUiBuilder withHidden(boolean hidden)
+    {
+      this.hidden = hidden;
       return this;
     }
 
@@ -64,9 +69,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private String content;
     private boolean hidden = false;
 
-    private RichTextFieldUiBuilder()
-    {
-    }
+    private RichTextFieldUiBuilder() {}
 
     public RichTextFieldUiBuilder withContent(String content)
     {
