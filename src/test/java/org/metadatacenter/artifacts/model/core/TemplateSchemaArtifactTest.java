@@ -9,11 +9,13 @@ public class TemplateSchemaArtifactTest
   @Test
   public void testMinimalSimpleTemplateSchemaArtifact()
   {
-
     String name = "Test Name";
     String description = "Test Description";
 
-    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().withName(name).withDescription(description).build();
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withName(name)
+      .withDescription(description)
+      .build();
 
     assertEquals(templateSchemaArtifact.name(), name);
     assertEquals(templateSchemaArtifact.description(), description);
