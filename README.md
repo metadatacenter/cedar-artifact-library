@@ -1,13 +1,15 @@
 CEDAR Artifact Library
 ======================
 
-Contains various tools to work with CEDAR model artifacts (templates, elements, fields, and template instances).
+This library various tools to work with CEDAR model artifacts (templates, elements, fields, and template instances).
 
-Primarily, the library provides an API to programatically work with CEDAR artifacts.
+Primarily, the library provides a Java API to programatically work with CEDAR artifacts.
 
 The library uses this API to support the conversion of artifacts to and from various serializations.
 
-Currently it supports (1) the reading of artifacts from their JSON Schema and JSON-LD serializations, and (2) the writing of Excel, TSV, CSV, and YAML serializations.
+Currently, it supports (1) the reading of artifacts from their JSON Schema and JSON-LD serializations, 
+(2) the writing of JSON Schema and YAML serializations of templates, elements and fields, and 
+(3) the writing of Excel, TSV, CSV, and YAML serializations of templates.
 
 ## Reading Schema Artifacts
 
