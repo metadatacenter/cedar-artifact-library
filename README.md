@@ -9,21 +9,73 @@ The library uses this API to support the conversion of artifacts to and from var
 
 Currently it supports (1) the reading of artifacts from their JSON Schema and JSON-LD serializations, and (2) the writing of Excel, TSV, and YAML serializations.
 
-## Reading Artifacts
+## Reading Schema Artifacts
 
-The library provides a class to convert the [Jackson library](https://github.com/FasterXML/jackson) `ObjectNode` class representation of a JSON object containing a JSON Schema serialization of CEDAR artifacts to a Java representation of those artifacts. 
+The library provides a class to convert the [Jackson Library](https://github.com/FasterXML/jackson) `ObjectNode` class representation of a JSON object containing a JSON Schema serialization of CEDAR artifacts to a Java representation of those artifacts. 
 
 A class called `JsonSchemaArtifactReader` provides methods to generate Java representations of templates, elements and fields from their JSON Schema representation.
 
-For example, assuming we used the Jackson library to read a JSON document containing a JSON Schema representation of a CEDAER template, we can generate a Java representation as follows:
+For example, assuming we used the Jackson Library to read a JSON document containing a JSON Schema representation of a CEDAR template, we can generate a Java representation as follows:
 
 ```java
 
   // Generate an instance of the JsonSchemaArtifactReader class
   JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
 
-  // Read an Jackson library ObjectNode instance and generate a Java representation of it
+  // Read an Jackson Library ObjectNode instance and generate a Java representation of it
   TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+```
+
+The `TemplateSchemaArtifact` contains a full representation of a CEDAR template.
+
+The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element and field artifacts.
+
+## Serializing Schema Artifacts
+
+Currently, four serializations are supported: JSON Schema, YAML, Excel, and TSV.
+
+### Serializing to JSON Schema 
+
+A class called `JsonSchemaArtifactRenderer` provides methods to serialize CEDAR schema artifacts to JSON Schema.
+
+Again, the `ObjectNode` class from the Jackson Library is used to represent JSON documents.
+
+For example, we can generate a JSON Schema serialization for a CEDAR template as follows:
+
+```java
+    // Obtain instance of TemplateSchemaArtifact class
+    TemplateSchemaArtifact templateSchemaArtifact = ...
+    // Generate a Jackson Library ObjectNode instance containing a JSON Schema representation on the template
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+```
+
+### Serializing to YAML
+
+A class called `YamlArtifactRenderer` provides methods to serialize CEDAR schema artifacts to YAML.
+
+For examle, we can generate a YAML serialization of a CEDAR template as follows:
+
+```java
+    // Set to true for a complete YAML representation of an artifact, false for a condensed representation
+    boolean isExanded = true;
+    // Create the renderer
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
+    // Generate a map containing a YAML representation of the template
+    LinkedHashMap<String, Object> yamlRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+```
+
+This map can be written to a file using the Jackson Library as follows:
+
+```java
+    YAMLFactory yamlFactory = new YAMLFactory()
+      .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+      .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+      .disable(YAMLGenerator.Feature.SPLIT_LINES);
+    ObjectMapper mapper = new ObjectMapper(yamlFactory);
+
+    LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+
+   mapper.writeValue([file], yamlRendering);
 ```
 
 ## Building the Library
