@@ -18,12 +18,10 @@ A class called `JsonSchemaArtifactReader` provides methods to generate Java repr
 For example, assuming we used the Jackson Library to read a JSON document containing a JSON Schema representation of a CEDAR template, we can generate a Java representation as follows:
 
 ```java
-
-  // Generate an instance of the JsonSchemaArtifactReader class
-  JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-
-  // Read an Jackson Library ObjectNode instance and generate a Java representation of it
-  TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+// Generate an instance of the JsonSchemaArtifactReader class
+JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
+// Read an Jackson Library ObjectNode instance and generate a Java representation of it
+TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 ```
 
 The `TemplateSchemaArtifact` contains a full representation of a CEDAR template.
@@ -43,10 +41,10 @@ Again, the `ObjectNode` class from the Jackson Library is used to represent JSON
 For example, we can generate a JSON Schema serialization for a CEDAR template as follows:
 
 ```java
-    // Obtain instance of TemplateSchemaArtifact class
-    TemplateSchemaArtifact templateSchemaArtifact = ...
-    // Generate a Jackson Library ObjectNode instance containing a JSON Schema representation on the template
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+// Obtain instance of TemplateSchemaArtifact class
+TemplateSchemaArtifact templateSchemaArtifact = ...
+// Generate a Jackson Library ObjectNode instance containing a JSON Schema representation on the template
+ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 ```
 
 ### Serializing to YAML
@@ -56,26 +54,26 @@ A class called `YamlArtifactRenderer` provides methods to serialize CEDAR schema
 For examle, we can generate a YAML serialization of a CEDAR template as follows:
 
 ```java
-    // Set to true for a complete YAML representation of an artifact, false for a condensed representation
-    boolean isExanded = true;
-    // Create the renderer
-    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
-    // Generate a map containing a YAML representation of the template
-    LinkedHashMap<String, Object> yamlRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+// Set to true for a complete YAML representation of an artifact, false for a condensed representation
+boolean isExanded = true;
+// Create the renderer
+YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
+// Generate a map containing a YAML representation of the template
+LinkedHashMap<String, Object> yamlRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 ```
 
 This map can be written to a file using the Jackson Library as follows:
 
 ```java
-    YAMLFactory yamlFactory = new YAMLFactory()
-      .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-      .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-      .disable(YAMLGenerator.Feature.SPLIT_LINES);
-    ObjectMapper mapper = new ObjectMapper(yamlFactory);
+YAMLFactory yamlFactory = new YAMLFactory()
+  .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+  .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+  .disable(YAMLGenerator.Feature.SPLIT_LINES);
+ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
-    LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
-   mapper.writeValue([file], yamlRendering);
+mapper.writeValue([file], yamlRendering);
 ```
 
 ## Building the Library
