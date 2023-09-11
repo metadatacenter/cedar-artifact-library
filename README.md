@@ -99,7 +99,7 @@ ExcelArtifactRenderer renderer
 Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 ```
 
-### Serializing to TSV
+### Serializing Templates to TSV
 
 A utility class is provided that can take the above Excel rendering and generate a TSV from it.
 
@@ -109,14 +109,24 @@ For example, to generate a TSV from the first sheeet of the above workbook:
 StringBuffer tsvBuffer = SpreadSheetUtil.convertSheetToTsv(workbook.getSheetAt(0));
 ```
 
-### Serializing to CSV
+This string buffer can be written to a file as follows:
+
+```java
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter([file]))) {
+      writer.write(tsvBuffer.toString());
+    } catch (IOException e) {
+      ...
+    }
+```
+
+### Serializing Templates to CSV
 
 Again, a utility class is provided that can take the above Excel rendering and generate a CSV from it.
 
 For example, to generate a CSV from the first sheeet of the above workbook:
 
 ```java
-StringBuffer tsvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0));
+StringBuffer csvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0));
 ```
 
 ## Building the Library
