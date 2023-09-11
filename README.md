@@ -130,6 +130,50 @@ For example, to generate a CSV from the first sheeet of the above workbook:
 ```java
 StringBuffer csvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0));
 ```
+## Programatically Creating Templates
+
+CEDAR templates are represented using the `TemplateSchemaArtifact` class. 
+This class can represent a complete specification of CEDAR templates. 
+
+A companion builder class can be used to incrementally build a template. 
+
+For example, to create a minimal template with a name and description, we can use the library as follows:
+
+```java
+TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+  .withName("Study")
+  .withDescription("A template describing a study")
+  .build();
+```
+
+## Programatically Creating Elements
+
+CEDAR elements are represented using the `ElementSchemaArtifact` class. 
+
+Again, a companion builder class is provided that can be used to incrementally build an element. 
+
+For example, to create a minimal element with a name and description, we can use the library as follows:
+
+```java
+ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
+  .withName("Address")
+  .withDescription("An element describing an address")
+  .build();
+```
+
+This element can be added as a child to the earlier template as follows:
+
+```java
+TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+  .withName("Study")
+  .withDescription("A template describing a study")
+  .withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact);
+  .build();
+```
+
+## Programatically Creating Fields
+
+
 
 ## Building the Library
 
