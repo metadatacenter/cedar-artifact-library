@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.ss.ArtifactExcelRenderer;
+import org.metadatacenter.artifacts.model.renderer.ExcelArtifactRenderer;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 
 import java.io.File;
@@ -21,7 +21,7 @@ public class Template2Excel
 
     ObjectMapper mapper = new ObjectMapper();
     File templateFile = new File(args[0]);
-    File spreadsheetFile = new File(args[1]);
+    File excelFile = new File(args[1]);
     String terminologyServerIntegratedSearchEndpoint = args[2];
     String terminologyServerAPIKey= args[3];
 
@@ -35,15 +35,17 @@ public class Template2Excel
     JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-    ArtifactExcelRenderer renderer
-      = new ArtifactExcelRenderer(terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
+    ExcelArtifactRenderer renderer
+      = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
 
     Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 
     if (workbook.getNumberOfSheets() == 0)
       throw new RuntimeException("No sheets in generated workbook");
 
-    SpreadsheetFactory.writeWorkbook(workbook, spreadsheetFile);
+    SpreadsheetFactory.writeWorkbook(workbook, excelFile);
+
+    System.out.println("Successfully generated Excel file " + excelFile.getAbsolutePath());
   }
 
   private static void Usage()

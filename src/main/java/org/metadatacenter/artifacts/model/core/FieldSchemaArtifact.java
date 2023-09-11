@@ -100,7 +100,6 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   static ListFieldBuilder listFieldBuilder() { return new ListFieldBuilder(); }
 
-
   static PhoneNumberFieldBuilder phoneNumberFieldBuilder() { return new PhoneNumberFieldBuilder(); }
 
   static RadioFieldBuilder radioFieldBuilder() { return new RadioFieldBuilder(); }

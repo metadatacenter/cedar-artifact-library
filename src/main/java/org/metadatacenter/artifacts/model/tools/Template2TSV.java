@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.ss.ArtifactExcelRenderer;
+import org.metadatacenter.artifacts.model.renderer.ExcelArtifactRenderer;
 import org.metadatacenter.artifacts.ss.SpreadSheetUtil;
 
 import java.io.BufferedWriter;
@@ -37,8 +37,8 @@ public class Template2TSV
     JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-    ArtifactExcelRenderer renderer
-      = new ArtifactExcelRenderer(terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
+    ExcelArtifactRenderer renderer
+      = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
 
     Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 

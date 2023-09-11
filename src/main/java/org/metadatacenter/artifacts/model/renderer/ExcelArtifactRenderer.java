@@ -1,10 +1,9 @@
-package org.metadatacenter.artifacts.ss;
+package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -38,9 +37,9 @@ import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.model.ModelNodeNames;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -58,7 +57,7 @@ import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
 
-public class ArtifactExcelRenderer
+public class ExcelArtifactRenderer
 {
   private final Workbook workbook;
   private final String terminologyServerIntegratedSearchEndpoint;
@@ -77,7 +76,7 @@ public class ArtifactExcelRenderer
   public static final DateTimeFormatter xsdDateTimeFormatter =
     DateTimeFormatter.ofPattern(xsdDateTimeFormatterString).withZone(ZoneId.systemDefault());
 
-  public ArtifactExcelRenderer(String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
+  public ExcelArtifactRenderer(String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
   {
     this.workbook = SpreadsheetFactory.createEmptyWorkbook();
     this.terminologyServerIntegratedSearchEndpoint = terminologyServerIntegratedSearchEndpoint;
@@ -450,7 +449,7 @@ public class ArtifactExcelRenderer
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints.get();
 
         if (controlledTermValueConstraints.hasValues()) {
-          Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(valueConstraints.get());
+          Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(controlledTermValueConstraints);
           possibleValues.putAll(ontologyBasedValues);
         }
       }
@@ -462,7 +461,7 @@ public class ArtifactExcelRenderer
   }
 
   // Return prefLabel->IRI
-  private Map<String, String> getValuesFromTerminologyServer(ValueConstraints valueConstraints)
+  private Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints valueConstraints)
   {
     Map<String, String> values = new HashMap<>();
 
@@ -500,19 +499,24 @@ public class ArtifactExcelRenderer
     if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
       || fieldInputType == FieldInputType.RICHTEXT || fieldInputType == FieldInputType.EMAIL
       || fieldInputType == FieldInputType.IMAGE || fieldInputType == FieldInputType.LINK
-      || fieldInputType == FieldInputType.YOUTUBE) {
+      || fieldInputType == FieldInputType.YOUTUBE || fieldInputType == FieldInputType.TEXTAREA) {
       return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO || fieldInputType == FieldInputType.CHECKBOX) {
       return DataValidationConstraint.ValidationType.FORMULA;
-    } else if (fieldInputType == FieldInputType.TEXTFIELD || fieldInputType == FieldInputType.TEXTAREA) {
+    } else if (fieldInputType == FieldInputType.TEXTFIELD) {
+
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof TextValueConstraints)) {
         TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
         if (!textValueConstraints.literals().isEmpty())
           return DataValidationConstraint.ValidationType.FORMULA;
         else if (textValueConstraints.minLength().isPresent() || textValueConstraints.maxLength().isPresent())
           return DataValidationConstraint.ValidationType.TEXT_LENGTH;
-      }
-      return DataValidationConstraint.ValidationType.ANY;
+        else
+          return DataValidationConstraint.ValidationType.ANY;
+      } else if (valueConstraints.isPresent() && (valueConstraints.get() instanceof ControlledTermValueConstraints)) {
+        return DataValidationConstraint.ValidationType.FORMULA;
+      } else
+        return DataValidationConstraint.ValidationType.ANY;
 
     } else if (fieldInputType == FieldInputType.NUMERIC) {
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) { // TODO Use typesafe switch
