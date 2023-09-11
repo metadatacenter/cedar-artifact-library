@@ -23,7 +23,6 @@ import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -298,7 +297,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
         LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
         valueSetValueConstraintRendering.put(VALUE_SET, valueSetValueConstraint.name());
-        valueSetValueConstraintRendering.put(VALUE_SET_COLLECTION, valueSetValueConstraint.valueSetCollection());
+        valueSetValueConstraintRendering.put(VALUE_SET_COLLECTION, valueSetValueConstraint.vsCollection());
         valueSetValueConstraintRendering.put(URI, valueSetValueConstraint.uri());
         valuesRendering.add(valueSetValueConstraintRendering);
       }

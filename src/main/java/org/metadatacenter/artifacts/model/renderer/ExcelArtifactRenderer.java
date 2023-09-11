@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -37,6 +38,7 @@ import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.model.ModelNodeNames;
@@ -466,7 +468,7 @@ public class ExcelArtifactRenderer
     Map<String, String> values = new HashMap<>();
 
     try {
-      String vc = objectWriter.writeValueAsString(valueConstraints);
+      String vc = controlledTermValueConstraints2Json(valueConstraints);
       Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
 
       List<Map<String, String>> valueDescriptions;
@@ -486,6 +488,56 @@ public class ExcelArtifactRenderer
       throw new RuntimeException("Error retrieving values from terminology server " + e.getMessage());
     }
     return values;
+  }
+
+
+
+  /**
+   *
+   * The terminology server is expecting a value constraints object that looks like the following:
+   *
+   * public class ValueConstraints
+   *   private List<OntologyValueConstraint> ontologies;
+   *   private List<BranchValueConstraint> branches;
+   *   private List<ValueSetValueConstraint> valueSets;
+   *   private List<ClassValueConstraint> classes;
+   *   private List<Action> actions;
+   *
+   * public class BranchValueConstraint
+   *   private String uri;
+   *   private String acronym;
+   *
+   * public class OntologyValueConstraint
+   *   private String acronym;
+   *
+   * public class ValueSetValueConstraint
+   *   private String uri;
+   *   private String vsCollection;
+   *
+   * public class ClassValueConstraint
+   *   private String uri;
+   *   private String prefLabel;
+   *   private String type;
+   *   private String label; // Optional
+   *   private String source;
+   *
+   * public class Action
+   *   private Integer to; // Optional
+   *   private String action;
+   *   private String termUri;
+   *   private String type;
+   *   private String source;
+   *   private String sourceUri; // Optional
+   *
+   */
+  private String controlledTermValueConstraints2Json(ControlledTermValueConstraints controlledTermValueConstraints)
+  {
+    // TODO Do a manual conversion so we can do error checking.
+    try {
+      return objectWriter.writeValueAsString(controlledTermValueConstraints);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Error generation value constraints object for terminology server " + e.getMessage());
+    }
   }
 
   // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)

@@ -58,7 +58,7 @@ public class JsonSchemaArtifactReaderTest
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("HuBMAP Sample Block", templateSchemaArtifact.name());
+    assertEquals("Sample Block", templateSchemaArtifact.name());
   }
 
   @Test
@@ -78,7 +78,7 @@ public class JsonSchemaArtifactReaderTest
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    assertEquals("HuBMAP Sample Suspension", templateSchemaArtifact.name());
+    assertEquals("Sample Suspension", templateSchemaArtifact.name());
   }
 
   @Test
