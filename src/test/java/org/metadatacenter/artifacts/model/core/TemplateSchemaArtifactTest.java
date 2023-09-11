@@ -7,14 +7,16 @@ import static org.junit.Assert.assertEquals;
 public class TemplateSchemaArtifactTest
 {
   @Test
-  public void testMinimalSimpleTemplateSchemaArtifact() {
+  public void testMinimalSimpleTemplateSchemaArtifact()
+  {
 
-    TemplateUi templateUi = TemplateUi.builder().build();
+    String name = "Test Name";
+    String description = "Test Description";
 
-    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withName("Test").withTemplateUi(templateUi).build();
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().withName(name).withDescription(description).build();
 
-    assertEquals(templateSchemaArtifact.name(), "Test");
+    assertEquals(templateSchemaArtifact.name(), name);
+    assertEquals(templateSchemaArtifact.description(), description);
   }
 
   @Test
