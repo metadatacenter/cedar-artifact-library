@@ -7,7 +7,7 @@ Primarily, the library provides an API to programatically work with CEDAR artifa
 
 The library uses this API to support the conversion of artifacts to and from various serializations.
 
-Currently it supports (1) the reading of artifacts from their JSON Schema and JSON-LD serializations, and (2) the writing of Excel, TSV, and YAML serializations.
+Currently it supports (1) the reading of artifacts from their JSON Schema and JSON-LD serializations, and (2) the writing of Excel, TSV, CSV, and YAML serializations.
 
 ## Reading Schema Artifacts
 
@@ -31,7 +31,7 @@ The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element
 
 ## Serializing Schema Artifacts
 
-Currently, four serializations are supported: JSON Schema, YAML, Excel, and TSV.
+Currently, four serializations are supported: JSON Schema, YAML, Excel, CSV, and TSV.
 
 ### Serializing to JSON Schema 
 
@@ -53,7 +53,7 @@ ObjectNode rendering
 
 A class called `YamlArtifactRenderer` provides methods to serialize CEDAR schema artifacts to YAML.
 
-For examle, we can generate a YAML serialization of a CEDAR template as follows:
+For example, we can generate a YAML serialization of a CEDAR template as follows:
 
 ```java
 // Set to true for a complete YAML representation of an artifact, false for a condensed representation
@@ -78,6 +78,45 @@ LinkedHashMap<String, Object> yamlRendering
   = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
 mapper.writeValue([file], yamlRendering);
+```
+
+### Serializing Templates to Excel
+
+A class called `ExcelArtifactRenderer` provides methods to serialize CEDAR templates to Excel.
+
+Only top-level fields in templates will be serialized. All nested elements will be ignored.
+
+The [Apache POI](https://poi.apache.org/) library `Workbook` class is used to store the generated Excel representation.
+
+Using the `ExcelArtifactRendered`, we can generate a YAML serialization of a CEDAR template as follows:
+
+```java
+// Pass a CEDAR terminology server endpoint (e.g., https://terminology.metadatacenter.org/bioportal/integrated-search/) with a CEDAR API key
+ExcelArtifactRenderer renderer
+  = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
+
+// Generate an Apache POI Workbook rendering, starting at column 0 and row 0
+Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
+```
+
+### Serializing to TSV
+
+A utility class is provided that can take the above Excel rendering and generate a TSV from it.
+
+For example, to generate a TSV from the first sheeet of the above workbook:
+
+```java
+StringBuffer tsvBuffer = SpreadSheetUtil.convertSheetToTsv(workbook.getSheetAt(0));
+```
+
+### Serializing to CSV
+
+Again, a utility class is provided that can take the above Excel rendering and generate a CSV from it.
+
+For example, to generate a CSV from the first sheeet of the above workbook:
+
+```java
+StringBuffer tsvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0));
 ```
 
 ## Building the Library

@@ -151,7 +151,17 @@ public class SpreadSheetUtil
 
   public static StringBuffer convertSheetToTsv(Sheet sheet)
   {
-    StringBuffer tsvData = new StringBuffer();
+    return convertSheetToFlatFile(sheet, "\t");
+  }
+
+  public static StringBuffer convertSheetToCsv(Sheet sheet)
+  {
+    return convertSheetToFlatFile(sheet, ",");
+  }
+
+  public static StringBuffer convertSheetToFlatFile(Sheet sheet, String separator)
+  {
+    StringBuffer data = new StringBuffer();
     int rowCount = sheet.getLastRowNum();
     int colCount = sheet.getRow(0).getLastCellNum();
 
@@ -176,17 +186,17 @@ public class SpreadSheetUtil
           break;
         }
 
-        tsvData.append(cellValue);
+        data.append(cellValue);
 
         if (j < colCount - 1) {
-          tsvData.append("\t"); // Use tab as the delimiter
+          data.append(separator);
         }
       }
 
-      tsvData.append(System.lineSeparator());
+      data.append(System.lineSeparator());
     }
 
-    return tsvData;
+    return data;
   }
 
   private static boolean isAlpha(char c) {return c >= 'A' && c <= 'Z';}
