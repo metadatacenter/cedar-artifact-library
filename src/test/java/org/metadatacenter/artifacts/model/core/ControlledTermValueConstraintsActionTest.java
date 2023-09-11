@@ -23,16 +23,16 @@ public class ControlledTermValueConstraintsActionTest
       .withTermUri(termUri)
       .withSourceUri(sourceUri)
       .withSource(source)
-      .withValueType(valueType)
-      .withActionType(actionType)
+      .withType(valueType)
+      .withAction(actionType)
       .withTo(123)
       .build();
 
     assertEquals(termUri, controlledTermValueConstraintsAction.termUri());
     assertEquals(sourceUri, controlledTermValueConstraintsAction.sourceUri().get());
     assertEquals(source, controlledTermValueConstraintsAction.source());
-    assertEquals(valueType, controlledTermValueConstraintsAction.valueType());
-    assertEquals(actionType, controlledTermValueConstraintsAction.actionType());
+    assertEquals(valueType, controlledTermValueConstraintsAction.type());
+    assertEquals(actionType, controlledTermValueConstraintsAction.action());
     assertEquals(to, controlledTermValueConstraintsAction.to());
   }
 }

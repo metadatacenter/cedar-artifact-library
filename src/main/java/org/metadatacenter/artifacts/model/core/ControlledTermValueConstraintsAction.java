@@ -12,7 +12,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE_U
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TERM_URI;
 
 public record ControlledTermValueConstraintsAction(URI termUri, Optional<URI> sourceUri, String source,
-                                                   ValueType valueType, ValueConstraintsActionType actionType,
+                                                   ValueType type, ValueConstraintsActionType action,
                                                    Optional<Integer> to)
 {
     public ControlledTermValueConstraintsAction
@@ -28,8 +28,8 @@ public record ControlledTermValueConstraintsAction(URI termUri, Optional<URI> so
         private URI termUri;
         private Optional<URI> sourceUri = Optional.empty();
         private String source;
-        private ValueType valueType;
-        private ValueConstraintsActionType actionType;
+        private ValueType type;
+        private ValueConstraintsActionType action;
         private Optional<Integer> to = Optional.empty();
 
         public Builder withTermUri(URI termUri)
@@ -50,15 +50,15 @@ public record ControlledTermValueConstraintsAction(URI termUri, Optional<URI> so
             return this;
         }
 
-        public Builder withValueType(ValueType valueType)
+        public Builder withType(ValueType type)
         {
-            this.valueType = valueType;
+            this.type = type;
             return this;
         }
 
-        public Builder withActionType(ValueConstraintsActionType actionType)
+        public Builder withAction(ValueConstraintsActionType action)
         {
-            this.actionType = actionType;
+            this.action = action;
             return this;
         }
 
@@ -70,7 +70,7 @@ public record ControlledTermValueConstraintsAction(URI termUri, Optional<URI> so
 
         public ControlledTermValueConstraintsAction build()
         {
-            return new ControlledTermValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
+            return new ControlledTermValueConstraintsAction(termUri, sourceUri, source, type, action, to);
         }
     }
 }
