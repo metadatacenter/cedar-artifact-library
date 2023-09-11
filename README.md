@@ -20,8 +20,9 @@ For example, assuming we used the Jackson Library to read a JSON document contai
 ```java
 // Generate an instance of the JsonSchemaArtifactReader class
 JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-// Read an Jackson Library ObjectNode instance and generate a Java representation of it
-TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+// Generate a Java representation JSON in Jackson Library ObjectNode instance
+TemplateSchemaArtifact templateSchemaArtifact 
+  = artifactReader.readTemplateSchemaArtifact(objectNode);
 ```
 
 The `TemplateSchemaArtifact` contains a full representation of a CEDAR template.
@@ -44,7 +45,8 @@ For example, we can generate a JSON Schema serialization for a CEDAR template as
 // Obtain instance of TemplateSchemaArtifact class
 TemplateSchemaArtifact templateSchemaArtifact = ...
 // Generate a Jackson Library ObjectNode instance containing a JSON Schema representation on the template
-ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+ObjectNode rendering 
+  = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 ```
 
 ### Serializing to YAML
@@ -59,7 +61,8 @@ boolean isExanded = true;
 // Create the renderer
 YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
 // Generate a map containing a YAML representation of the template
-LinkedHashMap<String, Object> yamlRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+LinkedHashMap<String, Object> yamlRendering 
+  = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 ```
 
 This map can be written to a file using the Jackson Library as follows:
@@ -71,7 +74,8 @@ YAMLFactory yamlFactory = new YAMLFactory()
   .disable(YAMLGenerator.Feature.SPLIT_LINES);
 ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
-LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+LinkedHashMap<String, Object> yamlRendering 
+  = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
 mapper.writeValue([file], yamlRendering);
 ```
