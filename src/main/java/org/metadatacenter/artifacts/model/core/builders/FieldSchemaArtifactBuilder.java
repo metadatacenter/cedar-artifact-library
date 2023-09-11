@@ -54,69 +54,21 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
   public FieldSchemaArtifactBuilder() {}
 
-  public FieldSchemaArtifactBuilder withJsonLdId(URI jsonLdId)
-  {
-    this.jsonLdId = Optional.ofNullable(jsonLdId);
-    return this;
-  }
-
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
     this.jsonLdContext = jsonLdContext;
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withCreatedBy(URI createdBy)
+  public FieldSchemaArtifactBuilder withJsonLdType(URI jsonLdType)
   {
-    this.createdBy = Optional.ofNullable(createdBy);
+    this.jsonLdTypes.add(jsonLdType);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withModifiedBy(URI modifiedBy)
+  public FieldSchemaArtifactBuilder withJsonLdId(URI jsonLdId)
   {
-    this.modifiedBy = Optional.ofNullable(modifiedBy);
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withCreatedOn(OffsetDateTime createdOn)
-  {
-    this.createdOn = Optional.ofNullable(createdOn);
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-  {
-    this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri)
-  {
-    this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withJsonSchemaType(String jsonSchemaType)
-  {
-    this.jsonSchemaType = jsonSchemaType;
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withJsonSchemaTitle(String jsonSchemaTitle)
-  {
-    this.jsonSchemaTitle = jsonSchemaTitle;
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withJsonSchemaDescription(String jsonSchemaDescription)
-  {
-    this.jsonSchemaDescription = jsonSchemaDescription;
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withJsonLdTypes(List<URI> jsonLdTypes)
-  {
-    this.jsonLdTypes = jsonLdTypes;
+    this.jsonLdId = Optional.ofNullable(jsonLdId);
     return this;
   }
 
@@ -160,6 +112,30 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   public FieldSchemaArtifactBuilder withStatus(Status status)
   {
     this.status = Optional.ofNullable(status);
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withCreatedBy(URI createdBy)
+  {
+    this.createdBy = Optional.ofNullable(createdBy);
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withModifiedBy(URI modifiedBy)
+  {
+    this.modifiedBy = Optional.ofNullable(modifiedBy);
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withCreatedOn(OffsetDateTime createdOn)
+  {
+    this.createdOn = Optional.ofNullable(createdOn);
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+  {
+    this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
     return this;
   }
 
@@ -208,6 +184,18 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   public FieldSchemaArtifactBuilder withPropertyUri(URI propertyUri)
   {
     this.propertyUri = Optional.ofNullable(propertyUri);
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+  {
+    this.jsonSchemaTitle = jsonSchemaTitle;
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+  {
+    this.jsonSchemaDescription = jsonSchemaDescription;
     return this;
   }
 

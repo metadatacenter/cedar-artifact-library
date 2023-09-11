@@ -135,7 +135,7 @@ StringBuffer csvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0
 CEDAR templates are represented using the `TemplateSchemaArtifact` class. 
 This class can represent a complete specification of CEDAR templates. 
 
-A companion builder class can be used to incrementally build a template. 
+A companion builder class can be used to create a template. 
 
 For example, to create a minimal template with a name and description, we can use the library as follows:
 
@@ -150,7 +150,7 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 
 CEDAR elements are represented using the `ElementSchemaArtifact` class. 
 
-Again, a companion builder class is provided that can be used to incrementally build an element. 
+Again, a companion builder class can be used to create an element. 
 
 For example, to create a minimal element with a name and description, we can use the library as follows:
 
@@ -172,6 +172,15 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 ```
 
 ## Programatically Creating Fields
+
+Currently, CEDAR provides the following types of fields: text, temporal numeric, text area, phone number, email, radio, list, link, image, YouTube, section break, rich text, and attribute-value.
+
+A class called `FieldSchemaArtifact` represents all of these field types.
+
+Since each field has specific characteristics, a custom builder is provided to contruct each field type.
+
+### Programatically Creating Text Fields
+
 
 
 
