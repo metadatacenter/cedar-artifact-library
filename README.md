@@ -11,9 +11,9 @@ Currently it supports (1) the reading of artifacts from their JSON Schema and JS
 
 ## Reading Artifacts
 
-The library provides a class to convert the [Jackson library](https://github.com/FasterXML/jackson) ObjectNode class representation of a JSON object to a Java representation of an artifacts. 
+The library provides a class to convert the [Jackson library](https://github.com/FasterXML/jackson) `ObjectNode` class representation of a JSON object containing a JSON Schema serialization of CEDAR artifacts to a Java representation of those artifacts. 
 
-A class JsonSchemaArtifactReader provides methods to generate Java representations of templates, elementd and fields from the JSON Schema representation.
+A class called `JsonSchemaArtifactReader` provides methods to generate Java representations of templates, elements and fields from their JSON Schema representation.
 
 For example, assuming we used the Jackson library to read a JSON document containing a JSON Schema representation of a CEDAER template, we can generate a Java representation as follows:
 
