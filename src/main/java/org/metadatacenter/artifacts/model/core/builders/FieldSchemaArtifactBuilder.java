@@ -52,7 +52,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   private FieldUi fieldUi;
   private Optional<ValueConstraints> valueConstraints = Optional.empty();
 
-  public FieldSchemaArtifactBuilder() {}
+  protected FieldSchemaArtifactBuilder() {}
 
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
