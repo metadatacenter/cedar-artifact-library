@@ -43,7 +43,7 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
 
   public TextFieldBuilder withMaxLength(Integer maxLength)
   {
-    valueConstraintsBuilder.withMinLength(maxLength);
+    valueConstraintsBuilder.withMaxLength(maxLength);
     return this;
   }
 

@@ -15,6 +15,7 @@ import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
 import org.metadatacenter.model.ModelNodeNames;
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -71,13 +72,38 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   default boolean hidden() { return fieldUi().hidden(); }
 
+  default boolean requiredValue() {
+    return valueConstraints().isPresent() &&  valueConstraints().get().requiredValue();
+  }
+
   default boolean isStatic() { return fieldUi().isStatic(); }
 
   default boolean hasIRIValue()
   {
+    // TODO Ugly
     return (fieldUi().isTextField() &&
       (valueConstraints().isPresent() && valueConstraints().get() instanceof ControlledTermValueConstraints))
       || fieldUi().isLink() || fieldUi().isImage() || fieldUi().isYouTube();
+  }
+
+  default Optional<Integer> minLength()
+  {
+    // TODO Ugly
+    if (valueConstraints().isPresent() && valueConstraints().get() instanceof TextValueConstraints) {
+      TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints().get();
+      return textValueConstraints.minLength();
+    } else
+      return Optional.empty();
+  }
+
+  default Optional<Integer> maxLength()
+  {
+    // TODO Ugly
+    if (valueConstraints().isPresent() && valueConstraints().get() instanceof TextValueConstraints) {
+      TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints().get();
+      return textValueConstraints.maxLength();
+    } else
+      return Optional.empty();
   }
 
   static TextFieldBuilder textFieldBuilder() { return new TextFieldBuilder(); }

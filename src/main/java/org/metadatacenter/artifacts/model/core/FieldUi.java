@@ -69,8 +69,8 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
   class Builder
   {
     private FieldInputType inputType;
-    private boolean valueRecommendationEnabled = false;
     private boolean hidden = false;
+    private boolean valueRecommendationEnabled = false;
 
     private Builder()
     {
@@ -93,6 +93,7 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
       this.hidden = hidden;
       return this;
     }
+
 
     public FieldUi build()
     {

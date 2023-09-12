@@ -78,9 +78,9 @@ public class FieldSchemaArtifactTest
     String identifier = "id3443";
     Version version = new Version(2, 0, 0);
     Status status = Status.DRAFT;
-    Boolean required = true;
-    Integer minLength;
-    Integer maxLength;
+    Boolean requiredValue = true;
+    Integer minLength = 0;
+    Integer maxLength = 10;
     URI jsonLdId = URI.create("https://repo.metadatacenter.org/template-fields/4455");
     URI createdBy = URI.create("http://example.com/user/1");
     URI modifiedBy = URI.create("http://example.com/user/2");
@@ -97,6 +97,9 @@ public class FieldSchemaArtifactTest
       withIdentifier(identifier).
       withVersion(version).
       withStatus(status).
+      withRequiredValue(requiredValue).
+      withMinLength(minLength).
+      withMaxLength(maxLength).
       withCreatedBy(createdBy).
       withCreatedOn(createdOn).
       withModifiedBy(modifiedBy).
@@ -119,5 +122,8 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion().get());
     Assert.assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom().get());
     Assert.assertEquals(propertyUri, fieldSchemaArtifact.propertyUri().get());
+    Assert.assertEquals(requiredValue, fieldSchemaArtifact.requiredValue());
+    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
+    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
   }
 }
