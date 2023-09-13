@@ -8,7 +8,7 @@ import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.NumberType;
+import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
@@ -115,7 +115,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
         TemporalType temporalType = temporalValueConstraints.temporalType();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
-        Optional<InputTimeFormat> inputTimeFormat = temporalFieldUi.inputTimeFormat();
+        InputTimeFormat inputTimeFormat = temporalFieldUi.inputTimeFormat();
         TemporalGranularity temporalGranularity = temporalFieldUi.temporalGranularity();
 
         switch (temporalType) {
@@ -156,8 +156,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
     case NUMERIC:
 
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) {
-        NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get();
-        NumberType numberType = numericValueConstraints.numberType();
+        NumericValueConstraints numericValueConstraints = valueConstraints.get().asNumericValueConstraints();
+        NumericType numberType = numericValueConstraints.numberType();
 
         switch (numberType) {
         case INTEGER, LONG, INT, SHORT, BYTE -> {
@@ -182,7 +182,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
         }
         }
       } else
-        throw new RuntimeException("Missing numberType value in value constraint  for numeric field " + fieldSchemaArtifact.name());
+        throw new RuntimeException("Missing numericType value in value constraint  for numeric field " + fieldSchemaArtifact.name());
 
     case PHONE_NUMBER:
       return Optional.of(REDCapConstants.PHONE_TEXTFIELD_VALIDATION);

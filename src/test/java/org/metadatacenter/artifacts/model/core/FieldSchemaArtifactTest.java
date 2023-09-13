@@ -126,4 +126,5 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
   }
+
 }

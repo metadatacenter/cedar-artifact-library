@@ -52,13 +52,13 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
-    public Builder withDefaultValue(TextDefaultValue defaultValue) {
-      this.defaultValue = Optional.ofNullable(defaultValue);
+    public Builder withDefaultValue(String defaultValue) {
+      this.defaultValue = Optional.ofNullable(new TextDefaultValue(defaultValue));
       return this;
     }
 
-    public Builder withLiterals(List<LiteralValueConstraint> literals) {
-      this.literals = List.copyOf(literals);
+    public Builder withChoice(String choice, boolean selectedByDefault) {
+      this.literals.add(new LiteralValueConstraint(choice, selectedByDefault));
       return this;
     }
 

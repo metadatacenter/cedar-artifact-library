@@ -7,12 +7,11 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DECIMAL_
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MAX_NUMBER_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MIN_NUMBER_VALUE;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_UNIT_OF_MEASURE;
 
 public non-sealed interface NumericValueConstraints extends ValueConstraints
 {
-  NumberType numberType();
+  NumericType numberType();
 
   Optional<Number> minValue();
 
@@ -28,12 +27,12 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
 
   boolean multipleChoice();
 
-  static NumericValueConstraints create(NumberType numberType,
+  static NumericValueConstraints create(NumericType numericType,
     Optional<Number> minValue, Optional<Number> maxValue,
     Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,
     boolean requiredValue, boolean multipleChoice)
   {
-    return new NumericValueConstraintsRecord(numberType, minValue, maxValue, decimalPlaces, unitOfMeasure, defaultValue,
+    return new NumericValueConstraintsRecord(numericType, minValue, maxValue, decimalPlaces, unitOfMeasure, defaultValue,
       requiredValue, multipleChoice);
   }
 
@@ -42,7 +41,7 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
   }
 
   class Builder {
-    private NumberType numberType;
+    private NumericType numericType;
     private Optional<Number> minValue = Optional.empty();
     private Optional<Number> maxValue = Optional.empty();
     private Optional<Integer> decimalPlaces = Optional.empty();
@@ -54,8 +53,8 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
     private Builder() {
     }
 
-    public Builder withNumberType(NumberType numberType) {
-      this.numberType = numberType;
+    public Builder withNumberType(NumericType numericType) {
+      this.numericType = numericType;
       return this;
     }
 
@@ -79,8 +78,8 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
       return this;
     }
 
-    public Builder withDefaultValue(NumericDefaultValue defaultValue) {
-      this.defaultValue = Optional.ofNullable(defaultValue);
+    public Builder withDefaultValue(double defaultValue) {
+      this.defaultValue = Optional.of(new NumericDefaultValue(defaultValue));
       return this;
     }
 
@@ -96,16 +95,16 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
 
     public NumericValueConstraints build()
     {
-      return new NumericValueConstraintsRecord(numberType, minValue, maxValue,
+      return new NumericValueConstraintsRecord(numericType, minValue, maxValue,
         decimalPlaces, unitOfMeasure, defaultValue, requiredValue, multipleChoice);
     }
   }
 }
 
-record NumericValueConstraintsRecord(NumberType numberType,
-                              Optional<Number> minValue, Optional<Number> maxValue, Optional<Integer> decimalPlaces,
-                              Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,
-                              boolean requiredValue, boolean multipleChoice)
+record NumericValueConstraintsRecord(NumericType numberType,
+                                     Optional<Number> minValue, Optional<Number> maxValue, Optional<Integer> decimalPlaces,
+                                     Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,
+                                     boolean requiredValue, boolean multipleChoice)
   implements NumericValueConstraints
 {
 

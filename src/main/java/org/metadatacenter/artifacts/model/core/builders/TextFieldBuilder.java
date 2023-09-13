@@ -29,7 +29,7 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public TextFieldBuilder withDefaultValue(TextDefaultValue defaultValue)
+  public TextFieldBuilder withDefaultValue(String defaultValue)
   {
     valueConstraintsBuilder.withDefaultValue(defaultValue);
     return this;
@@ -202,5 +202,4 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
     withValueConstraints(valueConstraintsBuilder.build());
     return super.build();
   }
-
 }

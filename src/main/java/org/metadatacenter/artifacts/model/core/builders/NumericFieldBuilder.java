@@ -1,10 +1,16 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.NumberType;
-import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.NumericFieldUi;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.Version;
+
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Map;
 
 public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -15,8 +21,8 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     valueConstraintsBuilder.withMultipleChoice(false);
   }
 
-  public NumericFieldBuilder withNumberType(NumberType numberType) {
-    valueConstraintsBuilder.withNumberType(numberType);
+  public NumericFieldBuilder withNumericType(NumericType numericType) {
+    valueConstraintsBuilder.withNumberType(numericType);
     return this;
   }
 
@@ -46,7 +52,7 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public NumericFieldBuilder withDefaultValue(NumericDefaultValue defaultValue)
+  public NumericFieldBuilder withDefaultValue(double defaultValue)
   {
     valueConstraintsBuilder.withDefaultValue(defaultValue);
     return this;
@@ -57,6 +63,144 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     fieldUiBuilder.withHidden(hidden);
     return this;
   }
+
+  @Override public NumericFieldBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
+  {
+    super.withJsonLdContext(jsonLdContext);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withJsonLdType(URI jsonLdType) {
+    super.withJsonLdType(jsonLdType);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withJsonLdId(URI jsonLdId)
+  {
+    super.withJsonLdId(jsonLdId);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withName(String name)
+  {
+    super.withName(name);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withDescription(String description)
+  {
+    super.withDescription(description);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withIdentifier(String identifier)
+  {
+    super.withIdentifier(identifier);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withModelVersion(Version modelVersion)
+  {
+    super.withModelVersion(modelVersion);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withVersion(Version version)
+  {
+    super.withVersion(version);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withStatus(Status status)
+  {
+    super.withStatus(status);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withCreatedBy(URI createdBy)
+  {
+    super.withCreatedBy(createdBy);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withModifiedBy(URI modifiedBy)
+  {
+    super.withModifiedBy(modifiedBy);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withCreatedOn(OffsetDateTime createdOn)
+  {
+    super.withCreatedOn(createdOn);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+  {
+    super.withLastUpdatedOn(lastUpdatedOn);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withPreviousVersion(URI previousVersion)
+  {
+    super.withPreviousVersion(previousVersion);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withDerivedFrom(URI derivedFrom)
+  {
+    super.withDerivedFrom(derivedFrom);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  {
+    super.withSkosPrefLabel(skosPrefLabel);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  {
+    super.withSkosAlternateLabels(skosAlternateLabels);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withIsMultiple(boolean isMultiple)
+  {
+    super.withIsMultiple(isMultiple);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withMinItems(Integer minItems)
+  {
+    super.withMinItems(minItems);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withMaxItems(Integer maxItems)
+  {
+    super.withMaxItems(maxItems);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withPropertyUri(URI propertyUri)
+  {
+    super.withPropertyUri(propertyUri);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+  {
+    super.withJsonSchemaTitle(jsonSchemaTitle);
+    return this;
+  }
+
+  @Override public NumericFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+  {
+    super.withJsonSchemaDescription(jsonSchemaDescription);
+    return this;
+  }
+
 
   @Override public FieldSchemaArtifact build()
   {

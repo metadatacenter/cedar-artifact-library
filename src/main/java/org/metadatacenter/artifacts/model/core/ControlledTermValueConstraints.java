@@ -1,5 +1,9 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -86,9 +90,9 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
       return this;
     }
 
-    public Builder withDefaultValue(ControlledTermDefaultValue defaultValue)
+    public Builder withDefaultValue(URI uri, String label)
     {
-      this.defaultValue = Optional.ofNullable(defaultValue);
+      this.defaultValue = Optional.of(new ControlledTermDefaultValue(new ImmutablePair<>(uri, label)));
       return this;
     }
 

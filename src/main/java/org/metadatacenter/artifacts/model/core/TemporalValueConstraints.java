@@ -36,8 +36,8 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
       return this;
     }
 
-    public Builder withDefaultValue(TemporalDefaultValue defaultValue) {
-      this.defaultValue = Optional.ofNullable(defaultValue);
+    public Builder withDefaultValue(String defaultValue) {
+      this.defaultValue = Optional.of(new TemporalDefaultValue(defaultValue));
       return this;
     }
 

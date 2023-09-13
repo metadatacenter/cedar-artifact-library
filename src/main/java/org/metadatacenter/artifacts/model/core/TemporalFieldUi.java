@@ -13,7 +13,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
   TemporalGranularity temporalGranularity();
 
-  Optional<InputTimeFormat> inputTimeFormat();
+  InputTimeFormat inputTimeFormat();
 
   boolean timeZoneEnabled();
 
@@ -22,7 +22,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
   default boolean valueRecommendationEnabled() { return false; }
 
   static TemporalFieldUi create(TemporalGranularity temporalGranularity,
-    Optional<InputTimeFormat> inputTimeFormat, boolean timeZoneEnabled,  boolean hidden)
+    InputTimeFormat inputTimeFormat, boolean timeZoneEnabled,  boolean hidden)
   {
     return new TemporalFieldUiRecord(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
   }
@@ -34,7 +34,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
   class Builder
   {
     private TemporalGranularity temporalGranularity;
-    private Optional<InputTimeFormat> inputTimeFormat;
+    private InputTimeFormat inputTimeFormat = InputTimeFormat.TWELVE_HOUR;
     boolean timeZoneEnabled = false;
     private boolean hidden = false;
 
@@ -50,7 +50,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
     public Builder withInputTimeFormat(InputTimeFormat inputTimeFormat)
     {
-      this.inputTimeFormat = Optional.of(inputTimeFormat);
+      this.inputTimeFormat = inputTimeFormat;
       return this;
     }
 
@@ -73,12 +73,11 @@ public non-sealed interface TemporalFieldUi extends FieldUi
   }
 }
 
-record TemporalFieldUiRecord(TemporalGranularity temporalGranularity, Optional<InputTimeFormat> inputTimeFormat,
+record TemporalFieldUiRecord(TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat,
                              boolean timeZoneEnabled, boolean hidden) implements TemporalFieldUi
 {
   public TemporalFieldUiRecord
   {
-    validateOptionalFieldNotNull(this, inputTimeFormat, ModelNodeNames.UI_INPUT_TIME_FORMAT);
     if (temporalGranularity == null)
 
       throw new IllegalStateException("Field " + UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);

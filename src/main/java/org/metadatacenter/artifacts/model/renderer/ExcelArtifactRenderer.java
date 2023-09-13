@@ -26,7 +26,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
-import org.metadatacenter.artifacts.model.core.NumberType;
+import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
@@ -38,7 +38,6 @@ import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.model.ModelNodeNames;
@@ -573,15 +572,15 @@ public class ExcelArtifactRenderer
     } else if (fieldInputType == FieldInputType.NUMERIC) {
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) { // TODO Use typesafe switch
         NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get();
-        NumberType numberType = numericValueConstraints.numberType();
+        NumericType numericType = numericValueConstraints.numberType();
 
-        if (numberType == NumberType.DECIMAL || numberType == NumberType.DOUBLE || numberType == NumberType.FLOAT) {
+        if (numericType == NumericType.DECIMAL || numericType == NumericType.DOUBLE || numericType == NumericType.FLOAT) {
           return DataValidationConstraint.ValidationType.DECIMAL;
-        } else if (numberType == NumberType.LONG || numberType == NumberType.INTEGER || numberType == NumberType.INT
-          || numberType == NumberType.SHORT || numberType == NumberType.BYTE) {
+        } else if (numericType == NumericType.LONG || numericType == NumericType.INTEGER || numericType == NumericType.INT
+          || numericType == NumericType.SHORT || numericType == NumericType.BYTE) {
           return DataValidationConstraint.ValidationType.INTEGER;
         } else
-          throw new RuntimeException("Invalid number type " + numberType + " for numeric field " + fieldName);
+          throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldName);
       } else
         throw new RuntimeException("Missing number type for numeric field " + fieldName);
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
@@ -601,27 +600,27 @@ public class ExcelArtifactRenderer
       throw new RuntimeException("Invalid field input type " + fieldInputType + " for field " + fieldName);
   }
 
-  private String getNumericFormatString(String fieldName, NumberType numberType,
+  private String getNumericFormatString(String fieldName, NumericType numericType,
     Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure)
   {
     String numericFormatString = "";
 
-      if (numberType == NumberType.DECIMAL) {
+      if (numericType == NumericType.DECIMAL) {
         if (decimalPlaces.isPresent())
           numericFormatString += ""; // TODO
-      } else if (numberType == NumberType.DOUBLE) {
+      } else if (numericType == NumericType.DOUBLE) {
         if (decimalPlaces.isPresent())
           numericFormatString += ""; // TODO
-      } else if (numberType == NumberType.FLOAT) {
+      } else if (numericType == NumericType.FLOAT) {
         if (decimalPlaces.isPresent())
           numericFormatString += ""; // TODO
-      } else if (numberType == NumberType.LONG) {
-      } else if (numberType == NumberType.INTEGER) {
-      } else if (numberType == NumberType.INT) {
-      } else if (numberType == NumberType.SHORT) {
-      } else if (numberType == NumberType.BYTE) {
+      } else if (numericType == NumericType.LONG) {
+      } else if (numericType == NumericType.INTEGER) {
+      } else if (numericType == NumericType.INT) {
+      } else if (numericType == NumericType.SHORT) {
+      } else if (numericType == NumericType.BYTE) {
       } else
-        throw new RuntimeException("Invalid number type " + numberType + " for numeric field " + fieldName);
+        throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldName);
 
     if (unitOfMeasure.isPresent()) {
       // TODO
@@ -631,7 +630,7 @@ public class ExcelArtifactRenderer
   }
 
   private String getTemporalFormatString(String fieldName, TemporalType temporalType,
-    TemporalGranularity temporalGranularity, Optional<InputTimeFormat> inputTimeFormat, boolean timeZoneEnabled)
+    TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat, boolean timeZoneEnabled)
   {
     String temporalFormatString = "";
 
@@ -678,7 +677,7 @@ public class ExcelArtifactRenderer
     } else
       throw new RuntimeException("Unknown temporal type " + temporalType + " specified for temporal field " + fieldName);
 
-    if (inputTimeFormat.isPresent() && inputTimeFormat.get().isTwelveHour())
+    if (inputTimeFormat.isTwelveHour())
       temporalFormatString += " AM/PM";
 
     return temporalFormatString;
@@ -699,7 +698,7 @@ public class ExcelArtifactRenderer
           numericValueConstraints.decimalPlaces(), numericValueConstraints.unitOfMeasure());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {
-        String formatString = getNumericFormatString(fieldName, NumberType.DOUBLE, Optional.empty(), Optional.empty());
+        String formatString = getNumericFormatString(fieldName, NumericType.DOUBLE, Optional.empty(), Optional.empty());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     } else if (fieldUi.isTemporal()) {

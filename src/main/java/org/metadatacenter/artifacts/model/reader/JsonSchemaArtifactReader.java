@@ -16,7 +16,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
-import org.metadatacenter.artifacts.model.core.NumberType;
+import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
@@ -642,7 +642,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
       boolean requiredValue = readBooleanField(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean multipleChoice = readBooleanField(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
-      Optional<NumberType> numberType = readNumberTypeField(vcNode, vcPath);
+      Optional<NumericType> numberType = readNumberTypeField(vcNode, vcPath);
       Optional<TemporalType> temporalType = readTemporalTypeField(vcNode, vcPath);
       Optional<String> unitOfMeasure = readStringField(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
       Optional<Number> minValue = readNumberField(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
@@ -719,12 +719,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.empty();
   }
 
-  private Optional<NumberType> readNumberTypeField(ObjectNode objectNode, String path)
+  private Optional<NumericType> readNumberTypeField(ObjectNode objectNode, String path)
   {
     Optional<String> numberTypeValue = readOptionalStringField(objectNode, path, VALUE_CONSTRAINTS_NUMBER_TYPE);
 
     if (numberTypeValue.isPresent())
-      return Optional.of(NumberType.fromString(numberTypeValue.get()));
+      return Optional.of(NumericType.fromString(numberTypeValue.get()));
     else
       return Optional.empty();
   }
@@ -942,7 +942,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath);
-      Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(uiNode, uiPath);
+      InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, InputTimeFormat.TWELVE_HOUR);
       boolean timeZoneEnabled = readBooleanField(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
@@ -1086,17 +1086,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return TemporalGranularity.fromString(granularity);
   }
 
-  private Optional<InputTimeFormat> readInputTimeFormat(ObjectNode objectNode, String path)
+  private InputTimeFormat readInputTimeFormat(ObjectNode objectNode, String path, InputTimeFormat defaultInputTimeFormat)
   {
     Optional<String> timeFormat = readStringField(objectNode, path, UI_INPUT_TIME_FORMAT);
 
     if (!timeFormat.isPresent())
-      return Optional.empty();
+      return defaultInputTimeFormat;
 
     if (!ModelNodeValues.TIME_FORMATS.contains(timeFormat.get()))
       throw new ArtifactParseException("Invalid time format " + timeFormat.get(), UI_INPUT_TIME_FORMAT, path);
 
-    return Optional.of(InputTimeFormat.fromString(timeFormat.get()));
+    return InputTimeFormat.fromString(timeFormat.get());
   }
 
   private String readDefaultValue(ObjectNode objectNode, String path)
