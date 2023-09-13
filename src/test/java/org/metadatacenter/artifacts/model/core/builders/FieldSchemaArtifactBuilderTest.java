@@ -201,28 +201,35 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.LINK, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO test default value
+    Assert.assertEquals(defaultURI, fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().defaultValue().get().value().getLeft());
+    Assert.assertEquals(defaultLabel, fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().defaultValue().get().value().getRight());
   }
 
   @Test public void testCreateNumericField()
   {
     String name = "Field name";
     String description = "Field description";
-    double defaultValue = 22.3;
+    NumericType numericType = NumericType.DOUBLE;
+    Double defaultValue = 22.3;
+    double minValue = 0.0;
+    double maxValue = 0.0;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
       withName(name).
       withDescription(description).
-      withNumericType(NumericType.DOUBLE).
+      withNumericType(numericType).
       withDefaultValue(defaultValue).
+      withMinValue(minValue).
+      withMaxValue(maxValue).
       build();
 
     Assert.assertEquals(FieldInputType.NUMERIC, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO test numeric type
-    // TODO test default value
-
+    Assert.assertEquals(numericType, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().numberType());
+    Assert.assertEquals(defaultValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().defaultValue().get().value());
+    Assert.assertEquals(minValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().minValue().get());
+    Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
   }
 }
 //  ControlledTermFieldBuilder, NumericFieldBuilder,
