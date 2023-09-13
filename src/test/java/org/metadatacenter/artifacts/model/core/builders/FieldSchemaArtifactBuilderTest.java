@@ -20,12 +20,14 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     Integer minLength = 0;
     Integer maxLength = 10;
+    boolean valueRecommendationEnabled = false;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
+      withValueRecommendationEnabled(valueRecommendationEnabled).
       build();
 
     Assert.assertEquals(FieldInputType.TEXTFIELD, fieldSchemaArtifact.fieldUi().inputType());
@@ -33,6 +35,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    // TODO test value recommendation
   }
 
   @Test public void testCreateTextAreaField()
@@ -146,14 +149,12 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     Integer minLength = 0;
     Integer maxLength = 10;
-    boolean valueRecommendationEnabled = false;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
-      withValueRecommendationEnabled(valueRecommendationEnabled).
       build();
 
     Assert.assertEquals(FieldInputType.PHONE_NUMBER, fieldSchemaArtifact.fieldUi().inputType());
@@ -161,7 +162,6 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
-    // TODO test value recommendation
   }
 
   @Test public void testCreateEmailField()
