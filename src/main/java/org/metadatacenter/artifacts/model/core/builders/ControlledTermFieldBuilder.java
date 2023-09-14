@@ -10,13 +10,17 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.ValueType;
 import org.metadatacenter.artifacts.model.core.Version;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -28,33 +32,50 @@ public final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
     fieldUiBuilder.withInputType(FieldInputType.TEXTFIELD);
   }
 
-  public ControlledTermFieldBuilder withOntologyValueConstraint(OntologyValueConstraint constraint)
-  {
-    valueConstraintsBuilder.withOntologyValueConstraint(constraint);
+  public ControlledTermFieldBuilder withOntologyValueConstraint(URI uri, String acronym, String name) {
+    valueConstraintsBuilder.withOntologyValueConstraint(new OntologyValueConstraint(uri, acronym, name, Optional.empty()));
     return this;
   }
 
-  public ControlledTermFieldBuilder withValueSetValueConstraint(ValueSetValueConstraint constraint)
-  {
-    valueConstraintsBuilder.withValueSetValueConstraint(constraint);
+  public ControlledTermFieldBuilder withOntologyValueConstraint(URI uri, String acronym, String name, Optional<Integer> numTerms) {
+    valueConstraintsBuilder.withOntologyValueConstraint(new OntologyValueConstraint(uri, acronym, name, numTerms));
     return this;
   }
 
-  public ControlledTermFieldBuilder withClassValueConstraint(ClassValueConstraint constraint)
+  public ControlledTermFieldBuilder withValueSetValueConstraint(URI uri, String vsCollection, String name)
   {
-    valueConstraintsBuilder.withClassValueConstraint(constraint);
+    valueConstraintsBuilder.withValueSetValueConstraint(new ValueSetValueConstraint(uri, vsCollection, name, Optional.empty()));
     return this;
   }
 
-  public ControlledTermFieldBuilder withBranchValueConstraint(BranchValueConstraint constraint)
+  public ControlledTermFieldBuilder withValueSetValueConstraint(URI uri, String vsCollection, String name, Integer numberOfTerms)
   {
-    valueConstraintsBuilder.withBranchValueConstraint(constraint);
+    valueConstraintsBuilder.withValueSetValueConstraint(new ValueSetValueConstraint(uri, vsCollection, name, Optional.of(numberOfTerms)));
     return this;
   }
 
-  public ControlledTermFieldBuilder withValueConstraintsAction(ControlledTermValueConstraintsAction action)
+  public ControlledTermFieldBuilder withClassValueConstraint(URI uri, String source, String label, String prefLabel, ValueType type)
   {
-    valueConstraintsBuilder.withValueConstraintsAction(action);
+    valueConstraintsBuilder.withClassValueConstraint(new ClassValueConstraint(uri, source, label, prefLabel, type));
+    return this;
+  }
+
+  public ControlledTermFieldBuilder withBranchValueConstraint(URI uri, String source, String acronym, String name, int maxDepth)
+  {
+    valueConstraintsBuilder.withBranchValueConstraint(new BranchValueConstraint(uri, source, acronym, name, maxDepth));
+    return this;
+  }
+
+  public ControlledTermFieldBuilder withValueConstraintsAction(URI termUri, String source, ValueType type,
+    ValueConstraintsActionType action, URI sourceUri, Integer to)
+  {
+    valueConstraintsBuilder.withValueConstraintsAction(new ControlledTermValueConstraintsAction(termUri, source, type, action, Optional.of(sourceUri), Optional.of(to)));
+    return this;
+  }
+
+  public ControlledTermFieldBuilder withValueConstraintsAction(URI termUri, String source, ValueType type, ValueConstraintsActionType action)
+  {
+    valueConstraintsBuilder.withValueConstraintsAction(new ControlledTermValueConstraintsAction(termUri, source, type, action, Optional.empty(), Optional.empty()));
     return this;
   }
 

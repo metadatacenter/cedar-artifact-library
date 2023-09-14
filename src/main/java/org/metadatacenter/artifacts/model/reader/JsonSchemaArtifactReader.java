@@ -859,13 +859,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode objectNode, String path)
   {
     URI termUri = readRequiredURIField(objectNode, path, VALUE_CONSTRAINTS_TERM_URI);
-    Optional<URI> sourceUri = readURIField(objectNode, path, VALUE_CONSTRAINTS_SOURCE_URI);
     String source = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_SOURCE);
-    Optional<Integer> to = readIntegerField(objectNode, path, VALUE_CONSTRAINTS_ACTION_TO);
     ValueConstraintsActionType actionType = readValueConstraintsActionType(objectNode, path);
     ValueType valueType = readValueType(objectNode, path);
+    Optional<URI> sourceUri = readURIField(objectNode, path, VALUE_CONSTRAINTS_SOURCE_URI);
+    Optional<Integer> to = readIntegerField(objectNode, path, VALUE_CONSTRAINTS_ACTION_TO);
 
-    return new ControlledTermValueConstraintsAction(termUri, sourceUri, source, valueType, actionType, to);
+    return new ControlledTermValueConstraintsAction(termUri, source, valueType, actionType, sourceUri, to);
   }
 
   private ValueConstraintsActionType readValueConstraintsActionType(ObjectNode objectNode, String path)
@@ -896,31 +896,32 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   {
     URI uri = readRequiredURIField(objectNode, path, VALUE_CONSTRAINTS_URI);
     String prefLabel = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_PREFLABEL);
-    String type = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_TYPE);
+    ValueType valueType = readValueType(objectNode, path);
     String label = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_LABEL);
     String source = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_SOURCE);
 
-    return new ClassValueConstraint(uri, prefLabel, type, label, source);
+    return new ClassValueConstraint(uri, source, label, prefLabel, valueType);
   }
 
   private ValueSetValueConstraint readValueSetValueConstraint(ObjectNode objectNode, String path)
   {
+    URI uri = readRequiredURIField(objectNode, path, VALUE_CONSTRAINTS_URI);
     String name = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_NAME);
     String vsCollection = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_VS_COLLECTION);
-    URI uri = readRequiredURIField(objectNode, path, VALUE_CONSTRAINTS_URI);
-    int numTerms = readRequiredIntField(objectNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
+    Optional<Integer> numTerms = readIntegerField(objectNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
 
-    return new ValueSetValueConstraint(name, vsCollection, uri, numTerms);
+    return new ValueSetValueConstraint(uri, vsCollection, name, numTerms);
   }
+
   private BranchValueConstraint readBranchValueConstraint(ObjectNode objectNode, String path)
   {
+    URI uri = readRequiredURIField(objectNode, path, VALUE_CONSTRAINTS_URI);
     String source = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_SOURCE);
     String acronym = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_ACRONYM);
-    URI uri = readRequiredURIField(objectNode, path, VALUE_CONSTRAINTS_URI);
     String name = readRequiredStringField(objectNode, path, VALUE_CONSTRAINTS_NAME);
     int maxDepth = readRequiredIntField(objectNode, path, VALUE_CONSTRAINTS_MAX_DEPTH);
 
-    return new BranchValueConstraint(source, acronym, uri, name, maxDepth);
+    return new BranchValueConstraint(uri, source, acronym, name, maxDepth);
   }
 
   private LiteralValueConstraint readLiteralValueConstraint(ObjectNode objectNode, String path)

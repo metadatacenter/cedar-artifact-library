@@ -8,6 +8,9 @@ import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.ValueType;
 
 import java.net.URI;
 
@@ -90,6 +93,49 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(inputTimeFormat, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().inputTimeFormat());
     Assert.assertEquals(timeZoneEnabled, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().timeZoneEnabled());
     Assert.assertEquals(temporalType, fieldSchemaArtifact.valueConstraints().get().asTemporalValueConstraints().temporalType());
+  }
+
+  @Test public void testCreateControlledTermField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI ontologyUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String ontologyAcronym = "DOID";
+    String ontologyName = "Human Disease Ontology";
+    URI branchUri = URI.create("http://purl.bioontology.org/ontology/SNOMEDCT/64572001");
+    String branchAcronym = "SNOMEDCT";
+    String branchName = "Disease";
+    String branchSource = "SNOMEDCT";
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel= "Human";
+    String classPrefLabel = "Human";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+    URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
+    String valueSetCollection = "CADSR-VS";
+    String valueSetName = "Stable Disease";
+    URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/NCBITaxon_51291");
+    URI actionSourceUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String actionSource = "DOID";
+    ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
+    Integer actionTo = 0;
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
+      withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, 3).
+      withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
+      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName).
+      withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE,
+      actionSourceUri, actionTo).
+      build();
+
+    Assert.assertEquals(FieldInputType.TEXTFIELD, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
+
+    // TODO Check controlled term values
   }
 
   @Test public void testCreateRadioField()
@@ -233,5 +279,4 @@ public class FieldSchemaArtifactBuilderTest
   }
 
 }
-//  ControlledTermFieldBuilder, NumericFieldBuilder,
 //  SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder

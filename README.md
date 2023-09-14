@@ -179,7 +179,7 @@ A class called `FieldSchemaArtifact` represents all of these field types.
 
 Since each field has specific characteristics, a custom builder is provided to contruct each field type.
 
-### Programatically Creating Text Fields
+### Creating Text Fields
 
 A class called `TextFieldBuilder` can be used to create a CEDAR text field.
 
@@ -194,7 +194,7 @@ FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
       build();
 ```
 
-### Programatically Creating Numeric Fields
+### Creating Numeric Fields
 
 A class called `NumericFieldBuilder` can be used to create a CEDAR numeric fields.
 
@@ -213,7 +213,7 @@ An example numeric field representing the percentage of a treatment completed an
       build();
 ```
 
-### Programatically Creating Temporal Fields
+### Creating Temporal Fields
 
 A class called `TemporalFieldBuilder` can be used to create a CEDAR temporal fields.
 
@@ -231,7 +231,50 @@ An example temporal field representing the time of a patient visit recorded with
       build();
 ```
 
-### Programatically Creating Radio Fields
+### Creating Controlled Term Fields
+
+A class called `ControlledTermFieldBuilder` can be used to create a CEDAR controlled term fields.
+
+Controlled term fields can have four possible value types: classes, ontoogy branches, ontologies, and value sets.
+
+
+```java
+    String name = "Disease";
+    String description = "Please enter a disease";
+    URI ontologyUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String ontologyAcronym = "DOID";
+    String ontologyName = "Human Disease Ontology";
+    URI branchUri = URI.create("http://purl.bioontology.org/ontology/SNOMEDCT/64572001");
+    String branchAcronym = "SNOMEDCT";
+    String branchName = "Disease";
+    String branchSource = "SNOMEDCT";
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel= "Human";
+    String classPrefLabel = "Human";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+    URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
+    String valueSetCollection = "CADSR-VS";
+    String valueSetName = "Stable Disease";
+    URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/NCBITaxon_51291");
+    URI actionSourceUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String actionSource = "DOID";
+    ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
+    Integer actionTo = 0;
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
+      withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, 3).
+      withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
+      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName).
+      withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE,
+      actionSourceUri, actionTo).
+      build();
+```
+
+### Creating Radio Fields
 
 A class called `RadioFieldBuilder` can be used to create a CEDAR radio field.
 
@@ -249,7 +292,7 @@ For example, we can create a radio field representing a question with options Ye
       build();
 ```
 
-### Programatically Creating List Fields
+### Creating List Fields
 
 A class called `ListFieldBuilder` can be used to create a CEDAR list field.
 
@@ -267,7 +310,7 @@ Using this class, we can create a list field representing a question with option
       build();
 ```
 
-### Programatically Creating Checkbox Fields
+### Creating Checkbox Fields
 
 A class called `CheckboxFieldBuilder` can be used to create a CEDAR checkbox field.
 
@@ -278,14 +321,14 @@ For example, we can create a checkbox field representing a question with options
 ```java
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder().
       withName("DTAP Status").
-      withDescription("Are you up-to-date on you DTAP vaccination?").
+      withDescription("Are you up-to-date on your DTAP vaccination?").
       withOption("Yes").
       withOption("No").
       withOption("Don't Know", true).
       build();
 ```
 
-### Programatically Creating Link Fields
+### Creating Link Fields
 
 A class called `LinkFieldBuilder` can be used to create a CEDAR link field.
 
@@ -301,7 +344,7 @@ Using this class, we can create a link field as follows:
 
 A default value can be specified using the `withDefaultValue` builder method.
 
-### Programatically Creating Phone Number Fields
+### Creating Phone Number Fields
 
 A class called `PhoneNumberFieldBuilder` can be used to create a CEDAR phone number field.
 
@@ -310,11 +353,11 @@ Using this class, we can create a phone number field as follows:
 ```java
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder().
       withName("Phone Number").
-      withDescription("Please enter your phone nummer").
+      withDescription("Please enter your phone number").
       build();
 ```
 
-### Programatically Creating Email Fields
+### Creating Email Fields
 
 A class called `EmailFieldBuilder` can be used to create a CEDAR email field.
 
@@ -327,7 +370,7 @@ Using this class, we can create an email field as follows:
       build();
 ```
 
-### Programatically Creating Text Area Fields
+### Creating Text Area Fields
 
 A class called `TextAreaFieldBuilder` can be used to create a CEDAR text area fields.
 
