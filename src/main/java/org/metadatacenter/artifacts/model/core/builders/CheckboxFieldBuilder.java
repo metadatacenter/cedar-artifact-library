@@ -41,6 +41,12 @@ public final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
+  public CheckboxFieldBuilder withOption(String choice)
+  {
+    valueConstraintsBuilder.withChoice(choice, false);
+    return this;
+  }
+
   public CheckboxFieldBuilder withHidden(boolean hidden)
   {
     fieldUiBuilder.withHidden(hidden);

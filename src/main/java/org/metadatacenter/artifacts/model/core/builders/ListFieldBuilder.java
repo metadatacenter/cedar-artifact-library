@@ -41,6 +41,12 @@ public final class ListFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
+  public ListFieldBuilder withOption(String choice)
+  {
+    valueConstraintsBuilder.withChoice(choice, false);
+    return this;
+  }
+
   public ListFieldBuilder withHidden(boolean hidden)
   {
     fieldUiBuilder.withHidden(hidden);

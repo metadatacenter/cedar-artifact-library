@@ -41,6 +41,12 @@ public final class RadioFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
+  public RadioFieldBuilder withOption(String choice)
+  {
+    valueConstraintsBuilder.withChoice(choice, false);
+    return this;
+  }
+
   public RadioFieldBuilder withHidden(boolean hidden)
   {
     fieldUiBuilder.withHidden(hidden);

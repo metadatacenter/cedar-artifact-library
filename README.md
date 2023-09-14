@@ -194,6 +194,104 @@ FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
       build();
 ```
 
+### Programatically Creating Temporal Fields
+
+A class called `TemporalFieldBuilder` can be used to create a CEDAR temporal fields.
+
+In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can be opitionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
+
+An example temporal field representing the time of a patient visit recorded with the accuracy of minutes and presented in 24-hour format with time zone information displayed could be created as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
+      withName("Patient Visit Time").
+      withTemporalType(TemporalType.DATETIME).
+      withTemporalGranularity(TemporalGranularity.MINUTES).
+      withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOURS).
+      withTimeZoneEnabled(true).
+      build();
+```
+
+### Programatically Creating Radio Fields
+
+A class called `RadioFieldBuilder` can be used to create a CEDAR radio field.
+
+When creating a radio field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
+
+For example, we can create a radio field representing a question with options Yes/No/Maybe, with Maybe as the default as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder().
+      withName("Covid-19 Status").
+      withDescription("Have you had Covid-19?").
+      withOption("Yes").
+      withOption("No").
+      withOption("Maybe", true).
+      build();
+```
+
+### Programatically Creating List Fields
+
+A class called `ListFieldBuilder` can be used to create a CEDAR list field.
+
+When creating a list field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
+
+Using this class, we can create a list field representing a question with options Moderna/Pfizer/None, with None as the default as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().
+      withName("Covid-19 Vaccine").
+      withDescription("Which vaccine provider did you use?").
+      withOption("Moderna").
+      withOption("Pfizer").
+      withOption("None", true).
+      build();
+```
+
+### Programatically Creating Checkbox Fields
+
+A class called `CheckboxFieldBuilder` can be used to create a CEDAR checkbox field.
+
+When creating a checkbox field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
+
+For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know as the default as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder().
+      withName("DTAP Status").
+      withDescription("Are you up-to-date on you DTAP vaccination?").
+      withOption("Yes").
+      withOption("No").
+      withOption("Don't Know", true).
+      build();
+```
+
+### Programatically Creating Phone Number Fields
+
+A class called `PhoneNumberFieldBuilder` can be used to create a CEDAR phone number field.
+
+Using this class, we can create a phone number field as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder().
+      withName("Phone Number").
+      withDescription("Please enter your phone nummer").
+      build();
+```
+
+### Programatically Creating Email Fields
+
+A class called `EmailFieldBuilder` can be used to create a CEDAR email field.
+
+Using this class, we can create an email field as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.emailFieldBuilder().
+      withName("Email Address").
+      withDescription("Please enter your email address").
+      build();
+```
+
 ### Programatically Creating Text Area Fields
 
 A class called `TextAreaFieldBuilder` can be used to create a CEDAR text area fields.
@@ -208,25 +306,6 @@ FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuild
       withMaxLength(1000).
       build();
 ```
-
-### Programatically Creating Temporal Fields
-
-A class called `TemporalFieldBuilder` can be used to create a CEDAR temporal fields.
-
-In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can be opitionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
-
-An example temporal field representing the time of a patient visit recorded with the accuracy of minutes and presented in 24-hour format with time zone information displayed could be created as follows:
-
-```java
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
-      withName(name).
-      withTemporalType(TemporalType.DATETIME).
-      withTemporalGranularity(TemporalGranularity.MINUTES).
-      withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOURS).
-      withTimeZoneEnabled(true).
-      build();
-```
-
 
 
 ## Building the Library

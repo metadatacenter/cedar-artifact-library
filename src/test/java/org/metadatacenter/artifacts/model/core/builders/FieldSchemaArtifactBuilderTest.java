@@ -94,8 +94,8 @@ public class FieldSchemaArtifactBuilderTest
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder().
       withName(name).
       withDescription(description).
-      withOption("Choice 1", false).
-      withOption("Choice 2", false).
+      withOption("Choice 1").
+      withOption("Choice 2").
       withOption("Choice 3", true).
       build();
 
@@ -113,8 +113,8 @@ public class FieldSchemaArtifactBuilderTest
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().
       withName(name).
       withDescription(description).
-      withOption("Choice 1", false).
-      withOption("Choice 2", false).
+      withOption("Choice 1").
+      withOption("Choice 2").
       withOption("Choice 3", true).
       build();
 
