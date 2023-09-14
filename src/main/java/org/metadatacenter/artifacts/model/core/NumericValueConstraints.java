@@ -78,7 +78,7 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
       return this;
     }
 
-    public Builder withDefaultValue(double defaultValue) {
+    public Builder withDefaultValue(Number defaultValue) {
       this.defaultValue = Optional.of(new NumericDefaultValue(defaultValue));
       return this;
     }

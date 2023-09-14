@@ -52,7 +52,7 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public NumericFieldBuilder withDefaultValue(double defaultValue)
+  public NumericFieldBuilder withDefaultValue(Number defaultValue)
   {
     valueConstraintsBuilder.withDefaultValue(defaultValue);
     return this;

@@ -266,6 +266,22 @@ For example, we can create a checkbox field representing a question with options
       build();
 ```
 
+### Programatically Creating Link Fields
+
+A class called `LinkFieldBuilder` can be used to create a CEDAR link field.
+
+Using this class, we can create a link field as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
+      withName("Institution Home Page").
+      withDescription("Please enter your institution's home page").
+      withDefaultValue(URI.create("https://stanford.edu", "Stanford")
+      build();
+```
+
+A default value can be specified using the `withDefaultValue` builder method.
+
 ### Programatically Creating Phone Number Fields
 
 A class called `PhoneNumberFieldBuilder` can be used to create a CEDAR phone number field.

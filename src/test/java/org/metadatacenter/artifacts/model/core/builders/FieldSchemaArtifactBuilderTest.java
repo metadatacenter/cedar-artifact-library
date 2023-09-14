@@ -38,25 +38,31 @@ public class FieldSchemaArtifactBuilderTest
     // TODO test value recommendation
   }
 
-  @Test public void testCreateTextAreaField()
+  @Test public void testCreateNumericField()
   {
     String name = "Field name";
     String description = "Field description";
-    Integer minLength = 0;
-    Integer maxLength = 10;
+    NumericType numericType = NumericType.DOUBLE;
+    Double defaultValue = 22.3;
+    double minValue = 0.0;
+    double maxValue = 100.0;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
       withName(name).
       withDescription(description).
-      withMinLength(minLength).
-      withMaxLength(maxLength).
+      withNumericType(numericType).
+      withDefaultValue(defaultValue).
+      withMinValue(minValue).
+      withMaxValue(maxValue).
       build();
 
-    Assert.assertEquals(FieldInputType.TEXTAREA, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(FieldInputType.NUMERIC, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
-    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    Assert.assertEquals(numericType, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().numberType());
+    Assert.assertEquals(defaultValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().defaultValue().get().value());
+    Assert.assertEquals(minValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().minValue().get());
+    Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
   }
 
   @Test public void testCreateTemporalField()
@@ -205,32 +211,27 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(defaultLabel, fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().defaultValue().get().value().getRight());
   }
 
-  @Test public void testCreateNumericField()
+  @Test public void testCreateTextAreaField()
   {
     String name = "Field name";
     String description = "Field description";
-    NumericType numericType = NumericType.DOUBLE;
-    Double defaultValue = 22.3;
-    double minValue = 0.0;
-    double maxValue = 0.0;
+    Integer minLength = 0;
+    Integer maxLength = 10;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().
       withName(name).
       withDescription(description).
-      withNumericType(numericType).
-      withDefaultValue(defaultValue).
-      withMinValue(minValue).
-      withMaxValue(maxValue).
+      withMinLength(minLength).
+      withMaxLength(maxLength).
       build();
 
-    Assert.assertEquals(FieldInputType.NUMERIC, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(FieldInputType.TEXTAREA, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(numericType, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().numberType());
-    Assert.assertEquals(defaultValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().defaultValue().get().value());
-    Assert.assertEquals(minValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().minValue().get());
-    Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
+    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
+    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
   }
+
 }
 //  ControlledTermFieldBuilder, NumericFieldBuilder,
 //  SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder

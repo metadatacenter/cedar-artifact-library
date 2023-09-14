@@ -1,6 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
-public record NumericDefaultValue(Double value) implements DefaultValue<Double>
+public record NumericDefaultValue(Number value) implements DefaultValue<Number>
 {
   @Override public DefaultValueType getValueType()
   {
