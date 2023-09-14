@@ -43,9 +43,9 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
     NumericType numericType = NumericType.DOUBLE;
-    Double defaultValue = 22.3;
-    double minValue = 0.0;
-    double maxValue = 100.0;
+    Number defaultValue = 22.3;
+    Number minValue = 0.0;
+    Number maxValue = 100.0;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
       withName(name).

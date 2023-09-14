@@ -183,7 +183,7 @@ Since each field has specific characteristics, a custom builder is provided to c
 
 A class called `TextFieldBuilder` can be used to create a CEDAR text field.
 
-For example, to create a text field representing a study name with a minimum length of 2 and a maximum length of 10 we can write the following:
+Using this tuype, we can create a text field representing a study name with a minimum length of 2 and a maximum length of 10 we can write the following:
 
 ```java
 FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
@@ -191,6 +191,25 @@ FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
       withDescription("Field representing the ID of a study).
       withMinLength(2).
       withMaxLength(10).
+      build();
+```
+
+### Programatically Creating Numeric Fields
+
+A class called `NumericFieldBuilder` can be used to create a CEDAR numeric fields.
+
+In CEDAR, numeric fields can be one of XML Schema Datatypes decimal, integer, long, byte, short, int, float and double. An enumeration called `NumericType` can be used to specify this type on field creation. Numeric fields also allow the optional specification of minimum and maximum values, and of a default value.
+
+An example numeric field representing the percentage of a treatment completed and with a default of 0% could be created as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
+      withName("Treatment Completed (%)).
+      withDescription("Please enter the percentage of the treatment that has been completed").
+      withNumericType(NumericType.INTEGER).
+      withMinValue(0).
+      withMaxValue(100).
+      withDefaultValue(0).
       build();
 ```
 
