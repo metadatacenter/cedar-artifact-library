@@ -173,7 +173,7 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 
 ## Programatically Creating Fields
 
-Currently, CEDAR provides the following types of fields: text, temporal numeric, text area, phone number, email, radio, list, link, image, YouTube, section break, rich text, and attribute-value.
+Currently, CEDAR provides the following types of fields: text, temporal, numeric, text area, phone number, email, radio, list, link, image, YouTube, section break, rich text, and attribute-value.
 
 A class called `FieldSchemaArtifact` represents all of these field types.
 
@@ -181,6 +181,51 @@ Since each field has specific characteristics, a custom builder is provided to c
 
 ### Programatically Creating Text Fields
 
+A class called `TextFieldBuilder` can be used to create a CEDAR text field.
+
+For example, to create a text field representing a study name with a minimum length of 2 and a maximum length of 10 we can write the following:
+
+```java
+FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+      withName("Study ID").
+      withDescription("Field representing the ID of a study).
+      withMinLength(2).
+      withMaxLength(10).
+      build();
+```
+
+### Programatically Creating Text Area Fields
+
+A class called `TextAreaFieldBuilder` can be used to create a CEDAR text area fields.
+
+For example, to create a text area field representing a study description with a minimum lengtth of 20 and a maximum length of 10000 we can do the following:
+
+```java
+FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().
+      withName("Study Description").
+      withDescription("Field representing the description of a study).
+      withMinLength(20).
+      withMaxLength(1000).
+      build();
+```
+
+### Programatically Creating Temporal Fields
+
+A class called `TemporalFieldBuilder` can be used to create a CEDAR temporal fields.
+
+In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can be opitionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
+
+An example temporal field representing the time of a patient visit recorded with the accuracy of minutes and presented in 24-hour format with time zone information displayed could be created as follows:
+
+```java
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
+      withName(name).
+      withTemporalType(TemporalType.DATETIME).
+      withTemporalGranularity(TemporalGranularity.MINUTES).
+      withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOURS).
+      withTimeZoneEnabled(true).
+      build();
+```
 
 
 
