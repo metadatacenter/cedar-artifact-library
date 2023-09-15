@@ -235,42 +235,41 @@ An example temporal field representing the time of a patient visit recorded with
 
 A class called `ControlledTermFieldBuilder` can be used to create a CEDAR controlled term fields.
 
-Controlled term fields can have four possible value types: classes, ontoogy branches, ontologies, and value sets.
+Controlled term fields can have four possible value types: classes, ontology branches, ontologies, and value sets.
 
+The builder class has methods `withClassValueConstraint`, `withOntologyValueConstraint`, `withBranchValueConstraint`,  and `withValueSetValueConstraint` to allow specification of these types.
+
+Here, for example, is a the builder being used to create a field with all four types:
 
 ```java
     String name = "Disease";
     String description = "Please enter a disease";
+
     URI ontologyUri = URI.create("https://data.bioontology.org/ontologies/DOID");
     String ontologyAcronym = "DOID";
     String ontologyName = "Human Disease Ontology";
     URI branchUri = URI.create("http://purl.bioontology.org/ontology/SNOMEDCT/64572001");
+
     String branchAcronym = "SNOMEDCT";
     String branchName = "Disease";
     String branchSource = "SNOMEDCT";
+
     URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
     String classSource = "LOINC";
     String classLabel= "Human";
     String classPrefLabel = "Human";
     ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+
     URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
     String valueSetCollection = "CADSR-VS";
     String valueSetName = "Stable Disease";
-    URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/NCBITaxon_51291");
-    URI actionSourceUri = URI.create("https://data.bioontology.org/ontologies/DOID");
-    String actionSource = "DOID";
-    ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
-    Integer actionTo = 0;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
-      withName(name).
-      withDescription(description).
+      withName("Disease").
       withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
       withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, 3).
       withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
       withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName).
-      withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE,
-      actionSourceUri, actionTo).
       build();
 ```
 

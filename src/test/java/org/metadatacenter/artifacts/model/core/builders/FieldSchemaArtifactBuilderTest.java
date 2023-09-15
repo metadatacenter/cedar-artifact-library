@@ -278,5 +278,77 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
   }
 
+  @Test public void testCreateSectionBreakField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    String content = "Content";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withContent(content).
+      build();
+
+    Assert.assertEquals(FieldInputType.SECTION_BREAK, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    // TODO Test content
+  }
+
+  @Test public void testCreateImageField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    String content = "Content";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withContent(content).
+      build();
+
+    Assert.assertEquals(FieldInputType.IMAGE, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    // TODO Test content
+  }
+
+  @Test public void testCreateYouTubeField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    String content = "Content";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withContent(content).
+      build();
+
+    Assert.assertEquals(FieldInputType.YOUTUBE, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    // TODO Test content
+  }
+
+  @Test public void testCreateRichTextField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    String content = "Content";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withContent(content).
+      build();
+
+    Assert.assertEquals(FieldInputType.RICHTEXT, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    // TODO Test content
+  }
+
 }
-//  SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
+//  ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
