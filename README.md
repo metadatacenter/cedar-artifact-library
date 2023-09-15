@@ -204,7 +204,7 @@ An example numeric field representing the percentage of a treatment completed an
 
 ```java
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
-      withName("Treatment Completed (%)).
+      withName("Treatment Completed %").
       withDescription("Please enter the percentage of the treatment that has been completed").
       withNumericType(NumericType.INTEGER).
       withMinValue(0).
