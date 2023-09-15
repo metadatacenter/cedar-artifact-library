@@ -277,9 +277,9 @@ Here, for example, is a the builder being used to create a field with all four t
 
 A class called `RadioFieldBuilder` can be used to create a CEDAR radio field.
 
-When creating a radio field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
+A list of options can be supplied when creating a radio field. Whether an option is selected by default can also be indicated.
 
-For example, we can create a radio field representing a question with options Yes/No/Maybe, with Maybe as the default as follows:
+For example, we can create a radio field representing a question with options Yes/No/Maybe, with Maybe selected by default as follows:
 
 ```java
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder().
@@ -295,9 +295,9 @@ For example, we can create a radio field representing a question with options Ye
 
 A class called `ListFieldBuilder` can be used to create a CEDAR list field.
 
-When creating a list field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
+A list of options can be supplied when creation a list field. Whether an option is selected by default can also be indicated.
 
-Using this class, we can create a list field representing a question with options Moderna/Pfizer/None, with None as the default as follows:
+Using this class, we can create a list field representing a question with options Moderna/Pfizer/None, with None selected by default as follows:
 
 ```java
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().
@@ -315,7 +315,7 @@ A class called `CheckboxFieldBuilder` can be used to create a CEDAR checkbox fie
 
 When creating a checkbox field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
 
-For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know as the default as follows:
+For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know salected as default as follows:
 
 ```java
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder().
