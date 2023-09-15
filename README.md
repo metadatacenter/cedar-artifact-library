@@ -3,7 +3,7 @@ CEDAR Artifact Library
 
 This library various tools to work with CEDAR model artifacts (templates, elements, fields, and template instances).
 
-Primarily, the library provides a Java API to programatically work with CEDAR artifacts.
+Primarily, the library provides a Java API to work with CEDAR artifacts.
 
 The library uses this API to support the conversion of artifacts to and from various serializations.
 
@@ -130,7 +130,7 @@ For example, to generate a CSV from the first sheeet of the above workbook:
 ```java
 StringBuffer csvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0));
 ```
-## Programatically Creating Templates
+## Creating Templates
 
 CEDAR templates are represented using the `TemplateSchemaArtifact` class. 
 This class can represent a complete specification of CEDAR templates. 
@@ -146,7 +146,7 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
   .build();
 ```
 
-## Programatically Creating Elements
+## Creating Elements
 
 CEDAR elements are represented using the `ElementSchemaArtifact` class. 
 
@@ -171,7 +171,7 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
   .build();
 ```
 
-## Programatically Creating Fields
+## Creating Fields
 
 Currently, CEDAR provides the following types of fields: text, temporal, numeric, text area, phone number, email, radio, list, link, image, YouTube, section break, rich text, and attribute-value.
 
