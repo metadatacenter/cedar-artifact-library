@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
@@ -12,6 +13,7 @@ import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
+import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
@@ -79,7 +81,7 @@ public class ArtifactRoundTripTest
   }
 
   @Test
-  public void testRoundTripTextFieldSchemaArtifact() {
+  public void testRoundTripTextField() {
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
       withName("Study").
@@ -96,6 +98,37 @@ public class ArtifactRoundTripTest
     assertTrue(validateJsonSchema(finalRendering));
 
     assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripNumericField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    NumericType numericType = NumericType.DOUBLE;
+    Number defaultValue = 22.3;
+    Number minValue = 0.0;
+    Number maxValue = 100.0;
+
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withNumericType(numericType).
+      withDefaultValue(defaultValue).
+      withMinValue(minValue).
+      withMaxValue(maxValue).
+      build();
+
+//    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+//
+//    assertTrue(validateJsonSchema(originalRendering));
+//
+//    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+//
+//    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+//
+//    assertTrue(validateJsonSchema(finalRendering));
+//
+//    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)

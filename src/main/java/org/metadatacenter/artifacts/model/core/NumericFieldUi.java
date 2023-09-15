@@ -3,15 +3,13 @@ package org.metadatacenter.artifacts.model.core;
 
 public non-sealed interface NumericFieldUi extends FieldUi
 {
-  default FieldInputType inputType() { return FieldInputType.NUMERIC; }
-
   boolean hidden();
 
   default boolean valueRecommendationEnabled() { return false; }
 
   static NumericFieldUi create(boolean hidden)
   {
-    return new NumericFieldUiRecord(hidden);
+    return new NumericFieldUiRecord(FieldInputType.NUMERIC, hidden);
   }
 
   static Builder builder() {
@@ -20,6 +18,7 @@ public non-sealed interface NumericFieldUi extends FieldUi
 
   class Builder
   {
+    private FieldInputType inputType = FieldInputType.NUMERIC;
     private boolean hidden = false;
 
     private Builder()
@@ -34,11 +33,11 @@ public non-sealed interface NumericFieldUi extends FieldUi
 
     public NumericFieldUi build()
     {
-      return new NumericFieldUiRecord(hidden);
+      return new NumericFieldUiRecord(inputType, hidden);
     }
   }
 }
 
-record NumericFieldUiRecord(boolean hidden) implements NumericFieldUi
+record NumericFieldUiRecord(FieldInputType inputType, boolean hidden) implements NumericFieldUi
 {
 }

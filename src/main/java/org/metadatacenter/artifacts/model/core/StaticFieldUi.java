@@ -7,8 +7,6 @@ import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 
 public non-sealed interface StaticFieldUi extends FieldUi
 {
-  FieldInputType inputType();
-
   String _content();
 
   boolean hidden();

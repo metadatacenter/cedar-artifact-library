@@ -1,16 +1,9 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.model.ModelNodeNames;
-
-import java.util.Optional;
-
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
 
 public non-sealed interface TemporalFieldUi extends FieldUi
 {
-  default FieldInputType inputType() { return FieldInputType.TEMPORAL; }
-
   TemporalGranularity temporalGranularity();
 
   InputTimeFormat inputTimeFormat();
@@ -24,7 +17,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
   static TemporalFieldUi create(TemporalGranularity temporalGranularity,
     InputTimeFormat inputTimeFormat, boolean timeZoneEnabled,  boolean hidden)
   {
-    return new TemporalFieldUiRecord(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+    return new TemporalFieldUiRecord(FieldInputType.TEMPORAL, temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
   }
 
   static Builder builder() {
@@ -33,6 +26,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
   class Builder
   {
+    private FieldInputType inputType = FieldInputType.TEMPORAL;
     private TemporalGranularity temporalGranularity;
     private InputTimeFormat inputTimeFormat = InputTimeFormat.TWELVE_HOUR;
     boolean timeZoneEnabled = false;
@@ -68,12 +62,12 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
     public TemporalFieldUi build()
     {
-      return new TemporalFieldUiRecord(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+      return new TemporalFieldUiRecord(inputType, temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
     }
   }
 }
 
-record TemporalFieldUiRecord(TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat,
+record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat,
                              boolean timeZoneEnabled, boolean hidden) implements TemporalFieldUi
 {
   public TemporalFieldUiRecord
