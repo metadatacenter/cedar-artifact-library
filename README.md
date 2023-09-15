@@ -411,7 +411,12 @@ Then build it with Maven:
 
 To generate an Excel spreadsheet from a CEDAR template:
 
-    mvn exec:java@template2excel -Dexec.args="<input_template_filename.json> <output_Excel_filename.xlsx> https://terminology.metadatacenter.org/bioportal/integrated-search/ <CEDAR API key>"
+```
+    mvn exec:java@template2excel -Dexec.args="<input_template_filename.json> 
+                                              <output_Excel_filename.xlsx> 
+                                              https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                                              <CEDAR API key>"
+```
 
 This will read a JSON-Schema-based template and convert it into an Excel file.
 
