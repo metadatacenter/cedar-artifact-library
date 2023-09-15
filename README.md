@@ -315,7 +315,7 @@ A class called `CheckboxFieldBuilder` can be used to create a CEDAR checkbox fie
 
 When creating a checkbox field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
 
-For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know salected as default as follows:
+For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know salected by default as follows:
 
 ```java
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder().
@@ -337,11 +337,11 @@ Using this class, we can create a link field as follows:
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
       withName("Institution Home Page").
       withDescription("Please enter your institution's home page").
-      withDefaultValue(URI.create("https://stanford.edu", "Stanford")
+      withDefaultValue(URI.create("https://stanford.edu"), "Stanford")
       build();
 ```
 
-A default value can be specified using the `withDefaultValue` builder method.
+A default value can be specified using the `withDefaultValue` builder method. This method must be supplied with the URI of the default value and a user-friendly label for it.
 
 ### Creating Phone Number Fields
 
