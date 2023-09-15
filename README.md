@@ -235,7 +235,7 @@ An example temporal field representing the time of a patient visit recorded with
 
 A class called `ControlledTermFieldBuilder` can be used to create a CEDAR controlled term fields.
 
-Controlled term fields can have four possible value types: classes, ontology branches, ontologies, and value sets.
+Controlled term fields can have four possible value types: classes, ontologies, ontology branches, and value sets.
 
 The builder class has methods `withClassValueConstraint`, `withOntologyValueConstraint`, `withBranchValueConstraint`,  and `withValueSetValueConstraint` to allow specification of these types.
 
