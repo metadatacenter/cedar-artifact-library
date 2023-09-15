@@ -183,7 +183,7 @@ Since each field has specific characteristics, a custom builder is provided to c
 
 A class called `TextFieldBuilder` can be used to create a CEDAR text field.
 
-Using this tuype, we can create a text field representing a study name with a minimum length of 2 and a maximum length of 10 we can write the following:
+With this class we can create a text field representing a study name with a minimum length of 2 and a maximum length of 10 as follows:
 
 ```java
 FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
