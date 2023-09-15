@@ -173,7 +173,7 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 
 ## Creating Fields
 
-Currently, CEDAR provides the following types of fields: text, temporal, numeric, text area, phone number, email, radio, list, link, image, YouTube, section break, rich text, and attribute-value.
+Currently, CEDAR provides the following types of fields: text, temporal, numeric, controlled term, text area, phone number, email, radio, list, link, image, YouTube, section break, rich text, and attribute-value.
 
 A class called `FieldSchemaArtifact` represents all of these field types.
 
