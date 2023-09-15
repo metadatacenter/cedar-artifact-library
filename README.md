@@ -133,7 +133,7 @@ StringBuffer csvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0
 ## Creating Templates
 
 CEDAR templates are represented using the `TemplateSchemaArtifact` class. 
-This class can represent a complete specification of CEDAR templates. 
+This class provides a complete specification of a CEDAR template. 
 
 A companion builder class can be used to create a template. 
 
