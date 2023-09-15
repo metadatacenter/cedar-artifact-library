@@ -21,7 +21,7 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PR
 
 public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder, TextAreaFieldBuilder, TemporalFieldBuilder,
   RadioFieldBuilder, PhoneNumberFieldBuilder, NumericFieldBuilder, ListFieldBuilder, LinkFieldBuilder,
-  EmailFieldBuilder, ControlledTermFieldBuilder, CheckboxFieldBuilder,
+  EmailFieldBuilder, ControlledTermFieldBuilder, CheckboxFieldBuilder, AttributeValueFieldBuilder,
   SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
 {
   private Map<String, URI> jsonLdContext = new HashMap<>(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);

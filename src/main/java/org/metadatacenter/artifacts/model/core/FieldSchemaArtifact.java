@@ -12,6 +12,7 @@ import org.metadatacenter.artifacts.model.core.builders.RadioFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.RichTextFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TemporalFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.AttributeValueFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.SectionBreakFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
@@ -115,7 +116,6 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   static EmailFieldBuilder emailFieldBuilder() { return new EmailFieldBuilder(); }
 
-
   static LinkFieldBuilder linkFieldBuilder() { return new LinkFieldBuilder(); }
 
   static ListFieldBuilder listFieldBuilder() { return new ListFieldBuilder(); }
@@ -125,6 +125,8 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
   static RadioFieldBuilder radioFieldBuilder() { return new RadioFieldBuilder(); }
 
   static SectionBreakFieldBuilder sectionBreakFieldBuilder() { return new SectionBreakFieldBuilder(); }
+
+  static AttributeValueFieldBuilder attributeValueFieldBuilder() { return new AttributeValueFieldBuilder(); }
 
   static ImageFieldBuilder imageFieldBuilder() { return new ImageFieldBuilder(); }
 

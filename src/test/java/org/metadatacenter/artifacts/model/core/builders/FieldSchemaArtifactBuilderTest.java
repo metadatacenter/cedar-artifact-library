@@ -8,7 +8,6 @@ import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueType;
 
@@ -276,6 +275,21 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+  }
+
+  @Test public void testCreateAttributeValyeField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().
+      withName(name).
+      withDescription(description).
+      build();
+
+    Assert.assertEquals(FieldInputType.ATTRIBUTE_VALUE, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
   }
 
   @Test public void testCreateSectionBreakField()

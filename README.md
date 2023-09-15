@@ -384,6 +384,70 @@ FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuild
       build();
 ```
 
+### Creating Attribute-Value Fields
+
+A class called `AttributeValueTextBuilder` can be used to create a CEDAR attribute-value fields.
+
+Using this class, we can create an atribute-value field as follows:
+
+```java
+FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().
+      withName("Additional Patient Characteristics").
+      build();
+```
+
+### Creating Section Break Fields
+
+A class called `SectionBreakFieldBuilder` can be used to create a CEDAR section break fields.
+
+Using this class, we can create a section break field as follows:
+
+```java
+FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder().
+      withName("Patient Details Section").
+      withContent("This section of the form contains details about a patient").
+      build();
+```
+
+### Creating Image Fields
+
+A class called `ImageFieldBuilder` can be used to create a CEDAR image fields.
+
+Using this class, we can create an image field as follows:
+
+```java
+FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder().
+      withName("Patient Picture").
+      withContent("link to image").
+      build();
+```
+
+### Creating Image Fields
+
+A class called `YouTubeBuilder` can be used to create a CEDAR YouTube fields.
+
+Using this class, we can create a YouTube field as follows:
+
+```java
+FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder().
+      withName("Patient Video").
+      withContent("link to video").
+      build();
+```
+
+### Creating Rich Text Fields
+
+A class called `YouRichTextBuilder` can be used to create a CEDAR rich text fields.
+
+Using this class, we can create a rich text field as follows:
+
+```java
+FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().
+      withName("Patient Video").
+      withContent("<http> ....").
+      build();
+```
+
 
 ## Building the Library
 
