@@ -105,7 +105,6 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
     NumericType numericType = NumericType.DOUBLE;
-    Number defaultValue = 22.3;
     Number minValue = 0.0;
     Number maxValue = 100.0;
 
@@ -113,22 +112,21 @@ public class ArtifactRoundTripTest
       withName(name).
       withDescription(description).
       withNumericType(numericType).
-      withDefaultValue(defaultValue).
       withMinValue(minValue).
       withMaxValue(maxValue).
       build();
 
-//    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-//
-//    assertTrue(validateJsonSchema(originalRendering));
-//
-//    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-//
-//    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-//
-//    assertTrue(validateJsonSchema(finalRendering));
-//
-//    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)

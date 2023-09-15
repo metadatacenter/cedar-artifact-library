@@ -48,6 +48,8 @@ public class FieldSchemaArtifactBuilderTest
     Number defaultValue = 22.3;
     Number minValue = 0.0;
     Number maxValue = 100.0;
+    String unitOfMeasure = "%";
+    Integer decimalPlaces = 2;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
       withName(name).
@@ -56,6 +58,8 @@ public class FieldSchemaArtifactBuilderTest
       withDefaultValue(defaultValue).
       withMinValue(minValue).
       withMaxValue(maxValue).
+      withUnitOfMeasure(unitOfMeasure).
+      withDecimalPlaces(decimalPlaces).
       build();
 
     Assert.assertEquals(FieldInputType.NUMERIC, fieldSchemaArtifact.fieldUi().inputType());
@@ -65,6 +69,9 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(defaultValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().defaultValue().get().value());
     Assert.assertEquals(minValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().minValue().get());
     Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
+    Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
+    Assert.assertEquals(unitOfMeasure, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().unitOfMeasure().get());
+    Assert.assertEquals(decimalPlaces, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().decimalPlaces().get());
   }
 
   @Test public void testCreateTemporalField()

@@ -16,6 +16,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
+import org.metadatacenter.artifacts.model.core.NumericFieldUi;
 import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
@@ -694,7 +695,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     if (jsonNode == null || jsonNode.isNull())
       return Optional.empty();
     else if (jsonNode.isObject()) {
-      String nestedPath = path + VALUE_CONSTRAINTS_DEFAULT_VALUE;
+      String nestedPath = path + "/" + VALUE_CONSTRAINTS_DEFAULT_VALUE;
       ObjectNode defaultValueNode = (ObjectNode)jsonNode;
       URI termUri = readRequiredURIField(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       String rdfsLabel = readRequiredStringField(defaultValueNode, nestedPath, RDFS_LABEL);
@@ -947,6 +948,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       boolean timeZoneEnabled = readBooleanField(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+    } else if (fieldInputType.isNumeric()) {
+      return NumericFieldUi.create(hidden);
     } else if (fieldInputType.isStatic()) {
       String content = readRequiredStringField(uiNode, uiPath, UI_CONTENT);
       return StaticFieldUi.create(fieldInputType, content, hidden);

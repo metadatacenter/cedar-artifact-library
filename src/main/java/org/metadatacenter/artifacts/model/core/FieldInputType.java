@@ -54,6 +54,8 @@ public enum FieldInputType
 
   public boolean isTemporal() { return this == TEMPORAL; }
 
+  public boolean isNumeric() { return this == NUMERIC; }
+
   public boolean isStatic() { return this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }
 
   public static FieldInputType fromString(String text) {
