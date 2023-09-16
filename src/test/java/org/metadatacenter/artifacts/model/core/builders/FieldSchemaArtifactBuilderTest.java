@@ -160,7 +160,12 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.RADIO, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO test options
+    Assert.assertEquals("Choice 1", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).literal());
+    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
+    Assert.assertEquals("Choice 2", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).literal());
+    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
+    Assert.assertEquals("Choice 3", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).literal());
+    Assert.assertEquals(true, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
   }
 
   @Test public void testCreateListField()
@@ -179,7 +184,12 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.LIST, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO test options
+    Assert.assertEquals("Choice 1", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).literal());
+    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
+    Assert.assertEquals("Choice 2", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).literal());
+    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
+    Assert.assertEquals("Choice 3", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).literal());
+    Assert.assertEquals(true, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
   }
 
   @Test public void testCreateCheckboxField()
@@ -198,7 +208,12 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.CHECKBOX, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO test options
+    Assert.assertEquals("Choice 1", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).literal());
+    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
+    Assert.assertEquals("Choice 2", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).literal());
+    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
+    Assert.assertEquals("Choice 3", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).literal());
+    Assert.assertEquals(true, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
   }
 
   @Test public void testCreatePhoneNumberField()
