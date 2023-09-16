@@ -284,7 +284,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
   }
 
-  @Test public void testCreateAttributeValyeField()
+  @Test public void testCreateAttributeValueField()
   {
     String name = "Field name";
     String description = "Field description";
@@ -314,7 +314,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.SECTION_BREAK, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO Test content
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
   }
 
   @Test public void testCreateImageField()
@@ -332,7 +332,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.IMAGE, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO Test content
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
   }
 
   @Test public void testCreateYouTubeField()
@@ -350,7 +350,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.YOUTUBE, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO Test content
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
   }
 
   @Test public void testCreateRichTextField()
@@ -368,8 +368,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.RICHTEXT, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    // TODO Test content
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
   }
 
 }
-//  ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
