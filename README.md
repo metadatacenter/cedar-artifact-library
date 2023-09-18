@@ -473,30 +473,41 @@ Then build it with Maven:
 
 ## Generating Excel, TSV, and YAML Serializations of CEDAR Templates
 
-To generate an Excel spreadsheet from a CEDAR template:
+To generate an Excel spreadsheet from a CEDAR template stored in a file:
 
 ```
     mvn exec:java@template2excel 
-      -Dexec.args="<input_template_filename.json> 
-                   <output_Excel_filename.xlsx> 
-                   https://terminology.metadatacenter.org/bioportal/integrated-search/ 
-                   <CEDAR API key>"
+      -Dexec.args="-tf <input_template_filename> 
+                   -e <output_Excel_filename> 
+                   -cs https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                   -k <CEDAR API key>"
 ```
 
-This will read a JSON-Schema-based template and convert it into an Excel file.
+To generate an Excel spreadsheet from a CEDAR template stored on the main CEDAR system:
+
+```
+    mvn exec:java@template2excel 
+      -Dexec.args="-ti <template_iri> 
+                   -e <output_Excel_filename> 
+                   -cs https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                   -cr https://resource.metadatacenter.org/templates/ 
+                   -k <CEDAR API key>"
+```
+
+This will retrieve a JSON-Schema-based template from CEDAR and convert it into an Excel file.
 
 To generate a TSV from a CEDAR template:
 
     mvn exec:java@template2tsv
       -Dexec.args="<input_template_filename.json> 
-                   <output_TSV_filename.tsv> 
+                   <output_TSV_filename> 
                    https://terminology.metadatacenter.org/bioportal/integrated-search/ 
                    <CEDAR API key>"
 
 To generate a YAML from a CEDAR template:
 
     mvn exec:java@template2yaml 
-      -Dexec.args="<input_template_filename.json> <output_YAML_filename.tsv>"
+      -Dexec.args="<input_template_filename> <output_YAML_filename>"
 
 This will read a JSON-Schema-based template and convert it into a YAML file.
 

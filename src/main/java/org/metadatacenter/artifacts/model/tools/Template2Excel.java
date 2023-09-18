@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -13,50 +16,66 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.ExcelArtifactRenderer;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
+import org.metadatacenter.artifacts.util.ConnectionUtil;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 
 public class Template2Excel
 {
+  private static String TEMPLATE_FILE_OPTION = "tf";
+  private static String TEMPLATE_IRI_OPTION = "ti";
+  private static String EXCEL_OPTION = "e";
+  private static String CEDAR_SEARCH_ENDPOINT_OPTION = "cs";
+  private static String CEDAR_RESOURCE_BASE_OPTION = "cr";
+  private static String CEDAR_APIKEY_OPTION = "k";
+
   public static void main(String[] args) throws Exception {
 
     CommandLineParser parser = new DefaultParser();
-    Options options = new Options();
-    options.addOption("t", "template", true, "Template JSON file");
-    options.addOption("e", "excel", true, "Excel output file");
-    options.addOption("s", "search-endpoint", true, "Terminology Server Search Endpoint");
-    options.addOption("k", "api-key", true, "Terminology Server API Key");
+    Options options = buildCommandLineOptions();
 
     try {
-      CommandLine cmd = parser.parse(options, args);
+      CommandLine command = parser.parse(options, args);
 
-      if (!(cmd.hasOption("t") && cmd.hasOption("e") && cmd.hasOption("s") && cmd.hasOption("k"))) {
-        Usage();
-        return;
-      }
+      checkCommandLine(command, options);
 
-      String templateFileName = cmd.getOptionValue("t");
-      String excelFileName = cmd.getOptionValue("e");
-      String terminologyServerIntegratedSearchEndpoint = cmd.getOptionValue("s");
-      String terminologyServerAPIKey = cmd.getOptionValue("k");
-
-      ObjectMapper mapper = new ObjectMapper();
-      File templateFile = new File(templateFileName);
+      String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(CEDAR_SEARCH_ENDPOINT_OPTION);
+      String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
+      String excelFileName = command.getOptionValue(EXCEL_OPTION);
       File excelFile = new File(excelFileName);
 
-      JsonNode jsonNode = mapper.readTree(templateFile);
+      ObjectNode templateObjectNode = null;
 
-      if (!jsonNode.isObject()) {
-        throw new RuntimeException("Expecting JSON object");
-      }
+      if (command.hasOption(TEMPLATE_FILE_OPTION)) {
+        String templateFileName = command.getOptionValue(TEMPLATE_FILE_OPTION);
+        File templateFile = new File(templateFileName);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(templateFile);
 
-      ObjectNode templateObjectNode = (ObjectNode) jsonNode;
+        if (!jsonNode.isObject())
+          throw new RuntimeException("Expecting JSON object");
+
+        templateObjectNode = (ObjectNode) jsonNode;
+      } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
+        String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
+        String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
+        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, "UTF-8");
+        HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarAPIKey);
+        int responseCode = connection.getResponseCode();
+
+        if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST)
+          throw new RuntimeException("Error retrieving template at " + requestURL + ": " + responseCode);
+
+        templateObjectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
+      } else
+        Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-      ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
+      ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
 
       Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 
@@ -67,13 +86,91 @@ public class Template2Excel
 
       System.out.println("Successfully generated Excel file " + excelFile.getAbsolutePath());
     } catch (ParseException e) {
-      // Handle parsing errors here
-      System.err.println("Command line argument parsing error: " + e.getMessage());
-      Usage();
+      Usage(options, e.getMessage());
     }
   }
 
-  private static void Usage() {
-    System.err.println("Usage: " + Template2Excel.class.getName() + " -t <templateFile> -e <excelFile> -s <searchEndpoint> -k <apiKey>");
+  private static Options buildCommandLineOptions()
+  {
+    Options options = new Options();
+
+    Option templateFileOption = Option.builder(TEMPLATE_FILE_OPTION)
+      .argName("template-file")
+      .hasArg()
+      .desc("Template file")
+      .build();
+
+    Option templateIRIOption = Option.builder(TEMPLATE_IRI_OPTION)
+      .argName("template-iri")
+      .hasArg()
+      .desc("Template IRI")
+      .build();
+
+    Option excelOption = Option.builder(EXCEL_OPTION)
+      .argName("excel-output-file")
+      .hasArg()
+      .desc("Excel output file")
+      .required()
+      .build();
+
+    Option searchOption = Option.builder(CEDAR_SEARCH_ENDPOINT_OPTION)
+      .argName("cedar-search-endpoint")
+      .hasArg()
+      .desc("CEDAR Terminology Server search endpoint")
+      .required()
+      .build();
+
+    Option resourceOption = Option.builder(CEDAR_RESOURCE_BASE_OPTION)
+      .argName("cedar-resource-base")
+      .hasArg()
+      .desc("CEDAR Resource Server base")
+      .build();
+
+    Option keyOption = Option.builder(CEDAR_APIKEY_OPTION)
+      .argName("cedar-api-key")
+      .hasArg()
+      .desc("CEDAR API key")
+      .required()
+      .build();
+
+    OptionGroup templateGroup = new OptionGroup();
+    templateGroup.addOption(templateFileOption);
+    templateGroup.addOption(templateIRIOption);
+
+    options.addOptionGroup(templateGroup);
+
+    options.addOption(excelOption);
+    options.addOption(searchOption);
+    options.addOption(resourceOption);
+    options.addOption(keyOption);
+
+    return options;
+  }
+
+  private static void checkCommandLine(CommandLine command, Options options)
+  {
+    if (command.hasOption(TEMPLATE_FILE_OPTION) && command.hasOption(TEMPLATE_IRI_OPTION))
+      Usage(options, "Both a template file path and a template IRI cannot be specified together");
+
+    if (command.hasOption(TEMPLATE_FILE_OPTION)) {
+      if (!command.hasOption(EXCEL_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
+        CEDAR_APIKEY_OPTION))
+        Usage(options, "Excel file path, Terminology Server search endpoint, and CEDAR API key must be provided when template file option is selected");
+    } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
+      if (!command.hasOption(EXCEL_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
+        CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options, "Excel file path, Terminology Server search endpoint, Resource Server REST base, and CEDAR API key must be provided when template IRI option is selected");
+    } else
+      Usage(options, "Please specify a template file path or a template IRI");
+  }
+
+  private static void Usage(Options options, String errorMessage) {
+
+    String header = "CEDAR Template to Excel Translation Tool";
+
+    HelpFormatter formatter = new HelpFormatter();
+    formatter.printHelp(Template2Excel.class.getName(), header, options, errorMessage, true);
+
+    System.exit(-1);
   }
 }

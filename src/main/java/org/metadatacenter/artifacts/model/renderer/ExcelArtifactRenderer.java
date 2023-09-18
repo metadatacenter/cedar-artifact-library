@@ -489,8 +489,6 @@ public class ExcelArtifactRenderer
     return values;
   }
 
-
-
   /**
    *
    * The terminology server is expecting a value constraints object that looks like the following:
