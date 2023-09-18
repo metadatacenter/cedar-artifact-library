@@ -505,7 +505,6 @@ To generate a YAML file from a CEDAR template stored on the main CEDAR system:
     mvn exec:java@template2yaml 
       -Dexec.args="-ti <template_iri> 
                    -y <output_YAML_filename> 
-                   -cs https://terminology.metadatacenter.org/bioportal/integrated-search/ 
                    -cr https://resource.metadatacenter.org/templates/ 
                    -k <CEDAR API key>"
 ```
