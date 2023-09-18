@@ -146,7 +146,7 @@
               <goal>java</goal>
             </goals>
             <configuration>
-	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2TSV</mainClass>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Tsv</mainClass>
             </configuration>
           </execution>
 

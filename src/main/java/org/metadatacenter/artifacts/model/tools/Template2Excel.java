@@ -26,7 +26,7 @@ public class Template2Excel
 {
   private static String TEMPLATE_FILE_OPTION = "tf";
   private static String TEMPLATE_IRI_OPTION = "ti";
-  private static String EXCEL_OPTION = "e";
+  private static String EXCEL_FILE_OPTION = "e";
   private static String CEDAR_SEARCH_ENDPOINT_OPTION = "cs";
   private static String CEDAR_RESOURCE_BASE_OPTION = "cr";
   private static String CEDAR_APIKEY_OPTION = "k";
@@ -43,7 +43,7 @@ public class Template2Excel
 
       String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(CEDAR_SEARCH_ENDPOINT_OPTION);
       String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
-      String excelFileName = command.getOptionValue(EXCEL_OPTION);
+      String excelFileName = command.getOptionValue(EXCEL_FILE_OPTION);
       File excelFile = new File(excelFileName);
 
       ObjectNode templateObjectNode = null;
@@ -106,7 +106,7 @@ public class Template2Excel
       .desc("Template IRI")
       .build();
 
-    Option excelOption = Option.builder(EXCEL_OPTION)
+    Option excelOption = Option.builder(EXCEL_FILE_OPTION)
       .argName("excel-output-file")
       .hasArg()
       .desc("Excel output file")
@@ -153,11 +153,11 @@ public class Template2Excel
       Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
     if (command.hasOption(TEMPLATE_FILE_OPTION)) {
-      if (!command.hasOption(EXCEL_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
+      if (!command.hasOption(EXCEL_FILE_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
         CEDAR_APIKEY_OPTION))
         Usage(options, "Excel file path, Terminology Server search endpoint, and CEDAR API key must be provided when template file option is selected");
     } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
-      if (!command.hasOption(EXCEL_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
+      if (!command.hasOption(EXCEL_FILE_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
         CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
         Usage(options, "Excel file path, Terminology Server search endpoint, Resource Server REST base, and CEDAR API key must be provided when template IRI option is selected");
     } else

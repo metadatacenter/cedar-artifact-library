@@ -3,8 +3,6 @@ package org.metadatacenter.artifacts.model.tools;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -13,24 +11,28 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
+import org.metadatacenter.artifacts.model.renderer.ExcelArtifactRenderer;
+import org.metadatacenter.artifacts.ss.SpreadSheetUtil;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
-import java.util.LinkedHashMap;
 
-public class Template2Yaml
+public class Template2Tsv
 {
-  private static final String TEMPLATE_FILE_OPTION = "tf";
-  private static final String TEMPLATE_IRI_OPTION = "ti";
-  private static final String YAML_FILE_OPTION = "y";
-  private static final String CEDAR_RESOURCE_BASE_OPTION = "cr";
-  private static final String CEDAR_APIKEY_OPTION = "k";
+  private static String TEMPLATE_FILE_OPTION = "tf";
+  private static String TEMPLATE_IRI_OPTION = "ti";
+  private static String TSV_FILE_OPTION = "t";
+  private static String CEDAR_SEARCH_ENDPOINT_OPTION = "cs";
+  private static String CEDAR_RESOURCE_BASE_OPTION = "cr";
+  private static String CEDAR_APIKEY_OPTION = "k";
 
   public static void main(String[] args) throws IOException
   {
@@ -42,9 +44,10 @@ public class Template2Yaml
 
       checkCommandLine(command, options);
 
+      String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(CEDAR_SEARCH_ENDPOINT_OPTION);
       String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
-      String yamlFileName = command.getOptionValue(YAML_FILE_OPTION);
-      File yamlFile = new File(yamlFileName);
+      String tsvFileName = command.getOptionValue(TSV_FILE_OPTION);
+      File tsvFile = new File(tsvFileName);
 
       ObjectNode templateObjectNode = null;
 
@@ -75,22 +78,24 @@ public class Template2Yaml
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(true);
+      ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
 
-      LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+      Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 
-      try {
-        YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).disable(YAMLGenerator.Feature.SPLIT_LINES);
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
-        mapper.writeValue(yamlFile, yamlRendering);
-        System.out.println("Successfully generated YAML file " + yamlFile.getAbsolutePath());
+      if (workbook.getNumberOfSheets() == 0)
+        throw new RuntimeException("No sheets in generated workbook");
+
+      StringBuffer tsvBuffer = SpreadSheetUtil.convertSheetToTsv(workbook.getSheetAt(0));
+
+      try (BufferedWriter writer = new BufferedWriter(new FileWriter(tsvFile))) {
+        writer.write(tsvBuffer.toString());
+        System.out.println("Successfully generated TSV file " + tsvFile.getAbsolutePath());
       } catch (IOException e) {
-        throw new RuntimeException("Error saving YAML file: " + e.getMessage());
+        throw new RuntimeException("Error saving TSV file: " + e.getMessage());
       }
     } catch (ParseException e) {
       Usage(options, e.getMessage());
     }
-
   }
 
   private static Options buildCommandLineOptions()
@@ -109,10 +114,17 @@ public class Template2Yaml
       .desc("Template IRI")
       .build();
 
-    Option yamlOption = Option.builder(YAML_FILE_OPTION)
-      .argName("yaml-output-file")
+    Option tsvOption = Option.builder(TSV_FILE_OPTION)
+      .argName("tsv-output-file")
       .hasArg()
-      .desc("YAML output file")
+      .desc("TSV output file")
+      .required()
+      .build();
+
+    Option searchOption = Option.builder(CEDAR_SEARCH_ENDPOINT_OPTION)
+      .argName("cedar-search-endpoint")
+      .hasArg()
+      .desc("CEDAR Terminology Server search endpoint")
       .required()
       .build();
 
@@ -126,6 +138,7 @@ public class Template2Yaml
       .argName("cedar-api-key")
       .hasArg()
       .desc("CEDAR API key")
+      .required()
       .build();
 
     OptionGroup templateGroup = new OptionGroup();
@@ -134,7 +147,8 @@ public class Template2Yaml
 
     options.addOptionGroup(templateGroup);
 
-    options.addOption(yamlOption);
+    options.addOption(tsvOption);
+    options.addOption(searchOption);
     options.addOption(resourceOption);
     options.addOption(keyOption);
 
@@ -147,21 +161,23 @@ public class Template2Yaml
       Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
     if (command.hasOption(TEMPLATE_FILE_OPTION)) {
-      if (!command.hasOption(YAML_FILE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path and CEDAR API key must be provided when template file option is selected");
+      if (!command.hasOption(TSV_FILE_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
+        CEDAR_APIKEY_OPTION))
+        Usage(options, "Excel file path, Terminology Server search endpoint, and CEDAR API key must be provided when template file option is selected");
     } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
-      if (!command.hasOption(YAML_FILE_OPTION) || !command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path, Resource Server REST base, and CEDAR API key must be provided when template IRI option is selected");
+      if (!command.hasOption(TSV_FILE_OPTION) || !command.hasOption(CEDAR_SEARCH_ENDPOINT_OPTION) || !command.hasOption(
+        CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options, "TSV file path, Terminology Server search endpoint, Resource Server REST base, and CEDAR API key must be provided when template IRI option is selected");
     } else
       Usage(options, "Please specify a template file path or a template IRI");
   }
 
   private static void Usage(Options options, String errorMessage) {
 
-    String header = "CEDAR Template to YAML Translation Tool";
+    String header = "CEDAR Template to TSV Translation Tool";
 
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp(Template2Yaml.class.getName(), header, options, errorMessage, true);
+    formatter.printHelp(Template2Tsv.class.getName(), header, options, errorMessage, true);
 
     System.exit(-1);
   }
