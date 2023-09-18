@@ -492,7 +492,7 @@ To generate a TSV file from a CEDAR template stored on the main CEDAR system:
                    -k <CEDAR API key>"
 ```
 
-To generate a YAML from a CEDAR template stored in a file:
+To generate a YAML file from a CEDAR template stored in a file:
 
     mvn exec:java@template2yaml 
       -Dexec.args="-tf <input_template_filename> -y <output_YAML_filename>"
