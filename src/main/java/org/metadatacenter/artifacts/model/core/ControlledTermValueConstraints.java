@@ -1,7 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -9,8 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTIONS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_BRANCHES;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS;
 
@@ -116,7 +117,7 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
   }
 }
 
-record ControlledTermValueConstraintsRecord( List<OntologyValueConstraint> ontologies,
+record ControlledTermValueConstraintsRecord(List<OntologyValueConstraint> ontologies,
                               List<ValueSetValueConstraint> valueSets, List<ClassValueConstraint> classes,
                               List<BranchValueConstraint> branches, List<ControlledTermValueConstraintsAction> actions,
                               Optional<ControlledTermDefaultValue> defaultValue,
@@ -128,6 +129,7 @@ record ControlledTermValueConstraintsRecord( List<OntologyValueConstraint> ontol
     validateListFieldNotNull(this, valueSets, VALUE_CONSTRAINTS_VALUE_SETS);
     validateListFieldNotNull(this, branches, VALUE_CONSTRAINTS_BRANCHES);
     validateListFieldNotNull(this, actions, VALUE_CONSTRAINTS_ACTIONS);
+    validateOptionalFieldNotNull(this, defaultValue, VALUE_CONSTRAINTS_DEFAULT_VALUE);
 
     ontologies = List.copyOf(ontologies);
     valueSets = List.copyOf(valueSets);

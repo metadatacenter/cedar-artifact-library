@@ -2,11 +2,13 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.util.Optional;
 
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateNumericTypeFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DECIMAL_PLACE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MAX_NUMBER_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MIN_NUMBER_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_UNIT_OF_MEASURE;
 
 public non-sealed interface NumericValueConstraints extends ValueConstraints
@@ -110,6 +112,7 @@ record NumericValueConstraintsRecord(NumericType numberType,
 
   public NumericValueConstraintsRecord
   {
+    validateNumericTypeFieldNotNull(this, numberType, VALUE_CONSTRAINTS_NUMBER_TYPE);
     validateOptionalFieldNotNull(this, unitOfMeasure, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
     validateOptionalFieldNotNull(this, minValue, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
     validateOptionalFieldNotNull(this, maxValue, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);

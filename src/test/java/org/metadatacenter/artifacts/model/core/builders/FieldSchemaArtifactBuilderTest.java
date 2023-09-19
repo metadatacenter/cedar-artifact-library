@@ -89,7 +89,7 @@ public class FieldSchemaArtifactBuilderTest
       withTemporalType(temporalType).
       withTemporalGranularity(temporalGranularity).
       withInputTimeFormat(inputTimeFormat).
-      withTimeZoneEnabled(false).
+      withTimeZoneEnabled(timeZoneEnabled).
       build();
 
     Assert.assertEquals(FieldInputType.TEMPORAL, fieldSchemaArtifact.fieldUi().inputType());

@@ -13,8 +13,11 @@ import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
+import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
@@ -114,6 +117,37 @@ public class ArtifactRoundTripTest
       withNumericType(numericType).
       withMinValue(minValue).
       withMaxValue(maxValue).
+      build();
+
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripTemporalField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    TemporalType temporalType = TemporalType.TIME;
+    TemporalGranularity temporalGranularity = TemporalGranularity.SECOND;
+    InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
+    boolean timeZoneEnabled = false;
+
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withTemporalType(temporalType).
+      withTemporalGranularity(temporalGranularity).
+      withInputTimeFormat(inputTimeFormat).
+      withTimeZoneEnabled(timeZoneEnabled).
       build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);

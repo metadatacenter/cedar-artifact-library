@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.poi.ss.formula.functions.T;
 
 public enum InputTimeFormat
@@ -17,6 +18,7 @@ public enum InputTimeFormat
 
   public boolean isTwentyFourHour() { return this == TWENTY_FOUR_HOUR; }
 
+  @JsonValue
   public String getText() {
     return this.text;
   }
