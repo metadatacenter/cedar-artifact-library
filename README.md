@@ -471,7 +471,18 @@ To generate an Excel spreadsheet from a CEDAR template stored on the main CEDAR 
                    -k <CEDAR API key>"
 ```
 
-This will retrieve a JSON-Schema-based template from CEDAR and convert it into an Excel file.
+e.g.,
+
+```
+    mvn exec:java@template2excel 
+      -Dexec.args="-i https://repo.metadatacenter.org/templates/22bc762a-5020-419d-b170-24253ed9e8d9 
+                   -e Sample.xlsx 
+                   -s https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                   -r https://resource.metadatacenter.org/templates/ 
+                   -k <CEDAR API key>"
+```
+
+This will retrieve a JSON Schema-based template from CEDAR and convert it into an Excel file.
 
 To generate a TSV file from a CEDAR template stored in a file:
 
