@@ -37,7 +37,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
-    // TODO test value recommendation
+    Assert.assertEquals(valueRecommendationEnabled, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
   }
 
   @Test public void testCreateNumericField()
@@ -112,14 +112,16 @@ public class FieldSchemaArtifactBuilderTest
     String branchAcronym = "SNOMEDCT";
     String branchName = "Disease";
     String branchSource = "SNOMEDCT";
+    Integer branchMaxDepth = 3;
     URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
     String classSource = "LOINC";
     String classLabel= "Human";
-    String classPrefLabel = "Human";
+    String classPrefLabel = "Homo Spiens";
     ValueType classValueType = ValueType.ONTOLOGY_CLASS;
     URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
     String valueSetCollection = "CADSR-VS";
     String valueSetName = "Stable Disease";
+    Integer valueSetNumberOfTerms = 1;
     URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/NCBITaxon_51291");
     URI actionSourceUri = URI.create("https://data.bioontology.org/ontologies/DOID");
     String actionSource = "DOID";
@@ -130,9 +132,9 @@ public class FieldSchemaArtifactBuilderTest
       withName(name).
       withDescription(description).
       withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
-      withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, 3).
+      withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth).
       withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
-      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName).
+      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumberOfTerms).
       withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE,
       actionSourceUri, actionTo).
       build();
@@ -140,8 +142,50 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.TEXTFIELD, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-
-    // TODO Check controlled term values
+    Assert.assertEquals(ontologyUri,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).uri());
+    Assert.assertEquals(ontologyAcronym,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).acronym());
+    Assert.assertEquals(ontologyName,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).name());
+    Assert.assertEquals(branchUri,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).uri());
+    Assert.assertEquals(branchAcronym,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).acronym());
+    Assert.assertEquals(branchName,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).name());
+    Assert.assertEquals(branchSource,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).source());
+    Assert.assertEquals(branchMaxDepth,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).maxDepth());
+    Assert.assertEquals(classUri,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).uri());
+    Assert.assertEquals(classSource,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).source());
+    Assert.assertEquals(classLabel,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).label());
+    Assert.assertEquals(classPrefLabel,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).prefLabel());
+    Assert.assertEquals(classValueType,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).type());
+    Assert.assertEquals(valueSetUri,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).uri());
+    Assert.assertEquals(valueSetCollection,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).vsCollection());
+    Assert.assertEquals(valueSetName,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).name());
+    Assert.assertEquals(valueSetNumberOfTerms,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).numberOfTerms().get());
+    Assert.assertEquals(actionTermUri,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).termUri());
+    Assert.assertEquals(actionSourceUri,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).sourceUri().get());
+    Assert.assertEquals(actionSource,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).source());
+    Assert.assertEquals(actionValueType,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).type());
+    Assert.assertEquals(actionTo,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).to().get());
   }
 
   @Test public void testCreateRadioField()
