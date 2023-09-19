@@ -24,11 +24,11 @@ import java.net.URLEncoder;
 
 public class Template2Excel
 {
-  private static String TEMPLATE_FILE_OPTION = "tf";
-  private static String TEMPLATE_IRI_OPTION = "ti";
+  private static String TEMPLATE_FILE_OPTION = "f";
+  private static String TEMPLATE_IRI_OPTION = "i";
   private static String EXCEL_FILE_OPTION = "e";
-  private static String CEDAR_SEARCH_ENDPOINT_OPTION = "cs";
-  private static String CEDAR_RESOURCE_BASE_OPTION = "cr";
+  private static String CEDAR_SEARCH_ENDPOINT_OPTION = "s";
+  private static String CEDAR_RESOURCE_BASE_OPTION = "r";
   private static String CEDAR_APIKEY_OPTION = "k";
 
   public static void main(String[] args) throws Exception {

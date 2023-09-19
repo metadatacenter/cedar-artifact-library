@@ -454,9 +454,9 @@ To generate an Excel spreadsheet from a CEDAR template stored in a file:
 
 ```
     mvn exec:java@template2excel 
-      -Dexec.args="-tf <input_template_filename> 
+      -Dexec.args="-f <input_template_filename> 
                    -e <output_Excel_filename> 
-                   -cs https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                   -s https://terminology.metadatacenter.org/bioportal/integrated-search/ 
                    -k <CEDAR API key>"
 ```
 
@@ -464,10 +464,10 @@ To generate an Excel spreadsheet from a CEDAR template stored on the main CEDAR 
 
 ```
     mvn exec:java@template2excel 
-      -Dexec.args="-ti <template_iri> 
+      -Dexec.args="-i <template_iri> 
                    -e <output_Excel_filename> 
-                   -cs https://terminology.metadatacenter.org/bioportal/integrated-search/ 
-                   -cr https://resource.metadatacenter.org/templates/ 
+                   -s https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                   -r https://resource.metadatacenter.org/templates/ 
                    -k <CEDAR API key>"
 ```
 
@@ -476,19 +476,19 @@ This will retrieve a JSON-Schema-based template from CEDAR and convert it into a
 To generate a TSV file from a CEDAR template stored in a file:
 
     mvn exec:java@template2tsv
-      -Dexec.args="-tf <input_template_filename> 
+      -Dexec.args="-f <input_template_filename> 
                    -t <output_TSV_filename> 
-                   -cs https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                   -s https://terminology.metadatacenter.org/bioportal/integrated-search/ 
                    -k <CEDAR API key>"
 
 To generate a TSV file from a CEDAR template stored on the main CEDAR system:
 
 ```
     mvn exec:java@template2tsv 
-      -Dexec.args="-ti <template_iri> 
+      -Dexec.args="-i <template_iri> 
                    -t <output_TSV_filename> 
-                   -cs https://terminology.metadatacenter.org/bioportal/integrated-search/ 
-                   -cr https://resource.metadatacenter.org/templates/ 
+                   -s https://terminology.metadatacenter.org/bioportal/integrated-search/ 
+                   -r https://resource.metadatacenter.org/templates/ 
                    -k <CEDAR API key>"
 ```
 
@@ -503,9 +503,9 @@ To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
 ```
     mvn exec:java@template2yaml 
-      -Dexec.args="-ti <template_iri> 
+      -Dexec.args="-i <template_iri> 
                    -y <output_YAML_filename> 
-                   -cr https://resource.metadatacenter.org/templates/ 
+                   -r https://resource.metadatacenter.org/templates/ 
                    -k <CEDAR API key>"
 ```
 ## Building the Library

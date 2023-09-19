@@ -26,10 +26,10 @@ import java.util.LinkedHashMap;
 
 public class Template2Yaml
 {
-  private static final String TEMPLATE_FILE_OPTION = "tf";
-  private static final String TEMPLATE_IRI_OPTION = "ti";
+  private static final String TEMPLATE_FILE_OPTION = "f";
+  private static final String TEMPLATE_IRI_OPTION = "i";
   private static final String YAML_FILE_OPTION = "y";
-  private static final String CEDAR_RESOURCE_BASE_OPTION = "cr";
+  private static final String CEDAR_RESOURCE_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
   public static void main(String[] args) throws IOException
