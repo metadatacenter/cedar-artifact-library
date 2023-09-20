@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.bouncycastle.jcajce.util.AnnotatedPrivateKey.LABEL;
 import static org.metadatacenter.model.ModelNodeNames.ARTIFACT_CONTEXT_ENTRIES;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
@@ -351,7 +352,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> skosPrefLabel = readSkosPrefLabelField(objectNode, path);
     List<String> skosAlternateLabels = readSkosAltLabelField(objectNode, path);
     FieldUi fieldUi = readFieldUi(objectNode, path);
-    Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path);
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path, fieldUi.inputType());
 
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
 
@@ -633,8 +634,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return jsonLdTypes;
   }
 
-  // TODO Pass the expected valueConstraints type in (based on field type)
-  private Optional<ValueConstraints> readValueConstraints(ObjectNode objectNode, String path)
+  private Optional<ValueConstraints> readValueConstraints(ObjectNode objectNode, String path, FieldInputType fieldInputType)
   {
     String vcPath = path + "/" + VALUE_CONSTRAINTS;
     ObjectNode vcNode = readValueConstraintsNodeAtPath(objectNode, path);
@@ -659,18 +659,20 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath);
       List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath);
 
-      if (numberType.isPresent()) {
-        Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ? Optional.of(defaultValue.get()
-          .asNumericDefaultValue()) : Optional.empty();
+      if (fieldInputType == FieldInputType.NUMERIC) {
+        Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asNumericDefaultValue()) :
+          Optional.empty();
         return Optional.of(
           NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
             numericDefaultValue, requiredValue, multipleChoice));
-      } else if (temporalType.isPresent()) {
-        Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ? Optional.of(defaultValue.get()
-          .asTemporalDefaultValue()) : Optional.empty();
+      } else if (fieldInputType == FieldInputType.TEMPORAL) {
+        Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asTemporalDefaultValue()) :
+          Optional.empty();
         return Optional.of(TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, multipleChoice));
 
-      } else if (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()) {
+      } else if (fieldInputType == FieldInputType.LINK || (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()))) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
           Optional.empty();
@@ -681,8 +683,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         Optional<TextDefaultValue> textDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asTextDefaultValue()) :
           Optional.empty();
-        return Optional.of(TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue,
-          multipleChoice));
+        return Optional.of(
+          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, multipleChoice));
       }
     } else
       return Optional.empty();
@@ -699,7 +701,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       ObjectNode defaultValueNode = (ObjectNode)jsonNode;
       URI termUri = readRequiredURIField(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       String rdfsLabel = readRequiredStringField(defaultValueNode, nestedPath, RDFS_LABEL);
-      return Optional.of(new ControlledTermDefaultValue(Pair.of(termUri, rdfsLabel)));
+      return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel));
     } else if (jsonNode.isNumber())
       return Optional.of(new NumericDefaultValue(jsonNode.asDouble()));
     else if (jsonNode.isTextual())

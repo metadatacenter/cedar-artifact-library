@@ -462,7 +462,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   "type": "object",
    *   "properties": {
    *     "@value": { "type": [ "string", "null" ] },
-   *     "@type": { "type": "string", "format": "uri" }
+   *     "@type": { "type": "string", "format": "termUri" }
    *   },
    *   "required": [ "@value" ],
    *   "additionalProperties": false
@@ -503,12 +503,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "@context": {
    *       "type": "object",
    *       "properties": {
-   *         "schema": { "type": "string", "format": "uri", "enum": ["http://schema.org/"] },
-   *         "oslc": { "type": "string", "format": "uri", "enum": ["http://open-services.net/ns/core#"] },
-   *         "pav": { "type": "string", "format": "uri", "enum": ["http://purl.org/pav/"] },
-   *         "rdfs": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
-   *         "xsd": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
-   *         "skos": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
+   *         "schema": { "type": "string", "format": "termUri", "enum": ["http://schema.org/"] },
+   *         "oslc": { "type": "string", "format": "termUri", "enum": ["http://open-services.net/ns/core#"] },
+   *         "pav": { "type": "string", "format": "termUri", "enum": ["http://purl.org/pav/"] },
+   *         "rdfs": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
+   *         "xsd": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
+   *         "skos": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
    *         "rdfs:label": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
    *         "schema:isBasedOn": { "type": "object", "properties": {"@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "schema:name": { "type": "object", "properties": {"@type": { "type": "string",  "enum": ["xsd:string"] }}},
@@ -527,18 +527,18 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *                     "[Child Name 1]", ... "[Child Name n]" ],
    *       "additionalProperties": false
    *     },
-   *     "@id": { "type": [ "string", "null" ], "format": "uri" },
-   *     "@type": { "oneOf": [ { "type": "string","format": "uri" },
-   *                           { "type": "array", "minItems": 1, 'items": { "type": "string","format": "uri" }, "uniqueItems": true } ]
+   *     "@id": { "type": [ "string", "null" ], "format": "termUri" },
+   *     "@type": { "oneOf": [ { "type": "string","format": "termUri" },
+   *                           { "type": "array", "minItems": 1, 'items": { "type": "string","format": "termUri" }, "uniqueItems": true } ]
    *              },
-   *     "schema:isBasedOn": { "type": "string", "format": "uri" },
+   *     "schema:isBasedOn": { "type": "string", "format": "termUri" },
    *     "schema:name": { "type": "string","minLength": 1 },
    *     "schema:description": { "type": "string" },
-   *     "pav:derivedFrom": { "type": "string", "format": "uri" },
+   *     "pav:derivedFrom": { "type": "string", "format": "termUri" },
    *     "pav:createdOn": { "type": [ "string", "null" ], "format": "date-time" },
-   *     "pav:createdBy": { "type": [ "string", "null" ], "format": "uri" },
+   *     "pav:createdBy": { "type": [ "string", "null" ], "format": "termUri" },
    *     "pav:lastUpdatedOn": {  "type": [ "string", "null" ], "format": "date-time" },
-   *     "oslc:modifiedBy": { "type": [ "string", "null" ], "format": "uri" }
+   *     "oslc:modifiedBy": { "type": [ "string", "null" ], "format": "termUri" }
    *     "[Child Name 1]": { [Child JSON Schema 1] },
    *     ...
    *     "[Child Name n]": { [Child JSON Schema n] }
@@ -608,12 +608,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <pre>
    *   {
    *     "properties": {
-   *         "rdfs": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
-   *         "xsd": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
-   *         "pav": { "type": "string", "format": "uri", "enum": ["http://purl.org/pav/"] },
-   *         "schema": { "type": "string", "format": "uri", "enum": ["http://schema.org/"] },
-   *         "oslc": { "type": "string", "format": "uri", "enum": ["http://open-services.net/ns/core#"] },
-   *         "skos": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
+   *         "rdfs": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
+   *         "xsd": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
+   *         "pav": { "type": "string", "format": "termUri", "enum": ["http://purl.org/pav/"] },
+   *         "schema": { "type": "string", "format": "termUri", "enum": ["http://schema.org/"] },
+   *         "oslc": { "type": "string", "format": "termUri", "enum": ["http://open-services.net/ns/core#"] },
+   *         "skos": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
    *         "rdfs:label": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
    *         "schema:isBasedOn": { "type": "object", "properties": {"@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "schema:name": { "type": "object", "properties": {"@type": { "type": "string",  "enum": ["xsd:string"] }}},
@@ -714,7 +714,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p></p>
    * Defined as follows:
    * <pre>
-   * { "type": "string", "format": "uri", "enum": ["<IRI>"] }
+   * { "type": "string", "format": "termUri", "enum": ["<IRI>"] }
    * </pre>
    * A conforming value could look as follows:
    * <pre>
@@ -726,7 +726,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
     rendering.withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(uri);
 
@@ -895,8 +895,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * {
    *   "@type": {
    *     "oneOf": [
-   *       { "type": "string", "format": "uri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
+   *       { "type": "string", "format": "termUri" },
+   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "termUri" },  "uniqueItems": true }
    *     ]
    *   },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
@@ -931,12 +931,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * {
    *   "@type": {
    *     "oneOf": [
-   *       { "type": "string", "format": "uri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
+   *       { "type": "string", "format": "termUri" },
+   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "termUri" },  "uniqueItems": true }
    *     ]
    *   },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
-   *   "@id": { "type": "string", "format": "uri" }
+   *   "@id": { "type": "string", "format": "termUri" }
    * }
    * </pre>
    * A conforming value could look like:
@@ -1002,7 +1002,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   //   { "type": [ "string", "null" ], "format": "uri" },
+   //   { "type": [ "string", "null" ], "format": "termUri" },
    * </pre>
    */
   private ObjectNode renderUriOrNullJsonSchemaTypeSpecification()
@@ -1013,7 +1013,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_TYPE).add("string");
     rendering.withArray(JSON_SCHEMA_TYPE).add("null");
 
-    rendering.put(JSON_SCHEMA_FORMAT, "uri");
+    rendering.put(JSON_SCHEMA_FORMAT, "termUri");
 
     return rendering;
   }
@@ -1095,7 +1095,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   *   { "type": "string", "format": "uri" }
+   *   { "type": "string", "format": "termUri" }
    * </pre>
    */
   private ObjectNode renderUriJsonSchemaTypeSpecification()
@@ -1103,7 +1103,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
 
     return rendering;
   }
@@ -1115,8 +1115,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <pre>
    * {
    *   "oneOf": [
-   *     { "type": "string", "format": "uri" },
-   *     { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" }, "uniqueItems": true }
+   *     { "type": "string", "format": "termUri" },
+   *     { "type": "array", "minItems": 1, "items": { "type": "string", "format": "termUri" }, "uniqueItems": true }
    *   ]
    * }
    * </pre>
@@ -1137,7 +1137,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "uri" }, "uniqueItems": [uniqueItems] }
+   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "termUri" }, "uniqueItems": [uniqueItems] }
    * </pre>
    */
   private ObjectNode renderUriArrayJsonSchemaTypeSpecification(int minItems, boolean uniqueItems)
@@ -1148,7 +1148,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
     rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, "string");
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;

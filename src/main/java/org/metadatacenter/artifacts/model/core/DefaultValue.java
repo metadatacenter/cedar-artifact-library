@@ -1,19 +1,27 @@
 
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefaultValue, ControlledTermDefaultValue, TemporalDefaultValue
 {
+   @JsonIgnore
    DefaultValueType getValueType();
 
+   @JsonIgnore
    T value();
 
+   @JsonIgnore
    default boolean isTextDefaultValue() { return getValueType() == DefaultValueType.TEXT; }
 
+   @JsonIgnore
    default boolean isNumericDefaultValue() { return getValueType() == DefaultValueType.NUMERIC; }
 
-   default boolean isControlledTermDefaultValue() { return getValueType() == DefaultValueType.CONTROLLED_TERM; }
-
+   @JsonIgnore
    default boolean isTemporalDefaultValue() { return getValueType() == DefaultValueType.TEMPORAL; }
+   @JsonIgnore
+   default boolean isControlledTermDefaultValue() { return getValueType() == DefaultValueType.CONTROLLED_TERM; }
 
    default TextDefaultValue asTextDefaultValue()
    {

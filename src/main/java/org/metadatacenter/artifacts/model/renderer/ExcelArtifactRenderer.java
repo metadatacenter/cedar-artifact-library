@@ -501,18 +501,18 @@ public class ExcelArtifactRenderer
    *   private List<Action> actions;
    *
    * public class BranchValueConstraint
-   *   private String uri;
+   *   private String termUri;
    *   private String acronym;
    *
    * public class OntologyValueConstraint
    *   private String acronym;
    *
    * public class ValueSetValueConstraint
-   *   private String uri;
+   *   private String termUri;
    *   private String vsCollection;
    *
    * public class ClassValueConstraint
-   *   private String uri;
+   *   private String termUri;
    *   private String prefLabel;
    *   private String type;
    *   private String label; // Optional
@@ -521,7 +521,7 @@ public class ExcelArtifactRenderer
    * public class Action
    *   private Integer to; // Optional
    *   private String action;
-   *   private String termUri;
+   *   private String label;
    *   private String type;
    *   private String source;
    *   private String sourceUri; // Optional

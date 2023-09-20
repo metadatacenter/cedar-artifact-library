@@ -93,7 +93,7 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
     public Builder withDefaultValue(URI uri, String label)
     {
-      this.defaultValue = Optional.of(new ControlledTermDefaultValue(new ImmutablePair<>(uri, label)));
+      this.defaultValue = Optional.of(new ControlledTermDefaultValue(uri, label));
       return this;
     }
 

@@ -70,7 +70,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String DECIMAL_PLACES = "decimalPlaces";
   public static String MIN_LENGTH = "minLength";
   public static String MAX_LENGTH = "maxLength";
-  public static String URI = "uri";
+  public static String URI = "termUri";
   public static String SOURCE = "source";
   public static String VALUES = "values";
   public static String ACRONYM = "acronym";
@@ -198,13 +198,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    * values:
    *       - ontology: Human Disease Ontology
    *         acronym: DOID
-   *         uri: "https://data.bioontology.org/ontologies/DOID"
+   *         termUri: "https://data.bioontology.org/ontologies/DOID"
    *       - branch: Disease
    *         acronym: DPCO
-   *         uri: "http://purl.org/twc/dpo/ont/Disease"
+   *         termUri: "http://purl.org/twc/dpo/ont/Disease"
    *       - class: Translated Title
    *         source: DATACITE-VOCAB
-   *         uri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *         termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
    *         type: OntologyClass
    * </pre>
    */
@@ -269,13 +269,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    * values:
    *       - ontology: Human Disease Ontology
    *         acronym: DOID
-   *         uri: "https://data.bioontology.org/ontologies/DOID"
+   *         termUri: "https://data.bioontology.org/ontologies/DOID"
    *       - branch: Disease
    *         acronym: DPCO
-   *         uri: "http://purl.org/twc/dpo/ont/Disease"
+   *         termUri: "http://purl.org/twc/dpo/ont/Disease"
    *       - class: Translated Title
    *         source: DATACITE-VOCAB
-   *         uri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *         termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
    *         type: OntologyClass
    * </pre>
    */
