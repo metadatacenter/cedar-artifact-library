@@ -820,15 +820,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     List<LiteralValueConstraint> literalValueConstraints = new ArrayList<>();
 
     JsonNode jsonNode = objectNode.get(VALUE_CONSTRAINTS_LITERALS);
+    String literalsPath = path + "/" + VALUE_CONSTRAINTS_LITERALS;
 
     if (jsonNode != null && jsonNode.isArray()) {
 
       for (JsonNode valueConstraintsNode : jsonNode) {
         if (valueConstraintsNode != null) {
           if (!valueConstraintsNode.isObject())
-            throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_LITERALS, path);
+            throw new ArtifactParseException("Value in array must be an object", VALUE_CONSTRAINTS_LITERALS, literalsPath);
           LiteralValueConstraint literalValueConstraint = readLiteralValueConstraint((ObjectNode)valueConstraintsNode,
-            path + "/" + VALUE_CONSTRAINTS_LITERALS);
+            literalsPath);
           literalValueConstraints.add(literalValueConstraint);
         }
       }
@@ -1124,7 +1125,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     else if (jsonNode.isNull())
       throw new ArtifactParseException("Null " + UI + " field", UI, path);
     else if (!jsonNode.isObject())
-      throw new ArtifactParseException("Value of field must be an object", UI, path);
+      throw new ArtifactParseException("Value must be an object", UI, path);
 
      return (ObjectNode)jsonNode;
   }
@@ -1138,7 +1139,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     else if (jsonNode.isNull())
       return null;
     else if (!jsonNode.isObject())
-      throw new ArtifactParseException("Value of field must be an object", VALUE_CONSTRAINTS, path);
+      throw new ArtifactParseException("Value must be an object", VALUE_CONSTRAINTS, path);
 
     return (ObjectNode)jsonNode;
   }
@@ -1381,12 +1382,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new ArtifactParseException("No value for text field", fieldName, path);
+      throw new ArtifactParseException("No text value present", fieldName, path);
     else if (jsonNode.isNull())
-      throw new ArtifactParseException("Null value for text field", fieldName, path);
+      throw new ArtifactParseException("Null value present", fieldName, path);
     else {
       if (!jsonNode.isTextual())
-        throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
+        throw new ArtifactParseException("Value must be textual", fieldName, path);
 
       return jsonNode.asText();
     }
@@ -1397,12 +1398,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new ArtifactParseException("No value for int field", fieldName,  path);
+      throw new ArtifactParseException("No int value present", fieldName,  path);
     else if (jsonNode.isNull())
-      throw new ArtifactParseException("Null value for int field", fieldName, path);
+      throw new ArtifactParseException("Null value present", fieldName, path);
     else {
       if (!jsonNode.isInt())
-        throw new ArtifactParseException("Value of int field must be an int", fieldName, path);
+        throw new ArtifactParseException("Value must be an int", fieldName, path);
 
       return jsonNode.asInt();
     }
@@ -1413,17 +1414,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new ArtifactParseException("No value for URI field", fieldName, path);
+      throw new ArtifactParseException("No URI value present", fieldName, path);
     else if (jsonNode.isNull())
-      throw new ArtifactParseException("Null value for URI field", fieldName, path);
+      throw new ArtifactParseException("Null value present", fieldName, path);
     else {
       if (!jsonNode.isTextual())
-        throw new ArtifactParseException("Value of URI field must be textual", fieldName, path);
+        throw new ArtifactParseException("Value must be a URI", fieldName, path);
 
       try {
         return new URI(jsonNode.asText());
       } catch (Exception e) {
-        throw new ArtifactParseException("Value of URI field must be a valid URI", fieldName, path);
+        throw new ArtifactParseException("Value must be a valid URI", fieldName, path);
       }
     }
   }
@@ -1496,7 +1497,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     List<String> textValues = readStringFieldValues(objectNode, path, fieldName);
 
     if (textValues.isEmpty())
-      throw new ArtifactParseException("No value for text field", fieldName, path);
+      throw new ArtifactParseException("No value present", fieldName, path);
     else
       return textValues;
   }

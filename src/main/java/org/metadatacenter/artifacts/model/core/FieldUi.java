@@ -1,12 +1,14 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericFieldUi, StaticFieldUi, FieldUiRecord
 {
   FieldInputType inputType();
 
   boolean hidden();
 
-  default boolean isStatic() { return false; }
+  @JsonIgnore default boolean isStatic() {return false;}
 
   boolean valueRecommendationEnabled();
 
@@ -26,35 +28,35 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + StaticFieldUi.class.getName());
   }
 
-  default boolean isTemporal() { return inputType() == FieldInputType.TEMPORAL; }
+  @JsonIgnore default boolean isTemporal() {return inputType() == FieldInputType.TEMPORAL;}
 
-  default boolean isNumeric() { return inputType() == FieldInputType.NUMERIC; }
+  @JsonIgnore default boolean isNumeric() {return inputType() == FieldInputType.NUMERIC;}
 
-  default boolean isTextField() { return inputType() == FieldInputType.TEXTFIELD; }
+  @JsonIgnore default boolean isTextField() {return inputType() == FieldInputType.TEXTFIELD;}
 
-  default boolean isTextarea() { return inputType() == FieldInputType.TEXTAREA; }
+  @JsonIgnore default boolean isTextarea() {return inputType() == FieldInputType.TEXTAREA;}
 
-  default boolean isRadio() { return inputType() == FieldInputType.RADIO; }
+  @JsonIgnore default boolean isRadio() {return inputType() == FieldInputType.RADIO;}
 
-  default boolean isCheckbox() { return inputType() == FieldInputType.CHECKBOX; }
+  @JsonIgnore default boolean isCheckbox() {return inputType() == FieldInputType.CHECKBOX;}
 
-  default boolean isEmail() { return inputType() == FieldInputType.EMAIL; }
+  @JsonIgnore default boolean isEmail() {return inputType() == FieldInputType.EMAIL;}
 
-  default boolean isList() { return inputType() == FieldInputType.LIST; }
+  @JsonIgnore default boolean isList() {return inputType() == FieldInputType.LIST;}
 
-  default boolean isPhoneNumber() { return inputType() == FieldInputType.PHONE_NUMBER; }
+  @JsonIgnore default boolean isPhoneNumber() {return inputType() == FieldInputType.PHONE_NUMBER;}
 
-  default boolean isLink() { return inputType() == FieldInputType.LINK; }
+  @JsonIgnore default boolean isLink() {return inputType() == FieldInputType.LINK;}
 
-  default boolean isAttributeValue() { return inputType() == FieldInputType.ATTRIBUTE_VALUE; }
+  @JsonIgnore default boolean isAttributeValue() {return inputType() == FieldInputType.ATTRIBUTE_VALUE;}
 
-  default boolean isRichText() { return inputType() == FieldInputType.RICHTEXT; }
+  @JsonIgnore default boolean isRichText() {return inputType() == FieldInputType.RICHTEXT;}
 
-  default boolean isSectionBreak() { return inputType() == FieldInputType.SECTION_BREAK; }
+  @JsonIgnore default boolean isSectionBreak() {return inputType() == FieldInputType.SECTION_BREAK;}
 
-  default boolean isImage() { return inputType() == FieldInputType.IMAGE; }
+  @JsonIgnore default boolean isImage() {return inputType() == FieldInputType.IMAGE;}
 
-  default boolean isYouTube() { return inputType() == FieldInputType.YOUTUBE; }
+  @JsonIgnore default boolean isYouTube() {return inputType() == FieldInputType.YOUTUBE;}
 
   static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendationEnabled)
   {
@@ -94,7 +96,6 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
       return this;
     }
 
-
     public FieldUi build()
     {
       return new FieldUiRecord(inputType, hidden, valueRecommendationEnabled);
@@ -112,5 +113,4 @@ record FieldUiRecord(FieldInputType inputType, boolean hidden, boolean valueReco
       throw new IllegalArgumentException("The " + TemporalFieldUi.class.getName() + " class should be used for temporal field UIs");
   }
 }
-
 

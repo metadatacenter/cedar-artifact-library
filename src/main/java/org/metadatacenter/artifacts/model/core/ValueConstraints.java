@@ -1,12 +1,16 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Optional;
 
 public sealed interface ValueConstraints permits TextValueConstraints, NumericValueConstraints,
   ControlledTermValueConstraints, TemporalValueConstraints
 {
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean requiredValue();
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean multipleChoice();
 
   Optional<? extends DefaultValue> defaultValue();

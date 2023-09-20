@@ -30,6 +30,7 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.metadatacenter.artifacts.model.core.ValueConstraintsActionType.DELETE;
 
 public class ArtifactRoundTripTest
 {
@@ -65,12 +66,13 @@ public class ArtifactRoundTripTest
   }
 
   @Test
-  public void testRoundTripElementSchemaArtifact() {
-    ElementSchemaArtifact originalElementSchemaArtifact = ElementSchemaArtifact.builder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).
-      withName("Study").
-      withElementUi(ElementUi.builder().build()).
-      build();
+  public void testRoundTripElementSchemaArtifact()
+  {
+    ElementSchemaArtifact originalElementSchemaArtifact = ElementSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123"))
+      .withName("Study")
+      .withElementUi(ElementUi.builder().build())
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
 
@@ -86,11 +88,12 @@ public class ArtifactRoundTripTest
   }
 
   @Test
-  public void testRoundTripTextField() {
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
-      withName("Study").
-      build();
+  public void testRoundTripTextField()
+  {
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123"))
+      .withName("Study")
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -113,13 +116,13 @@ public class ArtifactRoundTripTest
     Number minValue = 0.0;
     Number maxValue = 100.0;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withNumericType(numericType).
-      withMinValue(minValue).
-      withMaxValue(maxValue).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withNumericType(numericType)
+      .withMinValue(minValue)
+      .withMaxValue(maxValue)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -143,14 +146,14 @@ public class ArtifactRoundTripTest
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withTemporalType(temporalType).
-      withTemporalGranularity(temporalGranularity).
-      withInputTimeFormat(inputTimeFormat).
-      withTimeZoneEnabled(timeZoneEnabled).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withTemporalType(temporalType)
+      .withTemporalGranularity(temporalGranularity)
+      .withInputTimeFormat(inputTimeFormat)
+      .withTimeZoneEnabled(timeZoneEnabled)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -192,15 +195,15 @@ public class ArtifactRoundTripTest
     ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
     Integer actionTo = 0;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
-        withName(name).
-        withDescription(description).
-        withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
-        withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth).
-        withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
-        withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumberOfTerms).
-        withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE, actionSourceUri, actionTo).
-        build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName)
+      .withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth)
+      .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType)
+      .withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumberOfTerms)
+      .withValueConstraintsAction(actionTermUri, actionSource, actionValueType, DELETE, actionSourceUri, actionTo)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -215,7 +218,33 @@ public class ArtifactRoundTripTest
     assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
-  private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
+  @Test public void testRoundTripRadioField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withOption("Choice 1")
+      .withOption("Choice 2")
+      .withOption("Choice 3", true)
+      .build();
+
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  }
+
+    private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
   {
     try {
       JsonNode jsonNode = mapper.readTree(new File(

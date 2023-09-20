@@ -25,10 +25,6 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
 
   Optional<NumericDefaultValue> defaultValue();
 
-  boolean requiredValue();
-
-  boolean multipleChoice();
-
   static NumericValueConstraints create(NumericType numericType,
     Optional<Number> minValue, Optional<Number> maxValue,
     Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,

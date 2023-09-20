@@ -231,7 +231,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderSchemaArtifactContextPrefixesJsonLdSpecification());
 
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
-    // value constraints.
+    // value constraints field.
     if (!fieldSchemaArtifact.isStatic()) {
 
       if (fieldSchemaArtifact.hasIRIValue()) {
@@ -888,7 +888,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate a JSON Schema properties specification for a literal-valued field
+   * Generate a JSON Schema properties specification for a label-valued field
    * <p></p>
    * Defined as follows:
    * <pre>

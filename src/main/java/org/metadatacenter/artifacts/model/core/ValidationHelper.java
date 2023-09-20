@@ -15,6 +15,12 @@ public class ValidationHelper
       throw new IllegalStateException("field " + fieldName + " is null in " + obj);
   }
 
+  public static void validateIntegerFieldNotNull(Object obj, Integer field, String fieldName)
+  {
+    if (field == null)
+      throw new IllegalStateException("field " + fieldName + " is null in " + obj);
+  }
+
   public static void validateStringFieldNotEmpty(Object obj, String field, String fieldName)
   {
     validateStringFieldNotNull(obj, field, fieldName);
@@ -95,7 +101,7 @@ public class ValidationHelper
 
   public static <T> void validateOptionalFieldNotNull(Object obj, Optional<T> field, String fieldName)
   {
-    if (field == null)
+    if (field == null || (field.isPresent() && field.get() == null))
       throw new IllegalStateException("Optional field " + fieldName + " is null in " + obj);
   }
 

@@ -11,10 +11,6 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
 {
   TemporalType temporalType();
 
-  boolean requiredValue();
-
-  boolean multipleChoice();
-
   Optional<TemporalDefaultValue> defaultValue();
 
   static TemporalValueConstraints create(TemporalType temporalType, Optional<TemporalDefaultValue> defaultValue,

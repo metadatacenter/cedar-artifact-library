@@ -79,7 +79,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public static String BRANCH = "branch";
   public static String VALUE_SET = "valueSet";
   public static String VALUE_SET_COLLECTION = "collection";
-  public static String LITERAL = "literal";
+  public static String LITERAL = "label";
   public static String SELECTED_BY_DEFAULT = "selected";
   public static String MAX_DEPTH = "maxDepth";
   public static String HEADER = "header";
@@ -327,7 +327,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
       for (LiteralValueConstraint literalValueConstraint : textValueConstraints.literals()) {
         LinkedHashMap<String, Object> literalValueConstraintRendering = new LinkedHashMap<>();
-        literalValueConstraintRendering.put(LITERAL, literalValueConstraint.literal());
+        literalValueConstraintRendering.put(LITERAL, literalValueConstraint.label());
         if (literalValueConstraint.selectedByDefault())
           literalValueConstraintRendering.put(SELECTED_BY_DEFAULT, true);
 

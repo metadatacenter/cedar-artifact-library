@@ -440,7 +440,7 @@ public class ExcelArtifactRenderer
       if (valueConstraints.get() instanceof TextValueConstraints) {
         TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
 
-        List<String> labels = textValueConstraints.literals().stream().map(LiteralValueConstraint::literal).collect(Collectors.toList());
+        List<String> labels = textValueConstraints.literals().stream().map(LiteralValueConstraint::label).collect(Collectors.toList());
 
         for (String label : labels)
           possibleValues.put(label, "");
