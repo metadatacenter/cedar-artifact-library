@@ -244,7 +244,59 @@ public class ArtifactRoundTripTest
     assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
-    private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
+  @Test public void testCreateListField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withOption("Choice 1").
+      withOption("Choice 2").
+      withOption("Choice 3", true).
+      build();
+
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripCheckboxField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withOption("Choice 1", false)
+      .withOption("Choice 2", false)
+      .withOption("Choice 3", true)
+      .build();
+
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  }
+
+  private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
   {
     try {
       JsonNode jsonNode = mapper.readTree(new File(
