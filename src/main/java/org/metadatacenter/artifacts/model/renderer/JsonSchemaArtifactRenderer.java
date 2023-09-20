@@ -190,7 +190,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
 
-    // TODO isMultiple, minItem, maxItems
+    // TODO Generate JSON Schema field representation for isMultiple, minItem, maxItems
 
     return rendering;
   }
