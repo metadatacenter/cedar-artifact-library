@@ -183,7 +183,7 @@ public class ExcelArtifactRenderer
       dataValidationHelper);
 
     if (constraint.isPresent()) {
-      // TODO Check lastRow
+      // TODO Replace arbitrary 1000 with final row in spreadsheet
       CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 1000, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
@@ -471,7 +471,8 @@ public class ExcelArtifactRenderer
       Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
 
       List<Map<String, String>> valueDescriptions;
-      Map<String, Object> searchResult = integratedSearch(vcMap, 1, 5000, // TODO
+      // TODO Replace arbitrary 5000 BioPortal terms; show error if more
+      Map<String, Object> searchResult = integratedSearch(vcMap, 1, 5000,
         terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
       valueDescriptions = searchResult.containsKey("collection") ?
         (List<Map<String, String>>)searchResult.get("collection") :
@@ -529,7 +530,7 @@ public class ExcelArtifactRenderer
    */
   private String controlledTermValueConstraints2Json(ControlledTermValueConstraints controlledTermValueConstraints)
   {
-    // TODO Do a manual conversion so we can do error checking.
+    // TODO Do a manual conversion of valueConstraints to JSON so we can do error checking
     try {
       return objectWriter.writeValueAsString(controlledTermValueConstraints);
     } catch (JsonProcessingException e) {
@@ -605,13 +606,13 @@ public class ExcelArtifactRenderer
 
       if (numericType == NumericType.DECIMAL) {
         if (decimalPlaces.isPresent())
-          numericFormatString += ""; // TODO
+          numericFormatString += ""; // TODO Handle decimal places in Excel rendering
       } else if (numericType == NumericType.DOUBLE) {
         if (decimalPlaces.isPresent())
-          numericFormatString += ""; // TODO
+          numericFormatString += ""; // TODO Handle decimal places in Excel rendering
       } else if (numericType == NumericType.FLOAT) {
         if (decimalPlaces.isPresent())
-          numericFormatString += ""; // TODO
+          numericFormatString += ""; // TODO Handle decimal places in Excel rendering
       } else if (numericType == NumericType.LONG) {
       } else if (numericType == NumericType.INTEGER) {
       } else if (numericType == NumericType.INT) {
@@ -621,7 +622,7 @@ public class ExcelArtifactRenderer
         throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldName);
 
     if (unitOfMeasure.isPresent()) {
-      // TODO
+      // TODO Handle unit representation in Excel if possible
     }
 
     return numericFormatString;
@@ -691,7 +692,7 @@ public class ExcelArtifactRenderer
 
     if (fieldUi.isNumeric()) {
       if (valueConstraints.isPresent()) {
-        NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get(); // TODO
+        NumericValueConstraints numericValueConstraints = valueConstraints.get().asNumericValueConstraints();
         String formatString = getNumericFormatString(fieldName, numericValueConstraints.numberType(),
           numericValueConstraints.decimalPlaces(), numericValueConstraints.unitOfMeasure());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
@@ -702,7 +703,7 @@ public class ExcelArtifactRenderer
     } else if (fieldUi.isTemporal()) {
       TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
       if (valueConstraints.isPresent()) {
-        TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get(); // TODO
+        TemporalValueConstraints temporalValueConstraints = valueConstraints.get().asTemporalValueConstraints();
         String formatString = getTemporalFormatString(fieldName, temporalValueConstraints.temporalType(),
           temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timeZoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));

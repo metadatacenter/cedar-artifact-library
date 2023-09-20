@@ -140,9 +140,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
 
-    // TODO header/footer
-    // TODO UI.propertyLabels, UI.propertyDescriptions
-    // TODO childPropertyUris
+    // TODO Generate YAML for header/footer
+    // TODO Generate YAML for UI.propertyLabels, UI.propertyDescriptions
+    // TODO Generate YAML for childPropertyUris
 
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(templateSchemaArtifact.getChildSchemas()));
@@ -178,8 +178,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifact(elementSchemaArtifact, ELEMENT);
 
-    // TODO UI: propertyLabels, propertyDescriptions
-    // TODO childPropertyUris
+    // TODO Generate YAML for UI.propertyLabels, propertyDescriptions
+    // TODO Generate YAML for childPropertyUris
 
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(elementSchemaArtifact.getChildSchemas()));
@@ -236,7 +236,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       renderValueConstraintValues(valueConstraints, rendering);
     }
 
-    // TODO _valueConstraints.actions
+    // TODO Generate YAML for _valueConstraints.actions
 
     return rendering;
   }

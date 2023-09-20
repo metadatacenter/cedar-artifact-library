@@ -258,7 +258,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
-    // TODO isMultiple, minItem, maxItems
+    // TODO Generate JSON Schema field representation for isMultiple, minItem, maxItems
 
     return rendering;
   }
@@ -595,7 +595,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(OSLC_MODIFIED_BY, renderUriOrNullJsonSchemaTypeSpecification());
 
     for (ChildSchemaArtifact childSchemaArtifact : parentSchemaArtifact.getChildSchemas()) {
-      // TODO Add child schema
+      // TODO Add child schema to parent schema
     }
 
     return rendering;
@@ -700,7 +700,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
 
-    // TODO Check that all children have an IRI mapping
+    // TODO Check that all children have an IRI mapping in childPropertyUris
     for (String childName : parentSchemaArtifact.getChildPropertyUris().keySet())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
