@@ -390,6 +390,17 @@ public class ArtifactRoundTripTest
       withMaxLength(maxLength).
       build();
 
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripAttributeValueField()
@@ -402,6 +413,17 @@ public class ArtifactRoundTripTest
       withDescription(description).
       build();
 
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripSectionBreakField()
@@ -416,6 +438,17 @@ public class ArtifactRoundTripTest
       withContent(content).
       build();
 
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripImageField()
@@ -430,6 +463,17 @@ public class ArtifactRoundTripTest
       withContent(content).
       build();
 
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripYouTubeField()
@@ -444,6 +488,17 @@ public class ArtifactRoundTripTest
       withContent(content).
       build();
 
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripRichTextField()
@@ -458,8 +513,18 @@ public class ArtifactRoundTripTest
       withContent(content).
       build();
 
-  }
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  }
 
   private boolean validateJsonSchema(ObjectNode schemaNode)
   {

@@ -19,6 +19,8 @@ import org.metadatacenter.artifacts.model.core.ValueConstraints;
 
 import java.util.Optional;
 
+// TODO This is a work-in-progress!
+
 public class TemplateSchemaArtifact2REDCapConvertor
 {
   private final TemplateSchemaArtifact templateSchemaArtifact;
