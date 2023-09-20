@@ -121,7 +121,7 @@ public class FieldSchemaArtifactBuilderTest
     URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
     String valueSetCollection = "CADSR-VS";
     String valueSetName = "Stable Disease";
-    Integer valueSetNumberOfTerms = 1;
+    Integer valueSetNumTerms = 1;
     URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/NCBITaxon_51291");
     URI actionSourceUri = URI.create("https://data.bioontology.org/ontologies/DOID");
     String actionSource = "DOID";
@@ -134,7 +134,7 @@ public class FieldSchemaArtifactBuilderTest
       withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
       withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth).
       withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
-      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumberOfTerms).
+      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumTerms).
       withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE,
       actionSourceUri, actionTo).
       build();
@@ -174,8 +174,8 @@ public class FieldSchemaArtifactBuilderTest
       fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).vsCollection());
     Assert.assertEquals(valueSetName,
       fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).name());
-    Assert.assertEquals(valueSetNumberOfTerms,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).numberOfTerms().get());
+    Assert.assertEquals(valueSetNumTerms,
+      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).numTerms().get());
     Assert.assertEquals(actionTermUri,
       fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).termUri());
     Assert.assertEquals(actionSourceUri,
