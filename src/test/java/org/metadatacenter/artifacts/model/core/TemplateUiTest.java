@@ -8,12 +8,12 @@ public class TemplateUiTest
 {
 
   @Test
-  public void testGetUIType() {
+  public void testGetUiType() {
     TemplateUi templateUi = TemplateUi.builder()
       .withOrder(Collections.singletonList("order1"))
       .withPages(Collections.singletonList("page1"))
       .build();
-    assertEquals(UiType.TEMPLATE_UI, templateUi.getUiType());
+    assertEquals(UiType.TEMPLATE_UI, templateUi.uiType());
   }
 
   @Test

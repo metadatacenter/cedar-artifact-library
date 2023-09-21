@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,8 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
     return new ElementUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  default UiType getUiType() { return UiType.ELEMENT_UI; }
+  @JsonIgnore
+  default UiType uiType() { return UiType.ELEMENT_UI; }
 
   static Builder builder() {
     return new Builder();

@@ -357,11 +357,11 @@ public class ArtifactRoundTripTest
     URI defaultURI = URI.create("https://example.com/Study");
     String defaultLabel = "Study";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withDefaultValue(defaultURI, defaultLabel).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withDefaultValue(defaultURI, defaultLabel)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -383,12 +383,12 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withMinLength(minLength).
-      withMaxLength(maxLength).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withMinLength(minLength)
+      .withMaxLength(maxLength)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -408,10 +408,10 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().
-      withName(name).
-      withDescription(description).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -432,11 +432,11 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withContent(content).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withContent(content)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -457,11 +457,11 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withContent(content).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withContent(content)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -482,11 +482,11 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withContent(content).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withContent(content)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -507,11 +507,11 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withContent(content).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder()
+      .withName(name)
+      .withDescription(description)
+      .withContent(content)
+      .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -524,6 +524,39 @@ public class ArtifactRoundTripTest
     assertTrue(validateJsonSchema(finalRendering));
 
     assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripSampleBlock()
+  {
+    ObjectNode originalRendering = getJSONFileContentAsObjectNode("SampleBlock.json");
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    TemplateSchemaArtifact originalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(originalTemplateSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    // TODO Finish Sample Block round-trip test
+//    TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
+//
+//    assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
+  }
+
+  private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
+  {
+    try {
+      JsonNode jsonNode = mapper.readTree(new File(
+        JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+
+      if (jsonNode.isObject())
+        return (ObjectNode)jsonNode;
+      else
+        throw new RuntimeException("Error reading JSON file " + jsonFileName + ": root node is not an ObjectNode");
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
+    }
   }
 
   private boolean validateJsonSchema(ObjectNode schemaNode)

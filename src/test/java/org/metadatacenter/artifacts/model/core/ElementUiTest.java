@@ -11,7 +11,7 @@ public class ElementUiTest
   public void testGetUIType() {
     ElementUi elementUi = ElementUi.builder()
       .build();
-    assertEquals(UiType.ELEMENT_UI, elementUi.getUiType());
+    assertEquals(UiType.ELEMENT_UI, elementUi.uiType());
   }
 
   @Test

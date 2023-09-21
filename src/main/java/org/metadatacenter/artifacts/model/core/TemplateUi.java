@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +30,8 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
 
   List<String> pages();
 
-  default UiType getUiType() { return UiType.TEMPLATE_UI; }
+  @JsonIgnore
+  default UiType uiType() { return UiType.TEMPLATE_UI; }
 
   static Builder builder() {
     return new Builder();
