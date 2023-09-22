@@ -154,7 +154,10 @@ public class ExcelArtifactRenderer
       DefaultValue value = defaultValue.get(); // TODO Use typesafe switch when available
       Cell dataCell = firstDataRow.createCell(columnIndex);
 
-      if (value.isNumericDefaultValue()) {
+      if (value.isTextDefaultValue()) {
+        TextDefaultValue textDefaultValue = value.asTextDefaultValue();
+        dataCell.setCellValue(textDefaultValue.value());
+      } else if (value.isNumericDefaultValue()) {
         NumericDefaultValue numericDefaultValue = value.asNumericDefaultValue();
         Number n = numericDefaultValue.value();
 
@@ -166,10 +169,9 @@ public class ExcelArtifactRenderer
         dataCell.setCellValue(label);
       } else if (value.isTemporalDefaultValue()) {
         TemporalDefaultValue temporalDefaultValue = value.asTemporalDefaultValue();
-
         dataCell.setCellValue(temporalDefaultValue.value());
       } else
-        throw new RuntimeException("Unknown default value type" + value.getValueType() + " for field " + fieldName);
+        throw new RuntimeException("Unknown default value type " + value.getValueType() + " for field " + fieldName);
     }
     return this.workbook;
   }
