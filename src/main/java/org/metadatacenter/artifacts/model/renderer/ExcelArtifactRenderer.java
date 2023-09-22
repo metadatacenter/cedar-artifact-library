@@ -61,10 +61,9 @@ import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
 
 public class ExcelArtifactRenderer
 {
-  private final Workbook workbook;
   private final String terminologyServerIntegratedSearchEndpoint;
-
   private final String terminologyServerAPIKey;
+  private final Workbook workbook;
   private final ObjectMapper mapper;
   private final ObjectWriter objectWriter;
 
@@ -492,9 +491,9 @@ public class ExcelArtifactRenderer
 
   /**
    *
-   * The terminology server is expecting a value constraints object that looks like the following:
+   * The terminology server is expecting a controlled term value constraints object that looks like the following:
    *
-   * public class ValueConstraints
+   * public class ControlledTermValueConstraints
    *   private List<OntologyValueConstraint> ontologies;
    *   private List<BranchValueConstraint> branches;
    *   private List<ValueSetValueConstraint> valueSets;
