@@ -266,7 +266,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   // A parent schema artifact's JSON Schema 'properties' object contains a specification for a JSON-LD @context for
-  // the corresponding instance; this @context maps child names to a URI that represents a property specifications
+  // the corresponding instance; this @context maps each child name to a URI that represents a property specification
   // for each child.
   //
   // e.g.,
@@ -296,23 +296,24 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           JsonNode enumNode = jsonSchemaContextSpecificationNode.get(childName);
 
           if (enumNode == null || !enumNode.isObject())
-            throw new ArtifactParseException("Expecting object node with enum specification", childName, path + contextPath);
+            throw new ArtifactParseException("Expecting object node with property URI enum specification",
+              childName, path + contextPath);
 
           JsonNode enumArray = enumNode.get(JSON_SCHEMA_ENUM);
 
           if (enumArray == null || !enumArray.isArray())
-            throw new ArtifactParseException("Expecting array for enum specification", JSON_SCHEMA_ENUM,
-              path + contextPath + childName);
+            throw new ArtifactParseException("Expecting array for property URI enum specification",
+              JSON_SCHEMA_ENUM, path + contextPath + childName);
 
           if (enumArray.size() != 1)
-            throw new ArtifactParseException("Expecting exactly one value for enum specification, got " + enumArray.size(),
-              JSON_SCHEMA_ENUM, path + contextPath + childName);
+            throw new ArtifactParseException("Expecting exactly one value for property URI enum specification, got " +
+              enumArray.size(), JSON_SCHEMA_ENUM, path + contextPath + childName);
 
           JsonNode elementNode = enumArray.get(0);
 
           if (!elementNode.isTextual())
-            throw new ArtifactParseException("Expecting text node for enum specification, got " + elementNode.getNodeType(),
-              JSON_SCHEMA_ENUM, path + contextPath + childName);
+            throw new ArtifactParseException("Expecting text node for property URI enum entry, got " +
+              elementNode.getNodeType(), JSON_SCHEMA_ENUM, path + contextPath + childName);
 
           try {
             URI propertyUri = new URI(elementNode.asText());

@@ -15,6 +15,14 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   Optional<? extends DefaultValue> defaultValue();
 
+  default boolean isTextValueConstraint() { return this instanceof TextValueConstraints; }
+
+  default boolean isNumericValueConstraint() { return this instanceof NumericValueConstraints; }
+
+  default boolean isControlledTermValueConstraint() { return this instanceof ControlledTermValueConstraints; }
+
+  default boolean isTemporalValueConstraint() { return this instanceof TemporalValueConstraints; }
+
   default TextValueConstraints asTextValueConstraints()
   {
     if (this instanceof TextValueConstraints) // TODO Use typesafe switch when available
