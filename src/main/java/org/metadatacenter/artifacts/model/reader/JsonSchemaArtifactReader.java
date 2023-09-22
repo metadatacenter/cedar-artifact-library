@@ -362,8 +362,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
-      skosPrefLabel, skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri,
-      fieldUi, valueConstraints);
+      isMultiple, minItems, maxItems, propertyUri,
+      skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
   }
 
 

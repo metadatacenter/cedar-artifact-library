@@ -48,14 +48,14 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String name, String description, Optional<String> identifier,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
     return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
-      identifier, modelVersion, version, status, previousVersion, derivedFrom, skosPrefLabel,
-      skosAlternateLabels, isMultiple, minItems, maxItems, propertyUri, fieldUi, valueConstraints);
+      identifier, modelVersion, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
+      propertyUri, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
   }
 
   FieldUi fieldUi();
@@ -76,17 +76,15 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   default boolean hasIRIValue()
   {
-    // TODO Ugly
     return (fieldUi().isTextField() &&
-      (valueConstraints().isPresent() && valueConstraints().get() instanceof ControlledTermValueConstraints))
-      || fieldUi().isLink() || fieldUi().isImage() || fieldUi().isYouTube();
+      (valueConstraints().isPresent() && valueConstraints().get().isControlledTermValueConstraint()))
+      || fieldUi().isLink();
   }
 
   default Optional<Integer> minLength()
   {
-    // TODO Ugly
-    if (valueConstraints().isPresent() && valueConstraints().get() instanceof TextValueConstraints) {
-      TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints().get();
+    if (valueConstraints().isPresent() && valueConstraints().get().isTextValueConstraint()) {
+      TextValueConstraints textValueConstraints = valueConstraints().get().asTextValueConstraints();
       return textValueConstraints.minLength();
     } else
       return Optional.empty();
@@ -94,9 +92,8 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   default Optional<Integer> maxLength()
   {
-    // TODO Ugly
-    if (valueConstraints().isPresent() && valueConstraints().get() instanceof TextValueConstraints) {
-      TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints().get();
+    if (valueConstraints().isPresent() && valueConstraints().get().isTextValueConstraint()) {
+      TextValueConstraints textValueConstraints = valueConstraints().get().asTextValueConstraints();
       return textValueConstraints.maxLength();
     } else
       return Optional.empty();
@@ -142,9 +139,9 @@ record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonL
                                  String name, String description, Optional<String> identifier,
                                  Version modelVersion, Optional<Version> version, Optional<Status> status,
                                  Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
                                  boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
                                  Optional<URI> propertyUri,
+                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
                                  FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements FieldSchemaArtifact
 {
