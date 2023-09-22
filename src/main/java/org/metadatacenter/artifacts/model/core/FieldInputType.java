@@ -41,7 +41,6 @@ public enum FieldInputType
   IMAGE(FIELD_INPUT_TYPE_IMAGE),
   YOUTUBE(FIELD_INPUT_TYPE_YOUTUBE);
 
-
   private final String text;
 
   FieldInputType(String text) {

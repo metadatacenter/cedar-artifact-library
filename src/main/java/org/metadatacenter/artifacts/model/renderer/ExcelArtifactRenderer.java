@@ -29,6 +29,7 @@ import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -118,11 +119,10 @@ public class ExcelArtifactRenderer
     throw new RuntimeException("element rendering not implemented");
   }
 
-  public Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow, Row firstDataRow)
+  private Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow, Row firstDataRow)
   {
     String fieldName = fieldSchemaArtifact.name();
     String fieldDescription = fieldSchemaArtifact.description();
-    FieldInputType fieldInputType = fieldSchemaArtifact.fieldUi().inputType();
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
@@ -147,11 +147,11 @@ public class ExcelArtifactRenderer
 
     setColumnDataValidationConstraintIfRequired(fieldSchemaArtifact, sheet, columnIndex, rowIndex);
 
-    if (fieldSchemaArtifact.hidden())
+    if (fieldSchemaArtifact.hidden() || fieldSchemaArtifact.isStatic())
       sheet.setColumnHidden(columnIndex, true);
 
     if (defaultValue.isPresent()) {
-      DefaultValue value = fieldSchemaArtifact.valueConstraints().get().defaultValue().get();
+      DefaultValue value = defaultValue.get(); // TODO Use typesafe switch when available
       Cell dataCell = firstDataRow.createCell(columnIndex);
 
       if (value.isNumericDefaultValue()) {
@@ -159,20 +159,18 @@ public class ExcelArtifactRenderer
         Number n = numericDefaultValue.value();
 
         dataCell.setCellValue(n.doubleValue());
-      } else if (value.isTextDefaultValue()) {
-        TextDefaultValue textDefaultValue = value.asTextDefaultValue();
-        String s = textDefaultValue.value();
-
-        dataCell.setCellValue(s);
       } else if (value.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = value.asControlledTermDefaultValue();
         String label = controlledTermDefaultValue.value().getRight();
 
         dataCell.setCellValue(label);
+      } else if (value.isTemporalDefaultValue()) {
+        TemporalDefaultValue temporalDefaultValue = value.asTemporalDefaultValue();
+
+        dataCell.setCellValue(temporalDefaultValue.value());
       } else
         throw new RuntimeException("Unknown default value type" + value.getValueType() + " for field " + fieldName);
     }
-
     return this.workbook;
   }
 
