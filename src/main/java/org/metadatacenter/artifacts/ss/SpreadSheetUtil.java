@@ -168,31 +168,32 @@ public class SpreadSheetUtil
     for (int i = 0; i <= rowCount; i++) {
       Row row = sheet.getRow(i);
       for (int j = 0; j < colCount; j++) {
-        Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-        String cellValue = "";
+        if (!sheet.isColumnHidden(j)) {
+          Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+          String cellValue = "";
 
-        switch (cell.getCellType()) {
-        case STRING:
-          cellValue = cell.getStringCellValue();
-          break;
-        case NUMERIC:
-          cellValue = String.valueOf(cell.getNumericCellValue());
-          break;
-        case BOOLEAN:
-          cellValue = String.valueOf(cell.getBooleanCellValue());
-          break;
-        case FORMULA:
-          cellValue = cell.getCellFormula();
-          break;
-        }
+          switch (cell.getCellType()) {
+          case STRING:
+            cellValue = cell.getStringCellValue();
+            break;
+          case NUMERIC:
+            cellValue = String.valueOf(cell.getNumericCellValue());
+            break;
+          case BOOLEAN:
+            cellValue = String.valueOf(cell.getBooleanCellValue());
+            break;
+          case FORMULA:
+            cellValue = cell.getCellFormula();
+            break;
+          }
 
-        data.append(cellValue);
+          data.append(cellValue);
 
-        if (j < colCount - 1) {
-          data.append(separator);
+          if (j < colCount - 1) {
+            data.append(separator);
+          }
         }
       }
-
       data.append(System.lineSeparator());
     }
 
