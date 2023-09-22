@@ -11,9 +11,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   boolean hidden();
 
-  default boolean isStatic() {return true;}
-
-  default boolean valueRecommendationEnabled() {return false;}
+  default boolean valueRecommendationEnabled() { return false; }
 
   static StaticFieldUi create(FieldInputType fieldInputType, String content, boolean hidden)
   {

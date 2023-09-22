@@ -8,7 +8,7 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
   boolean hidden();
 
-  @JsonIgnore default boolean isStatic() {return false;}
+  default boolean isStatic() { return inputType().isStatic(); }
 
   boolean valueRecommendationEnabled();
 
