@@ -80,7 +80,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   /**
    * Generate a JSON Schema specification for a template schema artifact
    * <p></p>
-   * An example artifact specification could look as follows:
+   * An example template schema artifact specification could look as follows:
    * <pre>
    * {
    *   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -198,7 +198,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   /**
    * Generate a JSON Schema specification for a field schema artifact
    * <p></p>
-   * An example JSON Schema artifact could look as follows:
+   * An example JSON Schema field artifact could look as follows:
    * <pre>
    * {
    *   "$schema": "http://json-schema.org/draft-04/schema#",
