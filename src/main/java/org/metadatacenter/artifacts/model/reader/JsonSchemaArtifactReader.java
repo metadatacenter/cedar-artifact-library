@@ -399,7 +399,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Map<String, URI> childName2URI = new HashMap<>();
     String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;
     JsonNode contextNode = objectNode.at(contextPath);
-    Set<String> contextFieldNames = ARTIFACT_CONTEXT_ENTRIES;
 
     if (contextNode != null && contextNode.isObject()) {
       ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;
@@ -407,35 +406,38 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
       while (childNames.hasNext()) {
         String childName = childNames.next();
-        if (!contextFieldNames.contains(childName)) {
+        if (!ARTIFACT_CONTEXT_ENTRIES.contains(childName)) { // Ignore standard context entries
           JsonNode enumNode = jsonSchemaContextSpecificationNode.get(childName);
 
-          if (enumNode == null || !enumNode.isObject())
-            throw new ArtifactParseException("Expecting object node with property URI enum specification",
-              childName, path + contextPath);
+          if (enumNode != null) { // A property URI specification for a child is optional
+            if (!enumNode.isObject())
+              throw new ArtifactParseException("Expecting object node with property URI enum specification", childName,
+                path + contextPath);
 
-          JsonNode enumArray = enumNode.get(JSON_SCHEMA_ENUM);
+            JsonNode enumArray = enumNode.get(JSON_SCHEMA_ENUM);
 
-          if (enumArray == null || !enumArray.isArray())
-            throw new ArtifactParseException("Expecting array for property URI enum specification",
-              JSON_SCHEMA_ENUM, path + contextPath + childName);
+            if (enumArray == null || !enumArray.isArray())
+              throw new ArtifactParseException("Expecting array for property URI enum specification", JSON_SCHEMA_ENUM,
+                path + contextPath + childName);
 
-          if (enumArray.size() != 1)
-            throw new ArtifactParseException("Expecting exactly one value for property URI enum specification, got " +
-              enumArray.size(), JSON_SCHEMA_ENUM, path + contextPath + childName);
+            if (enumArray.size() != 1)
+              throw new ArtifactParseException(
+                "Expecting exactly one value for property URI enum specification, got " + enumArray.size(),
+                JSON_SCHEMA_ENUM, path + contextPath + childName);
 
-          JsonNode elementNode = enumArray.get(0);
+            JsonNode elementNode = enumArray.get(0);
 
-          if (!elementNode.isTextual())
-            throw new ArtifactParseException("Expecting text node for property URI enum entry, got " +
-              elementNode.getNodeType(), JSON_SCHEMA_ENUM, path + contextPath + childName);
+            if (!elementNode.isTextual())
+              throw new ArtifactParseException("Expecting text node for property URI enum entry, got " + elementNode.getNodeType(), JSON_SCHEMA_ENUM,
+                path + contextPath + childName);
 
-          try {
-            URI propertyUri = new URI(elementNode.asText());
-            childName2URI.put(childName, propertyUri);
-          } catch (URISyntaxException e) {
-            throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
-              JSON_SCHEMA_ENUM, path + contextPath + childName);
+            try {
+              URI propertyUri = new URI(elementNode.asText());
+              childName2URI.put(childName, propertyUri);
+            } catch (URISyntaxException e) {
+              throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
+                JSON_SCHEMA_ENUM, path + contextPath + childName);
+            }
           }
         }
       }

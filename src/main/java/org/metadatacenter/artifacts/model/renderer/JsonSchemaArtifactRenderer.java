@@ -684,7 +684,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (Map.Entry<String, URI> entry : parentSchemaArtifact.getChildPropertyUris().entrySet()) {
       String childName = entry.getKey();
       URI propertyUri = entry.getValue();
-      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, propertyUri.toString());
+      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(propertyUri.toString()));
     }
 
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -700,7 +700,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
 
-    // TODO Check that all children have an IRI mapping in childPropertyUris
     for (String childName : parentSchemaArtifact.getChildPropertyUris().keySet())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
@@ -714,7 +713,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p></p>
    * Defined as follows:
    * <pre>
-   * { "type": "string", "format": "termUri", "enum": ["<IRI>"] }
+   * { "type": "string", "format": "termUri", "enum": [ "<IRI>" ] }
    * </pre>
    * A conforming value could look as follows:
    * <pre>
@@ -729,6 +728,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
     rendering.withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(uri);
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema specification for an enum with a specific value.
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   * { "enum": [ "<IRI>" ] }
+   * </pre>
+   * A conforming value could look as follows:
+   * <pre>
+   *   "http://purl.org/pav/"
+   * </pre>
+   */
+  private ObjectNode renderJsonSchemaEnumSpecification(String value)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
+    rendering.withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(value);
 
     return rendering;
   }

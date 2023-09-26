@@ -123,18 +123,27 @@ public class ValidationHelper
   {
     if (field == null)
       throw new IllegalStateException("Map field " + fieldName + " is null in " + obj);
+
+    if (field.values().stream().anyMatch(e -> e == null))
+      throw new IllegalStateException("Map field " + fieldName + " contains null values in " + obj);
   }
 
   public static <T> void validateListFieldNotNull(Object obj, List<T> field, String fieldName)
   {
     if (field == null)
-      throw new IllegalStateException("Field " + fieldName + " is null in " + obj);
+      throw new IllegalStateException("List field " + fieldName + " is null in " + obj);
+
+    if (field.stream().anyMatch(e -> e == null))
+      throw new IllegalStateException("List field " + fieldName + " contains null entries in " + obj);
   }
 
   public static <T> void validateSetFieldNotNull(Object obj, Set<T> field, String fieldName)
   {
     if (field == null)
-      throw new IllegalStateException("Field " + fieldName + " is null in " + obj);
+      throw new IllegalStateException("Set field " + fieldName + " is null in " + obj);
+
+    if (field.stream().anyMatch(e -> e == null))
+      throw new IllegalStateException("Set field " + fieldName + " contains null entries in " + obj);
   }
 
   public static <T> void validateListFieldDoesNotHaveDuplicates(Object obj, List<T> field, String fieldName)

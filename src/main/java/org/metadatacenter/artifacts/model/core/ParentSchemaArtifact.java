@@ -79,19 +79,6 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
     return childPropertyUris;
   }
 
-  default void addChild(ChildSchemaArtifact childSchemaArtifact)
-  {
-    String childName = childSchemaArtifact.name();
-
-    if (getChildNames().contains(childSchemaArtifact.name()))
-      throw new IllegalArgumentException("schema artifact " + name() + " already has a child named " + childName);
-
-    // TODO UI.order
-    // TODO UI.propertyLabels
-    // TODO UI.propertyDescriptions
-    // TODO childPropertyUris
-  }
-
   default boolean hasChildren()
   {
     return !elementSchemas().isEmpty() || !fieldSchemas().isEmpty();
