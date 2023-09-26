@@ -64,7 +64,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     return new Builder();
   }
 
-  class Builder {
+  class Builder
+  {
     private Map<String, URI> jsonLdContext = new HashMap<>(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     private List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
@@ -86,77 +87,92 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<URI> derivedFrom = Optional.empty();
     private LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     private LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
-    private TemplateUi templateUi = TemplateUi.builder().build();
+    private TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
 
-    private Builder() {
+    private Builder()
+    {
     }
 
-    public Builder withJsonLdId(URI jsonLdId) {
+    public Builder withJsonLdId(URI jsonLdId)
+    {
       this.jsonLdId = Optional.ofNullable(jsonLdId);
       return this;
     }
 
-    public Builder withJsonLdType(URI jsonLdType) {
+    public Builder withJsonLdType(URI jsonLdType)
+    {
       this.jsonLdTypes.add(jsonLdType);
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext) {
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    {
       this.jsonLdContext = Map.copyOf(jsonLdContext);
       return this;
     }
 
-    public Builder withCreatedBy(URI createdBy) {
+    public Builder withCreatedBy(URI createdBy)
+    {
       this.createdBy = Optional.ofNullable(createdBy);
       return this;
     }
 
-    public Builder withModifiedBy(URI modifiedBy) {
+    public Builder withModifiedBy(URI modifiedBy)
+    {
       this.modifiedBy = Optional.ofNullable(modifiedBy);
       return this;
     }
 
-    public Builder withCreatedOn(OffsetDateTime createdOn) {
+    public Builder withCreatedOn(OffsetDateTime createdOn)
+    {
       this.createdOn = Optional.ofNullable(createdOn);
       return this;
     }
 
-    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn) {
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+    {
       this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
       return this;
     }
 
-    public Builder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri) {
+    public Builder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri)
+    {
       this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
       return this;
     }
 
-    public Builder withJsonSchemaType(String jsonSchemaType) {
+    public Builder withJsonSchemaType(String jsonSchemaType)
+    {
       this.jsonSchemaType = jsonSchemaType;
       return this;
     }
 
-    public Builder withJsonSchemaTitle(String jsonSchemaTitle) {
+    public Builder withJsonSchemaTitle(String jsonSchemaTitle)
+    {
       this.jsonSchemaTitle = jsonSchemaTitle;
       return this;
     }
 
-    public Builder withJsonSchemaDescription(String jsonSchemaDescription) {
+    public Builder withJsonSchemaDescription(String jsonSchemaDescription)
+    {
       this.jsonSchemaDescription = jsonSchemaDescription;
       return this;
     }
 
-    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier) {
+    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier)
+    {
       this.schemaOrgIdentifier = Optional.ofNullable(schemaOrgIdentifier);
       return this;
     }
 
-    public Builder withJsonLdTypes(List<URI> jsonLdTypes) {
+    public Builder withJsonLdTypes(List<URI> jsonLdTypes)
+    {
       this.jsonLdTypes = jsonLdTypes;
       return this;
     }
 
-    public Builder withName(String name) {
+    public Builder withName(String name)
+    {
       this.name = name;
 
       if (this.jsonSchemaTitle.isEmpty())
@@ -168,60 +184,97 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
-    public Builder withDescription(String description) {
+    public Builder withDescription(String description)
+    {
       this.description = description;
 
       return this;
     }
 
-    public Builder withModelVersion(Version modelVersion) {
+    public Builder withModelVersion(Version modelVersion)
+    {
       this.modelVersion = modelVersion;
       return this;
     }
 
-    public Builder withVersion(Version version) {
+    public Builder withVersion(Version version)
+    {
       this.version = Optional.ofNullable(version);
       return this;
     }
 
-    public Builder withStatus(Status status) {
+    public Builder withStatus(Status status)
+    {
       this.status = Optional.ofNullable(status);
       return this;
     }
 
-    public Builder withPreviousVersion(URI previousVersion) {
+    public Builder withPreviousVersion(URI previousVersion)
+    {
       this.previousVersion = Optional.ofNullable(previousVersion);
       return this;
     }
 
-    public Builder withDerivedFrom(URI derivedFrom) {
+    public Builder withDerivedFrom(URI derivedFrom)
+    {
       this.derivedFrom = Optional.ofNullable(derivedFrom);
       return this;
     }
 
-    public Builder withFieldSchema(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact)
     {
-      this.fieldSchemas.put(fieldName, fieldSchemaArtifact);
+      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+      this.templateUiBuilder.withOrder(fieldSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), fieldSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), fieldSchemaArtifact.description());
       return this;
     }
 
-    public Builder withElementSchema(String elementName, ElementSchemaArtifact elementSchemaArtifact)
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
     {
-      this.elementSchemas.put(elementName, elementSchemaArtifact);
+      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+      this.templateUiBuilder.withOrder(fieldSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), propertyLabel);
+      this.templateUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), propertyDescription);
       return this;
     }
 
-    public Builder withTemplateUi(TemplateUi templateUi) {
-      this.templateUi = templateUi;
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact)
+    {
+      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
+      this.templateUiBuilder.withOrder(elementSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), elementSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), elementSchemaArtifact.description());
+      return this;
+    }
+
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
+    {
+      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
+      this.templateUiBuilder.withOrder(elementSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), propertyLabel);
+      this.templateUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), propertyDescription);
+      return this;
+    }
+
+    public Builder withHeader(String header)
+    {
+      this.templateUiBuilder.withHeader(header);
+      return this;
+    }
+
+    public Builder withFooter(String footer)
+    {
+      this.templateUiBuilder.withFooter(footer);
       return this;
     }
 
     public TemplateSchemaArtifact build()
     {
       return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description, schemaOrgIdentifier, modelVersion,
-        version, status, previousVersion,
-        derivedFrom, fieldSchemas, elementSchemas, templateUi);
+        lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
+        schemaOrgIdentifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas,
+        templateUiBuilder.build());
     }
   }
 }

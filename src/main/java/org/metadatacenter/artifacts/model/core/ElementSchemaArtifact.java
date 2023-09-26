@@ -77,7 +77,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
-    private ElementUi elementUi = ElementUi.builder().build();
+    private ElementUi.Builder elementUiBuilder = ElementUi.builder();
 
     private Builder() {
     }
@@ -209,21 +209,39 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
-    public Builder withElementUi(ElementUi elementUi)
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact)
     {
-      this.elementUi = elementUi;
+      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+      this.elementUiBuilder.withOrder(fieldSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), fieldSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), fieldSchemaArtifact.description());
       return this;
     }
 
-    public Builder withFieldSchema(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
     {
-      this.fieldSchemas.put(fieldName, fieldSchemaArtifact);
+      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+      this.elementUiBuilder.withOrder(fieldSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), propertyLabel);
+      this.elementUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), propertyDescription);
       return this;
     }
 
-    public Builder withElementSchema(String elementName, ElementSchemaArtifact elementSchemaArtifact)
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact)
     {
-      this.elementSchemas.put(elementName, elementSchemaArtifact);
+      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
+      this.elementUiBuilder.withOrder(elementSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), elementSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), elementSchemaArtifact.description());
+      return this;
+    }
+
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
+    {
+      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
+      this.elementUiBuilder.withOrder(elementSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), propertyLabel);
+      this.elementUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), propertyDescription);
       return this;
     }
 
@@ -256,7 +274,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return new ElementSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
         identifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas,
-        elementUi,
+        elementUiBuilder.build(),
         isMultiple, minItems, maxItems, propertyUri);
     }
   }

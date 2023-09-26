@@ -6,58 +6,73 @@ import java.util.*;
 
 public class TemplateUiTest
 {
-
   @Test
   public void testGetUiType() {
     TemplateUi templateUi = TemplateUi.builder()
-      .withOrder(Collections.singletonList("order1"))
-      .withPages(Collections.singletonList("page1"))
+      .withOrder("field 1")
+      .withPage("page 1")
       .build();
     assertEquals(UiType.TEMPLATE_UI, templateUi.uiType());
   }
 
   @Test
   public void testGetOrder() {
-    List<String> order = List.of("order1", "order2", "order3");
+    String fieldName = "Field 1";
     TemplateUi templateUi = TemplateUi.builder()
-      .withOrder(order)
+      .withOrder(fieldName)
       .build();
-    assertEquals(order, templateUi.order());
+    assertFalse(templateUi.order().isEmpty());
+    assertEquals(templateUi.order().get(0), fieldName);
   }
 
   @Test
   public void testGetPages() {
-    List<String> pages = List.of("page1", "page2", "page3");
+    String pageName = "Page 1";
     TemplateUi templateUi = TemplateUi.builder()
-      .withPages(pages)
+      .withPage(pageName)
       .build();
-    assertEquals(pages, templateUi.pages());
+    assertFalse(templateUi.pages().isEmpty());
+    assertEquals(templateUi.pages().get(0), pageName);
   }
 
   @Test
   public void testGetPropertyLabels() {
-    List<String> order = List.of("field1", "field2", "field3");
-    Map<String, String> propertyLabels = new HashMap<>();
-    propertyLabels.put("field1", "Label 1");
-    propertyLabels.put("field2", "Label 2");
+    String fieldName1 = "Field 1";
+    String fieldName2 = "Field 2";
+    String propertyLabel1 = "Label 1";
+    String propertyLabel2 = "Label 2";
+
     TemplateUi templateUi = TemplateUi.builder()
-      .withOrder(order)
-      .withPropertyLabels(propertyLabels)
+      .withOrder(fieldName1)
+      .withOrder(fieldName2)
+      .withPropertyLabel(fieldName1, propertyLabel1)
+      .withPropertyLabel(fieldName2, propertyLabel2)
       .build();
-    assertEquals(propertyLabels, templateUi.propertyLabels());
+
+    assertEquals(templateUi.order().get(0), fieldName1);
+    assertEquals(templateUi.order().get(1), fieldName2);
+    assertEquals(templateUi.propertyLabels().get(fieldName1), propertyLabel1);
+    assertEquals(templateUi.propertyLabels().get(fieldName2), propertyLabel2);
   }
 
   @Test
   public void testGetPropertyDescriptions() {
-    List<String> order = List.of("field1", "field2", "field3");
-    Map<String, String> propertyDescriptions = new HashMap<>();
-    propertyDescriptions.put("field1", "Description 1");
-    propertyDescriptions.put("field2", "Description 2");
+    String fieldName1 = "Field 1";
+    String fieldName2 = "Field 2";
+    String propertyDescription1 = "Description 1";
+    String propertyDescription2 = "Description 1";
+
     TemplateUi templateUi = TemplateUi.builder()
-      .withOrder(order)
-      .withPropertyDescriptions(propertyDescriptions)
+      .withOrder(fieldName1)
+      .withOrder(fieldName2)
+      .withPropertyDescription(fieldName1, propertyDescription1)
+      .withPropertyDescription(fieldName2, propertyDescription2)
       .build();
-    assertEquals(propertyDescriptions, templateUi.propertyDescriptions());
+
+    assertEquals(templateUi.order().get(0), fieldName1);
+    assertEquals(templateUi.order().get(1), fieldName2);
+    assertEquals(templateUi.propertyDescriptions().get(fieldName1), propertyDescription1);
+    assertEquals(templateUi.propertyDescriptions().get(fieldName1), propertyDescription2);
   }
 
   @Test

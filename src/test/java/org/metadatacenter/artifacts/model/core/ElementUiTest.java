@@ -16,37 +16,57 @@ public class ElementUiTest
 
   @Test
   public void testGetOrder() {
-    List<String> order = List.of("field1", "field2", "field3");
+    String fieldName = "Field 1";
     ElementUi elementUi = ElementUi.builder()
-      .withOrder(order)
+      .withOrder(fieldName)
       .build();
-    assertEquals(order, elementUi.order());
+    assertFalse(elementUi.order().isEmpty());
+    assertEquals(elementUi.order().get(0), fieldName);
   }
 
   @Test
   public void testGetPropertyLabels() {
-    List<String> order = List.of("field1", "field2", "field3");
-    Map<String, String> propertyLabels = new HashMap<>();
-    propertyLabels.put("field1", "Label 1");
-    propertyLabels.put("field2", "Label 2");
+    String fieldName1 = "Field 1";
+    String fieldName2 = "Field 2";
+    String label1 = "Label 1";
+    String label2 = "Label 2";
+
     ElementUi elementUi = ElementUi.builder()
-      .withOrder(order)
-      .withPropertyLabels(propertyLabels)
+      .withOrder(fieldName1)
+      .withOrder(fieldName2)
+      .withPropertyLabel(fieldName1, label1)
+      .withPropertyLabel(fieldName2, label2)
       .build();
-    assertEquals(propertyLabels, elementUi.propertyLabels());
+
+    assertEquals(elementUi.order().size(), 2);
+    assertEquals(elementUi.order().get(0), fieldName1);
+    assertEquals(elementUi.order().get(1), fieldName2);
+
+    assertEquals(elementUi.propertyLabels().size(), 2);
+    assertEquals(elementUi.propertyLabels().get(fieldName1), label1);
+    assertEquals(elementUi.propertyLabels().get(fieldName2), label2);
   }
 
   @Test
   public void testGetPropertyDescriptions() {
-    List<String> order = List.of("field1", "field2", "field3");
-    Map<String, String> propertyDescriptions = new HashMap<>();
-    propertyDescriptions.put("field1", "Description 1");
-    propertyDescriptions.put("field2", "Description 2");
+    String fieldName1 = "Field 1";
+    String fieldName2 = "Field 2";
+    String propertyDescription1 = "Description 1";
+    String propertyDescription2 = "Description 2";
     ElementUi elementUi = ElementUi.builder()
-      .withOrder(order)
-      .withPropertyDescriptions(propertyDescriptions)
+      .withOrder(fieldName1)
+      .withOrder(fieldName2)
+      .withPropertyDescription(fieldName1, propertyDescription1)
+      .withPropertyDescription(fieldName2, propertyDescription2)
       .build();
-    assertEquals(propertyDescriptions, elementUi.propertyDescriptions());
+
+    assertEquals(elementUi.order().size(), 2);
+    assertEquals(elementUi.order().get(0), fieldName1);
+    assertEquals(elementUi.order().get(1), fieldName2);
+
+    assertEquals(elementUi.propertyDescriptions().size(), 2);
+    assertEquals(elementUi.propertyDescriptions().get(fieldName1), propertyDescription1);
+    assertEquals(elementUi.propertyDescriptions().get(fieldName2), propertyDescription2);
   }
 
   @Test

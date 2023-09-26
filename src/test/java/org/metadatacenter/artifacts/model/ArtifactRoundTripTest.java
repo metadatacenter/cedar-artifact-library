@@ -71,7 +71,6 @@ public class ArtifactRoundTripTest
     ElementSchemaArtifact originalElementSchemaArtifact = ElementSchemaArtifact.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123"))
       .withName("Study")
-      .withElementUi(ElementUi.builder().build())
       .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);

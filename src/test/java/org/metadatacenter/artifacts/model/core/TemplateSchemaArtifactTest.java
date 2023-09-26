@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TemplateSchemaArtifactTest
 {
@@ -23,22 +24,37 @@ public class TemplateSchemaArtifactTest
 
   @Test
   public void testCreateTemplateSchemaArtifact() {
-    TemplateUi templateUi = TemplateUi.builder().build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName("Test")
-      .withTemplateUi(templateUi).build();
+      .build();
 
     assertEquals(templateSchemaArtifact.name(), "Test");
-    assertEquals(templateSchemaArtifact.templateUi(), templateUi);
+  }
+
+  @Test
+  public void testCreateTemplateSchemaArtifactWithChildren()
+  {
+    String templateName = "Template 1";
+    String textFieldName = "Text Field 1";
+
+    FieldSchemaArtifact textField = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName).build();
+
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withName(templateName)
+      .withFieldSchema(textField)
+      .build();
+
+    assertEquals(templateSchemaArtifact.name(), templateName);
+    assertTrue(templateSchemaArtifact.hasFields());
+    assertEquals(templateSchemaArtifact.getFieldSchemaArtifact(textFieldName), textField);
   }
 
   @Test(expected = IllegalStateException.class)
   public void testMissingName()
   {
-    TemplateUi templateUi = TemplateUi.builder().build();
-
-    TemplateSchemaArtifact.builder().withTemplateUi(templateUi).build();
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .build();
   }
 
 }
