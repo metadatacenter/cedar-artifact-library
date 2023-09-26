@@ -294,9 +294,12 @@ record ElementSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jso
     Set<String> order = elementUi.order().stream().collect(toSet());
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
-    if (!order.equals(childNames))
+    if (!order.containsAll(childNames)) {
+      childNames.removeAll(order);
       throw new IllegalStateException(
-        "UI order field must contain an entry for all child fields and elements in " + "element schema artifact " + name() + "; missing fields: " + childNames.removeAll(order));
+        "UI order field must contain an entry for all child fields and elements in element schema artifact " +
+          name + "; missing fields: " + childNames);
+    }
 
     jsonLdContext = Map.copyOf(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

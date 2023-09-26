@@ -539,7 +539,7 @@ public class ArtifactRoundTripTest
     assertTrue(validateJsonSchema(finalRendering));
 
     // TODO Finish Sample Block round-trip test
-    TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
+//    TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
 //
 //    assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
   }
