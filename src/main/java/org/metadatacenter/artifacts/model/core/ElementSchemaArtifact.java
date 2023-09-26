@@ -13,8 +13,13 @@ import static java.util.stream.Collectors.toSet;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContains;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
@@ -23,6 +28,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact, ParentSchemaArtifact
@@ -291,6 +298,11 @@ record ElementSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jso
 {
   public ElementSchemaArtifactRecord
   {
+    validateStringFieldNotNull(this, jsonSchemaType, JSON_SCHEMA_TYPE);
+    validateStringFieldNotNull(this, jsonSchemaTitle, JSON_SCHEMA_TITLE);
+    validateStringFieldNotNull(this, jsonSchemaDescription, JSON_SCHEMA_DESCRIPTION);
+    validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
     validateMapContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     validateUriListContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -72,4 +74,43 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom());
     Assert.assertEquals(propertyUri, elementSchemaArtifact.propertyUri());
   }
+
+  @Test
+  public void testCreateElementSchemaArtifactWithChildren()
+  {
+    String elementName = "Element 1";
+    String textFieldName1 = "Text Field 1";
+    String textFieldName2 = "Text Field 2";
+    String textField2Label = "text field 2 label";
+    String textField2Description = "text field 2 description";
+
+    FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
+    FieldSchemaArtifact textField2 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName2).build();
+
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
+      .withName(elementName)
+      .withFieldSchema(textField1)
+      .withFieldSchema(textField2, textField2Label, textField2Description)
+      .build();
+
+    assertEquals(elementSchemaArtifact.name(), elementName);
+    assertTrue(elementSchemaArtifact.hasFields());
+    assertEquals(elementSchemaArtifact.getFieldSchemaArtifact(textFieldName1), textField1);
+    assertEquals(elementSchemaArtifact.getFieldSchemaArtifact(textFieldName2), textField2);
+    assertEquals(elementSchemaArtifact.elementUi().order().size(), 2);
+    assertEquals(elementSchemaArtifact.elementUi().order().get(0), textFieldName1);
+    assertEquals(elementSchemaArtifact.elementUi().order().get(1), textFieldName2);
+    assertEquals(elementSchemaArtifact.elementUi().propertyLabels().size(), 2);
+    assertEquals(elementSchemaArtifact.elementUi().propertyLabels().get(textFieldName2), textField2Label);
+    assertEquals(elementSchemaArtifact.elementUi().propertyDescriptions().size(), 2);
+    assertEquals(elementSchemaArtifact.elementUi().propertyDescriptions().get(textFieldName2), textField2Description);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testMissingName()
+  {
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
+      .build();
+  }
+
 }

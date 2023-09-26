@@ -36,18 +36,31 @@ public class TemplateSchemaArtifactTest
   public void testCreateTemplateSchemaArtifactWithChildren()
   {
     String templateName = "Template 1";
-    String textFieldName = "Text Field 1";
+    String textFieldName1 = "Text Field 1";
+    String textFieldName2 = "Text Field 2";
+    String textField2Label = "text field 2 label";
+    String textField2Description = "text field 2 description";
 
-    FieldSchemaArtifact textField = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName).build();
+    FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
+    FieldSchemaArtifact textField2 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName2).build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName(templateName)
-      .withFieldSchema(textField)
+      .withFieldSchema(textField1)
+      .withFieldSchema(textField2, textField2Label, textField2Description)
       .build();
 
     assertEquals(templateSchemaArtifact.name(), templateName);
     assertTrue(templateSchemaArtifact.hasFields());
-    assertEquals(templateSchemaArtifact.getFieldSchemaArtifact(textFieldName), textField);
+    assertEquals(templateSchemaArtifact.getFieldSchemaArtifact(textFieldName1), textField1);
+    assertEquals(templateSchemaArtifact.getFieldSchemaArtifact(textFieldName2), textField2);
+    assertEquals(templateSchemaArtifact.templateUi().order().size(), 2);
+    assertEquals(templateSchemaArtifact.templateUi().order().get(0), textFieldName1);
+    assertEquals(templateSchemaArtifact.templateUi().order().get(1), textFieldName2);
+    assertEquals(templateSchemaArtifact.templateUi().propertyLabels().size(), 2);
+    assertEquals(templateSchemaArtifact.templateUi().propertyLabels().get(textFieldName2), textField2Label);
+    assertEquals(templateSchemaArtifact.templateUi().propertyDescriptions().size(), 2);
+    assertEquals(templateSchemaArtifact.templateUi().propertyDescriptions().get(textFieldName2), textField2Description);
   }
 
   @Test(expected = IllegalStateException.class)
@@ -56,5 +69,4 @@ public class TemplateSchemaArtifactTest
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .build();
   }
-
 }
