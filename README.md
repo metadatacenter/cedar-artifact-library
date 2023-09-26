@@ -161,7 +161,7 @@ ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
   .build();
 ```
 
-This element can be added as a child to the earlier template as follows:
+This element can be added as a child to a template as follows:
 
 ```java
 TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
@@ -192,6 +192,16 @@ FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
       withMinLength(2).
       withMaxLength(10).
       build();
+```
+
+This field can be added as a child to a template as follows:
+
+```java
+TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+  .withName("Study")
+  .withDescription("A template describing a study")
+  .withFieldSchema(fieldSchemaArtifact);
+  .build();
 ```
 
 ### Creating Numeric Fields
