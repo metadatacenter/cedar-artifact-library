@@ -25,11 +25,19 @@ public class TemplateSchemaArtifactTest
   @Test
   public void testCreateTemplateSchemaArtifact() {
 
+    String templateName = "Test Name";
+    String header = "Header";
+    String footer = "Footer";
+
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withName("Test")
+      .withName(templateName)
+      .withHeader(header)
+      .withFooter(footer)
       .build();
 
-    assertEquals(templateSchemaArtifact.name(), "Test");
+    assertEquals(templateSchemaArtifact.name(), templateName);
+    assertEquals(templateSchemaArtifact.templateUi().header().get(), header);
+    assertEquals(templateSchemaArtifact.templateUi().footer().get(), footer);
   }
 
   @Test

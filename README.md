@@ -167,7 +167,7 @@ This element can be added as a child to the earlier template as follows:
 TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
   .withName("Study")
   .withDescription("A template describing a study")
-  .withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact);
+  .withElementSchema(elementSchemaArtifact);
   .build();
 ```
 
