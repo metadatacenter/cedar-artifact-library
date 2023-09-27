@@ -226,7 +226,7 @@ public class JsonSchemaArtifactReaderTest
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
-    for (Map.Entry<String, URI> entry : contextMap.entrySet())
+    for (var entry : contextMap.entrySet())
       objectNode.put(entry.getKey(), entry.getValue().toString());
 
     return objectNode;

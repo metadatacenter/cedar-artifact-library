@@ -134,13 +134,13 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
     if (templateSchemaArtifact.hasAttributeValueField())
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
-        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
     else
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
+    // TODO Think about moving this to renderParentSchemaArtifactPropertiesJsonSchemaSpecification above
     for (String childName : templateSchemaArtifact.templateUi().order()) {
       if (templateSchemaArtifact.isField(childName)) {
         FieldSchemaArtifact childSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childName);
@@ -581,7 +581,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "[Child Name n]": { [Child JSON Schema n] }
    *   }
    * </pre>
-   * A conforming instance chould look as follows:
+   * A conforming instance should look as follows:
    * <pre>
    * {
    *   "@context": {
@@ -630,10 +630,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(PAV_CREATED_BY, renderUriOrNullJsonSchemaTypeSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderUriOrNullJsonSchemaTypeSpecification());
-
-    for (ChildSchemaArtifact childSchemaArtifact : parentSchemaArtifact.getChildSchemas()) {
-      // TODO Add child schema to parent schema
-    }
 
     return rendering;
   }
@@ -718,7 +714,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(
       JSON_LD_ID));
 
-    for (Map.Entry<String, URI> entry : parentSchemaArtifact.getChildPropertyUris().entrySet()) {
+    for (var entry : parentSchemaArtifact.getChildPropertyUris().entrySet()) {
       String childName = entry.getKey();
       URI propertyUri = entry.getValue();
       rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(propertyUri.toString()));
