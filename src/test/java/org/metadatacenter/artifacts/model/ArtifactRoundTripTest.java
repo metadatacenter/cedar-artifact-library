@@ -523,9 +523,19 @@ public class ArtifactRoundTripTest
     assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
-  @Test public void testRoundTripSampleBlock()
+  @Test public void testRoundTripHuBMAPSampleBlock()
   {
-    ObjectNode originalRendering = getJSONFileContentAsObjectNode("SampleBlock.json");
+    testRoundTripFromFile("SampleBlock.json");
+  }
+
+  @Test public void testRoundTripHuBMAPSampleSection()
+  {
+    testRoundTripFromFile("SampleSection.json");
+  }
+
+  private void testRoundTripFromFile(String fileName)
+  {
+    ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);
 
     assertTrue(validateJsonSchema(originalRendering));
 
