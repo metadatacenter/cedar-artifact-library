@@ -267,7 +267,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     else
       rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
 
-
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
     // value constraints field.
     if (!fieldSchemaArtifact.isStatic()) {
@@ -283,15 +282,16 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
-      if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-        rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
-
-      if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-        rendering.put(SKOS_ALTLABEL, mapper.createArrayNode());
-        for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
-          rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel.toString());
-      }
       rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints()));
+    }
+
+    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
+      rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+
+    if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
+      rendering.put(SKOS_ALTLABEL, mapper.createArrayNode());
+      for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
+        rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel.toString());
     }
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));

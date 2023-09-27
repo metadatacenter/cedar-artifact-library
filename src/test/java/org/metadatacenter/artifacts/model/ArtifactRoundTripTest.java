@@ -5,20 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ElementUi;
-import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.NumericType;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
@@ -505,12 +500,14 @@ public class ArtifactRoundTripTest
   {
     String name = "Field name";
     String description = "Field description";
+    String preferredLabel = "Preferred label";
     String content = "Content";
 
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder()
       .withName(name)
       .withDescription(description)
       .withContent(content)
+      .withPreferredLabel(preferredLabel)
       .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -541,7 +538,7 @@ public class ArtifactRoundTripTest
     // TODO Finish Sample Block round-trip test
     TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
 
- //   assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
+//   assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
   }
 
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)

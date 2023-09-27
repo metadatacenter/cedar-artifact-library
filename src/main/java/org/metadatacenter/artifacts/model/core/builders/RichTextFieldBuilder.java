@@ -122,9 +122,9 @@ public final class RichTextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public RichTextFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public RichTextFieldBuilder withPreferredLabel(String preferredLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(preferredLabel);
     return this;
   }
 

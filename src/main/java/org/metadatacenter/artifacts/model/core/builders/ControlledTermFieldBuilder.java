@@ -2,7 +2,6 @@ package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
-import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
@@ -10,7 +9,6 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.ValueType;
@@ -195,9 +193,9 @@ public final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public ControlledTermFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public ControlledTermFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

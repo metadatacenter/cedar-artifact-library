@@ -6,7 +6,6 @@ import org.metadatacenter.artifacts.model.core.NumericFieldUi;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -157,9 +156,9 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public NumericFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public NumericFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

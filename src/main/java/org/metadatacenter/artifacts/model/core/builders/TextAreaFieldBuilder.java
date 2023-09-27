@@ -6,7 +6,6 @@ import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -139,9 +138,9 @@ public final class TextAreaFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public TextAreaFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public TextAreaFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

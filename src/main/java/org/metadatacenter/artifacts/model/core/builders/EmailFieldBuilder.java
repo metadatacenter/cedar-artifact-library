@@ -149,9 +149,9 @@ public final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public EmailFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public EmailFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

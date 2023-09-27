@@ -121,9 +121,9 @@ public final class ImageFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public ImageFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public ImageFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

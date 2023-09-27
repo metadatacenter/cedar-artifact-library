@@ -144,9 +144,9 @@ public final class ListFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public ListFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public ListFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

@@ -121,9 +121,9 @@ public final class YouTubeFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public YouTubeFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public YouTubeFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

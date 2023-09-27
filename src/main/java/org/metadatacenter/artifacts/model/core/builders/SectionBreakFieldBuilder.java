@@ -10,7 +10,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
@@ -122,9 +121,9 @@ public final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public SectionBreakFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public SectionBreakFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

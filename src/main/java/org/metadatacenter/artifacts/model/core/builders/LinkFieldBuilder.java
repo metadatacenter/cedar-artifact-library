@@ -138,9 +138,9 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public LinkFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public LinkFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

@@ -144,9 +144,9 @@ public final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public CheckboxFieldBuilder withSkosPrefLabel(String skosPrefLabel)
+  @Override public CheckboxFieldBuilder withPreferredLabel(String skosPrefLabel)
   {
-    super.withSkosPrefLabel(skosPrefLabel);
+    super.withPreferredLabel(skosPrefLabel);
     return this;
   }
 

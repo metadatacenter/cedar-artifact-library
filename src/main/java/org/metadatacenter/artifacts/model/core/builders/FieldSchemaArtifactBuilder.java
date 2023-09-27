@@ -9,7 +9,6 @@ import org.metadatacenter.artifacts.model.core.Version;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +16,6 @@ import java.util.Optional;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder, TextAreaFieldBuilder, TemporalFieldBuilder,
   RadioFieldBuilder, PhoneNumberFieldBuilder, NumericFieldBuilder, ListFieldBuilder, LinkFieldBuilder,
@@ -151,7 +149,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withSkosPrefLabel(String skosPrefLabel)
+  public FieldSchemaArtifactBuilder withPreferredLabel(String skosPrefLabel)
   {
     this.skosPrefLabel = Optional.ofNullable(skosPrefLabel);
     return this;
