@@ -92,6 +92,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123"))
       .withName("Study")
+      .withDefaultValue("None")
       .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -538,8 +539,8 @@ public class ArtifactRoundTripTest
     assertTrue(validateJsonSchema(finalRendering));
 
     // TODO Finish Sample Block round-trip test
-//    TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
-//
+    TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
+
 //    assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
   }
 

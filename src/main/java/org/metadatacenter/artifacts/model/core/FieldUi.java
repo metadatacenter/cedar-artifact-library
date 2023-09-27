@@ -1,15 +1,19 @@
 package org.metadatacenter.artifacts.model.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericFieldUi, StaticFieldUi, FieldUiRecord
 {
   FieldInputType inputType();
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean hidden();
 
+  @JsonIgnore
   default boolean isStatic() { return inputType().isStatic(); }
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean valueRecommendationEnabled();
 
   default TemporalFieldUi asTemporalFieldUi()

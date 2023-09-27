@@ -1,6 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
-public record TemporalDefaultValue(String value) implements DefaultValue<String>
+import com.fasterxml.jackson.annotation.JsonValue;
+
+public record TemporalDefaultValue(@JsonValue String value) implements DefaultValue<String>
 {
   @Override public DefaultValueType getValueType()
   {

@@ -1,6 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
-public record NumericDefaultValue(Number value) implements DefaultValue<Number>
+import com.fasterxml.jackson.annotation.JsonValue;
+
+public record NumericDefaultValue(@JsonValue Number value) implements DefaultValue<Number>
 {
   @Override public DefaultValueType getValueType()
   {

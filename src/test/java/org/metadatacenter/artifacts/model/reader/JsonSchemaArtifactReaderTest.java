@@ -18,7 +18,8 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -175,7 +176,7 @@ public class JsonSchemaArtifactReaderTest
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
-    objectNode.put(JSON_LD_CONTEXT, createContextMap(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+    objectNode.put(JSON_LD_CONTEXT, createContextMap(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     objectNode.put(JSON_LD_TYPE, TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
@@ -185,7 +186,7 @@ public class JsonSchemaArtifactReaderTest
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
-    objectNode.put(JSON_LD_CONTEXT, createContextMap(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+    objectNode.put(JSON_LD_CONTEXT, createContextMap(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     objectNode.put(JSON_LD_TYPE, ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;
@@ -195,7 +196,7 @@ public class JsonSchemaArtifactReaderTest
   {
     ObjectNode objectNode = createBaseSchemaArtifact(title, description);
 
-    objectNode.put(JSON_LD_CONTEXT, createContextMap(SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+    objectNode.put(JSON_LD_CONTEXT, createContextMap(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     objectNode.put(JSON_LD_TYPE, FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
 
     return objectNode;

@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public class FieldSchemaArtifactTest
 {
 
   @Test public void testCreateTextField()
   {
-    Map<String, URI> jsonLdContext = ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+    Map<String, URI> jsonLdContext = FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
     List<URI> jsonLdTypes = Collections.singletonList(URI.create("https://schema.metadatacenter.org/core/TemplateField"));
     URI jsonLdId = URI.create("https://repo.metadatacenter.org/fields/4455");
     URI createdBy = URI.create("http://example.com/user");

@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.metadatacenter.artifacts.model.core.builders.AttributeValueFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.CheckboxFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.ControlledTermFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.EmailFieldBuilder;
@@ -10,10 +12,9 @@ import org.metadatacenter.artifacts.model.core.builders.NumericFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.PhoneNumberFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.RadioFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.RichTextFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.SectionBreakFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TemporalFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
-import org.metadatacenter.artifacts.model.core.builders.AttributeValueFieldBuilder;
-import org.metadatacenter.artifacts.model.core.builders.SectionBreakFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
 import org.metadatacenter.model.ModelNodeNames;
@@ -30,11 +31,12 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateM
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListContainsOneOf;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -72,6 +74,7 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
     return valueConstraints().isPresent() &&  valueConstraints().get().requiredValue();
   }
 
+  @JsonIgnore
   default boolean isStatic() { return fieldUi().isStatic(); }
 
   default boolean hasIRIValue()
@@ -147,7 +150,6 @@ record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonL
 {
   public FieldSchemaArtifactRecord
   {
-    validateMapContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     validateUriListContainsOneOf(this, jsonLdTypes, ModelNodeNames.JSON_LD_TYPE, Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
     validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
@@ -165,6 +167,11 @@ record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonL
 
     if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
       throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
+
+    if (fieldUi.isStatic())
+      validateMapContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    else
+      validateMapContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 
     jsonLdContext = Map.copyOf(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

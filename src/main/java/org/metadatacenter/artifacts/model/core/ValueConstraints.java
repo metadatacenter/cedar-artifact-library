@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Optional;
@@ -15,12 +16,16 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   Optional<? extends DefaultValue> defaultValue();
 
+  @JsonIgnore
   default boolean isTextValueConstraint() { return this instanceof TextValueConstraints; }
 
+  @JsonIgnore
   default boolean isNumericValueConstraint() { return this instanceof NumericValueConstraints; }
 
+  @JsonIgnore
   default boolean isControlledTermValueConstraint() { return this instanceof ControlledTermValueConstraints; }
 
+  @JsonIgnore
   default boolean isTemporalValueConstraint() { return this instanceof TemporalValueConstraints; }
 
   default TextValueConstraints asTextValueConstraints()

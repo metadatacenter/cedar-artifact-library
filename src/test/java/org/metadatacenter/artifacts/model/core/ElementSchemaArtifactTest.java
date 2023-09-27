@@ -1,14 +1,11 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.bouncycastle.math.raw.Mod;
 import org.junit.Assert;
 import org.junit.Test;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,14 +14,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public class ElementSchemaArtifactTest
 {
 
   @Test public void testConstructor()
   {
-    Map<String, URI> jsonLdContext = SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+    Map<String, URI> jsonLdContext = PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
     List<URI> jsonLdTypes = Collections.singletonList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     URI jsonLdId = URI.create("http://example.com/artifact");
     URI createdBy = URI.create("http://example.com/user");

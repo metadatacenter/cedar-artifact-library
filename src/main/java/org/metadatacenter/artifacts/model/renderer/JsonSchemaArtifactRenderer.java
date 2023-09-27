@@ -20,6 +20,8 @@ import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.INSTANCE_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
@@ -37,6 +39,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.OSLC;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.PAV;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
@@ -137,6 +140,21 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
+    for (String childName : templateSchemaArtifact.templateUi().order()) {
+      if (templateSchemaArtifact.isField(childName)) {
+        FieldSchemaArtifact childSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childName);
+
+        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
+
+      } else if (templateSchemaArtifact.isElement(childName)) {
+        ElementSchemaArtifact childSchemaArtifact = templateSchemaArtifact.getElementSchemaArtifact(childName);
+
+        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderElementSchemaArtifact(childSchemaArtifact));
+
+      } else // TODO Use typesafe switch on ChildSchemaArtifact when available
+        throw new IllegalStateException("Order child " + childName + " is not a field or an element");
+    }
+
     return rendering;
   }
 
@@ -192,6 +210,22 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     // TODO Generate JSON Schema field representation for isMultiple, minItem, maxItems
 
+    for (String childName : elementSchemaArtifact.elementUi().order()) {
+      if (elementSchemaArtifact.isField(childName)) {
+        FieldSchemaArtifact childSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childName);
+
+        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
+
+      } else if (elementSchemaArtifact.isElement(childName)) {
+        ElementSchemaArtifact childSchemaArtifact = elementSchemaArtifact.getElementSchemaArtifact(childName);
+
+        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderElementSchemaArtifact(childSchemaArtifact));
+
+      } else // TODO Use typesafe switch on ChildSchemaArtifact when available
+        throw new IllegalStateException("Order child " + childName + " is not a field or an element");
+    }
+
+
     return rendering;
   }
 
@@ -228,7 +262,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = renderSchemaArtifact(fieldSchemaArtifact);
 
     // TODO This will create prefix mappings for schema, pav, bibo, oslc. Some fields need xsd, rdfs, skos
-    rendering.put(JSON_LD_CONTEXT, renderSchemaArtifactContextPrefixesJsonLdSpecification());
+    rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
 
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
     // value constraints field.
@@ -257,7 +291,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     }
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
-
     // TODO Generate JSON Schema field representation for isMultiple, minItem, maxItems
 
     return rendering;
@@ -804,7 +837,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private ObjectNode renderParentSchemaArtifactContextJsonLdSpecification()
   {
-    ObjectNode rendering = renderSchemaArtifactContextPrefixesJsonLdSpecification();
+    ObjectNode rendering = renderParentSchemaArtifactContextPrefixesJsonLdSpecification();
 
     rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
     rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
@@ -855,7 +888,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate JSON-LD @context prefix specification for schema artifacts
+   * Generate JSON-LD @context prefix specification for parent schema artifacts
    * <p></p>
    * Defined as follows:
    * <pre>
@@ -863,18 +896,42 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "schema": "http://schema.org/",
    *     "pav": "http://purl.org/pav/",
    *     "oslc": "http://open-services.net/ns/core#",
-   *     "bibo": "http://purl.org/ontology/bibo/"
+   *     "bibo": "http://purl.org/ontology/bibo/",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#"
    *   }
    * </pre>
    */
-  private ObjectNode renderSchemaArtifactContextPrefixesJsonLdSpecification()
+  private ObjectNode renderParentSchemaArtifactContextPrefixesJsonLdSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(SCHEMA, SCHEMA_IRI);
-    rendering.put(PAV, PAV_IRI);
-    rendering.put(OSLC, OSLC_IRI);
-    rendering.put(BIBO, BIBO_IRI);
+    for (var entry: PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
+      rendering.put(entry.getKey(), entry.getValue().toString());
+
+    return rendering;
+  }
+
+  /**
+   * Generate JSON-LD @context prefix specification for field schema artifacts
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   *   "@context": {
+   *     "schema": "http://schema.org/",
+   *     "pav": "http://purl.org/pav/",
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "bibo": "http://purl.org/ontology/bibo/",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     "skos": "http://www.w3.org/2004/02/skos/core#"
+   *   }
+   * </pre>
+   */
+  private ObjectNode renderFieldSchemaArtifactContextPrefixesJsonLdSpecification()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    for (var entry: FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
+      rendering.put(entry.getKey(), entry.getValue().toString());
 
     return rendering;
   }
@@ -898,12 +955,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(SCHEMA, SCHEMA_IRI);
-    rendering.put(PAV, PAV_IRI);
-    rendering.put(OSLC, OSLC_IRI);
-    rendering.put(RDFS, RDFS_IRI);
-    rendering.put(XSD, XSD_IRI);
-    rendering.put(SKOS, SKOS_IRI);
+    for (var entry: INSTANCE_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
+      rendering.put(entry.getKey(), entry.getValue().toString());
 
     return rendering;
   }

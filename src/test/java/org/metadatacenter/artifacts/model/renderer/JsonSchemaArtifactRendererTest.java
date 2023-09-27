@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import org.apache.bcel.generic.FADD;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.FieldInputType;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
@@ -18,13 +22,19 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI;
 
 public class JsonSchemaArtifactRendererTest
 {
@@ -54,8 +64,56 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(JSON_SCHEMA_TYPE).textValue(), JSON_SCHEMA_OBJECT);
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "Study");
+  }
 
-    //System.out.println(rendering.toPrettyString());
+  @Test public void testRenderTextField()
+  {
+    String fieldName = "Field name";
+    String fieldDescription = "Field description";
+    String defaultValue = "default value";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+      withName(fieldName).
+      withDescription(fieldDescription).
+      withDefaultValue(defaultValue).
+      build();
+
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(rendering));
+
+    assertEquals(rendering.get(JSON_SCHEMA_SCHEMA).textValue(), JSON_SCHEMA_SCHEMA_IRI);
+    assertEquals(rendering.get(JSON_SCHEMA_TYPE).textValue(), JSON_SCHEMA_OBJECT);
+    assertEquals(rendering.get(JSON_LD_TYPE).textValue(), FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
+    assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
+    assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
+    //assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue(), defaultURI.toString());
+  }
+
+  @Test public void testRenderLinkField()
+  {
+    String fieldName = "Field name";
+    String fieldDescription = "Field description";
+    URI defaultURI = URI.create("https://example.com/Study");
+    String defaultLabel = "Study";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
+      withName(fieldName).
+      withDescription(fieldDescription).
+      withDefaultValue(defaultURI, defaultLabel).
+      build();
+
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(rendering));
+
+    assertEquals(rendering.get(JSON_SCHEMA_SCHEMA).textValue(), JSON_SCHEMA_SCHEMA_IRI);
+    assertEquals(rendering.get(JSON_SCHEMA_TYPE).textValue(), JSON_SCHEMA_OBJECT);
+    assertEquals(rendering.get(JSON_LD_TYPE).textValue(), FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
+    assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
+    assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
+    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI).textValue(), defaultURI.toString());
+    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(RDFS_LABEL).textValue(), defaultLabel);
   }
 
   @Test
@@ -69,8 +127,6 @@ public class JsonSchemaArtifactRendererTest
     ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "SDY232");
-
-    //System.out.println(rendering.toPrettyString());
   }
 
   @Test
@@ -94,7 +150,7 @@ public class JsonSchemaArtifactRendererTest
   }
 
   @Test
-  public void testRenderSampleSectionTemplateSchemaArtifact()
+  public void testRenderHuBMAPSampleSection()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("SampleSection.json");
 
@@ -108,7 +164,7 @@ public class JsonSchemaArtifactRendererTest
   }
 
   @Test
-  public void testRenderRADxMetadataSpecificationTemplateSchemaArtifact()
+  public void testRenderRADxMetadataSpecification()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");
 
