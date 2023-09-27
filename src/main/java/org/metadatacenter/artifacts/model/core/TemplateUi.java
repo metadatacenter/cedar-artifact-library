@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
@@ -131,13 +132,24 @@ record TemplateUiRecord(List<String> order, List<String> pages, Map<String, Stri
     validateOptionalFieldNotNull(this, header, UI_HEADER);
     validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
-    if (!order.stream().collect(Collectors.toSet()).containsAll(propertyLabels.keySet()))
-      throw new IllegalStateException("propertyLabels field must contain only entries present in the order field in " +
-        TemplateUi.class.getName() + ": " + this);
+    // TODO Many CEDAR templates will have extra mappings for property labels and descriptions; probably remove silently
+    /*
+    if (!order.containsAll(propertyLabels.keySet())) {
+      Set<String> extraPropertyLabels = propertyLabels.keySet();
+      extraPropertyLabels.removeAll(order);
+      throw new IllegalStateException(
+        "propertyLabels field must contain only entries present in the order field in " +
+          TemplateUi.class.getName() + " " + this.toString() + "; extra labels: " + extraPropertyLabels);
+    }
 
-    if (!order.stream().collect(Collectors.toSet()).containsAll(propertyDescriptions.keySet()))
-      throw new IllegalStateException("propertyDescriptions field must contain only entries present in the order field in " +
-        TemplateUi.class.getName() + ": " + this);
+    if (!order.containsAll(propertyDescriptions.keySet())) {
+      Set<String> extraPropertyDescriptions = propertyDescriptions.keySet();
+      extraPropertyDescriptions.removeAll(order);
+      throw new IllegalStateException(
+        "propertyDescriptions field must contain only entries present in the order field in " +
+          TemplateUi.class.getName() + ": " + this.toString() + "; extra descriptions: " + extraPropertyDescriptions);
+    }
+    **/
 
     order = List.copyOf(order);
     pages = List.copyOf(pages);

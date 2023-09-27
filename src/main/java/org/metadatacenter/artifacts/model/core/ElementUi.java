@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
@@ -112,13 +112,24 @@ record ElementUiRecord(List<String> order, Map<String, String> propertyLabels, M
     validateOptionalFieldNotNull(this, header, UI_HEADER);
     validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
-    if (!order.stream().collect(Collectors.toSet()).containsAll(propertyLabels.keySet()))
+    // TODO Many CEDAR templates will have extra mappings for property labels and descriptions; probably remove silently
+    /*
+    if (!order.containsAll(propertyLabels.keySet())) {
+      Set<String> extraPropertyLabels = propertyLabels.keySet();
+      extraPropertyLabels.removeAll(order);
       throw new IllegalStateException(
-        "propertyLabels field must contain only entries present in the order field in " + ElementUi.class.getName() + ": " + this.toString());
+        "propertyLabels field must contain only entries present in the order field in " +
+          ElementUi.class.getName() + " " + this.toString() + "; extra labels: " + extraPropertyLabels);
+    }
 
-    if (!order.stream().collect(Collectors.toSet()).containsAll(propertyDescriptions.keySet()))
+    if (!order.containsAll(propertyDescriptions.keySet())) {
+      Set<String> extraPropertyDescriptions = propertyDescriptions.keySet();
+      extraPropertyDescriptions.removeAll(order);
       throw new IllegalStateException(
-        "propertyDescriptions field must contain only entries present in the order field in " + ElementUi.class.getName() + ": " + this.toString());
+        "propertyDescriptions field must contain only entries present in the order field in " +
+          ElementUi.class.getName() + ": " + this.toString() + "; extra descriptions: " + extraPropertyDescriptions);
+    }
+    **/
 
     order = List.copyOf(order);
     propertyLabels = Map.copyOf(propertyLabels);

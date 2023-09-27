@@ -1284,7 +1284,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           String currentFieldName = fieldEntry.getKey();
           String currentFieldValue = fieldEntry.getValue().textValue();
 
-          if (currentFieldValue != null && !currentFieldValue.isEmpty())
+          if (currentFieldValue != null)
             fieldNameStringValueMap.put(currentFieldName, currentFieldValue);
         } else
             throw new ArtifactParseException("Object in field must contain string values", fieldName, path);

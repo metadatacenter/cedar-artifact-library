@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -532,6 +533,16 @@ public class ArtifactRoundTripTest
   {
     testRoundTripFromFile("SampleSection.json");
   }
+
+  @Test public void testRoundTripHuBMAPSampleSuspension()
+  {
+    testRoundTripFromFile("SampleSuspension.json");
+  }
+
+//  @Test public void testRoundTripADVANCE()
+//  {
+//    testRoundTripFromFile("ADVANCETemplate.json");
+//  }
 
   private void testRoundTripFromFile(String fileName)
   {
