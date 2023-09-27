@@ -51,7 +51,7 @@ public class ValidationHelper
       throw new IllegalStateException("URI field " + fieldName + " must equal " + value + " in " + obj);
   }
 
-  public static void validateUriListContains(Object obj, List<URI> uriListField, String fieldName, URI value)
+  public static void validateUriListFieldContains(Object obj, List<URI> uriListField, String fieldName, URI value)
   {
     validateListFieldNotNull(obj, uriListField, fieldName);
 
@@ -59,7 +59,7 @@ public class ValidationHelper
       throw new IllegalStateException("URI list field " + fieldName + " must contain " + value + " in " + obj);
   }
 
-  public static void validateUriListContainsOneOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
+  public static void validateUriListFieldContainsOneOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
   {
     validateListFieldNotNull(obj, uriListField, fieldName);
 
@@ -67,7 +67,7 @@ public class ValidationHelper
       throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values + " in " + obj);
   }
 
-  public static void validateUriListContainsAllOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
+  public static void validateUriListFieldContainsAllOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
   {
     validateListFieldNotNull(obj, uriListField, fieldName);
 
@@ -75,8 +75,10 @@ public class ValidationHelper
       throw new IllegalStateException("URI list field " + fieldName + " must contain all values " + values + " in " + obj);
   }
 
-  public static <K, V> void validateMapContainsAll(Object obj, Map<K, V> field, String fieldName, Map<K, V> values)
+  public static <K, V> void validateMapFieldContainsAll(Object obj, Map<K, V> field, String fieldName, Map<K, V> values)
   {
+    validateMapFieldNotNull(obj, field, fieldName);
+
     if (!field.entrySet().containsAll(values.entrySet()))
       throw new IllegalStateException("Map field " + fieldName + " must contain all entries " + values + " in " + obj);
   }

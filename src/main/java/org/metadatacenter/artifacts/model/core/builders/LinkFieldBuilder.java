@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
-import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -13,13 +12,15 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
   private final ControlledTermValueConstraints.Builder valueConstraintsBuilder = ControlledTermValueConstraints.builder();
 
   public LinkFieldBuilder() {
-
+    withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.LINK);
     valueConstraintsBuilder.withMultipleChoice(false);
   }

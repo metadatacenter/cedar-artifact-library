@@ -7,11 +7,14 @@ import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -19,6 +22,7 @@ public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
   private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
 
   public PhoneNumberFieldBuilder() {
+    withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.PHONE_NUMBER);
     valueConstraintsBuilder.withMultipleChoice(false);
   }

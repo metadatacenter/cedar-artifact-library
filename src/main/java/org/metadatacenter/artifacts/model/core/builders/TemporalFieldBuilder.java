@@ -9,11 +9,14 @@ import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.TemporalType;
 import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -26,6 +29,7 @@ public final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
 
   public TemporalFieldBuilder withTemporalType(TemporalType temporalType)
   {
+    withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     valueConstraintsBuilder.withTemporalType(temporalType);
     return this;
   }

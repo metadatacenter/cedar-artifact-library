@@ -12,11 +12,14 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
 
   public AttributeValueFieldBuilder() {
+    withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.ATTRIBUTE_VALUE);
   }
 

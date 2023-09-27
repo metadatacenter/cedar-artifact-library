@@ -24,7 +24,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   EmailFieldBuilder, ControlledTermFieldBuilder, CheckboxFieldBuilder, AttributeValueFieldBuilder,
   SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
 {
-  private Map<String, URI> jsonLdContext = new HashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+  private Map<String, URI> jsonLdContext;
   private List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
   private Optional<URI> jsonLdId = Optional.empty();
   private Optional<URI> createdBy = Optional.empty();
@@ -56,7 +56,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
-    this.jsonLdContext = jsonLdContext;
+    this.jsonLdContext = Map.copyOf(jsonLdContext);
     return this;
   }
 

@@ -10,11 +10,15 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class YouTubeFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final StaticFieldUi.YouTubeFieldUiBuilder fieldUiBuilder = StaticFieldUi.youTubeFieldUiBuilder();
 
-  public YouTubeFieldBuilder() {}
+  public YouTubeFieldBuilder() {
+    withJsonLdContext(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+  }
 
   public YouTubeFieldBuilder withContent(String content)
   {

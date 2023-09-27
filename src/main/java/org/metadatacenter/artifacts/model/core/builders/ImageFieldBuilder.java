@@ -10,11 +10,15 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class ImageFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final StaticFieldUi.ImageFieldUiBuilder fieldUiBuilder = StaticFieldUi.imageFieldUiBuilder();
 
-  public ImageFieldBuilder() {}
+  public ImageFieldBuilder() {
+    withJsonLdContext(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+  }
 
   public ImageFieldBuilder withContent(String content)
   {

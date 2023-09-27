@@ -22,12 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
   private final ControlledTermValueConstraints.Builder valueConstraintsBuilder = ControlledTermValueConstraints.builder();
 
   public ControlledTermFieldBuilder() {
+    withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     valueConstraintsBuilder.withMultipleChoice(false);
     fieldUiBuilder.withInputType(FieldInputType.TEXTFIELD);
   }

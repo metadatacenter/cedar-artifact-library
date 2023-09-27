@@ -12,12 +12,15 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
   private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
 
   public EmailFieldBuilder() {
+    withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.EMAIL);
   }
 

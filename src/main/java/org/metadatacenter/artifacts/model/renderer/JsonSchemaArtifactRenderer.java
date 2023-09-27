@@ -58,6 +58,7 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.XSD;
@@ -261,8 +262,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = renderSchemaArtifact(fieldSchemaArtifact);
 
-    // TODO This will create prefix mappings for schema, pav, bibo, oslc. Some fields need xsd, rdfs, skos
-    rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
+    if (fieldSchemaArtifact.isStatic())
+      rendering.put(JSON_LD_CONTEXT, renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification());
+    else
+      rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
+
 
     // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
     // value constraints field.
@@ -931,6 +935,29 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     for (var entry: FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
+      rendering.put(entry.getKey(), entry.getValue().toString());
+
+    return rendering;
+  }
+
+  /**
+   * Generate JSON-LD @context prefix specification for field schema artifacts
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   *   "@context": {
+   *     "schema": "http://schema.org/",
+   *     "pav": "http://purl.org/pav/",
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "bibo": "http://purl.org/ontology/bibo/",
+   *   }
+   * </pre>
+   */
+  private ObjectNode renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    for (var entry: STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
       rendering.put(entry.getKey(), entry.getValue().toString());
 
     return rendering;

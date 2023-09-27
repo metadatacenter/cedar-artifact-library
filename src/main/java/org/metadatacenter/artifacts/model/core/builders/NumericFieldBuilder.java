@@ -6,11 +6,14 @@ import org.metadatacenter.artifacts.model.core.NumericFieldUi;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -18,6 +21,7 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
   private final NumericValueConstraints.Builder valueConstraintsBuilder = NumericValueConstraints.builder();
 
   public NumericFieldBuilder() {
+    withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     valueConstraintsBuilder.withMultipleChoice(false);
   }
 

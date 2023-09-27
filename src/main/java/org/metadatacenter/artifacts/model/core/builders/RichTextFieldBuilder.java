@@ -10,11 +10,15 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class RichTextFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final StaticFieldUi.RichTextFieldUiBuilder fieldUiBuilder = StaticFieldUi.richTextFieldUiBuilder();
 
-  public RichTextFieldBuilder() {}
+  public RichTextFieldBuilder() {
+    withJsonLdContext(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+  }
 
   public RichTextFieldBuilder withContent(String content)
   {

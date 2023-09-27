@@ -10,11 +10,16 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+
 public final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final StaticFieldUi.SectionBreakFieldUiBuilder fieldUiBuilder = StaticFieldUi.sectionBreakFieldUiBuilder();
 
-  public SectionBreakFieldBuilder() {}
+  public SectionBreakFieldBuilder() {
+    withJsonLdContext(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+  }
 
   public SectionBreakFieldBuilder withContent(String content)
   {
