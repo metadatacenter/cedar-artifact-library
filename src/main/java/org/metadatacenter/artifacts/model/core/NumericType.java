@@ -1,6 +1,11 @@
 package org.metadatacenter.artifacts.model.core;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.metadatacenter.model.ModelNodeNames;
+
+import java.net.URI;
+
+import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 
 public enum NumericType
 {
@@ -18,6 +23,8 @@ public enum NumericType
   NumericType(String text) {
     this.text = text;
   }
+
+  public URI toURI() { return URI.create(XSD_IRI + this.text.substring(this.text.indexOf(":"))); }
 
   @JsonValue
   public String getText() {

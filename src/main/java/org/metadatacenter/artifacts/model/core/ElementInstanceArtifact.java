@@ -30,8 +30,7 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
   static ElementInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    String name, String description, Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Map<String, List<FieldInstanceArtifact>> fieldInstances, Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
     return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
@@ -129,8 +128,8 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
 
     public ElementInstanceArtifact build()
     {
-      return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, fieldInstances, elementInstances);
+      return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
     }
   }
 }

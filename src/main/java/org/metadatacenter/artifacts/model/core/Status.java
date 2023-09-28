@@ -13,6 +13,10 @@ public enum Status
     this.text = text;
   }
 
+  public boolean isPublished() { return this == PUBLISHED; }
+
+  public boolean isDraft() { return this == DRAFT; }
+
   @JsonValue
   public String getText() {
     return this.text;
