@@ -15,7 +15,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.UbkgArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
+import org.metadatacenter.artifacts.ubkg.UbkgRendering;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 
 import java.io.File;
@@ -78,22 +80,18 @@ public class Template2Ubkg
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(true);
+      UbkgRendering.Builder ubkgRenderingBuilder = UbkgRendering.builder();
 
-      LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+      UbkgArtifactRenderer ubkgRenderer = new UbkgArtifactRenderer(ubkgRenderingBuilder);
 
-      try {
-        YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).disable(YAMLGenerator.Feature.SPLIT_LINES);
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
-        mapper.writeValue(ubkgNodeFile, yamlRendering);
-        System.out.println("Successfully generated YAML file " + ubkgNodeFile.getAbsolutePath());
-      } catch (IOException e) {
-        throw new RuntimeException("Error saving YAML file: " + e.getMessage());
-      }
+      ubkgRenderingBuilder = ubkgRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+
+      UbkgRendering ubkgRendering = ubkgRenderingBuilder.build();
+
+      System.out.println("dds");
     } catch (ParseException e) {
       Usage(options, e.getMessage());
     }
-
   }
 
   private static Options buildCommandLineOptions()
@@ -112,10 +110,17 @@ public class Template2Ubkg
       .desc("Template IRI")
       .build();
 
-    Option yamlOption = Option.builder(UBKG_NODE_FILE_OPTION)
-      .argName("yaml-output-file")
+    Option ubkgNodeFileOption = Option.builder(UBKG_NODE_FILE_OPTION)
+      .argName("ubkg-node-output-file")
       .hasArg()
-      .desc("YAML output file")
+      .desc("UBKG node output file")
+      .required()
+      .build();
+
+    Option ubkgEdgeFileOption = Option.builder(UBKG_EDGE_FILE_OPTION)
+      .argName("ubkg-edge-output-file")
+      .hasArg()
+      .desc("UBKG edge output file")
       .required()
       .build();
 
@@ -137,7 +142,8 @@ public class Template2Ubkg
 
     options.addOptionGroup(templateGroup);
 
-    options.addOption(yamlOption);
+    options.addOption(ubkgEdgeFileOption);
+    options.addOption(ubkgNodeFileOption);
     options.addOption(resourceOption);
     options.addOption(keyOption);
 
@@ -149,22 +155,24 @@ public class Template2Ubkg
     if (command.hasOption(TEMPLATE_FILE_OPTION) && command.hasOption(TEMPLATE_IRI_OPTION))
       Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
-    if (command.hasOption(TEMPLATE_FILE_OPTION)) {
-      if (!command.hasOption(UBKG_NODE_FILE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path and CEDAR API key must be provided when template file option is selected");
-    } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
-      if (!command.hasOption(UBKG_NODE_FILE_OPTION) || !command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path, Resource Server REST base, and CEDAR API key must be provided when template IRI option is selected");
+    if (!command.hasOption(UBKG_NODE_FILE_OPTION) || !command.hasOption(UBKG_EDGE_FILE_OPTION))
+      Usage(options, "UBKG node file path and UBKG edge file path must be provided");
+
+    if (command.hasOption(TEMPLATE_IRI_OPTION)) {
+      if (!command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options,
+          "Resource server REST base, and CEDAR API key must be provided when template IRI option is selected");
+    } else if (command.hasOption(TEMPLATE_FILE_OPTION)) {
     } else
       Usage(options, "Please specify a template file path or a template IRI");
   }
 
   private static void Usage(Options options, String errorMessage) {
 
-    String header = "CEDAR Template to YAML Translation Tool";
+    String header = "CEDAR Template to UBKG Translation Tool";
 
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp(Template2Yaml.class.getName(), header, options, errorMessage, true);
+    formatter.printHelp(Template2Ubkg.class.getName(), header, options, errorMessage, true);
 
     System.exit(-1);
   }

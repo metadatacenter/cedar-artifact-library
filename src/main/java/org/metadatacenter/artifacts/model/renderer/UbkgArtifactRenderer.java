@@ -149,6 +149,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
       "Supports the mathematical concept of binary-valued logic: true or false");
     ubkgRenderingBuilder.withNode(XSD_DECIMAL_URI, "xsd:decimal",
       "Represents a subset of the real numbers that can be represented by decimal numerals");
+    ubkgRenderingBuilder.withNode(XSD_INTEGER_URI, "xsd:integer", "Represents an integer");
     ubkgRenderingBuilder.withNode(XSD_LONG_URI, "xsd:long", "Represents a long");
     ubkgRenderingBuilder.withNode(XSD_BYTE_URI, "xsd:byte", "Represents a byte");
     ubkgRenderingBuilder.withNode(XSD_SHORT_URI, "xsd:short", "Represents a short");
@@ -163,6 +164,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     ubkgRenderingBuilder.withEdge(XSD_STRING_URI, RDFS_TYPE, XSD_ANY_SIMPLE_TYPE_URI);
     ubkgRenderingBuilder.withEdge(XSD_BOOLEAN_URI, RDFS_TYPE, XSD_ANY_SIMPLE_TYPE_URI);
     ubkgRenderingBuilder.withEdge(XSD_DECIMAL_URI, RDFS_TYPE, XSD_ANY_SIMPLE_TYPE_URI);
+    ubkgRenderingBuilder.withEdge(XSD_INTEGER_URI, RDFS_TYPE, XSD_ANY_SIMPLE_TYPE_URI);
     ubkgRenderingBuilder.withEdge(XSD_LONG_URI, RDFS_TYPE, XSD_ANY_SIMPLE_TYPE_URI);
     ubkgRenderingBuilder.withEdge(XSD_BYTE_URI, RDFS_TYPE, XSD_ANY_SIMPLE_TYPE_URI);
     ubkgRenderingBuilder.withEdge(XSD_SHORT_URI, RDFS_TYPE, XSD_ANY_SIMPLE_TYPE_URI);
