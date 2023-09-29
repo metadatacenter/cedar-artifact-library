@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.ubkg;
 
 import java.net.URI;
+import java.util.Set;
 
 import static org.metadatacenter.artifacts.ubkg.UbkgRendering.NODE_DEFINITION;
 import static org.metadatacenter.artifacts.ubkg.UbkgRendering.NODE_LABEL;
@@ -49,9 +50,10 @@ public class UbkgTsvRenderer
       URI edgeURI = edge.getKey();
       for (var predicateObject : edge.getValue().entrySet()) {
         String predicate = predicateObject.getKey();
-        URI object = predicateObject.getValue();
+        Set<URI> objects = predicateObject.getValue();
 
-        sb.append(edgeURI.toString() + "\t" + predicate + "\t" + object + "\n");
+        for (URI object: objects)
+          sb.append(edgeURI.toString() + "\t" + predicate + "\t" + object + "\n");
       }
     }
     return sb;

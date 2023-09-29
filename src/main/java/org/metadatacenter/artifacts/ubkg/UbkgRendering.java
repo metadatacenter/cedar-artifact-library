@@ -3,23 +3,25 @@ package org.metadatacenter.artifacts.ubkg;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface UbkgRendering
 {
   String NODE_LABEL = "node_label";
   String NODE_DEFINITION = "node_definition";
 
-  static UbkgRendering create(LinkedHashMap<URI, Map<String, String>> nodes, LinkedHashMap<URI, Map<String, URI>> edges)
+  static UbkgRendering create(LinkedHashMap<URI, Map<String, String>> nodes, LinkedHashMap<URI, Map<String, Set<URI>>> edges)
   {
     return new UbkgRenderingRecord(nodes, edges);
   }
 
   LinkedHashMap<URI, Map<String, String>> nodes();
 
-  LinkedHashMap<URI, Map<String, URI>> edges();
+  LinkedHashMap<URI, Map<String, Set<URI>>> edges();
 
   default List<URI> nodeIds() { return new ArrayList<>(nodes().keySet()); }
 
@@ -33,7 +35,7 @@ public interface UbkgRendering
       throw new IllegalArgumentException("Invalid node ID " + nodeId);
   }
 
-  default Map<String, URI> getEdge(URI edgeId)
+  default Map<String, Set<URI>> getEdge(URI edgeId)
   {
     if (edges().containsKey(edgeId))
       return edges().get(edgeId);
@@ -49,7 +51,7 @@ public interface UbkgRendering
   class Builder
   {
     private final LinkedHashMap<URI, Map<String, String>> nodes = new LinkedHashMap<>();
-    private final LinkedHashMap<URI, Map<String, URI>> edges = new LinkedHashMap<>();
+    private final LinkedHashMap<URI, Map<String, Set<URI>>> edges = new LinkedHashMap<>();
 
     private Builder()
     {
@@ -70,13 +72,20 @@ public interface UbkgRendering
     public Builder withEdge(URI subject, String predicate, URI object)
     {
       if (edges.containsKey(subject)) {
-        Map<String, URI> edge = edges.get(subject);
-        edge.put(predicate, object);
+        Map<String, Set<URI>> edge = edges.get(subject);
 
+        if (edge.containsKey(predicate))
+          edge.get(predicate).add(object);
+        else {
+          Set<URI> predicateValues = new HashSet<>();
+          predicateValues.add(object);
+          edge.put(predicate, predicateValues);
+        }
       } else {
-        Map<String, URI> edge = new HashMap<>();
-
-        edge.put(predicate, object);
+        Map<String, Set<URI>> edge = new HashMap<>();
+        Set<URI> predicateValues = new HashSet<>();
+        predicateValues.add(object);
+        edge.put(predicate, predicateValues);
 
         edges.put(subject, edge);
       }
@@ -90,7 +99,7 @@ public interface UbkgRendering
   }
 }
 
-record UbkgRenderingRecord(LinkedHashMap<URI, Map<String, String>> nodes, LinkedHashMap<URI, Map<String, URI>> edges)
+record UbkgRenderingRecord(LinkedHashMap<URI, Map<String, String>> nodes, LinkedHashMap<URI, Map<String, Set<URI>>> edges)
   implements UbkgRendering
 {
 
