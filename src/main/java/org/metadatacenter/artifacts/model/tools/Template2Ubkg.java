@@ -18,6 +18,7 @@ import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.UbkgArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.ubkg.UbkgRendering;
+import org.metadatacenter.artifacts.ubkg.UbkgTsvRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 
 import java.io.File;
@@ -88,7 +89,11 @@ public class Template2Ubkg
 
       UbkgRendering ubkgRendering = ubkgRenderingBuilder.build();
 
-      System.out.println("dds");
+      UbkgTsvRenderer ubkgTsvRenderer = new UbkgTsvRenderer(ubkgRendering);
+
+      System.out.println("Nodes: \n" + ubkgTsvRenderer.renderNodes());
+
+      System.out.println("Edges: \n" + ubkgTsvRenderer.renderEdges());
     } catch (ParseException e) {
       Usage(options, e.getMessage());
     }

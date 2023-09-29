@@ -24,7 +24,7 @@ public enum NumericType
     this.text = text;
   }
 
-  public URI toURI() { return URI.create(XSD_IRI + this.text.substring(this.text.indexOf(":"))); }
+  public URI toURI() { return URI.create(XSD_IRI + this.text.substring(this.text.indexOf(":") + 1)); }
 
   @JsonValue
   public String getText() {

@@ -71,12 +71,12 @@ public interface UbkgRendering
     {
       if (edges.containsKey(subject)) {
         Map<String, URI> edge = edges.get(subject);
-        edge.put(predicate, subject);
+        edge.put(predicate, object);
 
       } else {
         Map<String, URI> edge = new HashMap<>();
 
-        edge.put(predicate, subject);
+        edge.put(predicate, object);
 
         edges.put(subject, edge);
       }

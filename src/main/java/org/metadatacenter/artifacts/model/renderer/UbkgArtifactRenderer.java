@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -112,8 +113,8 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
         ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, XSD_ANY_URI);
 
-        for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets())
-          ubkgRenderingBuilder.withEdge(fieldID, HAS_VALUESET_PREDICATE, valueSetValueConstraint.uri());
+        for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches())
+          ubkgRenderingBuilder.withEdge(fieldID, HAS_VALUESET_PREDICATE, branchValueConstraint.uri());
 
       } else
         ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, XSD_STRING_URI);
