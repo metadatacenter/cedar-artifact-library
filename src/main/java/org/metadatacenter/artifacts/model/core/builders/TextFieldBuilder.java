@@ -61,6 +61,12 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
+  public TextFieldBuilder withRegex(String regex)
+  {
+    valueConstraintsBuilder.withRegex(regex);
+    return this;
+  }
+
   @Override public TextFieldBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
     super.withJsonLdContext(jsonLdContext);

@@ -88,7 +88,8 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123"))
       .withName("Study")
-      .withDefaultValue("None")
+      .withDefaultValue("A default value")
+      .withRegex("*")
       .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);

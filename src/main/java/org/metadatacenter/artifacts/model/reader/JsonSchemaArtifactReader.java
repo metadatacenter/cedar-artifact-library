@@ -770,6 +770,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       Optional<Integer> minLength = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
       Optional<Integer> maxLength = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
       Optional<? extends DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath);
+      Optional<String> regex = readStringField(vcNode, vcPath, "regex"); // TODO Add 'regex' to ModelNodeNames
       List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath);
       List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(vcNode, vcPath);
       List<ClassValueConstraint> classes = readClassValueConstraints(vcNode, vcPath);
@@ -802,7 +803,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           Optional.of(defaultValue.get().asTextDefaultValue()) :
           Optional.empty();
         return Optional.of(
-          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, multipleChoice));
+          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, multipleChoice, regex));
       }
     } else
       return Optional.empty();

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LITERALS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MAX_STRING_LENGTH;
@@ -22,9 +23,10 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
   List<LiteralValueConstraint> literals();
 
   static TextValueConstraints create(Optional<Integer> minLength, Optional<Integer> maxLength,
-    Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals, boolean requiredValue, boolean multipleChoice)
+    Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals,
+    boolean requiredValue, boolean multipleChoice, Optional<String> regex)
   {
-    return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice);
+    return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice, regex);
   }
 
   static Builder builder() {
@@ -38,6 +40,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     private List<LiteralValueConstraint> literals = new ArrayList<>();
     private boolean requiredValue = false;
     private boolean multipleChoice = false;
+    private Optional<String> regex = Optional.empty();
 
     private Builder() {
     }
@@ -72,16 +75,21 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
+    public Builder withRegex(String regex) {
+      this.regex = Optional.ofNullable(regex);
+      return this;
+    }
+
     public ValueConstraints build()
     {
-      return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice);
+      return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice, regex);
     }
   }
 }
 
 record TextValueConstraintsRecord(Optional<Integer> minLength, Optional<Integer> maxLength,
                                   Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals,
-                                  boolean requiredValue, boolean multipleChoice) implements TextValueConstraints {
+                                  boolean requiredValue, boolean multipleChoice, Optional<String> regex) implements TextValueConstraints {
 
   public TextValueConstraintsRecord
   {
@@ -89,5 +97,6 @@ record TextValueConstraintsRecord(Optional<Integer> minLength, Optional<Integer>
     validateOptionalFieldNotNull(this, maxLength, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
     validateOptionalFieldNotNull(this, defaultValue, VALUE_CONSTRAINTS_DEFAULT_VALUE);
     validateListFieldNotNull(this, literals, VALUE_CONSTRAINTS_LITERALS);
+    validateOptionalFieldNotNull(this, regex, "regex"); // TODO Add 'regex' to ModelNodeNames
   }
 }
