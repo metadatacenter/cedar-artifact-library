@@ -476,14 +476,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
 
     return FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       name, description, identifier, skosPrefLabel, skosAlternateLabels,
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldUi, valueConstraints);
   }
-
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)

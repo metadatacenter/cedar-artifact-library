@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 
 public class FieldSchemaArtifactTest
 {
@@ -26,7 +27,7 @@ public class FieldSchemaArtifactTest
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
 
-    URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = "object";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
@@ -43,10 +44,10 @@ public class FieldSchemaArtifactTest
     Optional<Integer> maxItems = Optional.of(4);
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
-      Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, name, description, identifier, Optional.empty(), Collections.emptyList(),
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      name, description, identifier, Optional.empty(), Collections.emptyList(),
       modelVersion, version, status, previousVersion, derivedFrom, false, minItems, maxItems, propertyUri,
+      Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty());
 
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.jsonLdTypes());

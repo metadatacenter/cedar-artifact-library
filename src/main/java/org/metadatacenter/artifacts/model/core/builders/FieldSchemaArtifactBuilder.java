@@ -212,11 +212,11 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   public FieldSchemaArtifact build()
   {
     return FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       name, description, identifier, skosPrefLabel, skosAlternateLabels,
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldUi, valueConstraints);
   }
 }

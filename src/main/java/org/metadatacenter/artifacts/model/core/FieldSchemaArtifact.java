@@ -33,6 +33,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateO
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
@@ -47,17 +48,20 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
 {
   static FieldSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     String name, String description, Optional<String> identifier, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
-    return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
-      identifier, modelVersion, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
-      skosPrefLabel, skosAlternateLabels, propertyUri, fieldUi, valueConstraints);
+    return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      name, description, identifier, skosPrefLabel, skosAlternateLabels,
+      modelVersion, version, status, previousVersion, derivedFrom,
+      isMultiple, minItems, maxItems, propertyUri,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      fieldUi, valueConstraints);
   }
 
   FieldUi fieldUi();
@@ -136,22 +140,23 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 }
 
 record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                 Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                 Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                  URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
                                  String name, String description, Optional<String> identifier,
+                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
                                  Version modelVersion, Optional<Version> version, Optional<Status> status,
                                  Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                  boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
                                  Optional<URI> propertyUri,
+                                 Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                 Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                  FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements FieldSchemaArtifact
 {
   public FieldSchemaArtifactRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateUriListFieldContainsOneOf(this, jsonLdTypes, ModelNodeNames.JSON_LD_TYPE, Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
+    validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
+      Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
     validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
