@@ -151,9 +151,9 @@ public final class RadioFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public RadioFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public RadioFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

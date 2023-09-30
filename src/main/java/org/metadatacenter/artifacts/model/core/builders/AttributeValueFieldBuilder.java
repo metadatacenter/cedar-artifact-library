@@ -117,9 +117,9 @@ public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public AttributeValueFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public AttributeValueFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

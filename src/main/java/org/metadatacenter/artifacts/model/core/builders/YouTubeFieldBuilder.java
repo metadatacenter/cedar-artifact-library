@@ -127,9 +127,9 @@ public final class YouTubeFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public YouTubeFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public YouTubeFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

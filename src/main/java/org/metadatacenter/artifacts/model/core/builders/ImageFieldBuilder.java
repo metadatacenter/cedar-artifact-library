@@ -127,9 +127,9 @@ public final class ImageFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public ImageFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public ImageFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

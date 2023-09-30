@@ -199,9 +199,9 @@ public final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public ControlledTermFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public ControlledTermFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

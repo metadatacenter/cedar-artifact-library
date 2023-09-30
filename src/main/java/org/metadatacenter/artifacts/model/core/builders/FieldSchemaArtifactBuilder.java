@@ -36,13 +36,13 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   private String name;
   private String description = "";
   private Optional<String> identifier = Optional.empty();
+  private Optional<String> skosPrefLabel = Optional.empty();
+  private List<String> skosAlternateLabels = Collections.emptyList();
   private Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
   private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
   private Optional<Status> status = Optional.of(Status.DRAFT);
   private Optional<URI> previousVersion = Optional.empty();
   private Optional<URI> derivedFrom = Optional.empty();
-  private Optional<String> skosPrefLabel = Optional.empty();
-  private List<String> skosAlternateLabels = Collections.emptyList();
   private boolean isMultiple = false;
   private Optional<Integer> minItems = Optional.empty();
   private Optional<Integer> maxItems = Optional.empty();
@@ -92,6 +92,18 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   public FieldSchemaArtifactBuilder withIdentifier(String identifier)
   {
     this.identifier = Optional.ofNullable(identifier);
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withPreferredLabel(String skosPrefLabel)
+  {
+    this.skosPrefLabel = Optional.ofNullable(skosPrefLabel);
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withAlternateLabels(List<String> skosAlternateLabels)
+  {
+    this.skosAlternateLabels = skosAlternateLabels;
     return this;
   }
 
@@ -149,18 +161,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withPreferredLabel(String skosPrefLabel)
-  {
-    this.skosPrefLabel = Optional.ofNullable(skosPrefLabel);
-    return this;
-  }
-
-  public FieldSchemaArtifactBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
-  {
-    this.skosAlternateLabels = skosAlternateLabels;
-    return this;
-  }
-
   public FieldSchemaArtifactBuilder withIsMultiple(boolean isMultiple)
   {
     this.isMultiple = isMultiple;
@@ -214,9 +214,9 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      name, description, identifier,
+      name, description, identifier, skosPrefLabel, skosAlternateLabels,
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
-      skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      fieldUi, valueConstraints);
   }
 }

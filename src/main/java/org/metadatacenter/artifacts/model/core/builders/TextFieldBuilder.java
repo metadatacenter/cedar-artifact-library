@@ -162,9 +162,9 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public TextFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public TextFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

@@ -162,9 +162,9 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public NumericFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public NumericFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

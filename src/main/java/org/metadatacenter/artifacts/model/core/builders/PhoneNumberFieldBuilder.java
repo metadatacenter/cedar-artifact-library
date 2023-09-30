@@ -156,9 +156,9 @@ public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public PhoneNumberFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public PhoneNumberFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

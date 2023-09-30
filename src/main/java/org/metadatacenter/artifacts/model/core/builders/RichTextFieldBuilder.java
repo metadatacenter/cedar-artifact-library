@@ -128,9 +128,9 @@ public final class RichTextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public RichTextFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public RichTextFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

@@ -150,9 +150,9 @@ public final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public CheckboxFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public CheckboxFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

@@ -144,9 +144,9 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public LinkFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public LinkFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

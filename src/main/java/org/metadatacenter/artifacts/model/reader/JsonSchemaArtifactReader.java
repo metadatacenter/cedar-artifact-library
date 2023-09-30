@@ -478,10 +478,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      name, description, identifier,
+      name, description, identifier, skosPrefLabel, skosAlternateLabels,
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
-      skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      fieldUi, valueConstraints);
   }
 
 

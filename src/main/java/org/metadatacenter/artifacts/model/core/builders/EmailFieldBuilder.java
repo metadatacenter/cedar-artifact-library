@@ -155,9 +155,9 @@ public final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public EmailFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public EmailFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

@@ -49,10 +49,9 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
   static FieldSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String name, String description, Optional<String> identifier,
+    String name, String description, Optional<String> identifier, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
-    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
     return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,

@@ -150,9 +150,9 @@ public final class ListFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public ListFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public ListFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

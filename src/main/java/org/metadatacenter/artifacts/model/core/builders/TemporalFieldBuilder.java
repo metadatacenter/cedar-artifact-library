@@ -163,9 +163,9 @@ public final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public TemporalFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public TemporalFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 

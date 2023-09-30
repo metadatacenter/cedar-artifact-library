@@ -127,9 +127,9 @@ public final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public SectionBreakFieldBuilder withSkosAlternateLabels(List<String> skosAlternateLabels)
+  @Override public SectionBreakFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
-    super.withSkosAlternateLabels(skosAlternateLabels);
+    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 
