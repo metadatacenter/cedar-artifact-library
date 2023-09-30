@@ -34,6 +34,8 @@ public class FieldSchemaArtifactTest
     String name = "Schema Org name";
     String description = "Schema Org description";
     Optional<String> identifier = Optional.of("Schema Org identifier");
+    Optional<String> preferredLabel = Optional.of("My label");
+    List<String> alternateLabels = Collections.emptyList();
     Version modelVersion = new Version(1, 6, 0);
     Optional<Version> version = Optional.of(new Version(2, 0, 0));
     Optional<Status> status = Optional.of(Status.DRAFT);
@@ -45,7 +47,7 @@ public class FieldSchemaArtifactTest
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
       jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      name, description, identifier, Optional.empty(), Collections.emptyList(),
+      name, description, identifier, preferredLabel, alternateLabels,
       modelVersion, version, status, previousVersion, derivedFrom, false, minItems, maxItems, propertyUri,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty());
@@ -64,6 +66,8 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(identifier, fieldSchemaArtifact.identifier());
+    Assert.assertEquals(preferredLabel, fieldSchemaArtifact.skosPrefLabel());
+    Assert.assertEquals(alternateLabels, fieldSchemaArtifact.skosAlternateLabels());
     Assert.assertEquals(modelVersion, fieldSchemaArtifact.modelVersion());
     Assert.assertEquals(version, fieldSchemaArtifact.version());
     Assert.assertEquals(status, fieldSchemaArtifact.status());
@@ -78,6 +82,8 @@ public class FieldSchemaArtifactTest
     String name = "My Field";
     String description = "My Field description";
     String identifier = "id3443";
+    String preferredLabel = "My label";
+    List<String> alternateLabels = Collections.emptyList();
     Version version = new Version(2, 0, 0);
     Status status = Status.DRAFT;
     Boolean requiredValue = true;
@@ -97,6 +103,8 @@ public class FieldSchemaArtifactTest
       withName(name).
       withDescription(description).
       withIdentifier(identifier).
+      withPreferredLabel(preferredLabel).
+      withAlternateLabels(alternateLabels).
       withVersion(version).
       withStatus(status).
       withRequiredValue(requiredValue).
@@ -119,6 +127,8 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(identifier, fieldSchemaArtifact.identifier().get());
+    Assert.assertEquals(preferredLabel, fieldSchemaArtifact.skosPrefLabel().get());
+    Assert.assertEquals(alternateLabels, fieldSchemaArtifact.skosAlternateLabels());
     Assert.assertEquals(version, fieldSchemaArtifact.version().get());
     Assert.assertEquals(status, fieldSchemaArtifact.status().get());
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion().get());
