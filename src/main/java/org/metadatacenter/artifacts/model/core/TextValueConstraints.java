@@ -22,6 +22,8 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
 
   List<LiteralValueConstraint> literals();
 
+  Optional<String> regex();
+
   static TextValueConstraints create(Optional<Integer> minLength, Optional<Integer> maxLength,
     Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals,
     boolean requiredValue, boolean multipleChoice, Optional<String> regex)

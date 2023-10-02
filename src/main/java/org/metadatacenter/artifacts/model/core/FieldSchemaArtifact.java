@@ -106,6 +106,15 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
       return Optional.empty();
   }
 
+  default Optional<String> regex()
+  {
+    if (valueConstraints().isPresent() && valueConstraints().get().isTextValueConstraint()) {
+      TextValueConstraints textValueConstraints = valueConstraints().get().asTextValueConstraints();
+      return textValueConstraints.regex();
+    } else
+      return Optional.empty();
+  }
+
   static TextFieldBuilder textFieldBuilder() { return new TextFieldBuilder(); }
 
   static TextAreaFieldBuilder textAreaFieldBuilder() { return new TextAreaFieldBuilder(); }

@@ -22,6 +22,7 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     Integer minLength = 0;
     Integer maxLength = 10;
+    String regex = "*";
     boolean valueRecommendationEnabled = false;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
@@ -29,6 +30,7 @@ public class FieldSchemaArtifactBuilderTest
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
+      withRegex(regex).
       withValueRecommendationEnabled(valueRecommendationEnabled).
       build();
 
@@ -37,6 +39,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    Assert.assertEquals(regex, fieldSchemaArtifact.regex().get());
     Assert.assertEquals(valueRecommendationEnabled, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
   }
 
