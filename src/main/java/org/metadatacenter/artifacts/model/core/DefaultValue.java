@@ -1,24 +1,34 @@
 
 package org.metadatacenter.artifacts.model.core;
 
-public sealed interface DefaultValue<T> permits StringDefaultValue, NumericDefaultValue, URIStringPairDefaultValue
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefaultValue, ControlledTermDefaultValue, TemporalDefaultValue
 {
+   @JsonIgnore
    DefaultValueType getValueType();
 
-   T getValue();
+   @JsonIgnore
+   T value();
 
-   default boolean isStringDefaultValue() { return getValueType() == DefaultValueType.STRING; }
+   @JsonIgnore
+   default boolean isTextDefaultValue() { return getValueType() == DefaultValueType.TEXT; }
 
+   @JsonIgnore
    default boolean isNumericDefaultValue() { return getValueType() == DefaultValueType.NUMERIC; }
 
-   default boolean isURIStringPairDefaultValue() { return getValueType() == DefaultValueType.URI_STRING_PAIR; }
+   @JsonIgnore
+   default boolean isTemporalDefaultValue() { return getValueType() == DefaultValueType.TEMPORAL; }
 
-   default StringDefaultValue asStringDefaultValue()
+   @JsonIgnore
+   default boolean isControlledTermDefaultValue() { return getValueType() == DefaultValueType.CONTROLLED_TERM; }
+
+   default TextDefaultValue asTextDefaultValue()
    {
-      if (getValueType() == DefaultValueType.STRING)
-         return (StringDefaultValue)this;
+      if (getValueType() == DefaultValueType.TEXT)
+         return (TextDefaultValue)this;
       else
-         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + StringDefaultValue.class.getName());
+         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TextDefaultValue.class.getName());
    }
 
    default NumericDefaultValue asNumericDefaultValue()
@@ -29,11 +39,20 @@ public sealed interface DefaultValue<T> permits StringDefaultValue, NumericDefau
          throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + NumericDefaultValue.class.getName());
    }
 
-   default URIStringPairDefaultValue asURIStringPairDefaultValue()
+   default ControlledTermDefaultValue asControlledTermDefaultValue()
    {
-      if (getValueType() == DefaultValueType.URI_STRING_PAIR)
-         return (URIStringPairDefaultValue)this;
+      if (getValueType() == DefaultValueType.CONTROLLED_TERM)
+         return (ControlledTermDefaultValue)this;
       else
-         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + URIStringPairDefaultValue.class.getName());
+         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + ControlledTermDefaultValue.class.getName());
    }
+
+   default TemporalDefaultValue asTemporalDefaultValue()
+   {
+      if (getValueType() == DefaultValueType.TEMPORAL)
+         return (TemporalDefaultValue)this;
+      else
+         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TemporalDefaultValue.class.getName());
+   }
+
 }

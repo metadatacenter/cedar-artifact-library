@@ -1,6 +1,17 @@
 package org.metadatacenter.artifacts.model.core;
 
-public sealed interface ChildSchemaArtifact permits ElementSchemaArtifact, FieldSchemaArtifact
+import java.net.URI;
+import java.util.Optional;
+
+public sealed interface ChildSchemaArtifact extends SchemaArtifact permits ElementSchemaArtifact, FieldSchemaArtifact
 {
+  String name();
+
   boolean isMultiple();
+
+  Optional<Integer> minItems();
+
+  Optional<Integer> maxItems();
+
+  Optional<URI> propertyUri();
 }

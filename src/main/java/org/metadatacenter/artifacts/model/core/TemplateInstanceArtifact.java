@@ -3,138 +3,173 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public final class TemplateInstanceArtifact extends InstanceArtifact implements ParentInstanceArtifact
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
+
+public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
-  private final String isBasedOn;
-  private final Map<String, List<ElementInstanceArtifact>> elementInstances;
-  private final Map<String, List<FieldInstanceArtifact>> fieldInstances;
-
-  public TemplateInstanceArtifact(InstanceArtifact instanceArtifact, String isBasedOn,
-    Map<String, List<ElementInstanceArtifact>> elementInstances,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances)
+  static TemplateInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description,
+    Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    URI isBasedOn,
+    Map<String, List<FieldInstanceArtifact>> fieldInstances,
+    Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
-    super(instanceArtifact);
-    this.isBasedOn = isBasedOn;
-    this.elementInstances = Collections.unmodifiableMap(elementInstances);
-    this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
+    return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
   }
 
-  public TemplateInstanceArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, String isBasedOn,
-    Map<String, List<ElementInstanceArtifact>> elementInstances,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances)
+  URI isBasedOn();
+
+  static Builder builder()
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
-    this.isBasedOn = isBasedOn;
-    this.elementInstances = Collections.unmodifiableMap(elementInstances);
-    this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
-  }
-
-  public TemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
-  {
-    super(templateInstanceArtifact);
-    this.isBasedOn = templateInstanceArtifact.isBasedOn;
-    this.elementInstances = templateInstanceArtifact.elementInstances;
-    this.fieldInstances = templateInstanceArtifact.fieldInstances;
-  }
-
-  private TemplateInstanceArtifact(Builder builder) {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
-    this.isBasedOn = builder.isBasedOn;
-    this.elementInstances = Collections.unmodifiableMap(builder.elementInstances);
-    this.fieldInstances = Collections.unmodifiableMap(builder.fieldInstances);
-  }
-
-  public String getIsBasedOn()
-  {
-    return isBasedOn;
-  }
-
-  @Override public Map<String, List<ElementInstanceArtifact>> getElementInstances()
-  {
-    return elementInstances;
-  }
-
-  @Override public Map<String, List<FieldInstanceArtifact>> getFieldInstances()
-  {
-    return fieldInstances;
-  }
-
-  @Override public String toString()
-  {
-    return super.toString() + "\n TemplateInstanceArtifact{" + "isBasedOn='" + isBasedOn + '\'' + ", elementInstances=" + elementInstances
-      + ", fieldInstances=" + fieldInstances + '}';
-  }
-
-  public static Builder builder() {
     return new Builder();
   }
 
-  public static class Builder {
+  class Builder
+  {
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
+    private Map<String, URI> jsonLdContext = new HashMap<>();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private String isBasedOn;
-    private Map<String, List<ElementInstanceArtifact>> elementInstances = Collections.emptyMap();
-    private Map<String, List<FieldInstanceArtifact>> fieldInstances = Collections.emptyMap();
+    private URI isBasedOn;
+    private String name;
+    private String description = "";
+    private Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
-    private Builder() {
+    private Builder()
+    {
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId) {
-      this.jsonLdId = jsonLdId;
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    {
+      this.jsonLdContext = Map.copyOf(jsonLdContext);
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext) {
-      this.jsonLdContext = jsonLdContext;
+    public Builder withJsonLdType(URI jsonLdType)
+    {
+      this.jsonLdTypes.add(jsonLdType);
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
+    public Builder withJsonLdId(URI jsonLdId)
+    {
+      this.jsonLdId = Optional.ofNullable(jsonLdId);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
+    public Builder withName(String name)
+    {
+      this.name = name;
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
+    public Builder withDescription(String description)
+    {
+      this.description = description;
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
+    public Builder withCreatedBy(URI createdBy)
+    {
+      this.createdBy = Optional.ofNullable(createdBy);
       return this;
     }
 
-    public Builder withIsBasedOn(String isBasedOn) {
+    public Builder withModifiedBy(URI modifiedBy)
+    {
+      this.modifiedBy = Optional.ofNullable(modifiedBy);
+      return this;
+    }
+
+    public Builder withCreatedOn(OffsetDateTime createdOn)
+    {
+      this.createdOn = Optional.ofNullable(createdOn);
+      return this;
+    }
+
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+    {
+      this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
+      return this;
+    }
+
+    public Builder withIsBasedOn(URI isBasedOn)
+    {
       this.isBasedOn = isBasedOn;
       return this;
     }
 
-    public Builder withElementInstances(Map<String, List<ElementInstanceArtifact>> elementInstances) {
-      this.elementInstances = elementInstances;
+    public Builder withElementInstances(Map<String, List<ElementInstanceArtifact>> elementInstances)
+    {
+      this.elementInstances = Map.copyOf(elementInstances);
       return this;
     }
 
-    public Builder withFieldInstances(Map<String, List<FieldInstanceArtifact>> fieldInstances) {
-      this.fieldInstances = fieldInstances;
+    public Builder withFieldInstances(Map<String, List<FieldInstanceArtifact>> fieldInstances)
+    {
+      this.fieldInstances = Map.copyOf(fieldInstances);
       return this;
     }
 
-    public TemplateInstanceArtifact build() {
-      return new TemplateInstanceArtifact(this);
+    public TemplateInstanceArtifact build()
+    {
+      return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
     }
+  }
+}
+
+record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                      String name, String description,
+                                      Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                      Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                      URI isBasedOn,
+                                      Map<String, List<FieldInstanceArtifact>> fieldInstances,
+                                      Map<String, List<ElementInstanceArtifact>> elementInstances) implements TemplateInstanceArtifact
+{
+  public TemplateInstanceArtifactRecord
+  {
+    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
+    validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
+    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateStringFieldNotNull(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
+    validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
+    validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
+    validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
+    validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
+    validateUriFieldNotNull(this, isBasedOn, SCHEMA_IS_BASED_ON);
+    validateMapFieldNotNull(this, fieldInstances, "fieldInstances");
+    validateMapFieldNotNull(this, elementInstances, "elementInstances");
+
+    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdTypes = List.copyOf(jsonLdTypes);
+    fieldInstances = Map.copyOf(fieldInstances);
+    elementInstances = Map.copyOf(elementInstances);
   }
 }

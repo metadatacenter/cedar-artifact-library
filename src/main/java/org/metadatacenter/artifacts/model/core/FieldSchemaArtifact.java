@@ -1,266 +1,194 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.metadatacenter.artifacts.model.core.builders.AttributeValueFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.CheckboxFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ControlledTermFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.EmailFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ImageFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.LinkFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ListFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.NumericFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.PhoneNumberFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.RadioFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.RichTextFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.SectionBreakFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TemporalFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
+import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
+import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
+import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.UI;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
-public final class FieldSchemaArtifact extends SchemaArtifact implements ChildSchemaArtifact
+public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
 {
-  private final FieldUI fieldUI;
-  private final Optional<ValueConstraints> valueConstraints;
-  private final Optional<String> skosPrefLabel;
-  private final List<String> skosAlternateLabels;
-  private final boolean isMultiple;
-
-  public FieldSchemaArtifact(SchemaArtifact schemaArtifact, FieldUI fieldUI,
-    Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    boolean isMultiple)
-  {
-    super(schemaArtifact);
-    this.valueConstraints = valueConstraints;
-    this.fieldUI = fieldUI;
-    this.skosPrefLabel = skosPrefLabel;
-    this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
-    this.isMultiple = isMultiple;
-
-    validate();
-  }
-
-  public FieldSchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
-    Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+  static FieldSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    List<URI> jsonLdTypes,
-    String schemaOrgName, String schemaOrgDescription,
-    Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom, FieldUI fieldUI,
-    Optional<ValueConstraints> valueConstraints, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    boolean isMultiple)
+    String name, String description, Optional<String> identifier, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription, modelVersion,
-      artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
-    this.valueConstraints = valueConstraints;
-    this.fieldUI = fieldUI;
-    this.skosPrefLabel = skosPrefLabel;
-    this.skosAlternateLabels = Collections.unmodifiableList(skosAlternateLabels);
-    this.isMultiple = isMultiple;
-
-    validate();
+    return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
+      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      name, description, identifier, skosPrefLabel, skosAlternateLabels,
+      modelVersion, version, status, previousVersion, derivedFrom,
+      isMultiple, minItems, maxItems, propertyUri,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      fieldUi, valueConstraints);
   }
 
-  private FieldSchemaArtifact(Builder builder) {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn,
-      builder.lastUpdatedOn, builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle,
-      builder.jsonSchemaDescription, builder.jsonLdTypes, builder.schemaOrgName, builder.schemaOrgDescription,
-      builder.modelVersion, builder.artifactVersion, builder.artifactVersionStatus,
-      builder.previousVersion, builder.derivedFrom);
-    this.fieldUI = builder.fieldUI;
-    this.valueConstraints = builder.valueConstraints;
-    this.skosPrefLabel = builder.skosPrefLabel;
-    this.skosAlternateLabels = Collections.unmodifiableList(builder.skosAlternateLabels);
-    this.isMultiple = builder.isMultiple;
+  FieldUi fieldUi();
 
-    validate();
+  Optional<ValueConstraints> valueConstraints();
+
+  Optional<String> skosPrefLabel();
+
+  List<String> skosAlternateLabels();
+
+  default boolean hidden() { return fieldUi().hidden(); }
+
+  default boolean requiredValue() {
+    return valueConstraints().isPresent() &&  valueConstraints().get().requiredValue();
   }
 
-  public FieldUI getFieldUI()
+  @JsonIgnore
+  default boolean isStatic() { return fieldUi().isStatic(); }
+
+  default boolean hasIRIValue()
   {
-    return fieldUI;
+    return (fieldUi().isTextField() &&
+      (valueConstraints().isPresent() && valueConstraints().get().isControlledTermValueConstraint()))
+      || fieldUi().isLink();
   }
 
-  public boolean isHidden() { return fieldUI.isHidden(); }
-
-  @Override public boolean isMultiple() { return isMultiple; }
-
-  public Optional<ValueConstraints> getValueConstraints()
+  default Optional<Integer> minLength()
   {
-    return valueConstraints;
+    if (valueConstraints().isPresent() && valueConstraints().get().isTextValueConstraint()) {
+      TextValueConstraints textValueConstraints = valueConstraints().get().asTextValueConstraints();
+      return textValueConstraints.minLength();
+    } else
+      return Optional.empty();
   }
 
-  public Optional<String> getSkosPrefLabel()
+  default Optional<Integer> maxLength()
   {
-    return skosPrefLabel;
+    if (valueConstraints().isPresent() && valueConstraints().get().isTextValueConstraint()) {
+      TextValueConstraints textValueConstraints = valueConstraints().get().asTextValueConstraints();
+      return textValueConstraints.maxLength();
+    } else
+      return Optional.empty();
   }
 
-  public List<String> getSkosAlternateLabels()
+  default Optional<String> regex()
   {
-    return skosAlternateLabels;
+    if (valueConstraints().isPresent() && valueConstraints().get().isTextValueConstraint()) {
+      TextValueConstraints textValueConstraints = valueConstraints().get().asTextValueConstraints();
+      return textValueConstraints.regex();
+    } else
+      return Optional.empty();
   }
 
-  @Override public String toString()
+  static TextFieldBuilder textFieldBuilder() { return new TextFieldBuilder(); }
+
+  static TextAreaFieldBuilder textAreaFieldBuilder() { return new TextAreaFieldBuilder(); }
+
+  static ControlledTermFieldBuilder controlledTermFieldBuilder() { return new ControlledTermFieldBuilder(); }
+
+  static NumericFieldBuilder numericFieldBuilder() { return new NumericFieldBuilder(); }
+
+  static TemporalFieldBuilder temporalFieldBuilder() { return new TemporalFieldBuilder(); }
+
+  static CheckboxFieldBuilder checkboxFieldBuilder() { return new CheckboxFieldBuilder(); }
+
+  static EmailFieldBuilder emailFieldBuilder() { return new EmailFieldBuilder(); }
+
+  static LinkFieldBuilder linkFieldBuilder() { return new LinkFieldBuilder(); }
+
+  static ListFieldBuilder listFieldBuilder() { return new ListFieldBuilder(); }
+
+  static PhoneNumberFieldBuilder phoneNumberFieldBuilder() { return new PhoneNumberFieldBuilder(); }
+
+  static RadioFieldBuilder radioFieldBuilder() { return new RadioFieldBuilder(); }
+
+  static SectionBreakFieldBuilder sectionBreakFieldBuilder() { return new SectionBreakFieldBuilder(); }
+
+  static AttributeValueFieldBuilder attributeValueFieldBuilder() { return new AttributeValueFieldBuilder(); }
+
+  static ImageFieldBuilder imageFieldBuilder() { return new ImageFieldBuilder(); }
+
+  static RichTextFieldBuilder richTextFieldBuilder() { return new RichTextFieldBuilder(); }
+
+  static YouTubeFieldBuilder youTubeFieldBuilder() { return new YouTubeFieldBuilder(); }
+}
+
+record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                 URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                                 String name, String description, Optional<String> identifier,
+                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                                 Version modelVersion, Optional<Version> version, Optional<Status> status,
+                                 Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                 boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                                 Optional<URI> propertyUri,
+                                 Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                 Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                 FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+  implements FieldSchemaArtifact
+{
+  public FieldSchemaArtifactRecord
   {
-    return "FieldSchemaArtifact{" + "fieldUI=" + fieldUI + ", valueConstraints=" + valueConstraints + ", skosPrefLabel="
-      + skosPrefLabel + ", skosAlternateLabels=" + skosAlternateLabels + '}';
+    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
+    validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
+      Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
+    validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
+    validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
+    validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
+    validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
+    validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateUiFieldNotNull(this, fieldUi, UI);
+    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
+
+    if (minItems.isPresent() && minItems.get() < 0)
+      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);
+
+    if (maxItems.isPresent() && maxItems.get() < 1)
+      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
+
+    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
+      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
+
+    if (fieldUi.isStatic())
+      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    else
+      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+
+    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdTypes = List.copyOf(jsonLdTypes);
   }
-
-  private void validate()
-  {
-    validateUIFieldNotNull(this, fieldUI, ModelNodeNames.UI);
-    validateOptionalFieldNotNull(this, valueConstraints, ModelNodeNames.VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(this, skosPrefLabel, ModelNodeNames.SKOS_PREFLABEL);
-    validateListFieldNotNull(this, skosAlternateLabels, ModelNodeNames.SKOS_ALTLABEL);
-  }
-
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  public static class Builder {
-    private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
-    private Optional<URI> createdBy = Optional.empty();
-    private Optional<URI> modifiedBy = Optional.empty();
-    private Optional<OffsetDateTime> createdOn = Optional.empty();
-    private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
-    private String jsonSchemaTitle = "";
-    private String jsonSchemaDescription = "";
-    private List<URI> jsonLdTypes = Collections.emptyList();
-    private String schemaOrgName;
-    private String schemaOrgDescription = "";
-    private Version modelVersion = new Version(1, 6, 0); // TODO
-    private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
-    private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
-    private Optional<URI> previousVersion = Optional.empty();
-    private Optional<URI> derivedFrom = Optional.empty();
-    private FieldUI fieldUI;
-    private Optional<ValueConstraints> valueConstraints = Optional.empty();
-    private Optional<String> skosPrefLabel = Optional.empty();
-    private List<String> skosAlternateLabels = Collections.emptyList();
-    private boolean isMultiple = false;
-
-    private Builder() {
-    }
-
-    public Builder withJsonLdId(Optional<URI> jsonLdId) {
-      this.jsonLdId = jsonLdId;
-      return this;
-    }
-
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext) {
-      this.jsonLdContext = jsonLdContext;
-      return this;
-    }
-
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
-      return this;
-    }
-
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
-      return this;
-    }
-
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
-      return this;
-    }
-
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
-      return this;
-    }
-
-    public Builder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri) {
-      this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
-      return this;
-    }
-
-    public Builder withJsonSchemaType(String jsonSchemaType) {
-      this.jsonSchemaType = jsonSchemaType;
-      return this;
-    }
-
-    public Builder withJsonSchemaTitle(String jsonSchemaTitle) {
-      this.jsonSchemaTitle = jsonSchemaTitle;
-      return this;
-    }
-
-    public Builder withJsonSchemaDescription(String jsonSchemaDescription) {
-      this.jsonSchemaDescription = jsonSchemaDescription;
-      return this;
-    }
-
-    public Builder withJsonLdTypes(List<URI> jsonLdTypes) {
-      this.jsonLdTypes = jsonLdTypes;
-      return this;
-    }
-
-    public Builder withSchemaOrgName(String schemaOrgName) {
-      this.schemaOrgName = schemaOrgName;
-      return this;
-    }
-
-    public Builder withSchemaOrgDescription(String schemaOrgDescription) {
-      this.schemaOrgDescription = schemaOrgDescription;
-      return this;
-    }
-
-    public Builder withModelVersion(Version modelVersion) {
-      this.modelVersion = modelVersion;
-      return this;
-    }
-
-    public Builder withArtifactVersion(Optional<Version> artifactVersion) {
-      this.artifactVersion = artifactVersion;
-      return this;
-    }
-
-    public Builder withArtifactVersionStatus(Optional<Status> artifactVersionStatus) {
-      this.artifactVersionStatus = artifactVersionStatus;
-      return this;
-    }
-
-    public Builder withPreviousVersion(Optional<URI> previousVersion) {
-      this.previousVersion = previousVersion;
-      return this;
-    }
-
-    public Builder withDerivedFrom(Optional<URI> derivedFrom) {
-      this.derivedFrom = derivedFrom;
-      return this;
-    }
-
-    public Builder withFieldUI(FieldUI fieldUI) {
-      this.fieldUI = fieldUI;
-      return this;
-    }
-
-    public Builder withValueConstraints(Optional<ValueConstraints> valueConstraints) {
-      this.valueConstraints = valueConstraints;
-      return this;
-    }
-
-    public Builder withSkosPrefLabel(Optional<String> skosPrefLabel) {
-      this.skosPrefLabel = skosPrefLabel;
-      return this;
-    }
-
-    public Builder withSkosAlternateLabels(List<String> skosAlternateLabels) {
-      this.skosAlternateLabels = skosAlternateLabels;
-      return this;
-    }
-
-    public Builder withIsMultiple(boolean isMultiple) {
-      this.isMultiple = isMultiple;
-      return this;
-    }
-
-    public FieldSchemaArtifact build() {
-      return new FieldSchemaArtifact(this);
-    }
-  }
-
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
-import org.metadatacenter.artifacts.model.reader.ArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,11 +25,11 @@ public class FieldReporter
       throw new RuntimeException("Expecting JSON object");
 
     ObjectNode fieldObjectNode = (ObjectNode)jsonNode;
-    ArtifactReader artifactReader = new ArtifactReader(mapper);
+    JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
 
     try {
       FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
-      System.out.println("schema:name: " + fieldSchemaArtifact.getName());
+      System.out.println("schema:name: " + fieldSchemaArtifact.name());
     } catch (ArtifactParseException e) {
       System.err.println(
         "Parse error '" + e.getParseErrorMessage() + "' processing field " + e.getFieldName() + " at path " + e.getPath());

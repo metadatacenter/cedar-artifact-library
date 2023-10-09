@@ -1,298 +1,325 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.model.ModelNodeNames;
-
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUIFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldEquals;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContains;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
+import static org.metadatacenter.model.ModelNodeNames.PAV_PREVIOUS_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.UI;
 
-public final class TemplateSchemaArtifact extends SchemaArtifact implements ParentSchemaArtifact
+public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact
 {
-  private final Map<String, FieldSchemaArtifact> fieldSchemas;
-  private final Map<String, ElementSchemaArtifact> elementSchemas;
-  private final TemplateUI templateUI;
-  private final Map<String, URI> childPropertyURIs;
-
-  public TemplateSchemaArtifact(SchemaArtifact schemaArtifact, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
-  {
-    super(schemaArtifact);
-    this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
-    this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
-    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
-    this.templateUI = templateUI;
-
-    validate();
-  }
-
-  public TemplateSchemaArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext,
-    Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+  static TemplateSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    List<URI> jsonLdTypes, String schemaOrgName, String schemaOrgDescription,
-    Version modelVersion, Optional<Version> artifactVersion, Optional<Status> artifactVersionStatus,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom, Map<String, FieldSchemaArtifact> fieldSchemas,
-    Map<String, ElementSchemaArtifact> elementSchemas, Map<String, URI> childPropertyURIs, TemplateUI templateUI)
+    String name, String description, Optional<String> identifier,
+    Version modelVersion, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
+    TemplateUi templateUi)
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType,
-      jsonSchemaTitle, jsonSchemaDescription, jsonLdTypes, schemaOrgName, schemaOrgDescription, modelVersion,
-      artifactVersion, artifactVersionStatus, previousVersion, derivedFrom);
-    this.fieldSchemas = Collections.unmodifiableMap(fieldSchemas);
-    this.elementSchemas = Collections.unmodifiableMap(elementSchemas);
-    this.childPropertyURIs = Collections.unmodifiableMap(childPropertyURIs);
-    this.templateUI = templateUI;
-
-    validate();
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name,
+      description, identifier, modelVersion, version, status, previousVersion,
+      derivedFrom, fieldSchemas, elementSchemas, templateUi);
   }
 
-  public TemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
-  {
-    super(templateSchemaArtifact);
-    this.fieldSchemas = templateSchemaArtifact.fieldSchemas;
-    this.elementSchemas = templateSchemaArtifact.elementSchemas;
-    this.childPropertyURIs = templateSchemaArtifact.childPropertyURIs;
-    this.templateUI = templateSchemaArtifact.templateUI;
+  TemplateUi templateUi();
 
-    validate();
-  }
+  default ParentArtifactUi getUi() { return templateUi(); }
 
-  private TemplateSchemaArtifact(Builder builder)
-  {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn,
-      builder.jsonSchemaSchemaUri, builder.jsonSchemaType, builder.jsonSchemaTitle, builder.jsonSchemaDescription,
-      builder.jsonLdTypes, builder.schemaOrgName, builder.schemaOrgDescription, builder.modelVersion, builder.artifactVersion,
-      builder.artifactVersionStatus, builder.previousVersion, builder.derivedFrom);
-    this.fieldSchemas = Collections.unmodifiableMap(builder.fieldSchemas);
-    this.elementSchemas = Collections.unmodifiableMap(builder.elementSchemas);
-    this.childPropertyURIs = Collections.unmodifiableMap(builder.childPropertyURIs);
-    this.templateUI = builder.templateUI;
-
-    validate();
-  }
-
-  @Override public LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas()
-  {
-    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
-
-    for (String fieldName: getUI().getOrder()) {
-      if (this.fieldSchemas.containsKey(fieldName))
-        orderedFieldSchemas.put(fieldName, this.fieldSchemas.get(fieldName));
-    }
-    return orderedFieldSchemas;
-  }
-
-  @Override public LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas()
-  {
-    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
-
-    for (String elementName: getUI().getOrder()) {
-      if (this.elementSchemas.containsKey(elementName))
-        orderedElementSchemas.put(elementName, this.elementSchemas.get(elementName));
-    }
-    return orderedElementSchemas;
-  }
-
-  @Override public Map<String, URI> getChildPropertyURIs()
-  {
-    return Collections.unmodifiableMap(childPropertyURIs);
-  }
-
-  @Override public FieldSchemaArtifact getFieldSchemaArtifact(String name)
-  {
-    if (fieldSchemas.containsKey(name))
-      return fieldSchemas.get(name);
-    else
-      throw new IllegalArgumentException("Field " + name + "not present in template " + getName());
-  }
-
-  @Override public ElementSchemaArtifact getElementSchemaArtifact(String name)
-  {
-    if (elementSchemas.containsKey(name))
-      return elementSchemas.get(name);
-    else
-      throw new IllegalArgumentException("Element " + name + "not present in template " + getName());
-  }
-
-  @Override public boolean hasFields() { return !fieldSchemas.isEmpty(); }
-
-  @Override public boolean hasElements() { return !elementSchemas.isEmpty(); }
-
-  @Override public boolean isField(String name) { return fieldSchemas.containsKey(name); }
-
-  @Override public boolean isElement(String name) { return elementSchemas.containsKey(name); }
-
-  @Override public ParentArtifactUI getUI() { return templateUI; }
-
-  public TemplateUI getTemplateUI()
-  {
-    return templateUI;
-  }
-
-  @Override public String toString()
-  {
-    return "TemplateSchemaArtifact{" + "fieldSchemas=" + fieldSchemas + ", elementSchemas=" + elementSchemas
-      + ", templateUI=" + templateUI + ", childPropertyURIs=" + childPropertyURIs + '}';
-  }
-
-  private void validate()
-  {
-    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
-    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUIFieldNotNull(this, templateUI, ModelNodeNames.UI);
-    validateMapFieldNotNull(this, childPropertyURIs, "childPropertyURIs");
-  }
-
-  public static Builder builder() {
+  static Builder builder() {
     return new Builder();
   }
 
-  public static class Builder {
+  class Builder
+  {
+    private Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    private List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
-    private String jsonSchemaType = ModelNodeNames.JSON_SCHEMA_OBJECT;
+    private URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
+    private String jsonSchemaType = JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
-    private List<URI> jsonLdTypes = Collections.emptyList();
-    private String schemaOrgName;
-    private String schemaOrgDescription = "";
-    private Version modelVersion = new Version(1, 6, 1); // TODO
-    private Optional<Version> artifactVersion = Optional.of(new Version(1, 0, 0)); // TODO
-    private Optional<Status> artifactVersionStatus = Optional.of(Status.DRAFT);
+    private String name;
+    private String description = "";
+    private Optional<String> schemaOrgIdentifier = Optional.empty();
+    private Version modelVersion = new Version(1, 6, 0); // TODO
+    private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO
+    private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas = Collections.emptyMap();
-    private Map<String, ElementSchemaArtifact> elementSchemas = Collections.emptyMap();
-    private Map<String, URI> childPropertyURIs = Collections.emptyMap();
-    private TemplateUI templateUI;
+    private LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
+    private LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+    private TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
 
-    private Builder() {
+    private Builder()
+    {
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId) {
-      this.jsonLdId = jsonLdId;
+    public Builder withJsonLdId(URI jsonLdId)
+    {
+      this.jsonLdId = Optional.ofNullable(jsonLdId);
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext) {
-      this.jsonLdContext = jsonLdContext;
+    public Builder withJsonLdType(URI jsonLdType)
+    {
+      this.jsonLdTypes.add(jsonLdType);
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    {
+      this.jsonLdContext = Map.copyOf(jsonLdContext);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
+    public Builder withCreatedBy(URI createdBy)
+    {
+      this.createdBy = Optional.ofNullable(createdBy);
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
+    public Builder withModifiedBy(URI modifiedBy)
+    {
+      this.modifiedBy = Optional.ofNullable(modifiedBy);
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
+    public Builder withCreatedOn(OffsetDateTime createdOn)
+    {
+      this.createdOn = Optional.ofNullable(createdOn);
       return this;
     }
 
-    public Builder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri) {
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+    {
+      this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
+      return this;
+    }
+
+    public Builder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri)
+    {
       this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
       return this;
     }
 
-    public Builder withJsonSchemaType(String jsonSchemaType) {
+    public Builder withJsonSchemaType(String jsonSchemaType)
+    {
       this.jsonSchemaType = jsonSchemaType;
       return this;
     }
 
-    public Builder withJsonSchemaTitle(String jsonSchemaTitle) {
+    public Builder withJsonSchemaTitle(String jsonSchemaTitle)
+    {
       this.jsonSchemaTitle = jsonSchemaTitle;
       return this;
     }
 
-    public Builder withJsonSchemaDescription(String jsonSchemaDescription) {
+    public Builder withJsonSchemaDescription(String jsonSchemaDescription)
+    {
       this.jsonSchemaDescription = jsonSchemaDescription;
       return this;
     }
 
-    public Builder withJsonLdTypes(List<URI> jsonLdTypes) {
+    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier)
+    {
+      this.schemaOrgIdentifier = Optional.ofNullable(schemaOrgIdentifier);
+      return this;
+    }
+
+    public Builder withJsonLdTypes(List<URI> jsonLdTypes)
+    {
       this.jsonLdTypes = jsonLdTypes;
       return this;
     }
 
-    public Builder withName(String schemaOrgName) {
-      this.schemaOrgName = schemaOrgName;
+    public Builder withName(String name)
+    {
+      this.name = name;
+
+      if (this.jsonSchemaTitle.isEmpty())
+        this.jsonSchemaTitle = name + " template schema";
+
+      if (this.jsonSchemaDescription.isEmpty())
+        this.jsonSchemaDescription = name + " template schema generated by the CEDAR Artifact Library";
+
       return this;
     }
 
-    public Builder withDescription(String schemaOrgDescription) {
-      this.schemaOrgDescription = schemaOrgDescription;
+    public Builder withDescription(String description)
+    {
+      this.description = description;
+
       return this;
     }
 
-    public Builder withModelVersion(Version modelVersion) {
+    public Builder withModelVersion(Version modelVersion)
+    {
       this.modelVersion = modelVersion;
       return this;
     }
 
-    public Builder withArtifactVersion(Optional<Version> artifactVersion) {
-      this.artifactVersion = artifactVersion;
-      return this;
-    }
-
-    public Builder withArtifactVersionStatus(Optional<Status> artifactVersionStatus) {
-      this.artifactVersionStatus = artifactVersionStatus;
-      return this;
-    }
-
-    public Builder withPreviousVersion(Optional<URI> previousVersion) {
-      this.previousVersion = previousVersion;
-      return this;
-    }
-
-    public Builder withDerivedFrom(Optional<URI> derivedFrom) {
-      this.derivedFrom = derivedFrom;
-      return this;
-    }
-
-    public Builder withFieldSchemas(Map<String, FieldSchemaArtifact> fieldSchemas) {
-      this.fieldSchemas = fieldSchemas;
-      return this;
-    }
-
-    public Builder withElementSchemas(Map<String, ElementSchemaArtifact> elementSchemas) {
-      this.elementSchemas = elementSchemas;
-      return this;
-    }
-
-    public Builder withChildPropertyURIs(Map<String, URI> childPropertyURIs)
+    public Builder withVersion(Version version)
     {
-      this.childPropertyURIs = childPropertyURIs;
+      this.version = Optional.ofNullable(version);
       return this;
     }
 
-    public Builder withTemplateUI(TemplateUI templateUI) {
-      this.templateUI = templateUI;
+    public Builder withStatus(Status status)
+    {
+      this.status = Optional.ofNullable(status);
       return this;
     }
 
-    public TemplateSchemaArtifact build() {
-      return new TemplateSchemaArtifact(this);
+    public Builder withPreviousVersion(URI previousVersion)
+    {
+      this.previousVersion = Optional.ofNullable(previousVersion);
+      return this;
     }
+
+    public Builder withDerivedFrom(URI derivedFrom)
+    {
+      this.derivedFrom = Optional.ofNullable(derivedFrom);
+      return this;
+    }
+
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact)
+    {
+      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+      this.templateUiBuilder.withOrder(fieldSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), fieldSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), fieldSchemaArtifact.description());
+      return this;
+    }
+
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
+    {
+      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+      this.templateUiBuilder.withOrder(fieldSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), propertyLabel);
+      this.templateUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), propertyDescription);
+      return this;
+    }
+
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact)
+    {
+      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
+      this.templateUiBuilder.withOrder(elementSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), elementSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), elementSchemaArtifact.description());
+      return this;
+    }
+
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
+    {
+      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
+      this.templateUiBuilder.withOrder(elementSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), propertyLabel);
+      this.templateUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), propertyDescription);
+      return this;
+    }
+
+    public Builder withHeader(String header)
+    {
+      this.templateUiBuilder.withHeader(header);
+      return this;
+    }
+
+    public Builder withFooter(String footer)
+    {
+      this.templateUiBuilder.withFooter(footer);
+      return this;
+    }
+
+    public TemplateSchemaArtifact build()
+    {
+      return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
+        schemaOrgIdentifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas,
+        templateUiBuilder.build());
+    }
+  }
+}
+
+record TemplateSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                    URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                                    String name, String description, Optional<String> identifier,
+                                    Version modelVersion, Optional<Version> version, Optional<Status> status,
+                                    Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                    Map<String, FieldSchemaArtifact> fieldSchemas,
+                                    Map<String, ElementSchemaArtifact> elementSchemas,
+                                    TemplateUi templateUi) implements TemplateSchemaArtifact
+{
+  public TemplateSchemaArtifactRecord {
+    validateUriFieldEquals(this, jsonSchemaSchemaUri, JSON_SCHEMA_SCHEMA, URI.create(JSON_SCHEMA_SCHEMA_IRI));
+    validateStringFieldNotNull(this, jsonSchemaType, JSON_SCHEMA_TYPE);
+    validateStringFieldNotNull(this, jsonSchemaTitle, JSON_SCHEMA_TITLE);
+    validateStringFieldNotNull(this, jsonSchemaDescription, JSON_SCHEMA_DESCRIPTION);
+    validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
+    validateVersionFieldNotNull(this, modelVersion, SCHEMA_ORG_SCHEMA_VERSION);
+    validateOptionalFieldNotNull(this, version, PAV_VERSION);
+    validateOptionalFieldNotNull(this, status, BIBO_STATUS);
+    validateOptionalFieldNotNull(this, previousVersion, PAV_PREVIOUS_VERSION);
+    validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
+    validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    validateUriListFieldContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
+    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
+    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
+    validateUiFieldNotNull(this, templateUi, UI);
+
+    Set<String> order = templateUi.order().stream().collect(toSet());
+    Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
+
+    if (!order.containsAll(childNames)) {
+      childNames.removeAll(order);
+      throw new IllegalStateException(
+        "UI order field must contain an entry for all child fields and elements in " + "template schema artifact " +
+          name + "; missing fields: " + childNames);
+    }
+
+    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdTypes = List.copyOf(jsonLdTypes);
+    fieldSchemas = Map.copyOf(fieldSchemas);
+    elementSchemas = Map.copyOf(elementSchemas);
   }
 }

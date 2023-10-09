@@ -1,94 +1,58 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.model.ModelNodeNames;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
+import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
+import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
+
 /**
  * While field instances may not necessarily have JSON-LD identifiers or provenance fields (name, description,
- * createdBy, modifiedBy, createdOn, lastUpdatedOn) the model allows them.
+ * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them.
  */
-public final class FieldInstanceArtifact extends InstanceArtifact
+public interface FieldInstanceArtifact extends InstanceArtifact
 {
-  private final String jsonLdValue;
-  private final Optional<String> label;
-  private final Optional<String> notation;
-  private final Optional<String> prefLabel;
-
-  public FieldInstanceArtifact(InstanceArtifact instanceArtifact, String jsonLdValue,
-    Optional<String> label, Optional<String> notation, Optional<String> prefLabel)
+  static FieldInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    String jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel)
   {
-    super(instanceArtifact);
-    this.jsonLdValue = jsonLdValue;
-    this.label = label;
-    this.notation = notation;
-    this.prefLabel = prefLabel;
+    return new FieldInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, jsonLdValue, label, notation, prefLabel);
   }
 
-  public FieldInstanceArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, String jsonLdValue,
-    Optional<String> label, Optional<String> notation, Optional<String> prefLabel)
+  static Builder builder()
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
-    this.jsonLdValue = jsonLdValue;
-    this.label = label;
-    this.notation = notation;
-    this.prefLabel = prefLabel;
-  }
-
-  private FieldInstanceArtifact(Builder builder) {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
-    this.jsonLdValue = builder.jsonLdValue;
-    this.label = builder.label;
-    this.notation = builder.notation;
-    this.prefLabel = builder.prefLabel;
-  }
-
-  public FieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact)
-  {
-    super(fieldInstanceArtifact);
-    this.jsonLdValue = fieldInstanceArtifact.jsonLdValue;
-    this.label = fieldInstanceArtifact.label;
-    this.notation = fieldInstanceArtifact.notation;
-    this.prefLabel = fieldInstanceArtifact.prefLabel;
-  }
-
-  public String getJsonLdValue()
-  {
-    return jsonLdValue;
-  }
-
-  public Optional<String> getLabel()
-  {
-    return label;
-  }
-
-  public Optional<String> getNotation()
-  {
-    return notation;
-  }
-
-  public Optional<String> getPrefLabel()
-  {
-    return prefLabel;
-  }
-
-
-  @Override public String toString()
-  {
-    return super.toString() + "\n FieldInstanceArtifact{" + "value='" + jsonLdValue + '\'' + ", label='" + label + '\'' + ", notation='" + notation
-      + '\'' + ", prefLabel='" + prefLabel + '\'' + '}';
-  }
-
-  public static Builder builder() {
     return new Builder();
   }
 
-  public static class Builder {
+  class Builder
+  {
+    private Map<String, URI> jsonLdContext = new HashMap<>();
+    private List<URI> jsonLdTypes = new ArrayList<>();
     private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
@@ -98,62 +62,101 @@ public final class FieldInstanceArtifact extends InstanceArtifact
     private Optional<String> notation = Optional.empty();
     private Optional<String> prefLabel = Optional.empty();
 
-    private Builder() {
+    private Builder()
+    {
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId) {
-      this.jsonLdId = jsonLdId;
-      return this;
-    }
-
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext) {
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    {
       this.jsonLdContext = jsonLdContext;
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
+    public Builder withJsonLdType(URI jsonLdType)
+    {
+      this.jsonLdTypes.add(jsonLdType);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
+    public Builder withJsonLdId(Optional<URI> jsonLdId)
+    {
+      this.jsonLdId = jsonLdId;
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
+    public Builder withCreatedBy(URI createdBy)
+    {
+      this.createdBy = Optional.ofNullable(createdBy);
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
+    public Builder withModifiedBy(URI modifiedBy)
+    {
+      this.modifiedBy = Optional.ofNullable(modifiedBy);
       return this;
     }
 
-    public Builder withJsonLdValue(String jsonLdValue) {
+    public Builder withCreatedOn(OffsetDateTime createdOn)
+    {
+      this.createdOn = Optional.ofNullable(createdOn);
+      return this;
+    }
+
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+    {
+      this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
+      return this;
+    }
+
+    public Builder withJsonLdValue(String jsonLdValue)
+    {
       this.jsonLdValue = jsonLdValue;
       return this;
     }
 
-    public Builder withLabel(Optional<String> label) {
-      this.label = label;
+    public Builder withLabel(String label)
+    {
+      this.label = Optional.ofNullable(label);
       return this;
     }
 
-    public Builder withNotation(Optional<String> notation) {
-      this.notation = notation;
+    public Builder withNotation(String notation)
+    {
+      this.notation = Optional.ofNullable(notation);
       return this;
     }
 
-    public Builder withPrefLabel(Optional<String> prefLabel) {
-      this.prefLabel = prefLabel;
+    public Builder withPrefLabel(String prefLabel)
+    {
+      this.prefLabel = Optional.ofNullable(prefLabel);
       return this;
     }
 
-    public FieldInstanceArtifact build() {
-      return new FieldInstanceArtifact(this);
+    public FieldInstanceArtifact build()
+    {
+      return new FieldInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, jsonLdValue, label, notation, prefLabel);
     }
+  }
+}
+
+record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                   Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                   Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                   String jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel) implements FieldInstanceArtifact
+{
+  public FieldInstanceArtifactRecord
+  {
+    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
+    validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
+    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
+    validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
+    validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
+    validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
+    validateOptionalFieldNotNull(this, label, RDFS_LABEL);
+    validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
+    validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
   }
 }
 

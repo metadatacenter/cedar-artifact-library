@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
-import org.metadatacenter.artifacts.model.reader.ArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,11 +25,11 @@ public class TemplateReporter
       throw new RuntimeException("Expecting JSON object");
 
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
-    ArtifactReader artifactReader = new ArtifactReader(mapper);
+    JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
 
     try {
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
-      System.out.println("schema:name: " + templateSchemaArtifact.getName());
+      System.out.println("schema:name: " + templateSchemaArtifact.name());
     } catch (ArtifactParseException e) {
       System.err.println(
         "Parse error '" + e.getParseErrorMessage() + "' processing field " + e.getFieldName() + " at path " + e.getPath());

@@ -3,127 +3,162 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
+import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 
 /**
  * While element instances may not necessarily have JSON-LD identifiers or provenance fields (name, description,
  * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them.
  */
-public final class ElementInstanceArtifact extends InstanceArtifact implements ParentInstanceArtifact
+public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
-  private final Map<String, List<FieldInstanceArtifact>> fieldInstances;
-  private final Map<String, List<ElementInstanceArtifact>> elementInstances;
-
-  public ElementInstanceArtifact(InstanceArtifact instanceArtifact,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances,
-    Map<String, List<ElementInstanceArtifact>> elementInstances)
+  static ElementInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    Map<String, List<FieldInstanceArtifact>> fieldInstances, Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
-    super(instanceArtifact);
-    this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
-    this.elementInstances = Collections.unmodifiableMap(elementInstances);
+    return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
   }
 
-  public ElementInstanceArtifact(Optional<URI> jsonLdId, Map<String, URI> jsonLdContext, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances,
-    Map<String, List<ElementInstanceArtifact>> elementInstances)
+  static Builder builder()
   {
-    super(jsonLdId, jsonLdContext, createdBy, modifiedBy, createdOn, lastUpdatedOn);
-    this.fieldInstances = Collections.unmodifiableMap(fieldInstances);
-    this.elementInstances = Collections.unmodifiableMap(elementInstances);
-  }
-
-  public ElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
-  {
-    super(elementInstanceArtifact);
-    this.fieldInstances = elementInstanceArtifact.fieldInstances;
-    this.elementInstances = elementInstanceArtifact.elementInstances;
-  }
-
-  private ElementInstanceArtifact(Builder builder)
-  {
-    super(builder.jsonLdId, builder.jsonLdContext, builder.createdBy, builder.modifiedBy, builder.createdOn, builder.lastUpdatedOn);
-    this.fieldInstances = Collections.unmodifiableMap(builder.fieldInstances);
-    this.elementInstances = Collections.unmodifiableMap(builder.elementInstances);
-  }
-
-  @Override public Map<String, List<FieldInstanceArtifact>> getFieldInstances()
-  {
-    return fieldInstances;
-  }
-
-  @Override public Map<String, List<ElementInstanceArtifact>> getElementInstances()
-  {
-    return elementInstances;
-  }
-
-  @Override public String toString()
-  {
-    return super.toString() + "\n ElementInstanceArtifact{" + "fieldInstances=" + fieldInstances + ", elementInstances=" + elementInstances
-      + '}';
-  }
-
-  public static Builder builder() {
     return new Builder();
   }
 
-  public static class Builder {
+  class Builder
+  {
+    private Map<String, URI> jsonLdContext = new HashMap<>();
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
-    private Map<String, URI> jsonLdContext = Collections.emptyMap();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private Map<String, List<FieldInstanceArtifact>> fieldInstances;
-    private Map<String, List<ElementInstanceArtifact>> elementInstances;
+    private String name;
+    private String description = "";
+    private Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
-    private Builder() {
+    private Builder()
+    {
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId) {
-      this.jsonLdId = jsonLdId;
+    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    {
+      this.jsonLdContext = Map.copyOf(jsonLdContext);
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext) {
-      this.jsonLdContext = jsonLdContext;
+    public Builder withJsonLdType(URI jsonLdType)
+    {
+      this.jsonLdTypes.add(jsonLdType);
       return this;
     }
 
-    public Builder withCreatedBy(Optional<URI> createdBy) {
-      this.createdBy = createdBy;
+    public Builder withJsonLdId(URI jsonLdId)
+    {
+      this.jsonLdId = Optional.ofNullable(jsonLdId);
       return this;
     }
 
-    public Builder withModifiedBy(Optional<URI> modifiedBy) {
-      this.modifiedBy = modifiedBy;
+    public Builder withName(String name)
+    {
+      this.name = name;
       return this;
     }
 
-    public Builder withCreatedOn(Optional<OffsetDateTime> createdOn) {
-      this.createdOn = createdOn;
+    public Builder withDescription(String description)
+    {
+      this.description = description;
       return this;
     }
 
-    public Builder withLastUpdatedOn(Optional<OffsetDateTime> lastUpdatedOn) {
-      this.lastUpdatedOn = lastUpdatedOn;
+    public Builder withCreatedBy(URI createdBy)
+    {
+      this.createdBy = Optional.ofNullable(createdBy);
       return this;
     }
 
-    public Builder withFieldInstances(Map<String, List<FieldInstanceArtifact>> fieldInstances) {
-      this.fieldInstances = fieldInstances;
+    public Builder withModifiedBy(URI modifiedBy)
+    {
+      this.modifiedBy = Optional.ofNullable(modifiedBy);
       return this;
     }
 
-    public Builder withElementInstances(Map<String, List<ElementInstanceArtifact>> elementInstances) {
-      this.elementInstances = elementInstances;
+    public Builder withCreatedOn(OffsetDateTime createdOn)
+    {
+      this.createdOn = Optional.ofNullable(createdOn);
       return this;
     }
 
-    public ElementInstanceArtifact build() {
-      return new ElementInstanceArtifact(this);
+    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+    {
+      this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
+      return this;
+    }
+
+    public Builder withFieldInstances(Map<String, List<FieldInstanceArtifact>> fieldInstances)
+    {
+      this.fieldInstances = Map.copyOf(fieldInstances);
+      return this;
+    }
+
+    public Builder withElementInstances(Map<String, List<ElementInstanceArtifact>> elementInstances)
+    {
+      this.elementInstances = Map.copyOf(elementInstances);
+      return this;
+    }
+
+    public ElementInstanceArtifact build()
+    {
+      return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
     }
   }
 }
+
+record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                     String name, String description,
+                                      Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                      Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                      Map<String, List<FieldInstanceArtifact>> fieldInstances,
+                                      Map<String, List<ElementInstanceArtifact>> elementInstances) implements ElementInstanceArtifact
+{
+  public ElementInstanceArtifactRecord
+  {
+    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
+    validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
+    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
+    validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
+    validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
+    validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
+    validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
+    validateStringFieldNotNull(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
+
+    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdTypes = List.copyOf(jsonLdTypes);
+    fieldInstances = Map.copyOf(fieldInstances);
+    elementInstances = Map.copyOf(elementInstances);
+  }
+}
+

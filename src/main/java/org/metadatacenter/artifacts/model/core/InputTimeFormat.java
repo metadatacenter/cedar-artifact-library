@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.poi.ss.formula.functions.T;
+
 public enum InputTimeFormat
 {
   TWELVE_HOUR("12h"),
@@ -11,6 +14,11 @@ public enum InputTimeFormat
     this.text = text;
   }
 
+  public boolean isTwelveHour() { return this == TWELVE_HOUR; }
+
+  public boolean isTwentyFourHour() { return this == TWENTY_FOUR_HOUR; }
+
+  @JsonValue
   public String getText() {
     return this.text;
   }
@@ -22,5 +30,10 @@ public enum InputTimeFormat
       }
     }
     throw new IllegalArgumentException("No input time format constant with text " + text + " found");
+  }
+
+  @Override public String toString()
+  {
+    return text;
   }
 }

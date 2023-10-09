@@ -3,10 +3,13 @@ package org.metadatacenter.artifacts.model.core;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.metadatacenter.model.ModelNodeNames;
 
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTION_DELETE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTION_MOVE;
+
 public enum ValueConstraintsActionType
 {
-  MOVE(ModelNodeNames.VALUE_CONSTRAINTS_ACTION_MOVE),
-  DELETE(ModelNodeNames.VALUE_CONSTRAINTS_ACTION_DELETE);
+  MOVE(VALUE_CONSTRAINTS_ACTION_MOVE),
+  DELETE(VALUE_CONSTRAINTS_ACTION_DELETE);
 
   private final String text;
 
@@ -26,5 +29,10 @@ public enum ValueConstraintsActionType
       }
     }
     throw new IllegalArgumentException("No value constraints action type constant with text " + text + " found");
+  }
+
+  @Override public String toString()
+  {
+    return text;
   }
 }

@@ -2,52 +2,109 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
 {
-  boolean isField(String name);
+  String name();
 
-  boolean isElement(String name);
+  ParentArtifactUi getUi();
 
-  boolean hasFields();
+  Map<String, FieldSchemaArtifact> fieldSchemas();
 
-  boolean hasElements();
+  Map<String, ElementSchemaArtifact> elementSchemas();
 
-  FieldSchemaArtifact getFieldSchemaArtifact(String name);
+  default boolean isField(String name) { return fieldSchemas().containsKey(name); }
 
-  ElementSchemaArtifact getElementSchemaArtifact(String name);
+  default boolean isElement(String name) { return elementSchemas().containsKey(name); }
 
-  LinkedHashMap<String, FieldSchemaArtifact> getFieldSchemas();
+  default boolean hasFields() { return !fieldSchemas().isEmpty(); }
 
-  LinkedHashMap<String, ElementSchemaArtifact> getElementSchemas();
+  default boolean hasElements() { return !elementSchemas().isEmpty(); }
 
-  Map<String, URI> getChildPropertyURIs();
+  default boolean hasAttributeValueField()
+  {
+    return this.fieldSchemas().values().stream().anyMatch(fs -> fs.fieldUi().isAttributeValue());
+  }
 
-  ParentArtifactUI getUI();
+  default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
+  {
+    LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
+
+    for (String fieldName: getUi().order()) {
+      if (fieldSchemas().containsKey(fieldName))
+        orderedFieldSchemas.put(fieldName, fieldSchemas().get(fieldName));
+    }
+    return orderedFieldSchemas;
+  }
+
+  default LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas()
+  {
+    LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
+
+    for (String elementName : getUi().order()) {
+      if (elementSchemas().containsKey(elementName))
+        orderedElementSchemas.put(elementName, elementSchemas().get(elementName));
+    }
+    return orderedElementSchemas;
+  }
+
+  default ElementSchemaArtifact getElementSchemaArtifact(String name)
+  {
+    if (elementSchemas().containsKey(name))
+      return elementSchemas().get(name);
+    else
+      throw new IllegalArgumentException("Element " + name + "not present in template " + name());
+  }
+
+  default FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  {
+    if (fieldSchemas().containsKey(name))
+      return fieldSchemas().get(name);
+    else
+      throw new IllegalArgumentException("Field " + name + "not present in element " + name());
+  }
+
+  default Map<String, URI> getChildPropertyUris()
+  {
+    Map<String, URI> childPropertyUris = new HashMap<>();
+
+    for (ChildSchemaArtifact childSchemaArtifact : getChildSchemas())
+      if (childSchemaArtifact.propertyUri().isPresent())
+        childPropertyUris.put(childSchemaArtifact.name(), childSchemaArtifact.propertyUri().get());
+
+    return childPropertyUris;
+  }
+
+  default boolean hasChildren()
+  {
+    return !elementSchemas().isEmpty() || !fieldSchemas().isEmpty();
+  }
 
   default List<ChildSchemaArtifact> getChildSchemas()
   {
     var childSchemas = new ArrayList<ChildSchemaArtifact>();
 
-    for (String childName : getUI().getOrder()) {
-      if (getElementSchemas().containsKey(childName))
-        childSchemas.add(getElementSchemas().get(childName));
-      else if (getFieldSchemas().containsKey(childName))
-        childSchemas.add(getFieldSchemas().get(childName));
+    for (String childName : getUi().order()) {
+      if (elementSchemas().containsKey(childName))
+        childSchemas.add(elementSchemas().get(childName));
+      else if (fieldSchemas().containsKey(childName))
+        childSchemas.add(fieldSchemas().get(childName));
       else
         throw new RuntimeException("internal error: no child " + childName + " present in artifact");
     }
 
     return childSchemas;
   }
+
   default List<String> getFieldNames()
   {
     ArrayList<String> fieldNames = new ArrayList<>();
 
-    for (String name: getUI().getOrder())
+    for (String name : getUi().order())
       if (isField(name))
         fieldNames.add(name);
 
@@ -58,10 +115,20 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
   {
     ArrayList<String> elementNames = new ArrayList<>();
 
-    for (String name: getUI().getOrder())
+    for (String name : getUi().order())
       if (isElement(name))
         elementNames.add(name);
 
     return elementNames;
+  }
+
+  default List<String> getChildNames()
+  {
+    ArrayList<String> childNames = new ArrayList<>();
+
+    for (String name : getUi().order())
+      childNames.add(name);
+
+    return childNames;
   }
 }

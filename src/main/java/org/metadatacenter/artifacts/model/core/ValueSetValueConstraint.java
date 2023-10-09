@@ -1,45 +1,22 @@
 package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
+import java.util.Optional;
 
-public class ValueSetValueConstraint
-{
-  private final String name;
-  private final String valueSetCollection;
-  private final URI uri;
-  private final int numberOfTerms;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NAME;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUM_TERMS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_URI;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLECTION;
 
-  public ValueSetValueConstraint(String name, String valueSetCollection, URI uri, int numberOfTerms)
-  {
-    this.name = name;
-    this.valueSetCollection = valueSetCollection;
-    this.uri = uri;
-    this.numberOfTerms = numberOfTerms;
-  }
+public record ValueSetValueConstraint(URI uri, String vsCollection, String name, Optional<Integer> numTerms) {
 
-  public String getName()
-  {
-    return name;
-  }
-
-  public String getValueSetCollection()
-  {
-    return valueSetCollection;
-  }
-
-  public URI getUri()
-  {
-    return uri;
-  }
-
-  public int getNumberOfTerms()
-  {
-    return numberOfTerms;
-  }
-
-  @Override public String toString()
-  {
-    return "ValueSetValueConstraint{" + "name='" + name + '\'' + ", valueSetCollection=" + valueSetCollection
-      + ", uri=" + uri + ", numberOfTerms=" + numberOfTerms + '}';
+  public ValueSetValueConstraint {
+    validateStringFieldNotNull(this, name, VALUE_CONSTRAINTS_NAME);
+    validateStringFieldNotNull(this, vsCollection, VALUE_CONSTRAINTS_VS_COLLECTION);
+    validateUriFieldNotNull(this, uri, VALUE_CONSTRAINTS_URI);
+    validateOptionalFieldNotNull(this, numTerms, VALUE_CONSTRAINTS_NUM_TERMS);
   }
 }

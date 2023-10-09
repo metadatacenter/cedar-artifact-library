@@ -4,12 +4,12 @@
   <parent>
     <groupId>org.metadatacenter</groupId>
     <artifactId>cedar-parent</artifactId>
-    <version>2.6.41</version>
+    <version>2.6.42</version>
   </parent>
 
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-artifact-library</artifactId>
-  <version>2.6.41</version>
+  <version>2.6.42</version>
   <packaging>jar</packaging>
 
   <name>CEDAR Artifact Library</name>
@@ -19,7 +19,6 @@
     <connection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</connection>
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-artifact-library</url>
-    <tag>release-2.6.24</tag>
   </scm>
 
   <dependencies>
@@ -55,14 +54,35 @@
     </dependency>
 
     <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <version>2.14.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.java-json-tools</groupId>
+      <artifactId>json-schema-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.java-json-tools</groupId>
+      <artifactId>json-schema-core</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
     </dependency>
 
-   <dependency>
-     <groupId>junit</groupId>
-     <artifactId>junit</artifactId>
-     <scope>test</scope>
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -125,7 +145,17 @@
               <goal>java</goal>
             </goals>
             <configuration>
-	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2TSV</mainClass>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Tsv</mainClass>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>template2yaml</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Yaml</mainClass>
             </configuration>
           </execution>
 

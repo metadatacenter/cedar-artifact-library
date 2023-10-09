@@ -1,61 +1,80 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.net.URI;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TemplateSchemaArtifactTest
 {
   @Test
-  public void testMinimalSimpleTemplateSchemaArtifact() {
-
-    TemplateUI templateUI = TemplateUI.builder().build();
+  public void testMinimalSimpleTemplateSchemaArtifact()
+  {
+    String name = "Test Name";
+    String description = "Test Description";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withName("Test").withTemplateUI(templateUI).build();
+      .withName(name)
+      .withDescription(description)
+      .build();
 
-    assertEquals(templateSchemaArtifact.getName(), "Test");
+    assertEquals(templateSchemaArtifact.name(), name);
+    assertEquals(templateSchemaArtifact.description(), description);
   }
 
   @Test
   public void testCreateTemplateSchemaArtifact() {
-    Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    Map<String, URI> childPropertyURIs = new HashMap<>();
-    TemplateUI templateUI = TemplateUI.builder().build();
+
+    String templateName = "Test Name";
+    String header = "Header";
+    String footer = "Footer";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withName("Test")
-      .withFieldSchemas(fieldSchemas)
-      .withElementSchemas(elementSchemas)
-      .withChildPropertyURIs(childPropertyURIs)
-      .withTemplateUI(templateUI).build();
+      .withName(templateName)
+      .withHeader(header)
+      .withFooter(footer)
+      .build();
 
-    assertEquals(templateSchemaArtifact.getName(), "Test");
-    assertEquals(templateSchemaArtifact.getFieldSchemas(), fieldSchemas);
-    assertEquals(templateSchemaArtifact.getElementSchemas(), elementSchemas);
-    assertEquals(templateSchemaArtifact.getChildPropertyURIs(), childPropertyURIs);
-    assertEquals(templateSchemaArtifact.getTemplateUI(), templateUI);
+    assertEquals(templateSchemaArtifact.name(), templateName);
+    assertEquals(templateSchemaArtifact.templateUi().header().get(), header);
+    assertEquals(templateSchemaArtifact.templateUi().footer().get(), footer);
   }
 
+  @Test
+  public void testCreateTemplateSchemaArtifactWithChildren()
+  {
+    String templateName = "Template 1";
+    String textFieldName1 = "Text Field 1";
+    String textFieldName2 = "Text Field 2";
+    String textField2Label = "text field 2 label";
+    String textField2Description = "text field 2 description";
+
+    FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
+    FieldSchemaArtifact textField2 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName2).build();
+
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withName(templateName)
+      .withFieldSchema(textField1)
+      .withFieldSchema(textField2, textField2Label, textField2Description)
+      .build();
+
+    assertEquals(templateSchemaArtifact.name(), templateName);
+    assertTrue(templateSchemaArtifact.hasFields());
+    assertEquals(templateSchemaArtifact.getFieldSchemaArtifact(textFieldName1), textField1);
+    assertEquals(templateSchemaArtifact.getFieldSchemaArtifact(textFieldName2), textField2);
+    assertEquals(templateSchemaArtifact.templateUi().order().size(), 2);
+    assertEquals(templateSchemaArtifact.templateUi().order().get(0), textFieldName1);
+    assertEquals(templateSchemaArtifact.templateUi().order().get(1), textFieldName2);
+    assertEquals(templateSchemaArtifact.templateUi().propertyLabels().size(), 2);
+    assertEquals(templateSchemaArtifact.templateUi().propertyLabels().get(textFieldName2), textField2Label);
+    assertEquals(templateSchemaArtifact.templateUi().propertyDescriptions().size(), 2);
+    assertEquals(templateSchemaArtifact.templateUi().propertyDescriptions().get(textFieldName2), textField2Description);
+  }
 
   @Test(expected = IllegalStateException.class)
   public void testMissingName()
   {
-    TemplateUI templateUI = TemplateUI.builder().build();
-
-    TemplateSchemaArtifact.builder().withTemplateUI(templateUI).build();
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .build();
   }
-
-  @Test(expected = IllegalStateException.class)
-  public void testMissingUI()
-  {
-    TemplateSchemaArtifact.builder().withName("Test").build();
-  }
-
 }

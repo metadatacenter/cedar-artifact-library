@@ -1,5 +1,10 @@
 package org.metadatacenter.artifacts.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -26,7 +31,24 @@ public class ConnectionUtil {
       public void checkServerTrusted(X509Certificate[] certs, String authType) {}
     };
   }
+
+  private static ObjectMapper mapper = new ObjectMapper();
+
   //@formatter:on
+
+  public static ObjectNode readJsonResponseMessage(InputStream is) {
+
+    try {
+      JsonNode jsonNode = mapper.readTree(readResponseMessage(is));
+
+      if (!jsonNode.isObject())
+        throw new RuntimeException("Expecting JSON object");
+
+      return (ObjectNode)jsonNode;
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Error reading JSON object: " + e.getMessage());
+    }
+  }
 
   public static String readResponseMessage(InputStream is) {
     StringBuffer sb = new StringBuffer();

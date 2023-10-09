@@ -151,42 +151,53 @@ public class SpreadSheetUtil
 
   public static StringBuffer convertSheetToTsv(Sheet sheet)
   {
-    StringBuffer tsvData = new StringBuffer();
+    return convertSheetToFlatFile(sheet, "\t");
+  }
+
+  public static StringBuffer convertSheetToCsv(Sheet sheet)
+  {
+    return convertSheetToFlatFile(sheet, ",");
+  }
+
+  public static StringBuffer convertSheetToFlatFile(Sheet sheet, String separator)
+  {
+    StringBuffer data = new StringBuffer();
     int rowCount = sheet.getLastRowNum();
     int colCount = sheet.getRow(0).getLastCellNum();
 
     for (int i = 0; i <= rowCount; i++) {
       Row row = sheet.getRow(i);
       for (int j = 0; j < colCount; j++) {
-        Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-        String cellValue = "";
+        if (!sheet.isColumnHidden(j)) {
+          Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+          String cellValue = "";
 
-        switch (cell.getCellType()) {
-        case STRING:
-          cellValue = cell.getStringCellValue();
-          break;
-        case NUMERIC:
-          cellValue = String.valueOf(cell.getNumericCellValue());
-          break;
-        case BOOLEAN:
-          cellValue = String.valueOf(cell.getBooleanCellValue());
-          break;
-        case FORMULA:
-          cellValue = cell.getCellFormula();
-          break;
-        }
+          switch (cell.getCellType()) {
+          case STRING:
+            cellValue = cell.getStringCellValue();
+            break;
+          case NUMERIC:
+            cellValue = String.valueOf(cell.getNumericCellValue());
+            break;
+          case BOOLEAN:
+            cellValue = String.valueOf(cell.getBooleanCellValue());
+            break;
+          case FORMULA:
+            cellValue = cell.getCellFormula();
+            break;
+          }
 
-        tsvData.append(cellValue);
+          data.append(cellValue);
 
-        if (j < colCount - 1) {
-          tsvData.append("\t"); // Use tab as the delimiter
+          if (j < colCount - 1) {
+            data.append(separator);
+          }
         }
       }
-
-      tsvData.append(System.lineSeparator());
+      data.append(System.lineSeparator());
     }
 
-    return tsvData;
+    return data;
   }
 
   private static boolean isAlpha(char c) {return c >= 'A' && c <= 'Z';}
