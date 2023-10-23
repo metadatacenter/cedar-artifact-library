@@ -8,7 +8,6 @@ import java.util.Optional;
 public sealed interface ValueConstraints permits TextValueConstraints, NumericValueConstraints,
   ControlledTermValueConstraints, TemporalValueConstraints
 {
-  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean requiredValue();
 
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)

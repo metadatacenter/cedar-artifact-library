@@ -452,8 +452,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.withArray(JSON_LD_TYPE).add(jsonLdType.toString());
     }
 
-    if (artifact.jsonLdId().isPresent())
+    if (artifact.jsonLdId().isPresent()) {
       rendering.put(JSON_LD_ID, artifact.jsonLdId().get().toString());
+    } else {
+      rendering.putNull(JSON_LD_ID);
+    }
 
     return rendering;
   }
@@ -474,17 +477,29 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    if (monitoredArtifact.createdBy().isPresent())
+    if (monitoredArtifact.createdBy().isPresent()) {
       rendering.put(PAV_CREATED_BY, monitoredArtifact.createdBy().get().toString());
+    } else {
+      rendering.putNull(PAV_CREATED_BY);
+    }
 
-    if (monitoredArtifact.modifiedBy().isPresent())
+    if (monitoredArtifact.modifiedBy().isPresent()) {
       rendering.put(OSLC_MODIFIED_BY, monitoredArtifact.modifiedBy().get().toString());
+    } else {
+      rendering.putNull(OSLC_MODIFIED_BY);
+    }
 
-    if (monitoredArtifact.createdOn().isPresent())
+    if (monitoredArtifact.createdOn().isPresent()) {
       rendering.put(PAV_CREATED_ON, monitoredArtifact.createdOn().get().toString());
+    } else {
+      rendering.putNull(PAV_CREATED_ON);
+    }
 
-    if (monitoredArtifact.lastUpdatedOn().isPresent())
+    if (monitoredArtifact.lastUpdatedOn().isPresent()) {
       rendering.put(PAV_LAST_UPDATED_ON, monitoredArtifact.lastUpdatedOn().get().toString());
+    } else {
+      rendering.putNull(PAV_LAST_UPDATED_ON);
+    }
 
     return rendering;
   }
@@ -922,7 +937,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "oslc": "http://open-services.net/ns/core#",
    *     "bibo": "http://purl.org/ontology/bibo/",
    *     "xsd": "http://www.w3.org/2001/XMLSchema#",
-   *     "skos": "http://www.w3.org/2004/02/skos/core#"
+   *     "skos": "http://www.w3.org/2004/02/skos/core#",
+   *     "schema:name": { "@type": "xsd:string" },
+   *     "schema:description": { "@type": "xsd:string" },
+   *     "pav:createdOn": { "@type": "xsd:dateTime" },
+   *     "pav:createdBy": { "@type": "@id" },
+   *     "pav:lastUpdatedOn": { "@type": "xsd:dateTime" },
+   *     "oslc:modifiedBy": { "@type": "@id" },
+   *     "skos:prefLabel": { "@type": "xsd:string" },
+   *     "skos:altLabel": { "@type": "xsd:string" }
    *   }
    * </pre>
    */
@@ -933,11 +956,20 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (var entry: FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
       rendering.put(entry.getKey(), entry.getValue().toString());
 
+    rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
+    rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
+    rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
+    rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
+    rendering.put(SKOS_PREFLABEL, renderXsdStringJsonLdSpecification());
+    rendering.put(SKOS_ALTLABEL, renderXsdStringJsonLdSpecification());
+
     return rendering;
   }
 
   /**
-   * Generate JSON-LD @context prefix specification for field schema artifacts
+   * Generate JSON-LD @context prefix specification for static field schema artifacts
    * <p></p>
    * Defined as follows:
    * <pre>
@@ -1192,7 +1224,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   *   { "type": "string", "format": "termUri" }
+   *   { "type": "string", "format": "uri" }
    * </pre>
    */
   private ObjectNode renderUriJsonSchemaTypeSpecification()
@@ -1200,7 +1232,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
 
     return rendering;
   }
@@ -1234,7 +1266,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "termUri" }, "uniqueItems": [uniqueItems] }
+   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "uri" }, "uniqueItems": [uniqueItems] }
    * </pre>
    */
   private ObjectNode renderUriArrayJsonSchemaTypeSpecification(int minItems, boolean uniqueItems)
@@ -1245,7 +1277,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
     rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, "string");
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;
