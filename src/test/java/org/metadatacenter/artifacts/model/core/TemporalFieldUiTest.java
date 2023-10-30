@@ -17,7 +17,7 @@ public class TemporalFieldUiTest
     TemporalFieldUi temporalFieldUi = TemporalFieldUi.builder()
       .withTemporalGranularity(temporalGranularity)
       .withInputTimeFormat(inputTimeFormat)
-      .withTimeZoneEnabled(timeZoneEnabled)
+      .withTimezoneEnabled(timeZoneEnabled)
       .withHidden(hidden)
       .build();
 
@@ -25,7 +25,7 @@ public class TemporalFieldUiTest
     assertEquals(FieldInputType.TEMPORAL, temporalFieldUi.inputType());
     assertEquals(temporalGranularity, temporalFieldUi.temporalGranularity());
     assertEquals(inputTimeFormat, temporalFieldUi.inputTimeFormat());
-    assertEquals(timeZoneEnabled, temporalFieldUi.timeZoneEnabled());
+    assertEquals(timeZoneEnabled, temporalFieldUi.timezoneEnabled());
     assertEquals(hidden, temporalFieldUi.hidden());
   }
 

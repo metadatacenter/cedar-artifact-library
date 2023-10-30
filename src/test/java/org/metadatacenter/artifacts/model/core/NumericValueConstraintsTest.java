@@ -32,6 +32,6 @@ public class NumericValueConstraintsTest
     assertEquals(unitOfMeasure, numericValueConstraints.unitOfMeasure().get());
     assertEquals(minValue, numericValueConstraints.minValue().get());
     assertEquals(maxValue, numericValueConstraints.maxValue().get());
-    assertEquals(decimalPlaces, numericValueConstraints.decimalPlaces().get());
+    assertEquals(decimalPlaces, numericValueConstraints.decimalPlace().get());
   }
 }
