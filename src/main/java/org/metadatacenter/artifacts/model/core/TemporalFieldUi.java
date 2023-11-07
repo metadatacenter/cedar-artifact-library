@@ -8,16 +8,16 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
   InputTimeFormat inputTimeFormat();
 
-  boolean timeZoneEnabled();
+  boolean timezoneEnabled();
 
   boolean hidden();
 
   default boolean valueRecommendationEnabled() { return false; }
 
   static TemporalFieldUi create(TemporalGranularity temporalGranularity,
-    InputTimeFormat inputTimeFormat, boolean timeZoneEnabled,  boolean hidden)
+    InputTimeFormat inputTimeFormat, boolean timezoneEnabled,  boolean hidden)
   {
-    return new TemporalFieldUiRecord(FieldInputType.TEMPORAL, temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+    return new TemporalFieldUiRecord(FieldInputType.TEMPORAL, temporalGranularity, inputTimeFormat, timezoneEnabled, hidden);
   }
 
   static Builder builder() {
@@ -29,7 +29,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
     private FieldInputType inputType = FieldInputType.TEMPORAL;
     private TemporalGranularity temporalGranularity;
     private InputTimeFormat inputTimeFormat = InputTimeFormat.TWELVE_HOUR;
-    boolean timeZoneEnabled = false;
+    boolean timezoneEnabled = false;
     private boolean hidden = false;
 
     private Builder()
@@ -48,9 +48,9 @@ public non-sealed interface TemporalFieldUi extends FieldUi
       return this;
     }
 
-    public Builder withTimeZoneEnabled(boolean timeZoneEnabled)
+    public Builder withTimezoneEnabled(boolean timezoneEnabled)
     {
-      this.timeZoneEnabled = timeZoneEnabled;
+      this.timezoneEnabled = timezoneEnabled;
       return this;
     }
 
@@ -62,13 +62,13 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
     public TemporalFieldUi build()
     {
-      return new TemporalFieldUiRecord(inputType, temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+      return new TemporalFieldUiRecord(inputType, temporalGranularity, inputTimeFormat, timezoneEnabled, hidden);
     }
   }
 }
 
 record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat,
-                             boolean timeZoneEnabled, boolean hidden) implements TemporalFieldUi
+                             boolean timezoneEnabled, boolean hidden) implements TemporalFieldUi
 {
   public TemporalFieldUiRecord
   {
