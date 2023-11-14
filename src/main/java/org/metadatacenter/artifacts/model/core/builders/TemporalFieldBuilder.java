@@ -46,7 +46,7 @@ public final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
 
   public TemporalFieldBuilder withTimeZoneEnabled(boolean timeZoneEnabled)
   {
-    fieldUiBuilder.withTimeZoneEnabled(timeZoneEnabled);
+    fieldUiBuilder.withTimezoneEnabled(timeZoneEnabled);
     return this;
   }
 

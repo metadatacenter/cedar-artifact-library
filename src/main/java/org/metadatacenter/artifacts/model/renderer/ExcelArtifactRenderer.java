@@ -242,7 +242,7 @@ public class ExcelArtifactRenderer
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi(); // TODO Temporary until we use typed switch
         TemporalType temporalType = temporalValueConstraints.temporalType();
-        String temporalFormatString = getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timeZoneEnabled());
+        String temporalFormatString = getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
         return temporalFormatString;
 
       } else
@@ -693,7 +693,7 @@ public class ExcelArtifactRenderer
       if (valueConstraints.isPresent()) {
         NumericValueConstraints numericValueConstraints = valueConstraints.get().asNumericValueConstraints();
         String formatString = getNumericFormatString(fieldName, numericValueConstraints.numberType(),
-          numericValueConstraints.decimalPlaces(), numericValueConstraints.unitOfMeasure());
+          numericValueConstraints.decimalPlace(), numericValueConstraints.unitOfMeasure());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {
         String formatString = getNumericFormatString(fieldName, NumericType.DOUBLE, Optional.empty(), Optional.empty());
@@ -704,7 +704,7 @@ public class ExcelArtifactRenderer
       if (valueConstraints.isPresent()) {
         TemporalValueConstraints temporalValueConstraints = valueConstraints.get().asTemporalValueConstraints();
         String formatString = getTemporalFormatString(fieldName, temporalValueConstraints.temporalType(),
-          temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timeZoneEnabled());
+          temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     }

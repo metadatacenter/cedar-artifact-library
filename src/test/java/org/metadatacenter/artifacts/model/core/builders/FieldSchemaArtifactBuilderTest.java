@@ -74,7 +74,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
     Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
     Assert.assertEquals(unitOfMeasure, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().unitOfMeasure().get());
-    Assert.assertEquals(decimalPlaces, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().decimalPlaces().get());
+    Assert.assertEquals(decimalPlaces, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().decimalPlace().get());
   }
 
   @Test public void testCreateTemporalField()
@@ -84,7 +84,7 @@ public class FieldSchemaArtifactBuilderTest
     TemporalType temporalType = TemporalType.TIME;
     TemporalGranularity temporalGranularity = TemporalGranularity.SECOND;
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
-    boolean timeZoneEnabled = false;
+    boolean timezoneEnabled = false;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
       withName(name).
@@ -92,7 +92,7 @@ public class FieldSchemaArtifactBuilderTest
       withTemporalType(temporalType).
       withTemporalGranularity(temporalGranularity).
       withInputTimeFormat(inputTimeFormat).
-      withTimeZoneEnabled(timeZoneEnabled).
+      withTimeZoneEnabled(timezoneEnabled).
       build();
 
     Assert.assertEquals(FieldInputType.TEMPORAL, fieldSchemaArtifact.fieldUi().inputType());
@@ -100,7 +100,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(temporalGranularity, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().temporalGranularity());
     Assert.assertEquals(inputTimeFormat, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().inputTimeFormat());
-    Assert.assertEquals(timeZoneEnabled, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().timeZoneEnabled());
+    Assert.assertEquals(timezoneEnabled, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().timezoneEnabled());
     Assert.assertEquals(temporalType, fieldSchemaArtifact.valueConstraints().get().asTemporalValueConstraints().temporalType());
   }
 

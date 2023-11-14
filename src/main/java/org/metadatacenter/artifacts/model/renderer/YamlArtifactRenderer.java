@@ -253,7 +253,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       rendering.put(CONTENT, fieldUi.asStaticFieldUi()._content());
     else if (fieldUi.isTemporal()) {
 
-      rendering.put(TIME_ZONE, fieldUi.asTemporalFieldUi().timeZoneEnabled());
+      rendering.put(TIME_ZONE, fieldUi.asTemporalFieldUi().timezoneEnabled());
 
       rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity());
 
@@ -384,8 +384,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       if (numericValueConstraints.maxValue().isPresent())
         rendering.put(MAX_VALUE, numericValueConstraints.maxValue().get());
 
-      if (numericValueConstraints.decimalPlaces().isPresent())
-        rendering.put(DECIMAL_PLACES, numericValueConstraints.decimalPlaces().get());
+      if (numericValueConstraints.decimalPlace().isPresent())
+        rendering.put(DECIMAL_PLACES, numericValueConstraints.decimalPlace().get());
 
       if (numericValueConstraints.unitOfMeasure().isPresent())
         rendering.put(UNIT, numericValueConstraints.unitOfMeasure().get());
