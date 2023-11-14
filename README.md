@@ -59,7 +59,7 @@ For example, we can generate a YAML serialization of a CEDAR template as follows
 
 ```java
 // Set to true for a complete YAML representation of an artifact, false for a condensed representation
-boolean isExanded = true;
+boolean isExpanded = true;
 // Create the renderer
 YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
 // Generate a map containing a YAML representation of the template
