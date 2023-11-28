@@ -340,8 +340,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> skosNotation = readSkosNotationField(objectNode, path);
     Optional<String> skosPrefLabel = readSkosPrefLabelField(objectNode, path);
 
-    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel);
+    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
+      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)

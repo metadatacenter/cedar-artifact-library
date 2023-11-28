@@ -24,13 +24,14 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 
 /**
- * While element instances may not necessarily have JSON-LD identifiers or provenance fields (name, description,
+ * While element instances may not necessarily have a JSON-LD identifier or provenance fields (name, description,
  * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them.
  */
 public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
   static ElementInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    String name, String description,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Map<String, List<FieldInstanceArtifact>> fieldInstances, Map<String, List<ElementInstanceArtifact>> elementInstances)
   {
     return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
@@ -47,12 +48,12 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     private Map<String, URI> jsonLdContext = new HashMap<>();
     private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
+    private String name;
+    private String description = "";
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private String name;
-    private String description = "";
     private Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
@@ -114,22 +115,23 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withFieldInstances(Map<String, List<FieldInstanceArtifact>> fieldInstances)
+    public Builder withChildElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
     {
-      this.fieldInstances = Map.copyOf(fieldInstances);
+      this.elementInstances.put(childElementName, List.copyOf(childElementInstances));
       return this;
     }
 
-    public Builder withElementInstances(Map<String, List<ElementInstanceArtifact>> elementInstances)
+    public Builder withChildFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
     {
-      this.elementInstances = Map.copyOf(elementInstances);
+      this.fieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
       return this;
     }
 
     public ElementInstanceArtifact build()
     {
-      return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-        modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
+      return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
+        name, description,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
     }
   }
 }
@@ -148,12 +150,12 @@ record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> j
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
     validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
     validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
+    validateStringFieldNotNull(this, name, SCHEMA_ORG_NAME);
+    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
     validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
     validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
     validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
     validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
-    validateStringFieldNotNull(this, name, SCHEMA_ORG_NAME);
-    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
 
     jsonLdContext = Map.copyOf(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

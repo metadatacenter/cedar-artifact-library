@@ -168,7 +168,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     public Builder withJsonLdTypes(List<URI> jsonLdTypes)
     {
-      this.jsonLdTypes = jsonLdTypes;
+      this.jsonLdTypes = List.copyOf(jsonLdTypes);
       return this;
     }
 

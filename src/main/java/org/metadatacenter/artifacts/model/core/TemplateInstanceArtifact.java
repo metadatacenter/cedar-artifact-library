@@ -28,8 +28,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 {
   static TemplateInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description,
-    Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI isBasedOn,
     Map<String, List<FieldInstanceArtifact>> fieldInstances,
     Map<String, List<ElementInstanceArtifact>> elementInstances)
@@ -50,13 +49,13 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = new HashMap<>();
+    private URI isBasedOn;
+    private String name;
+    private String description = "";
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI isBasedOn;
-    private String name;
-    private String description = "";
     private Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
@@ -124,15 +123,15 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withElementInstances(Map<String, List<ElementInstanceArtifact>> elementInstances)
+    public Builder withChildElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
     {
-      this.elementInstances = Map.copyOf(elementInstances);
+      this.elementInstances.put(childElementName, List.copyOf(childElementInstances));
       return this;
     }
 
-    public Builder withFieldInstances(Map<String, List<FieldInstanceArtifact>> fieldInstances)
+    public Builder withChildFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
     {
-      this.fieldInstances = Map.copyOf(fieldInstances);
+      this.fieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
       return this;
     }
 
