@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
@@ -126,7 +127,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<OffsetDateTime> lastUpdatedOn = getOptionalOffsetDatetime(LAST_UPDATED_ON, yamlSource, path);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO
-    TemplateUi templateUi = TemplateUi.builder().build(); // TODO
+    TemplateUi templateUi = readTemplateUi(yamlSource, path);
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
@@ -195,7 +196,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<OffsetDateTime> lastUpdatedOn = getOptionalOffsetDatetime(LAST_UPDATED_ON, yamlSource, path);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO
-    ElementUi elementUi = ElementUi.builder().build(); // TODO
+    ElementUi elementUi = readElementUi(yamlSource, path);
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
@@ -240,8 +241,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = getOptionalUri(MODIFIED_BY, yamlSource, path);
     Optional<OffsetDateTime> createdOn = getOptionalOffsetDatetime(CREATED_ON, yamlSource, path);
     Optional<OffsetDateTime> lastUpdatedOn = getOptionalOffsetDatetime(LAST_UPDATED_ON, yamlSource, path);
-    FieldUi fieldUi = FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(); // TODO
-    Optional<ValueConstraints> valueConstraints = Optional.empty(); // TODO
+    FieldUi fieldUi = readFieldUi(yamlSource, path);
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(yamlSource, path);
     Optional<String> skosPrefLabel = Optional.empty(); // TODO
     List<String> skosAlternateLabels = Collections.emptyList(); // TODO
 
@@ -397,4 +398,30 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
   }
 
+  private TemplateUi readTemplateUi(LinkedHashMap<String, Object> yamlSource, String path)
+  {
+
+    return TemplateUi.builder().build(); // TODO
+    // TODO Read YAML for header/footer
+    // TODO Read YAML for UI.propertyLabels, UI.propertyDescriptions
+    // TODO Read YAML for childPropertyUris
+  }
+
+  private ElementUi readElementUi(LinkedHashMap<String, Object> yamlSource, String path)
+  {
+
+    return ElementUi.builder().build(); // TODO
+    // TODO Read YAML for UI.propertyLabels, UI.propertyDescriptions
+    // TODO Read YAML for childPropertyUris
+  }
+
+  private FieldUi readFieldUi(LinkedHashMap<String, Object> yamlSource, String path)
+  {
+    return FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(); // TODO
+  }
+
+  private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> yamlSource, String path)
+  {
+    return Optional.empty(); // TODO
+  }
 }
