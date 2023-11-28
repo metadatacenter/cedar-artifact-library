@@ -31,6 +31,15 @@ public enum Status
     throw new IllegalArgumentException("No status constant with text " + text + " found");
   }
 
+  public static boolean isValidStatus(String text) {
+    for (Status s : Status.values()) {
+      if (s.text.equalsIgnoreCase(text)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override public String toString()
   {
     return text;

@@ -49,7 +49,6 @@ public class JsonSchemaArtifactReaderTest
   public void setup() {
     artifactReader = new JsonSchemaArtifactReader();
     mapper = new ObjectMapper();
-
   }
 
   @Test

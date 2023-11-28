@@ -4,15 +4,19 @@ import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.model.ModelNodeNames;
-import org.yaml.snakeyaml.Yaml;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.XSD_STRING;
 
 public class YamlArtifactRendererTest {
 
@@ -33,8 +37,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(YamlArtifactRenderer.TEMPLATE, name);
-    expectedRendering.put(YamlArtifactRenderer.DESCRIPTION, description);
+    expectedRendering.put(TEMPLATE, name);
+    expectedRendering.put(DESCRIPTION, description);
 
     assertEquals(expectedRendering, rendering);
   }
@@ -56,8 +60,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(YamlArtifactRenderer.ELEMENT, name);
-    expectedRendering.put(YamlArtifactRenderer.DESCRIPTION, description);
+    expectedRendering.put(ELEMENT, name);
+    expectedRendering.put(DESCRIPTION, description);
 
     assertEquals(expectedRendering, rendering);
   }
@@ -79,10 +83,10 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(YamlArtifactRenderer.FIELD, name);
-    expectedRendering.put(YamlArtifactRenderer.DESCRIPTION, description);
-    expectedRendering.put(YamlArtifactRenderer.INPUT_TYPE, FieldInputType.TEXTFIELD);
-    expectedRendering.put(YamlArtifactRenderer.DATATYPE, YamlArtifactRenderer.XSD_STRING);
+    expectedRendering.put(FIELD, name);
+    expectedRendering.put(DESCRIPTION, description);
+    expectedRendering.put(INPUT_TYPE, FieldInputType.TEXTFIELD);
+    expectedRendering.put(DATATYPE, XSD_STRING);
 
     assertEquals(expectedRendering, rendering);
   }

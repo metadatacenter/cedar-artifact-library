@@ -110,6 +110,9 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 record FieldUiRecord(FieldInputType inputType, boolean hidden, boolean valueRecommendationEnabled) implements FieldUi
 {
   public FieldUiRecord {
+    if (inputType == null)
+      throw new IllegalArgumentException("Field input type is null in " + FieldUi.class.getName());
+
     if (inputType.isStatic())
       throw new IllegalArgumentException("The " + StaticFieldUi.class.getName() + " class should be used for static field UIs");
 

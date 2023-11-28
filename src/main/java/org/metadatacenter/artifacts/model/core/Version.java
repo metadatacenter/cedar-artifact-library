@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 public record Version(int major, int minor, int patch)
 {
+  private static final String VERSION_REGEX = "(\\d+)\\.(\\d+)\\.(\\d+)";
+
   public Version
   {
     if (major < 0)
@@ -19,7 +21,7 @@ public record Version(int major, int minor, int patch)
 
   public static Version fromString(String versionText)
   {
-    Matcher m = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)").matcher(versionText);
+    Matcher m = Pattern.compile(VERSION_REGEX).matcher(versionText);
 
     if (!m.matches())
       throw new IllegalArgumentException("Invalid version string " + versionText);
@@ -29,6 +31,13 @@ public record Version(int major, int minor, int patch)
     int patch = Integer.parseInt(m.group(3));
 
     return new Version(major, minor, patch);
+  }
+
+  public static boolean isValidVersion(String versionText)
+  {
+    Matcher m = Pattern.compile(VERSION_REGEX).matcher(versionText);
+
+    return m.matches();
   }
 
   @Override public String toString()
