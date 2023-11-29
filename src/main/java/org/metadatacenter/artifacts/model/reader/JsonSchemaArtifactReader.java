@@ -211,7 +211,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
    */
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode)
   {
-    String name = readSchemaOrgName(objectNode, "/");
+    String name = readRequiredString(objectNode, "/", SCHEMA_ORG_NAME);
     return readElementSchemaArtifact(objectNode, "", name, false, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
@@ -245,7 +245,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
    */
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode)
   {
-    String name = readSchemaOrgName(objectNode, "/");
+    String name = readRequiredString(objectNode, "/", SCHEMA_ORG_NAME);
     return readFieldSchemaArtifact(objectNode, "", name, false, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
@@ -502,15 +502,15 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    URI isBasedOn = readRequiredIsBasedOn(objectNode, path);
-    String name = readSchemaOrgName(objectNode, path);
-    String description = readSchemaOrgDescription(objectNode, path);
+    List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
+    Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
+    Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
+    Optional<URI> modifiedBy = readUri(objectNode, path, OSLC_MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDateTime(objectNode, path, PAV_CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(objectNode, path, PAV_LAST_UPDATED_ON);
+    URI isBasedOn = readRequiredUri(objectNode, SCHEMA_IS_BASED_ON, path);
+    String name = readRequiredString(objectNode, path, SCHEMA_ORG_NAME);
+    String description = readRequiredString(objectNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
@@ -521,14 +521,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    String name = readSchemaOrgName(objectNode, path);
-    String description = readSchemaOrgDescription(objectNode, path);
+    List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
+    Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
+    Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
+    Optional<URI> modifiedBy = readUri(objectNode, path, OSLC_MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDateTime(objectNode, path, PAV_CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(objectNode, path, PAV_LAST_UPDATED_ON);
+    String name = readRequiredString(objectNode, path, SCHEMA_ORG_NAME);
+    String description = readRequiredString(objectNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
@@ -541,16 +541,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    String jsonLdValue = readJsonLdValue(objectNode, path);
-    Optional<String> rdfsLabel = readOptionalRdsfLabel(objectNode, path);
-    Optional<String> skosNotation = readSkosNotation(objectNode, path);
-    Optional<String> skosPrefLabel = readSkosPrefLabel(objectNode, path);
+    List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
+    Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
+    Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
+    Optional<URI> modifiedBy = readUri(objectNode, path, OSLC_MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDateTime(objectNode, path, PAV_CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(objectNode, path, PAV_LAST_UPDATED_ON);
+    String jsonLdValue = readString(objectNode, path, JSON_LD_VALUE, null);
+    Optional<String> rdfsLabel = readOptionalString(objectNode, path, RDFS_LABEL);
+    Optional<String> skosNotation = readOptionalString(objectNode, path, SKOS_NOTATION);
+    Optional<String> skosPrefLabel = readOptionalString(objectNode, path, SKOS_PREFLABEL);
 
     return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
       jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel,
@@ -1349,51 +1349,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return objectNode;
   }
 
-  private String readJsonSchemaTitle(ObjectNode objectNode, String path)
-  {
-    return readRequiredString(objectNode, path, JSON_SCHEMA_TITLE);
-  }
-
-  private Optional<URI> readCreatedBy(ObjectNode objectNode, String path)
-  {
-    return readUri(objectNode, path, PAV_CREATED_BY);
-  }
-
-  private Optional<URI> readModifiedBy(ObjectNode objectNode, String path)
-  {
-    return readUri(objectNode, path, OSLC_MODIFIED_BY);
-  }
-
-  private String readJsonSchemaDescription(ObjectNode objectNode, String path)
-  {
-    return readString(objectNode, path, JSON_SCHEMA_DESCRIPTION, "");
-  }
-
-  private URI readJsonSchemaSchemaUri(ObjectNode objectNode, String path)
-  {
-    return readRequiredUri(objectNode, path, JSON_SCHEMA_SCHEMA);
-  }
-
-  private Version readSchemaOrgSchemaVersion(ObjectNode objectNode, String path)
-  {
-    return Version.fromString(readRequiredString(objectNode, path, SCHEMA_ORG_SCHEMA_VERSION));
-  }
-
-  private String readSchemaOrgName(ObjectNode objectNode, String path)
-  {
-    return readRequiredString(objectNode, path, SCHEMA_ORG_NAME);
-  }
-
-  private String readSchemaOrgDescription(ObjectNode objectNode, String path)
-  {
-    return readRequiredString(objectNode, path, SCHEMA_ORG_DESCRIPTION);
-  }
-
-  private Optional<String> readSchemaOrgIdentifier(ObjectNode objectNode, String path)
-  {
-    return readString(objectNode, path, SCHEMA_ORG_IDENTIFIER);
-  }
-
   private Optional<Version> readVersion(ObjectNode objectNode, String path, String fieldName)
   {
     Optional<String> version = readString(objectNode, path, fieldName);
@@ -1404,16 +1359,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.of(Version.fromString(version.get()));
   }
 
-  private Optional<URI> readPreviousVersion(ObjectNode objectNode, String path)
-  {
-    return readUri(objectNode, path, PAV_PREVIOUS_VERSION);
-  }
-
-  private Optional<URI> readDerivedFromField(ObjectNode objectNode, String path)
-  {
-    return readUri(objectNode, path, PAV_DERIVED_FROM);
-  }
-
   private Optional<Status> readStatus(ObjectNode objectNode, String path, String fieldName)
   {
     Optional<String> status = readString(objectNode, path, fieldName);
@@ -1422,16 +1367,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.of(Status.fromString(status.get()));
     else
       return Optional.empty();
-  }
-
-  private Optional<OffsetDateTime> readCreatedOn(ObjectNode objectNode, String path)
-  {
-    return readOffsetDateTime(objectNode, path, PAV_CREATED_ON);
-  }
-
-  private Optional<OffsetDateTime> readLastUpdatedOn(ObjectNode objectNode, String path)
-  {
-    return readOffsetDateTime(objectNode, path, PAV_LAST_UPDATED_ON);
   }
 
   private Optional<OffsetDateTime> readOffsetDateTime(ObjectNode objectNode, String path, String fieldName)
@@ -1617,68 +1552,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return uriValues;
   }
 
-  private List<String> readRequiredStringArray(ObjectNode objectNode, String path, String fieldName)
-  {
-    List<String> textValues = readStringArray(objectNode, path, fieldName);
-
-    if (textValues.isEmpty())
-      throw new ArtifactParseException("No value present", fieldName, path);
-    else
-      return textValues;
-  }
-
   private boolean hasJsonLdContextField(ObjectNode objectNode)
   {
     return objectNode.get(JSON_LD_CONTEXT) != null;
-  }
-
-  private URI readIsBasedOn(ObjectNode objectNode, String path)
-  {
-    return readRequiredUri(objectNode, path, SCHEMA_IS_BASED_ON);
-  }
-
-  private URI readRequiredIsBasedOn(ObjectNode objectNode, String path)
-  {
-    return readRequiredUri(objectNode, SCHEMA_IS_BASED_ON, path);
-  }
-
-  private Optional<URI> readOptionalJsonLdId(ObjectNode objectNode, String path)
-  {
-    return readUri(objectNode, path, JSON_LD_ID);
-  }
-
-  private URI readRequiredJsonLdId(ObjectNode objectNode, String path)
-  {
-    return readRequiredUri(objectNode, path, JSON_LD_ID);
-  }
-
-  private String readJsonLdValue(ObjectNode objectNode, String path)
-  {
-    return readString(objectNode, path, JSON_LD_VALUE, null);
-  }
-
-  private Optional<String> readOptionalRdsfLabel(ObjectNode objectNode, String path)
-  {
-    return readOptionalString(objectNode, path, RDFS_LABEL);
-  }
-
-  private Optional<String> readSkosNotation(ObjectNode objectNode, String path)
-  {
-    return readOptionalString(objectNode, path, SKOS_NOTATION);
-  }
-
-  private Optional<String> readSkosPrefLabel(ObjectNode objectNode, String path)
-  {
-    return readOptionalString(objectNode, path, SKOS_PREFLABEL);
-  }
-
-  private List<String> readSkosAltLabel(ObjectNode objectNode, String path)
-  {
-    return readStringArray(objectNode, path, SKOS_ALTLABEL);
-  }
-
-  private String readSkosPrefLabelValue(ObjectNode objectNode, String path)
-  {
-    return readString(objectNode, path, SKOS_PREFLABEL, null);
   }
 }
