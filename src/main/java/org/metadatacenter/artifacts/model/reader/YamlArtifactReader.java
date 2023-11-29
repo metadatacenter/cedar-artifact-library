@@ -108,7 +108,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
   {
     String path = "top level";
-    String name = readRequiredString(TEMPLATE, false, yamlSource, path);
+    String name = readRequiredString(yamlSource, path, TEMPLATE, false);
 
     return readTemplateSchemaArtifact(yamlSource, path, name);
    }
@@ -122,19 +122,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
-    Optional<URI> jsonLdId = readOptionalUri(ID, yamlSource, path);
+    Optional<URI> jsonLdId = readOptionalUri(yamlSource, path, ID);
 
-    String description = readStringWithDefaultValue(DESCRIPTION, "", yamlSource, path);
-    Optional<String> identifier = readOptionalString(IDENTIFIER, true, yamlSource, path);
-    Optional<Version> version = readOptionalVersion(VERSION, yamlSource, path);
-    Version modelVersion = readRequiredVersion(MODEL_VERSION, yamlSource, path);
-    Optional<Status> status = readOptionalStatus(STATUS, yamlSource, path);
-    Optional<URI> previousVersion = readOptionalUri(PREVIOUS_VERSION, yamlSource, path);
-    Optional<URI> derivedFrom = readOptionalUri(DERIVED_FROM, yamlSource, path);
-    Optional<URI> createdBy = readOptionalUri(CREATED_BY, yamlSource, path);
-    Optional<URI> modifiedBy = readOptionalUri(MODIFIED_BY, yamlSource, path);
-    Optional<OffsetDateTime> createdOn = readOptionalOffsetDatetime(CREATED_ON, yamlSource, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readOptionalOffsetDatetime(LAST_UPDATED_ON, yamlSource, path);
+    String description = readStringWithDefaultValue(yamlSource, path, DESCRIPTION, "");
+    Optional<String> identifier = readOptionalString(yamlSource, path, IDENTIFIER, true);
+    Optional<Version> version = readOptionalVersion(yamlSource, path, VERSION);
+    Version modelVersion = readRequiredVersion(yamlSource, path, MODEL_VERSION);
+    Optional<Status> status = readOptionalStatus(yamlSource, path, STATUS);
+    Optional<URI> previousVersion = readOptionalUri(yamlSource, path, PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readOptionalUri(yamlSource, path, DERIVED_FROM);
+    Optional<URI> createdBy = readOptionalUri(yamlSource, path, CREATED_BY);
+    Optional<URI> modifiedBy = readOptionalUri(yamlSource, path, MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOptionalOffsetDatetime(yamlSource, path, CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOptionalOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO
     TemplateUi templateUi = readTemplateUi(yamlSource, path);
@@ -175,7 +175,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
   {
     String path = "top level";
-    String name = readRequiredString(ELEMENT, false, yamlSource, path);
+    String name = readRequiredString(yamlSource, path, ELEMENT, false);
 
     return readElementSchemaArtifact(yamlSource, path, name, false,
       Optional.empty(), Optional.empty(), Optional.empty());
@@ -191,19 +191,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
-    Optional<URI> jsonLdId = readOptionalUri(ID, yamlSource, path);
+    Optional<URI> jsonLdId = readOptionalUri(yamlSource, path, ID);
 
-    String description = readStringWithDefaultValue(DESCRIPTION, "", yamlSource, path);
-    Optional<String> identifier = readOptionalString(IDENTIFIER, true, yamlSource, path);
-    Optional<Version> version = readOptionalVersion(VERSION, yamlSource, path);
-    Version modelVersion = readRequiredVersion(MODEL_VERSION, yamlSource, path);
-    Optional<Status> status = readOptionalStatus(STATUS, yamlSource, path);
-    Optional<URI> previousVersion = readOptionalUri(PREVIOUS_VERSION, yamlSource, path);
-    Optional<URI> derivedFrom = readOptionalUri(DERIVED_FROM, yamlSource, path);
-    Optional<URI> createdBy = readOptionalUri(CREATED_BY, yamlSource, path);
-    Optional<URI> modifiedBy = readOptionalUri(MODIFIED_BY, yamlSource, path);
-    Optional<OffsetDateTime> createdOn = readOptionalOffsetDatetime(CREATED_ON, yamlSource, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readOptionalOffsetDatetime(LAST_UPDATED_ON, yamlSource, path);
+    String description = readStringWithDefaultValue(yamlSource, path, DESCRIPTION, "");
+    Optional<String> identifier = readOptionalString(yamlSource, path, IDENTIFIER, true);
+    Optional<Version> version = readOptionalVersion(yamlSource, path, VERSION);
+    Version modelVersion = readRequiredVersion(yamlSource, path, MODEL_VERSION);
+    Optional<Status> status = readOptionalStatus(yamlSource, path, STATUS);
+    Optional<URI> previousVersion = readOptionalUri(yamlSource, path, PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readOptionalUri(yamlSource, path, DERIVED_FROM);
+    Optional<URI> createdBy = readOptionalUri(yamlSource, path, CREATED_BY);
+    Optional<URI> modifiedBy = readOptionalUri(yamlSource, path, MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOptionalOffsetDatetime(yamlSource, path, CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOptionalOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO
     ElementUi elementUi = readElementUi(yamlSource, path);
@@ -242,7 +242,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     {
       String path = "top level";
-      String name = readRequiredString(FIELD, false, yamlSource, path);
+      String name = readRequiredString(yamlSource, path, FIELD, false);
 
       return readFieldSchemaArtifact(yamlSource, path, name, false,
         Optional.empty(), Optional.empty(), Optional.empty());
@@ -259,19 +259,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     Map<String, URI> jsonLdContext = new HashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
-    Optional<URI> jsonLdId = readOptionalUri(ID, yamlSource, path);
+    Optional<URI> jsonLdId = readOptionalUri(yamlSource, path, ID);
 
-    String description = readStringWithDefaultValue(DESCRIPTION, "", yamlSource, path);
-    Optional<String> identifier = readOptionalString(IDENTIFIER, true, yamlSource, path);
-    Optional<Version> version = readOptionalVersion(VERSION, yamlSource, path);
-    Version modelVersion = readRequiredVersion(MODEL_VERSION, yamlSource, path);
-    Optional<Status> status = readOptionalStatus(STATUS, yamlSource, path);
-    Optional<URI> previousVersion = readOptionalUri(PREVIOUS_VERSION, yamlSource, path);
-    Optional<URI> derivedFrom = readOptionalUri(DERIVED_FROM, yamlSource, path);
-    Optional<URI> createdBy = readOptionalUri(CREATED_BY, yamlSource, path);
-    Optional<URI> modifiedBy = readOptionalUri(MODIFIED_BY, yamlSource, path);
-    Optional<OffsetDateTime> createdOn = readOptionalOffsetDatetime(CREATED_ON, yamlSource, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readOptionalOffsetDatetime(LAST_UPDATED_ON, yamlSource, path);
+    String description = readStringWithDefaultValue(yamlSource, path, DESCRIPTION, "");
+    Optional<String> identifier = readOptionalString(yamlSource, path, IDENTIFIER, true);
+    Optional<Version> version = readOptionalVersion(yamlSource, path, VERSION);
+    Version modelVersion = readRequiredVersion(yamlSource, path, MODEL_VERSION);
+    Optional<Status> status = readOptionalStatus(yamlSource, path, STATUS);
+    Optional<URI> previousVersion = readOptionalUri(yamlSource, path, PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readOptionalUri(yamlSource, path, DERIVED_FROM);
+    Optional<URI> createdBy = readOptionalUri(yamlSource, path, CREATED_BY);
+    Optional<URI> modifiedBy = readOptionalUri(yamlSource, path, MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOptionalOffsetDatetime(yamlSource, path, CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOptionalOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
     FieldUi fieldUi = readFieldUi(yamlSource, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(yamlSource, path);
     Optional<String> skosPrefLabel = Optional.empty(); // TODO
@@ -337,7 +337,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.empty(); // TODO
   }
 
-  private String readRequiredString(String fieldName, boolean allowEmpty, LinkedHashMap<String, Object> yamlSource, String path)
+  private String readRequiredString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean allowEmpty)
   {
     if (!yamlSource.containsKey(fieldName))
       throw new ArtifactParseException("No keyword", fieldName, path);
@@ -358,9 +358,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return value;
   }
 
-  private String readStringWithDefaultValue(String fieldName, String defaultValue, LinkedHashMap<String, Object> yamlSource, String path)
+  private String readStringWithDefaultValue(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, String defaultValue)
   {
-    Optional<String> optionalString = readOptionalString(fieldName, true, yamlSource, path);
+    Optional<String> optionalString = readOptionalString(yamlSource, path, fieldName, true);
 
     if (optionalString.isPresent())
       return optionalString.get();
@@ -368,7 +368,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return defaultValue;
   }
 
-  private Optional<String> readOptionalString(String fieldName, boolean allowEmpty, LinkedHashMap<String, Object> yamlSource, String path)
+  private Optional<String> readOptionalString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean allowEmpty)
   {
     if (!yamlSource.containsKey(fieldName))
       return Optional.empty();
@@ -389,9 +389,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of(value);
   }
 
-  private Version readRequiredVersion(String fieldName, LinkedHashMap<String, Object> yamlSource, String path)
+  private Version readRequiredVersion(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    String versionString = readRequiredString(fieldName, false, yamlSource, path);
+    String versionString = readRequiredString(yamlSource, path, fieldName, false);
 
     if (Version.isValidVersion(versionString))
       return Version.fromString(versionString);
@@ -401,7 +401,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private FieldInputType readFieldInputType(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    String inputTypeString = readRequiredString(fieldName, false, yamlSource, path);
+    String inputTypeString = readRequiredString(yamlSource, path, fieldName, false);
 
     if (!INPUT_TYPES.contains(inputTypeString))
       throw new ArtifactParseException("Invalid field input type " + inputTypeString, UI_FIELD_INPUT_TYPE, path);
@@ -409,9 +409,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return FieldInputType.fromString(inputTypeString);
   }
 
-  private Optional<Version> readOptionalVersion(String fieldName, LinkedHashMap<String, Object> yamlSource, String path)
+  private Optional<Version> readOptionalVersion(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    Optional<String> versionString = readOptionalString(fieldName, false, yamlSource, path);
+    Optional<String> versionString = readOptionalString(yamlSource, path, fieldName, false);
 
     if (!versionString.isPresent())
       return Optional.empty();
@@ -422,9 +422,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid version " + versionString.get(), fieldName, path);
   }
 
-  private Status readRequiredStatus(String fieldName, LinkedHashMap<String, Object> yamlSource, String path)
+  private Status readRequiredStatus(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    String statusString = readRequiredString(fieldName, false, yamlSource, path);
+    String statusString = readRequiredString(yamlSource, path, fieldName, false);
 
     if (Status.isValidStatus(statusString))
       return Status.fromString(statusString);
@@ -432,9 +432,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid status " + statusString, fieldName, path);
   }
 
-  private Optional<Status> readOptionalStatus(String fieldName, LinkedHashMap<String, Object> yamlSource, String path)
+  private Optional<Status> readOptionalStatus(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    Optional<String> statusString = readOptionalString(fieldName, false, yamlSource, path);
+    Optional<String> statusString = readOptionalString(yamlSource, path, fieldName, false);
 
     if (!statusString.isPresent())
       return Optional.empty();
@@ -445,9 +445,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid status " + statusString.get(), fieldName, path);
   }
 
-  private URI readRequiredUri(String fieldName, LinkedHashMap<String, Object> yamlSource, String path)
+  private URI readRequiredUri(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    String uriString = readRequiredString(fieldName, false, yamlSource, path);
+    String uriString = readRequiredString(yamlSource, path, fieldName, false);
 
     try {
       return new URI(uriString);
@@ -456,9 +456,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
   }
 
-  private Optional<URI> readOptionalUri(String fieldName, LinkedHashMap<String, Object> yamlSource, String path)
+  private Optional<URI> readOptionalUri(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    Optional<String> uriString = readOptionalString(fieldName, false, yamlSource, path);
+    Optional<String> uriString = readOptionalString(yamlSource, path, fieldName, false);
 
     if (!uriString.isPresent())
       return Optional.empty();
@@ -470,9 +470,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
   }
 
-  private Optional<OffsetDateTime> readOptionalOffsetDatetime(String fieldName, LinkedHashMap<String, Object> yamlSource, String path)
+  private Optional<OffsetDateTime> readOptionalOffsetDatetime(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
-    Optional<String> dateTimeValue = readOptionalString(fieldName, false, yamlSource, path);
+    Optional<String> dateTimeValue = readOptionalString(yamlSource, path, fieldName, false);
 
     try {
       if (dateTimeValue.isPresent())
