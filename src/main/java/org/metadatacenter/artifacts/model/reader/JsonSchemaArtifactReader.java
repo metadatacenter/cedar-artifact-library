@@ -287,89 +287,32 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return readTemplateInstanceArtifact(objectNode, "");
   }
 
-  private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
-  {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    URI isBasedOn = readRequiredIsBasedOn(objectNode, path);
-    String name = readSchemaOrgName(objectNode, path);
-    String description = readSchemaOrgDescription(objectNode, path);
-    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
-    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
-
-    return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
-  }
-
-  private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
-  {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    String name = readSchemaOrgName(objectNode, path);
-    String description = readSchemaOrgDescription(objectNode, path);
-    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
-    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
-
-    readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
-
-    return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes,
-      jsonLdId, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
-  }
-
-  private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
-  {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    String jsonLdValue = readJsonLdValue(objectNode, path);
-    Optional<String> rdfsLabel = readOptionalRdsfLabel(objectNode, path);
-    Optional<String> skosNotation = readSkosNotation(objectNode, path);
-    Optional<String> skosPrefLabel = readSkosPrefLabel(objectNode, path);
-
-    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn);
-  }
-
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
   {
     Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    URI jsonSchemaSchemaUri = readJsonSchemaSchemaUri(objectNode, path);
-    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
-    String jsonSchemaTitle = readJsonSchemaTitle(objectNode, path);
-    String jsonSchemaDescription = readJsonSchemaDescription(objectNode, path);
-    Version modelVersion = readSchemaOrgSchemaVersion(objectNode, path);
-    String name = readSchemaOrgName(objectNode, path);
-    String description = readSchemaOrgDescription(objectNode, path);
-    Optional<String> identifier = readSchemaOrgIdentifier(objectNode, path);
-    Optional<Version> version = readPAVVersion(objectNode, path);
-    Optional<Status> status = readBIBOStatus(objectNode, path);
-    Optional<URI> previousVersion = readPreviousVersion(objectNode, path);
-    Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
+    List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
+    Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
+    Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
+    Optional<URI> modifiedBy = readUri(objectNode, path, OSLC_MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDateTime(objectNode, path, PAV_CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(objectNode, path, PAV_LAST_UPDATED_ON);
+    URI jsonSchemaSchemaUri = readRequiredUri(objectNode, path, JSON_SCHEMA_SCHEMA);
+    String jsonSchemaType = readRequiredString(objectNode, path, JSON_SCHEMA_TYPE);
+    String jsonSchemaTitle = readRequiredString(objectNode, path, JSON_SCHEMA_TITLE);
+
+    String jsonSchemaDescription = readString(objectNode, path, JSON_SCHEMA_DESCRIPTION, "");
+    Version modelVersion = Version.fromString(readRequiredString(objectNode, path, SCHEMA_ORG_SCHEMA_VERSION));
+    String name = readRequiredString(objectNode, path, SCHEMA_ORG_NAME);
+    String description = readRequiredString(objectNode, path, SCHEMA_ORG_DESCRIPTION);
+    Optional<String> identifier = readString(objectNode, path, SCHEMA_ORG_IDENTIFIER);
+    Optional<Version> version = readVersion(objectNode, path, PAV_VERSION);
+    Optional<Status> status = readStatus(objectNode, path, BIBO_STATUS);
+    Optional<URI> previousVersion = readUri(objectNode, path, PAV_PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readUri(objectNode, path, PAV_DERIVED_FROM);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     Map<String, URI> childPropertyUris = getChildPropertyUris(objectNode, path);
-    TemplateUi templateUi = readTemplateUi(objectNode, path);
+    TemplateUi templateUi = readTemplateUi(objectNode, path, UI);
 
     checkTemplateSchemaArtifactJsonLdType(jsonLdTypes, path);
 
@@ -381,108 +324,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas, templateUi);
-  }
-
-  // A parent schema artifact's JSON Schema 'properties' object contains a specification for a JSON-LD @context for
-  // the corresponding instance; this @context maps each child name to a URI that represents a property specification
-  // for each child.
-  //
-  // e.g.,
-  //
-  //    "properties": {
-  //      "@context": {
-  //         "type": "object",
-  //          ....
-  //          "Study ID": { "enum": [ "http://semantic-dicom.org/dcm#StudyID" ]
-  //          "Disease": { "enum": [ "http://semantic-dicom.org/dcm#Disease" ]
-  //      }
-  //    }
-  private Map<String, URI> getChildPropertyUris(ObjectNode objectNode, String path)
-  {
-    Map<String, URI> childName2URI = new HashMap<>();
-    String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;
-    JsonNode contextNode = objectNode.at(contextPath);
-
-    if (contextNode != null && contextNode.isObject()) {
-      ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;
-      Iterator<String> childNames = jsonSchemaContextSpecificationNode.fieldNames();
-
-      while (childNames.hasNext()) {
-        String childName = childNames.next();
-        if (!ARTIFACT_CONTEXT_ENTRIES.contains(childName)) { // Ignore standard context entries
-          JsonNode enumNode = jsonSchemaContextSpecificationNode.get(childName);
-
-          if (enumNode != null) { // A property URI specification for a child is optional
-            if (!enumNode.isObject())
-              throw new ArtifactParseException("Expecting object node with property URI enum specification", childName,
-                path + contextPath);
-
-            JsonNode enumArray = enumNode.get(JSON_SCHEMA_ENUM);
-
-            if (enumArray == null || !enumArray.isArray())
-              throw new ArtifactParseException("Expecting array for property URI enum specification", JSON_SCHEMA_ENUM,
-                path + contextPath + childName);
-
-            if (enumArray.size() != 1)
-              throw new ArtifactParseException(
-                "Expecting exactly one value for property URI enum specification, got " + enumArray.size(),
-                JSON_SCHEMA_ENUM, path + contextPath + childName);
-
-            JsonNode elementNode = enumArray.get(0);
-
-            if (!elementNode.isTextual())
-              throw new ArtifactParseException("Expecting text node for property URI enum entry, got " + elementNode.getNodeType(), JSON_SCHEMA_ENUM,
-                path + contextPath + childName);
-
-            try {
-              URI propertyUri = new URI(elementNode.asText());
-              childName2URI.put(childName, propertyUri);
-            } catch (URISyntaxException e) {
-              throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
-                JSON_SCHEMA_ENUM, path + contextPath + childName);
-            }
-          }
-        }
-      }
-    }
-    return childName2URI;
-  }
-
-  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path,
-    String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
-  {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
-    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
-    Optional<URI> createdBy = readCreatedBy(objectNode, path);
-    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
-    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
-    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
-    URI jsonSchemaSchemaUri = readJsonSchemaSchemaUri(objectNode, path);
-    String jsonSchemaType = readJsonSchemaTypeField(objectNode, path);
-    String jsonSchemaTitle = readJsonSchemaTitle(objectNode, path);
-    String jsonSchemaDescription = readJsonSchemaDescription(objectNode, path);
-    Version modelVersion = readSchemaOrgSchemaVersion(objectNode, path);
-    String description = readSchemaOrgDescription(objectNode, path);
-    Optional<String> identifier = readSchemaOrgIdentifier(objectNode, path);
-    Optional<Version> version = readPAVVersion(objectNode, path);
-    Optional<Status> status = readBIBOStatus(objectNode, path);
-    Optional<URI> previousVersion = readPreviousVersion(objectNode, path);
-    Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
-    Optional<String> skosPrefLabel = readSkosPrefLabel(objectNode, path);
-    List<String> skosAlternateLabels = readSkosAltLabel(objectNode, path);
-    FieldUi fieldUi = readFieldUi(objectNode, path);
-    Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path, fieldUi.inputType());
-
-    checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
-
-    return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      isMultiple, minItems, maxItems, propertyUri,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldUi,  skosPrefLabel, skosAlternateLabels, valueConstraints);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path,
@@ -502,13 +343,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Version modelVersion = readSchemaOrgSchemaVersion(objectNode, path);
     String description = readSchemaOrgDescription(objectNode, path);
     Optional<String> identifier = readSchemaOrgIdentifier(objectNode, path);
-    Optional<Version> version = readPAVVersion(objectNode, path);
-    Optional<Status> status = readBIBOStatus(objectNode, path);
+    Optional<Version> version = readVersion(objectNode, path, PAV_VERSION);
+    Optional<Status> status = readStatus(objectNode, path, BIBO_STATUS);
     Optional<URI> previousVersion = readPreviousVersion(objectNode, path);
     Optional<URI> derivedFrom = readDerivedFromField(objectNode, path);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
-    ElementUi elementUi = readElementUi(objectNode, path);
+    ElementUi elementUi = readElementUi(objectNode, path, UI);
     Map<String, URI> childPropertyUris = getChildPropertyUris(objectNode, path);
 
     checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
@@ -522,6 +363,43 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas, elementUi,
       isMultiple, minItems, maxItems, propertyUri);
+  }
+
+  private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path,
+    String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+  {
+    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
+    Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
+    Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
+    Optional<URI> modifiedBy = readUri(objectNode, path, OSLC_MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDateTime(objectNode, path, PAV_CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(objectNode, path, PAV_LAST_UPDATED_ON);
+    URI jsonSchemaSchemaUri = readRequiredUri(objectNode, path, JSON_SCHEMA_SCHEMA);
+    String jsonSchemaType = readRequiredString(objectNode, path, JSON_SCHEMA_TYPE);
+    String jsonSchemaTitle = readRequiredString(objectNode, path, JSON_SCHEMA_TITLE);
+    String jsonSchemaDescription = readString(objectNode, path, JSON_SCHEMA_DESCRIPTION, "");
+    Version modelVersion = Version.fromString(readRequiredString(objectNode, path, SCHEMA_ORG_SCHEMA_VERSION));
+    String description = readRequiredString(objectNode, path, SCHEMA_ORG_DESCRIPTION);
+    Optional<String> identifier = readString(objectNode, path, SCHEMA_ORG_IDENTIFIER);
+    Optional<Version> version = readVersion(objectNode, path, PAV_VERSION);
+    Optional<Status> status = readStatus(objectNode, path, BIBO_STATUS);
+    Optional<URI> previousVersion = readUri(objectNode, path, PAV_PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readUri(objectNode, path, PAV_DERIVED_FROM);
+    Optional<String> skosPrefLabel = readOptionalString(objectNode, path, SKOS_PREFLABEL);
+    List<String> skosAlternateLabels = readStringArray(objectNode, path, SKOS_ALTLABEL);
+    FieldUi fieldUi = readFieldUi(objectNode, path, UI);
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path, fieldUi.inputType());
+
+    checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
+
+    return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      jsonLdContext, jsonLdTypes, jsonLdId,
+      name, description, identifier,
+      modelVersion, version, status, previousVersion, derivedFrom,
+      isMultiple, minItems, maxItems, propertyUri,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      fieldUi,  skosPrefLabel, skosAlternateLabels, valueConstraints);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode objectNode, String path,
@@ -619,6 +497,64 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           }
         }
     }
+  }
+
+  private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
+    Optional<URI> createdBy = readCreatedBy(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
+    URI isBasedOn = readRequiredIsBasedOn(objectNode, path);
+    String name = readSchemaOrgName(objectNode, path);
+    String description = readSchemaOrgDescription(objectNode, path);
+    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+
+    return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
+  }
+
+  private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
+    Optional<URI> createdBy = readCreatedBy(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
+    String name = readSchemaOrgName(objectNode, path);
+    String description = readSchemaOrgDescription(objectNode, path);
+    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+
+    readNestedInstanceArtifacts(objectNode, path, fieldInstances, elementInstances);
+
+    return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes,
+      jsonLdId, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
+  }
+
+  private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
+  {
+    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    List<URI> jsonLdTypes = readJsonLdTypeField(objectNode, path);
+    Optional<URI> jsonLdId = readOptionalJsonLdId(objectNode, path);
+    Optional<URI> createdBy = readCreatedBy(objectNode, path);
+    Optional<URI> modifiedBy = readModifiedBy(objectNode, path);
+    Optional<OffsetDateTime> createdOn = readCreatedOn(objectNode, path);
+    Optional<OffsetDateTime> lastUpdatedOn = readLastUpdatedOn(objectNode, path);
+    String jsonLdValue = readJsonLdValue(objectNode, path);
+    Optional<String> rdfsLabel = readOptionalRdsfLabel(objectNode, path);
+    Optional<String> skosNotation = readSkosNotation(objectNode, path);
+    Optional<String> skosPrefLabel = readSkosPrefLabel(objectNode, path);
+
+    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
+      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
   private void readNestedInstanceArtifacts(ObjectNode instanceArtifactNode, String path,
@@ -735,6 +671,71 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         JSON_LD_TYPE, path);
   }
 
+  // A parent schema artifact's JSON Schema 'properties' object contains a specification for a JSON-LD @context for
+  // the corresponding instance; this @context maps each child name to a URI that represents a property specification
+  // for each child.
+  //
+  // e.g.,
+  //
+  //    "properties": {
+  //      "@context": {
+  //         "type": "object",
+  //          ....
+  //          "Study ID": { "enum": [ "http://semantic-dicom.org/dcm#StudyID" ]
+  //          "Disease": { "enum": [ "http://semantic-dicom.org/dcm#Disease" ]
+  //      }
+  //    }
+  private Map<String, URI> getChildPropertyUris(ObjectNode objectNode, String path)
+  {
+    Map<String, URI> childName2URI = new HashMap<>();
+    String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;
+    JsonNode contextNode = objectNode.at(contextPath);
+
+    if (contextNode != null && contextNode.isObject()) {
+      ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;
+      Iterator<String> childNames = jsonSchemaContextSpecificationNode.fieldNames();
+
+      while (childNames.hasNext()) {
+        String childName = childNames.next();
+        if (!ARTIFACT_CONTEXT_ENTRIES.contains(childName)) { // Ignore standard context entries
+          JsonNode enumNode = jsonSchemaContextSpecificationNode.get(childName);
+
+          if (enumNode != null) { // A property URI specification for a child is optional
+            if (!enumNode.isObject())
+              throw new ArtifactParseException("Expecting object node with property URI enum specification", childName,
+                path + contextPath);
+
+            JsonNode enumArray = enumNode.get(JSON_SCHEMA_ENUM);
+
+            if (enumArray == null || !enumArray.isArray())
+              throw new ArtifactParseException("Expecting array for property URI enum specification", JSON_SCHEMA_ENUM,
+                path + contextPath + childName);
+
+            if (enumArray.size() != 1)
+              throw new ArtifactParseException(
+                "Expecting exactly one value for property URI enum specification, got " + enumArray.size(),
+                JSON_SCHEMA_ENUM, path + contextPath + childName);
+
+            JsonNode elementNode = enumArray.get(0);
+
+            if (!elementNode.isTextual())
+              throw new ArtifactParseException("Expecting text node for property URI enum entry, got " + elementNode.getNodeType(), JSON_SCHEMA_ENUM,
+                path + contextPath + childName);
+
+            try {
+              URI propertyUri = new URI(elementNode.asText());
+              childName2URI.put(childName, propertyUri);
+            } catch (URISyntaxException e) {
+              throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
+                JSON_SCHEMA_ENUM, path + contextPath + childName);
+            }
+          }
+        }
+      }
+    }
+    return childName2URI;
+  }
+
   private List<URI> readJsonLdTypeField(ObjectNode objectNode, String path)
   {
     return readUriArray(objectNode, path, JSON_LD_TYPE);
@@ -836,7 +837,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<TemporalType> readTemporalTypeField(ObjectNode objectNode, String path)
   {
-    Optional<String> temporalTypeValue = readOptionalStringField(objectNode, path, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
+    Optional<String> temporalTypeValue = readOptionalString(objectNode, path, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
 
     if (temporalTypeValue.isPresent())
       return Optional.of(TemporalType.fromString(temporalTypeValue.get()));
@@ -846,7 +847,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<NumericType> readNumberTypeField(ObjectNode objectNode, String path)
   {
-    Optional<String> numberTypeValue = readOptionalStringField(objectNode, path, VALUE_CONSTRAINTS_NUMBER_TYPE);
+    Optional<String> numberTypeValue = readOptionalString(objectNode, path, VALUE_CONSTRAINTS_NUMBER_TYPE);
 
     if (numberTypeValue.isPresent())
       return Optional.of(NumericType.fromString(numberTypeValue.get()));
@@ -988,7 +989,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String source = readRequiredString(objectNode, path, VALUE_CONSTRAINTS_SOURCE);
     ValueConstraintsActionType actionType = readValueConstraintsActionType(objectNode, path);
     ValueType valueType = readValueType(objectNode, path);
-    Optional<URI> sourceUri = readURI(objectNode, path, VALUE_CONSTRAINTS_SOURCE_URI);
+    Optional<URI> sourceUri = readUri(objectNode, path, VALUE_CONSTRAINTS_SOURCE_URI);
     Optional<Integer> to = readIntegerField(objectNode, path, VALUE_CONSTRAINTS_ACTION_TO);
 
     return new ControlledTermValueConstraintsAction(termUri, source, valueType, actionType, sourceUri, to);
@@ -1058,18 +1059,18 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return new LiteralValueConstraint(label, selectedByDefault);
   }
 
-  private FieldUi readFieldUi(ObjectNode objectNode, String path)
+  private FieldUi readFieldUi(ObjectNode objectNode, String path, String fieldName)
   {
-    ObjectNode uiNode = readUINodeAtPath(objectNode, path);
-    String uiPath = path + "/" + UI;
+    ObjectNode uiNode = readNodeAtPath(objectNode, path, fieldName);
+    String uiPath = path + "/" + fieldName;
 
-    FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath);
+    FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath, UI_FIELD_INPUT_TYPE);
     boolean valueRecommendationEnabled = readBooleanField(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBooleanField(uiNode, uiPath, UI_HIDDEN, false);
 
     if (fieldInputType.isTemporal()) {
-      TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath);
-      InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, InputTimeFormat.TWELVE_HOUR);
+      TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);
+      InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
       boolean timeZoneEnabled = readBooleanField(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
@@ -1082,36 +1083,36 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
   }
 
-  private ElementUi readElementUi(ObjectNode objectNode, String path)
+  private ElementUi readElementUi(ObjectNode objectNode, String path, String fieldName)
   {
-    ObjectNode uiNode = readUINodeAtPath(objectNode, path);
-    String uiPath = path + "/" + UI;
+    ObjectNode uiNode = readNodeAtPath(objectNode, path, fieldName);
+    String uiPath = path + "/" + fieldName;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
-    Map<String, String> propertyLabels = readFieldNameStringValueMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readFieldNameStringValueMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readOptionalStringField(uiNode, uiPath, UI_HEADER);
-    Optional<String> footer = readOptionalStringField(uiNode, uiPath, UI_FOOTER);
+    Map<String, String> propertyLabels = readMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readOptionalString(uiNode, uiPath, UI_HEADER);
+    Optional<String> footer = readOptionalString(uiNode, uiPath, UI_FOOTER);
 
     return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  private TemplateUi readTemplateUi(ObjectNode objectNode, String path)
+  private TemplateUi readTemplateUi(ObjectNode objectNode, String path, String fieldName)
   {
-    ObjectNode uiNode = readUINodeAtPath(objectNode, path);
-    String uiPath = path + "/" + UI;
+    ObjectNode uiNode = readNodeAtPath(objectNode, path, fieldName);
+    String uiPath = path + "/" + fieldName;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
     List<String> pages = readStringArray(uiNode, uiPath, UI_PAGES);
-    Map<String, String> propertyLabels = readFieldNameStringValueMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readFieldNameStringValueMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readOptionalStringField(uiNode, uiPath, UI_HEADER);
-    Optional<String> footer = readOptionalStringField(uiNode, uiPath, UI_FOOTER);
+    Map<String, String> propertyLabels = readMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readOptionalString(uiNode, uiPath, UI_HEADER);
+    Optional<String> footer = readOptionalString(uiNode, uiPath, UI_FOOTER);
 
     return TemplateUi.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  private Optional<String> readOptionalStringField(ObjectNode objectNode, String path, String fieldName)
+  private Optional<String> readOptionalString(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -1195,29 +1196,29 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return jsonNode.asBoolean();
   }
 
-  private FieldInputType readFieldInputType(ObjectNode objectNode, String path)
+  private FieldInputType readFieldInputType(ObjectNode objectNode, String path, String fieldName)
   {
-    String inputType = readRequiredString(objectNode, path, UI_FIELD_INPUT_TYPE);
+    String inputType = readRequiredString(objectNode, path, fieldName);
 
     if (!INPUT_TYPES.contains(inputType))
-      throw new ArtifactParseException("Invalid field input type " + inputType, UI_FIELD_INPUT_TYPE, path);
+      throw new ArtifactParseException("Invalid field input type " + inputType, fieldName, path);
 
     return FieldInputType.fromString(inputType);
   }
 
-  private TemporalGranularity readTemporalGranularity(ObjectNode objectNode, String path)
+  private TemporalGranularity readTemporalGranularity(ObjectNode objectNode, String path, String fieldName)
   {
-    String granularity = readRequiredString(objectNode, path, UI_TEMPORAL_GRANULARITY);
+    String granularity = readRequiredString(objectNode, path, fieldName);
 
     if (!ModelNodeValues.TEMPORAL_GRANULARITIES.contains(granularity))
-      throw new ArtifactParseException("Invalid granularity " + granularity, UI_TEMPORAL_GRANULARITY, path);
+      throw new ArtifactParseException("Invalid granularity " + granularity, fieldName, path);
 
     return TemporalGranularity.fromString(granularity);
   }
 
-  private InputTimeFormat readInputTimeFormat(ObjectNode objectNode, String path, InputTimeFormat defaultInputTimeFormat)
+  private InputTimeFormat readInputTimeFormat(ObjectNode objectNode, String path, String fieldName, InputTimeFormat defaultInputTimeFormat)
   {
-    Optional<String> timeFormat = readString(objectNode, path, UI_INPUT_TIME_FORMAT);
+    Optional<String> timeFormat = readString(objectNode, path, fieldName);
 
     if (!timeFormat.isPresent())
       return defaultInputTimeFormat;
@@ -1240,16 +1241,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return readRequiredString(valueConstraintsNode, subPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
   }
 
-  private ObjectNode readUINodeAtPath(ObjectNode objectNode, String path)
+  private ObjectNode readNodeAtPath(ObjectNode objectNode, String path, String fieldName)
   {
-    JsonNode jsonNode = objectNode.get(UI);
+    JsonNode jsonNode = objectNode.get(fieldName);
 
     if (jsonNode == null)
-      throw new ArtifactParseException("No " + UI + " field", UI, path);
+      throw new ArtifactParseException("No " + fieldName + " field", fieldName, path);
     else if (jsonNode.isNull())
-      throw new ArtifactParseException("Null " + UI + " field", UI, path);
+      throw new ArtifactParseException("Null " + fieldName + " field", fieldName, path);
     else if (!jsonNode.isObject())
-      throw new ArtifactParseException("Value must be an object", UI, path);
+      throw new ArtifactParseException("Value must be an object", fieldName, path);
 
      return (ObjectNode)jsonNode;
   }
@@ -1268,7 +1269,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return (ObjectNode)jsonNode;
   }
 
-  private Map<String, String> readFieldNameStringValueMap(ObjectNode objectNode, String path, String fieldName)
+  private Map<String, String> readMap(ObjectNode objectNode, String path, String fieldName)
   {
     Map<String, String> fieldNameStringValueMap = new HashMap<>();
 
@@ -1277,7 +1278,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     if (jsonNode != null && !jsonNode.isNull()) {
 
       if (!jsonNode.isObject())
-        throw new ArtifactParseException("Value of field  must be an object", fieldName, path);
+        throw new ArtifactParseException("Value of field must be an object", fieldName, path);
 
       Iterator<Map.Entry<String, JsonNode>> fieldEntries = jsonNode.fields();
 
@@ -1355,12 +1356,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<URI> readCreatedBy(ObjectNode objectNode, String path)
   {
-    return readURI(objectNode, path, PAV_CREATED_BY);
+    return readUri(objectNode, path, PAV_CREATED_BY);
   }
 
   private Optional<URI> readModifiedBy(ObjectNode objectNode, String path)
   {
-    return readURI(objectNode, path, OSLC_MODIFIED_BY);
+    return readUri(objectNode, path, OSLC_MODIFIED_BY);
   }
 
   private String readJsonSchemaDescription(ObjectNode objectNode, String path)
@@ -1393,9 +1394,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return readString(objectNode, path, SCHEMA_ORG_IDENTIFIER);
   }
 
-  private Optional<Version> readPAVVersion(ObjectNode objectNode, String path)
+  private Optional<Version> readVersion(ObjectNode objectNode, String path, String fieldName)
   {
-    Optional<String> version = readString(objectNode, path, PAV_VERSION);
+    Optional<String> version = readString(objectNode, path, fieldName);
 
     if (version.isEmpty())
       return Optional.empty();
@@ -1405,17 +1406,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<URI> readPreviousVersion(ObjectNode objectNode, String path)
   {
-    return readURI(objectNode, path, PAV_PREVIOUS_VERSION);
+    return readUri(objectNode, path, PAV_PREVIOUS_VERSION);
   }
 
   private Optional<URI> readDerivedFromField(ObjectNode objectNode, String path)
   {
-    return readURI(objectNode, path, PAV_DERIVED_FROM);
+    return readUri(objectNode, path, PAV_DERIVED_FROM);
   }
 
-  private Optional<Status> readBIBOStatus(ObjectNode objectNode, String path)
+  private Optional<Status> readStatus(ObjectNode objectNode, String path, String fieldName)
   {
-    Optional<String> status = readString(objectNode, path, BIBO_STATUS);
+    Optional<String> status = readString(objectNode, path, fieldName);
 
     if (status.isPresent())
       return Optional.of(Status.fromString(status.get()));
@@ -1460,7 +1461,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     }
   }
 
-  private Optional<URI> readURI(ObjectNode objectNode, String path, String fieldName)
+  private Optional<URI> readUri(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -1608,7 +1609,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           arrayIndex++;
         }
       } else {
-        Optional<URI> uriValue = readURI(objectNode, path, fieldName);
+        Optional<URI> uriValue = readUri(objectNode, path, fieldName);
         if (uriValue.isPresent())
           uriValues.add(uriValue.get());
       }
@@ -1643,7 +1644,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<URI> readOptionalJsonLdId(ObjectNode objectNode, String path)
   {
-    return readURI(objectNode, path, JSON_LD_ID);
+    return readUri(objectNode, path, JSON_LD_ID);
   }
 
   private URI readRequiredJsonLdId(ObjectNode objectNode, String path)
@@ -1658,17 +1659,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<String> readOptionalRdsfLabel(ObjectNode objectNode, String path)
   {
-    return readOptionalStringField(objectNode, path, RDFS_LABEL);
+    return readOptionalString(objectNode, path, RDFS_LABEL);
   }
 
   private Optional<String> readSkosNotation(ObjectNode objectNode, String path)
   {
-    return readOptionalStringField(objectNode, path, SKOS_NOTATION);
+    return readOptionalString(objectNode, path, SKOS_NOTATION);
   }
 
   private Optional<String> readSkosPrefLabel(ObjectNode objectNode, String path)
   {
-    return readOptionalStringField(objectNode, path, SKOS_PREFLABEL);
+    return readOptionalString(objectNode, path, SKOS_PREFLABEL);
   }
 
   private List<String> readSkosAltLabel(ObjectNode objectNode, String path)

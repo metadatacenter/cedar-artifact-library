@@ -35,6 +35,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
@@ -44,6 +46,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION_ENABLED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -52,11 +55,6 @@ import static org.metadatacenter.model.ModelNodeNames.INPUT_TYPES;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.UI_CONTENT;
-import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.UI_HIDDEN;
-import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
-import static org.metadatacenter.model.ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED;
 
 public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, Object>>
 {
@@ -313,19 +311,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String uiPath = path + "/" + UI;
 
 //    FieldInputType fieldInputType = readFieldInputType(yamlSource, uiPath, INPUT_TYPE);
-//    boolean valueRecommendationEnabled = readBoolean(yamlSource, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
-//    boolean hidden = readBoolean(yamlSource, uiPath, UI_HIDDEN, false);
+//    boolean valueRecommendationEnabled = readBoolean(yamlSource, uiPath, VALUE_RECOMMENDATION_ENABLED, false);
+//    boolean hidden = readBoolean(yamlSource, uiPath, HIDDEN, false);
 //
 //    if (fieldInputType.isTemporal()) {
-//      TemporalGranularity temporalGranularity = readTemporalGranularity(yamlSource, uiPath);
+//      TemporalGranularity temporalGranularity = readTemporalGranularity(yamlSource, uiPath, GRANULARITY);
 //      InputTimeFormat inputTimeFormat = readInputTimeFormat(yamlSource, uiPath, InputTimeFormat.TWELVE_HOUR);
-//      boolean timeZoneEnabled = readBoolean(yamlSource, uiPath, UI_TIMEZONE_ENABLED, false);
+//      boolean timeZoneEnabled = readBoolean(yamlSource, uiPath, TIMEZONE_ENABLED, false);
 //
 //      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
 //    } else if (fieldInputType.isNumeric()) {
 //      return NumericFieldUi.create(hidden);
 //    } else if (fieldInputType.isStatic()) {
-//      String content = readRequiredString(yamlSource, uiPath, CONTENT);
+//      String content = readRequiredString(yamlSource, uiPath, CONTENT, true);
 //      return StaticFieldUi.create(fieldInputType, content, hidden);
 //    } else
 //      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
@@ -404,7 +402,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String inputTypeString = readRequiredString(yamlSource, path, fieldName, false);
 
     if (!INPUT_TYPES.contains(inputTypeString))
-      throw new ArtifactParseException("Invalid field input type " + inputTypeString, UI_FIELD_INPUT_TYPE, path);
+      throw new ArtifactParseException("Invalid field input type " + inputTypeString, INPUT_TYPE, path);
 
     return FieldInputType.fromString(inputTypeString);
   }
