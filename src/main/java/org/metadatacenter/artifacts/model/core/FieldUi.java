@@ -24,6 +24,14 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TemporalFieldUi.class.getName());
   }
 
+  default NumericFieldUi asNumericFieldUi()
+  {
+    if (inputType().isNumeric())
+      return (NumericFieldUi)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + NumericFieldUi.class.getName());
+  }
+
   default StaticFieldUi asStaticFieldUi()
   {
     if (inputType().isStatic())
