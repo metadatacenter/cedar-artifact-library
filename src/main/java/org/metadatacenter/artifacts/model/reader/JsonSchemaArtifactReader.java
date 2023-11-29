@@ -754,7 +754,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       Optional<Integer> decimalPlaces = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_DECIMAL_PLACE);
       Optional<Integer> minLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
       Optional<Integer> maxLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
-      Optional<? extends DefaultValue> defaultValue = readDefaultValueField(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
+      Optional<? extends DefaultValue> defaultValue = readDefaultValue(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
       Optional<String> regex = readString(vcNode, vcPath, "regex"); // TODO Add 'regex' to ModelNodeNames
       List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_ONTOLOGIES);
       List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_VALUE_SETS);
@@ -794,7 +794,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.empty();
   }
 
-  private Optional<DefaultValue> readDefaultValueField(ObjectNode objectNode, String path, String fieldName)
+  private Optional<DefaultValue> readDefaultValue(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -1166,18 +1166,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       throw new ArtifactParseException("Invalid time format " + timeFormat.get(), UI_INPUT_TIME_FORMAT, path);
 
     return InputTimeFormat.fromString(timeFormat.get());
-  }
-
-  private String readDefaultValue(ObjectNode objectNode, String path)
-  {
-    ObjectNode valueConstraintsNode = readValueConstraintsNode(objectNode, path, VALUE_CONSTRAINTS);
-
-    if (valueConstraintsNode == null)
-      throw new ArtifactParseException("No " + VALUE_CONSTRAINTS + " field", VALUE_CONSTRAINTS, path);
-
-    String subPath = path + "/" + VALUE_CONSTRAINTS;
-
-    return readRequiredString(valueConstraintsNode, subPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
   }
 
   private ObjectNode readNode(ObjectNode objectNode, String path, String fieldName)
