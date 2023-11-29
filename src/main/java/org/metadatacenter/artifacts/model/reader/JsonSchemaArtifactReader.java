@@ -386,7 +386,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<Status> status = readStatus(objectNode, path, BIBO_STATUS);
     Optional<URI> previousVersion = readUri(objectNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(objectNode, path, PAV_DERIVED_FROM);
-    Optional<String> skosPrefLabel = readOptionalString(objectNode, path, SKOS_PREFLABEL);
+    Optional<String> skosPrefLabel = readString(objectNode, path, SKOS_PREFLABEL);
     List<String> skosAlternateLabels = readStringArray(objectNode, path, SKOS_ALTLABEL);
     FieldUi fieldUi = readFieldUi(objectNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(objectNode, path, fieldUi.inputType());
@@ -548,9 +548,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(objectNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(objectNode, path, PAV_LAST_UPDATED_ON);
     String jsonLdValue = readString(objectNode, path, JSON_LD_VALUE, null);
-    Optional<String> rdfsLabel = readOptionalString(objectNode, path, RDFS_LABEL);
-    Optional<String> skosNotation = readOptionalString(objectNode, path, SKOS_NOTATION);
-    Optional<String> skosPrefLabel = readOptionalString(objectNode, path, SKOS_PREFLABEL);
+    Optional<String> rdfsLabel = readString(objectNode, path, RDFS_LABEL);
+    Optional<String> skosNotation = readString(objectNode, path, SKOS_NOTATION);
+    Optional<String> skosPrefLabel = readString(objectNode, path, SKOS_PREFLABEL);
 
     return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
       jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel,
@@ -763,13 +763,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     if (vcNode != null) {
 
-      boolean requiredValue = readBooleanField(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
-      boolean multipleChoice = readBooleanField(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+      boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
+      boolean multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
       Optional<NumericType> numberType = readNumberTypeField(vcNode, vcPath);
       Optional<TemporalType> temporalType = readTemporalTypeField(vcNode, vcPath);
       Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
-      Optional<Number> minValue = readNumberField(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
-      Optional<Number> maxValue = readNumberField(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);
+      Optional<Number> minValue = readNumber(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
+      Optional<Number> maxValue = readNumber(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);
       Optional<Integer> decimalPlaces = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_DECIMAL_PLACE);
       Optional<Integer> minLength = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
       Optional<Integer> maxLength = readIntegerField(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
@@ -837,7 +837,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<TemporalType> readTemporalTypeField(ObjectNode objectNode, String path)
   {
-    Optional<String> temporalTypeValue = readOptionalString(objectNode, path, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
+    Optional<String> temporalTypeValue = readString(objectNode, path, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
 
     if (temporalTypeValue.isPresent())
       return Optional.of(TemporalType.fromString(temporalTypeValue.get()));
@@ -847,7 +847,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<NumericType> readNumberTypeField(ObjectNode objectNode, String path)
   {
-    Optional<String> numberTypeValue = readOptionalString(objectNode, path, VALUE_CONSTRAINTS_NUMBER_TYPE);
+    Optional<String> numberTypeValue = readString(objectNode, path, VALUE_CONSTRAINTS_NUMBER_TYPE);
 
     if (numberTypeValue.isPresent())
       return Optional.of(NumericType.fromString(numberTypeValue.get()));
@@ -1054,7 +1054,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private LiteralValueConstraint readLiteralValueConstraint(ObjectNode objectNode, String path)
   {
     String label = readRequiredString(objectNode, path, VALUE_CONSTRAINTS_LABEL);
-    boolean selectedByDefault = readBooleanField(objectNode, path, VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT, false);
+    boolean selectedByDefault = readBoolean(objectNode, path, VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT, false);
 
     return new LiteralValueConstraint(label, selectedByDefault);
   }
@@ -1065,13 +1065,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + fieldName;
 
     FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath, UI_FIELD_INPUT_TYPE);
-    boolean valueRecommendationEnabled = readBooleanField(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
-    boolean hidden = readBooleanField(uiNode, uiPath, UI_HIDDEN, false);
+    boolean valueRecommendationEnabled = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
+    boolean hidden = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);
       InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
-      boolean timeZoneEnabled = readBooleanField(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
+      boolean timeZoneEnabled = readBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
     } else if (fieldInputType.isNumeric()) {
@@ -1091,8 +1091,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
     Map<String, String> propertyLabels = readMap(uiNode, uiPath, UI_PROPERTY_LABELS);
     Map<String, String> propertyDescriptions = readMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readOptionalString(uiNode, uiPath, UI_HEADER);
-    Optional<String> footer = readOptionalString(uiNode, uiPath, UI_FOOTER);
+    Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
+    Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
     return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
@@ -1106,23 +1106,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     List<String> pages = readStringArray(uiNode, uiPath, UI_PAGES);
     Map<String, String> propertyLabels = readMap(uiNode, uiPath, UI_PROPERTY_LABELS);
     Map<String, String> propertyDescriptions = readMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readOptionalString(uiNode, uiPath, UI_HEADER);
-    Optional<String> footer = readOptionalString(uiNode, uiPath, UI_FOOTER);
+    Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
+    Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
     return TemplateUi.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
-  }
-
-  private Optional<String> readOptionalString(ObjectNode objectNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = objectNode.get(fieldName);
-
-    if (jsonNode == null || jsonNode.isNull())
-      return Optional.empty();
-
-    if (!jsonNode.isTextual())
-      throw new ArtifactParseException("Value must be a string", fieldName, path);
-
-    return Optional.of(jsonNode.asText());
   }
 
   private Optional<Integer> readIntegerField(ObjectNode objectNode, String path, String fieldName)
@@ -1138,7 +1125,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return Optional.of(jsonNode.asInt());
   }
 
-  private Optional<Number> readNumberField(ObjectNode objectNode, String path, String fieldName)
+  private Optional<Number> readNumber(ObjectNode objectNode, String path, String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -1154,36 +1141,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.of(jsonNode.asDouble());
   }
 
-  private Optional<Boolean> readOptionalBooleanField(ObjectNode objectNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = objectNode.get(fieldName);
-
-    if (jsonNode == null || jsonNode.isNull())
-      return Optional.empty();
-
-    if (!jsonNode.isBoolean())
-      throw new ArtifactParseException("Value must be a boolean", fieldName, path);
-
-    return Optional.of(jsonNode.asBoolean());
-  }
-
-  private boolean readRequiredBooleanField(ObjectNode objectNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = objectNode.get(fieldName);
-
-    if (jsonNode == null)
-      throw new ArtifactParseException("Field must be present", fieldName, path);
-
-    if (jsonNode.isNull())
-      throw new ArtifactParseException("Field must not be null", fieldName, path);
-
-    if (!jsonNode.isBoolean())
-      throw new ArtifactParseException("Value must be boolean", fieldName, path);
-
-    return jsonNode.asBoolean();
-  }
-
-  private boolean readBooleanField(ObjectNode objectNode, String path, String fieldName, boolean defaultValue)
+  private boolean readBoolean(ObjectNode objectNode, String path, String fieldName, boolean defaultValue)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
 
