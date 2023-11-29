@@ -11,18 +11,20 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUi;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
@@ -36,6 +38,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
@@ -43,6 +46,7 @@ import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TY
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.INPUT_TYPES;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
@@ -175,7 +179,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> yamlSource, String path, String name)
   {
-    URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
     String jsonSchemaTitle = name + " template";
     String jsonSchemaDescription = name + " template generated from YAML";
@@ -210,7 +214,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> yamlSource, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
     String jsonSchemaTitle = name + " element";
     String jsonSchemaDescription = name + " element generated from YAML";
@@ -247,7 +251,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> yamlSource, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    URI jsonSchemaSchemaUri = URI.create(ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI);
+    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
     String jsonSchemaTitle = name + " field";
     String jsonSchemaDescription = name + " field generated from YAML";
@@ -269,8 +273,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
     FieldUi fieldUi = readFieldUi(yamlSource, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(yamlSource, path);
-    Optional<String> skosPrefLabel = Optional.empty(); // TODO
-    List<String> skosAlternateLabels = Collections.emptyList(); // TODO
+    Optional<String> skosPrefLabel = readString(yamlSource, path, SKOS_PREF_LABEL);
+    List<String> skosAlternateLabels = readStringArray(yamlSource, path, SKOS_ALT_LABEL);
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
@@ -358,6 +362,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return defaultValue;
   }
 
+  private Optional<String> readString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  {
+    return readString(yamlSource, path, fieldName, true);
+  }
+
   private Optional<String> readString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean allowEmpty)
   {
     if (!yamlSource.containsKey(fieldName))
@@ -377,6 +386,31 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.empty();
 
     return Optional.of(value);
+  }
+
+  private List<String> readStringArray(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  {
+    Object rawValue = yamlSource.get(fieldName);
+    List<String> stringValues = new ArrayList<>();
+
+    if (rawValue != null) {
+      if (rawValue instanceof List<?>) {
+        List<?> rawListValues = (List<?>)rawValue;
+        Iterator<?> rawListValueIterator = rawListValues.iterator();
+        int arrayIndex = 0;
+        while (rawListValueIterator.hasNext()) {
+          Object rawListValue = rawListValueIterator.next();
+          if (rawListValue instanceof String) {
+            String stringValue = (String)rawListValue;
+            if (!stringValue.isEmpty())
+              stringValues.add(stringValue);
+          } else
+            throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldName, path);
+          arrayIndex++;
+        }
+      }
+    }
+    return stringValues;
   }
 
   private FieldInputType readFieldInputType(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)

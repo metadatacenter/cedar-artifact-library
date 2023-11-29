@@ -21,7 +21,7 @@ public class YamlConstants
   public static final String CHILDREN = "children";
   public static final String LAST_UPDATED_ON = "lastUpdatedOn";
   public static final String SKOS_PREF_LABEL = "label";
-  public static final String ALT_LABEL = "altLabel";
+  public static final String SKOS_ALT_LABEL = "altLabel";
   public static final String INPUT_TYPE = "inputType";
   public static final String HIDDEN = "hidden";
   public static final String VALUE_RECOMMENDATION_ENABLED = "valueRecommendationEnabled";

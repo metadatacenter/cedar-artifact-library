@@ -1419,7 +1419,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private List<String> readStringArray(ObjectNode objectNode, String path,  String fieldName)
   {
     JsonNode jsonNode = objectNode.get(fieldName);
-    List<String> textValues = new ArrayList<>();
+    List<String> stringValues = new ArrayList<>();
 
     if (jsonNode != null && !jsonNode.isNull()) {
       if (jsonNode.isArray()) {
@@ -1430,20 +1430,20 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           JsonNode jsonValueNode = nodeIterator.next();
           if (jsonValueNode != null) {
             if (!jsonValueNode.isTextual())
-              throw new ArtifactParseException("Value in text array at index " + arrayIndex + " must be textual", fieldName, path);
-            String textValue = jsonValueNode.asText();
-            if (!textValue.isEmpty())
-              textValues.add(textValue);
+              throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldName, path);
+            String stringValue = jsonValueNode.asText();
+            if (!stringValue.isEmpty())
+              stringValues.add(stringValue);
           }
           arrayIndex++;
         }
       } else {
         String textValue = readString(objectNode, path, fieldName, "");
         if (textValue != null && !textValue.isEmpty())
-          textValues.add(textValue);
+          stringValues.add(textValue);
       }
     }
-    return textValues;
+    return stringValues;
   }
 
   private List<URI> readUriArray(ObjectNode objectNode, String path, String fieldName)

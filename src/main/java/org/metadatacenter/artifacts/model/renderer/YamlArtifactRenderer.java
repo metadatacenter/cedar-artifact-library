@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
@@ -224,7 +224,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       List<Object> skosAlternateLabelRendering = new ArrayList<>();
       for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
         skosAlternateLabelRendering.add(skosAlternateLabel);
-      rendering.put(ALT_LABEL, skosAlternateLabelRendering);
+      rendering.put(SKOS_ALT_LABEL, skosAlternateLabelRendering);
     }
 
     renderFieldUi(fieldSchemaArtifact.fieldUi(), rendering);

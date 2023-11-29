@@ -11,7 +11,7 @@ import org.metadatacenter.artifacts.model.core.Version;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
@@ -22,11 +22,12 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
@@ -150,6 +151,8 @@ public class YamlArtifactReaderTest
     URI modifiedBy = URI.create("https://repo.metadatacenter.org/users/33");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
+    String prefLabel = "Study";
+    List<String> altLabels = List.of("Label 1", "Label 2");
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
     yamlSource.put(FIELD, name);
@@ -164,6 +167,8 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
     yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
+    yamlSource.put(SKOS_PREF_LABEL, prefLabel);
+    yamlSource.put(SKOS_ALT_LABEL, altLabels);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 
@@ -179,6 +184,8 @@ public class YamlArtifactReaderTest
     assertEquals(modifiedBy, fieldSchemaArtifact.modifiedBy().get());
     assertEquals(createdOn, fieldSchemaArtifact.createdOn().get());
     assertEquals(lastUpdatedOn, fieldSchemaArtifact.lastUpdatedOn().get());
+    assertEquals(prefLabel, fieldSchemaArtifact.skosPrefLabel().get());
+    assertEquals(altLabels, fieldSchemaArtifact.skosAlternateLabels());
   }
 
 }
