@@ -56,7 +56,11 @@ public class YamlConstants
   public static final String LITERAL = "label";
   public static final String SELECTED_BY_DEFAULT = "selected";
   public static final String MAX_DEPTH = "maxDepth";
+  public static final String CONTENT = "content";
   public static final String HEADER = "header";
   public static final String FOOTER = "footer";
-  public static final String CONTENT = "content";
+  public static final String ORDER = "order";
+  public static final String PAGES = "pages";
+  public static final String PROPERTY_LABELS = "propertyLabels";
+  public static final String PROPERTY_DESCRIPTIONS = "propertyDescriptions";
 }

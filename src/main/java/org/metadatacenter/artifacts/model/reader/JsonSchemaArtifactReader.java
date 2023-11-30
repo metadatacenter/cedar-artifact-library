@@ -290,7 +290,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode objectNode, String path)
   {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    Map<String, URI> jsonLdContext = readString2UriMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
     Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
@@ -330,7 +330,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode objectNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    Map<String, URI> jsonLdContext = readString2UriMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
     Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
@@ -369,7 +369,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode objectNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    Map<String, URI> jsonLdContext = readString2UriMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
     Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
@@ -502,7 +502,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode objectNode, String path)
   {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    Map<String, URI> jsonLdContext = readString2UriMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
     Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
@@ -521,7 +521,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode objectNode, String path)
   {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    Map<String, URI> jsonLdContext = readString2UriMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
     Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
@@ -541,7 +541,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode objectNode, String path)
   {
-    Map<String, URI> jsonLdContext = readFieldNameUriValueMap(objectNode, path, JSON_LD_CONTEXT);
+    Map<String, URI> jsonLdContext = readString2UriMap(objectNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(objectNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(objectNode, path, JSON_LD_ID);
     Optional<URI> createdBy = readUri(objectNode, path, PAV_CREATED_BY);
@@ -1065,20 +1065,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
   }
 
-  private ElementUi readElementUi(ObjectNode objectNode, String path, String fieldName)
-  {
-    ObjectNode uiNode = readNode(objectNode, path, fieldName);
-    String uiPath = path + "/" + fieldName;
-
-    List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
-    Map<String, String> propertyLabels = readMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
-    Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
-
-    return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
-  }
-
   private TemplateUi readTemplateUi(ObjectNode objectNode, String path, String fieldName)
   {
     ObjectNode uiNode = readNode(objectNode, path, fieldName);
@@ -1086,12 +1072,26 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
     List<String> pages = readStringArray(uiNode, uiPath, UI_PAGES);
-    Map<String, String> propertyLabels = readMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    Map<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
     return TemplateUi.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
+  }
+
+  private ElementUi readElementUi(ObjectNode objectNode, String path, String fieldName)
+  {
+    ObjectNode uiNode = readNode(objectNode, path, fieldName);
+    String uiPath = path + "/" + fieldName;
+
+    List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
+    Map<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
+    Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
+
+    return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
   private Optional<Integer> readInteger(ObjectNode objectNode, String path, String fieldName)
@@ -1197,9 +1197,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return (ObjectNode)jsonNode;
   }
 
-  private Map<String, String> readMap(ObjectNode objectNode, String path, String fieldName)
+  private Map<String, String> readString2StringMap(ObjectNode objectNode, String path, String fieldName)
   {
-    Map<String, String> fieldNameStringValueMap = new HashMap<>();
+    Map<String, String> string2StringMap = new HashMap<>();
 
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -1218,17 +1218,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           String currentFieldValue = fieldEntry.getValue().textValue();
 
           if (currentFieldValue != null)
-            fieldNameStringValueMap.put(currentFieldName, currentFieldValue);
+            string2StringMap.put(currentFieldName, currentFieldValue);
         } else
             throw new ArtifactParseException("Object in field must contain string values", fieldName, path);
       }
     }
-    return fieldNameStringValueMap;
+    return string2StringMap;
   }
 
-  private Map<String, URI> readFieldNameUriValueMap(ObjectNode objectNode, String path, String fieldName)
+  private Map<String, URI> readString2UriMap(ObjectNode objectNode, String path, String fieldName)
   {
-    Map<String, URI> fieldNameStringValueMap = new HashMap<>();
+    Map<String, URI> string2UriMap = new HashMap<>();
 
     JsonNode jsonNode = objectNode.get(fieldName);
 
@@ -1248,15 +1248,15 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           String currentFieldValue = fieldEntry.getValue().textValue();
 
           try {
-            URI currentFieldURIValue = new URI(currentFieldValue);
-            fieldNameStringValueMap.put(currentFieldName, currentFieldURIValue);
+            URI currentFieldUriValue = new URI(currentFieldValue);
+            string2UriMap.put(currentFieldName, currentFieldUriValue);
           } catch (Exception e) {
             throw new ArtifactParseException("Object in field must contain URI values", fieldName, path);
           }
         }
       }
     }
-    return fieldNameStringValueMap;
+    return string2UriMap;
   }
 
   /**

@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.reader;
 
-import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
@@ -39,7 +38,9 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
@@ -50,7 +51,11 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ORDER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PAGES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_DESCRIPTIONS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_LABELS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_URI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
@@ -311,26 +316,30 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> yamlSource, String path)
   {
-    return TemplateUi.builder().build();
-    // TODO Read YAML for order for TemplateUi
-    // TODO Read YAML for pages for TemplateUi
-    // TODO Read YAML for header/footer for TemplateUi
-    // TODO Read YAML for propertyLabels, propertyDescriptions for TemplateUi
-    // TODO Read YAML for childPropertyUris for TemplateUi
+    List<String> order = readStringArray(yamlSource, path, ORDER);
+    List<String> pages = readStringArray(yamlSource, path, PAGES);
+    Map<String, String> propertyLabels = readString2StringMap(yamlSource, path, PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readString2StringMap(yamlSource, path, PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readString(yamlSource, path, HEADER);
+    Optional<String> footer = readString(yamlSource, path, FOOTER);
 
-//    return TemplateUi.create(List<String> order, List<String> pages, Map<String, String> propertyLabels,
-//    Map<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
+    return TemplateUi.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
   }
 
   private ElementUi readElementUi(LinkedHashMap<String, Object> yamlSource, String path)
   {
-    return ElementUi.builder().build();
-    // TODO Read YAML for order for ElementUi
-    // TODO Read YAML for propertyLabels, propertyDescriptions for ElementUi
-    // TODO Read YAML for childPropertyUris for ElementUi
+    List<String> order = readStringArray(yamlSource, path, ORDER);
+    Map<String, String> propertyLabels = readString2StringMap(yamlSource, path, PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readString2StringMap(yamlSource, path, PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readString(yamlSource, path, HEADER);
+    Optional<String> footer = readString(yamlSource, path, FOOTER);
 
-//    return ElementUi.create(List<String> order, Map<String, String> propertyLabels, Map<String, String> propertyDescriptions,
-//    Optional<String> header, Optional<String> footer)
+    return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
+  }
+
+  private Map<String, String> readString2StringMap(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  {
+    return Collections.emptyMap(); // TODO Implement readString2StringMap
   }
 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> yamlSource, String path)
