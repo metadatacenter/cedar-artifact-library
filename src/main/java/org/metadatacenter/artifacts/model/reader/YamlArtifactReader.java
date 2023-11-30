@@ -1,22 +1,39 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
+import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
+import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
+import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraintsAction;
+import org.metadatacenter.artifacts.model.core.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
+import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.NumericFieldUi;
+import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUi;
+import org.metadatacenter.artifacts.model.core.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
+import org.metadatacenter.artifacts.model.core.TextDefaultValue;
+import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.XsdDatatype;
+import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -63,6 +80,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_FORMAT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_ZONE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION_ENABLED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -72,6 +90,23 @@ import static org.metadatacenter.model.ModelNodeNames.INPUT_TYPES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTIONS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_BRANCHES;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_CLASSES;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DECIMAL_PLACE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LITERALS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MAX_NUMBER_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MAX_STRING_LENGTH;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MIN_NUMBER_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MIN_STRING_LENGTH;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MULTIPLE_CHOICE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_REQUIRED_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_UNIT_OF_MEASURE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS;
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
 import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
@@ -122,13 +157,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *         maxLength: 5
    * </pre>
    */
-  @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
+  @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String name = readRequiredString(yamlSource, path, TEMPLATE, false);
+    String name = readRequiredString(sourceNode, path, TEMPLATE, false);
 
-    return readTemplateSchemaArtifact(yamlSource, path, name);
-   }
+    return readTemplateSchemaArtifact(sourceNode, path, name);
+  }
 
   /**
    * Read a YAML specification of an element schema artifact
@@ -155,21 +190,21 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *    maxLength: 5
    * </pre>
    */
-  @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
+  @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String name = readRequiredString(yamlSource, path, ELEMENT, false);
-    boolean isMultiple = readBoolean(yamlSource, path, MULTIPLE, false);
-    Optional<Integer> minItems = readInteger(yamlSource, path, MIN_ITEMS);
-    Optional<Integer> maxItems = readInteger(yamlSource, path, MAX_ITEMS);
-    Optional<URI> propertyUri = readUri(yamlSource, path, PROPERTY_URI);
+    String name = readRequiredString(sourceNode, path, ELEMENT, false);
+    boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
+    Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
+    Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
+    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_URI);
 
-    return readElementSchemaArtifact(yamlSource, path, name, isMultiple, minItems, maxItems, propertyUri);
+    return readElementSchemaArtifact(sourceNode, path, name, isMultiple, minItems, maxItems, propertyUri);
   }
 
   /**
    * Read a YAML specification of a field schema artifact
-   *
+   * <p>
    * e.g.,
    * <pre>
    * field: Disease
@@ -188,24 +223,25 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *    type: OntologyClass
    * </pre>
    */
-  @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
+  @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String name = readRequiredString(yamlSource, path, FIELD, false);
-    boolean isMultiple = readBoolean(yamlSource, path, MULTIPLE, false);
-    Optional<Integer> minItems = readInteger(yamlSource, path, MIN_ITEMS);
-    Optional<Integer> maxItems = readInteger(yamlSource, path, MAX_ITEMS);
-    Optional<URI> propertyUri = readUri(yamlSource, path, PROPERTY_URI);
+    String name = readRequiredString(sourceNode, path, FIELD, false);
+    boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
+    Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
+    Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
+    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_URI);
 
-    return readFieldSchemaArtifact(yamlSource, path, name, isMultiple, minItems, maxItems, propertyUri);
+    return readFieldSchemaArtifact(sourceNode, path, name, isMultiple, minItems, maxItems, propertyUri);
   }
 
-  @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> yamlSource)
+  @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     return null; // TODO Read template instance artifacts
   }
 
-  private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> yamlSource, String path, String name)
+  private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
+    String name)
   {
     URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
     String jsonSchemaType = TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -214,32 +250,30 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
-    Optional<URI> jsonLdId = readUri(yamlSource, path, ID);
+    Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
 
-    String description = readString(yamlSource, path, DESCRIPTION, "");
-    Optional<String> identifier = readString(yamlSource, path, IDENTIFIER, true);
-    Optional<Version> version = readVersion(yamlSource, path, VERSION);
-    Version modelVersion = readRequiredVersion(yamlSource, path, MODEL_VERSION);
-    Optional<Status> status = readStatus(yamlSource, path, STATUS);
-    Optional<URI> previousVersion = readUri(yamlSource, path, PREVIOUS_VERSION);
-    Optional<URI> derivedFrom = readUri(yamlSource, path, DERIVED_FROM);
-    Optional<URI> createdBy = readUri(yamlSource, path, CREATED_BY);
-    Optional<URI> modifiedBy = readUri(yamlSource, path, MODIFIED_BY);
-    Optional<OffsetDateTime> createdOn = readOffsetDatetime(yamlSource, path, CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
+    String description = readString(sourceNode, path, DESCRIPTION, "");
+    Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
+    Optional<Version> version = readVersion(sourceNode, path, VERSION);
+    Version modelVersion = readRequiredVersion(sourceNode, path, MODEL_VERSION);
+    Optional<Status> status = readStatus(sourceNode, path, STATUS);
+    Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
+    Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
+    Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO Read child elements
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO Read child fields
-    TemplateUi templateUi = readTemplateUi(yamlSource, path);
+    TemplateUi templateUi = readTemplateUi(sourceNode, path);
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, templateUi);
+      jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
+      previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
+      templateUi);
   }
 
-  private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> yamlSource, String path,
+  private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
@@ -249,34 +283,30 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
-    Optional<URI> jsonLdId = readUri(yamlSource, path, ID);
+    Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
 
-    String description = readString(yamlSource, path, DESCRIPTION, "");
-    Optional<String> identifier = readString(yamlSource, path, IDENTIFIER, true);
-    Optional<Version> version = readVersion(yamlSource, path, VERSION);
-    Version modelVersion = readRequiredVersion(yamlSource, path, MODEL_VERSION);
-    Optional<Status> status = readStatus(yamlSource, path, STATUS);
-    Optional<URI> previousVersion = readUri(yamlSource, path, PREVIOUS_VERSION);
-    Optional<URI> derivedFrom = readUri(yamlSource, path, DERIVED_FROM);
-    Optional<URI> createdBy = readUri(yamlSource, path, CREATED_BY);
-    Optional<URI> modifiedBy = readUri(yamlSource, path, MODIFIED_BY);
-    Optional<OffsetDateTime> createdOn = readOffsetDatetime(yamlSource, path, CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
+    String description = readString(sourceNode, path, DESCRIPTION, "");
+    Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
+    Optional<Version> version = readVersion(sourceNode, path, VERSION);
+    Version modelVersion = readRequiredVersion(sourceNode, path, MODEL_VERSION);
+    Optional<Status> status = readStatus(sourceNode, path, STATUS);
+    Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
+    Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
+    Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO  Read child elements
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO  Read child fields
-    ElementUi elementUi = readElementUi(yamlSource, path);
+    ElementUi elementUi = readElementUi(sourceNode, path);
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, elementUi,
-      isMultiple, minItems, maxItems, propertyUri);
+      jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
+      previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
+      elementUi, isMultiple, minItems, maxItems, propertyUri);
   }
 
-
-  private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> yamlSource, String path,
+  private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
@@ -286,95 +316,153 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     Map<String, URI> jsonLdContext = new HashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
-    Optional<URI> jsonLdId = readUri(yamlSource, path, ID);
+    Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
 
-    String description = readString(yamlSource, path, DESCRIPTION, "");
-    Optional<String> identifier = readString(yamlSource, path, IDENTIFIER, true);
-    Optional<Version> version = readVersion(yamlSource, path, VERSION);
-    Version modelVersion = readRequiredVersion(yamlSource, path, MODEL_VERSION);
-    Optional<Status> status = readStatus(yamlSource, path, STATUS);
-    Optional<URI> previousVersion = readUri(yamlSource, path, PREVIOUS_VERSION);
-    Optional<URI> derivedFrom = readUri(yamlSource, path, DERIVED_FROM);
-    Optional<URI> createdBy = readUri(yamlSource, path, CREATED_BY);
-    Optional<URI> modifiedBy = readUri(yamlSource, path, MODIFIED_BY);
-    Optional<OffsetDateTime> createdOn = readOffsetDatetime(yamlSource, path, CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
-    Optional<XsdDatatype> datatype = readXsdDatatype(yamlSource, path, DATATYPE);
-    FieldUi fieldUi = readFieldUi(yamlSource, path);
-    Optional<ValueConstraints> valueConstraints = readValueConstraints(yamlSource, path, datatype);
-    Optional<String> skosPrefLabel = readString(yamlSource, path, SKOS_PREF_LABEL);
-    List<String> skosAlternateLabels = readStringArray(yamlSource, path, SKOS_ALT_LABEL);
+    String description = readString(sourceNode, path, DESCRIPTION, "");
+    Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
+    Optional<Version> version = readVersion(sourceNode, path, VERSION);
+    Version modelVersion = readRequiredVersion(sourceNode, path, MODEL_VERSION);
+    Optional<Status> status = readStatus(sourceNode, path, STATUS);
+    Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
+    Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
+    Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
+    Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
+    Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
+    Optional<XsdDatatype> datatype = readXsdDatatype(sourceNode, path, DATATYPE);
+    FieldUi fieldUi = readFieldUi(sourceNode, path);
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUES, fieldUi.inputType());
+    Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREF_LABEL);
+    List<String> skosAlternateLabels = readStringArray(sourceNode, path, SKOS_ALT_LABEL);
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      isMultiple, minItems, maxItems, propertyUri,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldUi, skosPrefLabel, skosAlternateLabels, valueConstraints);
+      jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, fieldUi, skosPrefLabel, skosAlternateLabels, valueConstraints);
   }
 
-  private TemplateUi readTemplateUi(LinkedHashMap<String, Object> yamlSource, String path)
+  private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    List<String> order = readStringArray(yamlSource, path, ORDER);
-    List<String> pages = readStringArray(yamlSource, path, PAGES);
-    Map<String, String> propertyLabels = readString2StringMap(yamlSource, path, PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readString2StringMap(yamlSource, path, PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readString(yamlSource, path, HEADER);
-    Optional<String> footer = readString(yamlSource, path, FOOTER);
+    List<String> order = readStringArray(sourceNode, path, ORDER);
+    List<String> pages = readStringArray(sourceNode, path, PAGES);
+    Map<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readString(sourceNode, path, HEADER);
+    Optional<String> footer = readString(sourceNode, path, FOOTER);
 
     return TemplateUi.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  private ElementUi readElementUi(LinkedHashMap<String, Object> yamlSource, String path)
+  private ElementUi readElementUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    List<String> order = readStringArray(yamlSource, path, ORDER);
-    Map<String, String> propertyLabels = readString2StringMap(yamlSource, path, PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readString2StringMap(yamlSource, path, PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readString(yamlSource, path, HEADER);
-    Optional<String> footer = readString(yamlSource, path, FOOTER);
+    List<String> order = readStringArray(sourceNode, path, ORDER);
+    Map<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
+    Map<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readString(sourceNode, path, HEADER);
+    Optional<String> footer = readString(sourceNode, path, FOOTER);
 
     return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  private Map<String, String> readString2StringMap(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Map<String, String> readString2StringMap(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
     return Collections.emptyMap(); // TODO Implement readString2StringMap
   }
 
-  private FieldUi readFieldUi(LinkedHashMap<String, Object> yamlSource, String path)
+  private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    FieldInputType fieldInputType = readFieldInputType(yamlSource, path, INPUT_TYPE);
-    boolean valueRecommendationEnabled = readBoolean(yamlSource, path, VALUE_RECOMMENDATION_ENABLED, false);
-    boolean hidden = readBoolean(yamlSource, path, HIDDEN, false);
+    FieldInputType fieldInputType = readFieldInputType(sourceNode, path, INPUT_TYPE);
+    boolean valueRecommendationEnabled = readBoolean(sourceNode, path, VALUE_RECOMMENDATION_ENABLED, false);
+    boolean hidden = readBoolean(sourceNode, path, HIDDEN, false);
 
     if (fieldInputType.isTemporal()) {
-      TemporalGranularity temporalGranularity = readTemporalGranularity(yamlSource, path, GRANULARITY);
-      InputTimeFormat inputTimeFormat = readInputTimeFormat(yamlSource, path, TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
-      boolean timeZoneEnabled = readBoolean(yamlSource, path, TIME_ZONE, false);
+      TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
+      InputTimeFormat inputTimeFormat = readInputTimeFormat(sourceNode, path, TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
+      boolean timeZoneEnabled = readBoolean(sourceNode, path, TIME_ZONE, false);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
     } else if (fieldInputType.isNumeric()) {
       return NumericFieldUi.create(hidden);
     } else if (fieldInputType.isStatic()) {
-      String content = readRequiredString(yamlSource, path, CONTENT, true);
+      String content = readRequiredString(sourceNode, path, CONTENT, true);
       return StaticFieldUi.create(fieldInputType, content, hidden);
     } else
       return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
   }
 
-  private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> yamlSource, String path,
-    Optional<XsdDatatype> datatype)
+  private LinkedHashMap<String, Object> readChildNode(LinkedHashMap<String, Object> parentNode, String path, String fieldName)
   {
-    return Optional.empty(); // TODO Read Text, Numeric, ControlledTerm, and Temporal value constraints
+    return new LinkedHashMap<>(); // TODO Read child node
   }
 
-  private String readRequiredString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean allowEmpty)
+  private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,
+    String fieldName, FieldInputType fieldInputType)
   {
-    if (!yamlSource.containsKey(fieldName))
-      throw new ArtifactParseException("No keyword present", fieldName, path);
+    String vcPath = path + "/" + fieldName;
+    LinkedHashMap<String, Object> vcNode = readChildNode(sourceNode, path, fieldName);
 
-    Object rawValue = yamlSource.get(fieldName);
+    if (vcNode != null) {
+      boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
+      boolean multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+      Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
+      Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
+      Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
+      Optional<Number> minValue = readNumber(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
+      Optional<Number> maxValue = readNumber(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);
+      Optional<Integer> decimalPlaces = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_DECIMAL_PLACE);
+      Optional<Integer> minLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
+      Optional<Integer> maxLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
+      Optional<? extends DefaultValue> defaultValue = readDefaultValue(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
+      Optional<String> regex = readString(vcNode, vcPath, "regex"); // TODO Add 'regex' to ModelNodeNames
+      List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath,
+        VALUE_CONSTRAINTS_ONTOLOGIES);
+      List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(vcNode, vcPath,
+        VALUE_CONSTRAINTS_VALUE_SETS);
+      List<ClassValueConstraint> classes = readClassValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_CLASSES);
+      List<BranchValueConstraint> branches = readBranchValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_BRANCHES);
+      List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_LITERALS);
+      List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath,
+        VALUE_CONSTRAINTS_ACTIONS);
+
+      if (fieldInputType == FieldInputType.NUMERIC) {
+        Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asNumericDefaultValue()) :
+          Optional.empty();
+        return Optional.of(
+          NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
+            numericDefaultValue, requiredValue, multipleChoice));
+      } else if (fieldInputType == FieldInputType.TEMPORAL) {
+        Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asTemporalDefaultValue()) :
+          Optional.empty();
+        return Optional.of(
+          TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, multipleChoice));
+
+      } else if (fieldInputType == FieldInputType.LINK || (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()))) {
+        Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
+          Optional.empty();
+        return Optional.of(
+          ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
+            actions, requiredValue, multipleChoice));
+      } else {
+        Optional<TextDefaultValue> textDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asTextDefaultValue()) :
+          Optional.empty();
+        return Optional.of(
+          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, multipleChoice,
+            regex));
+      }
+    } else
+      return Optional.empty();
+  }
+
+  private String readRequiredString(LinkedHashMap<String, Object> sourceNode, String path, String fieldName, boolean allowEmpty)
+  {
+    if (!sourceNode.containsKey(fieldName))
+      throw new ArtifactParseException("No field present", fieldName, path);
+
+    Object rawValue = sourceNode.get(fieldName);
 
     if (rawValue == null)
       throw new ArtifactParseException("No value", fieldName, path);
@@ -390,27 +478,24 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return value;
   }
 
-  private String readString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, String defaultValue)
+  private String readString(LinkedHashMap<String, Object> sourceNode, String path, String fieldName, String defaultValue)
   {
-    Optional<String> optionalString = readString(yamlSource, path, fieldName, true);
+    Optional<String> optionalString = readString(sourceNode, path, fieldName, true);
 
-    if (optionalString.isPresent())
-      return optionalString.get();
-    else
-      return defaultValue;
+    return optionalString.orElse(defaultValue);
   }
 
-  private Optional<String> readString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<String> readString(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return readString(yamlSource, path, fieldName, true);
+    return readString(sourceNode, path, fieldName, true);
   }
 
-  private Optional<String> readString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean allowEmpty)
+  private Optional<String> readString(LinkedHashMap<String, Object> sourceNode, String path, String fieldName, boolean allowEmpty)
   {
-    if (!yamlSource.containsKey(fieldName))
+    if (!sourceNode.containsKey(fieldName))
       return Optional.empty();
 
-    Object rawValue = yamlSource.get(fieldName);
+    Object rawValue = sourceNode.get(fieldName);
 
     if (rawValue == null)
       return Optional.empty();
@@ -426,9 +511,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of(value);
   }
 
-  private Optional<Integer> readInteger(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<Integer> readInteger(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Object rawValue = yamlSource.get(fieldName);
+    Object rawValue = sourceNode.get(fieldName);
 
     if (rawValue == null)
       return Optional.empty();
@@ -439,9 +524,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of((Integer)rawValue);
   }
 
-  private Optional<Number> readNumber(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<Number> readNumber(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Object rawValue = yamlSource.get(fieldName);
+    Object rawValue = sourceNode.get(fieldName);
 
     if (rawValue == null)
       return Optional.empty();
@@ -452,12 +537,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of((Number)rawValue);
   }
 
-  private boolean readBoolean(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean defaultValue)
+  private boolean readBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldName, boolean defaultValue)
   {
-    if (!yamlSource.containsKey(fieldName))
+    if (!sourceNode.containsKey(fieldName))
       return defaultValue;
 
-    Object rawValue = yamlSource.get(fieldName);
+    Object rawValue = sourceNode.get(fieldName);
 
     if (rawValue == null)
       return defaultValue;
@@ -468,9 +553,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return (Boolean)rawValue;
   }
 
-  private List<String> readStringArray(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private List<String> readStringArray(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Object rawValue = yamlSource.get(fieldName);
+    Object rawValue = sourceNode.get(fieldName);
     List<String> stringValues = new ArrayList<>();
 
     if (rawValue != null) {
@@ -485,7 +570,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
             if (!stringValue.isEmpty())
               stringValues.add(stringValue);
           } else
-            throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldName, path);
+            throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldName,
+              path);
           arrayIndex++;
         }
       }
@@ -493,9 +579,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return stringValues;
   }
 
-  private TemporalGranularity readTemporalGranularity(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private TemporalGranularity readTemporalGranularity(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    String granularityString = readRequiredString(yamlSource, path, fieldName, false);
+    String granularityString = readRequiredString(sourceNode, path, fieldName, false);
 
     if (!TEMPORAL_GRANULARITIES.contains(granularityString))
       throw new ArtifactParseException("Invalid granularity" + granularityString, INPUT_TYPE, path);
@@ -503,10 +589,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return TemporalGranularity.fromString(granularityString);
   }
 
-  private InputTimeFormat readInputTimeFormat(LinkedHashMap<String, Object> yamlSource, String path, String fieldName,
+  private InputTimeFormat readInputTimeFormat(LinkedHashMap<String, Object> sourceNode, String path, String fieldName,
     InputTimeFormat defaultInputTimeFormat)
   {
-    Optional<String> inputTimeFormatString = readString(yamlSource, path, fieldName);
+    Optional<String> inputTimeFormatString = readString(sourceNode, path, fieldName);
 
     if (!inputTimeFormatString.isPresent())
       return defaultInputTimeFormat;
@@ -517,9 +603,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return InputTimeFormat.fromString(inputTimeFormatString.get());
   }
 
-  private FieldInputType readFieldInputType(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private FieldInputType readFieldInputType(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    String inputTypeString = readRequiredString(yamlSource, path, fieldName, false);
+    String inputTypeString = readRequiredString(sourceNode, path, fieldName, false);
 
     if (!INPUT_TYPES.contains(inputTypeString))
       throw new ArtifactParseException("Invalid field input type" + inputTypeString, INPUT_TYPE, path);
@@ -527,9 +613,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return FieldInputType.fromString(inputTypeString);
   }
 
-  private Optional<Version> readVersion(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<Version> readVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Optional<String> versionString = readString(yamlSource, path, fieldName, false);
+    Optional<String> versionString = readString(sourceNode, path, fieldName, false);
 
     if (!versionString.isPresent())
       return Optional.empty();
@@ -540,9 +626,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid version " + versionString.get(), fieldName, path);
   }
 
-  private Version readRequiredVersion(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Version readRequiredVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    String versionString = readRequiredString(yamlSource, path, fieldName, false);
+    String versionString = readRequiredString(sourceNode, path, fieldName, false);
 
     if (Version.isValidVersion(versionString))
       return Version.fromString(versionString);
@@ -550,10 +636,29 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid version " + versionString, fieldName, path);
   }
 
-
-  private Status readRequiredStatus(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<XsdNumericDatatype> readNumberType(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    String statusString = readRequiredString(yamlSource, path, fieldName, false);
+    Optional<String> numberTypeValue = readString(sourceNode, path, fieldName);
+
+    if (numberTypeValue.isPresent())
+      return Optional.of(XsdNumericDatatype.fromString(numberTypeValue.get()));
+    else
+      return Optional.empty();
+  }
+
+  private Optional<XsdTemporalDatatype> readTemporalType(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    Optional<String> temporalTypeValue = readString(sourceNode, path, fieldName);
+
+    if (temporalTypeValue.isPresent())
+      return Optional.of(XsdTemporalDatatype.fromString(temporalTypeValue.get()));
+    else
+      return Optional.empty();
+  }
+
+  private Status readRequiredStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    String statusString = readRequiredString(sourceNode, path, fieldName, false);
 
     if (Status.isValidStatus(statusString))
       return Status.fromString(statusString);
@@ -561,9 +666,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid status " + statusString, fieldName, path);
   }
 
-  private Optional<Status> readStatus(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<Status> readStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Optional<String> statusString = readString(yamlSource, path, fieldName, false);
+    Optional<String> statusString = readString(sourceNode, path, fieldName, false);
 
     if (!statusString.isPresent())
       return Optional.empty();
@@ -574,9 +679,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid status " + statusString.get(), fieldName, path);
   }
 
-  private Optional<XsdDatatype> readXsdDatatype(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<XsdDatatype> readXsdDatatype(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Optional<String> xsdDatatypeString = readString(yamlSource, path, fieldName, false);
+    Optional<String> xsdDatatypeString = readString(sourceNode, path, fieldName, false);
 
     if (!xsdDatatypeString.isPresent())
       return Optional.empty();
@@ -587,9 +692,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Invalid status " + xsdDatatypeString.get(), fieldName, path);
   }
 
-  private URI readRequiredUri(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private URI readRequiredUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    String uriString = readRequiredString(yamlSource, path, fieldName, false);
+    String uriString = readRequiredString(sourceNode, path, fieldName, false);
 
     try {
       return new URI(uriString);
@@ -598,9 +703,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
   }
 
-  private Optional<URI> readUri(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<URI> readUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Optional<String> uriString = readString(yamlSource, path, fieldName, false);
+    Optional<String> uriString = readString(sourceNode, path, fieldName, false);
 
     if (!uriString.isPresent())
       return Optional.empty();
@@ -612,9 +717,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
   }
 
-  private Optional<OffsetDateTime> readOffsetDatetime(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private Optional<OffsetDateTime> readOffsetDatetime(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    Optional<String> dateTimeValue = readString(yamlSource, path, fieldName, false);
+    Optional<String> dateTimeValue = readString(sourceNode, path, fieldName, false);
 
     try {
       if (dateTimeValue.isPresent())
@@ -622,9 +727,44 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       else
         return Optional.empty();
     } catch (DateTimeParseException e) {
-      throw new ArtifactParseException(
-        "Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(), fieldName, path);
+      throw new ArtifactParseException("Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(),
+        fieldName, path);
     }
+  }
+
+  private Optional<DefaultValue> readDefaultValue(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Optional.empty(); // TODO Read default value
+  }
+
+  private List<OntologyValueConstraint> readOntologyValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Collections.emptyList(); // TODO Read ontology value constraints
+  }
+
+  private List<ClassValueConstraint> readClassValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Collections.emptyList(); // TODO Read class value constraints
+  }
+
+  private List<ValueSetValueConstraint> readValueSetValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Collections.emptyList(); // TODO Read value set value constraints
+  }
+
+  private List<BranchValueConstraint> readBranchValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Collections.emptyList(); // TODO Read branch value constraints
+  }
+
+  private List<LiteralValueConstraint> readLiteralValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Collections.emptyList(); // TODO Read literal value constraints
+  }
+
+  private List<ControlledTermValueConstraintsAction> readValueConstraintsActions(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Collections.emptyList(); // TODO Read actions value constraints
   }
 
 }
