@@ -21,6 +21,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
@@ -32,6 +33,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LAB
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION_ENABLED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 
 public class YamlArtifactReaderTest
@@ -156,6 +158,8 @@ public class YamlArtifactReaderTest
     String prefLabel = "Study";
     List<String> altLabels = List.of("Label 1", "Label 2");
     FieldInputType fieldInputType = FieldInputType.TEXTFIELD;
+    boolean valueRecommendationEnabled = false;
+    boolean hidden = false;
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
     yamlSource.put(FIELD, name);
@@ -173,6 +177,8 @@ public class YamlArtifactReaderTest
     yamlSource.put(SKOS_PREF_LABEL, prefLabel);
     yamlSource.put(SKOS_ALT_LABEL, altLabels);
     yamlSource.put(INPUT_TYPE, FieldInputType.TEXTFIELD.toString());
+    yamlSource.put(VALUE_RECOMMENDATION_ENABLED, valueRecommendationEnabled);
+    yamlSource.put(HIDDEN, hidden);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 
@@ -191,6 +197,8 @@ public class YamlArtifactReaderTest
     assertEquals(prefLabel, fieldSchemaArtifact.skosPrefLabel().get());
     assertEquals(altLabels, fieldSchemaArtifact.skosAlternateLabels());
     assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
+    assertEquals(valueRecommendationEnabled, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
+    assertEquals(hidden, fieldSchemaArtifact.fieldUi().hidden());
   }
 
 }

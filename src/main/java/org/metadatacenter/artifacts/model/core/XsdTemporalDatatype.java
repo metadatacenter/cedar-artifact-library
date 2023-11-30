@@ -6,7 +6,7 @@ import java.net.URI;
 
 import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 
-public enum TemporalType
+public enum XsdTemporalDatatype
 {
   DATE("xsd:date"),
   DATETIME("xsd:dateTime"),
@@ -14,7 +14,7 @@ public enum TemporalType
 
   private String text;
 
-  TemporalType(String text) {
+  XsdTemporalDatatype(String text) {
     this.text = text;
   }
 
@@ -25,13 +25,13 @@ public enum TemporalType
     return this.text;
   }
 
-  public static TemporalType fromString(String text) {
-    for (TemporalType t : TemporalType.values()) {
+  public static XsdTemporalDatatype fromString(String text) {
+    for (XsdTemporalDatatype t : XsdTemporalDatatype.values()) {
       if (t.text.equalsIgnoreCase(text)) {
         return t;
       }
     }
-    throw new IllegalArgumentException("No temporal type constant with text " + text + " found");
+    throw new IllegalArgumentException("No temporal datatype constant " + text + " found");
   }
 
   @Override public String toString()

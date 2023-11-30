@@ -2,7 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.util.Optional;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateNumericTypeFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateXsdNumericDatatypeFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DECIMAL_PLACE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
@@ -13,7 +13,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_UNIT_OF_
 
 public non-sealed interface NumericValueConstraints extends ValueConstraints
 {
-  NumericType numberType();
+  XsdNumericDatatype numberType();
 
   Optional<Number> minValue();
 
@@ -25,7 +25,7 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
 
   Optional<NumericDefaultValue> defaultValue();
 
-  static NumericValueConstraints create(NumericType numericType,
+  static NumericValueConstraints create(XsdNumericDatatype numericType,
     Optional<Number> minValue, Optional<Number> maxValue,
     Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,
     boolean requiredValue, boolean multipleChoice)
@@ -39,7 +39,7 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
   }
 
   class Builder {
-    private NumericType numericType;
+    private XsdNumericDatatype numberType;
     private Optional<Number> minValue = Optional.empty();
     private Optional<Number> maxValue = Optional.empty();
     private Optional<Integer> decimalPlaces = Optional.empty();
@@ -51,8 +51,8 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
     private Builder() {
     }
 
-    public Builder withNumberType(NumericType numericType) {
-      this.numericType = numericType;
+    public Builder withNumberType(XsdNumericDatatype numberType) {
+      this.numberType = numberType;
       return this;
     }
 
@@ -93,13 +93,13 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
 
     public NumericValueConstraints build()
     {
-      return new NumericValueConstraintsRecord(numericType, minValue, maxValue,
+      return new NumericValueConstraintsRecord(numberType, minValue, maxValue,
         decimalPlaces, unitOfMeasure, defaultValue, requiredValue, multipleChoice);
     }
   }
 }
 
-record NumericValueConstraintsRecord(NumericType numberType,
+record NumericValueConstraintsRecord(XsdNumericDatatype numberType,
                                      Optional<Number> minValue, Optional<Number> maxValue, Optional<Integer> decimalPlace,
                                      Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,
                                      boolean requiredValue, boolean multipleChoice)
@@ -108,7 +108,7 @@ record NumericValueConstraintsRecord(NumericType numberType,
 
   public NumericValueConstraintsRecord
   {
-    validateNumericTypeFieldNotNull(this, numberType, VALUE_CONSTRAINTS_NUMBER_TYPE);
+    validateXsdNumericDatatypeFieldNotNull(this, numberType, VALUE_CONSTRAINTS_NUMBER_TYPE);
     validateOptionalFieldNotNull(this, unitOfMeasure, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
     validateOptionalFieldNotNull(this, minValue, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
     validateOptionalFieldNotNull(this, maxValue, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);

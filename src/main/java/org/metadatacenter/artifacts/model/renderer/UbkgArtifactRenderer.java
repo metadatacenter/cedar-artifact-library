@@ -10,7 +10,6 @@ import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.ubkg.UbkgRendering;
 
@@ -105,7 +104,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
 
       if (valueConstraints instanceof NumericValueConstraints) { // TODO Use typesafe switch when available
         NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, numericValueConstraints.numberType().toURI());
+        ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, numericValueConstraints.numberType().toUri());
       } else if (valueConstraints instanceof TemporalValueConstraints) {
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
         ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, temporalValueConstraints.temporalType().toURI());

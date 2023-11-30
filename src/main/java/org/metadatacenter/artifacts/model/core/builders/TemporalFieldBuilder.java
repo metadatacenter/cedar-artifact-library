@@ -5,7 +5,7 @@ import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
 
@@ -25,7 +25,7 @@ public final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
     valueConstraintsBuilder.withMultipleChoice(false);
   }
 
-  public TemporalFieldBuilder withTemporalType(TemporalType temporalType)
+  public TemporalFieldBuilder withTemporalType(XsdTemporalDatatype temporalType)
   {
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     valueConstraintsBuilder.withTemporalType(temporalType);

@@ -10,7 +10,7 @@ public class NumericValueConstraintsTest
   {
     boolean requiredValue = false;
     boolean multipleChoice= false;
-    NumericType numberType = NumericType.DECIMAL;
+    XsdNumericDatatype numberType = XsdNumericDatatype.DECIMAL;
     String unitOfMeasure = "mm";
     Number minValue = 0;
     Number maxValue = 100;

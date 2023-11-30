@@ -1,13 +1,12 @@
 package org.metadatacenter.artifacts.model.core;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 
 import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 
-public enum NumericType
+public enum XsdNumericDatatype
 {
   DECIMAL("xsd:decimal"),
   INTEGER("xsd:int"),
@@ -20,24 +19,24 @@ public enum NumericType
 
   private String text;
 
-  NumericType(String text) {
+  XsdNumericDatatype(String text) {
     this.text = text;
   }
 
-  public URI toURI() { return URI.create(XSD_IRI + this.text.substring(this.text.indexOf(":") + 1)); }
+  public URI toUri() { return URI.create(XSD_IRI + this.text.substring(this.text.indexOf(":") + 1)); }
 
   @JsonValue
   public String getText() {
     return this.text;
   }
 
-  public static NumericType fromString(String text) {
-    for (NumericType n : NumericType.values()) {
+  public static XsdNumericDatatype fromString(String text) {
+    for (XsdNumericDatatype n : XsdNumericDatatype.values()) {
       if (n.text.equalsIgnoreCase(text)) {
         return n;
       }
     }
-    throw new IllegalArgumentException("No numeric type constant with text " + text + " found");
+    throw new IllegalArgumentException("No numeric datatype constant " + text + " found");
   }
 
   @Override public String toString()

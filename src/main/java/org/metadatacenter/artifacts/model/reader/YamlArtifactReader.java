@@ -16,6 +16,7 @@ import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.XsdDatatype;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -32,6 +33,7 @@ import java.util.Optional;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
@@ -283,8 +285,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(yamlSource, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(yamlSource, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
+    Optional<XsdDatatype> datatype = readXsdDatatype(yamlSource, path, DATATYPE);
     FieldUi fieldUi = readFieldUi(yamlSource, path);
-    Optional<ValueConstraints> valueConstraints = readValueConstraints(yamlSource, path);
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(yamlSource, path, datatype);
     Optional<String> skosPrefLabel = readString(yamlSource, path, SKOS_PREF_LABEL);
     List<String> skosAlternateLabels = readStringArray(yamlSource, path, SKOS_ALT_LABEL);
 
@@ -335,7 +338,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
   }
 
-  private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> yamlSource, String path)
+  private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> yamlSource, String path,
+    Optional<XsdDatatype> datatype)
   {
     return Optional.empty(); // TODO
   }
@@ -517,6 +521,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.of(Status.fromString(statusString.get()));
     else
       throw new ArtifactParseException("Invalid status " + statusString.get(), fieldName, path);
+  }
+
+  private Optional<XsdDatatype> readXsdDatatype(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  {
+    Optional<String> xsdDatatypeString = readString(yamlSource, path, fieldName, false);
+
+    if (!xsdDatatypeString.isPresent())
+      return Optional.empty();
+
+    if (XsdDatatype.isValidXsdDatatype(xsdDatatypeString.get()))
+      return Optional.of(XsdDatatype.fromString(xsdDatatypeString.get()));
+    else
+      throw new ArtifactParseException("Invalid status " + xsdDatatypeString.get(), fieldName, path);
   }
 
   private URI readRequiredUri(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)

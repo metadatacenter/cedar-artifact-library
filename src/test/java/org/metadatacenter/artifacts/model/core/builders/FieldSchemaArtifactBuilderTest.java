@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueType;
 
@@ -47,7 +47,7 @@ public class FieldSchemaArtifactBuilderTest
   {
     String name = "Field name";
     String description = "Field description";
-    NumericType numericType = NumericType.DOUBLE;
+    XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
     Number defaultValue = 22.3;
     Number minValue = 0.0;
     Number maxValue = 100.0;
@@ -81,7 +81,7 @@ public class FieldSchemaArtifactBuilderTest
   {
     String name = "Field name";
     String description = "Field description";
-    TemporalType temporalType = TemporalType.TIME;
+    XsdTemporalDatatype temporalType = XsdTemporalDatatype.TIME;
     TemporalGranularity temporalGranularity = TemporalGranularity.SECOND;
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timezoneEnabled = false;

@@ -83,13 +83,13 @@ public class ValidationHelper
       throw new IllegalStateException("Map field " + fieldName + " must contain all entries " + values + " in " + obj);
   }
 
-  public static void validateTemporalTypeFieldNotNull(Object obj, TemporalType field, String fieldName)
+  public static void validateXsdTemporalDatatypeFieldNotNull(Object obj, XsdTemporalDatatype field, String fieldName)
   {
     if (field == null)
       throw new IllegalStateException("Temporal type field " + fieldName + " is null in " + obj);
   }
 
-  public static void validateNumericTypeFieldNotNull(Object obj, NumericType field, String fieldName)
+  public static void validateXsdNumericDatatypeFieldNotNull(Object obj, XsdNumericDatatype field, String fieldName)
   {
     if (field == null)
       throw new IllegalStateException("Numeric type field " + fieldName + " is null in " + obj);

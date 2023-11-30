@@ -3,17 +3,17 @@ package org.metadatacenter.artifacts.model.core;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateTemporalTypeFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateXsdTemporalDatatypeFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE;
 
 public non-sealed interface TemporalValueConstraints extends ValueConstraints
 {
-  TemporalType temporalType();
+  XsdTemporalDatatype temporalType();
 
   Optional<TemporalDefaultValue> defaultValue();
 
-  static TemporalValueConstraints create(TemporalType temporalType, Optional<TemporalDefaultValue> defaultValue,
+  static TemporalValueConstraints create(XsdTemporalDatatype temporalType, Optional<TemporalDefaultValue> defaultValue,
     boolean requiredValue, boolean multipleChoice)
   {
     return new TemporalValueConstraintsRecord(temporalType, defaultValue, requiredValue, multipleChoice);
@@ -24,7 +24,7 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
   }
 
   class Builder {
-    private TemporalType temporalType;
+    private XsdTemporalDatatype temporalType;
     private Optional<TemporalDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
     private boolean multipleChoice = false;
@@ -32,7 +32,7 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
     private Builder() {
     }
 
-    public Builder withTemporalType(TemporalType temporalType) {
+    public Builder withTemporalType(XsdTemporalDatatype temporalType) {
       this.temporalType = temporalType;
       return this;
     }
@@ -59,13 +59,13 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
   }
 }
 
-record TemporalValueConstraintsRecord(TemporalType temporalType, Optional<TemporalDefaultValue> defaultValue,
+record TemporalValueConstraintsRecord(XsdTemporalDatatype temporalType, Optional<TemporalDefaultValue> defaultValue,
                                       boolean requiredValue, boolean multipleChoice)
   implements TemporalValueConstraints
 {
   public TemporalValueConstraintsRecord
   {
-    validateTemporalTypeFieldNotNull(this, temporalType, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
+    validateXsdTemporalDatatypeFieldNotNull(this, temporalType, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
     validateOptionalFieldNotNull(this, defaultValue, VALUE_CONSTRAINTS_DEFAULT_VALUE);
   }
 }

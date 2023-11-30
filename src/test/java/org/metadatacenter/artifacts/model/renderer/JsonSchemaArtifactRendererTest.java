@@ -8,11 +8,11 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 
@@ -78,7 +78,7 @@ public class JsonSchemaArtifactRendererTest
     String fieldDescription = "Field description";
     boolean requiredValue = false;
     TemporalGranularity granularity = TemporalGranularity.DAY;
-    TemporalType temporalType = TemporalType.DATE;
+    XsdTemporalDatatype temporalType = XsdTemporalDatatype.DATE;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
             withName(fieldName).
@@ -116,7 +116,7 @@ public class JsonSchemaArtifactRendererTest
     String fieldName = "Field name";
     String fieldDescription = "Field description";
     boolean requiredValue = false;
-    NumericType numericType = NumericType.DECIMAL;
+    XsdNumericDatatype numericType = XsdNumericDatatype.DECIMAL;
     int decimalPlaces = 3;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().

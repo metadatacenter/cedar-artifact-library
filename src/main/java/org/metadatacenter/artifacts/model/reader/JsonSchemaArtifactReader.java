@@ -16,7 +16,7 @@ import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.NumericFieldUi;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
@@ -30,7 +30,7 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUi;
 import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
@@ -39,7 +39,6 @@ import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.ValueType;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.model.ModelNodeValues;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -748,8 +747,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
-      Optional<NumericType> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
-      Optional<TemporalType> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
+      Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
+      Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
       Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
       Optional<Number> minValue = readNumber(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_NUMBER_VALUE);
       Optional<Number> maxValue = readNumber(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);
@@ -958,22 +957,22 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return new ControlledTermValueConstraintsAction(termUri, source, valueType, actionType, sourceUri, to);
   }
 
-  private Optional<TemporalType> readTemporalType(ObjectNode objectNode, String path, String fieldName)
+  private Optional<XsdTemporalDatatype> readTemporalType(ObjectNode objectNode, String path, String fieldName)
   {
     Optional<String> temporalTypeValue = readString(objectNode, path, fieldName);
 
     if (temporalTypeValue.isPresent())
-      return Optional.of(TemporalType.fromString(temporalTypeValue.get()));
+      return Optional.of(XsdTemporalDatatype.fromString(temporalTypeValue.get()));
     else
       return Optional.empty();
   }
 
-  private Optional<NumericType> readNumberType(ObjectNode objectNode, String path, String fieldName)
+  private Optional<XsdNumericDatatype> readNumberType(ObjectNode objectNode, String path, String fieldName)
   {
     Optional<String> numberTypeValue = readString(objectNode, path, fieldName);
 
     if (numberTypeValue.isPresent())
-      return Optional.of(NumericType.fromString(numberTypeValue.get()));
+      return Optional.of(XsdNumericDatatype.fromString(numberTypeValue.get()));
     else
       return Optional.empty();
   }

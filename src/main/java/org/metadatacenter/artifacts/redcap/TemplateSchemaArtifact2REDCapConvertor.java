@@ -8,12 +8,12 @@ import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 
@@ -115,7 +115,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
     case TEMPORAL:
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof TemporalValueConstraints)) {
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
-        TemporalType temporalType = temporalValueConstraints.temporalType();
+        XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
         InputTimeFormat inputTimeFormat = temporalFieldUi.inputTimeFormat();
         TemporalGranularity temporalGranularity = temporalFieldUi.temporalGranularity();
@@ -159,7 +159,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) {
         NumericValueConstraints numericValueConstraints = valueConstraints.get().asNumericValueConstraints();
-        NumericType numberType = numericValueConstraints.numberType();
+        XsdNumericDatatype numberType = numericValueConstraints.numberType();
 
         switch (numberType) {
         case INTEGER, LONG, INT, SHORT, BYTE -> {

@@ -1,7 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.NumericFieldUi;
 import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.Status;
@@ -24,7 +24,7 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     valueConstraintsBuilder.withMultipleChoice(false);
   }
 
-  public NumericFieldBuilder withNumericType(NumericType numericType) {
+  public NumericFieldBuilder withNumericType(XsdNumericDatatype numericType) {
     valueConstraintsBuilder.withNumberType(numericType);
     return this;
   }

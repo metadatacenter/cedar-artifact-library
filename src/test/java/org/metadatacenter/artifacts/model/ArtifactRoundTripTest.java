@@ -6,15 +6,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
@@ -109,7 +108,7 @@ public class ArtifactRoundTripTest
   {
     String name = "Field name";
     String description = "Field description";
-    NumericType numericType = NumericType.DOUBLE;
+    XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
     Number minValue = 0.0;
     Number maxValue = 100.0;
 
@@ -138,7 +137,7 @@ public class ArtifactRoundTripTest
   {
     String name = "Field name";
     String description = "Field description";
-    TemporalType temporalType = TemporalType.TIME;
+    XsdTemporalDatatype temporalType = XsdTemporalDatatype.TIME;
     TemporalGranularity temporalGranularity = TemporalGranularity.SECOND;
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
