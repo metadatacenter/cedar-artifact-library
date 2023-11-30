@@ -1,8 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.poi.sl.draw.geom.GuideIf;
+import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
@@ -199,7 +197,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> yamlSource)
   {
-    return null; // TODO
+    return null; // TODO Read template instance artifacts
   }
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> yamlSource, String path, String name)
@@ -224,8 +222,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(yamlSource, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(yamlSource, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
-    Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO
-    Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO
+    Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO Read child elements
+    Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO Read child fields
     TemplateUi templateUi = readTemplateUi(yamlSource, path);
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -259,8 +257,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(yamlSource, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(yamlSource, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
-    Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO
-    Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO
+    Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO  Read child elements
+    Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO  Read child fields
     ElementUi elementUi = readElementUi(yamlSource, path);
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -313,19 +311,26 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> yamlSource, String path)
   {
+    return TemplateUi.builder().build();
+    // TODO Read YAML for order for TemplateUi
+    // TODO Read YAML for pages for TemplateUi
+    // TODO Read YAML for header/footer for TemplateUi
+    // TODO Read YAML for propertyLabels, propertyDescriptions for TemplateUi
+    // TODO Read YAML for childPropertyUris for TemplateUi
 
-    return TemplateUi.builder().build(); // TODO
-    // TODO Read YAML for header/footer
-    // TODO Read YAML for UI.propertyLabels, UI.propertyDescriptions
-    // TODO Read YAML for childPropertyUris
+//    return TemplateUi.create(List<String> order, List<String> pages, Map<String, String> propertyLabels,
+//    Map<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
   }
 
   private ElementUi readElementUi(LinkedHashMap<String, Object> yamlSource, String path)
   {
+    return ElementUi.builder().build();
+    // TODO Read YAML for order for ElementUi
+    // TODO Read YAML for propertyLabels, propertyDescriptions for ElementUi
+    // TODO Read YAML for childPropertyUris for ElementUi
 
-    return ElementUi.builder().build(); // TODO
-    // TODO Read YAML for UI.propertyLabels, UI.propertyDescriptions
-    // TODO Read YAML for childPropertyUris
+//    return ElementUi.create(List<String> order, Map<String, String> propertyLabels, Map<String, String> propertyDescriptions,
+//    Optional<String> header, Optional<String> footer)
   }
 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> yamlSource, String path)
@@ -352,7 +357,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> yamlSource, String path,
     Optional<XsdDatatype> datatype)
   {
-    return Optional.empty(); // TODO
+    return Optional.empty(); // TODO Read Text, Numeric, ControlledTerm, and Temporal value constraints
   }
 
   private String readRequiredString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean allowEmpty)
