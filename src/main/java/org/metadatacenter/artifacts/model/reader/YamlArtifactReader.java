@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
@@ -44,9 +47,13 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_URI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
@@ -149,9 +156,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     String path = "/";
     String name = readRequiredString(yamlSource, path, ELEMENT, false);
+    boolean isMultiple = readBoolean(yamlSource, path, MULTIPLE, false);
+    Optional<Integer> minItems = readInteger(yamlSource, path, MIN_ITEMS);
+    Optional<Integer> maxItems = readInteger(yamlSource, path, MAX_ITEMS);
+    Optional<URI> propertyUri = readUri(yamlSource, path, PROPERTY_URI);
 
-    return readElementSchemaArtifact(yamlSource, path, name, false,
-      Optional.empty(), Optional.empty(), Optional.empty());
+    return readElementSchemaArtifact(yamlSource, path, name, isMultiple, minItems, maxItems, propertyUri);
   }
 
   /**
@@ -177,13 +187,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    */
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
   {
-    {
-      String path = "/";
-      String name = readRequiredString(yamlSource, path, FIELD, false);
+    String path = "/";
+    String name = readRequiredString(yamlSource, path, FIELD, false);
+    boolean isMultiple = readBoolean(yamlSource, path, MULTIPLE, false);
+    Optional<Integer> minItems = readInteger(yamlSource, path, MIN_ITEMS);
+    Optional<Integer> maxItems = readInteger(yamlSource, path, MAX_ITEMS);
+    Optional<URI> propertyUri = readUri(yamlSource, path, PROPERTY_URI);
 
-      return readFieldSchemaArtifact(yamlSource, path, name, false,
-        Optional.empty(), Optional.empty(), Optional.empty());
-    }
+    return readFieldSchemaArtifact(yamlSource, path, name, isMultiple, minItems, maxItems, propertyUri);
   }
 
   @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> yamlSource)
@@ -399,6 +410,32 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.empty();
 
     return Optional.of(value);
+  }
+
+  private Optional<Integer> readInteger(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  {
+    Object rawValue = yamlSource.get(fieldName);
+
+    if (rawValue == null)
+      return Optional.empty();
+
+    if (!(rawValue instanceof Integer))
+      throw new ArtifactParseException("Value must be an integer", fieldName, path);
+
+    return Optional.of((Integer)rawValue);
+  }
+
+  private Optional<Number> readNumber(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  {
+    Object rawValue = yamlSource.get(fieldName);
+
+    if (rawValue == null)
+      return Optional.empty();
+
+    if (!(rawValue instanceof Number))
+      throw new ArtifactParseException("Value must be a number", fieldName, path);
+
+    return Optional.of((Number)rawValue);
   }
 
   private boolean readBoolean(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean defaultValue)

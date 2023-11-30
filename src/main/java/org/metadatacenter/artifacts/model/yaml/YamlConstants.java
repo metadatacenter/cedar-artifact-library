@@ -43,6 +43,7 @@ public class YamlConstants
   public static final String DECIMAL_PLACES = "decimalPlaces";
   public static final String MIN_LENGTH = "minLength";
   public static final String MAX_LENGTH = "maxLength";
+  public static final String PROPERTY_URI = "propertyUri";
   public static final String URI = "termUri";
   public static final String SOURCE = "source";
   public static final String VALUES = "values";

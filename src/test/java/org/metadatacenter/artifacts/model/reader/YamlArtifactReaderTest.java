@@ -26,8 +26,11 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
@@ -108,6 +111,9 @@ public class YamlArtifactReaderTest
     URI modifiedBy = URI.create("https://repo.metadatacenter.org/users/33");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
+    boolean isMultiple = true;
+    Integer minItems = 3;
+    Integer maxItems = 5;
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
     yamlSource.put(ELEMENT, name);
@@ -123,6 +129,9 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
     yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
+    yamlSource.put(MULTIPLE, isMultiple);
+    yamlSource.put(MIN_ITEMS, minItems);
+    yamlSource.put(MAX_ITEMS, maxItems);
 
     ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(yamlSource);
 
@@ -139,6 +148,9 @@ public class YamlArtifactReaderTest
     assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());
     assertEquals(createdOn, elementSchemaArtifact.createdOn().get());
     assertEquals(lastUpdatedOn, elementSchemaArtifact.lastUpdatedOn().get());
+    assertEquals(isMultiple, elementSchemaArtifact.isMultiple());
+    assertEquals(minItems, elementSchemaArtifact.minItems().get());
+    assertEquals(maxItems, elementSchemaArtifact.maxItems().get());
   }
 
   @Test public void readFieldSchemaArtifactTest()
@@ -160,6 +172,9 @@ public class YamlArtifactReaderTest
     FieldInputType fieldInputType = FieldInputType.TEXTFIELD;
     boolean valueRecommendationEnabled = false;
     boolean hidden = false;
+    boolean isMultiple = true;
+    Integer minItems = 3;
+    Integer maxItems = 5;
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
     yamlSource.put(FIELD, name);
@@ -179,6 +194,9 @@ public class YamlArtifactReaderTest
     yamlSource.put(INPUT_TYPE, FieldInputType.TEXTFIELD.toString());
     yamlSource.put(VALUE_RECOMMENDATION_ENABLED, valueRecommendationEnabled);
     yamlSource.put(HIDDEN, hidden);
+    yamlSource.put(MULTIPLE, isMultiple);
+    yamlSource.put(MIN_ITEMS, minItems);
+    yamlSource.put(MAX_ITEMS, maxItems);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 
@@ -199,6 +217,9 @@ public class YamlArtifactReaderTest
     assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
     assertEquals(valueRecommendationEnabled, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
     assertEquals(hidden, fieldSchemaArtifact.fieldUi().hidden());
+    assertEquals(isMultiple, fieldSchemaArtifact.isMultiple());
+    assertEquals(minItems, fieldSchemaArtifact.minItems().get());
+    assertEquals(maxItems, fieldSchemaArtifact.maxItems().get());
   }
 
 }
