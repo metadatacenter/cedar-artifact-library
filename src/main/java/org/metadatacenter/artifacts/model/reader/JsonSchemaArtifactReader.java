@@ -143,6 +143,8 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_UNIT_OF_
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_URI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VALUE_SETS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLECTION;
+import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
+import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
 public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 {
@@ -1147,25 +1149,25 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private TemporalGranularity readTemporalGranularity(ObjectNode objectNode, String path, String fieldName)
   {
-    String granularity = readRequiredString(objectNode, path, fieldName);
+    String granularityString = readRequiredString(objectNode, path, fieldName);
 
-    if (!ModelNodeValues.TEMPORAL_GRANULARITIES.contains(granularity))
-      throw new ArtifactParseException("Invalid granularity " + granularity, fieldName, path);
+    if (!TEMPORAL_GRANULARITIES.contains(granularityString))
+      throw new ArtifactParseException("Invalid granularity " + granularityString, fieldName, path);
 
-    return TemporalGranularity.fromString(granularity);
+    return TemporalGranularity.fromString(granularityString);
   }
 
   private InputTimeFormat readInputTimeFormat(ObjectNode objectNode, String path, String fieldName, InputTimeFormat defaultInputTimeFormat)
   {
-    Optional<String> timeFormat = readString(objectNode, path, fieldName);
+    Optional<String> timeFormatString = readString(objectNode, path, fieldName);
 
-    if (!timeFormat.isPresent())
+    if (!timeFormatString.isPresent())
       return defaultInputTimeFormat;
 
-    if (!ModelNodeValues.TIME_FORMATS.contains(timeFormat.get()))
-      throw new ArtifactParseException("Invalid time format " + timeFormat.get(), UI_INPUT_TIME_FORMAT, path);
+    if (!TIME_FORMATS.contains(timeFormatString.get()))
+      throw new ArtifactParseException("Invalid time format " + timeFormatString.get(), UI_INPUT_TIME_FORMAT, path);
 
-    return InputTimeFormat.fromString(timeFormat.get());
+    return InputTimeFormat.fromString(timeFormatString.get());
   }
 
   private ObjectNode readNode(ObjectNode objectNode, String path, String fieldName)

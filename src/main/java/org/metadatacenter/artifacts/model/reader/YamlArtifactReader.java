@@ -5,10 +5,15 @@ import org.metadatacenter.artifacts.model.core.ElementUi;
 import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldUi;
+import org.metadatacenter.artifacts.model.core.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.NumericFieldUi;
+import org.metadatacenter.artifacts.model.core.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateUi;
+import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
+import org.metadatacenter.artifacts.model.core.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
 
@@ -24,13 +29,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
@@ -38,9 +45,13 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_FORMAT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_ZONE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION_ENABLED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -49,7 +60,8 @@ import static org.metadatacenter.model.ModelNodeNames.INPUT_TYPES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
+import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
+import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
 public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, Object>>
 {
@@ -100,7 +112,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    */
   @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
   {
-    String path = "top level";
+    String path = "/";
     String name = readRequiredString(yamlSource, path, TEMPLATE, false);
 
     return readTemplateSchemaArtifact(yamlSource, path, name);
@@ -133,7 +145,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    */
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
   {
-    String path = "top level";
+    String path = "/";
     String name = readRequiredString(yamlSource, path, ELEMENT, false);
 
     return readElementSchemaArtifact(yamlSource, path, name, false,
@@ -149,22 +161,22 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * inputType: textfield
    * datatype: xsd:anyURI
    * values:
-   *       - ontology: Human Disease Ontology
-   *         acronym: DOID
-   *         termUri: "https://data.bioontology.org/ontologies/DOID"
-   *       - branch: Disease
-   *         acronym: DPCO
-   *         termUri: "http://purl.org/twc/dpo/ont/Disease"
-   *       - class: Translated Title
-   *         source: DATACITE-VOCAB
-   *         termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
-   *         type: OntologyClass
+   *  - ontology: Human Disease Ontology
+   *    acronym: DOID
+   *    termUri: "https://data.bioontology.org/ontologies/DOID"
+   *  - branch: Disease
+   *    acronym: DPCO
+   *    termUri: "http://purl.org/twc/dpo/ont/Disease"
+   *  - class: Translated Title
+   *    source: DATACITE-VOCAB
+   *    termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *    type: OntologyClass
    * </pre>
    */
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> yamlSource)
   {
     {
-      String path = "top level";
+      String path = "/";
       String name = readRequiredString(yamlSource, path, FIELD, false);
 
       return readFieldSchemaArtifact(yamlSource, path, name, false,
@@ -271,7 +283,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(yamlSource, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(yamlSource, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(yamlSource, path, LAST_UPDATED_ON);
-    FieldUi fieldUi = readFieldUi(yamlSource, path, UI);
+    FieldUi fieldUi = readFieldUi(yamlSource, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(yamlSource, path);
     Optional<String> skosPrefLabel = readString(yamlSource, path, SKOS_PREF_LABEL);
     List<String> skosAlternateLabels = readStringArray(yamlSource, path, SKOS_ALT_LABEL);
@@ -302,28 +314,25 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     // TODO Read YAML for childPropertyUris
   }
 
-  private FieldUi readFieldUi(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  private FieldUi readFieldUi(LinkedHashMap<String, Object> yamlSource, String path)
   {
-    String uiPath = path + "/" + fieldName;
+    FieldInputType fieldInputType = readFieldInputType(yamlSource, path, INPUT_TYPE);
+    boolean valueRecommendationEnabled = readBoolean(yamlSource, path, VALUE_RECOMMENDATION_ENABLED, false);
+    boolean hidden = readBoolean(yamlSource, path, HIDDEN, false);
 
-//    FieldInputType fieldInputType = readFieldInputType(yamlSource, uiPath, INPUT_TYPE);
-//    boolean valueRecommendationEnabled = readBoolean(yamlSource, uiPath, VALUE_RECOMMENDATION_ENABLED, false);
-//    boolean hidden = readBoolean(yamlSource, uiPath, HIDDEN, false);
-//
-//    if (fieldInputType.isTemporal()) {
-//      TemporalGranularity temporalGranularity = readTemporalGranularity(yamlSource, uiPath, GRANULARITY);
-//      InputTimeFormat inputTimeFormat = readInputTimeFormat(yamlSource, uiPath, InputTimeFormat.TWELVE_HOUR);
-//      boolean timeZoneEnabled = readBoolean(yamlSource, uiPath, TIMEZONE_ENABLED, false);
-//
-//      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
-//    } else if (fieldInputType.isNumeric()) {
-//      return NumericFieldUi.create(hidden);
-//    } else if (fieldInputType.isStatic()) {
-//      String content = readRequiredString(yamlSource, uiPath, CONTENT, true);
-//      return StaticFieldUi.create(fieldInputType, content, hidden);
-//    } else
-//      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
-    return FieldUi.create(FieldInputType.EMAIL, false, false); // TODO
+    if (fieldInputType.isTemporal()) {
+      TemporalGranularity temporalGranularity = readTemporalGranularity(yamlSource, path, GRANULARITY);
+      InputTimeFormat inputTimeFormat = readInputTimeFormat(yamlSource, path, TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
+      boolean timeZoneEnabled = readBoolean(yamlSource, path, TIME_ZONE, false);
+
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+    } else if (fieldInputType.isNumeric()) {
+      return NumericFieldUi.create(hidden);
+    } else if (fieldInputType.isStatic()) {
+      String content = readRequiredString(yamlSource, path, CONTENT, true);
+      return StaticFieldUi.create(fieldInputType, content, hidden);
+    } else
+      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
   }
 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> yamlSource, String path)
@@ -334,7 +343,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private String readRequiredString(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean allowEmpty)
   {
     if (!yamlSource.containsKey(fieldName))
-      throw new ArtifactParseException("No keyword", fieldName, path);
+      throw new ArtifactParseException("No keyword present", fieldName, path);
 
     Object rawValue = yamlSource.get(fieldName);
 
@@ -388,6 +397,22 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of(value);
   }
 
+  private boolean readBoolean(LinkedHashMap<String, Object> yamlSource, String path, String fieldName, boolean defaultValue)
+  {
+    if (!yamlSource.containsKey(fieldName))
+      return defaultValue;
+
+    Object rawValue = yamlSource.get(fieldName);
+
+    if (rawValue == null)
+      return defaultValue;
+
+    if (!(rawValue instanceof Boolean))
+      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldName, path);
+
+    return (Boolean)rawValue;
+  }
+
   private List<String> readStringArray(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
     Object rawValue = yamlSource.get(fieldName);
@@ -413,12 +438,36 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return stringValues;
   }
 
+  private TemporalGranularity readTemporalGranularity(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
+  {
+    String granularityString = readRequiredString(yamlSource, path, fieldName, false);
+
+    if (!TEMPORAL_GRANULARITIES.contains(granularityString))
+      throw new ArtifactParseException("Invalid granularity" + granularityString, INPUT_TYPE, path);
+
+    return TemporalGranularity.fromString(granularityString);
+  }
+
+  private InputTimeFormat readInputTimeFormat(LinkedHashMap<String, Object> yamlSource, String path, String fieldName,
+    InputTimeFormat defaultInputTimeFormat)
+  {
+    Optional<String> inputTimeFormatString = readString(yamlSource, path, fieldName);
+
+    if (!inputTimeFormatString.isPresent())
+      return defaultInputTimeFormat;
+
+    if (!TIME_FORMATS.contains(inputTimeFormatString.get()))
+      throw new ArtifactParseException("Invalid input time format" + inputTimeFormatString.get(), INPUT_TYPE, path);
+
+    return InputTimeFormat.fromString(inputTimeFormatString.get());
+  }
+
   private FieldInputType readFieldInputType(LinkedHashMap<String, Object> yamlSource, String path, String fieldName)
   {
     String inputTypeString = readRequiredString(yamlSource, path, fieldName, false);
 
     if (!INPUT_TYPES.contains(inputTypeString))
-      throw new ArtifactParseException("Invalid field input type " + inputTypeString, INPUT_TYPE, path);
+      throw new ArtifactParseException("Invalid field input type" + inputTypeString, INPUT_TYPE, path);
 
     return FieldInputType.fromString(inputTypeString);
   }

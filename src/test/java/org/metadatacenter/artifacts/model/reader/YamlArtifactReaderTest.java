@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.reader;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -22,6 +23,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
@@ -153,6 +155,7 @@ public class YamlArtifactReaderTest
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
     String prefLabel = "Study";
     List<String> altLabels = List.of("Label 1", "Label 2");
+    FieldInputType fieldInputType = FieldInputType.TEXTFIELD;
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
     yamlSource.put(FIELD, name);
@@ -169,6 +172,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
     yamlSource.put(SKOS_PREF_LABEL, prefLabel);
     yamlSource.put(SKOS_ALT_LABEL, altLabels);
+    yamlSource.put(INPUT_TYPE, FieldInputType.TEXTFIELD.toString());
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 
@@ -186,6 +190,7 @@ public class YamlArtifactReaderTest
     assertEquals(lastUpdatedOn, fieldSchemaArtifact.lastUpdatedOn().get());
     assertEquals(prefLabel, fieldSchemaArtifact.skosPrefLabel().get());
     assertEquals(altLabels, fieldSchemaArtifact.skosAlternateLabels());
+    assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
   }
 
 }
