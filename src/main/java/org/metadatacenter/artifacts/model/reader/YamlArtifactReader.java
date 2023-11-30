@@ -364,11 +364,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  private Map<String, String> readString2StringMap(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
-  {
-    return Collections.emptyMap(); // TODO Implement readString2StringMap
-  }
-
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
     FieldInputType fieldInputType = readFieldInputType(sourceNode, path, INPUT_TYPE);
@@ -388,11 +383,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return StaticFieldUi.create(fieldInputType, content, hidden);
     } else
       return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
-  }
-
-  private LinkedHashMap<String, Object> readChildNode(LinkedHashMap<String, Object> parentNode, String path, String fieldName)
-  {
-    return new LinkedHashMap<>(); // TODO Read child node
   }
 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,
@@ -734,37 +724,47 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private Optional<DefaultValue> readDefaultValue(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Optional.empty(); // TODO Read default value
+    return Optional.empty(); // TODO Implement read default value
   }
 
   private List<OntologyValueConstraint> readOntologyValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Collections.emptyList(); // TODO Read ontology value constraints
+    return Collections.emptyList(); // TODO Implement read ontology value constraints
   }
 
   private List<ClassValueConstraint> readClassValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Collections.emptyList(); // TODO Read class value constraints
+    return Collections.emptyList(); // TODO Implement read class value constraints
   }
 
   private List<ValueSetValueConstraint> readValueSetValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Collections.emptyList(); // TODO Read value set value constraints
+    return Collections.emptyList(); // TODO Implement read value set value constraints
   }
 
   private List<BranchValueConstraint> readBranchValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Collections.emptyList(); // TODO Read branch value constraints
+    return Collections.emptyList(); // TODO Implement read branch value constraints
   }
 
   private List<LiteralValueConstraint> readLiteralValueConstraints(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Collections.emptyList(); // TODO Read literal value constraints
+    return Collections.emptyList(); // TODO Implement read literal value constraints
   }
 
   private List<ControlledTermValueConstraintsAction> readValueConstraintsActions(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Collections.emptyList(); // TODO Read actions value constraints
+    return Collections.emptyList(); // TODO Implement read actions value constraints
+  }
+
+  private Map<String, String> readString2StringMap(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    return Collections.emptyMap(); // TODO Implement readString2StringMap
+  }
+
+  private LinkedHashMap<String, Object> readChildNode(LinkedHashMap<String, Object> parentNode, String path, String fieldName)
+  {
+    return new LinkedHashMap<>(); // TODO Implement read child node
   }
 
 }
