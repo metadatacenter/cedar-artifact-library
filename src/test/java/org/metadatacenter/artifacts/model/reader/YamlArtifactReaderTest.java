@@ -32,6 +32,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSIO
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
@@ -170,6 +171,7 @@ public class YamlArtifactReaderTest
     String prefLabel = "Study";
     List<String> altLabels = List.of("Label 1", "Label 2");
     FieldInputType fieldInputType = FieldInputType.TEXTFIELD;
+    boolean requiredValue = true;
     boolean valueRecommendationEnabled = false;
     boolean hidden = false;
     boolean isMultiple = true;
@@ -192,6 +194,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(SKOS_PREF_LABEL, prefLabel);
     yamlSource.put(SKOS_ALT_LABEL, altLabels);
     yamlSource.put(INPUT_TYPE, FieldInputType.TEXTFIELD.toString());
+    yamlSource.put(REQUIRED, requiredValue);
     yamlSource.put(VALUE_RECOMMENDATION_ENABLED, valueRecommendationEnabled);
     yamlSource.put(HIDDEN, hidden);
     yamlSource.put(MULTIPLE, isMultiple);
@@ -215,6 +218,7 @@ public class YamlArtifactReaderTest
     assertEquals(prefLabel, fieldSchemaArtifact.skosPrefLabel().get());
     assertEquals(altLabels, fieldSchemaArtifact.skosAlternateLabels());
     assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
+    // TODO assertEquals(requiredValue, fieldSchemaArtifact.valueConstraints().get().requiredValue());
     assertEquals(valueRecommendationEnabled, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
     assertEquals(hidden, fieldSchemaArtifact.fieldUi().hidden());
     assertEquals(isMultiple, fieldSchemaArtifact.isMultiple());
