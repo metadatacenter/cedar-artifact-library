@@ -36,7 +36,7 @@ The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element
 
 ## Serializing Schema Artifacts
 
-Currently, the following serializations are supported: JSON Schema, YAML, Excel, CSV, and TSV.
+Currently, the following serializations are supported: JSON Schema, YAML, Excel, CSV, TSV, and UBKG.
 
 ### Serializing to JSON Schema 
 
