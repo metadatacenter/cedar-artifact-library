@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 
@@ -169,6 +170,17 @@ public class JsonSchemaArtifactReaderTest
     assertEquals(fieldSchemaArtifact.description(), "Test description");
     assertEquals(fieldSchemaArtifact.modelVersion(), new Version(1, 6, 0));
     assertNotNull(fieldSchemaArtifact.fieldUi());
+  }
+
+  @Test
+  public void testReadTemplateInstance()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("SimpleInstance.json");
+
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    assertEquals("Controlled Terms metadata", templateInstanceArtifact.name());
+
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)
