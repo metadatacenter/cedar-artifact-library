@@ -515,6 +515,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
+    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances);
+
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
   }
