@@ -510,8 +510,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     URI isBasedOn = readRequiredUri(sourceNode, path, SCHEMA_IS_BASED_ON);
-    String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
-    String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
+    Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
+    Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
@@ -530,8 +530,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
-    String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
-    String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
+    Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
+    Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
 
@@ -600,8 +600,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
             arrayIndex++;
           }
         }
-      } else
-        throw new ArtifactParseException("Unknown non-object instance artifact", instanceArtifactFieldName, path);
+      }
     }
   }
 

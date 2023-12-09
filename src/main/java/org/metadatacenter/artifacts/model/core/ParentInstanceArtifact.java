@@ -2,12 +2,13 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public sealed interface ParentInstanceArtifact permits TemplateInstanceArtifact, ElementInstanceArtifact
 {
-  String name();
+  Optional<String> name();
 
-  String description();
+  Optional<String> description();
 
   Map<String, List<FieldInstanceArtifact>> fieldInstances();
 

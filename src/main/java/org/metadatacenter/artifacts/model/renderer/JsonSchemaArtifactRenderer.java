@@ -345,8 +345,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.putNull(JSON_LD_ID);
 
     rendering.put(SCHEMA_IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
-    rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.name());
-    rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description());
+
+    if (templateInstanceArtifact.name().isPresent())
+       rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.name().get());
+
+    if (templateInstanceArtifact.description().isPresent())
+      rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description().get());
 
     if (templateInstanceArtifact.createdBy().isPresent())
       rendering.put(PAV_CREATED_BY, templateInstanceArtifact.createdBy().get().toString());

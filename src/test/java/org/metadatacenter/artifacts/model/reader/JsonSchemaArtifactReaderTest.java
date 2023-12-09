@@ -173,14 +173,23 @@ public class JsonSchemaArtifactReaderTest
   }
 
   @Test
-  public void testReadTemplateInstance()
+  public void testReadSimpleTemplateInstance()
   {
     ObjectNode objectNode = getJSONFileContentAsObjectNode("SimpleInstance.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
-    assertEquals("Controlled Terms metadata", templateInstanceArtifact.name());
+    assertEquals("Controlled Terms metadata", templateInstanceArtifact.name().get());
+  }
 
+  @Test
+  public void testReadSimpleTemplateInstanceWithNesting()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("SimpleInstanceWithNesting.json");
+
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    assertEquals("Read Instance Test metadata", templateInstanceArtifact.name().get());
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

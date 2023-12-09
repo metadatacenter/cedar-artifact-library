@@ -27,7 +27,7 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
   static TemplateInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description,
+    Optional<String> name, Optional<String> description,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     URI isBasedOn,
     Map<String, List<FieldInstanceArtifact>> fieldInstances,
@@ -50,8 +50,8 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = new HashMap<>();
     private URI isBasedOn;
-    private String name;
-    private String description = "";
+    private Optional<String> name = Optional.empty();
+    private Optional<String> description = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
@@ -83,13 +83,13 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
     public Builder withName(String name)
     {
-      this.name = name;
+      this.name = Optional.ofNullable(name);
       return this;
     }
 
     public Builder withDescription(String description)
     {
-      this.description = description;
+      this.description = Optional.ofNullable(description);
       return this;
     }
 
@@ -144,7 +144,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 }
 
 record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                      String name, String description,
+                                      Optional<String> name, Optional<String> description,
                                       Optional<URI> createdBy, Optional<URI> modifiedBy,
                                       Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                       URI isBasedOn,
@@ -156,8 +156,8 @@ record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> 
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
-    validateStringFieldNotNull(this, name, SCHEMA_ORG_NAME);
-    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
+    validateOptionalFieldNotNull(this, name, SCHEMA_ORG_NAME);
+    validateOptionalFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
     validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
     validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
     validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
