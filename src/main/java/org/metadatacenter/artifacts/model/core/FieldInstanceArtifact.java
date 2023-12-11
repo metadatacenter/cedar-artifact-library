@@ -39,6 +39,12 @@ public interface FieldInstanceArtifact extends InstanceArtifact
 
   String jsonLdValue();
 
+  Optional<String> label();
+
+  Optional<String> notation();
+
+  Optional<String> prefLabel();
+
   static Builder builder()
   {
     return new Builder();
