@@ -146,6 +146,10 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
   static RichTextFieldBuilder richTextFieldBuilder() { return new RichTextFieldBuilder(); }
 
   static YouTubeFieldBuilder youTubeFieldBuilder() { return new YouTubeFieldBuilder(); }
+
+  @Override default void accept(ArtifactVisitor visitor) {
+    visitor.visitChildArtifact(this);
+  }
 }
 
 record FieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,

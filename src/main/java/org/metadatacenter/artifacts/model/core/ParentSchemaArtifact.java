@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
+public sealed interface ParentSchemaArtifact extends ParentArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
 {
   String name();
 
@@ -131,4 +131,17 @@ public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, Ele
 
     return childNames;
   }
+
+  default void accept(ArtifactVisitor visitor) {
+    visitor.visitParentArtifact(this);
+
+    for (FieldSchemaArtifact child : fieldSchemas().values()) {
+        child.accept(visitor);
+    }
+
+    for (ElementSchemaArtifact child : elementSchemas().values()) {
+      child.accept(visitor);
+    }
+  }
+
 }

@@ -61,6 +61,18 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
   default ParentArtifactUi getUi() { return templateUi(); }
 
+  @Override default void accept(ArtifactVisitor visitor) {
+    visitor.visitParentArtifact(this);
+
+    for (ChildArtifact child : fieldSchemas().values()) {
+      child.accept(visitor);
+    }
+
+    for (ChildArtifact child : elementSchemas().values()) {
+      child.accept(visitor);
+    }
+  }
+
   static Builder builder() {
     return new Builder();
   }

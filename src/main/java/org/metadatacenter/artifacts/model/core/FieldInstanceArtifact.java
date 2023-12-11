@@ -26,7 +26,7 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
  * While field instances may not necessarily have JSON-LD identifiers or provenance fields (name, description,
  * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them.
  */
-public interface FieldInstanceArtifact extends InstanceArtifact
+public interface FieldInstanceArtifact extends ChildInstanceArtifact
 {
   static FieldInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
@@ -44,6 +44,10 @@ public interface FieldInstanceArtifact extends InstanceArtifact
   Optional<String> notation();
 
   Optional<String> prefLabel();
+
+  @Override default void accept(ArtifactVisitor visitor) {
+    visitor.visitChildArtifact(this);
+  }
 
   static Builder builder()
   {

@@ -36,6 +36,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
   }
 
+
   static Builder builder()
   {
     return new Builder();
