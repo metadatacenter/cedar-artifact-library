@@ -37,6 +37,8 @@ public interface FieldInstanceArtifact extends InstanceArtifact
       createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
+  String jsonLdValue();
+
   static Builder builder()
   {
     return new Builder();
