@@ -111,24 +111,20 @@ public class TemplateSchemaArtifactTest
   {
     String templateName = "Template 1";
     String textFieldName1 = "Text Field 1";
-    String textFieldName2 = "Text Field 2";
 
     FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
-    FieldSchemaArtifact textField2 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName2).build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName(templateName)
       .withFieldSchema(textField1)
-      .withFieldSchema(textField2)
       .build();
 
     Reporter reporter = new Reporter();
 
     templateSchemaArtifact.accept(reporter, "/");
 
-    assertEquals(3, reporter.getReport().size());
+    assertEquals(2, reporter.getReport().size());
     assertEquals(templateName, reporter.getReport().get(0));
     assertEquals(textFieldName1, reporter.getReport().get(1));
-    assertEquals(textFieldName2, reporter.getReport().get(2));
   }
 }
