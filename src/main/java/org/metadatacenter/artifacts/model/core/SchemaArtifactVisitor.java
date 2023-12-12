@@ -2,7 +2,9 @@ package org.metadatacenter.artifacts.model.core;
 
 interface SchemaArtifactVisitor
 {
-  void visitParentSchemaArtifact(ParentSchemaArtifact parentSchemaArtifact);
+  void visitTemplateSchemaArtifact(TemplateSchemaArtifact parentSchemaArtifact, String path);
 
-  void visitChildSchemaArtifact(ChildSchemaArtifact childSchemaArtifact);
+  void visitElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact, String path);
+
+  void visitFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact, String path);
 }

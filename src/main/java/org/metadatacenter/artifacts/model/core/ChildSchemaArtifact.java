@@ -15,5 +15,5 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifac
 
   Optional<URI> propertyUri();
 
-  void accept(SchemaArtifactVisitor visitor);
+  void accept(SchemaArtifactVisitor visitor, String path);
 }

@@ -90,16 +90,21 @@ public class TemplateSchemaArtifactTest
       return report;
     }
 
-    @Override public void visitParentSchemaArtifact(ParentSchemaArtifact parentSchemaArtifact)
+    @Override public void visitTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact, String path)
     {
-      report.add(parentSchemaArtifact.name());
+      report.add(templateSchemaArtifact.name());
     }
 
-    @Override public void visitChildSchemaArtifact(ChildSchemaArtifact childSchemaArtifact)
+    @Override public void visitElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact, String path)
     {
-      report.add(childSchemaArtifact.name());
+      report.add(elementSchemaArtifact.name());
     }
-  };
+
+    @Override public void visitFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact, String path)
+    {
+      report.add(fieldSchemaArtifact.name());
+    }
+  }
 
   @Test
   public void testVisitor()
@@ -119,7 +124,7 @@ public class TemplateSchemaArtifactTest
 
     Reporter reporter = new Reporter();
 
-    templateSchemaArtifact.accept(reporter);
+    templateSchemaArtifact.accept(reporter, "/");
 
     assertEquals(3, reporter.getReport().size());
     assertEquals(templateName, reporter.getReport().get(0));

@@ -146,8 +146,8 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   static YouTubeFieldBuilder youTubeFieldBuilder() { return new YouTubeFieldBuilder(); }
 
-  @Override default void accept(SchemaArtifactVisitor visitor) {
-    visitor.visitChildSchemaArtifact(this);
+  @Override default void accept(SchemaArtifactVisitor visitor, String path) {
+    visitor.visitFieldSchemaArtifact(this, path);
   }
 }
 
