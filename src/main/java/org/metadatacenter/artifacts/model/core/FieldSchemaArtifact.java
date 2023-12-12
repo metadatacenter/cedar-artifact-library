@@ -17,7 +17,6 @@ import org.metadatacenter.artifacts.model.core.builders.TemporalFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -147,8 +146,8 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
 
   static YouTubeFieldBuilder youTubeFieldBuilder() { return new YouTubeFieldBuilder(); }
 
-  @Override default void accept(ArtifactVisitor visitor) {
-    visitor.visitChildArtifact(this);
+  @Override default void accept(SchemaArtifactVisitor visitor) {
+    visitor.visitChildSchemaArtifact(this);
   }
 }
 

@@ -45,8 +45,8 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
 
   Optional<String> prefLabel();
 
-  @Override default void accept(ArtifactVisitor visitor) {
-    visitor.visitChildArtifact(this);
+  @Override default void accept(InstanceArtifactVisitor visitor, String path) {
+    visitor.visitFieldInstanceArtifact(this, path);
   }
 
   static Builder builder()
@@ -84,9 +84,9 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
       return this;
     }
 
-    public Builder withJsonLdId(Optional<URI> jsonLdId)
+    public Builder withJsonLdId(URI jsonLdId)
     {
-      this.jsonLdId = jsonLdId;
+      this.jsonLdId = Optional.ofNullable(jsonLdId);
       return this;
     }
 

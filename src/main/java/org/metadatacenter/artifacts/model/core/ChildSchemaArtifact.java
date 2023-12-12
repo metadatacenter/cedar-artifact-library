@@ -14,4 +14,6 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifac
   Optional<Integer> maxItems();
 
   Optional<URI> propertyUri();
+
+  void accept(SchemaArtifactVisitor visitor);
 }

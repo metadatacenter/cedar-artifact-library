@@ -5,6 +5,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class TemplateSchemaArtifactTest
 {
   @Test
@@ -76,5 +79,51 @@ public class TemplateSchemaArtifactTest
   {
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .build();
+  }
+
+  private class Reporter implements SchemaArtifactVisitor
+  {
+    private List<String> report = new ArrayList<>();
+
+    public List<String> getReport()
+    {
+      return report;
+    }
+
+    @Override public void visitParentSchemaArtifact(ParentSchemaArtifact parentSchemaArtifact)
+    {
+      report.add(parentSchemaArtifact.name());
+    }
+
+    @Override public void visitChildSchemaArtifact(ChildSchemaArtifact childSchemaArtifact)
+    {
+      report.add(childSchemaArtifact.name());
+    }
+  };
+
+  @Test
+  public void testVisitor()
+  {
+    String templateName = "Template 1";
+    String textFieldName1 = "Text Field 1";
+    String textFieldName2 = "Text Field 2";
+
+    FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
+    FieldSchemaArtifact textField2 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName2).build();
+
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withName(templateName)
+      .withFieldSchema(textField1)
+      .withFieldSchema(textField2)
+      .build();
+
+    Reporter reporter = new Reporter();
+
+    templateSchemaArtifact.accept(reporter);
+
+    assertEquals(3, reporter.getReport().size());
+    assertEquals(templateName, reporter.getReport().get(0));
+    assertEquals(textFieldName1, reporter.getReport().get(1));
+    assertEquals(textFieldName2, reporter.getReport().get(2));
   }
 }

@@ -132,8 +132,8 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     return childNames;
   }
 
-  default void accept(ArtifactVisitor visitor) {
-    visitor.visitParentArtifact(this);
+  default void accept(SchemaArtifactVisitor visitor) {
+    visitor.visitParentSchemaArtifact(this);
 
     for (FieldSchemaArtifact child : fieldSchemas().values()) {
         child.accept(visitor);
@@ -143,5 +143,4 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
       child.accept(visitor);
     }
   }
-
 }

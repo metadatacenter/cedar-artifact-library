@@ -14,17 +14,5 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact permits Te
 
   Map<String, List<ElementInstanceArtifact>> elementInstances();
 
-  default void accept(ArtifactVisitor visitor) {
-    visitor.visitParentArtifact(this);
-
-    for (List<FieldInstanceArtifact> children : fieldInstances().values()) {
-      for (FieldInstanceArtifact child : children)
-        child.accept(visitor);
-    }
-
-    for (List<ElementInstanceArtifact> children : elementInstances().values()) {
-      for (ElementInstanceArtifact child : children)
-        child.accept(visitor);
-    }
-  }
+  void accept(InstanceArtifactVisitor visitor, String path);
 }

@@ -56,14 +56,14 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
   ElementUi elementUi();
 
-  @Override default void accept(ArtifactVisitor visitor) {
-    visitor.visitParentArtifact(this);
+  @Override default void accept(SchemaArtifactVisitor visitor) {
+    visitor.visitParentSchemaArtifact(this);
 
-    for (ChildArtifact child : fieldSchemas().values()) {
+    for (ChildSchemaArtifact child : fieldSchemas().values()) {
       child.accept(visitor);
     }
 
-    for (ChildArtifact child : elementSchemas().values()) {
+    for (ChildSchemaArtifact child : elementSchemas().values()) {
       child.accept(visitor);
     }
   }

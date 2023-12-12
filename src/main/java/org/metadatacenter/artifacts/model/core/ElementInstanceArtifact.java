@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,43 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
   }
 
+  @Override default void accept(InstanceArtifactVisitor visitor, String path) {
+    visitor.visitElementInstanceArtifact(this, path);
+
+    for (Map.Entry<String, List<FieldInstanceArtifact>> children : fieldInstances().entrySet()) {
+      String fieldName = children.getKey();
+      String childBasePath = path + "/" + fieldName;
+      List<FieldInstanceArtifact> fieldInstanceArtifacts = children.getValue();
+
+      if (fieldInstanceArtifacts.size() == 1) {
+        FieldInstanceArtifact fieldInstanceArtifact = fieldInstanceArtifacts.get(0);
+        fieldInstanceArtifact.accept(visitor, childBasePath);
+      } else {
+        int childNumber = 0;
+        for (FieldInstanceArtifact fieldInstanceArtifact : fieldInstanceArtifacts) {
+          fieldInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
+          childNumber++;
+        }
+      }
+    }
+
+    for (Map.Entry<String, List<ElementInstanceArtifact>> children : elementInstances().entrySet()) {
+      String elementName = children.getKey();
+      String childBasePath = path + "/" + elementName;
+      List<ElementInstanceArtifact> elementInstanceArtifacts = children.getValue();
+
+      if (elementInstanceArtifacts.size() == 1) {
+        ElementInstanceArtifact elementInstanceArtifact = elementInstanceArtifacts.get(0);
+        elementInstanceArtifact.accept(visitor, childBasePath);
+      } else {
+        int childNumber = 0;
+        for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
+          elementInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
+          childNumber++;
+        }
+      }
+    }
+  }
 
   static Builder builder()
   {
@@ -114,13 +152,37 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withChildElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
+    public Builder withFieldInstance(String childFieldName, FieldInstanceArtifact fieldInstance)
+    {
+      if (fieldInstances.containsKey(childFieldName))
+        fieldInstances.get(childFieldName).add(fieldInstance);
+      else {
+        List<FieldInstanceArtifact> childFieldInstances = new ArrayList<>();
+        childFieldInstances.add(fieldInstance);
+        fieldInstances.put(childFieldName, childFieldInstances);
+      }
+      return this;
+    }
+
+    public Builder withElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
+    {
+      if (elementInstances.containsKey(childElementName))
+        elementInstances.get(childElementName).add(elementInstance);
+      else {
+        List<ElementInstanceArtifact> childElementInstances = new ArrayList<>();
+        childElementInstances.add(elementInstance);
+        elementInstances.put(childElementName, childElementInstances);
+      }
+      return this;
+    }
+
+    public Builder withElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
     {
       this.elementInstances.put(childElementName, List.copyOf(childElementInstances));
       return this;
     }
 
-    public Builder withChildFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
+    public Builder withFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
     {
       this.fieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
       return this;

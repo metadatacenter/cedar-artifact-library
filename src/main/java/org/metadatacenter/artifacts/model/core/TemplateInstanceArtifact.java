@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.Optional;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
@@ -38,6 +38,44 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
   }
 
   URI isBasedOn();
+
+  @Override default void accept(InstanceArtifactVisitor visitor, String path) {
+    visitor.visitTemplateInstanceArtifact(this, path);
+
+    for (Map.Entry<String, List<FieldInstanceArtifact>> children : fieldInstances().entrySet()) {
+      String fieldName = children.getKey();
+      String childBasePath = path + fieldName;
+      List<FieldInstanceArtifact> fieldInstanceArtifacts = children.getValue();
+
+      if (fieldInstanceArtifacts.size() == 1) {
+        FieldInstanceArtifact fieldInstanceArtifact = fieldInstanceArtifacts.get(0);
+        fieldInstanceArtifact.accept(visitor, childBasePath);
+      } else {
+        int childNumber = 0;
+        for (FieldInstanceArtifact fieldInstanceArtifact : fieldInstanceArtifacts) {
+          fieldInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
+          childNumber++;
+        }
+      }
+    }
+
+    for (Map.Entry<String, List<ElementInstanceArtifact>> children : elementInstances().entrySet()) {
+      String elementName = children.getKey();
+      String childBasePath = path + elementName;
+      List<ElementInstanceArtifact> elementInstanceArtifacts = children.getValue();
+
+      if (elementInstanceArtifacts.size() == 1) {
+        ElementInstanceArtifact elementInstanceArtifact = elementInstanceArtifacts.get(0);
+        elementInstanceArtifact.accept(visitor, childBasePath);
+      } else {
+        int childNumber = 0;
+        for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
+          elementInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
+          childNumber++;
+        }
+      }
+    }
+  }
 
   static Builder builder()
   {
@@ -123,17 +161,42 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withChildElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
+    public Builder withFieldInstance(String childFieldName, FieldInstanceArtifact fieldInstance)
     {
-      this.elementInstances.put(childElementName, List.copyOf(childElementInstances));
+      if (fieldInstances.containsKey(childFieldName))
+        fieldInstances.get(childFieldName).add(fieldInstance);
+      else {
+        List<FieldInstanceArtifact> childFieldInstances = new ArrayList<>();
+        childFieldInstances.add(fieldInstance);
+        fieldInstances.put(childFieldName, childFieldInstances);
+      }
       return this;
     }
 
-    public Builder withChildFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
+    public Builder withElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
     {
-      this.fieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
+      if (elementInstances.containsKey(childElementName))
+        elementInstances.get(childElementName).add(elementInstance);
+      else {
+        List<ElementInstanceArtifact> childElementInstances = new ArrayList<>();
+        childElementInstances.add(elementInstance);
+        elementInstances.put(childElementName, childElementInstances);
+      }
       return this;
     }
+
+    public Builder withFieldInstances(String childFieldName, List<FieldInstanceArtifact> fieldInstances)
+    {
+      this.fieldInstances.put(childFieldName, List.copyOf(fieldInstances));
+      return this;
+    }
+
+    public Builder withElementInstances(String childElementName, List<ElementInstanceArtifact> elementInstances)
+    {
+      this.elementInstances.put(childElementName, List.copyOf(elementInstances));
+      return this;
+    }
+
 
     public TemplateInstanceArtifact build()
     {
