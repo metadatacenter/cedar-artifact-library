@@ -42,10 +42,10 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
   @Override default void accept(InstanceArtifactVisitor visitor, String path) {
     visitor.visitTemplateInstanceArtifact(this, path);
 
-    for (Map.Entry<String, List<FieldInstanceArtifact>> children : fieldInstances().entrySet()) {
-      String fieldName = children.getKey();
+    for (Map.Entry<String, List<FieldInstanceArtifact>> entry : fieldInstances().entrySet()) {
+      String fieldName = entry.getKey();
       String childBasePath = path + fieldName;
-      List<FieldInstanceArtifact> fieldInstanceArtifacts = children.getValue();
+      List<FieldInstanceArtifact> fieldInstanceArtifacts = entry.getValue();
 
       if (fieldInstanceArtifacts.size() == 1) {
         FieldInstanceArtifact fieldInstanceArtifact = fieldInstanceArtifacts.get(0);
@@ -59,10 +59,10 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       }
     }
 
-    for (Map.Entry<String, List<ElementInstanceArtifact>> children : elementInstances().entrySet()) {
-      String elementName = children.getKey();
+    for (Map.Entry<String, List<ElementInstanceArtifact>> entry : elementInstances().entrySet()) {
+      String elementName = entry.getKey();
       String childBasePath = path + elementName;
-      List<ElementInstanceArtifact> elementInstanceArtifacts = children.getValue();
+      List<ElementInstanceArtifact> elementInstanceArtifacts = entry.getValue();
 
       if (elementInstanceArtifacts.size() == 1) {
         ElementInstanceArtifact elementInstanceArtifact = elementInstanceArtifacts.get(0);
