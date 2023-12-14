@@ -1,6 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
-interface SchemaArtifactVisitor
+public interface SchemaArtifactVisitor
 {
   void visitTemplateSchemaArtifact(TemplateSchemaArtifact parentSchemaArtifact, String path);
 
