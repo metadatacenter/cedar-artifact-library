@@ -3,46 +3,19 @@ package org.metadatacenter.artifacts.model.core;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TemplateInstanceArtifactTest
 {
-  private class Reporter implements InstanceArtifactVisitor
-  {
-    private List<String> report = new ArrayList<>();
-
-    public List<String> getReport()
-    {
-      return report;
-    }
-
-    @Override public void visitTemplateInstanceArtifact(ParentInstanceArtifact parentInstanceArtifact, String path)
-    {
-      report.add(path);
-    }
-
-    @Override public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path)
-    {
-      report.add(path);
-    }
-
-    @Override public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path)
-    {
-      report.add(path);
-    }
-  }
-
   @Test
-  public void testVisitor()
+  public void basicInstanceBuilderTest()
   {
     String instanceName = "Template 1";
+    URI isBasedOnTemplateUri = URI.create("https://repo.metadatacenter.org/templates/3232");
     String textFieldName1 = "Text Field 1";
     String element1Name = "Element 1";
     String textFieldName2 = "Text Field 2";
-    URI isBasedOn = URI.create("https://repo.metadatacenter.org/templates/3232");
 
     FieldInstanceArtifact textField1 = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
     ElementInstanceArtifact element1 = ElementInstanceArtifact.builder().withFieldInstance(textFieldName1, textField1).build();
@@ -50,20 +23,17 @@ public class TemplateInstanceArtifactTest
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
       .withName(instanceName)
-      .withIsBasedOn(isBasedOn)
+      .withIsBasedOn(isBasedOnTemplateUri)
       .withFieldInstance(textFieldName2, textField2)
       .withElementInstance(element1Name, element1)
       .build();
 
-    Reporter reporter = new Reporter();
+    assertEquals(instanceName, templateInstanceArtifact.name().get());
+    assertEquals(isBasedOnTemplateUri, templateInstanceArtifact.isBasedOn());
+    assertEquals(1, templateInstanceArtifact.fieldInstances().size());
+    assertEquals(1, templateInstanceArtifact.elementInstances().size());
+    assertEquals(textField2, templateInstanceArtifact.fieldInstances().get(textFieldName2).get(0));
+    assertEquals(element1, templateInstanceArtifact.elementInstances().get(element1Name).get(0));
 
-    templateInstanceArtifact.accept(reporter, "/");
-
-    assertEquals(4, reporter.getReport().size());
-    assertEquals("/", reporter.getReport().get(0));
-    assertEquals("/" + textFieldName2, reporter.getReport().get(1));
-    assertEquals("/" + element1Name, reporter.getReport().get(2));
-    assertEquals("/" + element1Name + "/" + textFieldName1, reporter.getReport().get(3));
   }
-
 }
