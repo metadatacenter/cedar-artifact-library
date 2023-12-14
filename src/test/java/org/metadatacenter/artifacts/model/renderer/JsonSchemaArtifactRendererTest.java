@@ -268,6 +268,16 @@ public class JsonSchemaArtifactRendererTest
     //System.out.println(templateRendering.toPrettyString());
   }
 
+  @Test
+  public void testRenderElementSchemaArtifact() {
+    // Similar test for renderElementSchemaArtifact() if needed
+  }
+
+  @Test
+  public void testRenderFieldSchemaArtifact() {
+    // Similar test for renderFieldSchemaArtifact() if needed
+  }
+
   private boolean validateJsonSchema(ObjectNode schemaNode)
   {
     try {
@@ -287,16 +297,6 @@ public class JsonSchemaArtifactRendererTest
     } catch (ProcessingException e) {
       return false;
     }
-  }
-
-  @Test
-  public void testRenderElementSchemaArtifact() {
-    // Similar test for renderElementSchemaArtifact() if needed
-  }
-
-  @Test
-  public void testRenderFieldSchemaArtifact() {
-    // Similar test for renderFieldSchemaArtifact() if needed
   }
 
   private ObjectNode getFileContentAsObjectNode(String jsonFileName)
