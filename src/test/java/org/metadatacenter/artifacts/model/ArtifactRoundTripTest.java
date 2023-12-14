@@ -526,17 +526,17 @@ public class ArtifactRoundTripTest
 
   @Test public void testRoundTripHuBMAPSampleBlock()
   {
-    testRoundTripFromFile("SampleBlock.json");
+    testRoundTripFromFile("templates/SampleBlock.json");
   }
 
   @Test public void testRoundTripHuBMAPSampleSection()
   {
-    testRoundTripFromFile("SampleSection.json");
+    testRoundTripFromFile("templates/SampleSection.json");
   }
 
   @Test public void testRoundTripHuBMAPSampleSuspension()
   {
-    testRoundTripFromFile("SampleSuspension.json");
+    testRoundTripFromFile("templates/SampleSuspension.json");
   }
 
 //  @Test public void testRoundTripADVANCE()

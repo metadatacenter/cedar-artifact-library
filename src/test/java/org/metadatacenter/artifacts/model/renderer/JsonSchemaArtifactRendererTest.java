@@ -243,7 +243,7 @@ public class JsonSchemaArtifactRendererTest
   @Test
   public void testRenderHuBMAPSampleSection()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("SampleSection.json");
+    ObjectNode objectNode = getFileContentAsObjectNode("templates/SampleSection.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -257,7 +257,7 @@ public class JsonSchemaArtifactRendererTest
   @Test
   public void testRenderRADxMetadataSpecification()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");
+    ObjectNode objectNode = getFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
