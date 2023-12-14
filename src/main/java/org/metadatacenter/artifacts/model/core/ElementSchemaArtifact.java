@@ -59,17 +59,17 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
   @Override default void accept(SchemaArtifactVisitor visitor, String path) {
     visitor.visitElementSchemaArtifact(this, path);
 
-    for (Map.Entry<String, FieldSchemaArtifact> child : fieldSchemas().entrySet()) {
-      String fieldName = child.getKey();
+    for (Map.Entry<String, FieldSchemaArtifact> entry : fieldSchemas().entrySet()) {
+      String fieldName = entry.getKey();
       String childPath = path + fieldName;
-      FieldSchemaArtifact fieldSchemaArtifact = child.getValue();
+      FieldSchemaArtifact fieldSchemaArtifact = entry.getValue();
       fieldSchemaArtifact.accept(visitor, childPath);
     }
 
-    for (Map.Entry<String, ElementSchemaArtifact> child : elementSchemas().entrySet()) {
-      String fieldName = child.getKey();
+    for (Map.Entry<String, ElementSchemaArtifact> entry : elementSchemas().entrySet()) {
+      String fieldName = entry.getKey();
       String childPath = path + fieldName;
-      ElementSchemaArtifact elementSchemaArtifact = child.getValue();
+      ElementSchemaArtifact elementSchemaArtifact = entry.getValue();
       elementSchemaArtifact.accept(visitor, childPath);
     }
   }
