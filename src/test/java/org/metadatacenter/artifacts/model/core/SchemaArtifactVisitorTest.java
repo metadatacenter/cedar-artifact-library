@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class TemplateSchemaArtifactVisitorTest
+public class SchemaArtifactVisitorTest
 {
   @Test
   public void testVisitor()

@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class TemplateInstanceArtifactVisitorTest
+public class InstanceArtifactVisitorTest
 {
   @Test
   public void testVisitor()
