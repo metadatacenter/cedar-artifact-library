@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class TemplateValueConstraintsReporter
 {
-  private final Map<String, ValueConstraints> valueConstraints;
+  private final Map<String, ValueConstraints> valueConstraints;  // path -> valueConstraints
 
   public TemplateValueConstraintsReporter(TemplateSchemaArtifact templateSchemaArtifact)
   {
@@ -47,7 +47,7 @@ public class TemplateValueConstraintsReporter
       return this.valueConstraints;
     }
 
-    @Override public void visitTemplateSchemaArtifact(TemplateSchemaArtifact parentSchemaArtifact)
+    @Override public void visitTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
     {
 
     }
