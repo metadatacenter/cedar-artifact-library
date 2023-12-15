@@ -50,7 +50,7 @@ public class TemplateInstanceArtifactVisitorTest
       return report;
     }
 
-    @Override public void visitTemplateInstanceArtifact(ParentInstanceArtifact parentInstanceArtifact, String path)
+    @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact, String path)
     {
       report.add(path);
     }
