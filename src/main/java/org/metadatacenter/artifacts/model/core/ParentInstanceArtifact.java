@@ -14,6 +14,4 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact permits Te
   Map<String, List<FieldInstanceArtifact>> fieldInstances();
 
   Map<String, List<ElementInstanceArtifact>> elementInstances();
-
-  void accept(InstanceArtifactVisitor visitor, String path);
 }

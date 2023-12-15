@@ -6,26 +6,29 @@ import org.metadatacenter.artifacts.model.core.SchemaArtifactVisitor;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class TemplateValueConstraintReporter
+public class TemplateValueConstraintsReporter
 {
   private final Map<String, ValueConstraints> valueConstraints;
 
-  public TemplateValueConstraintReporter(TemplateSchemaArtifact templateSchemaArtifact)
+  public TemplateValueConstraintsReporter(TemplateSchemaArtifact templateSchemaArtifact)
   {
     ValueConstraintsVisitor valueConstraintsVisitor = new ValueConstraintsVisitor(templateSchemaArtifact);
 
-    templateSchemaArtifact.accept(valueConstraintsVisitor, "/");
+    templateSchemaArtifact.accept(valueConstraintsVisitor);
 
-    valueConstraints = valueConstraintsVisitor.getValueConstraints();
+    valueConstraints = Map.copyOf(valueConstraintsVisitor.getValueConstraints());
   }
 
   public Optional<ValueConstraints> getValueConstraints(String path)
   {
-     return Optional.ofNullable(this.valueConstraints.get(path));
+    String normalizedPath = path.replaceAll("\\[\\d+\\]", "");
+
+    return Optional.ofNullable(this.valueConstraints.get(normalizedPath));
   }
 
   private class ValueConstraintsVisitor implements SchemaArtifactVisitor
@@ -44,7 +47,7 @@ public class TemplateValueConstraintReporter
       return this.valueConstraints;
     }
 
-    @Override public void visitTemplateSchemaArtifact(TemplateSchemaArtifact parentSchemaArtifact, String path)
+    @Override public void visitTemplateSchemaArtifact(TemplateSchemaArtifact parentSchemaArtifact)
     {
 
     }

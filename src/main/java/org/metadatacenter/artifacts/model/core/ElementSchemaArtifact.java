@@ -64,14 +64,14 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
     for (Map.Entry<String, FieldSchemaArtifact> entry : fieldSchemas().entrySet()) {
       String fieldName = entry.getKey();
-      String childPath = path + fieldName;
+      String childPath = path + "/" + fieldName;
       FieldSchemaArtifact fieldSchemaArtifact = entry.getValue();
       fieldSchemaArtifact.accept(visitor, childPath);
     }
 
     for (Map.Entry<String, ElementSchemaArtifact> entry : elementSchemas().entrySet()) {
       String fieldName = entry.getKey();
-      String childPath = path + fieldName;
+      String childPath = path + "/" + fieldName;
       ElementSchemaArtifact elementSchemaArtifact = entry.getValue();
       elementSchemaArtifact.accept(visitor, childPath);
     }

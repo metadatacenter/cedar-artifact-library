@@ -64,8 +64,10 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
   default ParentArtifactUi getUi() { return templateUi(); }
 
-  default void accept(SchemaArtifactVisitor visitor, String path) {
-    visitor.visitTemplateSchemaArtifact(this, path);
+  default void accept(SchemaArtifactVisitor visitor) {
+    String path = "/";
+
+    visitor.visitTemplateSchemaArtifact(this);
 
     for (Map.Entry<String, FieldSchemaArtifact> entry : fieldSchemas().entrySet()) {
       String fieldName = entry.getKey();

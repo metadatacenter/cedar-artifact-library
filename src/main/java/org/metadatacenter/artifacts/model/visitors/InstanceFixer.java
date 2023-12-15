@@ -27,7 +27,7 @@ public class InstanceFixer implements InstanceArtifactVisitor
 
   }
 
-  @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact, String path)
+  @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
   {
 
   }

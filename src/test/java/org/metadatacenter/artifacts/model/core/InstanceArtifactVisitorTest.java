@@ -32,7 +32,7 @@ public class InstanceArtifactVisitorTest
 
     Reporter reporter = new Reporter();
 
-    templateInstanceArtifact.accept(reporter, "/");
+    templateInstanceArtifact.accept(reporter);
 
     assertEquals(4, reporter.getReport().size());
     assertEquals("/", reporter.getReport().get(0));
@@ -50,9 +50,9 @@ public class InstanceArtifactVisitorTest
       return report;
     }
 
-    @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact, String path)
+    @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
     {
-      report.add(path);
+      report.add("/");
     }
 
     @Override public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path)

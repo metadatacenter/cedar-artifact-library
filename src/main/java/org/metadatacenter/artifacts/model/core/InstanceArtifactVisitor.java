@@ -2,7 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 public interface InstanceArtifactVisitor
 {
-  void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact, String path);
+  void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact);
 
   void visitElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact, String path);
 

@@ -39,8 +39,10 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
   URI isBasedOn();
 
-  @Override default void accept(InstanceArtifactVisitor visitor, String path) {
-    visitor.visitTemplateInstanceArtifact(this, path);
+  default void accept(InstanceArtifactVisitor visitor) {
+    String path = "/";
+
+    visitor.visitTemplateInstanceArtifact(this);
 
     for (Map.Entry<String, List<FieldInstanceArtifact>> entry : fieldInstances().entrySet()) {
       String fieldName = entry.getKey();

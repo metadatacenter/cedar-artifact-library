@@ -37,7 +37,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
   }
 
-  @Override default void accept(InstanceArtifactVisitor visitor, String path) {
+  default void accept(InstanceArtifactVisitor visitor, String path) {
     visitor.visitElementInstanceArtifact(this, path);
 
     for (Map.Entry<String, List<FieldInstanceArtifact>> entry : fieldInstances().entrySet()) {

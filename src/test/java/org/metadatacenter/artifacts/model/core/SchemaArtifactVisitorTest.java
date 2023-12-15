@@ -24,7 +24,7 @@ public class SchemaArtifactVisitorTest
 
     Reporter reporter = new Reporter();
 
-    templateSchemaArtifact.accept(reporter, "/");
+    templateSchemaArtifact.accept(reporter);
 
     assertEquals(2, reporter.getReport().size());
     assertEquals(templateName, reporter.getReport().get(0));
@@ -40,7 +40,7 @@ public class SchemaArtifactVisitorTest
       return report;
     }
 
-    @Override public void visitTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact, String path)
+    @Override public void visitTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
     {
       report.add(templateSchemaArtifact.name());
     }
