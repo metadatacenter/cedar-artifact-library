@@ -1,15 +1,15 @@
 package org.metadatacenter.artifacts.model.renderer;
 
-import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
-import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
-import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.ubkg.UbkgRendering;
 

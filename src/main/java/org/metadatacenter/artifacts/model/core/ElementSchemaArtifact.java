@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.ui.ElementUi;
+import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.HashMap;

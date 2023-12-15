@@ -1,12 +1,12 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
-import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
-import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
 
 import java.net.URI;

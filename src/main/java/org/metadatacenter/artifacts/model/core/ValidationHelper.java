@@ -1,5 +1,9 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.ui.Ui;
+
 import java.net.URI;
 import java.util.HashSet;
 import java.util.List;

@@ -2,14 +2,14 @@ package org.metadatacenter.artifacts.model.core.builders;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.core.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.XsdNumericDatatype;
-import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.XsdTemporalDatatype;
-import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
-import org.metadatacenter.artifacts.model.core.ValueType;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
 import java.net.URI;
 

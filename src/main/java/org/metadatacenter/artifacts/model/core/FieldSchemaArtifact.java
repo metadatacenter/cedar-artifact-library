@@ -17,6 +17,9 @@ import org.metadatacenter.artifacts.model.core.builders.TemporalFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;

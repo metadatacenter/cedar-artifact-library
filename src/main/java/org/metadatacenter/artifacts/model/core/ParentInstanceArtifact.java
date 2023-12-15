@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public sealed interface ParentInstanceArtifact extends ParentArtifact permits TemplateInstanceArtifact, ElementInstanceArtifact
+public sealed interface ParentInstanceArtifact extends ParentArtifact permits TemplateInstanceArtifact,
+  ElementInstanceArtifact
 {
   Optional<String> name();
 

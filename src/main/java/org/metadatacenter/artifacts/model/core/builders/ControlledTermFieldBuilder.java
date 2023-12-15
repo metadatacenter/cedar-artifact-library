@@ -1,17 +1,17 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
-import org.metadatacenter.artifacts.model.core.BranchValueConstraint;
-import org.metadatacenter.artifacts.model.core.ClassValueConstraint;
-import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
-import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraintsAction;
-import org.metadatacenter.artifacts.model.core.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldUi;
-import org.metadatacenter.artifacts.model.core.OntologyValueConstraint;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
-import org.metadatacenter.artifacts.model.core.ValueSetValueConstraint;
-import org.metadatacenter.artifacts.model.core.ValueType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.Version;
 
 import java.net.URI;

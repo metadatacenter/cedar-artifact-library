@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ui.ElementUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;

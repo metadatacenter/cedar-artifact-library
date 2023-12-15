@@ -1,6 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 
 import static org.junit.Assert.assertEquals;
 

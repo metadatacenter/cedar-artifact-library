@@ -1,6 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 
 import static org.junit.Assert.*;
 

@@ -1,7 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Test;
-import org.metadatacenter.model.ModelNodeNames;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
 import static org.junit.Assert.*;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE_ONTOLOGY_CLASS;

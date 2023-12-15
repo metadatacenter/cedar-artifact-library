@@ -2,7 +2,8 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.metadatacenter.model.ModelNodeNames;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
