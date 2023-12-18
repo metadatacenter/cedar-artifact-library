@@ -12,10 +12,10 @@ import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TemplateValueConstraintsReporterTest
+public class TemplateReporterTest
 {
   @Test
-  public void basicTemplateValueConstraintReporterTest()
+  public void basicTemplateReporterTest()
   {
     String textFieldName = "text field";
     String regex = "*";
@@ -55,11 +55,16 @@ public class TemplateValueConstraintsReporterTest
       withElementSchema(elementSchemaArtifact).
       build();
 
-    TemplateValueConstraintsReporter reporter = new TemplateValueConstraintsReporter(templateSchemaArtifact);
+    TemplateReporter reporter = new TemplateReporter(templateSchemaArtifact);
 
     assertTrue(reporter.getValueConstraints("/" + textFieldName).isPresent());
     assertTrue(reporter.getValueConstraints("/" + elementName + "/" + numericFieldName).isPresent());
     assertTrue(reporter.getValueConstraints("/" + elementName + "/" + temporalFieldName).isPresent());
+
+    assertEquals(textFieldSchemaArtifact, reporter.getFieldSchema("/" + textFieldName).get());
+    assertEquals(numericFieldSchemaArtifact, reporter.getFieldSchema("/" + elementName + "/" + numericFieldName).get());
+    assertEquals(temporalFieldSchemaArtifact, reporter.getFieldSchema("/" + elementName + "/" + temporalFieldName).get());
+    assertEquals(elementSchemaArtifact, reporter.getElementSchema("/" + elementName ).get());
 
     assertTrue(reporter.getValueConstraints("/" + textFieldName).get().isTextValueConstraint());
     assertEquals(regex, reporter.getValueConstraints("/" + textFieldName).get().asTextValueConstraints().regex().get());
@@ -72,7 +77,7 @@ public class TemplateValueConstraintsReporterTest
   }
 
   @Test
-  public void normalizedPathValueConstraintReporterTest()
+  public void normalizedPathReporterTest()
   {
     String numericFieldName = "numeric field";
     XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
@@ -94,7 +99,7 @@ public class TemplateValueConstraintsReporterTest
       withElementSchema(elementSchemaArtifact).
       build();
 
-    TemplateValueConstraintsReporter reporter = new TemplateValueConstraintsReporter(templateSchemaArtifact);
+    TemplateReporter reporter = new TemplateReporter(templateSchemaArtifact);
 
     assertTrue(reporter.getValueConstraints("/" + elementName + "/" + numericFieldName).isPresent());
     assertTrue(reporter.getValueConstraints("/" + elementName + "[3]/" + numericFieldName + "[7]").isPresent());
