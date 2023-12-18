@@ -448,7 +448,7 @@ public class ExcelArtifactRenderer
       if (valueConstraints.get() instanceof ControlledTermValueConstraints) {
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints.get();
 
-        if (controlledTermValueConstraints.hasExplicitContraints()) {
+        if (controlledTermValueConstraints.hasExplicitConstraints()) {
           Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(controlledTermValueConstraints);
           possibleValues.putAll(ontologyBasedValues);
         }
