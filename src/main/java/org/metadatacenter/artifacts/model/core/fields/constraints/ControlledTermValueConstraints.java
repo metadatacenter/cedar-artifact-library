@@ -27,7 +27,7 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
   List<ControlledTermValueConstraintsAction> actions();
 
-  default boolean hasValues() {
+  default boolean hasExplicitContraints() {
     return !ontologies().isEmpty() || !valueSets().isEmpty() || !classes().isEmpty() || !branches().isEmpty();
   }
 
