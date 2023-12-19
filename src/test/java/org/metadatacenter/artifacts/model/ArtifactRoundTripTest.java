@@ -351,12 +351,11 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
-    String defaultLabel = "Study";
 
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder()
       .withName(name)
       .withDescription(description)
-      .withDefaultValue(defaultURI, defaultLabel)
+      .withDefaultValue(defaultURI)
       .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);

@@ -186,12 +186,11 @@ public class JsonSchemaArtifactRendererTest
     String fieldName = "Field name";
     String fieldDescription = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
-    String defaultLabel = "Study";
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
       withName(fieldName).
       withDescription(fieldDescription).
-      withDefaultValue(defaultURI, defaultLabel).
+      withDefaultValue(defaultURI).
       build();
 
     ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
@@ -204,7 +203,6 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
     assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
     assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI).textValue(), defaultURI.toString());
-    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(RDFS_LABEL).textValue(), defaultLabel);
   }
 
   @Test

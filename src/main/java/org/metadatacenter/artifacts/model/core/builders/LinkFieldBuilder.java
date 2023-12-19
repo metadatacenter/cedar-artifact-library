@@ -1,11 +1,11 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
-import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -17,7 +17,7 @@ import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONT
 public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-  private final ControlledTermValueConstraints.Builder valueConstraintsBuilder = ControlledTermValueConstraints.builder();
+  private final LinkValueConstraints.Builder valueConstraintsBuilder = LinkValueConstraints.builder();
 
   public LinkFieldBuilder() {
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
@@ -31,9 +31,9 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public LinkFieldBuilder withDefaultValue(URI uri, String label)
+  public LinkFieldBuilder withDefaultValue(URI uri)
   {
-    valueConstraintsBuilder.withDefaultValue(uri, label);
+    valueConstraintsBuilder.withDefaultValue(uri);
     return this;
   }
 

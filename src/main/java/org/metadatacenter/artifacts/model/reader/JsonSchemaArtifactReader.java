@@ -2,12 +2,14 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.ElementUi;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -780,7 +782,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           Optional.empty();
         return Optional.of(TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, multipleChoice));
 
-      } else if (fieldInputType == FieldInputType.LINK || (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()))) {
+      } else if (fieldInputType == FieldInputType.LINK) {
+        Optional<LinkDefaultValue> linkDefaultValue = defaultValue.isPresent() ?
+          Optional.of(defaultValue.get().asLinkDefaultValue()) :
+          Optional.empty();
+        return Optional.of(LinkValueConstraints.create(linkDefaultValue, requiredValue, multipleChoice));
+      } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty())) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
           Optional.empty();
@@ -809,8 +816,11 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       String nestedPath = path + "/" + fieldName;
       ObjectNode defaultValueNode = (ObjectNode)childNode;
       URI termUri = readRequiredUri(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
-      String rdfsLabel = readRequiredString(defaultValueNode, nestedPath, RDFS_LABEL);
-      return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel));
+      Optional<String> rdfsLabel = readString(defaultValueNode, nestedPath, RDFS_LABEL);
+      if (rdfsLabel.isPresent() )
+        return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel.get()));
+      else
+        return Optional.of(new LinkDefaultValue(termUri));
     } else if (childNode.isNumber())
       return Optional.of(new NumericDefaultValue(childNode.asDouble()));
     else if (childNode.isTextual())

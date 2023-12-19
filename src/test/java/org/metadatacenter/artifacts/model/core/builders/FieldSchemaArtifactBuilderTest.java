@@ -315,14 +315,13 @@ public class FieldSchemaArtifactBuilderTest
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
       withName(name).
       withDescription(description).
-      withDefaultValue(defaultURI, defaultLabel).
+      withDefaultValue(defaultURI).
       build();
 
     Assert.assertEquals(FieldInputType.LINK, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(defaultURI, fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().defaultValue().get().value().getLeft());
-    Assert.assertEquals(defaultLabel, fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().defaultValue().get().value().getRight());
+    Assert.assertEquals(defaultURI, fieldSchemaArtifact.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
   }
 
   @Test public void testCreateTextAreaField()

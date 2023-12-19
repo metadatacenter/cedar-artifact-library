@@ -7,7 +7,7 @@ import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import java.util.Optional;
 
 public sealed interface ValueConstraints permits TextValueConstraints, NumericValueConstraints,
-  ControlledTermValueConstraints, TemporalValueConstraints
+  ControlledTermValueConstraints, TemporalValueConstraints, LinkValueConstraints
 {
   boolean requiredValue();
 
@@ -28,12 +28,23 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
   @JsonIgnore
   default boolean isTemporalValueConstraint() { return this instanceof TemporalValueConstraints; }
 
+  @JsonIgnore
+  default boolean isLinkValueConstraint() { return this instanceof LinkValueConstraints; }
+
   default TextValueConstraints asTextValueConstraints()
   {
     if (this instanceof TextValueConstraints) // TODO Use typesafe switch when available
       return (TextValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TextValueConstraints.class.getName());
+  }
+
+  default LinkValueConstraints asLinkValueConstraints()
+  {
+    if (this instanceof LinkValueConstraints) // TODO Use typesafe switch when available
+      return (LinkValueConstraints)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + LinkValueConstraints.class.getName());
   }
 
   default NumericValueConstraints asNumericValueConstraints()

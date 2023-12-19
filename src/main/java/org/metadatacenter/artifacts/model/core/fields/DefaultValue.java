@@ -4,7 +4,7 @@ package org.metadatacenter.artifacts.model.core.fields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefaultValue, ControlledTermDefaultValue,
-  TemporalDefaultValue
+  TemporalDefaultValue, LinkDefaultValue
 {
    @JsonIgnore
    DefaultValueType getValueType();
@@ -20,6 +20,9 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
 
    @JsonIgnore
    default boolean isTemporalDefaultValue() { return getValueType() == DefaultValueType.TEMPORAL; }
+
+   @JsonIgnore
+   default boolean isLinkDefaultValue() { return getValueType() == DefaultValueType.LINK; }
 
    @JsonIgnore
    default boolean isControlledTermDefaultValue() { return getValueType() == DefaultValueType.CONTROLLED_TERM; }
@@ -38,6 +41,14 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
          return (NumericDefaultValue)this;
       else
          throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + NumericDefaultValue.class.getName());
+   }
+
+   default LinkDefaultValue asLinkDefaultValue()
+   {
+      if (getValueType() == DefaultValueType.LINK)
+         return (LinkDefaultValue)this;
+      else
+         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + LinkDefaultValue.class.getName());
    }
 
    default ControlledTermDefaultValue asControlledTermDefaultValue()

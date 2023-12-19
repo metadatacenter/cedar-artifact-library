@@ -1226,7 +1226,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   *   { "type": "string", "format": "uri" }
+   *   { "type": "string", "format": "termUri" }
    * </pre>
    */
   private ObjectNode renderUriJsonSchemaTypeSpecification()
@@ -1234,7 +1234,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
 
     return rendering;
   }
@@ -1268,7 +1268,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "uri" }, "uniqueItems": [uniqueItems] }
+   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "termUri" }, "uniqueItems": [uniqueItems] }
    * </pre>
    */
   private ObjectNode renderUriArrayJsonSchemaTypeSpecification(int minItems, boolean uniqueItems)
@@ -1279,7 +1279,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
     rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, "string");
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;
