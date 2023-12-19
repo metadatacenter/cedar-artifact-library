@@ -12,19 +12,26 @@ import java.util.Optional;
 
 public class TemplateReporter
 {
+  private final TemplateSchemaArtifact templateSchema;
   private final Map<String, FieldSchemaArtifact> fieldSchemas;
   private final Map<String, ElementSchemaArtifact> elementSchemas;
   private final Map<String, ValueConstraints> valueConstraints;
 
-  public TemplateReporter(TemplateSchemaArtifact templateSchemaArtifact)
+  public TemplateReporter(TemplateSchemaArtifact templateSchema)
   {
-    ReporterVisitor reporterVisitor = new ReporterVisitor(templateSchemaArtifact);
+    ReporterVisitor reporterVisitor = new ReporterVisitor(templateSchema);
 
-    templateSchemaArtifact.accept(reporterVisitor);
+    templateSchema.accept(reporterVisitor);
 
+    this.templateSchema = templateSchema;
     fieldSchemas = Map.copyOf(reporterVisitor.getFieldSchemas());
     elementSchemas = Map.copyOf(reporterVisitor.getElementSchemas());
     valueConstraints = Map.copyOf(reporterVisitor.getValueConstraints());
+  }
+
+  public TemplateSchemaArtifact getTemplateSchema()
+  {
+    return templateSchema;
   }
 
   public Optional<FieldSchemaArtifact> getFieldSchema(String path)

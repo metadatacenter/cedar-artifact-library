@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.apache.poi.sl.draw.geom.GuideIf;
+
+import javax.swing.text.html.Option;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateO
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
@@ -23,21 +27,25 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
 /**
- * While field instances may not necessarily have JSON-LD identifiers or provenance fields (name, description,
- * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them.
+ * While field instances may not necessarily have provenance fields (name, description,
+ * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them. Instances will typically not have
+ * a JSON-LD @context field but, again, the model allows them.
  */
 public interface FieldInstanceArtifact extends ChildInstanceArtifact
 {
-  static FieldInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+  static FieldInstanceArtifact create(Map<String, URI> jsonLdContext,
+    List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
+    Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
   {
-    return new FieldInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
-      jsonLdValue, label, notation, prefLabel,
+    return new FieldInstanceArtifactRecord(jsonLdContext,
+      jsonLdTypes, jsonLdId, jsonLdValue, label, notation, prefLabel,
       createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
-  String jsonLdValue();
+  Optional<URI> jsonLdId();
+
+  Optional<String> jsonLdValue();
 
   Optional<String> label();
 
@@ -59,7 +67,7 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
     private Map<String, URI> jsonLdContext = new HashMap<>();
     private List<URI> jsonLdTypes = new ArrayList<>();
     private Optional<URI> jsonLdId = Optional.empty();
-    private String jsonLdValue;
+    private Optional<String> jsonLdValue = Optional.empty();
     private Optional<String> label = Optional.empty();
     private Optional<String> notation = Optional.empty();
     private Optional<String> prefLabel = Optional.empty();
@@ -90,6 +98,12 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
       return this;
     }
 
+    public Builder withJsonLdValue(String jsonLdValue)
+    {
+      this.jsonLdValue= Optional.ofNullable(jsonLdValue);
+      return this;
+    }
+
     public Builder withCreatedBy(URI createdBy)
     {
       this.createdBy = Optional.ofNullable(createdBy);
@@ -111,12 +125,6 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
     public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
     {
       this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
-      return this;
-    }
-
-    public Builder withJsonLdValue(String jsonLdValue)
-    {
-      this.jsonLdValue = jsonLdValue;
       return this;
     }
 
@@ -147,8 +155,9 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
   }
 }
 
-record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                   String jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
+                                   List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
+                                   Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
                                    Optional<URI> createdBy, Optional<URI> modifiedBy,
                                    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn) implements FieldInstanceArtifact
 {
@@ -156,6 +165,7 @@ record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jso
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
+    validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);

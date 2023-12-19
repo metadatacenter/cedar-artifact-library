@@ -552,7 +552,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
-    String jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE, null);
+    Optional<String> jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
     Optional<String> skosNotation = readString(sourceNode, path, SKOS_NOTATION);
     Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
