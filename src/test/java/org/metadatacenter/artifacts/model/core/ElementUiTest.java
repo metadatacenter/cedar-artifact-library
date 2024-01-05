@@ -1,6 +1,9 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ui.ElementUi;
+import org.metadatacenter.artifacts.model.core.ui.UiType;
+
 import static org.junit.Assert.*;
 import java.util.*;
 

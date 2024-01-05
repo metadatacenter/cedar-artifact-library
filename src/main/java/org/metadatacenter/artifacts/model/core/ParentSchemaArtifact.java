@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public sealed interface ParentSchemaArtifact permits TemplateSchemaArtifact, ElementSchemaArtifact
+public sealed interface ParentSchemaArtifact extends ParentArtifact permits TemplateSchemaArtifact,
+  ElementSchemaArtifact
 {
   String name();
 

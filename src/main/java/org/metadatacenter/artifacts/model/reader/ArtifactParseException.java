@@ -18,13 +18,14 @@ public class ArtifactParseException extends RuntimeException
   {
     return parseErrorMessage;
   }
+
   public String getFieldName()
   {
     return fieldName;
   }
+
   public String getPath()
   {
     return path;
   }
-
 }

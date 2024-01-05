@@ -8,11 +8,11 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 
@@ -78,7 +78,7 @@ public class JsonSchemaArtifactRendererTest
     String fieldDescription = "Field description";
     boolean requiredValue = false;
     TemporalGranularity granularity = TemporalGranularity.DAY;
-    TemporalType temporalType = TemporalType.DATE;
+    XsdTemporalDatatype temporalType = XsdTemporalDatatype.DATE;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
             withName(fieldName).
@@ -116,7 +116,7 @@ public class JsonSchemaArtifactRendererTest
     String fieldName = "Field name";
     String fieldDescription = "Field description";
     boolean requiredValue = false;
-    NumericType numericType = NumericType.DECIMAL;
+    XsdNumericDatatype numericType = XsdNumericDatatype.DECIMAL;
     int decimalPlaces = 3;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
@@ -186,12 +186,11 @@ public class JsonSchemaArtifactRendererTest
     String fieldName = "Field name";
     String fieldDescription = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
-    String defaultLabel = "Study";
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
       withName(fieldName).
       withDescription(fieldDescription).
-      withDefaultValue(defaultURI, defaultLabel).
+      withDefaultValue(defaultURI).
       build();
 
     ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
@@ -204,7 +203,6 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
     assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
     assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI).textValue(), defaultURI.toString());
-    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(RDFS_LABEL).textValue(), defaultLabel);
   }
 
   @Test
@@ -243,7 +241,7 @@ public class JsonSchemaArtifactRendererTest
   @Test
   public void testRenderHuBMAPSampleSection()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("SampleSection.json");
+    ObjectNode objectNode = getFileContentAsObjectNode("templates/SampleSection.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -257,7 +255,7 @@ public class JsonSchemaArtifactRendererTest
   @Test
   public void testRenderRADxMetadataSpecification()
   {
-    ObjectNode objectNode = getFileContentAsObjectNode("RADxMetadataSpecification.json");
+    ObjectNode objectNode = getFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -266,6 +264,16 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(validateJsonSchema(templateRendering));
 
     //System.out.println(templateRendering.toPrettyString());
+  }
+
+  @Test
+  public void testRenderElementSchemaArtifact() {
+    // Similar test for renderElementSchemaArtifact() if needed
+  }
+
+  @Test
+  public void testRenderFieldSchemaArtifact() {
+    // Similar test for renderFieldSchemaArtifact() if needed
   }
 
   private boolean validateJsonSchema(ObjectNode schemaNode)
@@ -287,16 +295,6 @@ public class JsonSchemaArtifactRendererTest
     } catch (ProcessingException e) {
       return false;
     }
-  }
-
-  @Test
-  public void testRenderElementSchemaArtifact() {
-    // Similar test for renderElementSchemaArtifact() if needed
-  }
-
-  @Test
-  public void testRenderFieldSchemaArtifact() {
-    // Similar test for renderFieldSchemaArtifact() if needed
   }
 
   private ObjectNode getFileContentAsObjectNode(String jsonFileName)

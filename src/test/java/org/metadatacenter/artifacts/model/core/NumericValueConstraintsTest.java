@@ -1,6 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,7 +12,7 @@ public class NumericValueConstraintsTest
   {
     boolean requiredValue = false;
     boolean multipleChoice= false;
-    NumericType numberType = NumericType.DECIMAL;
+    XsdNumericDatatype numberType = XsdNumericDatatype.DECIMAL;
     String unitOfMeasure = "mm";
     Number minValue = 0;
     Number maxValue = 100;

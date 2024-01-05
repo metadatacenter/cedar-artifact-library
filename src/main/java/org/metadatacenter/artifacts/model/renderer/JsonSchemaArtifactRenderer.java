@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.Artifact;
-import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
@@ -16,7 +15,6 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
-import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -345,8 +343,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.putNull(JSON_LD_ID);
 
     rendering.put(SCHEMA_IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
-    rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.name());
-    rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description());
+
+    if (templateInstanceArtifact.name().isPresent())
+       rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.name().get());
+
+    if (templateInstanceArtifact.description().isPresent())
+      rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description().get());
 
     if (templateInstanceArtifact.createdBy().isPresent())
       rendering.put(PAV_CREATED_BY, templateInstanceArtifact.createdBy().get().toString());
@@ -1224,7 +1226,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   *   { "type": "string", "format": "uri" }
+   *   { "type": "string", "format": "termUri" }
    * </pre>
    */
   private ObjectNode renderUriJsonSchemaTypeSpecification()
@@ -1232,7 +1234,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
 
     return rendering;
   }
@@ -1266,7 +1268,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "uri" }, "uniqueItems": [uniqueItems] }
+   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "termUri" }, "uniqueItems": [uniqueItems] }
    * </pre>
    */
   private ObjectNode renderUriArrayJsonSchemaTypeSpecification(int minItems, boolean uniqueItems)
@@ -1277,7 +1279,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
     rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, "string");
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "uri");
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
     rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;

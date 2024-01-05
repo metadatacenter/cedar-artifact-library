@@ -1,10 +1,10 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
-import org.metadatacenter.artifacts.model.core.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
 
 import java.net.URI;

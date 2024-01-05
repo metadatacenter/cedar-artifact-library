@@ -1,0 +1,88 @@
+{
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "pav": "http://purl.org/pav/",
+    "schema": "http://schema.org/",
+    "oslc": "http://open-services.net/ns/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdfs:label": {
+      "@type": "xsd:string"
+    },
+    "schema:isBasedOn": {
+      "@type": "@id"
+    },
+    "schema:name": {
+      "@type": "xsd:string"
+    },
+    "schema:description": {
+      "@type": "xsd:string"
+    },
+    "pav:derivedFrom": {
+      "@type": "@id"
+    },
+    "pav:createdOn": {
+      "@type": "xsd:dateTime"
+    },
+    "pav:createdBy": {
+      "@type": "@id"
+    },
+    "pav:lastUpdatedOn": {
+      "@type": "xsd:dateTime"
+    },
+    "oslc:modifiedBy": {
+      "@type": "@id"
+    },
+    "skos:notation": {
+      "@type": "xsd:string"
+    },
+    "Text Field": "https://schema.metadatacenter.org/properties/f48b5679-6843-4bb7-8324-3b4efd324ead",
+    "Numeric Field": "https://schema.metadatacenter.org/properties/b452a8fd-e4a9-4a9d-a2b6-fe76c93eed6a",
+    "Element A": "https://schema.metadatacenter.org/properties/48a423ec-6ab9-4a16-bb3d-6b22009d3eae",
+    "Element B": "https://schema.metadatacenter.org/properties/e2fc7710-060b-4036-9491-b5e1e067e80c"
+  },
+  "Text Field": {
+    "@value": "This is a text field"
+  },
+  "Numeric Field": {
+    "@value": "2",
+    "@type": "xsd:decimal"
+  },
+  "Element A": [
+    {
+      "@context": {
+        "Field A in Element A": "https://schema.metadatacenter.org/properties/46d9771d-3c83-48e9-a51f-9b3c7db97ebf",
+        "Field B in Element A": "https://schema.metadatacenter.org/properties/48a76627-f49b-42bf-b6e2-c2864ab9614e"
+      },
+      "Field A in Element A": {
+        "@value": "Element A - field A"
+      },
+      "Field B in Element A": {
+        "@value": "Element A - Filed B"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/2b7ffc19-9df2-4fe5-a603-a05bbb9ba76c"
+    }
+  ],
+  "Element B": {
+    "@context": {
+      "Field A in Element B": "https://schema.metadatacenter.org/properties/a3020e4b-b296-4a40-9472-b534c87f571d",
+      "Field B in Element B": "https://schema.metadatacenter.org/properties/8a1fcd87-e493-471a-b4b6-8d1333f8ae1a"
+    },
+    "Field A in Element B": {
+      "@id": "https://fieldA_in_element_b.com"
+    },
+    "Field B in Element B": {
+      "@value": "1969-12-31T16:00:00-12:00",
+      "@type": "xsd:dateTime"
+    },
+    "@id": "https://repo.metadatacenter.org/template-element-instances/2bb23dc5-d996-4143-a5b3-d84b952412d1"
+  },
+  "schema:isBasedOn": "https://repo.metadatacenter.org/templates/fd75c871-48a3-471d-bb87-d47a0c2c1480",
+  "schema:name": "Read Instance Test metadata",
+  "schema:description": "",
+  "pav:createdOn": "2023-12-07T21:26:53-08:00",
+  "pav:createdBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
+  "pav:lastUpdatedOn": "2023-12-07T21:26:53-08:00",
+  "oslc:modifiedBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
+  "@id": "https://repo.metadatacenter.org/template-instances/f998eb86-1abe-4372-8417-a84f130d38a7"
+}

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 
@@ -49,13 +50,12 @@ public class JsonSchemaArtifactReaderTest
   public void setup() {
     artifactReader = new JsonSchemaArtifactReader();
     mapper = new ObjectMapper();
-
   }
 
   @Test
   public void testReadSampleBlockTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("SampleBlock.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SampleBlock.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -65,7 +65,7 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadSampleSectionTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("SampleSection.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SampleSection.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -75,7 +75,7 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadSampleSuspensionTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("SampleSuspension.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SampleSuspension.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -85,7 +85,7 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadADVANCETemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("ADVANCETemplate.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/ADVANCETemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -95,7 +95,7 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadDataCiteTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("DataCiteTemplate.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/DataCiteTemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -105,7 +105,7 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadRADxMetadataSpecificationTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("RADxMetadataSpecification.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -115,7 +115,7 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadMultiInstanceFieldTemplate()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("MultiInstanceFieldTemplate.json");
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/MultiInstanceFieldTemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -170,6 +170,26 @@ public class JsonSchemaArtifactReaderTest
     assertEquals(fieldSchemaArtifact.description(), "Test description");
     assertEquals(fieldSchemaArtifact.modelVersion(), new Version(1, 6, 0));
     assertNotNull(fieldSchemaArtifact.fieldUi());
+  }
+
+  @Test
+  public void testReadSimpleTemplateInstance()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstance.json");
+
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    assertEquals("Controlled Terms metadata", templateInstanceArtifact.name().get());
+  }
+
+  @Test
+  public void testReadSimpleTemplateInstanceWithNesting()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithNesting.json");
+
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    assertEquals("Read Instance Test metadata", templateInstanceArtifact.name().get());
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

@@ -6,16 +6,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.NumericType;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.ValueType;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
@@ -26,7 +25,7 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.metadatacenter.artifacts.model.core.ValueConstraintsActionType.DELETE;
+import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class ArtifactRoundTripTest
 {
@@ -109,7 +108,7 @@ public class ArtifactRoundTripTest
   {
     String name = "Field name";
     String description = "Field description";
-    NumericType numericType = NumericType.DOUBLE;
+    XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
     Number minValue = 0.0;
     Number maxValue = 100.0;
 
@@ -138,7 +137,7 @@ public class ArtifactRoundTripTest
   {
     String name = "Field name";
     String description = "Field description";
-    TemporalType temporalType = TemporalType.TIME;
+    XsdTemporalDatatype temporalType = XsdTemporalDatatype.TIME;
     TemporalGranularity temporalGranularity = TemporalGranularity.SECOND;
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
@@ -352,12 +351,11 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
-    String defaultLabel = "Study";
 
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder()
       .withName(name)
       .withDescription(description)
-      .withDefaultValue(defaultURI, defaultLabel)
+      .withDefaultValue(defaultURI)
       .build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -527,17 +525,17 @@ public class ArtifactRoundTripTest
 
   @Test public void testRoundTripHuBMAPSampleBlock()
   {
-    testRoundTripFromFile("SampleBlock.json");
+    testRoundTripFromFile("templates/SampleBlock.json");
   }
 
   @Test public void testRoundTripHuBMAPSampleSection()
   {
-    testRoundTripFromFile("SampleSection.json");
+    testRoundTripFromFile("templates/SampleSection.json");
   }
 
   @Test public void testRoundTripHuBMAPSampleSuspension()
   {
-    testRoundTripFromFile("SampleSuspension.json");
+    testRoundTripFromFile("templates/SampleSuspension.json");
   }
 
 //  @Test public void testRoundTripADVANCE()

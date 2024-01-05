@@ -17,7 +17,9 @@ import org.metadatacenter.artifacts.model.core.builders.TemporalFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.TextFieldBuilder;
 import org.metadatacenter.artifacts.model.core.builders.YouTubeFieldBuilder;
-import org.metadatacenter.model.ModelNodeNames;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -47,21 +49,21 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
 {
-  static FieldSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    String name, String description, Optional<String> identifier, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+  static FieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+    Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+    FieldUi fieldUi, Optional<String> skosPrefLabel, List<String> skosAlternateLabels, Optional<ValueConstraints> valueConstraints)
   {
-    return new FieldSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
-      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      name, description, identifier, skosPrefLabel, skosAlternateLabels,
+    return new FieldSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      jsonLdContext, jsonLdTypes, jsonLdId,
+      name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldUi, valueConstraints);
+      fieldUi, skosPrefLabel, skosAlternateLabels, valueConstraints);
   }
 
   FieldUi fieldUi();
@@ -146,19 +148,23 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
   static RichTextFieldBuilder richTextFieldBuilder() { return new RichTextFieldBuilder(); }
 
   static YouTubeFieldBuilder youTubeFieldBuilder() { return new YouTubeFieldBuilder(); }
+
+  @Override default void accept(SchemaArtifactVisitor visitor, String path) {
+    visitor.visitFieldSchemaArtifact(this, path);
+  }
 }
 
-record FieldSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                 URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+record FieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                                 Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                  String name, String description, Optional<String> identifier,
-                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
                                  Version modelVersion, Optional<Version> version, Optional<Status> status,
                                  Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                  boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
                                  Optional<URI> propertyUri,
                                  Optional<URI> createdBy, Optional<URI> modifiedBy,
                                  Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                 FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                                 FieldUi fieldUi, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                                 Optional<ValueConstraints> valueConstraints)
   implements FieldSchemaArtifact
 {
   public FieldSchemaArtifactRecord

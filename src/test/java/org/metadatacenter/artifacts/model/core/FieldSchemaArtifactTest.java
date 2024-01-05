@@ -2,7 +2,8 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.metadatacenter.model.ModelNodeNames;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -45,13 +46,17 @@ public class FieldSchemaArtifactTest
     Optional<Integer> minItems = Optional.of(2);
     Optional<Integer> maxItems = Optional.of(4);
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
-      jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      name, description, identifier, preferredLabel, alternateLabels,
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
+      name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom, false, minItems, maxItems, propertyUri,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty());
+      FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), preferredLabel, alternateLabels,Optional.empty());
 
+    Assert.assertEquals(jsonSchemaSchemaUri, fieldSchemaArtifact.jsonSchemaSchemaUri());
+    Assert.assertEquals(jsonSchemaType, fieldSchemaArtifact.jsonSchemaType());
+    Assert.assertEquals(jsonSchemaTitle, fieldSchemaArtifact.jsonSchemaTitle());
+    Assert.assertEquals(jsonSchemaDescription, fieldSchemaArtifact.jsonSchemaDescription());
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, fieldSchemaArtifact.jsonLdId().get());
     Assert.assertEquals(jsonLdContext, fieldSchemaArtifact.jsonLdContext());
@@ -59,10 +64,6 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(modifiedBy, fieldSchemaArtifact.modifiedBy().get());
     Assert.assertEquals(createdOn, fieldSchemaArtifact.createdOn().get());
     Assert.assertEquals(lastUpdatedOn, fieldSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(jsonSchemaSchemaUri, fieldSchemaArtifact.jsonSchemaSchemaUri());
-    Assert.assertEquals(jsonSchemaType, fieldSchemaArtifact.jsonSchemaType());
-    Assert.assertEquals(jsonSchemaTitle, fieldSchemaArtifact.jsonSchemaTitle());
-    Assert.assertEquals(jsonSchemaDescription, fieldSchemaArtifact.jsonSchemaDescription());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
     Assert.assertEquals(identifier, fieldSchemaArtifact.identifier());

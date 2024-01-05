@@ -9,7 +9,7 @@ The library uses this API to support the conversion of artifacts to and from var
 
 Currently, it supports (1) the reading of artifacts from their JSON Schema and JSON-LD serializations, 
 (2) the writing of JSON Schema and YAML serializations of templates, elements and fields, and 
-(3) the writing of Excel, TSV, CSV, and YAML serializations of templates.
+(3) the writing of Excel, TSV, CSV, YAML, and UBKG serializations of templates.
 
 ## Reading Schema Artifacts
 
@@ -20,9 +20,12 @@ A class called `JsonSchemaArtifactReader` provides methods to generate Java repr
 For example, assuming we used the Jackson Library to read a JSON document containing a JSON Schema representation of a CEDAR template, we can generate a Java representation as follows:
 
 ```java
+// Obtain an instance of a Jackson Library ObjectNode class
+// containing a JSON Schema representation of a CEDAR template
+ObjectNode objectNode = ...
 // Generate an instance of the JsonSchemaArtifactReader class
 JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-// Generate a Java representation JSON in Jackson Library ObjectNode instance
+// Generate a Java representation of the CEDAR template 
 TemplateSchemaArtifact templateSchemaArtifact 
   = artifactReader.readTemplateSchemaArtifact(objectNode);
 ```
@@ -33,7 +36,7 @@ The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element
 
 ## Serializing Schema Artifacts
 
-Currently, four serializations are supported: JSON Schema, YAML, Excel, CSV, and TSV.
+Currently, the following serializations are supported: JSON Schema, YAML, Excel, CSV, TSV, and UBKG.
 
 ### Serializing to JSON Schema 
 
@@ -46,7 +49,7 @@ For example, we can generate a JSON Schema serialization for a CEDAR template as
 ```java
 // Obtain instance of TemplateSchemaArtifact class
 TemplateSchemaArtifact templateSchemaArtifact = ...
-// Generate a Jackson Library ObjectNode instance containing a JSON Schema representation on the template
+// Generate a Jackson Library ObjectNode instance containing a JSON Schema representation of the template
 ObjectNode rendering 
   = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 ```
@@ -59,7 +62,7 @@ For example, we can generate a YAML serialization of a CEDAR template as follows
 
 ```java
 // Set to true for a complete YAML representation of an artifact, false for a condensed representation
-boolean isExanded = true;
+boolean isExpanded = true;
 // Create the renderer
 YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
 // Generate a map containing a YAML representation of the template

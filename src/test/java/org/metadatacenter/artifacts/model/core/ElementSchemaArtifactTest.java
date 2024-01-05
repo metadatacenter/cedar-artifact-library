@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ui.ElementUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -44,11 +45,14 @@ public class ElementSchemaArtifactTest
     Optional<Integer> maxItems = Optional.of(3);
     Optional<URI> propertyUri = Optional.of(URI.create("https://schema.metadatacenter.org/properties/434"));
 
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
-      Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn), jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, name, description, identifier, modelVersion, version, status, previousVersion, derivedFrom,
-      Collections.emptyMap(), Collections.emptyMap(), ElementUi.builder().build(), false, minItems, maxItems,
-      propertyUri);
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+      jsonSchemaDescription,
+      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
+      name, description, identifier,
+      modelVersion, version, status, previousVersion, derivedFrom,
+      Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
+      Collections.emptyMap(), Collections.emptyMap(), ElementUi.builder().build(),
+      false, minItems, maxItems, propertyUri);
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());

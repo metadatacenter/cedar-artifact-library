@@ -3,7 +3,8 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.util.Optional;
 
-public sealed interface ChildSchemaArtifact extends SchemaArtifact permits ElementSchemaArtifact, FieldSchemaArtifact
+public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifact permits ElementSchemaArtifact,
+  FieldSchemaArtifact
 {
   String name();
 
@@ -14,4 +15,6 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact permits Eleme
   Optional<Integer> maxItems();
 
   Optional<URI> propertyUri();
+
+  void accept(SchemaArtifactVisitor visitor, String path);
 }

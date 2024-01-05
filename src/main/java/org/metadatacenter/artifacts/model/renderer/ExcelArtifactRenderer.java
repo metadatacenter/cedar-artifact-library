@@ -18,27 +18,27 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.metadatacenter.artifacts.model.core.ControlledTermValueConstraints;
-import org.metadatacenter.artifacts.model.core.DefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldUi;
-import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.LiteralValueConstraint;
-import org.metadatacenter.artifacts.model.core.NumericType;
-import org.metadatacenter.artifacts.model.core.NumericDefaultValue;
-import org.metadatacenter.artifacts.model.core.NumericValueConstraints;
-import org.metadatacenter.artifacts.model.core.TemporalDefaultValue;
-import org.metadatacenter.artifacts.model.core.TemporalValueConstraints;
-import org.metadatacenter.artifacts.model.core.TextDefaultValue;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TemporalFieldUi;
-import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.ControlledTermDefaultValue;
-import org.metadatacenter.artifacts.model.core.TextValueConstraints;
-import org.metadatacenter.artifacts.model.core.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.model.ModelNodeNames;
@@ -241,7 +241,7 @@ public class ExcelArtifactRenderer
       } else if (valueConstraints.get() instanceof TemporalValueConstraints) {
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi(); // TODO Temporary until we use typed switch
-        TemporalType temporalType = temporalValueConstraints.temporalType();
+        XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
         String temporalFormatString = getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
         return temporalFormatString;
 
@@ -448,7 +448,7 @@ public class ExcelArtifactRenderer
       if (valueConstraints.get() instanceof ControlledTermValueConstraints) {
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints.get();
 
-        if (controlledTermValueConstraints.hasValues()) {
+        if (controlledTermValueConstraints.hasExplicitConstraints()) {
           Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(controlledTermValueConstraints);
           possibleValues.putAll(ontologyBasedValues);
         }
@@ -570,12 +570,12 @@ public class ExcelArtifactRenderer
     } else if (fieldInputType == FieldInputType.NUMERIC) {
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) { // TODO Use typesafe switch
         NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get();
-        NumericType numericType = numericValueConstraints.numberType();
+        XsdNumericDatatype numericType = numericValueConstraints.numberType();
 
-        if (numericType == NumericType.DECIMAL || numericType == NumericType.DOUBLE || numericType == NumericType.FLOAT) {
+        if (numericType == XsdNumericDatatype.DECIMAL || numericType == XsdNumericDatatype.DOUBLE || numericType == XsdNumericDatatype.FLOAT) {
           return DataValidationConstraint.ValidationType.DECIMAL;
-        } else if (numericType == NumericType.LONG || numericType == NumericType.INTEGER || numericType == NumericType.INT
-          || numericType == NumericType.SHORT || numericType == NumericType.BYTE) {
+        } else if (numericType == XsdNumericDatatype.LONG || numericType == XsdNumericDatatype.INTEGER || numericType == XsdNumericDatatype.INT
+          || numericType == XsdNumericDatatype.SHORT || numericType == XsdNumericDatatype.BYTE) {
           return DataValidationConstraint.ValidationType.INTEGER;
         } else
           throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldName);
@@ -584,11 +584,11 @@ public class ExcelArtifactRenderer
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
       if (valueConstraints.isPresent() && valueConstraints.get() instanceof TemporalValueConstraints) {
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
-        TemporalType temporalType = temporalValueConstraints.temporalType();
+        XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
 
-        if (temporalType == TemporalType.DATE || temporalType == TemporalType.DATETIME)
+        if (temporalType == XsdTemporalDatatype.DATE || temporalType == XsdTemporalDatatype.DATETIME)
           return DataValidationConstraint.ValidationType.DATE;
-        else if (temporalType == TemporalType.TIME)
+        else if (temporalType == XsdTemporalDatatype.TIME)
           return DataValidationConstraint.ValidationType.TIME;
         else
           throw new RuntimeException("Invalid temporal type " + temporalType + " for temporal field " + fieldName);
@@ -598,25 +598,25 @@ public class ExcelArtifactRenderer
       throw new RuntimeException("Invalid field input type " + fieldInputType + " for field " + fieldName);
   }
 
-  private String getNumericFormatString(String fieldName, NumericType numericType,
+  private String getNumericFormatString(String fieldName, XsdNumericDatatype numericType,
     Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure)
   {
     String numericFormatString = "";
 
-      if (numericType == NumericType.DECIMAL) {
+      if (numericType == XsdNumericDatatype.DECIMAL) {
         if (decimalPlaces.isPresent())
           numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      } else if (numericType == NumericType.DOUBLE) {
+      } else if (numericType == XsdNumericDatatype.DOUBLE) {
         if (decimalPlaces.isPresent())
           numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      } else if (numericType == NumericType.FLOAT) {
+      } else if (numericType == XsdNumericDatatype.FLOAT) {
         if (decimalPlaces.isPresent())
           numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      } else if (numericType == NumericType.LONG) {
-      } else if (numericType == NumericType.INTEGER) {
-      } else if (numericType == NumericType.INT) {
-      } else if (numericType == NumericType.SHORT) {
-      } else if (numericType == NumericType.BYTE) {
+      } else if (numericType == XsdNumericDatatype.LONG) {
+      } else if (numericType == XsdNumericDatatype.INTEGER) {
+      } else if (numericType == XsdNumericDatatype.INT) {
+      } else if (numericType == XsdNumericDatatype.SHORT) {
+      } else if (numericType == XsdNumericDatatype.BYTE) {
       } else
         throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldName);
 
@@ -627,12 +627,12 @@ public class ExcelArtifactRenderer
     return numericFormatString;
   }
 
-  private String getTemporalFormatString(String fieldName, TemporalType temporalType,
+  private String getTemporalFormatString(String fieldName, XsdTemporalDatatype temporalType,
     TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat, boolean timeZoneEnabled)
   {
     String temporalFormatString = "";
 
-    if (temporalType == TemporalType.DATETIME) {
+    if (temporalType == XsdTemporalDatatype.DATETIME) {
       if (temporalGranularity == TemporalGranularity.YEAR)
         temporalFormatString += "yyyy";
       else if (temporalGranularity == TemporalGranularity.MONTH)
@@ -650,7 +650,7 @@ public class ExcelArtifactRenderer
       else
         throw new RuntimeException(
           "Unknown temporal granularity " + temporalGranularity + " specified for temporal field " + fieldName);
-    } else if (temporalType == TemporalType.DATE) {
+    } else if (temporalType == XsdTemporalDatatype.DATE) {
       if (temporalGranularity == TemporalGranularity.YEAR)
         temporalFormatString += "yyyy";
       else if (temporalGranularity == TemporalGranularity.MONTH)
@@ -660,7 +660,7 @@ public class ExcelArtifactRenderer
       else
         throw new RuntimeException(
           "Invalid temporal granularity " + temporalGranularity + " specified for date temporal field " + fieldName);
-    } else if (temporalType == TemporalType.TIME) {
+    } else if (temporalType == XsdTemporalDatatype.TIME) {
       if (temporalGranularity == TemporalGranularity.HOUR)
         temporalFormatString += "hh";
       else if (temporalGranularity == TemporalGranularity.MINUTE)
@@ -696,7 +696,7 @@ public class ExcelArtifactRenderer
           numericValueConstraints.decimalPlace(), numericValueConstraints.unitOfMeasure());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {
-        String formatString = getNumericFormatString(fieldName, NumericType.DOUBLE, Optional.empty(), Optional.empty());
+        String formatString = getNumericFormatString(fieldName, XsdNumericDatatype.DOUBLE, Optional.empty(), Optional.empty());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     } else if (fieldUi.isTemporal()) {

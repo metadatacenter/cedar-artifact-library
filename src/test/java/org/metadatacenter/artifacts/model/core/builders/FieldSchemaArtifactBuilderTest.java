@@ -2,14 +2,14 @@ package org.metadatacenter.artifacts.model.core.builders;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.core.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.NumericType;
-import org.metadatacenter.artifacts.model.core.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.TemporalType;
-import org.metadatacenter.artifacts.model.core.ValueConstraintsActionType;
-import org.metadatacenter.artifacts.model.core.ValueType;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
 import java.net.URI;
 
@@ -47,7 +47,7 @@ public class FieldSchemaArtifactBuilderTest
   {
     String name = "Field name";
     String description = "Field description";
-    NumericType numericType = NumericType.DOUBLE;
+    XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
     Number defaultValue = 22.3;
     Number minValue = 0.0;
     Number maxValue = 100.0;
@@ -81,7 +81,7 @@ public class FieldSchemaArtifactBuilderTest
   {
     String name = "Field name";
     String description = "Field description";
-    TemporalType temporalType = TemporalType.TIME;
+    XsdTemporalDatatype temporalType = XsdTemporalDatatype.TIME;
     TemporalGranularity temporalGranularity = TemporalGranularity.SECOND;
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timezoneEnabled = false;
@@ -315,14 +315,13 @@ public class FieldSchemaArtifactBuilderTest
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
       withName(name).
       withDescription(description).
-      withDefaultValue(defaultURI, defaultLabel).
+      withDefaultValue(defaultURI).
       build();
 
     Assert.assertEquals(FieldInputType.LINK, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(defaultURI, fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().defaultValue().get().value().getLeft());
-    Assert.assertEquals(defaultLabel, fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().defaultValue().get().value().getRight());
+    Assert.assertEquals(defaultURI, fieldSchemaArtifact.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
   }
 
   @Test public void testCreateTextAreaField()

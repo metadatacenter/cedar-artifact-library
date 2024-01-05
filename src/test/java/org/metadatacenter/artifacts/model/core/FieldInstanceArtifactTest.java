@@ -1,0 +1,64 @@
+package org.metadatacenter.artifacts.model.core;
+
+import org.junit.Test;
+
+import java.net.URI;
+
+import static org.junit.Assert.*;
+
+//static FieldInstanceArtifact create(Map<String, URI> jsonLdContext,
+//  List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
+//  Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+//  Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
+
+
+public class FieldInstanceArtifactTest
+{
+  @Test
+  public void fieldInstanceWithJsonLdValueTest()
+  {
+    URI aType = URI.create("https://example.com/types/t1");
+    String aValue = "a value";
+
+    FieldInstanceArtifact fieldInstance = FieldInstanceArtifact.builder().
+      withJsonLdType(aType).
+      withJsonLdValue(aValue).
+      build();
+
+    assertEquals(aType, fieldInstance.jsonLdTypes().get(0));
+    assertEquals(aValue, fieldInstance.jsonLdValue().get());
+  }
+
+  @Test
+  public void fieldInstanceWithJsonLdTypeTest()
+  {
+    URI aUriValue = URI.create("https://example.com/values/v1");
+
+    FieldInstanceArtifact fieldInstance = FieldInstanceArtifact.builder().
+      withJsonLdId(aUriValue).
+      build();
+
+    assertEquals(aUriValue, fieldInstance.jsonLdId().get());
+  }
+
+  @Test
+  public void fieldInstanceWithLabelNotationAndPrefLabelTest()
+  {
+    URI aUriValue = URI.create("https://example.com/values/v1");
+    String label = "a label";
+    String notation = "a notation";
+    String prefLabel = "a prefLabel";
+
+    FieldInstanceArtifact fieldInstance = FieldInstanceArtifact.builder().
+      withJsonLdId(aUriValue).
+      withLabel(label).
+      withPrefLabel(prefLabel).
+      withNotation(notation).
+      build();
+
+    assertEquals(aUriValue, fieldInstance.jsonLdId().get());
+    assertEquals(label, fieldInstance.label().get());
+    assertEquals(notation, fieldInstance.notation().get());
+    assertEquals(prefLabel, fieldInstance.prefLabel().get());
+  }
+}

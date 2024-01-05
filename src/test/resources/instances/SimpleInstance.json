@@ -1,0 +1,53 @@
+{
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "pav": "http://purl.org/pav/",
+    "schema": "http://schema.org/",
+    "oslc": "http://open-services.net/ns/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdfs:label": {
+      "@type": "xsd:string"
+    },
+    "schema:isBasedOn": {
+      "@type": "@id"
+    },
+    "schema:name": {
+      "@type": "xsd:string"
+    },
+    "schema:description": {
+      "@type": "xsd:string"
+    },
+    "pav:derivedFrom": {
+      "@type": "@id"
+    },
+    "pav:createdOn": {
+      "@type": "xsd:dateTime"
+    },
+    "pav:createdBy": {
+      "@type": "@id"
+    },
+    "pav:lastUpdatedOn": {
+      "@type": "xsd:dateTime"
+    },
+    "oslc:modifiedBy": {
+      "@type": "@id"
+    },
+    "skos:notation": {
+      "@type": "xsd:string"
+    },
+    "Controlled Terms": "https://schema.metadatacenter.org/properties/617a0e5f-4420-49e5-a393-7efc1f99f1c9"
+  },
+  "Controlled Terms": {
+    "@id": "http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity",
+    "rdfs:label": "BrainActivity"
+  },
+  "schema:isBasedOn": "https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded",
+  "schema:name": "Controlled Terms metadata",
+  "schema:description": "",
+  "pav:createdOn": "2023-12-06T17:07:33-08:00",
+  "pav:createdBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
+  "pav:lastUpdatedOn": "2023-12-06T17:07:33-08:00",
+  "oslc:modifiedBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
+  "@id": "https://repo.metadatacenter.org/template-instances/2123be29-d114-4849-8a5e-7a68022b8bfd"
+}

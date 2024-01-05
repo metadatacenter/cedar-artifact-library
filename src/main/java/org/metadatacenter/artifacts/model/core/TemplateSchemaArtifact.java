@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
+import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -41,24 +44,45 @@ import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact
 {
-  static TemplateSchemaArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+  static TemplateSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+    Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier,
-    Version modelVersion, Optional<Version> version, Optional<Status> status,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
     TemplateUi templateUi)
   {
-    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name,
-      description, identifier, modelVersion, version, status, previousVersion,
-      derivedFrom, fieldSchemas, elementSchemas, templateUi);
+    return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      jsonLdContext, jsonLdTypes, jsonLdId,
+      name, description, identifier,
+      modelVersion, version, status, previousVersion, derivedFrom,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      fieldSchemas, elementSchemas, templateUi);
   }
 
   TemplateUi templateUi();
 
   default ParentArtifactUi getUi() { return templateUi(); }
+
+  default void accept(SchemaArtifactVisitor visitor) {
+    String path = "/";
+
+    visitor.visitTemplateSchemaArtifact(this);
+
+    for (Map.Entry<String, FieldSchemaArtifact> entry : fieldSchemas().entrySet()) {
+      String fieldName = entry.getKey();
+      String childPath = path + fieldName;
+      FieldSchemaArtifact fieldSchemaArtifact = entry.getValue();
+      fieldSchemaArtifact.accept(visitor, childPath);
+    }
+
+    for (Map.Entry<String, ElementSchemaArtifact> entry : elementSchemas().entrySet()) {
+      String fieldName = entry.getKey();
+      String childPath = path + fieldName;
+      ElementSchemaArtifact elementSchemaArtifact = entry.getValue();
+      elementSchemaArtifact.accept(visitor, childPath);
+    }
+  }
 
   static Builder builder() {
     return new Builder();
@@ -167,7 +191,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     public Builder withJsonLdTypes(List<URI> jsonLdTypes)
     {
-      this.jsonLdTypes = jsonLdTypes;
+      this.jsonLdTypes = List.copyOf(jsonLdTypes);
       return this;
     }
 
@@ -271,20 +295,22 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     public TemplateSchemaArtifact build()
     {
-      return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, name, description,
-        schemaOrgIdentifier, modelVersion, version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas,
+      return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+        jsonLdContext, jsonLdTypes, jsonLdId,
+        name, description, schemaOrgIdentifier,
+        modelVersion, version, status, previousVersion, derivedFrom,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        fieldSchemas, elementSchemas,
         templateUiBuilder.build());
     }
   }
 }
 
-record TemplateSchemaArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                    URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                                    Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                     String name, String description, Optional<String> identifier,
-                                    Version modelVersion, Optional<Version> version, Optional<Status> status,
-                                    Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                     Map<String, FieldSchemaArtifact> fieldSchemas,
                                     Map<String, ElementSchemaArtifact> elementSchemas,
                                     TemplateUi templateUi) implements TemplateSchemaArtifact
