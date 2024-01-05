@@ -190,6 +190,8 @@ public class JsonSchemaArtifactReaderTest
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
     assertEquals("Read Instance Test metadata", templateInstanceArtifact.name().get());
+    assertEquals(2, templateInstanceArtifact.fieldInstances().size());
+    assertEquals(2, templateInstanceArtifact.elementInstances().size());
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

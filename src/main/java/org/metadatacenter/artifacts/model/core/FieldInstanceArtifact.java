@@ -1,8 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.apache.poi.sl.draw.geom.GuideIf;
-
-import javax.swing.text.html.Option;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -159,7 +156,8 @@ record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
                                    List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                    Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
                                    Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                   Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn) implements FieldInstanceArtifact
+                                   Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
+  implements FieldInstanceArtifact
 {
   public FieldInstanceArtifactRecord
   {

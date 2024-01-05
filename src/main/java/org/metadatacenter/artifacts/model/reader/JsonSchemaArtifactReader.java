@@ -614,13 +614,21 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       ObjectNode elementInstanceArtifactNode = instanceArtifactNode;
       ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
         instanceArtifactPath);
-      elements.put(instanceArtifactFieldName, new ArrayList<>());
-      elements.get(instanceArtifactFieldName).add(elementInstanceArtifact);
+      if (elements.containsKey(instanceArtifactFieldName)) {
+        elements.get(instanceArtifactFieldName).add(elementInstanceArtifact);
+      } else {
+        elements.put(instanceArtifactFieldName, new ArrayList<>());
+        elements.get(instanceArtifactFieldName).add(elementInstanceArtifact);
+      }
     } else { // Field instance artifact do not
       FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(instanceArtifactNode,
         instanceArtifactPath);
-      fields.put(instanceArtifactFieldName, new ArrayList<>());
-      fields.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
+      if (fields.containsKey(instanceArtifactFieldName)) {
+        fields.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
+      } else {
+        fields.put(instanceArtifactFieldName, new ArrayList<>());
+        fields.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
+      }
     }
   }
 
