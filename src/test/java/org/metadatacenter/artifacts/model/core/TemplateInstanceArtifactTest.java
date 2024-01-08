@@ -13,26 +13,28 @@ public class TemplateInstanceArtifactTest
   {
     String instanceName = "Template 1";
     URI isBasedOnTemplateUri = URI.create("https://repo.metadatacenter.org/templates/3232");
-    String textFieldName1 = "Text Field 1";
+    String textField1Name = "Text Field 1";
     String element1Name = "Element 1";
-    String textFieldName2 = "Text Field 2";
+    String textField2Name = "Text Field 2";
 
-    FieldInstanceArtifact textField1 = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
-    ElementInstanceArtifact element1 = ElementInstanceArtifact.builder().withFieldInstance(textFieldName1, textField1).build();
-    FieldInstanceArtifact textField2 = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
+    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
+    ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withFieldInstance(textField1Name, textField1Instance).build();
+    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.builder().withJsonLdValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.builder().withJsonLdValue("Value 3").build();
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
       .withName(instanceName)
       .withIsBasedOn(isBasedOnTemplateUri)
-      .withFieldInstance(textFieldName2, textField2)
-      .withElementInstance(element1Name, element1)
+      .withFieldInstance(textField2Name, textField2Instance1)
+      .withFieldInstance(textField2Name, textField2Instance2)
+      .withElementInstance(element1Name, element1Instance)
       .build();
 
     assertEquals(instanceName, templateInstanceArtifact.name().get());
     assertEquals(isBasedOnTemplateUri, templateInstanceArtifact.isBasedOn());
     assertEquals(1, templateInstanceArtifact.fieldInstances().size());
     assertEquals(1, templateInstanceArtifact.elementInstances().size());
-    assertEquals(textField2, templateInstanceArtifact.fieldInstances().get(textFieldName2).get(0));
-    assertEquals(element1, templateInstanceArtifact.elementInstances().get(element1Name).get(0));
+    assertEquals(textField2Instance1, templateInstanceArtifact.fieldInstances().get(textField2Name).get(0));
+    assertEquals(element1Instance, templateInstanceArtifact.elementInstances().get(element1Name).get(0));
   }
 }
