@@ -91,32 +91,32 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
 
   public UbkgRendering.Builder renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    URI fieldID = fieldSchemaArtifact.jsonLdId().get();
+    URI fieldUri = fieldSchemaArtifact.jsonLdId().get();
     String fieldName = fieldSchemaArtifact.name();
     String fieldDescription = fieldSchemaArtifact.description();
 
-    ubkgRenderingBuilder.withNode(fieldID, fieldName, fieldDescription);
+    ubkgRenderingBuilder.withNode(fieldUri, fieldName, fieldDescription);
 
-    ubkgRenderingBuilder.withEdge(fieldID, RDFS_TYPE, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
+    ubkgRenderingBuilder.withEdge(fieldUri, RDFS_TYPE, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
 
       if (valueConstraints instanceof NumericValueConstraints) { // TODO Use typesafe switch when available
         NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, numericValueConstraints.numberType().toUri());
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, numericValueConstraints.numberType().toUri());
       } else if (valueConstraints instanceof TemporalValueConstraints) {
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, temporalValueConstraints.temporalType().toURI());
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, temporalValueConstraints.temporalType().toURI());
       } else if (valueConstraints instanceof ControlledTermValueConstraints) {
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, XSD_ANY_URI);
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, XSD_ANY_URI);
 
         for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches())
-          ubkgRenderingBuilder.withEdge(fieldID, HAS_VALUESET_PREDICATE, branchValueConstraint.uri());
+          ubkgRenderingBuilder.withEdge(fieldUri, HAS_VALUESET_PREDICATE, branchValueConstraint.uri());
 
       } else
-        ubkgRenderingBuilder.withEdge(fieldID, HAS_DATATYPE_PREDICATE, XSD_STRING_URI);
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, XSD_STRING_URI);
     }
 
     return ubkgRenderingBuilder;
