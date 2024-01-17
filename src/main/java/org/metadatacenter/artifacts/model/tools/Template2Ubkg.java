@@ -35,6 +35,7 @@ public class Template2Ubkg
   private static final String UBKG_EDGE_FILE_OPTION = "ue";
   private static final String CEDAR_RESOURCE_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
+  private static final String JSON_FILE_EXTENSION = ".json";
 
   public static void main(String[] args) throws IOException
   {
@@ -46,35 +47,35 @@ public class Template2Ubkg
 
       checkCommandLine(command, options);
 
-      String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
-      String ubkgNodeFileName = command.getOptionValue(UBKG_NODE_FILE_OPTION);
-      String ubkgEdgeFileName = command.getOptionValue(UBKG_EDGE_FILE_OPTION);
-      File ubkgNodeFile = new File(ubkgNodeFileName);
-      File ubkgEdgeFile = new File(ubkgEdgeFileName);
+      String ubkgNodeFilePath = command.getOptionValue(UBKG_NODE_FILE_OPTION);
+      String ubkgEdgeFilePath = command.getOptionValue(UBKG_EDGE_FILE_OPTION);
+      File ubkgNodeFile = new File(ubkgNodeFilePath);
+      File ubkgEdgeFile = new File(ubkgEdgeFilePath);
 
       List<ObjectNode> templateObjectNodes = new ArrayList<>();
 
-      if (command.hasOption(TEMPLATE_FILE_OPTION)) {
-        String templateFileName = command.getOptionValue(TEMPLATE_FILE_OPTION);
-        ObjectNode templateObjectNode = readJsonFromFile(templateFileName);
+      if (command.hasOption(TEMPLATE_DIRECTORY_OPTION)) {
+        String templateDirectoryPath = command.getOptionValue(TEMPLATE_DIRECTORY_OPTION);
+        List<ObjectNode> objectNodes = readJsonFromDirectory(templateDirectoryPath);
+        templateObjectNodes.addAll(objectNodes);
+      } else if (command.hasOption(TEMPLATE_FILE_OPTION)) {
+        String templateFilePath = command.getOptionValue(TEMPLATE_FILE_OPTION);
+        ObjectNode templateObjectNode = readJsonFromFile(templateFilePath);
         templateObjectNodes.add(templateObjectNode);
       } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
         String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
         String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
-        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, StandardCharsets.UTF_8);
-        ObjectNode templateObjectNode = readJsonFromApi(requestURL, cedarAPIKey);
+        String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
+        ObjectNode templateObjectNode = readJsonFromApi(resourceServerBase, templateIRI, cedarAPIKey);
         templateObjectNodes.add(templateObjectNode);
-      } else
-        Usage(options, "Both a template file path and a template IRI cannot be specified together");
+      }
 
+      JsonSchemaArtifactReader jsonSchemaArtifactReader = new JsonSchemaArtifactReader();
       UbkgRendering.Builder ubkgRenderingBuilder = UbkgRendering.builder();
-
       UbkgArtifactRenderer ubkgRenderer = new UbkgArtifactRenderer(ubkgRenderingBuilder);
 
       for (ObjectNode templateObjectNode : templateObjectNodes) {
-        JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-        TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
-
+        TemplateSchemaArtifact templateSchemaArtifact = jsonSchemaArtifactReader.readTemplateSchemaArtifact(templateObjectNode);
         ubkgRenderingBuilder = ubkgRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
       }
 
@@ -88,29 +89,61 @@ public class Template2Ubkg
     }
   }
 
-  private static ObjectNode readJsonFromApi(String requestApiUrl, String cedarAPIKey) throws IOException
+  private static ObjectNode readJsonFromApi(String resourceServerBase, String templateIri, String cedarAPIKey) throws IOException
   {
-    HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestApiUrl, cedarAPIKey);
+    String requestUrl = resourceServerBase + URLEncoder.encode(templateIri, StandardCharsets.UTF_8);
+    HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestUrl, cedarAPIKey);
     int responseCode = connection.getResponseCode();
 
     if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST)
-      throw new RuntimeException("Error retrieving JSON from " + requestApiUrl + ": " + responseCode);
+      throw new RuntimeException("Error retrieving JSON from " + requestUrl + ": " + responseCode);
 
     ObjectNode objectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
 
     return objectNode;
   }
 
-  private static ObjectNode readJsonFromFile(String templateFileName) throws IOException
+  private static ObjectNode readJsonFromFile(String filePath) throws IOException
   {
-    File templateFile = new File(templateFileName);
+    File templateFile = new File(filePath);
     ObjectMapper mapper = new ObjectMapper();
     JsonNode jsonNode = mapper.readTree(templateFile);
 
     if (!jsonNode.isObject())
-      throw new RuntimeException("Expecting JSON object in file " + templateFileName);
+      throw new RuntimeException("Expecting JSON object in file " + filePath);
 
     return (ObjectNode)jsonNode;
+  }
+
+  public static List<ObjectNode> readJsonFromDirectory(String directoryPath)
+  {
+    List<ObjectNode> objectNodes = new ArrayList<>();
+
+    File directory = new File(directoryPath);
+
+    if (!directory.isDirectory())
+      throw new RuntimeException("Provided path " + directoryPath + " is not a directory");
+
+    File[] files = directory.listFiles();
+
+    if (files == null)
+      throw new RuntimeException("No JSON files found in directory " + directoryPath);
+
+    for (File file : files) {
+      if (file.isFile() && file.getName().endsWith(JSON_FILE_EXTENSION)) {
+        try {
+          ObjectMapper objectMapper = new ObjectMapper();
+          JsonNode jsonNode = objectMapper.readTree(file);
+          if (!jsonNode.isObject())
+            throw new RuntimeException("Expecting JSON object in file " + file.getName());
+          objectNodes.add((ObjectNode)jsonNode);
+        } catch (IOException e) {
+          throw new RuntimeException("Error reading JSON file " + file.getName() + ": " + e.getMessage());
+        }
+      }
+    }
+
+    return objectNodes;
   }
 
   private static Options buildCommandLineOptions()
@@ -121,6 +154,12 @@ public class Template2Ubkg
       .argName("template-file")
       .hasArg()
       .desc("Template file")
+      .build();
+
+    Option templatedirectoryOption = Option.builder(TEMPLATE_DIRECTORY_OPTION)
+      .argName("template-dir")
+      .hasArg()
+      .desc("Template directory")
       .build();
 
     Option templateIRIOption = Option.builder(TEMPLATE_IRI_OPTION)
@@ -149,13 +188,14 @@ public class Template2Ubkg
       .desc("CEDAR Resource Server base")
       .build();
 
-    Option keyOption = Option.builder(CEDAR_APIKEY_OPTION)
+    Option apiKeyOption = Option.builder(CEDAR_APIKEY_OPTION)
       .argName("cedar-api-key")
       .hasArg()
       .desc("CEDAR API key")
       .build();
 
     OptionGroup templateGroup = new OptionGroup();
+    templateGroup.addOption(templatedirectoryOption);
     templateGroup.addOption(templateFileOption);
     templateGroup.addOption(templateIRIOption);
 
@@ -164,7 +204,7 @@ public class Template2Ubkg
     options.addOption(ubkgEdgeFileOption);
     options.addOption(ubkgNodeFileOption);
     options.addOption(resourceOption);
-    options.addOption(keyOption);
+    options.addOption(apiKeyOption);
 
     return options;
   }
