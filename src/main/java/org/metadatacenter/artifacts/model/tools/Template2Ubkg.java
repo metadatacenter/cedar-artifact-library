@@ -25,7 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class Template2Ubkg
 {
@@ -52,7 +55,7 @@ public class Template2Ubkg
       File ubkgNodeFile = new File(ubkgNodeFileName);
       File ubkgEdgeFile = new File(ubkgEdgeFileName);
 
-      ObjectNode templateObjectNode = null;
+      List<ObjectNode> templateObjectNodes = new ArrayList<>();
 
       if (command.hasOption(TEMPLATE_FILE_OPTION)) {
         String templateFileName = command.getOptionValue(TEMPLATE_FILE_OPTION);
@@ -63,36 +66,38 @@ public class Template2Ubkg
         if (!jsonNode.isObject())
           throw new RuntimeException("Expecting JSON object");
 
-        templateObjectNode = (ObjectNode)jsonNode;
+        ObjectNode templateObjectNode = (ObjectNode)jsonNode;
+        templateObjectNodes.add(templateObjectNode);
       } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
         String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
         String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
-        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, "UTF-8");
+        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, StandardCharsets.UTF_8);
         HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarAPIKey);
         int responseCode = connection.getResponseCode();
 
         if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST)
           throw new RuntimeException("Error retrieving template at " + requestURL + ": " + responseCode);
 
-        templateObjectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
+        ObjectNode templateObjectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
+        templateObjectNodes.add(templateObjectNode);
       } else
         Usage(options, "Both a template file path and a template IRI cannot be specified together");
-
-      JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-      TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
       UbkgRendering.Builder ubkgRenderingBuilder = UbkgRendering.builder();
 
       UbkgArtifactRenderer ubkgRenderer = new UbkgArtifactRenderer(ubkgRenderingBuilder);
 
-      ubkgRenderingBuilder = ubkgRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+      for (ObjectNode templateObjectNode : templateObjectNodes) {
+        JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
+        TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
+
+        ubkgRenderingBuilder = ubkgRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+      }
 
       UbkgRendering ubkgRendering = ubkgRenderingBuilder.build();
-
       UbkgTsvRenderer ubkgTsvRenderer = new UbkgTsvRenderer(ubkgRendering);
 
       System.out.println("Nodes: \n" + ubkgTsvRenderer.renderNodes());
-
       System.out.println("Edges: \n" + ubkgTsvRenderer.renderEdges());
     } catch (ParseException e) {
       Usage(options, e.getMessage());
