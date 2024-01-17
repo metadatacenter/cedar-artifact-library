@@ -36,11 +36,16 @@
     "skos:notation": {
       "@type": "xsd:string"
     },
-    "Controlled Terms": "https://schema.metadatacenter.org/properties/617a0e5f-4420-49e5-a393-7efc1f99f1c9"
+    "Controlled Terms": "https://schema.metadatacenter.org/properties/617a0e5f-4420-49e5-a393-7efc1f99f1c9",
+    "Size": "https://schema.metadatacenter.org/properties/617a0e5f"
   },
   "Controlled Terms": {
     "@id": "http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity",
     "rdfs:label": "BrainActivity"
+  },
+  "Size": {
+    "@value": "33",
+    "@type": "xsd:int"
   },
   "schema:isBasedOn": "https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded",
   "schema:name": "Controlled Terms metadata",

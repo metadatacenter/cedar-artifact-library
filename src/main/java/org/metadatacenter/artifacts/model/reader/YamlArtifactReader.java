@@ -676,7 +676,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (!xsdDatatypeString.isPresent())
       return Optional.empty();
 
-    if (XsdDatatype.isValidXsdDatatype(xsdDatatypeString.get()))
+    if (XsdDatatype.isKnownXsdDatatype(xsdDatatypeString.get()))
       return Optional.of(XsdDatatype.fromString(xsdDatatypeString.get()));
     else
       throw new ArtifactParseException("Invalid status " + xsdDatatypeString.get(), fieldName, path);

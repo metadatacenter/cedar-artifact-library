@@ -80,6 +80,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
         throw new IllegalArgumentException("Field " + fieldSchemaArtifact.name() + " has no JSON-LD identifier");
 
       URI fieldID = fieldSchemaArtifact.jsonLdId().get();
+      String fieldName = fieldSchemaArtifact.name();
 
       ubkgRenderingBuilder.withEdge(templateID, HAS_FIELD_PREDICATE, fieldID);
 

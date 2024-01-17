@@ -44,7 +44,7 @@ public enum XsdDatatype
     throw new IllegalArgumentException("No XSD datatype constant " + text + " found");
   }
 
-  public static boolean isValidXsdDatatype(String text) {
+  public static boolean isKnownXsdDatatype(String text) {
     for (XsdDatatype d : XsdDatatype.values()) {
       if (d.text.equalsIgnoreCase(text)) {
         return true;
