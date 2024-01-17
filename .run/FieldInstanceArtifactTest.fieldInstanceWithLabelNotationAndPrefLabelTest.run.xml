@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="FieldInstanceArtifactTest.fieldInstanceWithLabelNotationAndPrefLabelTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+    <module name="cedar-artifact-library" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.metadatacenter.artifacts.model.core.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="org.metadatacenter.artifacts.model.core" />
+    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.core.FieldInstanceArtifactTest" />
+    <option name="METHOD_NAME" value="fieldInstanceWithLabelNotationAndPrefLabelTest" />
+    <option name="TEST_OBJECT" value="method" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="TEST_SEARCH_SCOPE">
+      <value defaultName="moduleWithDependencies" />
+    </option>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

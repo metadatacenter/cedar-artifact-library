@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Template2Yaml SampleSection" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Template2Yaml" />
+    <module name="cedar-artifact-library" />
+    <option name="PROGRAM_PARAMETERS" value="src/test/resources/SampleSection.json /tmp/SampleSection.yml" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.metadatacenter.artifacts.model.tools.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
