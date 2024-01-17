@@ -3,8 +3,6 @@ package org.metadatacenter.artifacts.model.tools;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -16,7 +14,6 @@ import org.apache.commons.cli.ParseException;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.UbkgArtifactRenderer;
-import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.ubkg.UbkgRendering;
 import org.metadatacenter.artifacts.ubkg.UbkgTsvRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
@@ -27,11 +24,11 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Template2Ubkg
 {
+  private static final String TEMPLATE_DIRECTORY_OPTION = "d";
   private static final String TEMPLATE_FILE_OPTION = "f";
   private static final String TEMPLATE_IRI_OPTION = "i";
   private static final String UBKG_NODE_FILE_OPTION = "un";
@@ -59,26 +56,13 @@ public class Template2Ubkg
 
       if (command.hasOption(TEMPLATE_FILE_OPTION)) {
         String templateFileName = command.getOptionValue(TEMPLATE_FILE_OPTION);
-        File templateFile = new File(templateFileName);
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(templateFile);
-
-        if (!jsonNode.isObject())
-          throw new RuntimeException("Expecting JSON object");
-
-        ObjectNode templateObjectNode = (ObjectNode)jsonNode;
+        ObjectNode templateObjectNode = readJsonFromFile(templateFileName);
         templateObjectNodes.add(templateObjectNode);
       } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
         String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
         String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
         String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, StandardCharsets.UTF_8);
-        HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarAPIKey);
-        int responseCode = connection.getResponseCode();
-
-        if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST)
-          throw new RuntimeException("Error retrieving template at " + requestURL + ": " + responseCode);
-
-        ObjectNode templateObjectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
+        ObjectNode templateObjectNode = readJsonFromApi(requestURL, cedarAPIKey);
         templateObjectNodes.add(templateObjectNode);
       } else
         Usage(options, "Both a template file path and a template IRI cannot be specified together");
@@ -102,6 +86,31 @@ public class Template2Ubkg
     } catch (ParseException e) {
       Usage(options, e.getMessage());
     }
+  }
+
+  private static ObjectNode readJsonFromApi(String requestApiUrl, String cedarAPIKey) throws IOException
+  {
+    HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestApiUrl, cedarAPIKey);
+    int responseCode = connection.getResponseCode();
+
+    if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST)
+      throw new RuntimeException("Error retrieving JSON from " + requestApiUrl + ": " + responseCode);
+
+    ObjectNode objectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
+
+    return objectNode;
+  }
+
+  private static ObjectNode readJsonFromFile(String templateFileName) throws IOException
+  {
+    File templateFile = new File(templateFileName);
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode jsonNode = mapper.readTree(templateFile);
+
+    if (!jsonNode.isObject())
+      throw new RuntimeException("Expecting JSON object in file " + templateFileName);
+
+    return (ObjectNode)jsonNode;
   }
 
   private static Options buildCommandLineOptions()
@@ -162,19 +171,32 @@ public class Template2Ubkg
 
   private static void checkCommandLine(CommandLine command, Options options)
   {
+    if (command.hasOption(TEMPLATE_DIRECTORY_OPTION) && command.hasOption(TEMPLATE_IRI_OPTION))
+      Usage(options, "Both a template directory path and a template IRI cannot be specified together");
+
+    if (command.hasOption(TEMPLATE_DIRECTORY_OPTION) && command.hasOption(TEMPLATE_FILE_OPTION))
+      Usage(options, "Both a template directory path and a template file path cannot be specified together");
+
     if (command.hasOption(TEMPLATE_FILE_OPTION) && command.hasOption(TEMPLATE_IRI_OPTION))
       Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
     if (!command.hasOption(UBKG_NODE_FILE_OPTION) || !command.hasOption(UBKG_EDGE_FILE_OPTION))
       Usage(options, "UBKG node file path and UBKG edge file path must be provided");
 
-    if (command.hasOption(TEMPLATE_IRI_OPTION)) {
+    if (command.hasOption(TEMPLATE_DIRECTORY_OPTION)) {
+      if (command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options,
+          "Resource server REST base, and CEDAR API key must not be provided when a template directory option is selected");
+    } else if (command.hasOption(TEMPLATE_FILE_OPTION)) {
+      if (command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options,
+          "Resource server REST base, and CEDAR API key must not be provided when a template file option is selected");
+    } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
       if (!command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
         Usage(options,
           "Resource server REST base, and CEDAR API key must be provided when template IRI option is selected");
-    } else if (command.hasOption(TEMPLATE_FILE_OPTION)) {
     } else
-      Usage(options, "Please specify a template file path or a template IRI");
+      Usage(options, "Please specify a template directory path, file path, or a template IRI");
   }
 
   private static void Usage(Options options, String errorMessage) {
