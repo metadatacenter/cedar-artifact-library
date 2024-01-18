@@ -19,14 +19,19 @@ import org.metadatacenter.artifacts.ubkg.UbkgTsvRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Template2Ubkg
+import static java.nio.file.StandardOpenOption.*;
+
+public class Templates2Ubkg
 {
   private static final String TEMPLATE_DIRECTORY_OPTION = "d";
   private static final String TEMPLATE_FILE_OPTION = "f";
@@ -56,7 +61,7 @@ public class Template2Ubkg
 
       if (command.hasOption(TEMPLATE_DIRECTORY_OPTION)) {
         String templateDirectoryPath = command.getOptionValue(TEMPLATE_DIRECTORY_OPTION);
-        List<ObjectNode> objectNodes = readJsonFromDirectory(templateDirectoryPath);
+        List<ObjectNode> objectNodes = readJsonFromFilesInDirectory(templateDirectoryPath);
         templateObjectNodes.addAll(objectNodes);
       } else if (command.hasOption(TEMPLATE_FILE_OPTION)) {
         String templateFilePath = command.getOptionValue(TEMPLATE_FILE_OPTION);
@@ -82,10 +87,19 @@ public class Template2Ubkg
       UbkgRendering ubkgRendering = ubkgRenderingBuilder.build();
       UbkgTsvRenderer ubkgTsvRenderer = new UbkgTsvRenderer(ubkgRendering);
 
-      System.out.println("Nodes: \n" + ubkgTsvRenderer.renderNodes());
-      System.out.println("Edges: \n" + ubkgTsvRenderer.renderEdges());
+      writeToFile(ubkgNodeFile, ubkgTsvRenderer.renderNodes());
+      writeToFile(ubkgEdgeFile, ubkgTsvRenderer.renderEdges());
     } catch (ParseException e) {
       Usage(options, e.getMessage());
+    }
+  }
+
+  public static void writeToFile(File file, StringBuffer content) throws IOException {
+
+    try (FileWriter fileWriter = new FileWriter(file)) {
+      fileWriter.write(content.toString());
+    } catch (IOException e) {
+      throw new RuntimeException("Error writing to file " + file.getName() + ": " + e.getMessage());
     }
   }
 
@@ -115,10 +129,9 @@ public class Template2Ubkg
     return (ObjectNode)jsonNode;
   }
 
-  public static List<ObjectNode> readJsonFromDirectory(String directoryPath)
+  public static List<ObjectNode> readJsonFromFilesInDirectory(String directoryPath)
   {
     List<ObjectNode> objectNodes = new ArrayList<>();
-
     File directory = new File(directoryPath);
 
     if (!directory.isDirectory())
@@ -244,7 +257,7 @@ public class Template2Ubkg
     String header = "CEDAR Template to UBKG Translation Tool";
 
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp(Template2Ubkg.class.getName(), header, options, errorMessage, true);
+    formatter.printHelp(Templates2Ubkg.class.getName(), header, options, errorMessage, true);
 
     System.exit(-1);
   }

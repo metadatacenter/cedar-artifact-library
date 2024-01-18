@@ -23,9 +23,11 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
   private final UbkgRendering.Builder ubkgRenderingBuilder;
 
   private final String RDFS_TYPE = "http://www.w3.org/2000/01/rdf-schema#type";
-  private final String HAS_FIELD_PREDICATE = "has_field";
-  private final String HAS_DATATYPE_PREDICATE = "has_datatype";
-  private final String HAS_VALUESET_PREDICATE = "has_valueset";
+  private final String HAS_FIELD_UBKG_PREDICATE = "has_field";
+  private final String HAS_DATATYPE_UBKG_PREDICATE = "has_datatype";
+  private final String HAS_VALUESET_UBKG_PREDICATE = "has_valueset";
+  private final String USED_FOR_DATASET_TYPE_UBKG_PREDICATE = "used_for_dataset_type";
+  private final String DATASET_TYPE_TEMPLATE_FIELD_NAME = "dataset_type";
 
   private final URI TEMPLATE_SCHEMA_ARTIFACT_TYPE_URI = URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
   private final URI FIELD_SCHEMA_ARTIFACT_TYPE_URI = URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
@@ -64,14 +66,14 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     if (!templateSchemaArtifact.status().isPresent())
       throw new IllegalArgumentException("Template " + templateSchemaArtifact.name() + " has no release status");
 
-    URI templateID = templateSchemaArtifact.jsonLdId().get();
+    URI templateUri = templateSchemaArtifact.jsonLdId().get();
     String templateName = templateSchemaArtifact.name();
     Version templateVersion = templateSchemaArtifact.version().get();
     Status templateStatus = templateSchemaArtifact.status().get();
     String templateDescription = templateStatus.isPublished() ? templateVersion.toString() : templateVersion + ":draft";
 
-    ubkgRenderingBuilder.withNode(templateID, templateName, templateDescription);
-    ubkgRenderingBuilder.withEdge(templateID, RDFS_TYPE, TEMPLATE_SCHEMA_ARTIFACT_TYPE_URI);
+    ubkgRenderingBuilder.withNode(templateUri, templateName, templateDescription);
+    ubkgRenderingBuilder.withEdge(templateUri, RDFS_TYPE, TEMPLATE_SCHEMA_ARTIFACT_TYPE_URI);
 
     for (var entry : templateSchemaArtifact.fieldSchemas().entrySet()) {
       FieldSchemaArtifact fieldSchemaArtifact = entry.getValue();
@@ -79,10 +81,21 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
       if (!fieldSchemaArtifact.jsonLdId().isPresent())
         throw new IllegalArgumentException("Field " + fieldSchemaArtifact.name() + " has no JSON-LD identifier");
 
-      URI fieldID = fieldSchemaArtifact.jsonLdId().get();
+      URI fieldUri = fieldSchemaArtifact.jsonLdId().get();
       String fieldName = fieldSchemaArtifact.name();
 
-      ubkgRenderingBuilder.withEdge(templateID, HAS_FIELD_PREDICATE, fieldID);
+      // We used the predicate 'used_for_dataset_type' to associate a template with a dataset type in the UBKG edges file.
+      // We get this value from the default value for a dataset_type field present in a template.
+      if (fieldName.equals(DATASET_TYPE_TEMPLATE_FIELD_NAME)) {
+        if (fieldSchemaArtifact.valueConstraints().isPresent() &&
+          fieldSchemaArtifact.valueConstraints().get().defaultValue().isPresent() &&
+          fieldSchemaArtifact.valueConstraints().get().defaultValue().get().isControlledTermDefaultValue()) {
+          URI termURI = fieldSchemaArtifact.valueConstraints().get().defaultValue().get().asControlledTermDefaultValue().termUri();
+          ubkgRenderingBuilder.withEdge(templateUri, USED_FOR_DATASET_TYPE_UBKG_PREDICATE, termURI);
+        }
+      }
+
+      ubkgRenderingBuilder.withEdge(templateUri, HAS_FIELD_UBKG_PREDICATE, fieldUri);
 
       renderFieldSchemaArtifact(fieldSchemaArtifact);
     }
@@ -105,19 +118,19 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
 
       if (valueConstraints instanceof NumericValueConstraints) { // TODO Use typesafe switch when available
         NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, numericValueConstraints.numberType().toUri());
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, numericValueConstraints.numberType().toUri());
       } else if (valueConstraints instanceof TemporalValueConstraints) {
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, temporalValueConstraints.temporalType().toURI());
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, temporalValueConstraints.temporalType().toURI());
       } else if (valueConstraints instanceof ControlledTermValueConstraints) {
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, XSD_ANY_URI);
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, XSD_ANY_URI);
 
         for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches())
-          ubkgRenderingBuilder.withEdge(fieldUri, HAS_VALUESET_PREDICATE, branchValueConstraint.uri());
+          ubkgRenderingBuilder.withEdge(fieldUri, HAS_VALUESET_UBKG_PREDICATE, branchValueConstraint.uri());
 
       } else
-        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_PREDICATE, XSD_STRING_URI);
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, XSD_STRING_URI);
     }
 
     return ubkgRenderingBuilder;

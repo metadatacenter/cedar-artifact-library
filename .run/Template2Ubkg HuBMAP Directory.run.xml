@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Template2Ubkg HuBMAP Directory" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Template2Ubkg" />
+    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Templates2Ubkg" />
     <module name="cedar-artifact-library" />
-    <option name="PROGRAM_PARAMETERS" value="-d src/test/resources/templates/HuBMAP -un /tmp/HuBMAPNodes.tsv -ue /tmp/HuBMAPEdges.tsv" />
+    <option name="PROGRAM_PARAMETERS" value="-d $PROJECT_DIR$/../../../common/cedar/HuBMAP/templates -un /tmp/HuBMAPNodes.tsv -ue /tmp/HuBMAPEdges.tsv" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.metadatacenter.artifacts.model.tools.*" />

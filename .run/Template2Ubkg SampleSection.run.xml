@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Template2Ubkg SampleSection" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Template2Ubkg" />
+    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Templates2Ubkg" />
     <module name="cedar-artifact-library" />
     <option name="PROGRAM_PARAMETERS" value="-f src/test/resources/templates/SampleSection.json -un /tmp/SampleNode.tsv -ue /tmp/SampleEdge.tsv" />
     <extension name="coverage">
