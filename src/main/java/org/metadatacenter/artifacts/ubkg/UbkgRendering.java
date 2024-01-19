@@ -24,20 +24,15 @@ public interface UbkgRendering
   String NODE_LABEL = "node_label";
   String NODE_DEFINITION = "node_definition";
 
-  static UbkgRendering create(LinkedHashMap<URI, Map<String, String>> nodes, LinkedHashMap<URI, Map<String, Set<URI>>> edges)
-  {
-    return new UbkgRenderingRecord(nodes, edges);
-  }
-
   // node URI -> ("node_label" -> node label, "node_definition" -> node definition)
   LinkedHashMap<URI, Map<String, String>> nodes();
 
   // subject URI->(predicate -> object URI)
   LinkedHashMap<URI, Map<String, Set<URI>>> edges();
 
-  default List<URI> nodeIds() { return new ArrayList<>(nodes().keySet()); }
+  default List<URI> nodeUris() { return new ArrayList<>(nodes().keySet()); }
 
-  default List<URI> edgeIds() { return new ArrayList<>(edges().keySet()); }
+  default List<URI> edgeUris() { return new ArrayList<>(edges().keySet()); }
 
   default Map<String, String> getNode(URI nodeUri)
   {

@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.reader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
@@ -1354,10 +1355,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     if (!jsonNode.isTextual())
       throw new ArtifactParseException("Value of URI field must be textual", fieldName, path);
 
-    try {
-      return Optional.of(new URI(jsonNode.asText()));
-    } catch (Exception e) {
-      throw new ArtifactParseException("Value of URI field must be a valid URI", fieldName, path);
+    String uriValue = jsonNode.asText();
+
+    if (XsdDatatype.isKnownXsdDatatype(uriValue)) {
+      return Optional.of(XsdDatatype.fromString(uriValue).toUri());
+    } else {
+      try {
+        return Optional.of(new URI(uriValue));
+      } catch (Exception e) {
+        throw new ArtifactParseException("Value " + uriValue + " in URI field must be a valid URI", fieldName, path);
+      }
     }
   }
 
