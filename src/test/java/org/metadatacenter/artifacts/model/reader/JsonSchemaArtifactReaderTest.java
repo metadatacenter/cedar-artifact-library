@@ -132,6 +132,25 @@ public class JsonSchemaArtifactReaderTest
   }
 
   @Test
+  public void testReadTemplateWithAttributeValues()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SimpleTemplateWithAttributeValues.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("Simple Template with Attribute-Value Field", templateSchemaArtifact.name());
+
+    Map<String, FieldSchemaArtifact> fieldSchemas = templateSchemaArtifact.fieldSchemas();
+
+    assertEquals(fieldSchemas.size(), 1);
+    FieldSchemaArtifact fieldSchemaArtifact = fieldSchemas.get("Attribute values");
+    assertNotNull(fieldSchemaArtifact);
+
+    assertTrue(fieldSchemaArtifact.isMultiple());
+    assertTrue(fieldSchemaArtifact.fieldUi().isAttributeValue());
+  }
+
+  @Test
   public void testReadTemplateSchemaArtifact()
   {
     ObjectNode objectNode = createBaseTemplateSchemaArtifact("Test name", "Test description");
