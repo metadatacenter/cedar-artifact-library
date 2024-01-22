@@ -28,13 +28,9 @@ public enum FieldInputType
   CHECKBOX(FIELD_INPUT_TYPE_CHECKBOX),
   LIST(FIELD_INPUT_TYPE_LIST),
   LINK(FIELD_INPUT_TYPE_LINK),
-
   NUMERIC(FIELD_INPUT_TYPE_NUMERIC),
-
   TEMPORAL(FIELD_INPUT_TYPE_TEMPORAL),
-
   ATTRIBUTE_VALUE(FIELD_INPUT_TYPE_ATTRIBUTE_VALUE),
-
   SECTION_BREAK(FIELD_INPUT_TYPE_SECTION_BREAK),
   RICHTEXT(FIELD_INPUT_TYPE_RICH_TEXT),
   IMAGE(FIELD_INPUT_TYPE_IMAGE),
@@ -53,7 +49,25 @@ public enum FieldInputType
 
   public boolean isTemporal() { return this == TEMPORAL; }
 
+  public boolean isTextField() { return this == TEXTFIELD; }
+
+  public boolean isTextArea() { return this == TEXTAREA; }
+
   public boolean isNumeric() { return this == NUMERIC; }
+
+  public boolean isPhoneNumber() { return this == PHONE_NUMBER; }
+
+  public boolean isEmail() { return this == EMAIL; }
+
+  public boolean isRadio() { return this == RADIO; }
+
+  public boolean isCheckbox() { return this == CHECKBOX; }
+
+  public boolean isList() { return this == LIST; }
+
+  public boolean isLink() { return this == LINK; }
+
+  public boolean isAttributeValue() { return this == ATTRIBUTE_VALUE; }
 
   public boolean isStatic() { return this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }
 

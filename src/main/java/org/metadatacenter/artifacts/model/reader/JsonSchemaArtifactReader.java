@@ -567,6 +567,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Map<String, List<FieldInstanceArtifact>> fields, Map<String, List<ElementInstanceArtifact>> elements)
   {
     Iterator<String> instanceArtifactFieldNames = parentNode.fieldNames();
+    Map<String, List<String>> attributeValueFieldGroups = new HashMap<>();
 
     while (instanceArtifactFieldNames.hasNext()) {
       String instanceArtifactFieldName = instanceArtifactFieldNames.next();
@@ -589,16 +590,25 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
             String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
             JsonNode instanceNode = nodeIterator.next();
             if (instanceNode == null || instanceNode.isNull()) {
-              throw new ArtifactParseException("Expecting field or element instance artifact entry in array, got null",
+              throw new ArtifactParseException("Expecting field or element instance or attribute-value field name in array, got null",
                 instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
             } else {
-              if (!instanceNode.isObject())
-                throw new ArtifactParseException("Expecting nested field or element instance artifact in array",
+              if (instanceNode.isObject()) {
+                ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
+                readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
+                  arrayEnclosedInstanceArtifactNode, elements, fields);
+              } else if (instanceNode.isTextual()) { // A list of attribute-value field names
+                String attributeValueFieldName = instanceNode.asText();
+                if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
+                  attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
+                else {
+                  List<String> attributeValueFieldNames = new ArrayList<>();
+                  attributeValueFieldNames.add(attributeValueFieldName);
+                  attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldNames);
+                }
+              } else
+                throw new ArtifactParseException("Expecting field or element instance or attribute-value field name in array",
                   instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
-
-              ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
-              readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
-                arrayEnclosedInstanceArtifactNode, elements, fields);
             }
             arrayIndex++;
           }
@@ -1293,7 +1303,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       JsonNode itemNode = itemsNode.iterator().next();
       if (!itemNode.isObject())
         throw new ArtifactParseException("Expecting object as first element", JSON_SCHEMA_ITEMS, path);
-      return  (ObjectNode)itemNode;
+      return (ObjectNode)itemNode;
     } else
       return sourceNode;
   }

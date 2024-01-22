@@ -4,13 +4,7 @@ import org.junit.Test;
 
 import java.net.URI;
 
-import static org.junit.Assert.*;
-
-//static FieldInstanceArtifact create(Map<String, URI> jsonLdContext,
-//  List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-//  Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
-//  Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
-
+import static org.junit.Assert.assertEquals;
 
 public class FieldInstanceArtifactTest
 {
