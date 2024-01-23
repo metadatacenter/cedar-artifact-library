@@ -1141,20 +1141,22 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath, UI_FIELD_INPUT_TYPE);
     boolean valueRecommendationEnabled = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
+    boolean recommendedValue = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
+    boolean continuePreviousLine = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);
       InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
       boolean timeZoneEnabled = readBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
 
-      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
-      return NumericFieldUi.create(hidden);
+      return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       String content = readRequiredString(uiNode, uiPath, UI_CONTENT);
-      return StaticFieldUi.create(fieldInputType, content, hidden);
+      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
     } else
-      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
+      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
   }
 
   private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName)

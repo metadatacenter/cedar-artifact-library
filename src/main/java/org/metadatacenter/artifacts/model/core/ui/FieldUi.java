@@ -11,11 +11,17 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean hidden();
 
-  @JsonIgnore
-  default boolean isStatic() { return inputType().isStatic(); }
-
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean valueRecommendationEnabled();
+
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  boolean continuePreviousLine();
+
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  boolean recommendedValue();
+
+  @JsonIgnore
+  default boolean isStatic() { return inputType().isStatic(); }
 
   default TemporalFieldUi asTemporalFieldUi()
   {
@@ -71,9 +77,10 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
   @JsonIgnore default boolean isYouTube() {return inputType() == FieldInputType.YOUTUBE;}
 
-  static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendationEnabled)
+  static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendationEnabled,
+    boolean recommendedValue, boolean continuePreviousLine)
   {
-    return new FieldUiRecord(fieldInputType, hidden, valueRecommendationEnabled);
+    return new FieldUiRecord(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
   }
 
   static Builder builder()
@@ -86,6 +93,8 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
     private FieldInputType inputType;
     private boolean hidden = false;
     private boolean valueRecommendationEnabled = false;
+    boolean recommendedValue = false;
+    boolean continuePreviousLine = false;
 
     private Builder()
     {
@@ -103,6 +112,18 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
       return this;
     }
 
+    public Builder withRecommendedValue(boolean recommendedValue)
+    {
+      this.recommendedValue = recommendedValue;
+      return this;
+    }
+
+    public Builder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
     public Builder withHidden(boolean hidden)
     {
       this.hidden = hidden;
@@ -111,22 +132,25 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
     public FieldUi build()
     {
-      return new FieldUiRecord(inputType, hidden, valueRecommendationEnabled);
+      return new FieldUiRecord(inputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
     }
   }
 }
 
-record FieldUiRecord(FieldInputType inputType, boolean hidden, boolean valueRecommendationEnabled) implements FieldUi
+record FieldUiRecord(FieldInputType inputType, boolean hidden, boolean valueRecommendationEnabled, boolean recommendedValue, boolean continuePreviousLine) implements FieldUi
 {
-  public FieldUiRecord {
+  public FieldUiRecord
+  {
     if (inputType == null)
       throw new IllegalArgumentException("Field input type is null in " + FieldUi.class.getName());
 
     if (inputType.isStatic())
-      throw new IllegalArgumentException("The " + StaticFieldUi.class.getName() + " class should be used for static field UIs");
+      throw new IllegalArgumentException(
+        "The " + StaticFieldUi.class.getName() + " class should be used for static field UIs");
 
     if (inputType.isTemporal())
-      throw new IllegalArgumentException("The " + TemporalFieldUi.class.getName() + " class should be used for temporal field UIs");
+      throw new IllegalArgumentException(
+        "The " + TemporalFieldUi.class.getName() + " class should be used for temporal field UIs");
   }
 }
 
