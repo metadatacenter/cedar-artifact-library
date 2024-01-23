@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
@@ -120,6 +121,12 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     public Builder withJsonLdType(URI jsonLdType)
     {
       this.jsonLdTypes.add(jsonLdType);
+      return this;
+    }
+
+    public Builder withJsonLdTypes(List<URI> jsonLdTypes)
+    {
+      this.jsonLdTypes = List.copyOf(jsonLdTypes);
       return this;
     }
 
