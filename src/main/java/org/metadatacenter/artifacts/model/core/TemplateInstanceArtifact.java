@@ -46,6 +46,23 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
     visitor.visitTemplateInstanceArtifact(this);
 
+    for (Map.Entry<String, List<ElementInstanceArtifact>> entry : elementInstances().entrySet()) {
+      String elementName = entry.getKey();
+      String childBasePath = path + elementName;
+      List<ElementInstanceArtifact> elementInstanceArtifacts = entry.getValue();
+
+      if (elementInstanceArtifacts.size() == 1) {
+        ElementInstanceArtifact elementInstanceArtifact = elementInstanceArtifacts.get(0);
+        elementInstanceArtifact.accept(visitor, childBasePath);
+      } else {
+        int childNumber = 0;
+        for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
+          elementInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
+          childNumber++;
+        }
+      }
+    }
+
     for (Map.Entry<String, List<FieldInstanceArtifact>> entry : fieldInstances().entrySet()) {
       String fieldName = entry.getKey();
       String childBasePath = path + fieldName;
@@ -63,21 +80,13 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       }
     }
 
-    for (Map.Entry<String, List<ElementInstanceArtifact>> entry : elementInstances().entrySet()) {
-      String elementName = entry.getKey();
-      String childBasePath = path + elementName;
-      List<ElementInstanceArtifact> elementInstanceArtifacts = entry.getValue();
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> entry : attributeValueFieldInstances().entrySet()) {
+      String attributeValueFieldName = entry.getKey();
+      String childBasePath = path + attributeValueFieldName;
+      Map<String, FieldInstanceArtifact> perAttributeValueFieldInstances = entry.getValue();
 
-      if (elementInstanceArtifacts.size() == 1) {
-        ElementInstanceArtifact elementInstanceArtifact = elementInstanceArtifacts.get(0);
-        elementInstanceArtifact.accept(visitor, childBasePath);
-      } else {
-        int childNumber = 0;
-        for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
-          elementInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
-          childNumber++;
-        }
-      }
+      for (FieldInstanceArtifact fieldInstanceArtifact: perAttributeValueFieldInstances.values())
+        fieldInstanceArtifact.accept(visitor, childBasePath);
     }
   }
 
