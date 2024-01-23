@@ -1,4 +1,4 @@
-package org.metadatacenter.artifacts.model.core;
+package org.metadatacenter.artifacts.model.core.ui;
 
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ui.ElementUi;
