@@ -17,6 +17,6 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact permits Te
   // element name->[element instance]
   Map<String, List<ElementInstanceArtifact>> elementInstances();
 
-  // attribute-value field group name->(attribute-value field instance name->field instance)
+  // attribute-value field name->(attribute-value field instance name->field instance)
   Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances();
 }
