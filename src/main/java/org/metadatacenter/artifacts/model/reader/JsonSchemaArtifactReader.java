@@ -517,11 +517,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
 
-    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances);
+    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances, attributeValueFieldInstances);
 
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
   }
 
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path)
@@ -537,11 +538,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
 
-    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances);
+    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances, attributeValueFieldInstances);
 
-    return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes,
-      jsonLdId, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
+    return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
   }
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path)
@@ -564,9 +566,11 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path,
-    Map<String, List<FieldInstanceArtifact>> fields, Map<String, List<ElementInstanceArtifact>> elements)
+    Map<String, List<FieldInstanceArtifact>> fieldInstances, Map<String, List<ElementInstanceArtifact>> elementInstances,
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   {
     Iterator<String> instanceArtifactFieldNames = parentNode.fieldNames();
+    // attribute-value field name -> [attribute-value field instance name]
     Map<String, List<String>> attributeValueFieldGroups = new HashMap<>();
 
     while (instanceArtifactFieldNames.hasNext()) {
@@ -580,7 +584,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           ObjectNode nestedInstanceArtifactNode = (ObjectNode)nestedNode;
 
           readNestedInstanceArtifact(instanceArtifactFieldName, nestedInstanceArtifactPath, nestedInstanceArtifactNode,
-            elements, fields);
+            elementInstances, fieldInstances);
 
         } else if (nestedNode.isArray()) {
           Iterator<JsonNode> nodeIterator = nestedNode.iterator();
@@ -590,29 +594,85 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
             String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
             JsonNode instanceNode = nodeIterator.next();
             if (instanceNode == null || instanceNode.isNull()) {
-              throw new ArtifactParseException("Expecting field or element instance or attribute-value field name in array, got null",
+              throw new ArtifactParseException(
+                "Expecting field or element instance or attribute-value field name in array, got null",
                 instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
             } else {
               if (instanceNode.isObject()) {
                 ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
                 readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
-                  arrayEnclosedInstanceArtifactNode, elements, fields);
+                  arrayEnclosedInstanceArtifactNode, elementInstances, fieldInstances);
               } else if (instanceNode.isTextual()) { // A list of attribute-value field names
                 String attributeValueFieldName = instanceNode.asText();
                 if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
                   attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
                 else {
-                  List<String> attributeValueFieldNames = new ArrayList<>();
-                  attributeValueFieldNames.add(attributeValueFieldName);
-                  attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldNames);
+                  List<String> attributeValueFieldInstanceNames = new ArrayList<>();
+                  attributeValueFieldInstanceNames.add(attributeValueFieldName);
+                  attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldInstanceNames);
                 }
               } else
-                throw new ArtifactParseException("Expecting field or element instance or attribute-value field name in array",
+                throw new ArtifactParseException(
+                  "Expecting field or element instance or attribute-value field name in array",
                   instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
             }
             arrayIndex++;
           }
         }
+      }
+    }
+    processAttributeValueFields(path, fieldInstances, attributeValueFieldGroups, attributeValueFieldInstances);
+  }
+
+  /**
+   * A template or element instance may contain attribute-value fields.
+   * <p></p>
+   * Their definition could look as follows:
+   * <pre>
+   *   "Attribute-values field A": [ "Attribute-values field instance name 1", "Attribute-values field instance name 2" ],
+   *   "Attribute-values field instance name 1": { "@value": "v1" },
+   *   "Attribute-values field instance name 2": { "@value": "v2" },
+   *
+   *   "Attribute-values field B": [ "Attribute-values field instance name 3", "Attribute-values field instance name 4" ],
+   *   "Attribute-values field instance name 3": { "@value": "v3" },
+   *   "Attribute-values field instance name 4": { "@value": "v4" },
+   * </pre>
+   * We need to post-process these attribute-value fields and move them from the main fieldInstances map to
+   * the specialized attributeValueFieldInstances map
+   */
+  private void processAttributeValueFields(String path, Map<String, List<FieldInstanceArtifact>> fieldInstances,
+    Map<String, List<String>> attributeValueFieldGroups, Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+  {
+    for (var entry : attributeValueFieldGroups.entrySet()) {
+      String attributeValueFieldName = entry.getKey();
+      List<String> attributeValueFieldInstanceNames = entry.getValue();
+
+      for (String attributeValueFieldInstanceName : attributeValueFieldInstanceNames) {
+
+        if (!fieldInstances.containsKey(attributeValueFieldInstanceName))
+          throw new ArtifactParseException(
+            "Attribute-value field " + attributeValueFieldName + " specifies an instance field "
+              + attributeValueFieldInstanceName + " that is not present in the template or element instance",
+            attributeValueFieldName, path);
+
+        List<FieldInstanceArtifact> perAttributeFieldInstances = fieldInstances.get(attributeValueFieldInstanceName);
+
+        if (perAttributeFieldInstances.size() != 1)
+          throw new ArtifactParseException(
+            "Attribute-value field " + attributeValueFieldName + " has an instance field "
+              + attributeValueFieldInstanceName + " that does not have exactly one instance",
+            attributeValueFieldInstanceName, path);
+
+        FieldInstanceArtifact fieldInstanceArtifact = perAttributeFieldInstances.get(0);
+
+        if (attributeValueFieldInstances.containsKey(attributeValueFieldName)) {
+          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, fieldInstanceArtifact);
+        } else {
+          attributeValueFieldInstances.put(attributeValueFieldName, new HashMap<>());
+          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, fieldInstanceArtifact);
+        }
+
+        fieldInstances.remove(attributeValueFieldInstanceName); // Now remove it from the non-attribute-value field instances
       }
     }
   }

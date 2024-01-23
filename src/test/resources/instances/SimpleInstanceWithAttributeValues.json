@@ -39,15 +39,25 @@
     "Attribute values1": "https://schema.metadatacenter.org/properties/e512494c-2671-4f99-b4a3-865ba1154ff4",
     "Attribute values2": "https://schema.metadatacenter.org/properties/5f28c5fa-5611-4f31-8012-a70c2474c3bf"
   },
-  "Attribute values": [
-    "Attribute values1",
-    "Attribute values2"
+  "Attribute-value field A": [
+    "Attribute-value instance field 1",
+    "Attribute-value instance field 2"
   ],
-  "Attribute values1": {
+  "Attribute-value instance field 1": {
     "@value": "v1"
   },
-  "Attribute values2": {
+  "Attribute-value instance field 2": {
     "@value": "v2"
+  },
+  "Attribute-value field B": [
+    "Attribute-value instance field 3",
+    "Attribute-value instance field 4"
+  ],
+  "Attribute-value instance field 3": {
+    "@value": "v3"
+  },
+  "Attribute-value instance field 4": {
+    "@value": "v4"
   },
   "schema:isBasedOn": "https://repo.metadatacenter.org/templates/b2cb857d-cdd2-4122-a006-ab8afc5dce0b",
   "schema:name": "Attribute-Value Field Test metadata",

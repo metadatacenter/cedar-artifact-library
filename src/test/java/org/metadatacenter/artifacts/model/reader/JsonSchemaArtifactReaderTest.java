@@ -221,10 +221,18 @@ public class JsonSchemaArtifactReaderTest
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
     assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
-    assertEquals(2, templateInstanceArtifact.fieldInstances().size());
-    assertNotNull(templateInstanceArtifact.fieldInstances().get("Attribute values1"));
-    assertNotNull(templateInstanceArtifact.fieldInstances().get("Attribute values2"));
+    assertEquals(0, templateInstanceArtifact.fieldInstances().size());
     assertEquals(0, templateInstanceArtifact.elementInstances().size());
+
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().size());
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 1"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 2"));
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 3"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 4"));
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

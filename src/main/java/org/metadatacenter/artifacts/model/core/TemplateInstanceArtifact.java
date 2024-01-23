@@ -27,19 +27,21 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
   static TemplateInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<String> name, Optional<String> description,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    URI isBasedOn,
+    Optional<String> name, Optional<String> description, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, URI isBasedOn,
     Map<String, List<FieldInstanceArtifact>> fieldInstances,
-    Map<String, List<ElementInstanceArtifact>> elementInstances)
+    Map<String, List<ElementInstanceArtifact>> elementInstances,
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   {
     return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances,
+      attributeValueFieldInstances);
   }
 
   URI isBasedOn();
 
-  default void accept(InstanceArtifactVisitor visitor) {
+  default void accept(InstanceArtifactVisitor visitor)
+  {
     String path = "/";
 
     visitor.visitTemplateInstanceArtifact(this);
@@ -98,6 +100,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
     private Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    private Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
 
     private Builder()
     {
@@ -199,11 +202,19 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
+    public Builder withAttributeValueFieldInstances(String attributeValueFieldName,
+      Map<String, FieldInstanceArtifact> attributeValueFieldInstances)
+    {
+      this.attributeValueFieldInstances.put(attributeValueFieldName,
+        Map.copyOf(attributeValueFieldInstances));
+      return this;
+    }
 
     public TemplateInstanceArtifact build()
     {
-      return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
+      return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances,
+        attributeValueFieldInstances);
     }
   }
 }
@@ -214,7 +225,9 @@ record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> 
                                       Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                       URI isBasedOn,
                                       Map<String, List<FieldInstanceArtifact>> fieldInstances,
-                                      Map<String, List<ElementInstanceArtifact>> elementInstances) implements TemplateInstanceArtifact
+                                      Map<String, List<ElementInstanceArtifact>> elementInstances,
+                                      Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+  implements TemplateInstanceArtifact
 {
   public TemplateInstanceArtifactRecord
   {
@@ -230,10 +243,12 @@ record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> 
     validateUriFieldNotNull(this, isBasedOn, SCHEMA_IS_BASED_ON);
     validateMapFieldNotNull(this, fieldInstances, "fieldInstances");
     validateMapFieldNotNull(this, elementInstances, "elementInstances");
+    validateMapFieldNotNull(this, attributeValueFieldInstances, "attributeValueFieldInstances");
 
     jsonLdContext = Map.copyOf(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
     fieldInstances = Map.copyOf(fieldInstances);
     elementInstances = Map.copyOf(elementInstances);
+    attributeValueFieldInstances = Map.copyOf(attributeValueFieldInstances);
   }
 }
