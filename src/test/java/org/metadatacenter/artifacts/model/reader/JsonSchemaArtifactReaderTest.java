@@ -201,7 +201,6 @@ public class JsonSchemaArtifactReaderTest
     assertEquals("Controlled Terms metadata", templateInstanceArtifact.name().get());
   }
 
-
   @Test
   public void testReadSimpleTemplateInstanceWithNesting()
   {
@@ -223,6 +222,8 @@ public class JsonSchemaArtifactReaderTest
 
     assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
     assertEquals(2, templateInstanceArtifact.fieldInstances().size());
+    assertNotNull(templateInstanceArtifact.fieldInstances().get("Attribute values1"));
+    assertNotNull(templateInstanceArtifact.fieldInstances().get("Attribute values2"));
     assertEquals(0, templateInstanceArtifact.elementInstances().size());
   }
 
