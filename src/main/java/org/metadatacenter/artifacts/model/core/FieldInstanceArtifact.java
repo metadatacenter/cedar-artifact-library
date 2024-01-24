@@ -57,6 +57,10 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
     visitor.visitFieldInstanceArtifact(this, path);
   }
 
+  @Override default void accept(InstanceArtifactVisitor visitor, String path, String specificationPath) {
+    visitor.visitAttributeValueFieldInstanceArtifact(this, path, specificationPath);
+  }
+
   static Builder builder()
   {
     return new Builder();

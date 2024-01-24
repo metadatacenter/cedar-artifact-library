@@ -82,11 +82,16 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> entry : attributeValueFieldInstances().entrySet()) {
       String attributeValueFieldName = entry.getKey();
-      String childBasePath = path + attributeValueFieldName;
       Map<String, FieldInstanceArtifact> perAttributeValueFieldInstances = entry.getValue();
 
-      for (FieldInstanceArtifact fieldInstanceArtifact: perAttributeValueFieldInstances.values())
-        fieldInstanceArtifact.accept(visitor, childBasePath);
+      for (Map.Entry<String, FieldInstanceArtifact> perAttributeValueFieldInstance : perAttributeValueFieldInstances.entrySet()) {
+        String attributeValueFieldInstanceName = perAttributeValueFieldInstance.getKey();
+        String attributeValueFieldSpecificationPath = path + attributeValueFieldName;
+        String attributeValueFieldInstancePath = path + attributeValueFieldInstanceName;
+
+        for (FieldInstanceArtifact fieldInstanceArtifact : perAttributeValueFieldInstances.values())
+          fieldInstanceArtifact.accept(visitor, attributeValueFieldInstancePath, attributeValueFieldSpecificationPath);
+      }
     }
   }
 

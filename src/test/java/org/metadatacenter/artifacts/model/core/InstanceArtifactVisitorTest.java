@@ -60,7 +60,7 @@ public class InstanceArtifactVisitorTest
     assertTrue(reporter.getReport().contains("/" + textFieldName2));
     assertTrue(reporter.getReport().contains("/" + element1Name));
     assertTrue(reporter.getReport().contains("/" + element1Name + "/" + textFieldName1));
-    assertTrue(reporter.getReport().contains("/" + attributeValueFieldName));
+    assertTrue(reporter.getReport().contains("/" + attributeValueFieldInstanceName));
   }
 
   @Test
@@ -100,6 +100,13 @@ public class InstanceArtifactVisitorTest
     {
       report.add(path);
     }
+
+    @Override public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
+      String path, String specificationPath)
+    {
+      report.add(path);
+    }
+
   }
 
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
