@@ -9,15 +9,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * A UBKG rendering consists of a list of nodes and edges.
  * <p></p>
  * A node is represented as a map of node URIs to a map containing a label and definition for each node:
- * <pre>node URI -> ("node_label" -> node label, "node_definition" -> node definition)</pre>
+ * <pre>
+ *   node URI -> ("node_label" -> node label, "node_definition" -> node definition)
+ * </pre>
  * <p></p>
  * An edge is represented as a map of subject URIs to a map of predicates to object URIs:
- * <pre>subject URI->(predicate -> object URI)</pre>
+ * <pre>
+ *   subject URI->(predicate -> object URI)
+ * </pre>
  */
 public interface UbkgRendering
 {

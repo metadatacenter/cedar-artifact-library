@@ -6,10 +6,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifactTest;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +43,7 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 
 public class JsonSchemaArtifactReaderTest
 {
@@ -194,11 +198,31 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadSimpleTemplateInstance()
   {
+    String nameFieldName = "Name";
+    String controlledTermsFieldName = "Controlled Terms";
+    String sizeFieldName = "Size";
+    URI brainActivityUri = URI.create("http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity");
+
     ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstance.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
-    assertEquals("Controlled Terms metadata", templateInstanceArtifact.name().get());
+    assertEquals("Simple instance", templateInstanceArtifact.name().get());
+    assertEquals(3, templateInstanceArtifact.fieldInstances().size());
+
+    assertNotNull(templateInstanceArtifact.fieldInstances().get(nameFieldName));
+    assertEquals(1, templateInstanceArtifact.fieldInstances().get(nameFieldName).size());
+    assertEquals("en", templateInstanceArtifact.fieldInstances().get(nameFieldName).get(0).language().get());
+
+    assertNotNull(templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName));
+    assertEquals(1, templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).size());
+    assertEquals("BrainActivity", templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).get(0).label().get());
+    assertEquals(brainActivityUri, templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).get(0).jsonLdId().get());
+
+    assertNotNull(templateInstanceArtifact.fieldInstances().get(sizeFieldName));
+    assertEquals(1, templateInstanceArtifact.fieldInstances().get(sizeFieldName).size());
+    assertEquals("33", templateInstanceArtifact.fieldInstances().get(sizeFieldName).get(0).jsonLdValue().get());
+    assertEquals(XsdDatatype.INT.toUri(), templateInstanceArtifact.fieldInstances().get(sizeFieldName).get(0).jsonLdTypes().get(0));
   }
 
   @Test

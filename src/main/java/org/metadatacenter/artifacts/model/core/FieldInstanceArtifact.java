@@ -13,6 +13,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateM
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_LANGUAGE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
@@ -32,11 +33,11 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
 {
   static FieldInstanceArtifact create(Map<String, URI> jsonLdContext,
     List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-    Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+    Optional<String> label, Optional<String> notation, Optional<String> prefLabel, Optional<String> language,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
   {
     return new FieldInstanceArtifactRecord(jsonLdContext,
-      jsonLdTypes, jsonLdId, jsonLdValue, label, notation, prefLabel,
+      jsonLdTypes, jsonLdId, jsonLdValue, label, notation, prefLabel, language,
       createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
@@ -49,6 +50,8 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
   Optional<String> notation();
 
   Optional<String> prefLabel();
+
+  Optional<String> language();
 
   @Override default void accept(InstanceArtifactVisitor visitor, String path) {
     visitor.visitFieldInstanceArtifact(this, path);
@@ -68,6 +71,7 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
     private Optional<String> label = Optional.empty();
     private Optional<String> notation = Optional.empty();
     private Optional<String> prefLabel = Optional.empty();
+    private Optional<String> language = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
@@ -143,10 +147,16 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
       return this;
     }
 
+    public Builder withLanguage(String language)
+    {
+      this.language = Optional.ofNullable(language);
+      return this;
+    }
+
     public FieldInstanceArtifact build()
     {
       return new FieldInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
-        jsonLdValue, label, notation, prefLabel,
+        jsonLdValue, label, notation, prefLabel, language,
         createdBy, modifiedBy, createdOn, lastUpdatedOn);
     }
   }
@@ -155,6 +165,7 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
 record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
                                    List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                    Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+                                   Optional<String> language,
                                    Optional<URI> createdBy, Optional<URI> modifiedBy,
                                    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
   implements FieldInstanceArtifact
@@ -166,6 +177,7 @@ record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
     validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
+    validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
     validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
     validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);

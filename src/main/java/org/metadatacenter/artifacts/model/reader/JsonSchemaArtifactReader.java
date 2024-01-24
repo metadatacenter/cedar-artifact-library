@@ -64,6 +64,7 @@ import static org.metadatacenter.model.ModelNodeNames.INPUT_TYPES;
 import static org.metadatacenter.model.ModelNodeNames.INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_LANGUAGE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ARRAY;
@@ -557,11 +558,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     Optional<String> jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
+    Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
     Optional<String> skosNotation = readString(sourceNode, path, SKOS_NOTATION);
     Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
 
     return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel,
+      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel, language,
       createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 

@@ -37,7 +37,8 @@
       "@type": "xsd:string"
     },
     "Controlled Terms": "https://schema.metadatacenter.org/properties/617a0e5f-4420-49e5-a393-7efc1f99f1c9",
-    "Size": "https://schema.metadatacenter.org/properties/617a0e5f"
+    "Size": "https://schema.metadatacenter.org/properties/617a0e5f",
+    "Name": "https://schema.metadatacenter.org/properties/554544f"
   },
   "Controlled Terms": {
     "@id": "http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity",
@@ -47,8 +48,12 @@
     "@value": "33",
     "@type": "xsd:int"
   },
+  "Name": {
+    "@value": "Bobby",
+    "@language": "en"
+  },
   "schema:isBasedOn": "https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded",
-  "schema:name": "Controlled Terms metadata",
+  "schema:name": "Simple instance",
   "schema:description": "",
   "pav:createdOn": "2023-12-06T17:07:33-08:00",
   "pav:createdBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",

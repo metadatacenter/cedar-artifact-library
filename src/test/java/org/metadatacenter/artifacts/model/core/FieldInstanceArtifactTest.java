@@ -42,11 +42,13 @@ public class FieldInstanceArtifactTest
     String label = "a label";
     String notation = "a notation";
     String prefLabel = "a prefLabel";
+    String language = "en";
 
     FieldInstanceArtifact fieldInstance = FieldInstanceArtifact.builder().
       withJsonLdId(aUriValue).
       withLabel(label).
       withPrefLabel(prefLabel).
+      withLanguage(language).
       withNotation(notation).
       build();
 
@@ -54,5 +56,6 @@ public class FieldInstanceArtifactTest
     assertEquals(label, fieldInstance.label().get());
     assertEquals(notation, fieldInstance.notation().get());
     assertEquals(prefLabel, fieldInstance.prefLabel().get());
+    assertEquals(language, fieldInstance.language().get());
   }
 }
