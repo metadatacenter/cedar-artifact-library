@@ -1,0 +1,72 @@
+{
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "pav": "http://purl.org/pav/",
+    "schema": "http://schema.org/",
+    "oslc": "http://open-services.net/ns/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdfs:label": {
+      "@type": "xsd:string"
+    },
+    "schema:isBasedOn": {
+      "@type": "@id"
+    },
+    "schema:name": {
+      "@type": "xsd:string"
+    },
+    "schema:description": {
+      "@type": "xsd:string"
+    },
+    "pav:derivedFrom": {
+      "@type": "@id"
+    },
+    "pav:createdOn": {
+      "@type": "xsd:dateTime"
+    },
+    "pav:createdBy": {
+      "@type": "@id"
+    },
+    "pav:lastUpdatedOn": {
+      "@type": "xsd:dateTime"
+    },
+    "oslc:modifiedBy": {
+      "@type": "@id"
+    },
+    "skos:notation": {
+      "@type": "xsd:string"
+    },
+    "Attribute value element": "https://schema.metadatacenter.org/properties/e7390cfa-f721-4505-9282-ff235f775a29",
+    "Top level text": "https://schema.metadatacenter.org/properties/6ec92a22-bd73-49ff-8cca-d5c8974798aa"
+  },
+  "Attribute value element": {
+    "@context": {
+      "Test text": "https://schema.metadatacenter.org/properties/9eab47d4-64bf-46b6-bf67-b2007160aca7"
+    },
+    "Attribute value pairs": [
+      "k1",
+      "k2"
+    ],
+    "Test text": {
+      "@value": "nested text"
+    },
+    "k1": {
+      "@value": "v1"
+    },
+    "k2": {
+      "@value": "v2"
+    },
+    "@id": "https://repo.metadatacenter.org/template-element-instances/bb94a084-4258-4592-910a-b6816b34e548"
+  },
+  "Top level text": {
+    "@value": "top level"
+  },
+  "schema:isBasedOn": "https://repo.metadatacenter.org/templates/6cfe3c42-43e3-4d97-a960-a8d91ac427b9",
+  "schema:name": "Nested attribute-value instance",
+  "schema:description": "",
+  "pav:createdOn": "2024-01-22T17:50:11-08:00",
+  "pav:createdBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
+  "pav:lastUpdatedOn": "2024-01-22T17:50:11-08:00",
+  "oslc:modifiedBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
+  "@id": "https://repo.metadatacenter.org/template-instances/970332f6-1eea-4118-87a1-21aac3c81d56"
+}

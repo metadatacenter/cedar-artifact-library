@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
@@ -40,6 +39,8 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
   }
 
+  // NOTE: Even those this method looks almost identical to the equivalent method in the TemplateInstanceArtifact
+  // its path handling is different.
   default void accept(InstanceArtifactVisitor visitor, String path)
   {
     visitor.visitElementInstanceArtifact(this, path);
@@ -80,7 +81,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
 
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> entry : attributeValueFieldInstances().entrySet()) {
       String attributeValueFieldName = entry.getKey();
-      String childBasePath = path + attributeValueFieldName;
+      String childBasePath = path + "/" + attributeValueFieldName;
       Map<String, FieldInstanceArtifact> perAttributeValueFieldInstances = entry.getValue();
 
       for (FieldInstanceArtifact fieldInstanceArtifact: perAttributeValueFieldInstances.values())
