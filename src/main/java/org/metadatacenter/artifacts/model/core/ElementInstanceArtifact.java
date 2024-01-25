@@ -39,7 +39,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
   }
 
-  // NOTE: Even those this method looks almost identical to the equivalent method in the TemplateInstanceArtifact
+  // NOTE: Even though this method looks almost identical to the equivalent method in the TemplateInstanceArtifact
   // its path handling is different.
   default void accept(InstanceArtifactVisitor visitor, String path)
   {
@@ -83,9 +83,9 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       String attributeValueFieldName = entry.getKey();
       Map<String, FieldInstanceArtifact> perAttributeValueFieldInstances = entry.getValue();
 
-      for (Map.Entry<String, FieldInstanceArtifact> perAttributeValueFieldInstance : perAttributeValueFieldInstances.entrySet()) {
-        String attributeValueFieldInstanceName = perAttributeValueFieldInstance.getKey();
-        FieldInstanceArtifact fieldInstanceArtifact = perAttributeValueFieldInstance.getValue();
+      for (Map.Entry<String, FieldInstanceArtifact> perAttributeValueFieldInstanceNameAndInstance : perAttributeValueFieldInstances.entrySet()) {
+        String attributeValueFieldInstanceName = perAttributeValueFieldInstanceNameAndInstance.getKey();
+        FieldInstanceArtifact fieldInstanceArtifact = perAttributeValueFieldInstanceNameAndInstance.getValue();
         String attributeValueFieldSpecificationPath = path + "/" + attributeValueFieldName;
         String attributeValueFieldInstancePath = path + "/" + attributeValueFieldInstanceName;
 
