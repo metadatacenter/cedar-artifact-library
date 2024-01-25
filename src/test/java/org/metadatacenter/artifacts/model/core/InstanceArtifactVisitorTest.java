@@ -77,6 +77,26 @@ public class InstanceArtifactVisitorTest
     assertEquals("Nested attribute-value instance", templateInstanceArtifact.name().get());
   }
 
+  @Test
+  public void testReadInstanceWithAttributeValues()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithAttributeValues.json");
+
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    Reporter reporter = new Reporter();
+
+    templateInstanceArtifact.accept(reporter);
+
+    assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
+    assertEquals(5, reporter.getReport().size());
+    assertTrue(reporter.getReport().contains("/"));
+    assertTrue(reporter.getReport().contains("/Attribute-value instance field 1"));
+    assertTrue(reporter.getReport().contains("/Attribute-value instance field 2"));
+    assertTrue(reporter.getReport().contains("/Attribute-value instance field 3"));
+    assertTrue(reporter.getReport().contains("/Attribute-value instance field 4"));
+  }
+
   private class Reporter implements InstanceArtifactVisitor
   {
     private List<String> report = new ArrayList<>();
