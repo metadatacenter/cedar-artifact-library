@@ -2,7 +2,7 @@
   <configuration default="false" name="Template2Excel SampleSection" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Template2Excel" />
     <module name="cedar-artifact-library" />
-    <option name="PROGRAM_PARAMETERS" value="-f src/test/resources/SampleSection.json -e /tmp/SampleSection.xlsx -s https://terminology.metadatacenter.org/bioportal/integrated-search/ -k a3beee754f96fb2f1b137c584bcabccb35ba8aa02307fc56e30a681b07ce0e36" />
+    <option name="PROGRAM_PARAMETERS" value="-f src/test/resources/templates/SampleSection.json -e /tmp/SampleSection.xlsx -s https://terminology.metadatacenter.org/bioportal/integrated-search/ -k a3beee754f96fb2f1b137c584bcabccb35ba8aa02307fc56e30a681b07ce0e36" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.metadatacenter.artifacts.model.tools.*" />

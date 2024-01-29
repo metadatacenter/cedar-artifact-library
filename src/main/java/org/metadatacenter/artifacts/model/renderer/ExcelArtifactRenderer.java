@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.deser.CreatorProperty;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -18,6 +19,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
@@ -93,10 +95,10 @@ public class ExcelArtifactRenderer
 
   public Workbook render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
   {
-    String sheetName = templateSchemaArtifact.name();
+    String proposedSheetName = templateSchemaArtifact.name();
     int columnIndex = headerStartColumnIndex;
 
-    Sheet sheet = workbook.createSheet(sheetName);
+    Sheet sheet = createSheet(workbook, proposedSheetName);
     Row headerRow = sheet.createRow(headerRowNumber);
     Row firstDataRow = sheet.createRow(headerRowNumber + 1);
 
@@ -404,8 +406,9 @@ public class ExcelArtifactRenderer
     Map<String, String> values = getPossibleValues(fieldSchemaArtifact.valueConstraints());
 
     if (!values.isEmpty()) {
-      String sheetName = fieldSchemaArtifact.name();
-      Sheet valueSheet = workbook.createSheet(sheetName);
+      String proposedSheetName = fieldSchemaArtifact.name();
+      Sheet valueSheet = createSheet(workbook, proposedSheetName);
+      String sheetName = valueSheet.getSheetName();
       int numberOfValues = values.keySet().size();
       String formula = "'" + sheetName + "'!$A$1:$A$" + numberOfValues;
 
@@ -757,6 +760,9 @@ public class ExcelArtifactRenderer
 
   private void addMetadataSheet(TemplateSchemaArtifact templateSchemaArtifact)
   {
+    if (workbook.getSheetIndex(metadataSheetName) != -1)
+      throw new RuntimeException("duplicate sheet called " + metadataSheetName + " in spreadsheet");
+
     Sheet metadataSheet = workbook.createSheet(metadataSheetName);
     Row headerRow = metadataSheet.createRow(0);
     Row dataRow = metadataSheet.createRow(1);
@@ -792,5 +798,24 @@ public class ExcelArtifactRenderer
     metadataSheet.autoSizeColumn(1);
     metadataSheet.autoSizeColumn(2);
     metadataSheet.autoSizeColumn(3);
+  }
+
+  private Sheet createSheet(Workbook workbook, String proposedSheetName)
+  {
+    String safeSheetName = WorkbookUtil.createSafeSheetName(proposedSheetName);
+    int sheetIndex = workbook.getSheetIndex(safeSheetName);
+
+    if (sheetIndex != -1) { // There is already a sheet with this name
+      String replacementSheetName = "Sheet" + sheetIndex;
+      // Iterate until we find an unused sheet name
+      while (workbook.getSheetIndex(replacementSheetName) != -1) {
+        sheetIndex++;
+        if (sheetIndex == Integer.MAX_VALUE)
+          throw new RuntimeException("could not create sheet " + proposedSheetName);
+        replacementSheetName = "Sheet" + sheetIndex;
+      }
+      return workbook.createSheet(replacementSheetName);
+    } else
+      return workbook.createSheet(safeSheetName);
   }
 }
