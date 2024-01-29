@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Template2UBKG MALDI" type="Application" factoryName="Application">
+  <configuration default="false" name="Template2UBKG LC-MS" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Template2Ubkg" />
     <module name="cedar-artifact-library" />
-    <option name="PROGRAM_PARAMETERS" value="-f src/test/resources/MALDI.json -ue /tmp/SampleEdge.tsv -un /tmp/SampleEdge.jtsv" />
+    <option name="PROGRAM_PARAMETERS" value="-f src/test/resources/LC-MS.json -ue /tmp/SampleEdge.tsv -un /tmp/SampleEdge.jtsv" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.metadatacenter.artifacts.model.tools.*" />
