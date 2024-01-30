@@ -22,16 +22,16 @@ public class SchemaArtifactVisitorTest
       .withFieldSchema(textField1)
       .build();
 
-    Reporter reporter = new Reporter();
+    SchemaReporter schemaReporter = new SchemaReporter();
 
-    templateSchemaArtifact.accept(reporter);
+    templateSchemaArtifact.accept(schemaReporter);
 
-    assertEquals(2, reporter.getReport().size());
-    assertEquals(templateName, reporter.getReport().get(0));
-    assertEquals(textFieldName1, reporter.getReport().get(1));
+    assertEquals(2, schemaReporter.getReport().size());
+    assertEquals(templateName, schemaReporter.getReport().get(0));
+    assertEquals(textFieldName1, schemaReporter.getReport().get(1));
   }
 
-  private class Reporter implements SchemaArtifactVisitor
+  private class SchemaReporter implements SchemaArtifactVisitor
   {
     private List<String> report = new ArrayList<>();
 

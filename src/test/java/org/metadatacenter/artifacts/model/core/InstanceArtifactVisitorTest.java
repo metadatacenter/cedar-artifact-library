@@ -7,11 +7,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
+import org.metadatacenter.artifacts.model.visitors.TemplateReporter;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,30 +54,16 @@ public class InstanceArtifactVisitorTest
       .withElementInstance(element1Name, element1).withAttributeValueFieldInstances(attributeValueFieldName,
         Map.of(attributeValueFieldInstanceName, attributeValueFieldInstance1)).build();
 
-    Reporter reporter = new Reporter();
+    BasicInstanceReporter instanceReporter = new BasicInstanceReporter();
 
-    templateInstanceArtifact.accept(reporter);
+    templateInstanceArtifact.accept(instanceReporter);
 
-    assertEquals(5, reporter.getReport().size());
-    assertTrue(reporter.getReport().contains("/"));
-    assertTrue(reporter.getReport().contains("/" + textFieldName2));
-    assertTrue(reporter.getReport().contains("/" + element1Name));
-    assertTrue(reporter.getReport().contains("/" + element1Name + "/" + textFieldName1));
-    assertTrue(reporter.getReport().contains("/" + attributeValueFieldInstanceName));
-  }
-
-  @Test
-  public void testReadInstanceWithNestedAttributeValues()
-  {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/InstanceWithNestedAttributeValues.json");
-
-    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
-
-    Reporter reporter = new Reporter();
-
-    templateInstanceArtifact.accept(reporter);
-
-    assertEquals("Nested attribute-value instance", templateInstanceArtifact.name().get());
+    assertEquals(5, instanceReporter.getInstanceReport().size());
+    assertTrue(instanceReporter.getInstanceReport().contains("/"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/" + textFieldName2));
+    assertTrue(instanceReporter.getInstanceReport().contains("/" + element1Name));
+    assertTrue(instanceReporter.getInstanceReport().contains("/" + element1Name + "/" + textFieldName1));
+    assertTrue(instanceReporter.getInstanceReport().contains("/" + attributeValueFieldInstanceName));
   }
 
   @Test
@@ -84,49 +73,125 @@ public class InstanceArtifactVisitorTest
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
-    Reporter reporter = new Reporter();
+    BasicInstanceReporter instanceReporter = new BasicInstanceReporter();
 
-    templateInstanceArtifact.accept(reporter);
+    templateInstanceArtifact.accept(instanceReporter);
 
     assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
-    assertEquals(5, reporter.getReport().size());
-    assertTrue(reporter.getReport().contains("/"));
-    assertTrue(reporter.getReport().contains("/Attribute-value instance field 1"));
-    assertTrue(reporter.getReport().contains("/Attribute-value instance field 2"));
-    assertTrue(reporter.getReport().contains("/Attribute-value instance field 3"));
-    assertTrue(reporter.getReport().contains("/Attribute-value instance field 4"));
+    assertEquals(5, instanceReporter.getInstanceReport().size());
+    assertTrue(instanceReporter.getInstanceReport().contains("/"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 1"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 2"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 3"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 4"));
   }
 
-  private class Reporter implements InstanceArtifactVisitor
+  @Test
+  public void testReadInstanceWithNestedAttributeValues()
   {
-    private List<String> report = new ArrayList<>();
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithAttributeValues.json");
 
-    public List<String> getReport()
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    BasicInstanceReporter instanceReporter = new BasicInstanceReporter();
+
+    templateInstanceArtifact.accept(instanceReporter);
+
+    assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
+    assertEquals(5, instanceReporter.getInstanceReport().size());
+    assertTrue(instanceReporter.getInstanceReport().contains("/"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 1"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 2"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 3"));
+    assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 4"));
+  }
+
+  @Test
+  public void testVisitorsOnRADXMetadata()
+  {
+    ObjectNode templateObjectNode = getJSONFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
+    ObjectNode instanceObjectNode = getJSONFileContentAsObjectNode("instances/RADxMetadataInstance.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(instanceObjectNode);
+
+    TemplateReporter templateReporter = new TemplateReporter(templateSchemaArtifact);
+    InstanceReporter instanceReporter = new InstanceReporter(templateReporter);
+
+    templateInstanceArtifact.accept(instanceReporter);
+
+    assertEquals("RADx Metadata Specification", templateSchemaArtifact.name());
+    assertEquals("RADx Example Metadata Instance", templateInstanceArtifact.name().get());
+    assertTrue(Collections.frequency(instanceReporter.getInstanceReport().keySet(), null) == 0);
+    assertTrue(Collections.frequency(instanceReporter.getInstanceReport().values(), null) == 0);
+  }
+
+  private class InstanceReporter implements InstanceArtifactVisitor
+  {
+    private final TemplateReporter templateReporter;
+    private final Map<String, SchemaArtifact> instanceReport = new HashMap<>();
+
+    public InstanceReporter(TemplateReporter templateReporter)
     {
-      return report;
+      this.templateReporter = templateReporter;
+    }
+
+    public Map<String, SchemaArtifact> getInstanceReport()
+    {
+      return instanceReport;
     }
 
     @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
     {
-      report.add("/");
+      instanceReport.put("/", templateReporter.getTemplateSchema());
     }
 
     @Override public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path)
     {
-      report.add(path);
+      instanceReport.put(path, templateReporter.getElementSchema(path).get());
     }
 
     @Override public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path)
     {
-      report.add(path);
+      instanceReport.put(path, templateReporter.getFieldSchema(path).get());
     }
 
     @Override public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
       String path, String specificationPath)
     {
-      report.add(path);
+      instanceReport.put(path, templateReporter.getFieldSchema(specificationPath).get());
+    }
+  }
+
+  private class BasicInstanceReporter implements InstanceArtifactVisitor
+  {
+    private List<String> instanceReport = new ArrayList<>();
+
+    public List<String> getInstanceReport()
+    {
+      return instanceReport;
     }
 
+    @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
+    {
+      instanceReport.add("/");
+    }
+
+    @Override public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path)
+    {
+      instanceReport.add(path);
+    }
+
+    @Override public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path)
+    {
+      instanceReport.add(path);
+    }
+
+    @Override public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
+      String path, String specificationPath)
+    {
+      instanceReport.add(path);
+    }
   }
 
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)

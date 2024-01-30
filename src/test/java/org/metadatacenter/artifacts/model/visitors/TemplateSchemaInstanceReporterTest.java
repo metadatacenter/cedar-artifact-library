@@ -12,7 +12,7 @@ import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TemplateReporterTest
+public class TemplateSchemaInstanceReporterTest
 {
   @Test
   public void basicTemplateReporterTest()

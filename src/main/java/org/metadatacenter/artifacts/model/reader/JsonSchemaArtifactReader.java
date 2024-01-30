@@ -606,6 +606,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
                   arrayEnclosedInstanceArtifactNode, elementInstances, fieldInstances);
               } else if (instanceNode.isTextual()) { // A list of attribute-value field names
                 String attributeValueFieldName = instanceNode.asText();
+                if (attributeValueFieldName.isEmpty())
+                  throw new ArtifactParseException("Empty attribute-value field name in array",
+                    instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+
                 if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
                   attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
                 else {
