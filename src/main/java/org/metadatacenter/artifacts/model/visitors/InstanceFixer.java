@@ -24,9 +24,10 @@ public class InstanceFixer implements InstanceArtifactVisitor
       throw new IllegalArgumentException("Template " + templateSchemaArtifact.name() + " does not have an @id");
 
     if (!templateInstanceArtifact.isBasedOn().equals(templateSchemaArtifact.jsonLdId().get()))
-      throw new IllegalArgumentException("Template " + templateSchemaArtifact.name() + " has @id " +
-        templateSchemaArtifact.jsonLdId().get() + " which does not match the " + ModelNodeNames.SCHEMA_IS_BASED_ON +
-        templateInstanceArtifact.isBasedOn() + " in the supplied instance");
+      throw new IllegalArgumentException(
+        "Template " + templateSchemaArtifact.name() + " has @id " + templateSchemaArtifact.jsonLdId().get()
+          + " which does not match the " + ModelNodeNames.SCHEMA_IS_BASED_ON + templateInstanceArtifact.isBasedOn()
+          + " in the supplied instance");
 
     this.templateReporter = new TemplateReporter(templateSchemaArtifact);
   }
@@ -44,7 +45,8 @@ public class InstanceFixer implements InstanceArtifactVisitor
   @Override public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path)
   {
     if (!templateReporter.getFieldSchema(path).isPresent())
-      throw new RuntimeException("no field schema specification for at path " + path + " when processing template" + templateName());
+      throw new RuntimeException(
+        "no field schema specification for at path " + path + " when processing template" + templateName());
 
     FieldSchemaArtifact fieldSchemaArtifact = templateReporter.getFieldSchema(path).get();
     String fieldName = fieldSchemaArtifact.name();
@@ -63,10 +65,17 @@ public class InstanceFixer implements InstanceArtifactVisitor
       } else if (valueConstraints.isControlledTermValueConstraint()) {
 
       } else
-        throw new RuntimeException("Unknown value constraint type " + valueConstraints.getClass().getName() +
-          " when processing field " + fieldName + " in template " + templateName() + " at path " + path);
+        throw new RuntimeException(
+          "Unknown value constraint type " + valueConstraints.getClass().getName() + " when processing field "
+            + fieldName + " in template " + templateName() + " at path " + path);
     }
   }
 
-  private String templateName() { return templateSchemaArtifact.name(); }
+  @Override public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
+    String path, String specificationPath)
+  {
+    // TOD
+  }
+
+  private String templateName() {return templateSchemaArtifact.name();}
 }

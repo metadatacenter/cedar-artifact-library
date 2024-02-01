@@ -12,11 +12,15 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   boolean hidden();
 
+  default boolean recommendedValue() { return false; }
+
   default boolean valueRecommendationEnabled() { return false; }
 
-  static StaticFieldUi create(FieldInputType fieldInputType, String content, boolean hidden)
+  default boolean continuePreviousLine() { return false; }
+
+  static StaticFieldUi create(FieldInputType fieldInputType, String content, boolean hidden, boolean continuePreviousLine)
   {
-    return new StaticFieldUiRecord(fieldInputType, content, hidden);
+    return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine);
   }
 
   static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder()
@@ -57,7 +61,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, false);
+      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, false);
     }
   }
 
@@ -65,6 +69,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private String content;
     private boolean hidden = false;
+    private boolean continuePreviousLine = false;
 
     private RichTextFieldUiBuilder() {}
 
@@ -80,9 +85,15 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public RichTextFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden);
+      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, continuePreviousLine);
     }
   }
 
@@ -90,6 +101,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private String content;
     private boolean hidden = false;
+    private boolean continuePreviousLine = false;
 
     private ImageFieldUiBuilder()
     {
@@ -107,9 +119,15 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public ImageFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden);
+      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine);
     }
   }
 
@@ -117,6 +135,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private String content;
     private boolean hidden = false;
+    private boolean continuePreviousLine = false;
 
     private YouTubeFieldUiBuilder()
     {
@@ -134,15 +153,21 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public YouTubeFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden);
+      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden, continuePreviousLine);
     }
   }
 
 }
 
-record StaticFieldUiRecord(FieldInputType inputType, String _content, boolean hidden) implements StaticFieldUi
+record StaticFieldUiRecord(FieldInputType inputType, String _content, boolean hidden, boolean continuePreviousLine) implements StaticFieldUi
 {
   public StaticFieldUiRecord
   {

@@ -4,13 +4,7 @@ import org.junit.Test;
 
 import java.net.URI;
 
-import static org.junit.Assert.*;
-
-//static FieldInstanceArtifact create(Map<String, URI> jsonLdContext,
-//  List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-//  Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
-//  Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
-
+import static org.junit.Assert.assertEquals;
 
 public class FieldInstanceArtifactTest
 {
@@ -48,11 +42,13 @@ public class FieldInstanceArtifactTest
     String label = "a label";
     String notation = "a notation";
     String prefLabel = "a prefLabel";
+    String language = "en";
 
     FieldInstanceArtifact fieldInstance = FieldInstanceArtifact.builder().
       withJsonLdId(aUriValue).
       withLabel(label).
       withPrefLabel(prefLabel).
+      withLanguage(language).
       withNotation(notation).
       build();
 
@@ -60,5 +56,6 @@ public class FieldInstanceArtifactTest
     assertEquals(label, fieldInstance.label().get());
     assertEquals(notation, fieldInstance.notation().get());
     assertEquals(prefLabel, fieldInstance.prefLabel().get());
+    assertEquals(language, fieldInstance.language().get());
   }
 }

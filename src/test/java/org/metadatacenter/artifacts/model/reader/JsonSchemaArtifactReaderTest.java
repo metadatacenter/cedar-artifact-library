@@ -10,6 +10,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +20,9 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
@@ -34,6 +34,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
@@ -132,6 +133,25 @@ public class JsonSchemaArtifactReaderTest
   }
 
   @Test
+  public void testReadTemplateWithAttributeValues()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SimpleTemplateWithAttributeValues.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals("Simple Template with Attribute-Value Field", templateSchemaArtifact.name());
+
+    Map<String, FieldSchemaArtifact> fieldSchemas = templateSchemaArtifact.fieldSchemas();
+
+    assertEquals(fieldSchemas.size(), 1);
+    FieldSchemaArtifact fieldSchemaArtifact = fieldSchemas.get("Attribute values");
+    assertNotNull(fieldSchemaArtifact);
+
+    assertTrue(fieldSchemaArtifact.isMultiple());
+    assertTrue(fieldSchemaArtifact.fieldUi().isAttributeValue());
+  }
+
+  @Test
   public void testReadTemplateSchemaArtifact()
   {
     ObjectNode objectNode = createBaseTemplateSchemaArtifact("Test name", "Test description");
@@ -175,11 +195,31 @@ public class JsonSchemaArtifactReaderTest
   @Test
   public void testReadSimpleTemplateInstance()
   {
+    String nameFieldName = "Name";
+    String controlledTermsFieldName = "Controlled Terms";
+    String sizeFieldName = "Size";
+    URI brainActivityUri = URI.create("http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity");
+
     ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstance.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
-    assertEquals("Controlled Terms metadata", templateInstanceArtifact.name().get());
+    assertEquals("Simple instance", templateInstanceArtifact.name().get());
+    assertEquals(3, templateInstanceArtifact.fieldInstances().size());
+
+    assertNotNull(templateInstanceArtifact.fieldInstances().get(nameFieldName));
+    assertEquals(1, templateInstanceArtifact.fieldInstances().get(nameFieldName).size());
+    assertEquals("en", templateInstanceArtifact.fieldInstances().get(nameFieldName).get(0).language().get());
+
+    assertNotNull(templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName));
+    assertEquals(1, templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).size());
+    assertEquals("BrainActivity", templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).get(0).label().get());
+    assertEquals(brainActivityUri, templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).get(0).jsonLdId().get());
+
+    assertNotNull(templateInstanceArtifact.fieldInstances().get(sizeFieldName));
+    assertEquals(1, templateInstanceArtifact.fieldInstances().get(sizeFieldName).size());
+    assertEquals("33", templateInstanceArtifact.fieldInstances().get(sizeFieldName).get(0).jsonLdValue().get());
+    assertEquals(XsdDatatype.INT.toUri(), templateInstanceArtifact.fieldInstances().get(sizeFieldName).get(0).jsonLdTypes().get(0));
   }
 
   @Test
@@ -192,6 +232,28 @@ public class JsonSchemaArtifactReaderTest
     assertEquals("Read Instance Test metadata", templateInstanceArtifact.name().get());
     assertEquals(2, templateInstanceArtifact.fieldInstances().size());
     assertEquals(2, templateInstanceArtifact.elementInstances().size());
+  }
+
+  @Test
+  public void testReadSimpleTemplateInstanceWithAttributeValueField()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithAttributeValues.json");
+
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
+    assertEquals(0, templateInstanceArtifact.fieldInstances().size());
+    assertEquals(0, templateInstanceArtifact.elementInstances().size());
+
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().size());
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 1"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 2"));
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 3"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 4"));
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

@@ -36,28 +36,35 @@
     "skos:notation": {
       "@type": "xsd:string"
     },
-    "Controlled Terms": "https://schema.metadatacenter.org/properties/617a0e5f-4420-49e5-a393-7efc1f99f1c9",
-    "Size": "https://schema.metadatacenter.org/properties/617a0e5f",
-    "Name": "https://schema.metadatacenter.org/properties/554544f"
+    "Attribute values1": "https://schema.metadatacenter.org/properties/e512494c-2671-4f99-b4a3-865ba1154ff4",
+    "Attribute values2": "https://schema.metadatacenter.org/properties/5f28c5fa-5611-4f31-8012-a70c2474c3bf"
   },
-  "Controlled Terms": {
-    "@id": "http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity",
-    "rdfs:label": "BrainActivity"
+  "Attribute-value field A": [
+    "Attribute-value instance field 1",
+    "Attribute-value instance field 2"
+  ],
+  "Attribute-value instance field 1": {
+    "@value": "v1"
   },
-  "Size": {
-    "@value": "33",
-    "@type": "xsd:int"
+  "Attribute-value instance field 2": {
+    "@value": "v2"
   },
-  "Name": {
-    "@value": "Bobby",
-    "@language": "en"
+  "Attribute-value field B": [
+    "Attribute-value instance field 3",
+    "Attribute-value instance field 4"
+  ],
+  "Attribute-value instance field 3": {
+    "@value": "v3"
   },
-  "schema:isBasedOn": "https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded",
-  "schema:name": "Simple instance",
+  "Attribute-value instance field 4": {
+    "@value": "v4"
+  },
+  "schema:isBasedOn": "https://repo.metadatacenter.org/templates/b2cb857d-cdd2-4122-a006-ab8afc5dce0b",
+  "schema:name": "Attribute-Value Field Test metadata",
   "schema:description": "",
-  "pav:createdOn": "2023-12-06T17:07:33-08:00",
+  "pav:createdOn": "2024-01-22T10:33:57-08:00",
   "pav:createdBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
-  "pav:lastUpdatedOn": "2023-12-06T17:07:33-08:00",
+  "pav:lastUpdatedOn": "2024-01-22T10:33:57-08:00",
   "oslc:modifiedBy": "https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44",
-  "@id": "https://repo.metadatacenter.org/template-instances/2123be29-d114-4849-8a5e-7a68022b8bfd"
+  "@id": "https://repo.metadatacenter.org/template-instances/e7b76cce-842b-47c7-b010-54373bafa496"
 }

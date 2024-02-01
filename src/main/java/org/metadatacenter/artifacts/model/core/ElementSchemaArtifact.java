@@ -290,7 +290,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
     public Builder withMaxItems(Integer maxItems)
     {
-      this.minItems = Optional.ofNullable(maxItems);
+      this.maxItems = Optional.ofNullable(maxItems);
       return this;
     }
 

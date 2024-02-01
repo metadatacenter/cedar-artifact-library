@@ -7,4 +7,6 @@ public interface InstanceArtifactVisitor
   void visitElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact, String path);
 
   void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path);
+
+  void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path, String specificationPath);
 }

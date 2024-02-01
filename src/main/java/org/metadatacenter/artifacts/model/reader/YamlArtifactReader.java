@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.checkerframework.checker.units.qual.C;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
@@ -48,6 +49,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTINUE_PREVIOUS_LINE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
@@ -74,6 +76,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VER
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_LABELS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_URI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
@@ -369,20 +372,22 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     FieldInputType fieldInputType = readFieldInputType(sourceNode, path, INPUT_TYPE);
     boolean valueRecommendationEnabled = readBoolean(sourceNode, path, VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBoolean(sourceNode, path, HIDDEN, false);
+    boolean recommendedValue = readBoolean(sourceNode, path, RECOMMENDED_VALUE, false);
+    boolean continuePreviousLine = readBoolean(sourceNode, path, CONTINUE_PREVIOUS_LINE, false);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
       InputTimeFormat inputTimeFormat = readInputTimeFormat(sourceNode, path, TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
       boolean timeZoneEnabled = readBoolean(sourceNode, path, TIME_ZONE, false);
 
-      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
-      return NumericFieldUi.create(hidden);
+      return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       String content = readRequiredString(sourceNode, path, CONTENT, true);
-      return StaticFieldUi.create(fieldInputType, content, hidden);
+      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
     } else
-      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
+      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
   }
 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,

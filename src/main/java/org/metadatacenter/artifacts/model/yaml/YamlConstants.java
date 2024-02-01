@@ -24,6 +24,8 @@ public class YamlConstants
   public static final String SKOS_ALT_LABEL = "altLabel";
   public static final String INPUT_TYPE = "inputType";
   public static final String HIDDEN = "hidden";
+  public static final String CONTINUE_PREVIOUS_LINE = "continuePreviousLine";
+  public static final String RECOMMENDED_VALUE = "recommendedValue";
   public static final String VALUE_RECOMMENDATION_ENABLED = "valueRecommendationEnabled";
   public static final String MULTIPLE_CHOICE = "multipleChoice";
   public static final String DATATYPE = "datatype";

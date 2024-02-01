@@ -64,6 +64,7 @@ import static org.metadatacenter.model.ModelNodeNames.INPUT_TYPES;
 import static org.metadatacenter.model.ModelNodeNames.INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_LANGUAGE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ARRAY;
@@ -517,11 +518,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
 
-    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances);
+    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances, attributeValueFieldInstances);
 
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances);
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
   }
 
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path)
@@ -537,11 +539,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
     Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
 
-    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances);
+    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances, attributeValueFieldInstances);
 
-    return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes,
-      jsonLdId, name, description, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances);
+    return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
   }
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path)
@@ -555,18 +558,22 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     Optional<String> jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
+    Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
     Optional<String> skosNotation = readString(sourceNode, path, SKOS_NOTATION);
     Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
 
     return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel,
+      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel, language,
       createdBy, modifiedBy, createdOn, lastUpdatedOn);
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path,
-    Map<String, List<FieldInstanceArtifact>> fields, Map<String, List<ElementInstanceArtifact>> elements)
+    Map<String, List<FieldInstanceArtifact>> fieldInstances, Map<String, List<ElementInstanceArtifact>> elementInstances,
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   {
     Iterator<String> instanceArtifactFieldNames = parentNode.fieldNames();
+    // attribute-value field name -> [attribute-value field instance name]
+    Map<String, List<String>> attributeValueFieldGroups = new HashMap<>();
 
     while (instanceArtifactFieldNames.hasNext()) {
       String instanceArtifactFieldName = instanceArtifactFieldNames.next();
@@ -579,7 +586,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           ObjectNode nestedInstanceArtifactNode = (ObjectNode)nestedNode;
 
           readNestedInstanceArtifact(instanceArtifactFieldName, nestedInstanceArtifactPath, nestedInstanceArtifactNode,
-            elements, fields);
+            elementInstances, fieldInstances);
 
         } else if (nestedNode.isArray()) {
           Iterator<JsonNode> nodeIterator = nestedNode.iterator();
@@ -589,20 +596,89 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
             String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
             JsonNode instanceNode = nodeIterator.next();
             if (instanceNode == null || instanceNode.isNull()) {
-              throw new ArtifactParseException("Expecting field or element instance artifact entry in array, got null",
+              throw new ArtifactParseException(
+                "Expecting field or element instance or attribute-value field name in array, got null",
                 instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
             } else {
-              if (!instanceNode.isObject())
-                throw new ArtifactParseException("Expecting nested field or element instance artifact in array",
-                  instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+              if (instanceNode.isObject()) {
+                ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
+                readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
+                  arrayEnclosedInstanceArtifactNode, elementInstances, fieldInstances);
+              } else if (instanceNode.isTextual()) { // A list of attribute-value field names
+                String attributeValueFieldName = instanceNode.asText();
+                if (attributeValueFieldName.isEmpty())
+                  throw new ArtifactParseException("Empty attribute-value field name in array",
+                    instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
 
-              ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
-              readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
-                arrayEnclosedInstanceArtifactNode, elements, fields);
+                if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
+                  attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
+                else {
+                  List<String> attributeValueFieldInstanceNames = new ArrayList<>();
+                  attributeValueFieldInstanceNames.add(attributeValueFieldName);
+                  attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldInstanceNames);
+                }
+              } else
+                throw new ArtifactParseException(
+                  "Expecting field or element instance or attribute-value field name in array",
+                  instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
             }
             arrayIndex++;
           }
         }
+      }
+    }
+    processAttributeValueFields(path, fieldInstances, attributeValueFieldGroups, attributeValueFieldInstances);
+  }
+
+  /**
+   * A template or element instance may contain attribute-value fields.
+   * <p></p>
+   * Their definition could look as follows:
+   * <pre>
+   *   "Attribute-values field A": [ "Attribute-values field instance name 1", "Attribute-values field instance name 2" ],
+   *   "Attribute-values field instance name 1": { "@value": "v1" },
+   *   "Attribute-values field instance name 2": { "@value": "v2" },
+   *
+   *   "Attribute-values field B": [ "Attribute-values field instance name 3", "Attribute-values field instance name 4" ],
+   *   "Attribute-values field instance name 3": { "@value": "v3" },
+   *   "Attribute-values field instance name 4": { "@value": "v4" },
+   * </pre>
+   * We need to post-process these attribute-value fields and move them from the main fieldInstances map to
+   * the specialized attributeValueFieldInstances map
+   */
+  private void processAttributeValueFields(String path, Map<String, List<FieldInstanceArtifact>> fieldInstances,
+    Map<String, List<String>> attributeValueFieldGroups, Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+  {
+    for (var entry : attributeValueFieldGroups.entrySet()) {
+      String attributeValueFieldName = entry.getKey();
+      List<String> attributeValueFieldInstanceNames = entry.getValue();
+
+      for (String attributeValueFieldInstanceName : attributeValueFieldInstanceNames) {
+
+        if (!fieldInstances.containsKey(attributeValueFieldInstanceName))
+          throw new ArtifactParseException(
+            "Attribute-value field " + attributeValueFieldName + " specifies an instance field "
+              + attributeValueFieldInstanceName + " that is not present in the template or element instance",
+            attributeValueFieldName, path);
+
+        List<FieldInstanceArtifact> perAttributeFieldInstances = fieldInstances.get(attributeValueFieldInstanceName);
+
+        if (perAttributeFieldInstances.size() != 1)
+          throw new ArtifactParseException(
+            "Attribute-value field " + attributeValueFieldName + " has an instance field "
+              + attributeValueFieldInstanceName + " that does not have exactly one instance",
+            attributeValueFieldInstanceName, path);
+
+        FieldInstanceArtifact fieldInstanceArtifact = perAttributeFieldInstances.get(0);
+
+        if (attributeValueFieldInstances.containsKey(attributeValueFieldName)) {
+          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, fieldInstanceArtifact);
+        } else {
+          attributeValueFieldInstances.put(attributeValueFieldName, new HashMap<>());
+          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, fieldInstanceArtifact);
+        }
+
+        fieldInstances.remove(attributeValueFieldInstanceName); // Now remove it from the non-attribute-value field instances
       }
     }
   }
@@ -1071,20 +1147,22 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath, UI_FIELD_INPUT_TYPE);
     boolean valueRecommendationEnabled = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
+    boolean recommendedValue = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
+    boolean continuePreviousLine = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);
       InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
       boolean timeZoneEnabled = readBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
 
-      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden);
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
-      return NumericFieldUi.create(hidden);
+      return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       String content = readRequiredString(uiNode, uiPath, UI_CONTENT);
-      return StaticFieldUi.create(fieldInputType, content, hidden);
+      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
     } else
-      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled);
+      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
   }
 
   private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName)
@@ -1293,7 +1371,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       JsonNode itemNode = itemsNode.iterator().next();
       if (!itemNode.isObject())
         throw new ArtifactParseException("Expecting object as first element", JSON_SCHEMA_ITEMS, path);
-      return  (ObjectNode)itemNode;
+      return (ObjectNode)itemNode;
     } else
       return sourceNode;
   }

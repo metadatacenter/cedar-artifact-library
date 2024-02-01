@@ -1,4 +1,4 @@
-package org.metadatacenter.artifacts.model.core;
+package org.metadatacenter.artifacts.model.core.ui;
 
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
@@ -17,12 +17,16 @@ public class TemporalFieldUiTest
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
     boolean hidden = false;
+    boolean recommendedValue = false;
+    boolean continuePreviousLine = false;
 
     TemporalFieldUi temporalFieldUi = TemporalFieldUi.builder()
       .withTemporalGranularity(temporalGranularity)
       .withInputTimeFormat(inputTimeFormat)
       .withTimezoneEnabled(timeZoneEnabled)
       .withHidden(hidden)
+      .withRecommendedValue(recommendedValue)
+      .withContinuePreviousLine(continuePreviousLine)
       .build();
 
     assertTrue(temporalFieldUi.inputType().isTemporal());
@@ -31,6 +35,8 @@ public class TemporalFieldUiTest
     assertEquals(inputTimeFormat, temporalFieldUi.inputTimeFormat());
     assertEquals(timeZoneEnabled, temporalFieldUi.timezoneEnabled());
     assertEquals(hidden, temporalFieldUi.hidden());
+    assertEquals(continuePreviousLine, temporalFieldUi.continuePreviousLine());
+    assertEquals(recommendedValue, temporalFieldUi.recommendedValue());
   }
 
 }
