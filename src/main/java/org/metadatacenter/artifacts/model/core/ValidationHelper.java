@@ -67,7 +67,7 @@ public class ValidationHelper
   {
     validateListFieldNotNull(obj, uriListField, fieldName);
 
-    if (!uriListField.stream().anyMatch(values::contains))
+    if (uriListField.stream().noneMatch(values::contains))
       throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values + " in " + obj);
   }
 

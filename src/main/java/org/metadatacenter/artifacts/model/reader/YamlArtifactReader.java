@@ -588,7 +588,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     Optional<String> inputTimeFormatString = readString(sourceNode, path, fieldName);
 
-    if (!inputTimeFormatString.isPresent())
+    if (inputTimeFormatString.isEmpty())
       return defaultInputTimeFormat;
 
     if (!TIME_FORMATS.contains(inputTimeFormatString.get()))
@@ -611,7 +611,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     Optional<String> versionString = readString(sourceNode, path, fieldName, false);
 
-    if (!versionString.isPresent())
+    if (versionString.isEmpty())
       return Optional.empty();
 
     if (Version.isValidVersion(versionString.get()))
@@ -664,7 +664,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     Optional<String> statusString = readString(sourceNode, path, fieldName, false);
 
-    if (!statusString.isPresent())
+    if (statusString.isEmpty())
       return Optional.empty();
 
     if (Status.isValidStatus(statusString.get()))
@@ -677,7 +677,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     Optional<String> xsdDatatypeString = readString(sourceNode, path, fieldName, false);
 
-    if (!xsdDatatypeString.isPresent())
+    if (xsdDatatypeString.isEmpty())
       return Optional.empty();
 
     if (XsdDatatype.isKnownXsdDatatype(xsdDatatypeString.get()))
@@ -701,7 +701,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     Optional<String> uriString = readString(sourceNode, path, fieldName, false);
 
-    if (!uriString.isPresent())
+    if (uriString.isEmpty())
       return Optional.empty();
 
     try {

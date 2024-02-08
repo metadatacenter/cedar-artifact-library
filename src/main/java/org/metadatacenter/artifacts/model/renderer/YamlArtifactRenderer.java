@@ -211,7 +211,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(SKOS_PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+      rendering.put(SKOS_PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
     rendering.put(INPUT_TYPE, fieldSchemaArtifact.fieldUi().inputType());
 
@@ -404,7 +404,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(INSTANCE, templateInstanceArtifact.name());
-    if (!templateInstanceArtifact.description().isEmpty())
+    if (templateInstanceArtifact.description().isPresent())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description());
 
     if (isExpanded && templateInstanceArtifact.jsonLdId().isPresent())

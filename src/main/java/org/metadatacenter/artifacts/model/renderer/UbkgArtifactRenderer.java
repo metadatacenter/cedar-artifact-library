@@ -57,13 +57,13 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
 
   public UbkgRendering.Builder renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    if (!templateSchemaArtifact.jsonLdId().isPresent())
+    if (templateSchemaArtifact.jsonLdId().isEmpty())
       throw new IllegalArgumentException("Template " + templateSchemaArtifact.name() + " has no JSON-LD identifier");
 
-    if (!templateSchemaArtifact.version().isPresent())
+    if (templateSchemaArtifact.version().isEmpty())
       throw new IllegalArgumentException("Template " + templateSchemaArtifact.name() + " has no version");
 
-    if (!templateSchemaArtifact.status().isPresent())
+    if (templateSchemaArtifact.status().isEmpty())
       throw new IllegalArgumentException("Template " + templateSchemaArtifact.name() + " has no release status");
 
     URI templateUri = templateSchemaArtifact.jsonLdId().get();
@@ -78,7 +78,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     for (var entry : templateSchemaArtifact.fieldSchemas().entrySet()) {
       FieldSchemaArtifact fieldSchemaArtifact = entry.getValue();
 
-      if (!fieldSchemaArtifact.jsonLdId().isPresent())
+      if (fieldSchemaArtifact.jsonLdId().isEmpty())
         throw new IllegalArgumentException("Field " + fieldSchemaArtifact.name() + " has no JSON-LD identifier");
 
       URI fieldUri = fieldSchemaArtifact.jsonLdId().get();
