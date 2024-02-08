@@ -727,7 +727,7 @@ public class ExcelArtifactRenderer
     Integer page, Integer pageSize, String integratedSearchEndpoint, String apiKey) throws IOException, RuntimeException
   {
     HttpURLConnection connection = null;
-    Map<String, Object> resultsMap = new HashMap<>();
+    Map<String, Object> resultsMap;
     try {
       Map<String, Object> vcMap = new HashMap<>();
       vcMap.put("valueConstraints", valueConstraints);

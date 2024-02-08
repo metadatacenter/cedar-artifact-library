@@ -59,7 +59,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     }
 
     public Builder withDefaultValue(String defaultValue) {
-      this.defaultValue = Optional.ofNullable(new TextDefaultValue(defaultValue));
+      this.defaultValue = Optional.of(new TextDefaultValue(defaultValue));
       return this;
     }
 

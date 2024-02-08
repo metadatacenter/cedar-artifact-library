@@ -89,9 +89,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
     fieldNotesHeaderCell.setCellValue(fieldSchemaArtifact.description());
 
     Cell textValidationTypeORShowSliderNumberHeaderCell = row.createCell(REDCapConstants.TEXT_VALIDATION_TYPE_OR_SHOW_SLIDER_NUMBER_COLUMN_INDEX);
-    if (fieldType == REDCapConstants.TEXT_FIELD_TYPE) {
+    if (fieldType.equals(REDCapConstants.TEXT_FIELD_TYPE)) {
       Optional<String> textFieldValidationValue = createTextFieldValidationValue(fieldSchemaArtifact);
-    } else if (fieldType == REDCapConstants.SLIDER_FIELD_TYPE) {
+    } else if (fieldType.equals(REDCapConstants.SLIDER_FIELD_TYPE)) {
       // TODO
     }
 
