@@ -107,7 +107,7 @@ public class ValidationHelper
 
   public static <T> void validateOptionalFieldNotNull(Object obj, Optional<T> field, String fieldName)
   {
-    if (field == null || (field.isPresent() && field.get() == null))
+    if (field == null)
       throw new IllegalStateException("Optional field " + fieldName + " is null in " + obj);
   }
 

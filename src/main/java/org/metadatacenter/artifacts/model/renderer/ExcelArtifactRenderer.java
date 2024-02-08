@@ -462,7 +462,7 @@ public class ExcelArtifactRenderer
   }
 
   // Return prefLabel->IRI
-  private Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints valueConstraints)
+  @SuppressWarnings("unchecked") private Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints valueConstraints)
   {
     Map<String, String> values = new HashMap<>();
 

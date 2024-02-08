@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class Template2Tsv
 {
@@ -64,7 +65,7 @@ public class Template2Tsv
       } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
         String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
         String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
-        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, "UTF-8");
+        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, StandardCharsets.UTF_8);
         HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarAPIKey);
         int responseCode = connection.getResponseCode();
 
