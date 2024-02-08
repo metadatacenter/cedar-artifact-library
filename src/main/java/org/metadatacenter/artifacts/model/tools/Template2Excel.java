@@ -21,15 +21,16 @@ import org.metadatacenter.artifacts.util.ConnectionUtil;
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class Template2Excel
 {
-  private static String TEMPLATE_FILE_OPTION = "f";
-  private static String TEMPLATE_IRI_OPTION = "i";
-  private static String EXCEL_FILE_OPTION = "e";
-  private static String CEDAR_SEARCH_ENDPOINT_OPTION = "s";
-  private static String CEDAR_RESOURCE_BASE_OPTION = "r";
-  private static String CEDAR_APIKEY_OPTION = "k";
+  private static final String TEMPLATE_FILE_OPTION = "f";
+  private static final String TEMPLATE_IRI_OPTION = "i";
+  private static final String EXCEL_FILE_OPTION = "e";
+  private static final String CEDAR_SEARCH_ENDPOINT_OPTION = "s";
+  private static final String CEDAR_RESOURCE_BASE_OPTION = "r";
+  private static final String CEDAR_APIKEY_OPTION = "k";
 
   public static void main(String[] args) throws Exception {
 
@@ -61,7 +62,7 @@ public class Template2Excel
       } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
         String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
         String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
-        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, "UTF-8");
+        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, StandardCharsets.UTF_8);
         HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarAPIKey);
         int responseCode = connection.getResponseCode();
 

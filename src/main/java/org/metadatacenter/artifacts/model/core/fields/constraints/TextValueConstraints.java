@@ -40,7 +40,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     private Optional<Integer> minLength = Optional.empty();
     private Optional<Integer> maxLength = Optional.empty();
     private Optional<TextDefaultValue> defaultValue = Optional.empty();
-    private List<LiteralValueConstraint> literals = new ArrayList<>();
+    private final List<LiteralValueConstraint> literals = new ArrayList<>();
     private boolean requiredValue = false;
     private boolean multipleChoice = false;
     private Optional<String> regex = Optional.empty();

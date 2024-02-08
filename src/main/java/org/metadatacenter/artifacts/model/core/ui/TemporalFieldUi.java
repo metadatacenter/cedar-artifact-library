@@ -32,7 +32,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
   class Builder
   {
-    private FieldInputType inputType = FieldInputType.TEMPORAL;
+    private final FieldInputType inputType = FieldInputType.TEMPORAL;
     private TemporalGranularity temporalGranularity;
     private InputTimeFormat inputTimeFormat = InputTimeFormat.TWELVE_HOUR;
     boolean timezoneEnabled = false;

@@ -23,7 +23,7 @@ import java.security.cert.X509Certificate;
 public class ConnectionUtil {
 
   //@formatter:off
-  private static TrustManager[] trustAllCerts = new TrustManager[1];
+  private static final TrustManager[] trustAllCerts = new TrustManager[1];
   static {
     trustAllCerts[0] = new X509TrustManager() {
       public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
@@ -32,7 +32,7 @@ public class ConnectionUtil {
     };
   }
 
-  private static ObjectMapper mapper = new ObjectMapper();
+  private static final ObjectMapper mapper = new ObjectMapper();
 
   //@formatter:on
 

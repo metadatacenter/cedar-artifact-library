@@ -48,11 +48,11 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
   class Builder
   {
-    private List<OntologyValueConstraint> ontologies = new ArrayList<>();
-    private List<ValueSetValueConstraint> valueSets = new ArrayList<>();
-    private List<ClassValueConstraint> classes = new ArrayList<>();
-    private List<BranchValueConstraint> branches = new ArrayList<>();
-    private List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
+    private final List<OntologyValueConstraint> ontologies = new ArrayList<>();
+    private final List<ValueSetValueConstraint> valueSets = new ArrayList<>();
+    private final List<ClassValueConstraint> classes = new ArrayList<>();
+    private final List<BranchValueConstraint> branches = new ArrayList<>();
+    private final List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
     private Optional<ControlledTermDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
     private boolean multipleChoice = false;

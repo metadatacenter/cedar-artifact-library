@@ -110,9 +110,9 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
-    private Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
-    private Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
+    private final Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
+    private final Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    private final Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
 
     private Builder()
     {

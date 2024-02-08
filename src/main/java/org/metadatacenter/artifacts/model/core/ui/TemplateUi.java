@@ -37,10 +37,10 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
   }
 
   class Builder {
-    private List<String> order = new ArrayList<>();
-    private List<String> pages = new ArrayList<>();
-    private Map<String, String> propertyLabels = new HashMap<>();
-    private Map<String, String> propertyDescriptions = new HashMap<>();
+    private final List<String> order = new ArrayList<>();
+    private final List<String> pages = new ArrayList<>();
+    private final Map<String, String> propertyLabels = new HashMap<>();
+    private final Map<String, String> propertyDescriptions = new HashMap<>();
     private Optional<String> header = Optional.empty();
     private Optional<String> footer = Optional.empty();
 

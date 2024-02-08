@@ -23,14 +23,14 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
 {
   private Map<String, URI> jsonLdContext;
-  private List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
+  private final List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
   private Optional<URI> jsonLdId = Optional.empty();
   private Optional<URI> createdBy = Optional.empty();
   private Optional<URI> modifiedBy = Optional.empty();
   private Optional<OffsetDateTime> createdOn = Optional.empty();
   private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-  private URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-  private String jsonSchemaType = JSON_SCHEMA_OBJECT;
+  private final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
+  private final String jsonSchemaType = JSON_SCHEMA_OBJECT;
   private String jsonSchemaTitle = "";
   private String jsonSchemaDescription = "";
   private String name;
@@ -175,7 +175,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
   public FieldSchemaArtifactBuilder withMaxItems(Integer maxItems)
   {
-    this.minItems = Optional.ofNullable(maxItems);
+    this.maxItems = Optional.ofNullable(maxItems);
     return this;
   }
 

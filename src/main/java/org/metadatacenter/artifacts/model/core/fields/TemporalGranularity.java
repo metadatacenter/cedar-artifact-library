@@ -12,7 +12,7 @@ public enum TemporalGranularity
   SECOND("second"),
   DECIMAL_SECOND("decimalSecond");
 
-  private String text;
+  private final String text;
 
   TemporalGranularity(String text) {
     this.text = text;

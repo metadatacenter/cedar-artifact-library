@@ -102,13 +102,13 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    private final Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    private final Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     private boolean isMultiple = false;
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
-    private ElementUi.Builder elementUiBuilder = ElementUi.builder();
+    private final ElementUi.Builder elementUiBuilder = ElementUi.builder();
 
     private Builder() {
     }

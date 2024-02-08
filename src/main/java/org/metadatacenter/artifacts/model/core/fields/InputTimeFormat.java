@@ -7,7 +7,7 @@ public enum InputTimeFormat
   TWELVE_HOUR("12h"),
   TWENTY_FOUR_HOUR("24h");
 
-  private String text;
+  private final String text;
 
   InputTimeFormat(String text) {
     this.text = text;

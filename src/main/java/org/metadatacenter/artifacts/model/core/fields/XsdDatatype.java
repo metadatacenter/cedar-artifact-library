@@ -22,7 +22,7 @@ public enum XsdDatatype
   FLOAT("xsd:float"),
   DOUBLE("xsd:double");
 
-  private String text;
+  private final String text;
 
   XsdDatatype(String text) {
     this.text = text;
