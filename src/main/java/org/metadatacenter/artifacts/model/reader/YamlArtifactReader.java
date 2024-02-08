@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.reader;
 
-import org.checkerframework.checker.units.qual.C;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;

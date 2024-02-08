@@ -129,8 +129,7 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   {
     ArrayList<String> childNames = new ArrayList<>();
 
-    for (String name : getUi().order())
-      childNames.add(name);
+    childNames.addAll(getUi().order());
 
     return childNames;
   }

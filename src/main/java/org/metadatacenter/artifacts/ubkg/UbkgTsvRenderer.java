@@ -34,7 +34,8 @@ public class UbkgTsvRenderer
       String nodeLabel = nodeProperties.get(NODE_LABEL);
       String nodeDefinition = nodeProperties.get(NODE_DEFINITION);
 
-      sb.append(nodeURI.toString() + "\t\t" + nodeLabel + "\t" + nodeDefinition + "\t\t\n");
+      sb.append(nodeURI.toString()).append("\t\t").append(nodeLabel).append("\t").append(nodeDefinition)
+        .append("\t\t\n");
     }
 
     return sb;

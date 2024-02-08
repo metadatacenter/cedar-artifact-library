@@ -29,7 +29,7 @@ public class ValidationHelper
   {
     validateStringFieldNotNull(obj, field, fieldName);
 
-    if (field.equals(""))
+    if (field.isEmpty())
       throw new IllegalStateException("field " + fieldName + " is empty in " + obj);
   }
 

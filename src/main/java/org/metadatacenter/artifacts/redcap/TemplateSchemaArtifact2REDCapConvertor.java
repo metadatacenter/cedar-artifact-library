@@ -167,7 +167,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
         }
         case DECIMAL, FLOAT, DOUBLE -> {
           if (numericValueConstraints.decimalPlace().isPresent()) {
-            Integer decimalPlaces = numericValueConstraints.decimalPlace().get();
+            int decimalPlaces = numericValueConstraints.decimalPlace().get();
             if (decimalPlaces == 1)
               return Optional.of(REDCapConstants.NUMBER_1_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 2)
