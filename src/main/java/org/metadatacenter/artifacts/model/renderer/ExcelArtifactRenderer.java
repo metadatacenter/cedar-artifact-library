@@ -56,7 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
 
@@ -126,8 +125,9 @@ public class ExcelArtifactRenderer
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
-    boolean isRequiredValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
-      fieldSchemaArtifact.valueConstraints().get().requiredValue() : false;
+    boolean isRequiredValue =
+      fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
+        .requiredValue();
     Optional<? extends DefaultValue> defaultValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
       fieldSchemaArtifact.valueConstraints().get().defaultValue() : Optional.empty();
 
@@ -243,8 +243,7 @@ public class ExcelArtifactRenderer
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi(); // TODO Temporary until we use typed switch
         XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
-        String temporalFormatString = getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
-        return temporalFormatString;
+        return getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
 
       } else
         return "";

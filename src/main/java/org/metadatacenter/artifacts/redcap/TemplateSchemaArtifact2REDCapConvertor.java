@@ -172,7 +172,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
               return Optional.of(REDCapConstants.NUMBER_1_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 2)
               return Optional.of(REDCapConstants.NUMBER_2_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
-            else if (decimalPlaces == 2)
+            else if (decimalPlaces == 3)
               return Optional.of(REDCapConstants.NUMBER_3_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 4)
               return Optional.of(REDCapConstants.NUMBER_4_DECIMAL_PLACE_TEXTFIELD_VALIDATION);

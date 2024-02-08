@@ -100,8 +100,7 @@ public class SpreadSheetUtil
   public static int getColumnNumber(Sheet sheet, String columnSpecification)
   {
     checkColumnSpecification(columnSpecification);
-    int columnNumber = columnName2Index(columnSpecification);
-    return columnNumber; // 0-indexed
+    return columnName2Index(columnSpecification); // 0-indexed
   }
 
   /**
@@ -112,8 +111,7 @@ public class SpreadSheetUtil
   public static int getRowNumber(Sheet sheet, String rowSpecification)
   {
     checkRowSpecification(rowSpecification);
-    int rowNumber = Integer.parseInt(rowSpecification);
-    return rowNumber; // 0-indexed
+    return Integer.parseInt(rowSpecification); // 0-indexed
   }
 
   public static Sheet getSheet(Workbook workbook, String sheetName)

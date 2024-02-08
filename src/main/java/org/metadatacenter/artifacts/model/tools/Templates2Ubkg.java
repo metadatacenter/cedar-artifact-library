@@ -108,9 +108,7 @@ public class Templates2Ubkg
     if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST)
       throw new RuntimeException("Error retrieving JSON from " + requestUrl + ": " + responseCode);
 
-    ObjectNode objectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
-
-    return objectNode;
+    return ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
   }
 
   private static ObjectNode readJsonFromFile(String filePath) throws IOException

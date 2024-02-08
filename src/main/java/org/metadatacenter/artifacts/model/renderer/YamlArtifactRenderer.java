@@ -221,8 +221,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     }
 
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-      List<Object> skosAlternateLabelRendering = new ArrayList<>();
-      skosAlternateLabelRendering.addAll(fieldSchemaArtifact.skosAlternateLabels());
+      List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
       rendering.put(SKOS_ALT_LABEL, skosAlternateLabelRendering);
     }
 
