@@ -55,7 +55,7 @@ public class TemplateReporter
     return Optional.ofNullable(this.valueConstraints.get(normalizedPath));
   }
 
-  private class ReporterVisitor implements SchemaArtifactVisitor
+  private static class ReporterVisitor implements SchemaArtifactVisitor
   {
     private final TemplateSchemaArtifact templateSchemaArtifact;
     private final Map<String, FieldSchemaArtifact> fieldSchemas;

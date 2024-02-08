@@ -252,7 +252,7 @@ Controlled term fields can have four possible value types: classes, ontologies, 
 
 The builder class has methods `withClassValueConstraint`, `withOntologyValueConstraint`, `withBranchValueConstraint`,  and `withValueSetValueConstraint` to allow specification of these types.
 
-Here, for example, is a the builder being used to create a field with all four types:
+Here, for example, is the builder being used to create a field with all four types:
 
 ```java
     String name = "Disease";

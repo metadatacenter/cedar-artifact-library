@@ -150,7 +150,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   /**
    * Generate YAML rendering of an element schema artifact
-   *
+   * <p>
    * e.g.,
    * <pre>
    * element: Address
@@ -187,7 +187,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   /**
    * Generate YAML rendering of a field schema artifact
-   *
+   * <p>
    * e.g.,
    * <pre>
    * field: Disease
@@ -260,7 +260,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   /**
    * Generate YAML rendering of a field schema artifact _valueConstraints specification
-   *
+   * <p>
    * e.g.,
    * <pre>
    * values:

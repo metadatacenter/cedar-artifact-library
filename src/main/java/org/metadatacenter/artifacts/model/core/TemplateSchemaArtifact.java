@@ -6,6 +6,7 @@ import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -333,7 +334,7 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUiFieldNotNull(this, templateUi, UI);
 
-    Set<String> order = templateUi.order().stream().collect(toSet());
+    Set<String> order = new HashSet<>(templateUi.order());
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
     if (!order.containsAll(childNames)) {

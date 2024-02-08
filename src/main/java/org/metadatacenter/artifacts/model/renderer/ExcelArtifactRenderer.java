@@ -494,32 +494,32 @@ public class ExcelArtifactRenderer
   /**
    *
    * The terminology server is expecting a controlled term value constraints object that looks like the following:
-   *
+   * <p>
    * public class ControlledTermValueConstraints
    *   private List<OntologyValueConstraint> ontologies;
    *   private List<BranchValueConstraint> branches;
    *   private List<ValueSetValueConstraint> valueSets;
    *   private List<ClassValueConstraint> classes;
    *   private List<Action> actions;
-   *
+   * <p>
    * public class BranchValueConstraint
    *   private String termUri;
    *   private String acronym;
-   *
+   * <p>
    * public class OntologyValueConstraint
    *   private String acronym;
-   *
+   * <p>
    * public class ValueSetValueConstraint
    *   private String termUri;
    *   private String vsCollection;
-   *
+   * <p>
    * public class ClassValueConstraint
    *   private String termUri;
    *   private String prefLabel;
    *   private String type;
    *   private String label; // Optional
    *   private String source;
-   *
+   * <p>
    * public class Action
    *   private Integer to; // Optional
    *   private String action;
