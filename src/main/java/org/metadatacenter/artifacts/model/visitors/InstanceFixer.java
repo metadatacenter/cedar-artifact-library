@@ -20,7 +20,7 @@ public class InstanceFixer implements InstanceArtifactVisitor
     this.templateSchemaArtifact = templateSchemaArtifact;
     this.templateInstanceArtifact = templateInstanceArtifact;
 
-    if (!templateSchemaArtifact.jsonLdId().isPresent())
+    if (templateSchemaArtifact.jsonLdId().isEmpty())
       throw new IllegalArgumentException("Template " + templateSchemaArtifact.name() + " does not have an @id");
 
     if (!templateInstanceArtifact.isBasedOn().equals(templateSchemaArtifact.jsonLdId().get()))
@@ -44,7 +44,7 @@ public class InstanceFixer implements InstanceArtifactVisitor
 
   @Override public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path)
   {
-    if (!templateReporter.getFieldSchema(path).isPresent())
+    if (templateReporter.getFieldSchema(path).isEmpty())
       throw new RuntimeException(
         "no field schema specification for at path " + path + " when processing template" + templateName());
 

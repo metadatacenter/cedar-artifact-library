@@ -284,12 +284,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     }
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+      rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
       rendering.put(SKOS_ALTLABEL, mapper.createArrayNode());
       for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
-        rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel.toString());
+        rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel);
     }
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));

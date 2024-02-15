@@ -20,7 +20,7 @@ public non-sealed interface NumericFieldUi extends FieldUi
 
   class Builder
   {
-    private FieldInputType inputType = FieldInputType.NUMERIC;
+    private final FieldInputType inputType = FieldInputType.NUMERIC;
     private boolean hidden = false;
     private boolean recommendedValue = false;
     private boolean continuePreviousLine = false;

@@ -24,12 +24,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.nio.file.StandardOpenOption.*;
 
 public class Templates2Ubkg
 {
@@ -94,7 +90,7 @@ public class Templates2Ubkg
     }
   }
 
-  public static void writeToFile(File file, StringBuffer content) throws IOException {
+  public static void writeToFile(File file, StringBuffer content) {
 
     try (FileWriter fileWriter = new FileWriter(file)) {
       fileWriter.write(content.toString());
@@ -112,9 +108,7 @@ public class Templates2Ubkg
     if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST)
       throw new RuntimeException("Error retrieving JSON from " + requestUrl + ": " + responseCode);
 
-    ObjectNode objectNode = ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
-
-    return objectNode;
+    return ConnectionUtil.readJsonResponseMessage(connection.getInputStream());
   }
 
   private static ObjectNode readJsonFromFile(String filePath) throws IOException

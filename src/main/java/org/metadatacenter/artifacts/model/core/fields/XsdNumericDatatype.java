@@ -17,7 +17,7 @@ public enum XsdNumericDatatype
   FLOAT("xsd:float"),
   DOUBLE("xsd:double");
 
-  private String text;
+  private final String text;
 
   XsdNumericDatatype(String text) {
     this.text = text;

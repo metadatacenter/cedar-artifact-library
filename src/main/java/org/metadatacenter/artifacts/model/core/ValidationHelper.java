@@ -29,7 +29,7 @@ public class ValidationHelper
   {
     validateStringFieldNotNull(obj, field, fieldName);
 
-    if (field.equals(""))
+    if (field.isEmpty())
       throw new IllegalStateException("field " + fieldName + " is empty in " + obj);
   }
 
@@ -67,7 +67,7 @@ public class ValidationHelper
   {
     validateListFieldNotNull(obj, uriListField, fieldName);
 
-    if (!uriListField.stream().anyMatch(values::contains))
+    if (uriListField.stream().noneMatch(values::contains))
       throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values + " in " + obj);
   }
 
@@ -107,7 +107,7 @@ public class ValidationHelper
 
   public static <T> void validateOptionalFieldNotNull(Object obj, Optional<T> field, String fieldName)
   {
-    if (field == null || (field.isPresent() && field.get() == null))
+    if (field == null)
       throw new IllegalStateException("Optional field " + fieldName + " is null in " + obj);
   }
 

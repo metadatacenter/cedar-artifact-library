@@ -89,9 +89,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
     fieldNotesHeaderCell.setCellValue(fieldSchemaArtifact.description());
 
     Cell textValidationTypeORShowSliderNumberHeaderCell = row.createCell(REDCapConstants.TEXT_VALIDATION_TYPE_OR_SHOW_SLIDER_NUMBER_COLUMN_INDEX);
-    if (fieldType == REDCapConstants.TEXT_FIELD_TYPE) {
+    if (fieldType.equals(REDCapConstants.TEXT_FIELD_TYPE)) {
       Optional<String> textFieldValidationValue = createTextFieldValidationValue(fieldSchemaArtifact);
-    } else if (fieldType == REDCapConstants.SLIDER_FIELD_TYPE) {
+    } else if (fieldType.equals(REDCapConstants.SLIDER_FIELD_TYPE)) {
       // TODO
     }
 
@@ -167,12 +167,12 @@ public class TemplateSchemaArtifact2REDCapConvertor
         }
         case DECIMAL, FLOAT, DOUBLE -> {
           if (numericValueConstraints.decimalPlace().isPresent()) {
-            Integer decimalPlaces = numericValueConstraints.decimalPlace().get();
+            int decimalPlaces = numericValueConstraints.decimalPlace().get();
             if (decimalPlaces == 1)
               return Optional.of(REDCapConstants.NUMBER_1_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 2)
               return Optional.of(REDCapConstants.NUMBER_2_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
-            else if (decimalPlaces == 2)
+            else if (decimalPlaces == 3)
               return Optional.of(REDCapConstants.NUMBER_3_DECIMAL_PLACE_TEXTFIELD_VALIDATION);
             else if (decimalPlaces == 4)
               return Optional.of(REDCapConstants.NUMBER_4_DECIMAL_PLACE_TEXTFIELD_VALIDATION);

@@ -481,13 +481,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
                 propertyUri);
               elementSchemas.put(childName, elementSchemaArtifact);
             }
-            case FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
-              FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
-                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiple, minItems, maxItems,
-                propertyUri);
-              fieldSchemas.put(childName, fieldSchemaArtifact);
-            }
-            case STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
+            case FIELD_SCHEMA_ARTIFACT_TYPE_IRI, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiple, minItems, maxItems,
                 propertyUri);
@@ -1260,7 +1254,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   {
     Optional<String> timeFormatString = readString(sourceNode, path, fieldName);
 
-    if (!timeFormatString.isPresent())
+    if (timeFormatString.isEmpty())
       return defaultInputTimeFormat;
 
     if (!TIME_FORMATS.contains(timeFormatString.get()))

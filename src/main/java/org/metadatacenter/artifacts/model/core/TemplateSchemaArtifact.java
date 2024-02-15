@@ -6,6 +6,7 @@ import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,9 +110,9 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
-    private LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
-    private TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
+    private final LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
+    private final LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+    private final TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
 
     private Builder()
     {
@@ -333,7 +334,7 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUiFieldNotNull(this, templateUi, UI);
 
-    Set<String> order = templateUi.order().stream().collect(toSet());
+    Set<String> order = new HashSet<>(templateUi.order());
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
     if (!order.containsAll(childNames)) {

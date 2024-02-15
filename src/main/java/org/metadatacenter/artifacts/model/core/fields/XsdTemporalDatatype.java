@@ -12,7 +12,7 @@ public enum XsdTemporalDatatype
   DATETIME("xsd:dateTime"),
   TIME("xsd:time");
 
-  private String text;
+  private final String text;
 
   XsdTemporalDatatype(String text) {
     this.text = text;

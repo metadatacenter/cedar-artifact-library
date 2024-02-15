@@ -69,7 +69,7 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
   class Builder
   {
     private Map<String, URI> jsonLdContext = new HashMap<>();
-    private List<URI> jsonLdTypes = new ArrayList<>();
+    private final List<URI> jsonLdTypes = new ArrayList<>();
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<String> jsonLdValue = Optional.empty();
     private Optional<String> label = Optional.empty();

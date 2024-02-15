@@ -7,7 +7,7 @@ public enum Status
   DRAFT("bibo:draft"),
   PUBLISHED("bibo:published");
 
-  private String text;
+  private final String text;
 
   Status(String text) {
     this.text = text;

@@ -150,7 +150,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   /**
    * Generate YAML rendering of an element schema artifact
-   *
+   * <p>
    * e.g.,
    * <pre>
    * element: Address
@@ -187,7 +187,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   /**
    * Generate YAML rendering of a field schema artifact
-   *
+   * <p>
    * e.g.,
    * <pre>
    * field: Disease
@@ -211,7 +211,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifact(fieldSchemaArtifact, FIELD);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(SKOS_PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get().toString());
+      rendering.put(SKOS_PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
     rendering.put(INPUT_TYPE, fieldSchemaArtifact.fieldUi().inputType());
 
@@ -221,9 +221,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     }
 
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-      List<Object> skosAlternateLabelRendering = new ArrayList<>();
-      for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
-        skosAlternateLabelRendering.add(skosAlternateLabel);
+      List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
       rendering.put(SKOS_ALT_LABEL, skosAlternateLabelRendering);
     }
 
@@ -261,7 +259,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
   /**
    * Generate YAML rendering of a field schema artifact _valueConstraints specification
-   *
+   * <p>
    * e.g.,
    * <pre>
    * values:
@@ -405,7 +403,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(INSTANCE, templateInstanceArtifact.name());
-    if (!templateInstanceArtifact.description().isEmpty())
+    if (templateInstanceArtifact.description().isPresent())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description());
 
     if (isExpanded && templateInstanceArtifact.jsonLdId().isPresent())

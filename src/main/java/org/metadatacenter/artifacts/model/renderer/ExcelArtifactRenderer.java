@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.deser.CreatorProperty;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -57,7 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
 
@@ -127,8 +125,9 @@ public class ExcelArtifactRenderer
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
-    boolean isRequiredValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
-      fieldSchemaArtifact.valueConstraints().get().requiredValue() : false;
+    boolean isRequiredValue =
+      fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
+        .requiredValue();
     Optional<? extends DefaultValue> defaultValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
       fieldSchemaArtifact.valueConstraints().get().defaultValue() : Optional.empty();
 
@@ -244,8 +243,7 @@ public class ExcelArtifactRenderer
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi(); // TODO Temporary until we use typed switch
         XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
-        String temporalFormatString = getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
-        return temporalFormatString;
+        return getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
 
       } else
         return "";
@@ -442,7 +440,7 @@ public class ExcelArtifactRenderer
       if (valueConstraints.get() instanceof TextValueConstraints) {
         TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
 
-        List<String> labels = textValueConstraints.literals().stream().map(LiteralValueConstraint::label).collect(Collectors.toList());
+        List<String> labels = textValueConstraints.literals().stream().map(LiteralValueConstraint::label).toList();
 
         for (String label : labels)
           possibleValues.put(label, "");
@@ -464,7 +462,7 @@ public class ExcelArtifactRenderer
   }
 
   // Return prefLabel->IRI
-  private Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints valueConstraints)
+  @SuppressWarnings("unchecked") private Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints valueConstraints)
   {
     Map<String, String> values = new HashMap<>();
 
@@ -495,32 +493,32 @@ public class ExcelArtifactRenderer
   /**
    *
    * The terminology server is expecting a controlled term value constraints object that looks like the following:
-   *
+   * <p>
    * public class ControlledTermValueConstraints
    *   private List<OntologyValueConstraint> ontologies;
    *   private List<BranchValueConstraint> branches;
    *   private List<ValueSetValueConstraint> valueSets;
    *   private List<ClassValueConstraint> classes;
    *   private List<Action> actions;
-   *
+   * <p>
    * public class BranchValueConstraint
    *   private String termUri;
    *   private String acronym;
-   *
+   * <p>
    * public class OntologyValueConstraint
    *   private String acronym;
-   *
+   * <p>
    * public class ValueSetValueConstraint
    *   private String termUri;
    *   private String vsCollection;
-   *
+   * <p>
    * public class ClassValueConstraint
    *   private String termUri;
    *   private String prefLabel;
    *   private String type;
    *   private String label; // Optional
    *   private String source;
-   *
+   * <p>
    * public class Action
    *   private Integer to; // Optional
    *   private String action;
@@ -729,7 +727,7 @@ public class ExcelArtifactRenderer
     Integer page, Integer pageSize, String integratedSearchEndpoint, String apiKey) throws IOException, RuntimeException
   {
     HttpURLConnection connection = null;
-    Map<String, Object> resultsMap = new HashMap<>();
+    Map<String, Object> resultsMap;
     try {
       Map<String, Object> vcMap = new HashMap<>();
       vcMap.put("valueConstraints", valueConstraints);

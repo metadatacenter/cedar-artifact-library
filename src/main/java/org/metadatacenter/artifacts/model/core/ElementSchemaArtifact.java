@@ -6,6 +6,7 @@ import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -102,13 +103,13 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    private final Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    private final Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     private boolean isMultiple = false;
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
-    private ElementUi.Builder elementUiBuilder = ElementUi.builder();
+    private final ElementUi.Builder elementUiBuilder = ElementUi.builder();
 
     private Builder() {
     }
@@ -348,7 +349,7 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
     if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
       throw new IllegalStateException("minItems must be less than maxItems in element schema artifact " + name());
 
-    Set<String> order = elementUi.order().stream().collect(toSet());
+    Set<String> order = new HashSet<>(elementUi.order());
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
     if (!order.containsAll(childNames)) {
