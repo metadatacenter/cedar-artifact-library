@@ -141,6 +141,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     // TODO Generate YAML for header/footer
     // TODO Generate YAML for UI.propertyLabels, UI.propertyDescriptions
     // TODO Generate YAML for childPropertyUris
+    // TODO Generate YAML for annotations
+    // TODO Generate YAML for provenance
 
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(templateSchemaArtifact.getChildSchemas()));
