@@ -121,6 +121,7 @@ public class Template2Yaml
 
     Option yamlExpandOption = Option.builder(YAML_EXPAND_OPTION)
       .argName("yaml-expand")
+      .desc("Expand YAML")
       .build();
 
     Option resourceOption = Option.builder(CEDAR_RESOURCE_BASE_OPTION)
