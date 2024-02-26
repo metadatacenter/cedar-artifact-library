@@ -155,12 +155,16 @@ public class Template2Yaml
     if (command.hasOption(TEMPLATE_FILE_OPTION) && command.hasOption(TEMPLATE_IRI_OPTION))
       Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
+    if (!command.hasOption(YAML_FILE_OPTION))
+      Usage(options, "A YAML file path must be provided");
+
     if (command.hasOption(TEMPLATE_FILE_OPTION)) {
-      if (!command.hasOption(YAML_FILE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path and CEDAR API key must be provided when template file option is selected");
+      if (command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options, "A CEDAR API key should not be provided when template file option is selected");
     } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
-      if (!command.hasOption(YAML_FILE_OPTION) || !command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path, Resource Server REST base, and CEDAR API key must be provided when template IRI option is selected");
+      if (!command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options,
+          "A Resource Server REST base and a CEDAR API key must be provided when template IRI option is selected");
     } else
       Usage(options, "Please specify a template file path or a template IRI");
   }
