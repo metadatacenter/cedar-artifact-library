@@ -471,8 +471,8 @@ public class ExcelArtifactRenderer
       Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
 
       List<Map<String, String>> valueDescriptions;
-      // TODO Replace arbitrary 5000 BioPortal terms; show error if more
-      Map<String, Object> searchResult = integratedSearch(vcMap, 1, 5000,
+      // TODO Replace arbitrary 4000 BioPortal terms; show error if more
+      Map<String, Object> searchResult = integratedSearch(vcMap, 1, 4000,
         terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
       valueDescriptions = searchResult.containsKey("collection") ?
         (List<Map<String, String>>)searchResult.get("collection") :
