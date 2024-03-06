@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.Artifact;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
 import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
@@ -15,6 +17,8 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -369,8 +373,42 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     else
       rendering.putNull(PAV_LAST_UPDATED_ON);
 
+    for (var entry : templateInstanceArtifact.singleInstanceFieldInstances().entrySet()) {
+      String fieldName = entry.getKey();
+      FieldInstanceArtifact fieldInstanceArtifact = entry.getValue();
+      // TODO
+    }
+
+    for (var entry : templateInstanceArtifact.multiInstanceFieldInstances().entrySet()) {
+      String fieldName = entry.getKey();
+      List<FieldInstanceArtifact> fieldInstanceArtifacts = entry.getValue();
+      // TODO
+    }
+
+
+    for (var entry : templateInstanceArtifact.multiInstanceFieldInstances().entrySet()) {
+      String fieldName = entry.getKey();
+      List<FieldInstanceArtifact> fieldInstanceArtifacts = entry.getValue();
+
+      for (FieldInstanceArtifact fieldInstanceArtifact : fieldInstanceArtifacts) {
+
+      }
+      // TODO
+    }
+
+    for (var entry : templateInstanceArtifact.multiInstanceElementInstances().entrySet()) {
+      String fieldName = entry.getKey();
+      List<ElementInstanceArtifact> elementInstanceArtifacts = entry.getValue();
+
+      for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
+
+      }
+      // TODO
+    }
+
     return rendering;
   }
+
   /**
    * Generate a base schema artifact rendering. In addition to core artifact fields (@type, @id, pav:createdOn,
    * pav:createdBy, pav:lastUpdatedOn, and oslc:modifiedBy), it will have JSON Schema fields (@schema, type,

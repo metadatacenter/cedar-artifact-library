@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -31,12 +33,18 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
   static ElementInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<String> name, Optional<String> description, Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances,
-    Map<String, List<ElementInstanceArtifact>> elementInstances,
+    List<String> childNames,
+    Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+    Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+    Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
+    Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
     Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   {
     return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
+      modifiedBy, createdOn, lastUpdatedOn, childNames,
+      singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances,
+      attributeValueFieldInstances);
   }
 
   // NOTE: Even though this method looks almost identical to the equivalent method in the TemplateInstanceArtifact
@@ -45,37 +53,43 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
   {
     visitor.visitElementInstanceArtifact(this, path);
 
-    for (Map.Entry<String, List<FieldInstanceArtifact>> entry : fieldInstances().entrySet()) {
+    for (Map.Entry<String, FieldInstanceArtifact> entry : singleInstanceFieldInstances().entrySet()) {
+      String fieldName = entry.getKey();
+      String childBasePath = path + "/" + fieldName;
+      FieldInstanceArtifact fieldInstanceArtifact = entry.getValue();
+
+      fieldInstanceArtifact.accept(visitor, childBasePath);
+    }
+
+    for (Map.Entry<String, List<FieldInstanceArtifact>> entry : multiInstanceFieldInstances().entrySet()) {
       String fieldName = entry.getKey();
       String childBasePath = path + "/" + fieldName;
       List<FieldInstanceArtifact> fieldInstanceArtifacts = entry.getValue();
 
-      if (fieldInstanceArtifacts.size() == 1) {
-        FieldInstanceArtifact fieldInstanceArtifact = fieldInstanceArtifacts.get(0);
-        fieldInstanceArtifact.accept(visitor, childBasePath);
-      } else {
-        int childNumber = 0;
-        for (FieldInstanceArtifact fieldInstanceArtifact : fieldInstanceArtifacts) {
-          fieldInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
-          childNumber++;
-        }
+      int childNumber = 0;
+      for (FieldInstanceArtifact fieldInstanceArtifact : fieldInstanceArtifacts) {
+        fieldInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
+        childNumber++;
       }
     }
 
-    for (Map.Entry<String, List<ElementInstanceArtifact>> entry : elementInstances().entrySet()) {
+    for (Map.Entry<String, ElementInstanceArtifact> entry : singleInstanceElementInstances().entrySet()) {
+      String elementName = entry.getKey();
+      String childBasePath = path + "/" + elementName;
+      ElementInstanceArtifact elementInstanceArtifact = entry.getValue();
+
+      elementInstanceArtifact.accept(visitor, childBasePath);
+    }
+
+    for (Map.Entry<String, List<ElementInstanceArtifact>> entry : multiInstanceElementInstances().entrySet()) {
       String elementName = entry.getKey();
       String childBasePath = path + "/" + elementName;
       List<ElementInstanceArtifact> elementInstanceArtifacts = entry.getValue();
 
-      if (elementInstanceArtifacts.size() == 1) {
-        ElementInstanceArtifact elementInstanceArtifact = elementInstanceArtifacts.get(0);
-        elementInstanceArtifact.accept(visitor, childBasePath);
-      } else {
-        int childNumber = 0;
-        for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
-          elementInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
-          childNumber++;
-        }
+      int childNumber = 0;
+      for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
+        elementInstanceArtifact.accept(visitor, childBasePath + "[" + childNumber + "]");
+        childNumber++;
       }
     }
 
@@ -110,8 +124,11 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private final Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
-    private final Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    private final List<String> childNames = new ArrayList<>();
+    private final Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
+    private final Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
+    private final Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
+    private final Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
     private final Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
 
     private Builder()
@@ -178,41 +195,54 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withFieldInstance(String childFieldName, FieldInstanceArtifact fieldInstance)
+    public Builder withSingleInstanceFieldInstance(String childFieldName, FieldInstanceArtifact fieldInstance)
     {
-      if (fieldInstances.containsKey(childFieldName))
-        fieldInstances.get(childFieldName).add(fieldInstance);
-      else {
-        List<FieldInstanceArtifact> childFieldInstances = new ArrayList<>();
-        childFieldInstances.add(fieldInstance);
-        fieldInstances.put(childFieldName, childFieldInstances);
-      }
+      if (childNames.contains(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " already present in instance");
+
+      childNames.add(childFieldName);
+
+      singleInstanceFieldInstances.put(childFieldName, fieldInstance);
+
       return this;
     }
 
-    public Builder withElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
+    public Builder withSingleInstanceElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
     {
-      if (elementInstances.containsKey(childElementName))
-        elementInstances.get(childElementName).add(elementInstance);
-      else {
-        List<ElementInstanceArtifact> childElementInstances = new ArrayList<>();
-        childElementInstances.add(elementInstance);
-        elementInstances.put(childElementName, childElementInstances);
-      }
+      if (childNames.contains(childElementName))
+        throw new IllegalArgumentException("child " + childElementName + " already present in instance");
+
+      childNames.add(childElementName);
+
+      singleInstanceElementInstances.put(childElementName, elementInstance);
+
       return this;
     }
 
-    public Builder withElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
+    public Builder withMultiInstanceFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
     {
-      this.elementInstances.put(childElementName, List.copyOf(childElementInstances));
+      if (childNames.contains(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " already present in instance");
+
+      childNames.add(childFieldName);
+
+      this.multiInstanceFieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
+
       return this;
     }
 
-    public Builder withFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
+    public Builder withMultiInstanceElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
     {
-      this.fieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
+      if (childNames.contains(childElementName))
+        throw new IllegalArgumentException("chile " + childElementName + " already present in instance");
+
+      childNames.add(childElementName);
+
+      this.multiInstanceElementInstances.put(childElementName, List.copyOf(childElementInstances));
+
       return this;
     }
+
 
     public Builder withAttributeValueFieldInstances(String attributeValueFieldName,
       Map<String, FieldInstanceArtifact> attributeValueFieldInstances)
@@ -226,7 +256,10 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     public ElementInstanceArtifact build()
     {
       return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-        modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances, attributeValueFieldInstanceGroups);
+        modifiedBy, createdOn, lastUpdatedOn, childNames,
+        singleInstanceFieldInstances, multiInstanceFieldInstances,
+        singleInstanceElementInstances, multiInstanceElementInstances,
+        attributeValueFieldInstanceGroups);
     }
   }
 }
@@ -234,9 +267,12 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
 record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                      Optional<String> name, Optional<String> description,
                                      Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                      Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                      Map<String, List<FieldInstanceArtifact>> fieldInstances,
-                                      Map<String, List<ElementInstanceArtifact>> elementInstances,
+                                     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                     List<String> childNames,
+                                     Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+                                     Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+                                     Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
+                                     Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
                                      Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   implements ElementInstanceArtifact
 {
@@ -251,14 +287,22 @@ record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> j
     validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
     validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
     validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
-    validateMapFieldNotNull(this, fieldInstances, "fieldInstances");
-    validateMapFieldNotNull(this, elementInstances, "elementInstances");
+    validateListFieldNotNull(this, childNames, "childNames");
+    validateMapFieldNotNull(this, singleInstanceFieldInstances, "singleInstanceFieldInstances");
+    validateMapFieldNotNull(this, multiInstanceFieldInstances, "multiInstanceFieldInstances");
+    validateMapFieldNotNull(this, singleInstanceElementInstances, "singleInstanceElementInstances");
+    validateMapFieldNotNull(this, multiInstanceElementInstances, "multiInstanceElementInstances");
     validateMapFieldNotNull(this, attributeValueFieldInstances, "attributeValueFieldInstances");
+
+    // TODO check that all childFieldNames present in child instances maps and that there are no extra fields in maps
 
     jsonLdContext = Map.copyOf(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
-    fieldInstances = Map.copyOf(fieldInstances);
-    elementInstances = Map.copyOf(elementInstances);
+    childNames = List.copyOf(childNames);
+    singleInstanceFieldInstances = Map.copyOf(singleInstanceFieldInstances);
+    multiInstanceFieldInstances = Map.copyOf(multiInstanceFieldInstances);
+    singleInstanceElementInstances = Map.copyOf(singleInstanceElementInstances);
+    multiInstanceElementInstances = Map.copyOf(multiInstanceElementInstances);
     attributeValueFieldInstances = Map.copyOf(attributeValueFieldInstances);
   }
 }
