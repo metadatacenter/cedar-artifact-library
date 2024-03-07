@@ -30,15 +30,13 @@ public class TemplateInstanceArtifactTest
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
       .withName(instanceName)
       .withIsBasedOn(isBasedOnTemplateUri)
-      .withSingleInstanceFieldInstance(textField1Name, textField1Instance)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
       .withElementInstance(element1Name, element1Instance)
       .build();
 
     assertEquals(instanceName, templateInstanceArtifact.name().get());
     assertEquals(isBasedOnTemplateUri, templateInstanceArtifact.isBasedOn());
-    assertEquals(1, templateInstanceArtifact.singleInstanceFieldInstances().size());
-    assertEquals(textField1Instance, templateInstanceArtifact.singleInstanceFieldInstances().get(textField1Name));
+    assertEquals(0, templateInstanceArtifact.singleInstanceFieldInstances().size());
     assertEquals(1, templateInstanceArtifact.multiInstanceFieldInstances().size());
     assertEquals(1, templateInstanceArtifact.singleInstanceElementInstances().size());
     assertEquals(0, templateInstanceArtifact.multiInstanceElementInstances().size());

@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -7,6 +9,15 @@ import java.util.Optional;
 public sealed interface ParentInstanceArtifact extends ParentArtifact permits TemplateInstanceArtifact,
   ElementInstanceArtifact
 {
+  Optional<URI> jsonLdId();
+
+  Optional<URI> createdBy();
+  Optional<URI> modifiedBy();
+
+  Optional<OffsetDateTime> createdOn();
+
+  Optional<OffsetDateTime> lastUpdatedOn();
+
   Optional<String> name();
 
   Optional<String> description();
