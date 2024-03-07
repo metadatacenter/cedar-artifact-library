@@ -134,9 +134,10 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     {
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    public Builder withJsonLdContextEntry(String name, URI property)
     {
-      this.jsonLdContext = Map.copyOf(jsonLdContext);
+      this.jsonLdContext.put(name, property);
+
       return this;
     }
 

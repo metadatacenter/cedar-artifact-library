@@ -9,6 +9,8 @@ import java.util.Optional;
 public sealed interface ParentInstanceArtifact extends ParentArtifact permits TemplateInstanceArtifact,
   ElementInstanceArtifact
 {
+  Map<String, URI> jsonLdContext();
+
   Optional<URI> jsonLdId();
 
   Optional<URI> createdBy();

@@ -301,6 +301,7 @@ public class JsonSchemaArtifactRendererTest
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
       .withName(instanceName)
+      .withJsonLdContextEntry(element1Name, URI.create("https://example.com/p1"))
       .withJsonLdId(instanceUri)
       .withIsBasedOn(isBasedOnTemplateUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
