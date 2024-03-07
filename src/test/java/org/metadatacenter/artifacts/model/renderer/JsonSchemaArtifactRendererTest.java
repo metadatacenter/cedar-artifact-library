@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
@@ -38,6 +39,7 @@ import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
 import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -296,6 +298,12 @@ public class JsonSchemaArtifactRendererTest
       .build();
 
     ObjectNode templateInstanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    assertEquals(instanceName, templateInstanceRendering.get(SCHEMA_ORG_NAME).asText());
+    assertEquals(instanceUri, URI.create(templateInstanceRendering.get(JSON_LD_ID).asText()));
+    assertEquals(isBasedOnTemplateUri, URI.create(templateInstanceRendering.get(SCHEMA_IS_BASED_ON).asText()));
+
+    // TODO Need more comprehensive testing here
 
     //System.out.println(templateInstanceRendering.toPrettyString());
   }
