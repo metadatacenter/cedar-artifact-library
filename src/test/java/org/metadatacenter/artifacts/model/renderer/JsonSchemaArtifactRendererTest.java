@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -280,6 +282,9 @@ public class JsonSchemaArtifactRendererTest
     String textField1Name = "Text Field 1";
     String element1Name = "Element 1";
     String textField2Name = "Text Field 2";
+    String attributeValueFieldName = "Attribute-value Field A";
+    String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
+    String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
 
     FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
     ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
@@ -288,6 +293,11 @@ public class JsonSchemaArtifactRendererTest
     List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
     textField2Instances.add(textField2Instance1);
     textField2Instances.add(textField2Instance2);
+    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.builder().withJsonLdValue("AV Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.builder().withJsonLdValue("AV Value 2").build();
+    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
       .withName(instanceName)
@@ -295,6 +305,7 @@ public class JsonSchemaArtifactRendererTest
       .withIsBasedOn(isBasedOnTemplateUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
       .withElementInstance(element1Name, element1Instance)
+      .withAttributeValueFieldInstances(attributeValueFieldName, attributeValueFieldInstances)
       .build();
 
     ObjectNode templateInstanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
@@ -305,7 +316,7 @@ public class JsonSchemaArtifactRendererTest
 
     // TODO Need more comprehensive testing here
 
-    //System.out.println(templateInstanceRendering.toPrettyString());
+    System.out.println(templateInstanceRendering.toPrettyString());
   }
 
   @Test

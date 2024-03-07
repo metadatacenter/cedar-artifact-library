@@ -20,6 +20,8 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -416,6 +418,26 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       List<ElementInstanceArtifact> elementInstanceArtifacts = entry.getValue();
 
       rendering.put(fieldName, renderElementInstanceArtifacts(elementInstanceArtifacts));
+    }
+
+    for (var attributeValueFieldEntry : parentInstanceArtifact.attributeValueFieldInstances().entrySet()) {
+      String attributeValueFieldName = attributeValueFieldEntry.getKey();
+      Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldEntry.getValue();
+
+      Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
+      ArrayNode attributeValueFieldInstanceNamesNode = mapper.createArrayNode();
+
+      for (String attributeValueFieldInstanceName : attributeValueInstanceFieldNames)
+        attributeValueFieldInstanceNamesNode.add(attributeValueFieldInstanceName);
+
+      rendering.put(attributeValueFieldName, attributeValueFieldInstanceNamesNode);
+
+      for (var attributeValueInstancesEntry : attributeValueFieldInstances.entrySet()) {
+        String attributeValueInstanceFieldName = attributeValueInstancesEntry.getKey();
+        FieldInstanceArtifact attributeValueFieldInstance = attributeValueInstancesEntry.getValue();
+
+        rendering.put(attributeValueInstanceFieldName, renderFieldInstanceArtifact(attributeValueFieldInstance));
+      }
     }
 
     return rendering;
