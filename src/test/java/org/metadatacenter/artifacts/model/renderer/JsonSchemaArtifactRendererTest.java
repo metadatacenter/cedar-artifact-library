@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
@@ -317,7 +316,7 @@ public class JsonSchemaArtifactRendererTest
 
     // TODO Need more comprehensive testing here
 
-    System.out.println(templateInstanceRendering.toPrettyString());
+    //System.out.println(templateInstanceRendering.toPrettyString());
   }
 
   @Test

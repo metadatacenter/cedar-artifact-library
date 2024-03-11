@@ -9,10 +9,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
@@ -33,21 +34,20 @@ public class ArtifactRoundTripTest
   private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
 
-  @Before
-  public void setUp() {
+  @Before public void setUp()
+  {
     artifactReader = new JsonSchemaArtifactReader();
     jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
   }
 
-  @Test
-  public void testRoundTripTemplateSchemaArtifact() {
-    TemplateSchemaArtifact originalTemplateSchemaArtifact = TemplateSchemaArtifact.builder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
-      withName("Study").
-      build();
+  @Test public void testRoundTripTemplateSchemaArtifact()
+  {
+    TemplateSchemaArtifact originalTemplateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName("Study").build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(originalTemplateSchemaArtifact);
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(
+      originalTemplateSchemaArtifact);
 
     assertTrue(validateJsonSchema(originalRendering));
 
@@ -60,15 +60,13 @@ public class ArtifactRoundTripTest
     assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
   }
 
-  @Test
-  public void testRoundTripElementSchemaArtifact()
+  @Test public void testRoundTripElementSchemaArtifact()
   {
     ElementSchemaArtifact originalElementSchemaArtifact = ElementSchemaArtifact.builder()
-      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123"))
-      .withName("Study")
-      .build();
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).withName("Study").build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(
+      originalElementSchemaArtifact);
 
     assertTrue(validateJsonSchema(originalRendering));
 
@@ -81,15 +79,11 @@ public class ArtifactRoundTripTest
     assertEquals(originalElementSchemaArtifact, finalElementSchemaArtifact);
   }
 
-  @Test
-  public void testRoundTripTextField()
+  @Test public void testRoundTripTextField()
   {
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
-      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123"))
-      .withName("Study")
-      .withDefaultValue("A default value")
-      .withRegex("*")
-      .build();
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Study")
+      .withDefaultValue("A default value").withRegex("*").build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -112,13 +106,8 @@ public class ArtifactRoundTripTest
     Number minValue = 0.0;
     Number maxValue = 100.0;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withNumericType(numericType)
-      .withMinValue(minValue)
-      .withMaxValue(maxValue)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().withName(name)
+      .withDescription(description).withNumericType(numericType).withMinValue(minValue).withMaxValue(maxValue).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -142,14 +131,9 @@ public class ArtifactRoundTripTest
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withTemporalType(temporalType)
-      .withTemporalGranularity(temporalGranularity)
-      .withInputTimeFormat(inputTimeFormat)
-      .withTimeZoneEnabled(timeZoneEnabled)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().withName(name)
+      .withDescription(description).withTemporalType(temporalType).withTemporalGranularity(temporalGranularity)
+      .withInputTimeFormat(inputTimeFormat).withTimeZoneEnabled(timeZoneEnabled).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -181,7 +165,8 @@ public class ArtifactRoundTripTest
     String classLabel = "Human";
     String classPrefLabel = "Homo Spiens";
     ValueType classValueType = ValueType.ONTOLOGY_CLASS;
-    URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
+    URI valueSetUri = URI.create(
+      "https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
     String valueSetCollection = "CADSR-VS";
     String valueSetName = "Stable Disease";
     Integer valueSetNumberOfTerms = 1;
@@ -191,10 +176,8 @@ public class ArtifactRoundTripTest
     ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
     Integer actionTo = 0;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName)
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().withName(name)
+      .withDescription(description).withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName)
       .withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth)
       .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType)
       .withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumberOfTerms)
@@ -219,13 +202,8 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withOption("Choice 1")
-      .withOption("Choice 2")
-      .withOption("Choice 3", true)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder().withName(name)
+      .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -245,13 +223,8 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withOption("Choice 1").
-      withOption("Choice 2").
-      withOption("Choice 3", true).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().withName(name)
+      .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -271,13 +244,9 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withOption("Choice 1", false)
-      .withOption("Choice 2", false)
-      .withOption("Choice 3", true)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder().withName(name)
+      .withDescription(description).withOption("Choice 1", false).withOption("Choice 2", false)
+      .withOption("Choice 3", true).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -299,12 +268,8 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withMinLength(minLength)
-      .withMaxLength(maxLength)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder().withName(name)
+      .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -326,12 +291,8 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.emailFieldBuilder().
-      withName(name).
-      withDescription(description).
-      withMinLength(minLength).
-      withMaxLength(maxLength).
-      build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.emailFieldBuilder().withName(name)
+      .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -352,11 +313,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withDefaultValue(defaultURI)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().withName(name)
+      .withDescription(description).withDefaultValue(defaultURI).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -378,12 +336,8 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withMinLength(minLength)
-      .withMaxLength(maxLength)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().withName(name)
+      .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -403,10 +357,8 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().withName(name)
+      .withDescription(description).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -427,11 +379,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withContent(content)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder().withName(name)
+      .withDescription(description).withContent(content).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -452,11 +401,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withContent(content)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder().withName(name)
+      .withDescription(description).withContent(content).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -477,11 +423,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withContent(content)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder().withName(name)
+      .withDescription(description).withContent(content).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -503,12 +446,8 @@ public class ArtifactRoundTripTest
     String preferredLabel = "Preferred label";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder()
-      .withName(name)
-      .withDescription(description)
-      .withContent(content)
-      .withPreferredLabel(preferredLabel)
-      .build();
+    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().withName(name)
+      .withDescription(description).withContent(content).withPreferredLabel(preferredLabel).build();
 
     ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -523,33 +462,184 @@ public class ArtifactRoundTripTest
     assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
-  @Test public void testRoundTripHuBMAPSampleBlock()
+  @Test public void testRoundTripHuBMAPAntibodiesTemplate()
   {
-    testRoundTripFromFile("templates/SampleBlock.json");
+    testTemplateSchemaArtifactRoundTripFromFile("templates/AntibodiesV3.0.0.json");
   }
 
-  @Test public void testRoundTripHuBMAPSampleSection()
+  @Test public void testRoundTripHuBMAPATACseqTemplate()
   {
-    testRoundTripFromFile("templates/SampleSection.json");
+    testTemplateSchemaArtifactRoundTripFromFile("templates/ATACseqV3.0.0.json");
   }
 
-  @Test public void testRoundTripHuBMAPSampleSuspension()
+  @Test public void testRoundTripHuBMAP10XMultiomeTemplate()
   {
-    testRoundTripFromFile("templates/SampleSuspension.json");
+    testTemplateSchemaArtifactRoundTripFromFile("templates/10XMultiomeV2.0.0.json");
   }
 
-//  @Test public void testRoundTripADVANCE()
-//  {
-//    testRoundTripFromFile("ADVANCETemplate.json");
-//  }
+  @Test public void testRoundTripHuBMAPAutoFlouresenceTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/Auto-flouresenceV2.1.0.json");
+  }
 
-  private void testRoundTripFromFile(String fileName)
+  @Test public void testRoundTripHuBMAPCODEXTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/CODEXV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPCellDIVETemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/CellDIVEV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPConfocalTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/ConfocalV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPContributorTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/ContributorV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPCyCIFTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/CyCIFV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPDESITemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/DESIV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPEnhancedSRSTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/EnhancedSRSV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPGeoMxNGSTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/GeoMxNGSV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPGeoMxnCounterTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/GeoMxnCounterV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPHiFiSlideTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/HiFi-SlideV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPHistologyTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/HistologyV2.2.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPICMC2DTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/ICMC2DV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPLCMSTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/LC-MSV4.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPLightSheetTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/LightSheetV3.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPMALDITemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/MALDIV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPMIBITemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/MIBIV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPNanoSplitsTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/NanoSplitsV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPPhenoCyclerTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/PhenoCyclerV2.2.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPRNAseqTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RNAseqV5.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPRNAseqWithProbesTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RNAseqWithProbes5.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPSIMSTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SIMSV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPSampleBlockTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SampleBlockV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPSampleSectionTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SampleSectionV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPSampleSuspensionTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SampleSuspensionV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPSecondHarmonicGenerationTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SecondHarmonicGenerationV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPSnareSeq2Template()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SnareSeq2V2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPThickSectionMultiphotonMxIFTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/ThickSectionMultiphotonMxIFV2.1.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPVisiumNoProbesTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumNoProbesV3.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPVisiumTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumV2.0.0.json");
+  }
+
+  @Test public void testRoundTripHuBMAPVisiumWithProbesTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumWithProbesV3.0.0.json");
+  }
+
+  private void testTemplateSchemaArtifactRoundTripFromFile(String fileName)
   {
     ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);
 
     assertTrue(validateJsonSchema(originalRendering));
 
-    TemplateSchemaArtifact originalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(originalRendering);
+    TemplateSchemaArtifact originalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(
+      originalRendering);
 
     ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(originalTemplateSchemaArtifact);
 
@@ -560,11 +650,27 @@ public class ArtifactRoundTripTest
     assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
   }
 
+  private void testTemplateInstanceArtifactRoundTripFromFile(String fileName)
+  {
+    ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);
+
+    TemplateInstanceArtifact originalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
+      originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(
+      originalTemplateInstanceArtifact);
+
+    TemplateInstanceArtifact finalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
+      finalRendering);
+
+    assertEquals(originalTemplateInstanceArtifact, finalTemplateInstanceArtifact);
+  }
+
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
   {
     try {
-      JsonNode jsonNode = mapper.readTree(new File(
-        JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+      JsonNode jsonNode = mapper.readTree(
+        new File(JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
 
       if (jsonNode.isObject())
         return (ObjectNode)jsonNode;
@@ -584,5 +690,4 @@ public class ArtifactRoundTripTest
       return false;
     }
   }
-
 }

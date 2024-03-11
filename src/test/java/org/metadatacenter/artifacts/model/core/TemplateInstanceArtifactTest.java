@@ -45,4 +45,5 @@ public class TemplateInstanceArtifactTest
     assertEquals(textField2Instance2, templateInstanceArtifact.multiInstanceFieldInstances().get(textField2Name).get(1));
     assertEquals(element1Instance, templateInstanceArtifact.singleInstanceElementInstances().get(element1Name));
   }
+
 }
