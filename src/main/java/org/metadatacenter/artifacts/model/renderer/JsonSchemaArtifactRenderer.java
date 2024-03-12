@@ -354,6 +354,37 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(SCHEMA_IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
 
+    if (templateInstanceArtifact.jsonLdId().isPresent())
+      rendering.put(JSON_LD_ID, templateInstanceArtifact.jsonLdId().get().toString());
+    else
+      rendering.putNull(JSON_LD_ID);
+
+    if (templateInstanceArtifact.name().isPresent())
+      rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.name().get());
+
+    if (templateInstanceArtifact.description().isPresent())
+      rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description().get());
+
+    if (templateInstanceArtifact.createdBy().isPresent())
+      rendering.put(PAV_CREATED_BY, templateInstanceArtifact.createdBy().get().toString());
+    else
+      rendering.putNull(PAV_CREATED_BY);
+
+    if (templateInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(OSLC_MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
+    else
+      rendering.putNull(OSLC_MODIFIED_BY);
+
+    if (templateInstanceArtifact.createdOn().isPresent())
+      rendering.put(PAV_CREATED_ON, templateInstanceArtifact.createdOn().get().toString());
+    else
+      rendering.putNull(PAV_CREATED_ON);
+
+    if (templateInstanceArtifact.lastUpdatedOn().isPresent())
+      rendering.put(PAV_LAST_UPDATED_ON, templateInstanceArtifact.lastUpdatedOn().get().toString());
+    else
+      rendering.putNull(PAV_LAST_UPDATED_ON);
+
     return rendering;
   }
 
@@ -368,6 +399,18 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       URI propertyUri = propertyMapping.getValue();
       rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, propertyUri.toString());
     }
+
+    if (elementInstanceArtifact.createdBy().isPresent())
+      rendering.put(PAV_CREATED_BY, elementInstanceArtifact.createdBy().get().toString());
+
+    if (elementInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(OSLC_MODIFIED_BY, elementInstanceArtifact.modifiedBy().get().toString());
+
+    if (elementInstanceArtifact.createdOn().isPresent())
+      rendering.put(PAV_CREATED_ON, elementInstanceArtifact.createdOn().get().toString());
+
+    if (elementInstanceArtifact.lastUpdatedOn().isPresent())
+      rendering.put(PAV_LAST_UPDATED_ON, elementInstanceArtifact.lastUpdatedOn().get().toString());
 
     return rendering;
   }
@@ -414,34 +457,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     if (parentInstanceArtifact.jsonLdId().isPresent())
       rendering.put(JSON_LD_ID, parentInstanceArtifact.jsonLdId().get().toString());
-    else
-      rendering.putNull(JSON_LD_ID);
 
     if (parentInstanceArtifact.name().isPresent())
       rendering.put(SCHEMA_ORG_NAME, parentInstanceArtifact.name().get());
 
     if (parentInstanceArtifact.description().isPresent())
       rendering.put(SCHEMA_ORG_DESCRIPTION, parentInstanceArtifact.description().get());
-
-    if (parentInstanceArtifact.createdBy().isPresent())
-      rendering.put(PAV_CREATED_BY, parentInstanceArtifact.createdBy().get().toString());
-    else
-      rendering.putNull(PAV_CREATED_BY);
-
-    if (parentInstanceArtifact.modifiedBy().isPresent())
-      rendering.put(OSLC_MODIFIED_BY, parentInstanceArtifact.modifiedBy().get().toString());
-    else
-      rendering.putNull(OSLC_MODIFIED_BY);
-
-    if (parentInstanceArtifact.createdOn().isPresent())
-      rendering.put(PAV_CREATED_ON, parentInstanceArtifact.createdOn().get().toString());
-    else
-      rendering.putNull(PAV_CREATED_ON);
-
-    if (parentInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(PAV_LAST_UPDATED_ON, parentInstanceArtifact.lastUpdatedOn().get().toString());
-    else
-      rendering.putNull(PAV_LAST_UPDATED_ON);
 
     for (var entry : parentInstanceArtifact.singleInstanceFieldInstances().entrySet()) {
       String fieldName = entry.getKey();
