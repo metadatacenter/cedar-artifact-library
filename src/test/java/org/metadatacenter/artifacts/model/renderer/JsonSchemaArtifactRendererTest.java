@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -306,8 +305,7 @@ public class JsonSchemaArtifactRendererTest
       .withIsBasedOn(isBasedOnTemplateUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
       .withElementInstance(element1Name, element1Instance)
-      //.withAttributeValueFieldInstances(attributeValueFieldName, attributeValueFieldInstances)
-      .withAttributeValueFieldInstances(attributeValueFieldName, Collections.emptyMap())
+      .withAttributeValueFieldInstances(attributeValueFieldName, attributeValueFieldInstances)
       .build();
 
     ObjectNode templateInstanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
