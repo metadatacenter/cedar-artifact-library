@@ -1051,8 +1051,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(SKOS_NOTATION, renderXsdStringJsonLdSpecification());
 
-    rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
-    rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
+    rendering.put(PAV_DERIVED_FROM, renderIriJsonLdSpecification());
+    rendering.put(SCHEMA_IS_BASED_ON, renderIriJsonLdSpecification());
 
     return rendering;
   }
