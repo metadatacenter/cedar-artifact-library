@@ -3,7 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +26,8 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
 /**
  * While field instances may not necessarily have provenance fields (name, description,
- * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them. Instances will typically not have
- * a JSON-LD @context field but, again, the model allows them.
+ * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them. Instances will must not have
+ * a JSON-LD @context field.
  */
 public interface FieldInstanceArtifact extends ChildInstanceArtifact
 {
@@ -68,7 +68,7 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
 
   class Builder
   {
-    private Map<String, URI> jsonLdContext = new HashMap<>();
+    private final Map<String, URI> jsonLdContext = Collections.emptyMap();
     private final List<URI> jsonLdTypes = new ArrayList<>();
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<String> jsonLdValue = Optional.empty();
@@ -85,27 +85,23 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
     {
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
-    {
-      this.jsonLdContext = jsonLdContext;
-      return this;
-    }
-
     public Builder withJsonLdType(URI jsonLdType)
     {
-      this.jsonLdTypes.add(jsonLdType);
+      if (jsonLdType != null)
+       this.jsonLdTypes.add(jsonLdType);
       return this;
     }
 
     public Builder withJsonLdId(URI jsonLdId)
     {
-      this.jsonLdId = Optional.ofNullable(jsonLdId);
+      // Null a valid API value; serializer should ensure that no @id: null is generated in JSON-LD
+      this.jsonLdId = Optional.of(jsonLdId);
       return this;
     }
 
     public Builder withJsonLdValue(String jsonLdValue)
     {
-      this.jsonLdValue= Optional.ofNullable(jsonLdValue);
+      this.jsonLdValue = Optional.of(jsonLdValue); // Null a valid value
       return this;
     }
 
@@ -117,7 +113,8 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
 
     public Builder withModifiedBy(URI modifiedBy)
     {
-      this.modifiedBy = Optional.ofNullable(modifiedBy);
+      if (modifiedBy != null)
+        this.modifiedBy = Optional.ofNullable(modifiedBy);
       return this;
     }
 

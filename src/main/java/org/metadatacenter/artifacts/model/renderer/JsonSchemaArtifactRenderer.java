@@ -419,8 +419,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
+    // If JSON-LD @value is present, assume it is a non-IRI field
     if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
-      objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get());
+      if (fieldInstanceArtifact.jsonLdValue().get() != null)
+        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get());
+      else
+        objectNode.putNull(JSON_LD_VALUE);
 
       if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
         objectNode.put(JSON_LD_TYPE, fieldInstanceArtifact.jsonLdTypes().get(0).toString());
@@ -443,11 +447,13 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.prefLabel().get());
 
     } else if (fieldInstanceArtifact.jsonLdId().isPresent()) {
-      objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
+      if (fieldInstanceArtifact.jsonLdId().get() != null)
+        objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
       if (fieldInstanceArtifact.label().isPresent())
         objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
     }
+
     return objectNode;
   }
 
