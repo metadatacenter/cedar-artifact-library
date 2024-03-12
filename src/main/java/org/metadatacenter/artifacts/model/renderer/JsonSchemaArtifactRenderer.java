@@ -496,19 +496,22 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       String attributeValueFieldName = attributeValueFieldEntry.getKey();
       Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldEntry.getValue();
 
-      Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
-      ArrayNode attributeValueFieldInstanceNamesNode = mapper.createArrayNode();
+      if (!attributeValueFieldInstances.isEmpty()) {
 
-      for (String attributeValueFieldInstanceName : attributeValueInstanceFieldNames)
-        attributeValueFieldInstanceNamesNode.add(attributeValueFieldInstanceName);
+        Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
+        ArrayNode attributeValueFieldInstanceNamesNode = mapper.createArrayNode();
 
-      rendering.put(attributeValueFieldName, attributeValueFieldInstanceNamesNode);
+        for (String attributeValueFieldInstanceName : attributeValueInstanceFieldNames)
+          attributeValueFieldInstanceNamesNode.add(attributeValueFieldInstanceName);
 
-      for (var attributeValueInstancesEntry : attributeValueFieldInstances.entrySet()) {
-        String attributeValueInstanceFieldName = attributeValueInstancesEntry.getKey();
-        FieldInstanceArtifact attributeValueFieldInstance = attributeValueInstancesEntry.getValue();
+        rendering.put(attributeValueFieldName, attributeValueFieldInstanceNamesNode);
 
-        rendering.put(attributeValueInstanceFieldName, renderFieldInstanceArtifact(attributeValueFieldInstance));
+        for (var attributeValueInstancesEntry : attributeValueFieldInstances.entrySet()) {
+          String attributeValueInstanceFieldName = attributeValueInstancesEntry.getKey();
+          FieldInstanceArtifact attributeValueFieldInstance = attributeValueInstancesEntry.getValue();
+
+          rendering.put(attributeValueInstanceFieldName, renderFieldInstanceArtifact(attributeValueFieldInstance));
+        }
       }
     }
 

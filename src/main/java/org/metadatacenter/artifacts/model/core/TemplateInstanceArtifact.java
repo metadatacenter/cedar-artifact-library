@@ -246,8 +246,8 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     public Builder withAttributeValueFieldInstances(String attributeValueFieldName,
       Map<String, FieldInstanceArtifact> attributeValueFieldInstances)
     {
-      this.attributeValueFieldInstances.put(attributeValueFieldName,
-        Map.copyOf(attributeValueFieldInstances));
+      this.attributeValueFieldInstances.put(attributeValueFieldName, Map.copyOf(attributeValueFieldInstances));
+
       return this;
     }
 
