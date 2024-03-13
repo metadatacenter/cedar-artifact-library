@@ -392,12 +392,14 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = renderParentInstanceArtifact(elementInstanceArtifact);
 
-    rendering.put(JSON_LD_CONTEXT, mapper.createObjectNode());
+    if (!elementInstanceArtifact.jsonLdContext().isEmpty()) {
+      rendering.put(JSON_LD_CONTEXT, mapper.createObjectNode());
 
-    for (var propertyMapping : elementInstanceArtifact.jsonLdContext().entrySet()) {
-      String fieldName = propertyMapping.getKey();
-      URI propertyUri = propertyMapping.getValue();
-      rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, propertyUri.toString());
+      for (var propertyMapping : elementInstanceArtifact.jsonLdContext().entrySet()) {
+        String fieldName = propertyMapping.getKey();
+        URI propertyUri = propertyMapping.getValue();
+        rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, propertyUri.toString());
+      }
     }
 
     if (elementInstanceArtifact.createdBy().isPresent())

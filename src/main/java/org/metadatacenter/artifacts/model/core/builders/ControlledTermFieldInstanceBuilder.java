@@ -62,7 +62,7 @@ public final class ControlledTermFieldInstanceBuilder extends FieldInstanceArtif
   {
     if (jsonLdId.isEmpty())
       jsonLdId = Optional.of(null);
-    
+
     return super.build();
   }
 }
