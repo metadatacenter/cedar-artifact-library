@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 
 import java.net.URI;
@@ -60,6 +61,9 @@ public final class LinkFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 
   public FieldInstanceArtifact build()
   {
+    if (jsonLdId.isEmpty())
+      jsonLdId = Optional.of(null);
+
     return super.build();
   }
 }
