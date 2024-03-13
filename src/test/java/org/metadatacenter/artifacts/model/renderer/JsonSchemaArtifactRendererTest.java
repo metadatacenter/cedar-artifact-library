@@ -285,15 +285,15 @@ public class JsonSchemaArtifactRendererTest
     String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
     String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
 
-    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
+    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
     ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
-    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.builder().withJsonLdValue("Value 2").build();
-    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.builder().withJsonLdValue("Value 3").build();
+    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 3").build();
     List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
     textField2Instances.add(textField2Instance1);
     textField2Instances.add(textField2Instance2);
-    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.builder().withJsonLdValue("AV Value 1").build();
-    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.builder().withJsonLdValue("AV Value 2").build();
+    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 2").build();
     Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
     attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
     attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);

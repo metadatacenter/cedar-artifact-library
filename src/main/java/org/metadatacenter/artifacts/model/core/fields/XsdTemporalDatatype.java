@@ -18,7 +18,7 @@ public enum XsdTemporalDatatype
     this.text = text;
   }
 
-  public URI toURI() { return URI.create(XSD_IRI + this.text.substring(this.text.indexOf(":") + 1)); }
+  public URI toUri() { return URI.create(XSD_IRI + this.text.substring(this.text.indexOf(":") + 1)); }
 
   @JsonValue
   public String getText() {

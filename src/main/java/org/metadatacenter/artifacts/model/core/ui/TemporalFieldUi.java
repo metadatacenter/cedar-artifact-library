@@ -16,7 +16,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
   boolean hidden();
 
-  default boolean valueRecommendationEnabled() {return false;}
+  default boolean valueRecommendationEnabled() { return false; }
 
   static TemporalFieldUi create(TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat,
     boolean timezoneEnabled, boolean hidden, boolean recommendedValue, boolean continuePreviousLine)

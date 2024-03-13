@@ -42,11 +42,11 @@ public class InstanceArtifactVisitorTest
     String attributeValueFieldInstanceName = "Attribute-value Field Instance 1";
     URI isBasedOn = URI.create("https://repo.metadatacenter.org/templates/3232");
 
-    FieldInstanceArtifact textField1 = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
+    FieldInstanceArtifact textField1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
     ElementInstanceArtifact element1 = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textFieldName1, textField1)
       .build();
-    FieldInstanceArtifact textField2 = FieldInstanceArtifact.builder().withJsonLdValue("Value 1").build();
-    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.builder().withJsonLdValue("AV Value 1")
+    FieldInstanceArtifact textField2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 1")
       .build();
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder().withName(instanceName)
