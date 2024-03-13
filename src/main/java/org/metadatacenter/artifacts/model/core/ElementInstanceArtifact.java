@@ -232,10 +232,17 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    public Builder withEmptyMultiInstanceFieldInstances(String childFieldName)
+    {
+      withMultiInstanceFieldInstances(childFieldName, Collections.emptyList());
+
+      return this;
+    }
+
     public Builder withMultiInstanceElementInstances(String childElementName, List<ElementInstanceArtifact> childElementInstances)
     {
       if (childNames.contains(childElementName))
-        throw new IllegalArgumentException("chile " + childElementName + " already present in instance");
+        throw new IllegalArgumentException("child " + childElementName + " already present in instance");
 
       childNames.add(childElementName);
 
@@ -244,6 +251,12 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    public Builder withEmptyMultiInstanceElementInstances(String childFieldName)
+    {
+      withMultiInstanceElementInstances(childFieldName, Collections.emptyList());
+
+      return this;
+    }
 
     public Builder withAttributeValueFieldInstances(String attributeValueFieldName,
       Map<String, FieldInstanceArtifact> attributeValueFieldInstances)

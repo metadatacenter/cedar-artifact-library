@@ -231,6 +231,13 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
+    public Builder withEmptyMultiInstanceFieldInstances(String childFieldName)
+    {
+      withMultiInstanceFieldInstances(childFieldName, Collections.emptyList());
+
+      return this;
+    }
+
     public Builder withMultiInstanceElementInstances(String childElementName, List<ElementInstanceArtifact> elementInstances)
     {
       if (childNames.contains(childElementName))
@@ -239,6 +246,13 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       childNames.add(childElementName);
 
       this.multiInstanceElementInstances.put(childElementName, List.copyOf(elementInstances));
+
+      return this;
+    }
+
+    public Builder withEmptyMultiInstanceElementInstances(String childFieldName)
+    {
+      withMultiInstanceElementInstances(childFieldName, Collections.emptyList());
 
       return this;
     }
