@@ -633,9 +633,29 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumWithProbesV3.0.0.json");
   }
 
+  @Test public void testRoundTripSimpleInstanceWithAttributeValues()
+  {
+    testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
+  }
+
   @Test public void testRoundTripInstanceWithNestedAttributeValues()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/InstanceWithNestedAttributeValues.json");
+  }
+
+  @Test public void testRoundTripSimpleInstance()
+  {
+    testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstance.json");
+  }
+
+  @Test public void testRoundTripSimpleInstanceWithNesting()
+  {
+    testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithNesting.json");
+  }
+
+  @Ignore @Test public void testRoundRADxMetadataInstance()
+  {
+    testTemplateInstanceArtifactRoundTripFromFile("instances/RADxMetadataInstance.json");
   }
 
   private void testTemplateSchemaArtifactRoundTripFromFile(String fileName)
