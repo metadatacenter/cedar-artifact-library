@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
@@ -260,6 +262,24 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     public Builder withAttributeValueFieldInstances(String attributeValueFieldName,
       Map<String, FieldInstanceArtifact> attributeValueFieldInstances)
     {
+      Set<String> attributeValueFieldInstanceNames = attributeValueFieldInstances.keySet();
+
+      if (childNames.contains(attributeValueFieldName))
+        throw new IllegalArgumentException("child " + attributeValueFieldName + " already present in instance");
+
+      childNames.add(attributeValueFieldName);
+
+      Set<String> overlappingChildNames = attributeValueFieldInstanceNames.stream()
+        .filter(childName -> childNames.contains(childName))
+        .collect(Collectors.toSet());
+
+      if (!overlappingChildNames.isEmpty())
+        throw new IllegalArgumentException("at least one of field instance names " +
+          overlappingChildNames + " of attribute-value field " + attributeValueFieldName +
+          " already present in parent instance");
+
+      childNames.addAll(attributeValueFieldInstanceNames);
+
       this.attributeValueFieldInstances.put(attributeValueFieldName, Map.copyOf(attributeValueFieldInstances));
 
       return this;
