@@ -28,31 +28,6 @@ public final class PhoneNumberFieldInstanceBuilder extends FieldInstanceArtifact
     return this;
   }
 
-
-  public PhoneNumberFieldInstanceBuilder withCreatedBy(URI createdBy)
-  {
-    super.withCreatedBy(createdBy);
-    return this;
-  }
-
-  public PhoneNumberFieldInstanceBuilder withModifiedBy(URI modifiedBy)
-  {
-    super.withModifiedBy(modifiedBy);
-    return this;
-  }
-
-  public PhoneNumberFieldInstanceBuilder withCreatedOn(OffsetDateTime createdOn)
-  {
-    super.withCreatedOn(createdOn);
-    return this;
-  }
-
-  public PhoneNumberFieldInstanceBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-  {
-    super.withLastUpdatedOn(lastUpdatedOn);
-    return this;
-  }
-
   public FieldInstanceArtifact build()
   {
     return super.build();

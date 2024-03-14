@@ -3,7 +3,8 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.util.Optional;
 
-public interface SchemaArtifact extends Artifact, JsonSchemaArtifact, SchemaOrgArtifact, ModelSchemaArtifact, VersionedArtifact
+public interface SchemaArtifact extends Artifact, JsonLdArtifact, JsonSchemaArtifact, SchemaOrgArtifact,
+  ModelSchemaArtifact, VersionedArtifact, MonitoredArtifact
 {
   URI jsonSchemaSchemaUri();
 
@@ -28,5 +29,4 @@ public interface SchemaArtifact extends Artifact, JsonSchemaArtifact, SchemaOrgA
   Optional<URI> previousVersion();
 
   Optional<URI> derivedFrom();
-
 }

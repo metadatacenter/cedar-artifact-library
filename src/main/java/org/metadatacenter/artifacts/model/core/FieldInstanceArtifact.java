@@ -36,20 +36,17 @@ import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
-/**
- * While field instances may not necessarily have provenance fields (createdBy, modifiedBy, createdOn,
- * lastUpdatedOn), the model allows them. Instances must not have a JSON-LD @context field.
- */
 public interface FieldInstanceArtifact extends ChildInstanceArtifact
 {
-  static FieldInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+  static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
-    Optional<String> language, Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
-    Optional<OffsetDateTime> lastUpdatedOn)
+    Optional<String> language)
   {
-    return new FieldInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
-      prefLabel, language, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
+      prefLabel, language);
   }
+
+  List<URI> jsonLdTypes();
 
   Optional<URI> jsonLdId();
 
@@ -129,17 +126,13 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
   }
 }
 
-record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
-                                   List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
+record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                    Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
-                                   Optional<String> language,
-                                   Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                   Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
+                                   Optional<String> language)
   implements FieldInstanceArtifact
 {
   public FieldInstanceArtifactRecord
   {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
     validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
@@ -147,10 +140,6 @@ record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
     validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
-    validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
-    validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
-    validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
-    validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
   }
 }
 

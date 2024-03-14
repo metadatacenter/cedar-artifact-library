@@ -28,30 +28,6 @@ public final class TextFieldInstanceBuilder extends FieldInstanceArtifactBuilder
     return this;
   }
 
-  public TextFieldInstanceBuilder withCreatedBy(URI createdBy)
-  {
-    super.withCreatedBy(createdBy);
-    return this;
-  }
-
-  public TextFieldInstanceBuilder withModifiedBy(URI modifiedBy)
-  {
-    super.withModifiedBy(modifiedBy);
-    return this;
-  }
-
-  public TextFieldInstanceBuilder withCreatedOn(OffsetDateTime createdOn)
-  {
-    super.withCreatedOn(createdOn);
-    return this;
-  }
-
-  public TextFieldInstanceBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-  {
-    super.withLastUpdatedOn(lastUpdatedOn);
-    return this;
-  }
-  
   public FieldInstanceArtifact build()
   {
     return super.build();

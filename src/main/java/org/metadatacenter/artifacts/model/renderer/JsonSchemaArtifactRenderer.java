@@ -10,6 +10,7 @@ import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.JsonLdArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
 import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
@@ -566,7 +567,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private ObjectNode renderSchemaArtifact(SchemaArtifact schemaArtifact)
   {
-    ObjectNode rendering = renderArtifact(schemaArtifact);
+    ObjectNode rendering = renderJsonLdArtifact(schemaArtifact);
 
     rendering.put(JSON_SCHEMA_SCHEMA, schemaArtifact.jsonSchemaSchemaUri().toString());
     rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
@@ -597,33 +598,30 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate an artifact rendering with core fields, which are @type, @id, pav:createdOn, pav:createdBy,
-   * pav:lastUpdatedOn, and oslc:modifiedBy
+   * Generate a base JSON-LD artifact rendering with core fields, which are @type, and @id
    * <p></p>
    * An example artifact could look as follows:
    * <pre>
    * {
    *   "@type": "https://schema.metadatacenter.org/core/Template",
    *   "@id": "https://repo.metadatacenter.org/templates/6d21a997-b884-4779-966a-aa71632f3232",
-   *   "pav:createdOn": "2023-07-28T11:10:41-07:00", "pav:createdBy": "https://metadatacenter.org/users/656433",
-   *   "pav:lastUpdatedOn": "2023-07-28T11:10:41-07:00", "oslc:modifiedBy": "https://metadatacenter.org/users/524332"
    *  }
    * </pre>
    */
-  private ObjectNode renderArtifact(Artifact artifact)
+  private ObjectNode renderJsonLdArtifact(JsonLdArtifact jsonLdArtifact)
   {
-    ObjectNode rendering = renderMonitoredArtifact(artifact);
+    ObjectNode rendering = renderMonitoredArtifact(jsonLdArtifact);
 
-    if (artifact.jsonLdTypes().size() == 1) {
-      rendering.put(JSON_LD_TYPE, artifact.jsonLdTypes().get(0).toString());
-    } else if (artifact.jsonLdTypes().size() > 1) {
+    if (jsonLdArtifact.jsonLdTypes().size() == 1) {
+      rendering.put(JSON_LD_TYPE, jsonLdArtifact.jsonLdTypes().get(0).toString());
+    } else if (jsonLdArtifact.jsonLdTypes().size() > 1) {
       rendering.put(JSON_LD_TYPE, mapper.createArrayNode());
-      for (URI jsonLdType : artifact.jsonLdTypes())
+      for (URI jsonLdType : jsonLdArtifact.jsonLdTypes())
         rendering.withArray(JSON_LD_TYPE).add(jsonLdType.toString());
     }
 
-    if (artifact.jsonLdId().isPresent()) {
-      rendering.put(JSON_LD_ID, artifact.jsonLdId().get().toString());
+    if (jsonLdArtifact.jsonLdId().isPresent()) {
+      rendering.put(JSON_LD_ID, jsonLdArtifact.jsonLdId().get().toString());
     } else {
       rendering.putNull(JSON_LD_ID);
     }

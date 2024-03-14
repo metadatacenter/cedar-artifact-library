@@ -34,30 +34,6 @@ public final class ControlledTermFieldInstanceBuilder extends FieldInstanceArtif
     return this;
   }
 
-  public ControlledTermFieldInstanceBuilder withCreatedBy(URI createdBy)
-  {
-    super.withCreatedBy(createdBy);
-    return this;
-  }
-
-  public ControlledTermFieldInstanceBuilder withModifiedBy(URI modifiedBy)
-  {
-    super.withModifiedBy(modifiedBy);
-    return this;
-  }
-
-  public ControlledTermFieldInstanceBuilder withCreatedOn(OffsetDateTime createdOn)
-  {
-    super.withCreatedOn(createdOn);
-    return this;
-  }
-
-  public ControlledTermFieldInstanceBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-  {
-    super.withLastUpdatedOn(lastUpdatedOn);
-    return this;
-  }
-
   public FieldInstanceArtifact build()
   {
     return super.build();

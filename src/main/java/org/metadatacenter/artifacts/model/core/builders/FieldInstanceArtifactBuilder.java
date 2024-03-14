@@ -3,11 +3,8 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 
 import java.net.URI;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public abstract sealed class FieldInstanceArtifactBuilder permits
@@ -16,7 +13,6 @@ public abstract sealed class FieldInstanceArtifactBuilder permits
   EmailFieldInstanceBuilder, CheckboxFieldInstanceBuilder, ListFieldInstanceBuilder, PhoneNumberFieldInstanceBuilder,
   RadioFieldInstanceBuilder
 {
-  protected final Map<String, URI> jsonLdContext = Collections.emptyMap();
   protected final List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();
   protected Optional<String> jsonLdValue = Optional.empty();
@@ -24,10 +20,6 @@ public abstract sealed class FieldInstanceArtifactBuilder permits
   protected Optional<String> notation = Optional.empty();
   protected Optional<String> prefLabel = Optional.empty();
   protected Optional<String> language = Optional.empty();
-  protected Optional<URI> createdBy = Optional.empty();
-  protected Optional<URI> modifiedBy = Optional.empty();
-  protected Optional<OffsetDateTime> createdOn = Optional.empty();
-  protected Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
 
   protected FieldInstanceArtifactBuilder()
   {
@@ -77,34 +69,8 @@ public abstract sealed class FieldInstanceArtifactBuilder permits
     return this;
   }
 
-  protected FieldInstanceArtifactBuilder withCreatedBy(URI createdBy)
-  {
-    this.createdBy = Optional.ofNullable(createdBy);
-    return this;
-  }
-
-  protected FieldInstanceArtifactBuilder withModifiedBy(URI modifiedBy)
-  {
-    if (modifiedBy != null)
-      this.modifiedBy = Optional.ofNullable(modifiedBy);
-    return this;
-  }
-
-  protected FieldInstanceArtifactBuilder withCreatedOn(OffsetDateTime createdOn)
-  {
-    this.createdOn = Optional.ofNullable(createdOn);
-    return this;
-  }
-
-  protected FieldInstanceArtifactBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-  {
-    this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
-    return this;
-  }
-
   protected FieldInstanceArtifact build()
   {
-    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, jsonLdValue, label, notation, prefLabel,
-      language, createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation, prefLabel, language);
   }
 }

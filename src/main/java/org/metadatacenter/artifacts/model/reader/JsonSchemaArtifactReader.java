@@ -555,22 +555,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path)
   {
-    Map<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
-    Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
-    Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
-    Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     Optional<String> jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
     Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
     Optional<String> skosNotation = readString(sourceNode, path, SKOS_NOTATION);
     Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
 
-    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel, language,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId,
+      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel, language);
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path,
@@ -608,6 +602,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
           int arrayIndex = 0;
           if (!nodeIterator.hasNext()) { // Array is empty
+            // TODO
           } else {
             while (nodeIterator.hasNext()) {
               String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";

@@ -28,30 +28,6 @@ public final class ListFieldInstanceBuilder extends FieldInstanceArtifactBuilder
     return this;
   }
 
-  public ListFieldInstanceBuilder withCreatedBy(URI createdBy)
-  {
-    super.withCreatedBy(createdBy);
-    return this;
-  }
-
-  public ListFieldInstanceBuilder withModifiedBy(URI modifiedBy)
-  {
-    super.withModifiedBy(modifiedBy);
-    return this;
-  }
-
-  public ListFieldInstanceBuilder withCreatedOn(OffsetDateTime createdOn)
-  {
-    super.withCreatedOn(createdOn);
-    return this;
-  }
-
-  public ListFieldInstanceBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-  {
-    super.withLastUpdatedOn(lastUpdatedOn);
-    return this;
-  }
-
   public FieldInstanceArtifact build()
   {
     return super.build();

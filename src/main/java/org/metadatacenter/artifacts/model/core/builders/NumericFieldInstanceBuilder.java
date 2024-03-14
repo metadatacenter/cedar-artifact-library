@@ -21,30 +21,6 @@ public final class NumericFieldInstanceBuilder extends FieldInstanceArtifactBuil
     return this;
   }
 
-  public NumericFieldInstanceBuilder withCreatedBy(URI createdBy)
-  {
-    super.withCreatedBy(createdBy);
-    return this;
-  }
-
-  public NumericFieldInstanceBuilder withModifiedBy(URI modifiedBy)
-  {
-    super.withModifiedBy(modifiedBy);
-    return this;
-  }
-
-  public NumericFieldInstanceBuilder withCreatedOn(OffsetDateTime createdOn)
-  {
-    super.withCreatedOn(createdOn);
-    return this;
-  }
-
-  public NumericFieldInstanceBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-  {
-    super.withLastUpdatedOn(lastUpdatedOn);
-    return this;
-  }
-
   public FieldInstanceArtifact build()
   {
     return super.build();
