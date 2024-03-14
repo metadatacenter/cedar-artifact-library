@@ -633,7 +633,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumWithProbesV3.0.0.json");
   }
 
-  @Ignore @Test public void testRoundTripInstanceWithNestedAttributeValues()
+  @Test public void testRoundTripInstanceWithNestedAttributeValues()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/InstanceWithNestedAttributeValues.json");
   }

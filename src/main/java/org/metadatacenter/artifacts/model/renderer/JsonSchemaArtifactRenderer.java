@@ -472,52 +472,48 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (parentInstanceArtifact.description().isPresent())
       rendering.put(SCHEMA_ORG_DESCRIPTION, parentInstanceArtifact.description().get());
 
-    for (var entry : parentInstanceArtifact.singleInstanceFieldInstances().entrySet()) {
-      String fieldName = entry.getKey();
-      FieldInstanceArtifact fieldInstanceArtifact = entry.getValue();
+    for (String childName: parentInstanceArtifact.childNames()) {
 
-      rendering.put(fieldName, renderFieldInstanceArtifact(fieldInstanceArtifact));
-    }
+      if (parentInstanceArtifact.singleInstanceFieldInstances().containsKey(childName)) {
+        FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances().get(childName);
 
-    for (var entry : parentInstanceArtifact.multiInstanceFieldInstances().entrySet()) {
-      String fieldName = entry.getKey();
-      List<FieldInstanceArtifact> fieldInstanceArtifacts = entry.getValue();
+        rendering.put(childName, renderFieldInstanceArtifact(fieldInstanceArtifact));
+      } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childName)) {
+        List<FieldInstanceArtifact> fieldInstanceArtifacts = parentInstanceArtifact.multiInstanceFieldInstances()
+          .get(childName);
 
-      rendering.put(fieldName, renderFieldInstanceArtifacts(fieldInstanceArtifacts));
-    }
+        rendering.put(childName, renderFieldInstanceArtifacts(fieldInstanceArtifacts));
+      } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childName)) {
+        ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances().get(childName);
 
-    for (var entry : parentInstanceArtifact.singleInstanceElementInstances().entrySet()) {
-      String fieldName = entry.getKey();
-      ElementInstanceArtifact elementInstanceArtifact = entry.getValue();
+        rendering.put(childName, renderElementInstanceArtifact(elementInstanceArtifact));
+      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childName)) {
+        List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances().get(childName);
 
-      rendering.put(fieldName, renderElementInstanceArtifact(elementInstanceArtifact));
-    }
+        rendering.put(childName, renderElementInstanceArtifacts(elementInstanceArtifacts));
+      } else if (parentInstanceArtifact.attributeValueFieldInstances().containsKey(childName)) {
+        Map<String, FieldInstanceArtifact> attributeValueFieldInstances = parentInstanceArtifact.attributeValueFieldInstances()
+          .get(childName);
 
-    for (var entry : parentInstanceArtifact.multiInstanceElementInstances().entrySet()) {
-      String fieldName = entry.getKey();
-      List<ElementInstanceArtifact> elementInstanceArtifacts = entry.getValue();
+        Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
+        ArrayNode attributeValueFieldInstanceNamesNode = mapper.createArrayNode();
 
-      rendering.put(fieldName, renderElementInstanceArtifacts(elementInstanceArtifacts));
-    }
+        for (String attributeValueFieldInstanceName : attributeValueInstanceFieldNames)
+          attributeValueFieldInstanceNamesNode.add(attributeValueFieldInstanceName);
 
-    for (var attributeValueFieldEntry : parentInstanceArtifact.attributeValueFieldInstances().entrySet()) {
-      String attributeValueFieldName = attributeValueFieldEntry.getKey();
-      Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldEntry.getValue();
+        rendering.put(childName, attributeValueFieldInstanceNamesNode);
 
-      Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
-      ArrayNode attributeValueFieldInstanceNamesNode = mapper.createArrayNode();
+      } else if (parentInstanceArtifact.attributeValueFieldInstances().values().stream()
+        .anyMatch(instancesForAttributeValueField -> instancesForAttributeValueField.containsKey(childName))) {
 
-      for (String attributeValueFieldInstanceName : attributeValueInstanceFieldNames)
-        attributeValueFieldInstanceNamesNode.add(attributeValueFieldInstanceName);
+        for (var attributeValueFieldInstancesEntry : parentInstanceArtifact.attributeValueFieldInstances().entrySet()) {
+          Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldInstancesEntry.getValue();
 
-      rendering.put(attributeValueFieldName, attributeValueFieldInstanceNamesNode);
+          if (attributeValueFieldInstances.containsKey(childName))
+            rendering.put(childName, renderFieldInstanceArtifact(attributeValueFieldInstances.get(childName)));
 
-      for (var attributeValueInstancesEntry : attributeValueFieldInstances.entrySet()) {
-        String attributeValueInstanceFieldName = attributeValueInstancesEntry.getKey();
-        FieldInstanceArtifact attributeValueFieldInstance = attributeValueInstancesEntry.getValue();
-
-        rendering.put(attributeValueInstanceFieldName, renderFieldInstanceArtifact(attributeValueFieldInstance));
-      }
+        }
+      } else throw new RuntimeException("unknown child " + childName + " in parent instance artifact");
     }
 
     return rendering;
