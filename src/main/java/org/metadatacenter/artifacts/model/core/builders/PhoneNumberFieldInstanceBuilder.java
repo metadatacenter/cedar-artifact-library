@@ -55,9 +55,6 @@ public final class PhoneNumberFieldInstanceBuilder extends FieldInstanceArtifact
 
   public FieldInstanceArtifact build()
   {
-    if (jsonLdValue.isEmpty())
-      jsonLdValue = Optional.of(null);
-
     return super.build();
   }
 }

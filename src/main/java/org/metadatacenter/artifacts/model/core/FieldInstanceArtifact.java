@@ -37,9 +37,8 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
 /**
- * While field instances may not necessarily have provenance fields (name, description,
- * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them. Instances will must not have
- * a JSON-LD @context field.
+ * While field instances may not necessarily have provenance fields (createdBy, modifiedBy, createdOn,
+ * lastUpdatedOn), the model allows them. Instances must not have a JSON-LD @context field.
  */
 public interface FieldInstanceArtifact extends ChildInstanceArtifact
 {

@@ -54,9 +54,6 @@ public final class TextAreaFieldInstanceBuilder extends FieldInstanceArtifactBui
 
   public FieldInstanceArtifact build()
   {
-    if (jsonLdValue.isEmpty())
-      jsonLdValue = Optional.of(null);
-
     return super.build();
   }
 }

@@ -54,9 +54,6 @@ public final class RadioFieldInstanceBuilder extends FieldInstanceArtifactBuilde
 
   public FieldInstanceArtifact build()
   {
-    if (jsonLdValue.isEmpty())
-      jsonLdValue = Optional.of(null);
-
     return super.build();
   }
 }

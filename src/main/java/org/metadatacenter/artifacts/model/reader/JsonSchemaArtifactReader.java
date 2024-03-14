@@ -595,8 +595,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         if (nestedNode.isObject()) {
           ObjectNode nestedInstanceArtifactNode = (ObjectNode)nestedNode;
 
-          readNestedSingleInstanceArtifact(instanceArtifactFieldName, nestedInstanceArtifactPath, nestedInstanceArtifactNode,
-            childNames, singleInstanceFieldInstances, singleInstanceElementInstances);
+          readNestedSingleInstanceArtifact(instanceArtifactFieldName, nestedInstanceArtifactPath,
+            nestedInstanceArtifactNode, childNames, singleInstanceFieldInstances, singleInstanceElementInstances);
 
         } else if (nestedNode.isArray()) {
           Iterator<JsonNode> nodeIterator = nestedNode.iterator();
@@ -607,39 +607,41 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           childNames.add(instanceArtifactFieldName);
 
           int arrayIndex = 0;
-          while (nodeIterator.hasNext()) {
-            String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
-            JsonNode instanceNode = nodeIterator.next();
-            if (instanceNode == null || instanceNode.isNull()) {
-              throw new ArtifactParseException(
-                "Expecting field or element instance or attribute-value field name in array, got null",
-                instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
-            } else {
-              if (instanceNode.isObject()) {
-
-                ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
-                readNestedMultiInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
-                  arrayEnclosedInstanceArtifactNode, childNames,
-                  multiInstanceFieldInstances, multiInstanceElementInstances);
-              } else if (instanceNode.isTextual()) { // A list of attribute-value field names
-                String attributeValueFieldName = instanceNode.asText();
-                if (attributeValueFieldName.isEmpty())
-                  throw new ArtifactParseException("Empty attribute-value field name in array",
-                    instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
-
-                if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
-                  attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
-                else {
-                  List<String> attributeValueFieldInstanceNames = new ArrayList<>();
-                  attributeValueFieldInstanceNames.add(attributeValueFieldName);
-                  attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldInstanceNames);
-                }
-              } else
+          if (!nodeIterator.hasNext()) { // Array is empty
+          } else {
+            while (nodeIterator.hasNext()) {
+              String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
+              JsonNode instanceNode = nodeIterator.next();
+              if (instanceNode == null || instanceNode.isNull()) {
                 throw new ArtifactParseException(
-                  "Expecting field or element instance or attribute-value field name in array",
+                  "Expecting field or element instance or attribute-value field name in array, got null",
                   instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+              } else {
+                if (instanceNode.isObject()) {
+                  ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
+                  readNestedMultiInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
+                    arrayEnclosedInstanceArtifactNode, childNames, multiInstanceFieldInstances,
+                    multiInstanceElementInstances);
+                } else if (instanceNode.isTextual()) { // A list of attribute-value field names
+                  String attributeValueFieldName = instanceNode.asText();
+                  if (attributeValueFieldName.isEmpty())
+                    throw new ArtifactParseException("Empty attribute-value field name in array",
+                      instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+
+                  if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
+                    attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
+                  else {
+                    List<String> attributeValueFieldInstanceNames = new ArrayList<>();
+                    attributeValueFieldInstanceNames.add(attributeValueFieldName);
+                    attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldInstanceNames);
+                  }
+                } else
+                  throw new ArtifactParseException(
+                    "Expecting field or element instance or attribute-value field name in array",
+                    instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+              }
+              arrayIndex++;
             }
-            arrayIndex++;
           }
         }
       }

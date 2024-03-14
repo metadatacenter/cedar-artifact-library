@@ -54,9 +54,6 @@ public final class TextFieldInstanceBuilder extends FieldInstanceArtifactBuilder
   
   public FieldInstanceArtifact build()
   {
-    if (jsonLdValue.isEmpty())
-      jsonLdValue = Optional.of(null);
-
     return super.build();
   }
 }

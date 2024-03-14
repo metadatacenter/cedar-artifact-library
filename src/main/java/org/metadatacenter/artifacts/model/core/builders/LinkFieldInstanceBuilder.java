@@ -61,9 +61,6 @@ public final class LinkFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 
   public FieldInstanceArtifact build()
   {
-    if (jsonLdId.isEmpty())
-      jsonLdId = Optional.of(null);
-
     return super.build();
   }
 }

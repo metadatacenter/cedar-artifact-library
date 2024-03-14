@@ -42,9 +42,6 @@ public final class EmailFieldInstanceBuilder extends FieldInstanceArtifactBuilde
 
   public FieldInstanceArtifact build()
   {
-    if (jsonLdValue.isEmpty())
-      jsonLdValue = Optional.of(null);
-
     return super.build();
   }
 }
