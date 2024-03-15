@@ -51,7 +51,7 @@ public class InstanceArtifactVisitorTest
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder().withName(instanceName)
       .withIsBasedOn(isBasedOn).withSingleInstanceFieldInstance(textFieldName2, textField2)
-      .withElementInstance(element1Name, element1).withAttributeValueFieldGroup(attributeValueFieldName,
+      .withSingleInstanceElementInstance(element1Name, element1).withAttributeValueFieldGroup(attributeValueFieldName,
         Map.of(attributeValueFieldInstanceName, attributeValueFieldInstance1)).build();
 
     BasicInstanceReporter instanceReporter = new BasicInstanceReporter();

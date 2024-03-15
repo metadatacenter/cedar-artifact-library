@@ -209,7 +209,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
+    public Builder withSingleInstanceElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
     {
       if (childNames.contains(childElementName))
         throw new IllegalArgumentException("child " + childElementName + " already present in instance");

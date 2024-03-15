@@ -304,7 +304,7 @@ public class JsonSchemaArtifactRendererTest
       .withJsonLdId(instanceUri)
       .withIsBasedOn(isBasedOnTemplateUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
-      .withElementInstance(element1Name, element1Instance)
+      .withSingleInstanceElementInstance(element1Name, element1Instance)
       .withAttributeValueFieldGroup(attributeValueFieldName, attributeValueFieldInstances)
       .build();
 
@@ -313,6 +313,50 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(instanceName, templateInstanceRendering.get(SCHEMA_ORG_NAME).asText());
     assertEquals(instanceUri, URI.create(templateInstanceRendering.get(JSON_LD_ID).asText()));
     assertEquals(isBasedOnTemplateUri, URI.create(templateInstanceRendering.get(SCHEMA_IS_BASED_ON).asText()));
+
+    // TODO Need more comprehensive testing here
+
+    //System.out.println(templateInstanceRendering.toPrettyString());
+  }
+
+  @Test
+  public void testRenderBasicElementInstance()
+  {
+    String instanceName = "Element 1";
+    URI instanceUri = URI.create("https://repo.metadatacenter.org/template-element-instances/6643");
+    String textField1Name = "Text Field 1";
+    String element1Name = "Element 1";
+    String textField2Name = "Text Field 2";
+    String attributeValueFieldName = "Attribute-value Field A";
+    String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
+    String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
+
+    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
+    ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
+    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 3").build();
+    List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
+    textField2Instances.add(textField2Instance1);
+    textField2Instances.add(textField2Instance2);
+    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 2").build();
+    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
+
+    ElementInstanceArtifact elementInstanceArtifact = ElementInstanceArtifact.builder()
+      .withName(instanceName)
+      .withJsonLdContextEntry(element1Name, URI.create("https://example.com/p1"))
+      .withJsonLdId(instanceUri)
+      .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
+      .withSingleInstanceElementInstance(element1Name, element1Instance)
+      .withAttributeValueFieldGroup(attributeValueFieldName, attributeValueFieldInstances)
+      .build();
+
+    ObjectNode elementInstanceRendering = jsonSchemaArtifactRenderer.renderElementInstanceArtifact(elementInstanceArtifact);
+
+    assertEquals(instanceName, elementInstanceRendering.get(SCHEMA_ORG_NAME).asText());
+    assertEquals(instanceUri, URI.create(elementInstanceRendering.get(JSON_LD_ID).asText()));
 
     // TODO Need more comprehensive testing here
 

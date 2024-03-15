@@ -31,7 +31,7 @@ public class TemplateInstanceArtifactTest
       .withName(instanceName)
       .withIsBasedOn(isBasedOnTemplateUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
-      .withElementInstance(element1Name, element1Instance)
+      .withSingleInstanceElementInstance(element1Name, element1Instance)
       .build();
 
     assertEquals(instanceName, templateInstanceArtifact.name().get());
