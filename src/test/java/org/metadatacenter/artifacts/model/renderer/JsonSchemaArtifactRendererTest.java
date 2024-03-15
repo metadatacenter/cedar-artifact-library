@@ -305,7 +305,7 @@ public class JsonSchemaArtifactRendererTest
       .withIsBasedOn(isBasedOnTemplateUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
       .withElementInstance(element1Name, element1Instance)
-      .withAttributeValueFieldInstances(attributeValueFieldName, attributeValueFieldInstances)
+      .withAttributeValueFieldGroup(attributeValueFieldName, attributeValueFieldInstances)
       .build();
 
     ObjectNode templateInstanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);

@@ -259,15 +259,15 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withAttributeValueFieldInstances(String attributeValueFieldName,
+    public Builder withAttributeValueFieldGroup(String attributeValueFieldGroupName,
       Map<String, FieldInstanceArtifact> attributeValueFieldInstances)
     {
       Set<String> attributeValueFieldInstanceNames = attributeValueFieldInstances.keySet();
 
-      if (childNames.contains(attributeValueFieldName))
-        throw new IllegalArgumentException("child " + attributeValueFieldName + " already present in instance");
+      if (childNames.contains(attributeValueFieldGroupName))
+        throw new IllegalArgumentException("child " + attributeValueFieldGroupName + " already present in instance");
 
-      childNames.add(attributeValueFieldName);
+      childNames.add(attributeValueFieldGroupName);
 
       Set<String> overlappingChildNames = attributeValueFieldInstanceNames.stream()
         .filter(childName -> childNames.contains(childName))
@@ -275,12 +275,12 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
       if (!overlappingChildNames.isEmpty())
         throw new IllegalArgumentException("at least one of field instance names " +
-          overlappingChildNames + " of attribute-value field " + attributeValueFieldName +
+          overlappingChildNames + " of attribute-value field " + attributeValueFieldGroupName +
           " already present in parent instance");
 
       childNames.addAll(attributeValueFieldInstanceNames);
 
-      this.attributeValueFieldInstanceGroups.put(attributeValueFieldName, Map.copyOf(attributeValueFieldInstances));
+      this.attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName, Map.copyOf(attributeValueFieldInstances));
 
       return this;
     }
