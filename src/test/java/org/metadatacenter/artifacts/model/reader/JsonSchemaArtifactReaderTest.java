@@ -242,15 +242,15 @@ public class JsonSchemaArtifactReaderTest
 
     assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
 
-    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().size());
-    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A"));
-    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").size());
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 1"));
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 2"));
-    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B"));
-    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").size());
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 3"));
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 4"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().size());
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").containsKey("Attribute-value instance field 1"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").containsKey("Attribute-value instance field 2"));
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").containsKey("Attribute-value instance field 3"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").containsKey("Attribute-value instance field 4"));
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

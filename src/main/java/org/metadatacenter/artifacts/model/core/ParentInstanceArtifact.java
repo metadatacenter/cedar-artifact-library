@@ -39,5 +39,5 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact, JsonLdArt
   Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances();
 
   // attribute-value field name->(attribute-value field instance name->field instance artifact)
-  Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances();
+  Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups();
 }

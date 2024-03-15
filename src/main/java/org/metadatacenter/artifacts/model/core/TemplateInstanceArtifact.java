@@ -36,13 +36,13 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
     Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
     Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   {
     return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, isBasedOn,
       childNames, singleInstanceFieldInstances, multiInstanceFieldInstances,
       singleInstanceElementInstances, multiInstanceElementInstances,
-      attributeValueFieldInstances);
+      attributeValueFieldInstanceGroups);
   }
 
   URI isBasedOn();
@@ -93,14 +93,14 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       }
     }
 
-    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> entry : attributeValueFieldInstances().entrySet()) {
-      String attributeValueFieldName = entry.getKey();
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> entry : attributeValueFieldInstanceGroups().entrySet()) {
+      String attributeValueFieldGroupName = entry.getKey();
       Map<String, FieldInstanceArtifact> perAttributeValueFieldInstances = entry.getValue();
 
       for (Map.Entry<String, FieldInstanceArtifact> perAttributeValueFieldInstanceNameAndInstance : perAttributeValueFieldInstances.entrySet()) {
         String attributeValueFieldInstanceName = perAttributeValueFieldInstanceNameAndInstance.getKey();
         FieldInstanceArtifact fieldInstanceArtifact = perAttributeValueFieldInstanceNameAndInstance.getValue();
-        String attributeValueFieldSpecificationPath = path + attributeValueFieldName;
+        String attributeValueFieldSpecificationPath = path + attributeValueFieldGroupName;
         String attributeValueFieldInstancePath = path + attributeValueFieldInstanceName;
 
         fieldInstanceArtifact.accept(visitor, attributeValueFieldInstancePath, attributeValueFieldSpecificationPath);
@@ -130,7 +130,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private final Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
     private final Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
     private final Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
-    private final Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
+    private final Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
 
     private Builder()
     {
@@ -280,7 +280,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
       childNames.addAll(attributeValueFieldInstanceNames);
 
-      this.attributeValueFieldInstances.put(attributeValueFieldName, Map.copyOf(attributeValueFieldInstances));
+      this.attributeValueFieldInstanceGroups.put(attributeValueFieldName, Map.copyOf(attributeValueFieldInstances));
 
       return this;
     }
@@ -290,8 +290,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
         modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childNames,
         singleInstanceFieldInstances, multiInstanceFieldInstances,
-        singleInstanceElementInstances, multiInstanceElementInstances,
-        attributeValueFieldInstances);
+        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
     }
   }
 }
@@ -306,7 +305,7 @@ record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> 
                                       Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
                                       Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
                                       Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-                                      Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+                                      Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   implements TemplateInstanceArtifact
 {
   public TemplateInstanceArtifactRecord
@@ -326,7 +325,7 @@ record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> 
     validateMapFieldNotNull(this, multiInstanceFieldInstances, "multiInstanceFieldInstances");
     validateMapFieldNotNull(this, singleInstanceElementInstances, "singleInstanceElementInstances");
     validateMapFieldNotNull(this, multiInstanceElementInstances, "multiInstanceElementInstances");
-    validateMapFieldNotNull(this, attributeValueFieldInstances, "attributeValueFieldInstances");
+    validateMapFieldNotNull(this, attributeValueFieldInstanceGroups, "attributeValueFieldInstanceGroups");
 
     // TODO check that all childFieldNames present in child instances maps and that there are no extra fields in maps
 
@@ -337,6 +336,6 @@ record TemplateInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> 
     multiInstanceFieldInstances = Map.copyOf(multiInstanceFieldInstances);
     singleInstanceElementInstances = Map.copyOf(singleInstanceElementInstances);
     multiInstanceElementInstances = Map.copyOf(multiInstanceElementInstances);
-    attributeValueFieldInstances = Map.copyOf(attributeValueFieldInstances);
+    attributeValueFieldInstanceGroups = Map.copyOf(attributeValueFieldInstanceGroups);
   }
 }

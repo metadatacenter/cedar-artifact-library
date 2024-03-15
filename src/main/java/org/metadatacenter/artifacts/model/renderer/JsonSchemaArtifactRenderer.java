@@ -492,8 +492,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances().get(childName);
 
         rendering.put(childName, renderElementInstanceArtifacts(elementInstanceArtifacts));
-      } else if (parentInstanceArtifact.attributeValueFieldInstances().containsKey(childName)) {
-        Map<String, FieldInstanceArtifact> attributeValueFieldInstances = parentInstanceArtifact.attributeValueFieldInstances()
+      } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().containsKey(childName)) {
+        Map<String, FieldInstanceArtifact> attributeValueFieldInstances = parentInstanceArtifact.attributeValueFieldInstanceGroups()
           .get(childName);
 
         Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
@@ -504,10 +504,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
         rendering.put(childName, attributeValueFieldInstanceNamesNode);
 
-      } else if (parentInstanceArtifact.attributeValueFieldInstances().values().stream()
+      } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().values().stream()
         .anyMatch(instancesForAttributeValueField -> instancesForAttributeValueField.containsKey(childName))) {
 
-        for (var attributeValueFieldInstancesEntry : parentInstanceArtifact.attributeValueFieldInstances().entrySet()) {
+        for (var attributeValueFieldInstancesEntry : parentInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
           Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldInstancesEntry.getValue();
 
           if (attributeValueFieldInstances.containsKey(childName))

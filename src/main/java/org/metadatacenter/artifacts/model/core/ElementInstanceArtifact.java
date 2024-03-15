@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
@@ -93,14 +95,14 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       }
     }
 
-    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> entry : attributeValueFieldInstances().entrySet()) {
-      String attributeValueFieldName = entry.getKey();
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> entry : attributeValueFieldInstanceGroups().entrySet()) {
+      String attributeValueFieldGroupName = entry.getKey();
       Map<String, FieldInstanceArtifact> perAttributeValueFieldInstances = entry.getValue();
 
       for (Map.Entry<String, FieldInstanceArtifact> perAttributeValueFieldInstanceNameAndInstance : perAttributeValueFieldInstances.entrySet()) {
         String attributeValueFieldInstanceName = perAttributeValueFieldInstanceNameAndInstance.getKey();
         FieldInstanceArtifact fieldInstanceArtifact = perAttributeValueFieldInstanceNameAndInstance.getValue();
-        String attributeValueFieldSpecificationPath = path + "/" + attributeValueFieldName;
+        String attributeValueFieldSpecificationPath = path + "/" + attributeValueFieldGroupName;
         String attributeValueFieldInstancePath = path + "/" + attributeValueFieldInstanceName;
 
         fieldInstanceArtifact.accept(visitor, attributeValueFieldInstancePath, attributeValueFieldSpecificationPath);
@@ -261,8 +263,25 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     public Builder withAttributeValueFieldInstances(String attributeValueFieldName,
       Map<String, FieldInstanceArtifact> attributeValueFieldInstances)
     {
-      this.attributeValueFieldInstanceGroups.put(attributeValueFieldName,
-        Map.copyOf(attributeValueFieldInstances));
+      Set<String> attributeValueFieldInstanceNames = attributeValueFieldInstances.keySet();
+
+      if (childNames.contains(attributeValueFieldName))
+        throw new IllegalArgumentException("child " + attributeValueFieldName + " already present in instance");
+
+      childNames.add(attributeValueFieldName);
+
+      Set<String> overlappingChildNames = attributeValueFieldInstanceNames.stream()
+        .filter(childName -> childNames.contains(childName))
+        .collect(Collectors.toSet());
+
+      if (!overlappingChildNames.isEmpty())
+        throw new IllegalArgumentException("at least one of field instance names " +
+          overlappingChildNames + " of attribute-value field " + attributeValueFieldName +
+          " already present in parent instance");
+
+      childNames.addAll(attributeValueFieldInstanceNames);
+
+      this.attributeValueFieldInstanceGroups.put(attributeValueFieldName, Map.copyOf(attributeValueFieldInstances));
 
       return this;
     }
@@ -287,7 +306,7 @@ record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> j
                                      Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
                                      Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
                                      Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-                                     Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+                                     Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   implements ElementInstanceArtifact
 {
   public ElementInstanceArtifactRecord
@@ -306,7 +325,7 @@ record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> j
     validateMapFieldNotNull(this, multiInstanceFieldInstances, "multiInstanceFieldInstances");
     validateMapFieldNotNull(this, singleInstanceElementInstances, "singleInstanceElementInstances");
     validateMapFieldNotNull(this, multiInstanceElementInstances, "multiInstanceElementInstances");
-    validateMapFieldNotNull(this, attributeValueFieldInstances, "attributeValueFieldInstances");
+    validateMapFieldNotNull(this, attributeValueFieldInstanceGroups, "attributeValueFieldInstanceGroups");
 
     // TODO check that all childFieldNames present in child instances maps and that there are no extra fields in maps
 
@@ -317,7 +336,7 @@ record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> j
     multiInstanceFieldInstances = Map.copyOf(multiInstanceFieldInstances);
     singleInstanceElementInstances = Map.copyOf(singleInstanceElementInstances);
     multiInstanceElementInstances = Map.copyOf(multiInstanceElementInstances);
-    attributeValueFieldInstances = Map.copyOf(attributeValueFieldInstances);
+    attributeValueFieldInstanceGroups = Map.copyOf(attributeValueFieldInstanceGroups);
   }
 }
 

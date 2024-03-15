@@ -49,6 +49,7 @@ import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -602,7 +603,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
           int arrayIndex = 0;
           if (!nodeIterator.hasNext()) { // Array is empty
-            // TODO
+            // We do not know if this is (1) an empty attribute-value field array, (2) an empty multi-instance field
+            // array, or (3) an empty multi-instance element array. We'll arbitrarily pick (1).
+            attributeValueFieldGroups.put(instanceArtifactFieldName, Collections.emptyList());
           } else {
             while (nodeIterator.hasNext()) {
               String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
@@ -657,15 +660,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
    *   "Attribute-values field instance name 3": { "@value": "v3" },
    *   "Attribute-values field instance name 4": { "@value": "v4" },
    * </pre>
-   * We need to post-process these attribute-value fields and move them from the main fieldInstances map to
-   * the specialized attributeValueFieldInstances map
+   * The individual attribute-value field instances will have ended up in our singleInstanceFieldInstances map when
+   * parsing. We thus need to post-process and move these fields from the singleInstanceFieldInstances map to the
+   * specialized attributeValueFieldInstances map.
    */
   private void processAttributeValueFields(String path, Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
     Map<String, List<String>> attributeValueFieldGroups, Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   {
-    for (var entry : attributeValueFieldGroups.entrySet()) {
-      String attributeValueFieldName = entry.getKey();
-      List<String> attributeValueFieldInstanceNames = entry.getValue();
+    for (var attributeValueFieldGroupsEntry : attributeValueFieldGroups.entrySet()) {
+      String attributeValueFieldName = attributeValueFieldGroupsEntry.getKey();
+      List<String> attributeValueFieldInstanceNames = attributeValueFieldGroupsEntry.getValue();
 
       for (String attributeValueFieldInstanceName : attributeValueFieldInstanceNames) {
 
@@ -683,8 +687,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           attributeValueFieldInstances.put(attributeValueFieldName, new HashMap<>());
           attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, perAttributeFieldInstance);
         }
-
-        singleInstanceFieldInstances.remove(attributeValueFieldInstanceName); // Now remove it from the non-attribute-value field instances
+        singleInstanceFieldInstances.remove(attributeValueFieldInstanceName); // Remove it from the single-instance fields
       }
     }
   }
