@@ -281,7 +281,7 @@ public class JsonSchemaArtifactRendererTest
     String textField1Name = "Text Field 1";
     String element1Name = "Element 1";
     String textField2Name = "Text Field 2";
-    String attributeValueFieldName = "Attribute-value Field A";
+    String attributeValueFieldGroupName = "Attribute-value Field A";
     String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
     String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
 
@@ -305,7 +305,7 @@ public class JsonSchemaArtifactRendererTest
       .withIsBasedOn(isBasedOnTemplateUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
       .withSingleInstanceElementInstance(element1Name, element1Instance)
-      .withAttributeValueFieldGroup(attributeValueFieldName, attributeValueFieldInstances)
+      .withAttributeValueFieldGroup(attributeValueFieldGroupName, attributeValueFieldInstances)
       .build();
 
     ObjectNode templateInstanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
@@ -315,9 +315,7 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(isBasedOnTemplateUri, URI.create(templateInstanceRendering.get(SCHEMA_IS_BASED_ON).asText()));
 
     // TODO Need more comprehensive testing here
-
-    //System.out.println(templateInstanceRendering.toPrettyString());
-  }
+}
 
   @Test
   public void testRenderBasicElementInstance()
@@ -327,7 +325,7 @@ public class JsonSchemaArtifactRendererTest
     String textField1Name = "Text Field 1";
     String element1Name = "Element 1";
     String textField2Name = "Text Field 2";
-    String attributeValueFieldName = "Attribute-value Field A";
+    String attributeValueFieldGroupName = "Attribute-value Field A";
     String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
     String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
 
@@ -350,7 +348,7 @@ public class JsonSchemaArtifactRendererTest
       .withJsonLdId(instanceUri)
       .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
       .withSingleInstanceElementInstance(element1Name, element1Instance)
-      .withAttributeValueFieldGroup(attributeValueFieldName, attributeValueFieldInstances)
+      .withAttributeValueFieldGroup(attributeValueFieldGroupName, attributeValueFieldInstances)
       .build();
 
     ObjectNode elementInstanceRendering = jsonSchemaArtifactRenderer.renderElementInstanceArtifact(elementInstanceArtifact);
@@ -359,8 +357,6 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(instanceUri, URI.create(elementInstanceRendering.get(JSON_LD_ID).asText()));
 
     // TODO Need more comprehensive testing here
-
-    //System.out.println(templateInstanceRendering.toPrettyString());
   }
 
   @Test
