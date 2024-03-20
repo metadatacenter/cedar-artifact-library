@@ -574,11 +574,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
     Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
     Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   {
+    Map<String, List<String>> attributeValueFieldGroupInstanceNames = new HashMap<>();
     Iterator<String> instanceArtifactFieldNames = parentNode.fieldNames();
-    // attribute-value field name -> [attribute-value field instance name]
-    Map<String, List<String>> attributeValueFieldGroups = new HashMap<>();
 
     while (instanceArtifactFieldNames.hasNext()) {
       String instanceArtifactFieldName = instanceArtifactFieldNames.next();
@@ -597,16 +596,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           Iterator<JsonNode> nodeIterator = nestedNode.iterator();
 
           if (childNames.contains(instanceArtifactFieldName))
-            throw new ArtifactParseException("duplicate field " + instanceArtifactFieldName, instanceArtifactFieldName,
+            throw new ArtifactParseException("Duplicate field " + instanceArtifactFieldName, instanceArtifactFieldName,
               instanceArtifactFieldName);
           childNames.add(instanceArtifactFieldName);
 
-          int arrayIndex = 0;
           if (!nodeIterator.hasNext()) { // Array is empty
             // We do not know if this is (1) an empty attribute-value field array, (2) an empty multi-instance field
-            // array, or (3) an empty multi-instance element array. We'll arbitrarily pick (1).
-            attributeValueFieldGroups.put(instanceArtifactFieldName, Collections.emptyList());
+            // array, or (3) an empty multi-instance element array. We'll arbitrarily pick (2).
+            multiInstanceFieldInstances.put(instanceArtifactFieldName, Collections.emptyList());
           } else {
+            int arrayIndex = 0;
             while (nodeIterator.hasNext()) {
               String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
               JsonNode instanceNode = nodeIterator.next();
@@ -626,12 +625,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
                     throw new ArtifactParseException("Empty attribute-value field name in array",
                       instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
 
-                  if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
-                    attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
+                  if (attributeValueFieldGroupInstanceNames.containsKey(instanceArtifactFieldName))
+                    attributeValueFieldGroupInstanceNames.get(instanceArtifactFieldName)
+                      .add(attributeValueFieldName);
                   else {
                     List<String> attributeValueFieldInstanceNames = new ArrayList<>();
                     attributeValueFieldInstanceNames.add(attributeValueFieldName);
-                    attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldInstanceNames);
+                    attributeValueFieldGroupInstanceNames.put(instanceArtifactFieldName,
+                      attributeValueFieldInstanceNames);
                   }
                 } else
                   throw new ArtifactParseException(
@@ -644,7 +645,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         }
       }
     }
-    processAttributeValueFields(path, singleInstanceFieldInstances, attributeValueFieldGroups, attributeValueFieldInstances);
+    processAttributeValueFields(path, singleInstanceFieldInstances, attributeValueFieldGroupInstanceNames,
+      attributeValueFieldInstanceGroups);
   }
 
   /**
@@ -665,27 +667,27 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
    * specialized attributeValueFieldInstances map.
    */
   private void processAttributeValueFields(String path, Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
-    Map<String, List<String>> attributeValueFieldGroups, Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+    Map<String, List<String>> attributeValueFieldGroupInstanceNames, Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   {
-    for (var attributeValueFieldGroupsEntry : attributeValueFieldGroups.entrySet()) {
-      String attributeValueFieldName = attributeValueFieldGroupsEntry.getKey();
+    for (var attributeValueFieldGroupsEntry : attributeValueFieldGroupInstanceNames.entrySet()) {
+      String attributeValueFieldGroupName = attributeValueFieldGroupsEntry.getKey();
       List<String> attributeValueFieldInstanceNames = attributeValueFieldGroupsEntry.getValue();
 
       for (String attributeValueFieldInstanceName : attributeValueFieldInstanceNames) {
 
         if (!singleInstanceFieldInstances.containsKey(attributeValueFieldInstanceName))
           throw new ArtifactParseException(
-            "Attribute-value field " + attributeValueFieldName + " specifies an instance field "
+            "Attribute-value field group " + attributeValueFieldGroupName + " specifies an instance field "
               + attributeValueFieldInstanceName + " that is not present in the template or element instance",
-            attributeValueFieldName, path);
+            attributeValueFieldGroupName, path);
 
         FieldInstanceArtifact perAttributeFieldInstance = singleInstanceFieldInstances.get(attributeValueFieldInstanceName);
 
-        if (attributeValueFieldInstances.containsKey(attributeValueFieldName)) {
-          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, perAttributeFieldInstance);
+        if (attributeValueFieldInstanceGroups.containsKey(attributeValueFieldGroupName)) {
+          attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName).put(attributeValueFieldInstanceName, perAttributeFieldInstance);
         } else {
-          attributeValueFieldInstances.put(attributeValueFieldName, new HashMap<>());
-          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, perAttributeFieldInstance);
+          attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName, new HashMap<>());
+          attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName).put(attributeValueFieldInstanceName, perAttributeFieldInstance);
         }
         singleInstanceFieldInstances.remove(attributeValueFieldInstanceName); // Remove it from the single-instance fields
       }

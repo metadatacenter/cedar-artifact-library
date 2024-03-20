@@ -507,12 +507,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().values().stream()
         .anyMatch(instancesForAttributeValueField -> instancesForAttributeValueField.containsKey(childName))) {
 
-        for (var attributeValueFieldInstancesEntry : parentInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
-          Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldInstancesEntry.getValue();
+        for (var attributeValueFieldInstancesGroupEntry : parentInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
+          Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldInstancesGroupEntry.getValue();
 
           if (attributeValueFieldInstances.containsKey(childName))
             rendering.put(childName, renderFieldInstanceArtifact(attributeValueFieldInstances.get(childName)));
-
         }
       } else throw new RuntimeException("unknown child " + childName + " in parent instance artifact");
     }
