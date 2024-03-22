@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.checkerframework.checker.units.qual.A;
 import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
@@ -48,6 +49,7 @@ import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -510,14 +512,20 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     URI isBasedOn = readRequiredUri(sourceNode, path, SCHEMA_IS_BASED_ON);
     Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
-    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
-    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    List<String> childNames = new ArrayList<>();
+    Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
+    Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
+    Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
+    Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
     Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
 
-    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances, attributeValueFieldInstances);
+    readNestedInstanceArtifacts(sourceNode, path, childNames, singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
 
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childNames, singleInstanceFieldInstances,
+      multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
+      attributeValueFieldInstances);
   }
 
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path)
@@ -531,43 +539,45 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
-    Map<String, List<FieldInstanceArtifact>> fieldInstances = new HashMap<>();
-    Map<String, List<ElementInstanceArtifact>> elementInstances = new HashMap<>();
+    List<String> childNames = new ArrayList<>();
+    Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
+    Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
+    Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
+    Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
     Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new HashMap<>();
 
-    readNestedInstanceArtifacts(sourceNode, path, fieldInstances, elementInstances, attributeValueFieldInstances);
+    readNestedInstanceArtifacts(sourceNode, path, childNames, singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
 
     return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, fieldInstances, elementInstances, attributeValueFieldInstances);
+      modifiedBy, createdOn, lastUpdatedOn, childNames, singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
   }
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path)
   {
-    Map<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
-    Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
-    Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
-    Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     Optional<String> jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
     Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
     Optional<String> skosNotation = readString(sourceNode, path, SKOS_NOTATION);
     Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
 
-    return FieldInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId,
-      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel, language,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId,
+      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel, language);
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path,
-    Map<String, List<FieldInstanceArtifact>> fieldInstances, Map<String, List<ElementInstanceArtifact>> elementInstances,
-    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+    List<String> childNames,
+    Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+    Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+    Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
+    Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
+    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   {
+    Map<String, List<String>> attributeValueFieldGroupInstanceNames = new HashMap<>();
     Iterator<String> instanceArtifactFieldNames = parentNode.fieldNames();
-    // attribute-value field name -> [attribute-value field instance name]
-    Map<String, List<String>> attributeValueFieldGroups = new HashMap<>();
 
     while (instanceArtifactFieldNames.hasNext()) {
       String instanceArtifactFieldName = instanceArtifactFieldNames.next();
@@ -579,49 +589,64 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         if (nestedNode.isObject()) {
           ObjectNode nestedInstanceArtifactNode = (ObjectNode)nestedNode;
 
-          readNestedInstanceArtifact(instanceArtifactFieldName, nestedInstanceArtifactPath, nestedInstanceArtifactNode,
-            elementInstances, fieldInstances);
+          readNestedSingleInstanceArtifact(instanceArtifactFieldName, nestedInstanceArtifactPath,
+            nestedInstanceArtifactNode, childNames, singleInstanceFieldInstances, singleInstanceElementInstances);
 
         } else if (nestedNode.isArray()) {
           Iterator<JsonNode> nodeIterator = nestedNode.iterator();
 
-          int arrayIndex = 0;
-          while (nodeIterator.hasNext()) {
-            String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
-            JsonNode instanceNode = nodeIterator.next();
-            if (instanceNode == null || instanceNode.isNull()) {
-              throw new ArtifactParseException(
-                "Expecting field or element instance or attribute-value field name in array, got null",
-                instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
-            } else {
-              if (instanceNode.isObject()) {
-                ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
-                readNestedInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
-                  arrayEnclosedInstanceArtifactNode, elementInstances, fieldInstances);
-              } else if (instanceNode.isTextual()) { // A list of attribute-value field names
-                String attributeValueFieldName = instanceNode.asText();
-                if (attributeValueFieldName.isEmpty())
-                  throw new ArtifactParseException("Empty attribute-value field name in array",
-                    instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+          if (childNames.contains(instanceArtifactFieldName))
+            throw new ArtifactParseException("Duplicate field " + instanceArtifactFieldName, instanceArtifactFieldName,
+              instanceArtifactFieldName);
+          childNames.add(instanceArtifactFieldName);
 
-                if (attributeValueFieldGroups.containsKey(instanceArtifactFieldName))
-                  attributeValueFieldGroups.get(instanceArtifactFieldName).add(attributeValueFieldName);
-                else {
-                  List<String> attributeValueFieldInstanceNames = new ArrayList<>();
-                  attributeValueFieldInstanceNames.add(attributeValueFieldName);
-                  attributeValueFieldGroups.put(instanceArtifactFieldName, attributeValueFieldInstanceNames);
-                }
-              } else
+          if (!nodeIterator.hasNext()) { // Array is empty
+            // We do not know if this is (1) an empty attribute-value field array, (2) an empty multi-instance field
+            // array, or (3) an empty multi-instance element array. We'll arbitrarily pick (2).
+            multiInstanceFieldInstances.put(instanceArtifactFieldName, Collections.emptyList());
+          } else {
+            int arrayIndex = 0;
+            while (nodeIterator.hasNext()) {
+              String arrayEnclosedInstanceArtifactPath = nestedInstanceArtifactPath + "[" + arrayIndex + "]";
+              JsonNode instanceNode = nodeIterator.next();
+              if (instanceNode == null || instanceNode.isNull()) {
                 throw new ArtifactParseException(
-                  "Expecting field or element instance or attribute-value field name in array",
+                  "Expecting field or element instance or attribute-value field name in array, got null",
                   instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+              } else {
+                if (instanceNode.isObject()) {
+                  ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
+                  readNestedMultiInstanceArtifact(instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath,
+                    arrayEnclosedInstanceArtifactNode, childNames, multiInstanceFieldInstances,
+                    multiInstanceElementInstances);
+                } else if (instanceNode.isTextual()) { // A list of attribute-value field names
+                  String attributeValueFieldName = instanceNode.asText();
+                  if (attributeValueFieldName.isEmpty())
+                    throw new ArtifactParseException("Empty attribute-value field name in array",
+                      instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+
+                  if (attributeValueFieldGroupInstanceNames.containsKey(instanceArtifactFieldName))
+                    attributeValueFieldGroupInstanceNames.get(instanceArtifactFieldName)
+                      .add(attributeValueFieldName);
+                  else {
+                    List<String> attributeValueFieldInstanceNames = new ArrayList<>();
+                    attributeValueFieldInstanceNames.add(attributeValueFieldName);
+                    attributeValueFieldGroupInstanceNames.put(instanceArtifactFieldName,
+                      attributeValueFieldInstanceNames);
+                  }
+                } else
+                  throw new ArtifactParseException(
+                    "Expecting field or element instance or attribute-value field name in array",
+                    instanceArtifactFieldName, arrayEnclosedInstanceArtifactPath);
+              }
+              arrayIndex++;
             }
-            arrayIndex++;
           }
         }
       }
     }
-    processAttributeValueFields(path, fieldInstances, attributeValueFieldGroups, attributeValueFieldInstances);
+    processAttributeValueFields(path, singleInstanceFieldInstances, attributeValueFieldGroupInstanceNames,
+      attributeValueFieldInstanceGroups);
   }
 
   /**
@@ -637,69 +662,90 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
    *   "Attribute-values field instance name 3": { "@value": "v3" },
    *   "Attribute-values field instance name 4": { "@value": "v4" },
    * </pre>
-   * We need to post-process these attribute-value fields and move them from the main fieldInstances map to
-   * the specialized attributeValueFieldInstances map
+   * The individual attribute-value field instances will have ended up in our singleInstanceFieldInstances map when
+   * parsing. We thus need to post-process and move these fields from the singleInstanceFieldInstances map to the
+   * specialized attributeValueFieldInstances map.
    */
-  private void processAttributeValueFields(String path, Map<String, List<FieldInstanceArtifact>> fieldInstances,
-    Map<String, List<String>> attributeValueFieldGroups, Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+  private void processAttributeValueFields(String path, Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+    Map<String, List<String>> attributeValueFieldGroupInstanceNames, Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   {
-    for (var entry : attributeValueFieldGroups.entrySet()) {
-      String attributeValueFieldName = entry.getKey();
-      List<String> attributeValueFieldInstanceNames = entry.getValue();
+    for (var attributeValueFieldGroupsEntry : attributeValueFieldGroupInstanceNames.entrySet()) {
+      String attributeValueFieldGroupName = attributeValueFieldGroupsEntry.getKey();
+      List<String> attributeValueFieldInstanceNames = attributeValueFieldGroupsEntry.getValue();
 
       for (String attributeValueFieldInstanceName : attributeValueFieldInstanceNames) {
 
-        if (!fieldInstances.containsKey(attributeValueFieldInstanceName))
+        if (!singleInstanceFieldInstances.containsKey(attributeValueFieldInstanceName))
           throw new ArtifactParseException(
-            "Attribute-value field " + attributeValueFieldName + " specifies an instance field "
+            "Attribute-value field group " + attributeValueFieldGroupName + " specifies an instance field "
               + attributeValueFieldInstanceName + " that is not present in the template or element instance",
-            attributeValueFieldName, path);
+            attributeValueFieldGroupName, path);
 
-        List<FieldInstanceArtifact> perAttributeFieldInstances = fieldInstances.get(attributeValueFieldInstanceName);
+        FieldInstanceArtifact perAttributeFieldInstance = singleInstanceFieldInstances.get(attributeValueFieldInstanceName);
 
-        if (perAttributeFieldInstances.size() != 1)
-          throw new ArtifactParseException(
-            "Attribute-value field " + attributeValueFieldName + " has an instance field "
-              + attributeValueFieldInstanceName + " that does not have exactly one instance",
-            attributeValueFieldInstanceName, path);
-
-        FieldInstanceArtifact fieldInstanceArtifact = perAttributeFieldInstances.get(0);
-
-        if (attributeValueFieldInstances.containsKey(attributeValueFieldName)) {
-          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, fieldInstanceArtifact);
+        if (attributeValueFieldInstanceGroups.containsKey(attributeValueFieldGroupName)) {
+          attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName).put(attributeValueFieldInstanceName, perAttributeFieldInstance);
         } else {
-          attributeValueFieldInstances.put(attributeValueFieldName, new HashMap<>());
-          attributeValueFieldInstances.get(attributeValueFieldName).put(attributeValueFieldInstanceName, fieldInstanceArtifact);
+          attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName, new HashMap<>());
+          attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName).put(attributeValueFieldInstanceName, perAttributeFieldInstance);
         }
-
-        fieldInstances.remove(attributeValueFieldInstanceName); // Now remove it from the non-attribute-value field instances
+        singleInstanceFieldInstances.remove(attributeValueFieldInstanceName); // Remove it from the single-instance fields
       }
     }
   }
 
-  private void readNestedInstanceArtifact(String instanceArtifactFieldName, String instanceArtifactPath,
-    ObjectNode instanceArtifactNode, Map<String, List<ElementInstanceArtifact>> elements,
-    Map<String, List<FieldInstanceArtifact>> fields)
+  private void readNestedSingleInstanceArtifact(String instanceArtifactFieldName, String instanceArtifactPath,
+    ObjectNode instanceArtifactNode,
+    List<String> childNames,
+    Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+    Map<String, ElementInstanceArtifact> singleInstanceElementInstances)
   {
+    if (childNames.contains(instanceArtifactFieldName))
+      throw new ArtifactParseException("duplicate field " + instanceArtifactFieldName, instanceArtifactFieldName,
+        instanceArtifactPath);
+
+    childNames.add(instanceArtifactFieldName);
+
     if (hasJsonLdContextField(instanceArtifactNode)) { // Element instance artifacts have @context fields
       ObjectNode elementInstanceArtifactNode = instanceArtifactNode;
       ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
         instanceArtifactPath);
-      if (elements.containsKey(instanceArtifactFieldName)) {
-        elements.get(instanceArtifactFieldName).add(elementInstanceArtifact);
-      } else {
-        elements.put(instanceArtifactFieldName, new ArrayList<>());
-        elements.get(instanceArtifactFieldName).add(elementInstanceArtifact);
-      }
-    } else { // Field instance artifact do not
+      singleInstanceElementInstances.put(instanceArtifactFieldName, elementInstanceArtifact);
+    } else { // Field instance artifacts do not
       FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(instanceArtifactNode,
         instanceArtifactPath);
-      if (fields.containsKey(instanceArtifactFieldName)) {
-        fields.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
-      } else {
-        fields.put(instanceArtifactFieldName, new ArrayList<>());
-        fields.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
-      }
+      singleInstanceFieldInstances.put(instanceArtifactFieldName, fieldInstanceArtifact);
+    }
+  }
+
+  private void readNestedMultiInstanceArtifact(String instanceArtifactFieldName, String instanceArtifactPath,
+    ObjectNode instanceArtifactArrayNode,
+    List<String> childNames,
+    Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+    Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances)
+  {
+
+    if (instanceArtifactArrayNode == null || instanceArtifactArrayNode.isNull())
+      throw new ArtifactParseException("Value in instance array must not be null", instanceArtifactFieldName,
+        instanceArtifactPath);
+
+    if (hasJsonLdContextField(instanceArtifactArrayNode)) { // Element instance artifacts have @context fields
+      ObjectNode elementInstanceArtifactNode = instanceArtifactArrayNode;
+      ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
+        instanceArtifactPath);
+
+      if (!multiInstanceElementInstances.containsKey(instanceArtifactFieldName))
+        multiInstanceElementInstances.put(instanceArtifactFieldName, new ArrayList<>());
+
+      multiInstanceElementInstances.get(instanceArtifactFieldName).add(elementInstanceArtifact);
+    } else { // Field instance artifacts do not
+      FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(instanceArtifactArrayNode,
+        instanceArtifactPath);
+
+      if (!multiInstanceFieldInstances.containsKey(instanceArtifactFieldName))
+        multiInstanceFieldInstances.put(instanceArtifactFieldName, new ArrayList<>());
+
+      multiInstanceFieldInstances.get(instanceArtifactFieldName).add(fieldInstanceArtifact);
     }
   }
 
@@ -915,7 +961,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     JsonNode ontologyValueConstraintArrayNode = sourceNode.get(fieldName);
 
-    if (ontologyValueConstraintArrayNode != null && !ontologyValueConstraintArrayNode.isNull() && ontologyValueConstraintArrayNode.isArray()) {
+    if (ontologyValueConstraintArrayNode != null && !ontologyValueConstraintArrayNode.isNull()
+      && ontologyValueConstraintArrayNode.isArray()) {
 
       for (JsonNode valueConstraintNode : ontologyValueConstraintArrayNode) {
         if (valueConstraintNode != null) {
@@ -936,7 +983,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     JsonNode classValueConstraintArrayNode = sourceNode.get(fieldName);
 
-    if (classValueConstraintArrayNode != null && !classValueConstraintArrayNode.isNull() && classValueConstraintArrayNode.isArray()) {
+    if (classValueConstraintArrayNode != null && !classValueConstraintArrayNode.isNull()
+      && classValueConstraintArrayNode.isArray()) {
 
       for (JsonNode valueConstraintNode : classValueConstraintArrayNode) {
         if (valueConstraintNode != null) {
@@ -1022,7 +1070,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     JsonNode controlledTermValueConstraintsActionArrayNode = sourceNode.get(fieldName);
 
-    if (controlledTermValueConstraintsActionArrayNode != null && controlledTermValueConstraintsActionArrayNode.isArray()) {
+    if (controlledTermValueConstraintsActionArrayNode != null
+      && controlledTermValueConstraintsActionArrayNode.isArray()) {
 
       for (JsonNode actionNode : controlledTermValueConstraintsActionArrayNode) {
         if (actionNode != null) {

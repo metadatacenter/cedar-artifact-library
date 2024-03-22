@@ -2,12 +2,17 @@ package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.Artifact;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.JsonLdArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
+import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -15,6 +20,9 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -22,6 +30,7 @@ import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONT
 import static org.metadatacenter.model.ModelNodeNames.INSTANCE_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_LANGUAGE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
@@ -55,6 +64,7 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
+import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.UI;
@@ -333,19 +343,25 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   public ObjectNode renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
   {
-    ObjectNode rendering = mapper.createObjectNode();
+    ObjectNode rendering = renderParentInstanceArtifact(templateInstanceArtifact);
 
-    rendering.put(JSON_LD_CONTEXT, renderInstanceArtifactContextJsonLdSpecification());
+    rendering.put(JSON_LD_CONTEXT, renderTemplateInstanceArtifactContextJsonLdSpecification());
+
+    for (var propertyMapping : templateInstanceArtifact.jsonLdContext().entrySet()) {
+      String fieldName = propertyMapping.getKey();
+      URI propertyUri = propertyMapping.getValue();
+      rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, propertyUri.toString());
+    }
+
+    rendering.put(SCHEMA_IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
 
     if (templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(JSON_LD_ID, templateInstanceArtifact.jsonLdId().get().toString());
     else
       rendering.putNull(JSON_LD_ID);
 
-    rendering.put(SCHEMA_IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
-
     if (templateInstanceArtifact.name().isPresent())
-       rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.name().get());
+      rendering.put(SCHEMA_ORG_NAME, templateInstanceArtifact.name().get());
 
     if (templateInstanceArtifact.description().isPresent())
       rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description().get());
@@ -363,7 +379,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (templateInstanceArtifact.createdOn().isPresent())
       rendering.put(PAV_CREATED_ON, templateInstanceArtifact.createdOn().get().toString());
     else
-      rendering.putNull(PAV_CREATED_BY);
+      rendering.putNull(PAV_CREATED_ON);
+
     if (templateInstanceArtifact.lastUpdatedOn().isPresent())
       rendering.put(PAV_LAST_UPDATED_ON, templateInstanceArtifact.lastUpdatedOn().get().toString());
     else
@@ -371,6 +388,157 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     return rendering;
   }
+
+  public ObjectNode renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    ObjectNode rendering = renderParentInstanceArtifact(elementInstanceArtifact);
+
+    if (!elementInstanceArtifact.jsonLdContext().isEmpty()) {
+      rendering.put(JSON_LD_CONTEXT, mapper.createObjectNode());
+
+      for (var propertyMapping : elementInstanceArtifact.jsonLdContext().entrySet()) {
+        String fieldName = propertyMapping.getKey();
+        URI propertyUri = propertyMapping.getValue();
+        rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, propertyUri.toString());
+      }
+    }
+
+    if (elementInstanceArtifact.createdBy().isPresent())
+      rendering.put(PAV_CREATED_BY, elementInstanceArtifact.createdBy().get().toString());
+
+    if (elementInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(OSLC_MODIFIED_BY, elementInstanceArtifact.modifiedBy().get().toString());
+
+    if (elementInstanceArtifact.createdOn().isPresent())
+      rendering.put(PAV_CREATED_ON, elementInstanceArtifact.createdOn().get().toString());
+
+    if (elementInstanceArtifact.lastUpdatedOn().isPresent())
+      rendering.put(PAV_LAST_UPDATED_ON, elementInstanceArtifact.lastUpdatedOn().get().toString());
+
+    return rendering;
+  }
+
+  private ObjectNode renderFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact)
+  {
+    ObjectNode objectNode = mapper.createObjectNode();
+
+    // If JSON-LD @value is present, assume it is a non-IRI field
+    if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
+      if (fieldInstanceArtifact.jsonLdValue().get() != null)
+        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get());
+      else
+        objectNode.putNull(JSON_LD_VALUE);
+
+      if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
+        objectNode.put(JSON_LD_TYPE, fieldInstanceArtifact.jsonLdTypes().get(0).toString());
+      } else if (fieldInstanceArtifact.jsonLdTypes().size() > 1) {
+        ArrayNode jsonLdTypesArrayNode = mapper.createArrayNode();
+
+        for (int i = 0; i < fieldInstanceArtifact.jsonLdTypes().size(); i++)
+          jsonLdTypesArrayNode.add(fieldInstanceArtifact.jsonLdTypes().get(i).toString());
+
+        objectNode.put(JSON_LD_TYPE, jsonLdTypesArrayNode);
+      }
+
+      if (fieldInstanceArtifact.language().isPresent())
+        objectNode.put(JSON_LD_LANGUAGE, fieldInstanceArtifact.language().get());
+
+      if (fieldInstanceArtifact.notation().isPresent())
+        objectNode.put(SKOS_NOTATION, fieldInstanceArtifact.notation().get());
+
+      if (fieldInstanceArtifact.prefLabel().isPresent())
+        objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.prefLabel().get());
+
+    } else if (fieldInstanceArtifact.jsonLdId().isPresent()) {
+      if (fieldInstanceArtifact.jsonLdId().get() != null)
+        objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
+
+      if (fieldInstanceArtifact.label().isPresent())
+        objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
+    }
+
+    return objectNode;
+  }
+
+  private ObjectNode renderParentInstanceArtifact(ParentInstanceArtifact parentInstanceArtifact)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    if (parentInstanceArtifact.jsonLdId().isPresent())
+      rendering.put(JSON_LD_ID, parentInstanceArtifact.jsonLdId().get().toString());
+
+    if (parentInstanceArtifact.name().isPresent())
+      rendering.put(SCHEMA_ORG_NAME, parentInstanceArtifact.name().get());
+
+    if (parentInstanceArtifact.description().isPresent())
+      rendering.put(SCHEMA_ORG_DESCRIPTION, parentInstanceArtifact.description().get());
+
+    for (String childName: parentInstanceArtifact.childNames()) {
+
+      if (parentInstanceArtifact.singleInstanceFieldInstances().containsKey(childName)) {
+        FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances().get(childName);
+
+        rendering.put(childName, renderFieldInstanceArtifact(fieldInstanceArtifact));
+      } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childName)) {
+        List<FieldInstanceArtifact> fieldInstanceArtifacts = parentInstanceArtifact.multiInstanceFieldInstances()
+          .get(childName);
+
+        rendering.put(childName, renderFieldInstanceArtifacts(fieldInstanceArtifacts));
+      } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childName)) {
+        ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances().get(childName);
+
+        rendering.put(childName, renderElementInstanceArtifact(elementInstanceArtifact));
+      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childName)) {
+        List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances().get(childName);
+
+        rendering.put(childName, renderElementInstanceArtifacts(elementInstanceArtifacts));
+      } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().containsKey(childName)) {
+        Map<String, FieldInstanceArtifact> attributeValueFieldInstances = parentInstanceArtifact.attributeValueFieldInstanceGroups()
+          .get(childName);
+
+        Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
+        ArrayNode attributeValueFieldInstanceNamesNode = mapper.createArrayNode();
+
+        for (String attributeValueFieldInstanceName : attributeValueInstanceFieldNames)
+          attributeValueFieldInstanceNamesNode.add(attributeValueFieldInstanceName);
+
+        rendering.put(childName, attributeValueFieldInstanceNamesNode);
+
+      } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().values().stream()
+        .anyMatch(instancesForAttributeValueField -> instancesForAttributeValueField.containsKey(childName))) {
+
+        for (var attributeValueFieldInstancesGroupEntry : parentInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
+          Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldInstancesGroupEntry.getValue();
+
+          if (attributeValueFieldInstances.containsKey(childName))
+            rendering.put(childName, renderFieldInstanceArtifact(attributeValueFieldInstances.get(childName)));
+        }
+      } else throw new RuntimeException("unknown child " + childName + " in parent instance artifact");
+    }
+
+    return rendering;
+  }
+
+  private ArrayNode renderFieldInstanceArtifacts(List<FieldInstanceArtifact> fieldInstanceArtifacts)
+  {
+    ArrayNode arrayNode = mapper.createArrayNode();
+
+    for (FieldInstanceArtifact fieldInstanceArtifact : fieldInstanceArtifacts)
+      arrayNode.add(renderFieldInstanceArtifact(fieldInstanceArtifact));
+
+    return arrayNode;
+  }
+
+  private ArrayNode renderElementInstanceArtifacts(List<ElementInstanceArtifact> elementInstanceArtifacts)
+  {
+    ArrayNode arrayNode = mapper.createArrayNode();
+
+    for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts)
+      arrayNode.add(renderElementInstanceArtifact(elementInstanceArtifact));
+
+    return arrayNode;
+  }
+
   /**
    * Generate a base schema artifact rendering. In addition to core artifact fields (@type, @id, pav:createdOn,
    * pav:createdBy, pav:lastUpdatedOn, and oslc:modifiedBy), it will have JSON Schema fields (@schema, type,
@@ -398,7 +566,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private ObjectNode renderSchemaArtifact(SchemaArtifact schemaArtifact)
   {
-    ObjectNode rendering = renderArtifact(schemaArtifact);
+    ObjectNode rendering = renderJsonLdArtifact(schemaArtifact);
 
     rendering.put(JSON_SCHEMA_SCHEMA, schemaArtifact.jsonSchemaSchemaUri().toString());
     rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
@@ -429,33 +597,30 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate an artifact rendering with core fields, which are @type, @id, pav:createdOn, pav:createdBy,
-   * pav:lastUpdatedOn, and oslc:modifiedBy
+   * Generate a base JSON-LD artifact rendering with core fields, which are @type, and @id
    * <p></p>
    * An example artifact could look as follows:
    * <pre>
    * {
    *   "@type": "https://schema.metadatacenter.org/core/Template",
    *   "@id": "https://repo.metadatacenter.org/templates/6d21a997-b884-4779-966a-aa71632f3232",
-   *   "pav:createdOn": "2023-07-28T11:10:41-07:00", "pav:createdBy": "https://metadatacenter.org/users/656433",
-   *   "pav:lastUpdatedOn": "2023-07-28T11:10:41-07:00", "oslc:modifiedBy": "https://metadatacenter.org/users/524332"
    *  }
    * </pre>
    */
-  private ObjectNode renderArtifact(Artifact artifact)
+  private ObjectNode renderJsonLdArtifact(JsonLdArtifact jsonLdArtifact)
   {
-    ObjectNode rendering = renderMonitoredArtifact(artifact);
+    ObjectNode rendering = renderMonitoredArtifact(jsonLdArtifact);
 
-    if (artifact.jsonLdTypes().size() == 1) {
-      rendering.put(JSON_LD_TYPE, artifact.jsonLdTypes().get(0).toString());
-    } else if (artifact.jsonLdTypes().size() > 1) {
+    if (jsonLdArtifact.jsonLdTypes().size() == 1) {
+      rendering.put(JSON_LD_TYPE, jsonLdArtifact.jsonLdTypes().get(0).toString());
+    } else if (jsonLdArtifact.jsonLdTypes().size() > 1) {
       rendering.put(JSON_LD_TYPE, mapper.createArrayNode());
-      for (URI jsonLdType : artifact.jsonLdTypes())
+      for (URI jsonLdType : jsonLdArtifact.jsonLdTypes())
         rendering.withArray(JSON_LD_TYPE).add(jsonLdType.toString());
     }
 
-    if (artifact.jsonLdId().isPresent()) {
-      rendering.put(JSON_LD_ID, artifact.jsonLdId().get().toString());
+    if (jsonLdArtifact.jsonLdId().isPresent()) {
+      rendering.put(JSON_LD_ID, jsonLdArtifact.jsonLdId().get().toString());
     } else {
       rendering.putNull(JSON_LD_ID);
     }
@@ -867,7 +1032,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate a JSON-LD @context for instance artifacts
+   * Generate a JSON-LD @context for template instance artifacts
    * <p>
    * Defined as follows:
    * <pre>
@@ -878,28 +1043,54 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
    *     "xsd": "http://www.w3.org/2001/XMLSchema#",
    *     "skos": "http://www.w3.org/2004/02/skos/core#",
+   *     "oslc": "http://open-services.net/ns/core#",
    *     "schema:name": { "@type": "xsd:string" },
    *     "schema:description": { "@type": "xsd:string" },
    *     "pav:createdOn": { "@type": "xsd:dateTime" },
    *     "pav:createdBy": { "@type": "@id" },
    *     "pav:lastUpdatedOn": { "@type": "xsd:dateTime" },
    *     "oslc:modifiedBy": { "@type": "@id" },
-   *     "rdfs:label": { "@type": "xsd:string" },
    *     "skos:notation": { "@type": "xsd:string" }
+   *     "pav:isDerivedFrom": { "@type": "@id" }
    *     "schema:isBasedOn": { "@type": "@id" }
+   *   }
+   * </pre>
+   */
+  private ObjectNode renderTemplateInstanceArtifactContextJsonLdSpecification()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    for (var entry: INSTANCE_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
+      rendering.put(entry.getKey(), entry.getValue().toString());
+
+    rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
+    rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
+
+    rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
+    rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
+    rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
+
+    rendering.put(SKOS_NOTATION, renderXsdStringJsonLdSpecification());
+
+    rendering.put(PAV_DERIVED_FROM, renderIriJsonLdSpecification());
+    rendering.put(SCHEMA_IS_BASED_ON, renderIriJsonLdSpecification());
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON-LD @context for a child instance artifacts
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *   {
    *   }
    * </pre>
    */
   private ObjectNode renderInstanceArtifactContextJsonLdSpecification()
   {
-    ObjectNode rendering = renderInstanceArtifactContextPrefixesJsonLdSpecification();
-
-    rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
-    rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
-    rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
-    rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
-    rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
-    rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
+    ObjectNode rendering = mapper.createObjectNode();
 
     return rendering;
   }

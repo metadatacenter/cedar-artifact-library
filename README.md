@@ -519,18 +519,23 @@ To generate a TSV file from a CEDAR template stored on the main CEDAR system:
 To generate a YAML file from a CEDAR template stored in a file:
 
     mvn exec:java@template2yaml 
-      -Dexec.args="-tf <input_template_filename> -y <output_YAML_filename>"
+      -Dexec.args="-x -tf <input_template_filename> -y <output_YAML_filename>"
 
-This will read a JSON-Schema-based template and convert it into a YAML file.
+This will read a JSON-Schema-based template and convert it into a YAML file. 
+If the optional -x argument is present then a full YAML rendering of the artifact is generated; otherwise a compact form is produced.
 
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
 ```
     mvn exec:java@template2yaml 
-      -Dexec.args="-i <template_iri> 
+      -Dexec.args="-x
+                   -i <template_iri> 
                    -y <output_YAML_filename> 
                    -r https://resource.metadatacenter.org/templates/ 
                    -k <CEDAR API key>"
+
+Again, the -x argument is optional.
+
 ```
 ## Building the Library
 

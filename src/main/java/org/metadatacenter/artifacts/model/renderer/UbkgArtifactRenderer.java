@@ -121,7 +121,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
         ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, numericValueConstraints.numberType().toUri());
       } else if (valueConstraints instanceof TemporalValueConstraints) {
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
-        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, temporalValueConstraints.temporalType().toURI());
+        ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, temporalValueConstraints.temporalType().toUri());
       } else if (valueConstraints instanceof ControlledTermValueConstraints) {
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
         ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, XSD_ANY_URI);

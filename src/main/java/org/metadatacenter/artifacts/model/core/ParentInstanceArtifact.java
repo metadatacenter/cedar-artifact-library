@@ -1,22 +1,43 @@
 package org.metadatacenter.artifacts.model.core;
 
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public sealed interface ParentInstanceArtifact extends ParentArtifact permits TemplateInstanceArtifact,
-  ElementInstanceArtifact
+public sealed interface ParentInstanceArtifact extends ParentArtifact, JsonLdArtifact, MonitoredArtifact
+  permits TemplateInstanceArtifact, ElementInstanceArtifact
 {
+  Map<String, URI> jsonLdContext();
+
+  Optional<URI> jsonLdId();
+
+  Optional<URI> createdBy();
+  Optional<URI> modifiedBy();
+
+  Optional<OffsetDateTime> createdOn();
+
+  Optional<OffsetDateTime> lastUpdatedOn();
+
   Optional<String> name();
 
   Optional<String> description();
 
-  // field name->[field instance artifact]
-  Map<String, List<FieldInstanceArtifact>> fieldInstances();
+  List<String> childNames();
 
-  // element name->[element instance artifact]
-  Map<String, List<ElementInstanceArtifact>> elementInstances();
+  // field name->field instance artifact
+  Map<String, FieldInstanceArtifact> singleInstanceFieldInstances();
+
+  // field name->[field instance artifact]
+  Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances();
+
+  // element name->element instance artifact
+  Map<String, ElementInstanceArtifact> singleInstanceElementInstances();
+
+  // field name->[field instance artifact]
+  Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances();
 
   // attribute-value field name->(attribute-value field instance name->field instance artifact)
-  Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances();
+  Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups();
 }

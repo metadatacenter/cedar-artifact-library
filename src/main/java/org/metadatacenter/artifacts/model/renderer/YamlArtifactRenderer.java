@@ -141,6 +141,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     // TODO Generate YAML for header/footer
     // TODO Generate YAML for UI.propertyLabels, UI.propertyDescriptions
     // TODO Generate YAML for childPropertyUris
+    // TODO Generate YAML for annotations
+    // TODO Generate YAML for provenance
 
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(templateSchemaArtifact.getChildSchemas()));
@@ -233,6 +235,36 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     }
 
     // TODO Generate YAML for _valueConstraints.actions
+
+    return rendering;
+  }
+
+  public LinkedHashMap<String, Object> renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    rendering.put(INSTANCE, templateInstanceArtifact.name());
+    if (templateInstanceArtifact.description().isPresent())
+      rendering.put(DESCRIPTION, templateInstanceArtifact.description());
+
+    if (isExpanded && templateInstanceArtifact.jsonLdId().isPresent())
+      rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
+
+    rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
+
+    if (isExpanded && templateInstanceArtifact.createdBy().isPresent())
+      rendering.put(CREATED_BY, templateInstanceArtifact.createdBy().get().toString());
+
+    if (isExpanded && templateInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
+
+    if (isExpanded && templateInstanceArtifact.createdOn().isPresent())
+      rendering.put(CREATED_ON, templateInstanceArtifact.createdOn().get().toString());
+
+    if (templateInstanceArtifact.lastUpdatedOn().isPresent())
+      rendering.put(LAST_UPDATED_ON, templateInstanceArtifact.lastUpdatedOn().get().toString());
+
+    // TODO Need to generate YAML for children of template instance
 
     return rendering;
   }
@@ -396,34 +428,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       if (textValueConstraints.maxLength().isPresent())
         rendering.put(MAX_LENGTH, textValueConstraints.maxLength().get());
     }
-  }
-
-  public LinkedHashMap<String, Object> renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
-  {
-    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
-
-    rendering.put(INSTANCE, templateInstanceArtifact.name());
-    if (templateInstanceArtifact.description().isPresent())
-      rendering.put(DESCRIPTION, templateInstanceArtifact.description());
-
-    if (isExpanded && templateInstanceArtifact.jsonLdId().isPresent())
-      rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
-
-    rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
-
-    if (isExpanded && templateInstanceArtifact.createdBy().isPresent())
-      rendering.put(CREATED_BY, templateInstanceArtifact.createdBy().get().toString());
-
-    if (isExpanded && templateInstanceArtifact.modifiedBy().isPresent())
-      rendering.put(MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
-
-    if (isExpanded && templateInstanceArtifact.createdOn().isPresent())
-      rendering.put(CREATED_ON, templateInstanceArtifact.createdOn().get().toString());
-
-    if (templateInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(LAST_UPDATED_ON, templateInstanceArtifact.lastUpdatedOn().get().toString());
-
-    return rendering;
   }
 
   private List<LinkedHashMap<String, Object>> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {

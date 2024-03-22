@@ -1,9 +1,21 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.builders.CheckboxFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ControlledTermFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.EmailFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.LinkFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.ListFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.NumericFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.PhoneNumberFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.RadioFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TemporalFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TextFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldInstanceBuilder;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,22 +36,17 @@ import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
-/**
- * While field instances may not necessarily have provenance fields (name, description,
- * createdBy, modifiedBy, createdOn, lastUpdatedOn), the model allows them. Instances will typically not have
- * a JSON-LD @context field but, again, the model allows them.
- */
 public interface FieldInstanceArtifact extends ChildInstanceArtifact
 {
-  static FieldInstanceArtifact create(Map<String, URI> jsonLdContext,
-    List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-    Optional<String> label, Optional<String> notation, Optional<String> prefLabel, Optional<String> language,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
+  static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+    Optional<String> language)
   {
-    return new FieldInstanceArtifactRecord(jsonLdContext,
-      jsonLdTypes, jsonLdId, jsonLdValue, label, notation, prefLabel, language,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn);
+    return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
+      prefLabel, language);
   }
+
+  List<URI> jsonLdTypes();
 
   Optional<URI> jsonLdId();
 
@@ -53,130 +60,79 @@ public interface FieldInstanceArtifact extends ChildInstanceArtifact
 
   Optional<String> language();
 
-  @Override default void accept(InstanceArtifactVisitor visitor, String path) {
+  @Override default void accept(InstanceArtifactVisitor visitor, String path)
+  {
     visitor.visitFieldInstanceArtifact(this, path);
   }
 
-  @Override default void accept(InstanceArtifactVisitor visitor, String path, String specificationPath) {
+  @Override default void accept(InstanceArtifactVisitor visitor, String path, String specificationPath)
+  {
     visitor.visitAttributeValueFieldInstanceArtifact(this, path, specificationPath);
   }
 
-  static Builder builder()
+  static TextFieldInstanceBuilder textFieldInstanceBuilder()
   {
-    return new Builder();
+    return new TextFieldInstanceBuilder();
   }
 
-  class Builder
+  static NumericFieldInstanceBuilder numericFieldInstanceBuilder()
   {
-    private Map<String, URI> jsonLdContext = new HashMap<>();
-    private final List<URI> jsonLdTypes = new ArrayList<>();
-    private Optional<URI> jsonLdId = Optional.empty();
-    private Optional<String> jsonLdValue = Optional.empty();
-    private Optional<String> label = Optional.empty();
-    private Optional<String> notation = Optional.empty();
-    private Optional<String> prefLabel = Optional.empty();
-    private Optional<String> language = Optional.empty();
-    private Optional<URI> createdBy = Optional.empty();
-    private Optional<URI> modifiedBy = Optional.empty();
-    private Optional<OffsetDateTime> createdOn = Optional.empty();
-    private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
+    return new NumericFieldInstanceBuilder();
+  }
 
-    private Builder()
-    {
-    }
+  static TemporalFieldInstanceBuilder temporalFieldInstanceBuilder()
+  {
+    return new TemporalFieldInstanceBuilder();
+  }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
-    {
-      this.jsonLdContext = jsonLdContext;
-      return this;
-    }
+  static TextAreaFieldInstanceBuilder textAreaFieldInstanceBuilder()
+  {
+    return new TextAreaFieldInstanceBuilder();
+  }
 
-    public Builder withJsonLdType(URI jsonLdType)
-    {
-      this.jsonLdTypes.add(jsonLdType);
-      return this;
-    }
+  static RadioFieldInstanceBuilder radioFieldInstanceBuilder()
+  {
+    return new RadioFieldInstanceBuilder();
+  }
 
-    public Builder withJsonLdId(URI jsonLdId)
-    {
-      this.jsonLdId = Optional.ofNullable(jsonLdId);
-      return this;
-    }
+  static PhoneNumberFieldInstanceBuilder phoneNumberFieldInstanceBuilder()
+  {
+    return new PhoneNumberFieldInstanceBuilder();
+  }
 
-    public Builder withJsonLdValue(String jsonLdValue)
-    {
-      this.jsonLdValue= Optional.ofNullable(jsonLdValue);
-      return this;
-    }
+  static EmailFieldInstanceBuilder emailFieldInstanceBuilder()
+  {
+    return new EmailFieldInstanceBuilder();
+  }
 
-    public Builder withCreatedBy(URI createdBy)
-    {
-      this.createdBy = Optional.ofNullable(createdBy);
-      return this;
-    }
+  static CheckboxFieldInstanceBuilder checkboxFieldInstanceBuilder()
+  {
+    return new CheckboxFieldInstanceBuilder();
+  }
 
-    public Builder withModifiedBy(URI modifiedBy)
-    {
-      this.modifiedBy = Optional.ofNullable(modifiedBy);
-      return this;
-    }
+  static ListFieldInstanceBuilder listFieldInstanceBuilder()
+  {
+    return new ListFieldInstanceBuilder();
+  }
 
-    public Builder withCreatedOn(OffsetDateTime createdOn)
-    {
-      this.createdOn = Optional.ofNullable(createdOn);
-      return this;
-    }
+  static ControlledTermFieldInstanceBuilder controlledTermFieldInstanceBuilder()
+  {
+    return new ControlledTermFieldInstanceBuilder();
+  }
 
-    public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-    {
-      this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
-      return this;
-    }
-
-    public Builder withLabel(String label)
-    {
-      this.label = Optional.ofNullable(label);
-      return this;
-    }
-
-    public Builder withNotation(String notation)
-    {
-      this.notation = Optional.ofNullable(notation);
-      return this;
-    }
-
-    public Builder withPrefLabel(String prefLabel)
-    {
-      this.prefLabel = Optional.ofNullable(prefLabel);
-      return this;
-    }
-
-    public Builder withLanguage(String language)
-    {
-      this.language = Optional.ofNullable(language);
-      return this;
-    }
-
-    public FieldInstanceArtifact build()
-    {
-      return new FieldInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
-        jsonLdValue, label, notation, prefLabel, language,
-        createdBy, modifiedBy, createdOn, lastUpdatedOn);
-    }
+  static LinkFieldInstanceBuilder linkFieldInstanceBuilder()
+  {
+    return new LinkFieldInstanceBuilder();
   }
 }
 
-record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
-                                   List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
+record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                    Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
-                                   Optional<String> language,
-                                   Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                   Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn)
+                                   Optional<String> language)
   implements FieldInstanceArtifact
 {
   public FieldInstanceArtifactRecord
   {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
     validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
@@ -184,10 +140,6 @@ record FieldInstanceArtifactRecord(Map<String, URI> jsonLdContext,
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
     validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
-    validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
-    validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
-    validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
-    validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
   }
 }
 

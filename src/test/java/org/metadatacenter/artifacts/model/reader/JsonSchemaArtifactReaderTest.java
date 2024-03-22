@@ -205,21 +205,18 @@ public class JsonSchemaArtifactReaderTest
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
     assertEquals("Simple instance", templateInstanceArtifact.name().get());
-    assertEquals(3, templateInstanceArtifact.fieldInstances().size());
+    assertEquals(3, templateInstanceArtifact.singleInstanceFieldInstances().size());
 
-    assertNotNull(templateInstanceArtifact.fieldInstances().get(nameFieldName));
-    assertEquals(1, templateInstanceArtifact.fieldInstances().get(nameFieldName).size());
-    assertEquals("en", templateInstanceArtifact.fieldInstances().get(nameFieldName).get(0).language().get());
+    assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(nameFieldName));
+    assertEquals("en", templateInstanceArtifact.singleInstanceFieldInstances().get(nameFieldName).language().get());
 
-    assertNotNull(templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName));
-    assertEquals(1, templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).size());
-    assertEquals("BrainActivity", templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).get(0).label().get());
-    assertEquals(brainActivityUri, templateInstanceArtifact.fieldInstances().get(controlledTermsFieldName).get(0).jsonLdId().get());
+    assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName));
+    assertEquals("BrainActivity", templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName).label().get());
+    assertEquals(brainActivityUri, templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName).jsonLdId().get());
 
-    assertNotNull(templateInstanceArtifact.fieldInstances().get(sizeFieldName));
-    assertEquals(1, templateInstanceArtifact.fieldInstances().get(sizeFieldName).size());
-    assertEquals("33", templateInstanceArtifact.fieldInstances().get(sizeFieldName).get(0).jsonLdValue().get());
-    assertEquals(XsdDatatype.INT.toUri(), templateInstanceArtifact.fieldInstances().get(sizeFieldName).get(0).jsonLdTypes().get(0));
+    assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName));
+    assertEquals("33", templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdValue().get());
+    assertEquals(XsdDatatype.INT.toUri(), templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdTypes().get(0));
   }
 
   @Test
@@ -230,8 +227,10 @@ public class JsonSchemaArtifactReaderTest
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
     assertEquals("Read Instance Test metadata", templateInstanceArtifact.name().get());
-    assertEquals(2, templateInstanceArtifact.fieldInstances().size());
-    assertEquals(2, templateInstanceArtifact.elementInstances().size());
+    assertEquals(1, templateInstanceArtifact.singleInstanceFieldInstances().size());
+    assertEquals(1, templateInstanceArtifact.multiInstanceFieldInstances().size());
+    assertEquals(1, templateInstanceArtifact.singleInstanceElementInstances().size());
+    assertEquals(1, templateInstanceArtifact.multiInstanceElementInstances().size());
   }
 
   @Test
@@ -242,18 +241,16 @@ public class JsonSchemaArtifactReaderTest
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
     assertEquals("Attribute-Value Field Test metadata", templateInstanceArtifact.name().get());
-    assertEquals(0, templateInstanceArtifact.fieldInstances().size());
-    assertEquals(0, templateInstanceArtifact.elementInstances().size());
 
-    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().size());
-    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A"));
-    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").size());
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 1"));
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field A").containsKey("Attribute-value instance field 2"));
-    assertNotNull(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B"));
-    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").size());
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 3"));
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstances().get("Attribute-value field B").containsKey("Attribute-value instance field 4"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().size());
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").containsKey("Attribute-value instance field 1"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").containsKey("Attribute-value instance field 2"));
+    assertNotNull(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B"));
+    assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").size());
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").containsKey("Attribute-value instance field 3"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").containsKey("Attribute-value instance field 4"));
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

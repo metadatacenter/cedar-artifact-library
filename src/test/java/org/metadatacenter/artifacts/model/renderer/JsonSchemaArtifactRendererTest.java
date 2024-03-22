@@ -7,11 +7,13 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
@@ -19,6 +21,10 @@ import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,7 +40,7 @@ import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
 import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
-import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -264,6 +270,93 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(validateJsonSchema(templateRendering));
 
     //System.out.println(templateRendering.toPrettyString());
+  }
+
+  @Test
+  public void testRenderBasicTemplateInstance()
+  {
+    String instanceName = "Template 1";
+    URI instanceUri = URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = URI.create("https://repo.metadatacenter.org/templates/3232");
+    String textField1Name = "Text Field 1";
+    String element1Name = "Element 1";
+    String textField2Name = "Text Field 2";
+    String attributeValueFieldGroupName = "Attribute-value Field A";
+    String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
+    String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
+
+    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
+    ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
+    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 3").build();
+    List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
+    textField2Instances.add(textField2Instance1);
+    textField2Instances.add(textField2Instance2);
+    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 2").build();
+    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+      .withName(instanceName)
+      .withJsonLdContextEntry(element1Name, URI.create("https://example.com/p1"))
+      .withJsonLdId(instanceUri)
+      .withIsBasedOn(isBasedOnTemplateUri)
+      .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
+      .withSingleInstanceElementInstance(element1Name, element1Instance)
+      .withAttributeValueFieldGroup(attributeValueFieldGroupName, attributeValueFieldInstances)
+      .build();
+
+    ObjectNode templateInstanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    assertEquals(instanceName, templateInstanceRendering.get(SCHEMA_ORG_NAME).asText());
+    assertEquals(instanceUri, URI.create(templateInstanceRendering.get(JSON_LD_ID).asText()));
+    assertEquals(isBasedOnTemplateUri, URI.create(templateInstanceRendering.get(SCHEMA_IS_BASED_ON).asText()));
+
+    // TODO Need more comprehensive testing here
+}
+
+  @Test
+  public void testRenderBasicElementInstance()
+  {
+    String instanceName = "Element 1";
+    URI instanceUri = URI.create("https://repo.metadatacenter.org/template-element-instances/6643");
+    String textField1Name = "Text Field 1";
+    String element1Name = "Element 1";
+    String textField2Name = "Text Field 2";
+    String attributeValueFieldGroupName = "Attribute-value Field A";
+    String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
+    String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
+
+    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
+    ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
+    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 3").build();
+    List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
+    textField2Instances.add(textField2Instance1);
+    textField2Instances.add(textField2Instance2);
+    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 2").build();
+    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
+
+    ElementInstanceArtifact elementInstanceArtifact = ElementInstanceArtifact.builder()
+      .withName(instanceName)
+      .withJsonLdContextEntry(element1Name, URI.create("https://example.com/p1"))
+      .withJsonLdId(instanceUri)
+      .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
+      .withSingleInstanceElementInstance(element1Name, element1Instance)
+      .withAttributeValueFieldGroup(attributeValueFieldGroupName, attributeValueFieldInstances)
+      .build();
+
+    ObjectNode elementInstanceRendering = jsonSchemaArtifactRenderer.renderElementInstanceArtifact(elementInstanceArtifact);
+
+    assertEquals(instanceName, elementInstanceRendering.get(SCHEMA_ORG_NAME).asText());
+    assertEquals(instanceUri, URI.create(elementInstanceRendering.get(JSON_LD_ID).asText()));
+
+    // TODO Need more comprehensive testing here
   }
 
   @Test

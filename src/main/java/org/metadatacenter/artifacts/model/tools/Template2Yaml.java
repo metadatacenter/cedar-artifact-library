@@ -30,6 +30,7 @@ public class Template2Yaml
   private static final String TEMPLATE_FILE_OPTION = "f";
   private static final String TEMPLATE_IRI_OPTION = "i";
   private static final String YAML_FILE_OPTION = "y";
+  private static final String YAML_EXPAND_OPTION = "x";
   private static final String CEDAR_RESOURCE_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
@@ -46,6 +47,7 @@ public class Template2Yaml
       String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
       String yamlFileName = command.getOptionValue(YAML_FILE_OPTION);
       File yamlFile = new File(yamlFileName);
+      boolean yamlExpand = command.hasOption(YAML_EXPAND_OPTION);
 
       ObjectNode templateObjectNode = null;
 
@@ -76,7 +78,7 @@ public class Template2Yaml
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(true);
+      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(yamlExpand);
 
       LinkedHashMap<String, Object> yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
@@ -117,6 +119,11 @@ public class Template2Yaml
       .required()
       .build();
 
+    Option yamlExpandOption = Option.builder(YAML_EXPAND_OPTION)
+      .argName("yaml-expand")
+      .desc("Expand YAML")
+      .build();
+
     Option resourceOption = Option.builder(CEDAR_RESOURCE_BASE_OPTION)
       .argName("cedar-resource-base")
       .hasArg()
@@ -136,6 +143,7 @@ public class Template2Yaml
     options.addOptionGroup(templateGroup);
 
     options.addOption(yamlOption);
+    options.addOption(yamlExpandOption);
     options.addOption(resourceOption);
     options.addOption(keyOption);
 
@@ -147,12 +155,16 @@ public class Template2Yaml
     if (command.hasOption(TEMPLATE_FILE_OPTION) && command.hasOption(TEMPLATE_IRI_OPTION))
       Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
+    if (!command.hasOption(YAML_FILE_OPTION))
+      Usage(options, "A YAML file path must be provided");
+
     if (command.hasOption(TEMPLATE_FILE_OPTION)) {
-      if (!command.hasOption(YAML_FILE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path and CEDAR API key must be provided when template file option is selected");
+      if (command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options, "A CEDAR API key should not be provided when template file option is selected");
     } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
-      if (!command.hasOption(YAML_FILE_OPTION) || !command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "YAML file path, Resource Server REST base, and CEDAR API key must be provided when template IRI option is selected");
+      if (!command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options,
+          "A Resource Server REST base and a CEDAR API key must be provided when template IRI option is selected");
     } else
       Usage(options, "Please specify a template file path or a template IRI");
   }
