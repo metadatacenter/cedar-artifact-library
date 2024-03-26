@@ -526,7 +526,7 @@ If the optional -x argument is present then a full YAML rendering of the artifac
 
 If the `-y` option is omitted the YAML is written to the console.
 
-Other file-based options are `-esf` for element schema artifacts, and `-fsf` for field schema artifacts.
+Other file-based options are `-esf` for element schema artifacts, `-fsf` for field schema artifacts, and `-tif` for template instance artifacts.
 
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
@@ -538,7 +538,7 @@ To generate a YAML file from a CEDAR template stored on the main CEDAR system:
                    -r https://resource.metadatacenter.org
                    -k <CEDAR API key>"
 
-Other IRI-based options are `-esi` for element schema artifacts, and `-fsi` for field schema artifacts.
+Other IRI-based options are `-esi` for element schema artifacts, `-fsi` for field schema artifacts, and `-tii` for template instance artifacts.
 
 Again, the -x argument is optional. If the `-y` option is omitted the YAML is written to the console.
 
