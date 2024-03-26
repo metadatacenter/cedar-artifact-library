@@ -79,8 +79,6 @@ public class Artifact2Yaml
 
       checkCommandLine(command, options);
 
-      String yamlOutputFileName = command.getOptionValue(YAML_FILE_OPTION);
-      File yamlOutputFile = new File(yamlOutputFileName);
       boolean yamlExpand = command.hasOption(YAML_EXPAND_OPTION);
 
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
@@ -124,10 +122,18 @@ public class Artifact2Yaml
         Usage(options, "No artifact file or IRI option specified");
 
       try {
+
         YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).disable(YAMLGenerator.Feature.SPLIT_LINES);
         ObjectMapper mapper = new ObjectMapper(yamlFactory);
-        mapper.writeValue(yamlOutputFile, yamlRendering);
-        System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
+
+        if (command.hasOption(YAML_FILE_OPTION)) {
+          String yamlOutputFileName = command.getOptionValue(YAML_FILE_OPTION);
+          File yamlOutputFile = new File(yamlOutputFileName);
+          mapper.writeValue(yamlOutputFile, yamlRendering);
+          System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
+        } else {
+          
+        }
       } catch (IOException e) {
         throw new RuntimeException("Error saving YAML file: " + e.getMessage());
       }
@@ -210,7 +216,6 @@ public class Artifact2Yaml
       .argName("yaml-output-file")
       .hasArg()
       .desc("YAML output file")
-      .required()
       .build();
 
     Option yamlExpandOption = Option.builder(YAML_EXPAND_OPTION)
@@ -251,9 +256,6 @@ public class Artifact2Yaml
 
   private static void checkCommandLine(CommandLine command, Options options)
   {
-    if (!command.hasOption(YAML_FILE_OPTION))
-      Usage(options, "A YAML file path must be provided");
-
     if (ARTIFACT_OPTIONS.stream().filter(o -> command.hasOption(o)).count() != 1)
       Usage(options, "Exactly one artifact option should be specified");
 
