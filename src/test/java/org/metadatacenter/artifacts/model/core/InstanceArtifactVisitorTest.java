@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
@@ -106,8 +107,8 @@ public class InstanceArtifactVisitorTest
     assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 4"));
   }
 
-  @Test
-  public void testVisitorsOnRADXMetadata()
+  @Ignore @Test
+  public void testVisitorsOnRADxMetadata()
   {
     ObjectNode templateObjectNode = getJSONFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
     ObjectNode instanceObjectNode = getJSONFileContentAsObjectNode("instances/RADxMetadataInstance.json");

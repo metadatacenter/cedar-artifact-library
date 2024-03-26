@@ -20,8 +20,12 @@
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-artifact-library</url>
   </scm>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
     <dependency>
       <groupId>org.metadatacenter</groupId>
@@ -159,12 +163,12 @@
           </execution>
 
           <execution>
-            <id>template2yaml</id>
+            <id>artifact2yaml</id>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Yaml</mainClass>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.Artifact2Yaml</mainClass>
             </configuration>
           </execution>
 

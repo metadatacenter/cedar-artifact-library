@@ -817,7 +817,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate a JSON Schema specification for a @context properties specification in a parent artifact
+   * Generate a JSON Schema specification for a @context properties specification in a parent schema artifact
    * <p></p>
    * Defined as follows:
    * <pre>

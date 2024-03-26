@@ -689,6 +689,13 @@ public class ArtifactRoundTripTest
     TemplateInstanceArtifact finalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
       finalRendering);
 
+    assertEquals(originalTemplateInstanceArtifact.jsonLdContext(), finalTemplateInstanceArtifact.jsonLdContext());
+    assertEquals(originalTemplateInstanceArtifact.childNames(), finalTemplateInstanceArtifact.childNames());
+    assertEquals(originalTemplateInstanceArtifact.singleInstanceFieldInstances(), finalTemplateInstanceArtifact.singleInstanceFieldInstances());
+    assertEquals(originalTemplateInstanceArtifact.singleInstanceElementInstances(), finalTemplateInstanceArtifact.singleInstanceElementInstances());
+    assertEquals(originalTemplateInstanceArtifact.multiInstanceFieldInstances(), finalTemplateInstanceArtifact.multiInstanceFieldInstances());
+    assertEquals(originalTemplateInstanceArtifact.multiInstanceElementInstances(), finalTemplateInstanceArtifact.multiInstanceElementInstances());
+
     assertEquals(originalTemplateInstanceArtifact, finalTemplateInstanceArtifact);
   }
 
