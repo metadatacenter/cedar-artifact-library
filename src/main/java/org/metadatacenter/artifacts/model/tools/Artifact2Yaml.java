@@ -41,7 +41,7 @@ public class Artifact2Yaml
   private static final String FIELD_SCHEMA_IRI_OPTION = "fsi";
   private static final String YAML_FILE_OPTION = "y";
   private static final String YAML_EXPAND_OPTION = "x";
-  private static final String CEDAR_RESOURCE_BASE_OPTION = "r";
+  private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
   private static final String TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION = "templates";
@@ -146,7 +146,7 @@ public class Artifact2Yaml
   {
     String cedarApiKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
     String artifactIri = command.getOptionValue(artifactCommandOption);
-    String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
+    String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_REST_API_BASE_OPTION);
     String requestURL = resourceServerBase + "/" + artifactResourcePathExtension + "/" +
       URLEncoder.encode(artifactIri, StandardCharsets.UTF_8);
     HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarApiKey);
@@ -222,10 +222,10 @@ public class Artifact2Yaml
       .desc("Expand YAML")
       .build();
 
-    Option resourceOption = Option.builder(CEDAR_RESOURCE_BASE_OPTION)
-      .argName("cedar-resource-base")
+    Option resourceOption = Option.builder(CEDAR_RESOURCE_REST_API_BASE_OPTION)
+      .argName("cedar-resource-rest-api-base")
       .hasArg()
-      .desc("CEDAR Resource Server base")
+      .desc("CEDAR Resource Server REST API base, e.g., https://resource.metadatacenter.org")
       .build();
 
     Option keyOption = Option.builder(CEDAR_APIKEY_OPTION)
@@ -259,12 +259,12 @@ public class Artifact2Yaml
       Usage(options, "Exactly one artifact option should be specified");
 
     if (ARTIFACT_FILE_OPTIONS.stream().anyMatch(o -> command.hasOption(o))) {
-      if (command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "A CEDAR API key should not be provided when an artifact file option is selected");
+      if (command.hasOption(CEDAR_RESOURCE_REST_API_BASE_OPTION) || command.hasOption(CEDAR_APIKEY_OPTION))
+        Usage(options, "A CEDAR Resource Server REST API base or API key should not be provided when an artifact file option is selected");
     } else if (ARTIFACT_IRI_OPTIONS.stream().anyMatch(o -> command.hasOption(o))) {
-      if (!command.hasOption(CEDAR_RESOURCE_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
+      if (!command.hasOption(CEDAR_RESOURCE_REST_API_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
         Usage(options,
-          "A Resource Server REST base and a CEDAR API key must be provided when an artifact IRI option is selected");
+          "A Resource Server REST API base and a CEDAR API key must be provided when an artifact IRI option is selected");
     } else
       Usage(options, "Please specify a template file path or a template IRI");
   }
