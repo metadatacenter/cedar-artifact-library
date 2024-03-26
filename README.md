@@ -509,7 +509,7 @@ To generate a TSV file from a CEDAR template stored on the main CEDAR system:
 
 ```
     mvn exec:java@template2tsv 
-      -Dexec.args="-i <template_iri> 
+      -Dexec.args="-i <artifact_iri> 
                    -t <output_TSV_filename> 
                    -s https://terminology.metadatacenter.org/bioportal/integrated-search/ 
                    -r https://resource.metadatacenter.org/templates/ 
@@ -531,11 +531,10 @@ To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 ```
     mvn exec:java@artifact2yaml 
       -Dexec.args="-x
-                   -tsi <template_iri> 
+                   -tsi <artifact_iri> 
                    -y <output_YAML_filename> 
                    -r https://resource.metadatacenter.org
                    -k <CEDAR API key>"
-
 
 Other IRI-base options include are `esi` for element schema artifacts, and `fsi` for field schema artifacts.
 
