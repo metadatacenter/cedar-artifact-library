@@ -119,10 +119,9 @@ public class Artifact2Yaml
 
         yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
       } else
-        Usage(options, "No artifact file or IRI option specified");
+        Usage(options, "No artifact file or artifact IRI option specified");
 
       try {
-
         YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).disable(YAMLGenerator.Feature.SPLIT_LINES);
         ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
@@ -177,39 +176,39 @@ public class Artifact2Yaml
     Options options = new Options();
 
     Option templateFileOption = Option.builder(TEMPLATE_SCHEMA_FILE_OPTION)
-      .argName("template-file")
+      .argName("template-schema_file")
       .hasArg()
-      .desc("Template file")
+      .desc("Template schema file")
       .build();
 
     Option elementFileOption = Option.builder(ELEMENT_SCHEMA_FILE_OPTION)
-      .argName("element-file")
+      .argName("element-schema_file")
       .hasArg()
-      .desc("Element file")
+      .desc("Element schema file")
       .build();
 
     Option fieldFileOption = Option.builder(FIELD_SCHEMA_FILE_OPTION)
-      .argName("field-file")
+      .argName("field-schema_file")
       .hasArg()
-      .desc("Field file")
+      .desc("Field schema file")
       .build();
 
     Option templateIriOption = Option.builder(TEMPLATE_SCHEMA_IRI_OPTION)
-      .argName("template-iri")
+      .argName("template-schema-iri")
       .hasArg()
-      .desc("Template IRI")
+      .desc("Template schema IRI")
       .build();
 
     Option elementIriOption = Option.builder(ELEMENT_SCHEMA_IRI_OPTION)
-      .argName("element-iri")
+      .argName("element-schema-iri")
       .hasArg()
-      .desc("Element IRI")
+      .desc("Element schema IRI")
       .build();
 
     Option fieldIriOption = Option.builder(FIELD_SCHEMA_IRI_OPTION)
-      .argName("field-iri")
+      .argName("field-schema-iri")
       .hasArg()
-      .desc("Field IRI")
+      .desc("Field schema IRI")
       .build();
 
     Option yamlOption = Option.builder(YAML_FILE_OPTION)
