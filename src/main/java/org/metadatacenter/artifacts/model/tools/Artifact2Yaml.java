@@ -15,6 +15,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Set;
 
 public class Artifact2Yaml
@@ -36,9 +38,11 @@ public class Artifact2Yaml
   private static final String TEMPLATE_SCHEMA_FILE_OPTION = "tsf";
   private static final String ELEMENT_SCHEMA_FILE_OPTION = "esf";
   private static final String FIELD_SCHEMA_FILE_OPTION = "fsf";
+  private static final String TEMPLATE_INSTANCE_FILE_OPTION = "tif";
   private static final String TEMPLATE_SCHEMA_IRI_OPTION = "tsi";
   private static final String ELEMENT_SCHEMA_IRI_OPTION = "esi";
   private static final String FIELD_SCHEMA_IRI_OPTION = "fsi";
+  private static final String TEMPLATE_INSTANCE_IRI_OPTION = "tii";
   private static final String YAML_FILE_OPTION = "y";
   private static final String YAML_EXPAND_OPTION = "x";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
@@ -47,26 +51,31 @@ public class Artifact2Yaml
   private static final String TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION = "templates";
   private static final String ELEMENT_SCHEMA_RESOURCE_PATH_EXTENSION = "template-elements";
   private static final String FIELD_SCHEMA_RESOURCE_PATH_EXTENSION = "template-fields";
-
-  private static final Set<String> ARTIFACT_OPTIONS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-    TEMPLATE_SCHEMA_FILE_OPTION,
-    ELEMENT_SCHEMA_FILE_OPTION,
-    FIELD_SCHEMA_FILE_OPTION,
-    TEMPLATE_SCHEMA_IRI_OPTION,
-    ELEMENT_SCHEMA_IRI_OPTION,
-    FIELD_SCHEMA_IRI_OPTION
-  )));
+  private static final String TEMPLATE_INSTANCE_RESOURCE_PATH_EXTENSION = "template-instances";
 
   private static final Set<String> ARTIFACT_FILE_OPTIONS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
     TEMPLATE_SCHEMA_FILE_OPTION,
     ELEMENT_SCHEMA_FILE_OPTION,
-    FIELD_SCHEMA_FILE_OPTION
+    FIELD_SCHEMA_FILE_OPTION,
+    TEMPLATE_INSTANCE_FILE_OPTION
   )));
 
   private static final Set<String> ARTIFACT_IRI_OPTIONS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
     TEMPLATE_SCHEMA_IRI_OPTION,
     ELEMENT_SCHEMA_IRI_OPTION,
-    FIELD_SCHEMA_IRI_OPTION
+    FIELD_SCHEMA_IRI_OPTION,
+    TEMPLATE_INSTANCE_IRI_OPTION
+  )));
+
+  private static final Set<String> ARTIFACT_OPTIONS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+    TEMPLATE_SCHEMA_FILE_OPTION,
+    ELEMENT_SCHEMA_FILE_OPTION,
+    FIELD_SCHEMA_FILE_OPTION,
+    TEMPLATE_INSTANCE_FILE_OPTION,
+    TEMPLATE_SCHEMA_IRI_OPTION,
+    ELEMENT_SCHEMA_IRI_OPTION,
+    FIELD_SCHEMA_IRI_OPTION,
+    TEMPLATE_INSTANCE_IRI_OPTION
   )));
 
   public static void main(String[] args) throws IOException
@@ -100,6 +109,11 @@ public class Artifact2Yaml
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
         yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+      } else if (command.hasOption(TEMPLATE_INSTANCE_FILE_OPTION)) {
+        ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, TEMPLATE_INSTANCE_FILE_OPTION);
+        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(fieldObjectNode);
+
+        yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
       } else if (command.hasOption(TEMPLATE_SCHEMA_IRI_OPTION)) {
         ObjectNode templateObjectNode =
           readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION, TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION);
@@ -118,6 +132,12 @@ public class Artifact2Yaml
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
         yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+      } else if (command.hasOption(TEMPLATE_INSTANCE_IRI_OPTION)) {
+        ObjectNode fieldObjectNode =
+          readArtifactJsonFromRestApi(command, TEMPLATE_INSTANCE_IRI_OPTION, TEMPLATE_INSTANCE_RESOURCE_PATH_EXTENSION);
+        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(fieldObjectNode);
+
+        yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
       } else
         Usage(options, "No artifact file or artifact IRI option specified");
 
@@ -175,40 +195,52 @@ public class Artifact2Yaml
   {
     Options options = new Options();
 
-    Option templateFileOption = Option.builder(TEMPLATE_SCHEMA_FILE_OPTION)
-      .argName("template-schema_file")
+    Option templateSchemaFileOption = Option.builder(TEMPLATE_SCHEMA_FILE_OPTION)
+      .argName("template-schema-file")
       .hasArg()
       .desc("Template schema file")
       .build();
 
-    Option elementFileOption = Option.builder(ELEMENT_SCHEMA_FILE_OPTION)
-      .argName("element-schema_file")
+    Option elementSchemaFileOption = Option.builder(ELEMENT_SCHEMA_FILE_OPTION)
+      .argName("element-schema-file")
       .hasArg()
       .desc("Element schema file")
       .build();
 
-    Option fieldFileOption = Option.builder(FIELD_SCHEMA_FILE_OPTION)
-      .argName("field-schema_file")
+    Option fieldSchemaFileOption = Option.builder(FIELD_SCHEMA_FILE_OPTION)
+      .argName("field-schema-file")
       .hasArg()
       .desc("Field schema file")
       .build();
 
-    Option templateIriOption = Option.builder(TEMPLATE_SCHEMA_IRI_OPTION)
+    Option templateInstanceFileOption = Option.builder(TEMPLATE_INSTANCE_FILE_OPTION)
+      .argName("template-instance-file")
+      .hasArg()
+      .desc("Template instance file")
+      .build();
+
+    Option templateSchemaIriOption = Option.builder(TEMPLATE_SCHEMA_IRI_OPTION)
       .argName("template-schema-iri")
       .hasArg()
       .desc("Template schema IRI")
       .build();
 
-    Option elementIriOption = Option.builder(ELEMENT_SCHEMA_IRI_OPTION)
+    Option elementSchemaIriOption = Option.builder(ELEMENT_SCHEMA_IRI_OPTION)
       .argName("element-schema-iri")
       .hasArg()
       .desc("Element schema IRI")
       .build();
 
-    Option fieldIriOption = Option.builder(FIELD_SCHEMA_IRI_OPTION)
+    Option fieldSchemaIriOption = Option.builder(FIELD_SCHEMA_IRI_OPTION)
       .argName("field-schema-iri")
       .hasArg()
       .desc("Field schema IRI")
+      .build();
+
+    Option templateInstanceIriOption = Option.builder(TEMPLATE_INSTANCE_IRI_OPTION)
+      .argName("template-instance-iri")
+      .hasArg()
+      .desc("Template instance IRI")
       .build();
 
     Option yamlOption = Option.builder(YAML_FILE_OPTION)
@@ -235,12 +267,14 @@ public class Artifact2Yaml
       .build();
 
     OptionGroup artifactGroup = new OptionGroup();
-    artifactGroup.addOption(templateFileOption);
-    artifactGroup.addOption(elementFileOption);
-    artifactGroup.addOption(fieldFileOption);
-    artifactGroup.addOption(templateIriOption);
-    artifactGroup.addOption(elementIriOption);
-    artifactGroup.addOption(fieldIriOption);
+    artifactGroup.addOption(templateSchemaFileOption);
+    artifactGroup.addOption(elementSchemaFileOption);
+    artifactGroup.addOption(fieldSchemaFileOption);
+    artifactGroup.addOption(templateInstanceFileOption);
+    artifactGroup.addOption(templateSchemaIriOption);
+    artifactGroup.addOption(elementSchemaIriOption);
+    artifactGroup.addOption(fieldSchemaIriOption);
+    artifactGroup.addOption(templateInstanceIriOption);
     artifactGroup.setRequired(true);
 
     options.addOptionGroup(artifactGroup);
