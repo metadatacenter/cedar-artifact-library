@@ -524,6 +524,8 @@ To generate a YAML file from a CEDAR template stored in a file:
 This will read a JSON-Schema-based template and convert it into a YAML file. 
 If the optional -x argument is present then a full YAML rendering of the artifact is generated; otherwise a compact form is produced.
 
+If the `-y` option is omitted the YAML is written to the console.
+
 Other file-base options include are `-esf` for element schema artifacts, and `-fsf` for field schema artifacts.
 
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
@@ -538,7 +540,8 @@ To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
 Other IRI-base options include are `-esi` for element schema artifacts, and `-fsi` for field schema artifacts.
 
-Again, the -x argument is optional.
+Again, the -x argument is optional. If the `-y` option is omitted the YAML is written to the console.
+
 
 ```
 ## Building the Library

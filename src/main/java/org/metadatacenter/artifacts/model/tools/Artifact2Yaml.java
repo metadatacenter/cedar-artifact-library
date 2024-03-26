@@ -132,10 +132,10 @@ public class Artifact2Yaml
           mapper.writeValue(yamlOutputFile, yamlRendering);
           System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
         } else {
-          
+          mapper.writeValue(System.out, yamlRendering);
         }
       } catch (IOException e) {
-        throw new RuntimeException("Error saving YAML file: " + e.getMessage());
+        throw new RuntimeException("Error writing YAML: " + e.getMessage());
       }
     } catch (ParseException e) {
       Usage(options, e.getMessage());
