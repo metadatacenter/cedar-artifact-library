@@ -375,7 +375,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.SECTION_BREAK, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateImageField()
@@ -393,7 +393,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.IMAGE, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateYouTubeField()
@@ -411,7 +411,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.YOUTUBE, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateRichTextField()
@@ -429,7 +429,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.RICHTEXT, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
 }
