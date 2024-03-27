@@ -658,7 +658,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-004.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate005()
+  @Test public void testRoundTripTemplate005()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-005.json");
   }
@@ -683,12 +683,12 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-009.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate010()
+  @Test public void testRoundTripTemplate010()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-010.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate011()
+  @Test public void testRoundTripTemplate011()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-011.json");
   }
@@ -713,7 +713,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-015.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate016()
+  @Test public void testRoundTripTemplate016()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-016.json");
   }
@@ -723,7 +723,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-017.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate018()
+  @Test public void testRoundTripTemplate018()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-018.json");
   }
@@ -733,7 +733,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-019.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate020()
+  @Test public void testRoundTripTemplate020()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-020.json");
   }
@@ -753,7 +753,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-023.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate24()
+  @Test public void testRoundTripTemplate24()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-024.json");
   }
@@ -773,7 +773,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-027.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate028()
+  @Test public void testRoundTripTemplate028()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-028.json");
   }
