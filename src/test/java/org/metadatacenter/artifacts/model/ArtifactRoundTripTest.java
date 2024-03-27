@@ -643,9 +643,159 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/InstanceWithNestedAttributeValues.json");
   }
 
+  @Test public void testRoundTripTemplate001()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-001.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate002()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-003.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate003()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-003.json");
+  }
+
+  @Test public void testRoundTripTemplate004()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-004.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate005()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-005.json");
+  }
+
+  @Test public void testRoundTripTemplate006()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-006.json");
+  }
+
+  @Test public void testRoundTripTemplate007()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-007.json");
+  }
+
+  @Test public void testRoundTripTemplate008()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-008.json");
+  }
+
   @Test public void testRoundTripTemplate009()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-009.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate010()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-010.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate011()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-011.json");
+  }
+
+  @Test public void testRoundTripTemplate012()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-012.json");
+  }
+
+  @Test public void testRoundTripTemplate013()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-013.json");
+  }
+
+  @Test public void testRoundTripTemplate014()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-014.json");
+  }
+
+  @Test public void testRoundTripTemplate015()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-015.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate016()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-016.json");
+  }
+
+  @Test public void testRoundTripTemplate017()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-017.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate018()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-018.json");
+  }
+
+  @Test public void testRoundTripTemplate019()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-019.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate020()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-020.json");
+  }
+
+  @Test public void testRoundTripTemplate021()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-021.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate022()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-022.json");
+  }
+
+  @Test public void testRoundTripTemplate023()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-023.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate24()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-024.json");
+  }
+
+  @Test public void testRoundTripTemplate025()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-025.json");
+  }
+
+  @Test public void testRoundTripTemplate026()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-026.json");
+  }
+
+  @Test public void testRoundTripTemplate027()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-027.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate028()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-028.json");
+  }
+
+  @Ignore @Test public void testRoundTripTemplate029()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-029.json");
+  }
+
+  @Test public void testRoundTripTemplate030()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-030.json");
+  }
+
+  @Test public void testRoundTripTemplate101()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
   }
 
   @Test public void testRoundTripSimpleInstance()
