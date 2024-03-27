@@ -9,6 +9,7 @@ import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_IMAGE;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_LINK;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_LIST;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_NUMERIC;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_PAGE_BREAK;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_PHONE_NUMBER;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_RADIO;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_RICH_TEXT;
@@ -31,6 +32,7 @@ public enum FieldInputType
   NUMERIC(FIELD_INPUT_TYPE_NUMERIC),
   TEMPORAL(FIELD_INPUT_TYPE_TEMPORAL),
   ATTRIBUTE_VALUE(FIELD_INPUT_TYPE_ATTRIBUTE_VALUE),
+  PAGE_BREAK(FIELD_INPUT_TYPE_PAGE_BREAK),
   SECTION_BREAK(FIELD_INPUT_TYPE_SECTION_BREAK),
   RICHTEXT(FIELD_INPUT_TYPE_RICH_TEXT),
   IMAGE(FIELD_INPUT_TYPE_IMAGE),
