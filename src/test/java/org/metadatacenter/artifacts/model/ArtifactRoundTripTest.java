@@ -778,11 +778,6 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-028.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate029()
-  {
-    testTemplateSchemaArtifactRoundTripFromFile("templates/template-029.json");
-  }
-
   @Test public void testRoundTripTemplate030()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-030.json");
