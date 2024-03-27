@@ -1202,7 +1202,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     } else if (fieldInputType.isNumeric()) {
       return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
-      String content = readRequiredString(uiNode, uiPath, UI_CONTENT);
+      Optional<String> content = readString(uiNode, uiPath, UI_CONTENT);
       return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
     } else
       return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);

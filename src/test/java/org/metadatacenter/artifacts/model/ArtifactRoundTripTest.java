@@ -643,10 +643,16 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/InstanceWithNestedAttributeValues.json");
   }
 
+  @Test public void testRoundTripTemplate009()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-009.json");
+  }
+
   @Test public void testRoundTripSimpleInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstance.json");
   }
+
 
   @Test public void testRoundTripSimpleInstanceWithNesting()
   {

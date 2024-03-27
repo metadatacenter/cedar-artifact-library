@@ -383,7 +383,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     } else if (fieldInputType.isNumeric()) {
       return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
-      String content = readRequiredString(sourceNode, path, CONTENT, true);
+      Optional<String> content = readString(sourceNode, path, CONTENT, true);
       return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
     } else
       return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);

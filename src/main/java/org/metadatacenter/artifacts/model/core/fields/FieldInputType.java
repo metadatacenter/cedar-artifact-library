@@ -71,7 +71,7 @@ public enum FieldInputType
 
   public boolean isAttributeValue() { return this == ATTRIBUTE_VALUE; }
 
-  public boolean isStatic() { return this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }
+  public boolean isStatic() { return this == PAGE_BREAK || this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }
 
   public static FieldInputType fromString(String text) {
     for (FieldInputType f : FieldInputType.values()) {
