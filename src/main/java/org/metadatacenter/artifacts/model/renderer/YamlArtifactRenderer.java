@@ -205,7 +205,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    *       - class: Translated Title
    *         source: DATACITE-VOCAB
    *         termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
-   *         type: OntologyClass
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
@@ -244,6 +243,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(INSTANCE, templateInstanceArtifact.name());
+
     if (templateInstanceArtifact.description().isPresent())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description());
 

@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Set;
 
 public class Artifact2Yaml
@@ -142,7 +141,11 @@ public class Artifact2Yaml
         Usage(options, "No artifact file or artifact IRI option specified");
 
       try {
-        YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).disable(YAMLGenerator.Feature.SPLIT_LINES);
+        YAMLFactory yamlFactory = new YAMLFactory().
+          disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
+          enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
+          enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
+          disable(YAMLGenerator.Feature.SPLIT_LINES);
         ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
         if (command.hasOption(YAML_FILE_OPTION)) {

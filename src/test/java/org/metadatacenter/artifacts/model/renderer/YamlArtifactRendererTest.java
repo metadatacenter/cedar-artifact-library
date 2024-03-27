@@ -1,13 +1,16 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
@@ -16,6 +19,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.XSD_STRING;
 
 public class YamlArtifactRendererTest {
@@ -90,5 +94,47 @@ public class YamlArtifactRendererTest {
 
     assertEquals(expectedRendering, rendering);
   }
+
+  @Ignore @Test
+  public void testRenderControlledTermField() {
+
+    String name = "Disease";
+    String description = "Disease field";
+    URI doidDiseaseBranchURI = URI.create("http://purl.obolibrary.org/obo/DOID_4");
+    String doidSource = "DOID";
+    String doidAcronym = "DOID";
+    String doidDiseaseBranchName = "disease";
+    URI pmrDiseaseBranchURI = URI.create("http://purl.bioontology.org/ontology/PMR.owl#Disease");
+    String pmrSource = "Physical Medicine and Rehabilitation (PMR)";
+    String pmrAcronym = "PMR";
+    String pmrDiseaseBranchName = "Disease";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+      withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
+      withName(name).
+      withDescription(description).
+      withBranchValueConstraint(doidDiseaseBranchURI, doidSource, doidAcronym, doidDiseaseBranchName, 0).
+      withBranchValueConstraint(pmrDiseaseBranchURI, pmrSource, pmrAcronym, pmrDiseaseBranchName, 0).
+      build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(FIELD, name);
+    expectedRendering.put(DESCRIPTION, description);
+    expectedRendering.put(INPUT_TYPE, FieldInputType.TEXTFIELD);
+    expectedRendering.put(DATATYPE, XSD_STRING);
+
+    List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
+
+
+    expectedRendering.put(VALUES, expectedValueConstraintsRendering);
+
+    assertEquals(expectedRendering, rendering);
+  }
+
+
 
 }
