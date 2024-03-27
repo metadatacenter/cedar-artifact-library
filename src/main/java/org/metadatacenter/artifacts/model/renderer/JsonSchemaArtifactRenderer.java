@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import org.metadatacenter.artifacts.model.core.Artifact;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -22,6 +21,7 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO;
@@ -34,8 +34,12 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_LD_LANGUAGE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ARRAY;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_FORMAT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ITEMS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_LENGTH;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ONE_OF;
@@ -153,17 +157,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       if (templateSchemaArtifact.isField(childName)) {
         FieldSchemaArtifact childSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childName);
 
-        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
+        if (childSchemaArtifact.isMultiple())
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childSchemaArtifact), childSchemaArtifact.minItems(),
+              childSchemaArtifact.maxItems()));
+        else
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
+            .put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
 
       } else if (templateSchemaArtifact.isElement(childName)) {
         ElementSchemaArtifact childSchemaArtifact = templateSchemaArtifact.getElementSchemaArtifact(childName);
 
-        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderElementSchemaArtifact(childSchemaArtifact));
+        if (childSchemaArtifact.isMultiple())
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+            renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childSchemaArtifact),
+              childSchemaArtifact.minItems(), childSchemaArtifact.maxItems()));
+        else
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
+            .put(childName, renderElementSchemaArtifact(childSchemaArtifact));
 
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
-
     return rendering;
   }
 
@@ -199,7 +214,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification());
 
-    rendering.put(JSON_SCHEMA_PROPERTIES, renderParentSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
+    rendering.put(JSON_SCHEMA_PROPERTIES,
+      renderParentSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
 
     // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -223,18 +239,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       if (elementSchemaArtifact.isField(childName)) {
         FieldSchemaArtifact childSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childName);
 
-        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
+        if (childSchemaArtifact.isMultiple())
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childSchemaArtifact),
+              childSchemaArtifact.minItems(), childSchemaArtifact.maxItems()));
+        else
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
+            .put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
 
       } else if (elementSchemaArtifact.isElement(childName)) {
         ElementSchemaArtifact childSchemaArtifact = elementSchemaArtifact.getElementSchemaArtifact(childName);
 
-        rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderElementSchemaArtifact(childSchemaArtifact));
+        if (childSchemaArtifact.isMultiple())
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+            renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childSchemaArtifact),
+              childSchemaArtifact.minItems(), childSchemaArtifact.maxItems()));
+        else
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
+            .put(childName, renderElementSchemaArtifact(childSchemaArtifact));
 
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
-
-
     return rendering;
   }
 
@@ -1475,4 +1501,31 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     return rendering;
   }
+
+  /**
+   * Generate a JSON Schema array specification wrapping a supplied JSON Schema Specification
+   * <p>
+   * Defined as follows:
+   * <pre>
+   * { "type": "array", "minItems": [minItems], "maxItems": [maxItems], "items": wrappedObjectNode }
+   * </pre>
+   */
+  private ObjectNode renderJsonSchemaArrayWrapperSpecification(ObjectNode wrappedObjectNode, Optional<Integer> minItems,
+    Optional<Integer> maxItems)
+  {
+    ObjectNode wrapperObjectNode = mapper.createObjectNode();
+
+    wrapperObjectNode.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_ARRAY);
+
+    if (minItems.isPresent())
+      wrapperObjectNode.put(JSON_SCHEMA_MIN_ITEMS, minItems.get());
+
+    if (maxItems.isPresent())
+      wrapperObjectNode.put(JSON_SCHEMA_MAX_ITEMS, maxItems.get());
+
+    wrapperObjectNode.put(JSON_SCHEMA_ITEMS, wrappedObjectNode);
+
+    return wrapperObjectNode;
+  }
+
 }
