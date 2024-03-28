@@ -743,7 +743,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-021.json");
   }
 
-  @Ignore @Test public void testRoundTripTemplate022()
+  @Test public void testRoundTripTemplate022()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-022.json");
   }
@@ -793,15 +793,56 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstance.json");
   }
 
-
   @Test public void testRoundTripSimpleInstanceWithNesting()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithNesting.json");
   }
 
+  // TODO We have the wrong instance here
   @Ignore @Test public void testRoundTripRADxMetadataInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADxMetadataInstance.json");
+  }
+
+  @Test public void testRoundTripElement001()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/element-001.json");
+  }
+
+  @Test public void testRoundTripElement002()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/element-002.json");
+  }
+
+  @Test public void testRoundTripElement003()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/element-003.json");
+  }
+
+  // TODO Nested field "Title" has no bibo entry in its @context
+  @Ignore @Test public void testRoundTripElement004()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
+  }
+
+  @Test public void testRoundTripField001()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-001.json");
+  }
+
+  @Test public void testRoundTripField002()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-002.json");
+  }
+
+  @Test public void testRoundTripField003()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-003.json");
+  }
+
+  @Test public void testRoundTripField004()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-004.json");
   }
 
   private void testTemplateSchemaArtifactRoundTripFromFile(String fileName)
@@ -820,6 +861,42 @@ public class ArtifactRoundTripTest
     TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
 
     assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
+  }
+
+  private void testElementSchemaArtifactRoundTripFromFile(String fileName)
+  {
+    ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    ElementSchemaArtifact originalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(
+      originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    ElementSchemaArtifact finalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(finalRendering);
+
+    assertEquals(originalElementSchemaArtifact, finalElementSchemaArtifact);
+  }
+
+  private void testFieldSchemaArtifactRoundTripFromFile(String fileName)
+  {
+    ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    FieldSchemaArtifact originalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(
+      originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(finalRendering);
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   private void testTemplateInstanceArtifactRoundTripFromFile(String fileName)

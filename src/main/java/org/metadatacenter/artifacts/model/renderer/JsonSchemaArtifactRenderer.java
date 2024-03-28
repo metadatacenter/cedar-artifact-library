@@ -595,7 +595,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = renderJsonLdArtifact(schemaArtifact);
 
     rendering.put(JSON_SCHEMA_SCHEMA, schemaArtifact.jsonSchemaSchemaUri().toString());
-    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
+    rendering.put(JSON_SCHEMA_TYPE, schemaArtifact.jsonSchemaType());
     rendering.put(JSON_SCHEMA_TITLE, schemaArtifact.jsonSchemaTitle());
     rendering.put(JSON_SCHEMA_DESCRIPTION, schemaArtifact.jsonSchemaDescription());
     rendering.put(SCHEMA_ORG_NAME, schemaArtifact.name());
