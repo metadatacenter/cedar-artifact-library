@@ -4,6 +4,7 @@ import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
+import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
@@ -20,7 +21,6 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueC
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -35,7 +35,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHECKBOX_FIE
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
@@ -43,9 +42,10 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLAC
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
@@ -73,6 +73,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PHONE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PUBLISHED_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RADIO_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REGEX;
@@ -85,18 +86,14 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_PAGE_
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_TEXT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_SECTION_BREAK;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_YOUTUBE_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_FORMAT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_ZONE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_COLLECTION;
 
@@ -522,7 +519,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       rendering.put(ID, schemaArtifact.jsonLdId().get());
 
     if (!isCompact && schemaArtifact.status().isPresent())
-      rendering.put(STATUS, schemaArtifact.status().get().toString());
+      rendering.put(STATUS, generateStatusName(schemaArtifact.status().get()));
 
     if (!isCompact)
       rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
@@ -547,6 +544,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     // TODO Generate YAML for annotations
 
     return rendering;
+  }
+
+
+  private String generateStatusName(Status status)
+  {
+    // TODO Use typesafe switch when available
+    switch (status) {
+    case DRAFT:
+      return DRAFT_STATUS;
+    case PUBLISHED:
+      return PUBLISHED_STATUS;
+    default:
+      throw new RuntimeException("Unknown statua " + status);
+    }
   }
 
   private String generateFieldTypeName(FieldSchemaArtifact fieldSchemaArtifact)

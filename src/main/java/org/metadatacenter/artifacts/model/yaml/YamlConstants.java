@@ -33,6 +33,8 @@ public class YamlConstants
   public static final String ID = "id";
   public static final String VERSION = "version";
   public static final String STATUS = "status";
+  public static final String DRAFT_STATUS = "draft";
+  public static final String PUBLISHED_STATUS = "published";
   public static final String MODEL_VERSION = "modelVersion";
   public static final String PREVIOUS_VERSION = "previousVersion";
   public static final String IS_BASED_ON = "isBasedOn";
