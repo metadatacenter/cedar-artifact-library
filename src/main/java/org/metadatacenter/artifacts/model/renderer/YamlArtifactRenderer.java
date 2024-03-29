@@ -477,8 +477,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (elementSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, elementSchemaArtifact.propertyUri().get().toString());
 
-    // TODO Generate YAML for UI.propertyLabels, propertyDescriptions
-    // TODO Generate YAML for childPropertyUris
+    // TODO Generate YAML for propertyLabels, propertyDescriptions
 
     return rendering;
   }
@@ -514,9 +513,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
+    // TODO Generate YAML for propertyLabels, propertyDescriptions
+
     // TODO valueRecommendation
-    // TODO propertyLabels
-    // TODO propertyDescriptions
 
     return rendering;
   }
