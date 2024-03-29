@@ -18,6 +18,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
@@ -80,7 +82,7 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, rendering);
   }
 
-  @Ignore @Test
+  @Test
   public void testRenderTextField() {
 
     String name = "Study Name";
@@ -105,11 +107,13 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, rendering);
   }
 
-  @Ignore @Test
+  @Ignore // TODO Need to fill in the value constraints
+  @Test
   public void testRenderControlledTermField() {
 
     String name = "Disease";
     String description = "Disease field";
+    URI fieldId = URI.create("https://repo.metadatacenter.org/template_fields/123");
     URI doidDiseaseBranchURI = URI.create("http://purl.obolibrary.org/obo/DOID_4");
     String doidSource = "DOID";
     String doidAcronym = "DOID";
@@ -120,25 +124,24 @@ public class YamlArtifactRendererTest {
     String pmrDiseaseBranchName = "Disease";
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
+      withJsonLdId(fieldId).
       withName(name).
       withDescription(description).
       withBranchValueConstraint(doidDiseaseBranchURI, doidSource, doidAcronym, doidDiseaseBranchName, 0).
       withBranchValueConstraint(pmrDiseaseBranchURI, pmrSource, pmrAcronym, pmrDiseaseBranchName, 0).
       build();
 
-    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(TYPE, TEXT_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(TYPE, FieldInputType.TEXTFIELD);
-    expectedRendering.put(DATATYPE, STRING);
+    expectedRendering.put(DATATYPE, IRI);
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
-
 
     expectedRendering.put(VALUES, expectedValueConstraintsRendering);
 

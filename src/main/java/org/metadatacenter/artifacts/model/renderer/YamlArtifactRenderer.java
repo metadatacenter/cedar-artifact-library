@@ -204,8 +204,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifact(elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> configurationRendering = renderElementConfiguration(elementSchemaArtifact);
 
-    rendering.put(CONFIGURATION, renderElementConfiguration(elementSchemaArtifact));
+    if (!configurationRendering.isEmpty())
+      rendering.put(CONFIGURATION, configurationRendering);
 
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(elementSchemaArtifact.getChildSchemas()));
@@ -239,6 +241,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering
       = renderSchemaArtifact(fieldSchemaArtifact, generateFieldTypeName(fieldSchemaArtifact));
+    LinkedHashMap<String, Object> configurationRendering = renderFieldConfiguration(fieldSchemaArtifact);
+
+    if (!configurationRendering.isEmpty())
+      rendering.put(CONFIGURATION, configurationRendering);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
@@ -258,7 +264,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       renderValueConstraintValues(valueConstraints, rendering);
     }
 
-    rendering.put(CONFIGURATION, renderFieldConfiguration(fieldSchemaArtifact));
+    if (!configurationRendering.isEmpty())
+      rendering.put(CONFIGURATION, renderFieldConfiguration(fieldSchemaArtifact));
 
     return rendering;
   }
