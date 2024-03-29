@@ -69,10 +69,10 @@ public class YamlConstants
   public static final String CLASS = "class";
   public static final String BRANCH = "branch";
   public static final String VALUE_SET = "valueSet";
-  public static final String VALUE_SET_COLLECTION = "collection";
   public static final String LITERAL = "label";
   public static final String SELECTED_BY_DEFAULT = "selected";
   public static final String MAX_DEPTH = "maxDepth";
+  public static final String NUM_TERMS = "numTerms";
   public static final String CONTENT = "content";
   public static final String HEADER = "header";
   public static final String FOOTER = "footer";

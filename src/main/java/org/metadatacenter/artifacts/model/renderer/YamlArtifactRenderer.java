@@ -44,6 +44,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
@@ -97,7 +98,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_COLLECTION;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object>>
 {
@@ -300,9 +300,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    * e.g.,
    * <pre>
    * values:
-   *       - ontology: Human Disease Ontology
+   *       - type: ontology
+   *         name: Human Disease Ontology
    *         acronym: DOID
-   *         termUri: "https://data.bioontology.org/ontologies/DOID"
+   *         iri: "https://data.bioontology.org/ontologies/DOID"
    *       - branch: Disease
    *         acronym: DPCO
    *         termUri: "http://purl.org/twc/dpo/ont/Disease"
@@ -321,36 +322,42 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
         LinkedHashMap<String, Object> ontologyValueConstraintRendering = new LinkedHashMap<>();
-        ontologyValueConstraintRendering.put(ONTOLOGY, ontologyValueConstraint.name());
+        ontologyValueConstraintRendering.put(TYPE, ONTOLOGY);
+        ontologyValueConstraintRendering.put(NAME, ontologyValueConstraint.name());
         ontologyValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
         ontologyValueConstraintRendering.put(IRI, ontologyValueConstraint.uri());
+        if (ontologyValueConstraint.numTerms().isPresent())
+          ontologyValueConstraintRendering.put(NUM_TERMS, ontologyValueConstraint.numTerms().get());
+
         valuesRendering.add(ontologyValueConstraintRendering);
       }
 
       for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
         LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
-        valueSetValueConstraintRendering.put(VALUE_SET, valueSetValueConstraint.name());
-        valueSetValueConstraintRendering.put(VALUE_SET_COLLECTION, valueSetValueConstraint.vsCollection());
+        valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
+        valueSetValueConstraintRendering.put(NAME, valueSetValueConstraint.name());
+        valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
         valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
         valuesRendering.add(valueSetValueConstraintRendering);
       }
 
       for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
         LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
-        classValueConstraintRendering.put(CLASS, classValueConstraint.label());
-        classValueConstraintRendering.put(IRI, classValueConstraint.uri());
-        classValueConstraintRendering.put(LABEL, classValueConstraint.prefLabel());
-        classValueConstraintRendering.put(TYPE, classValueConstraint.type());
+        classValueConstraintRendering.put(TYPE, CLASS);
         classValueConstraintRendering.put(SOURCE, classValueConstraint.source());
+        classValueConstraintRendering.put(NAME, classValueConstraint.prefLabel());
+        classValueConstraintRendering.put(IRI, classValueConstraint.uri());
+        classValueConstraintRendering.put(LABEL, classValueConstraint.label());
         valuesRendering.add(classValueConstraintRendering);
       }
 
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
         LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
-        branchValueConstraintRendering.put(BRANCH, branchValueConstraint.name());
-        branchValueConstraintRendering.put(IRI, branchValueConstraint.uri());
-        branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
+        branchValueConstraintRendering.put(TYPE, BRANCH);
         branchValueConstraintRendering.put(SOURCE, branchValueConstraint.source());
+        branchValueConstraintRendering.put(NAME, branchValueConstraint.name());
+        branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
+        branchValueConstraintRendering.put(IRI, branchValueConstraint.uri());
         branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
         valuesRendering.add(branchValueConstraintRendering);
       }
