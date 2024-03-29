@@ -1,39 +1,39 @@
 package org.metadatacenter.artifacts.model.reader;
 
-import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
-import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.ElementUi;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
-import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
-import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
-import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
-import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
-import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
-import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
-import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.ui.ElementUi;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
+import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
+import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTINUE_PREVIOUS_LINE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
@@ -55,35 +56,34 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TYPE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ORDER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PAGES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_DESCRIPTIONS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_LABELS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_URI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED_VALUE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_ALT_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SKOS_PREF_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_FORMAT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_ZONE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION_ENABLED;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -105,6 +105,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MIN_STRI
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MULTIPLE_CHOICE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_RECOMMENDED_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_REQUIRED_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_UNIT_OF_MEASURE;
@@ -199,7 +200,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
     Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
     Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
-    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_URI);
+    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_IRI);
 
     return readElementSchemaArtifact(sourceNode, path, name, isMultiple, minItems, maxItems, propertyUri);
   }
@@ -228,11 +229,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String name = readRequiredString(sourceNode, path, FIELD, false);
+    String name = readRequiredString(sourceNode, path, NAME, false);
     boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
     Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
     Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
-    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_URI);
+    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_IRI);
 
     return readFieldSchemaArtifact(sourceNode, path, name, isMultiple, minItems, maxItems, propertyUri);
   }
@@ -334,8 +335,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<XsdDatatype> datatype = readXsdDatatype(sourceNode, path, DATATYPE);
     FieldUi fieldUi = readFieldUi(sourceNode, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUES, fieldUi.inputType());
-    Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREF_LABEL);
-    List<String> skosAlternateLabels = readStringArray(sourceNode, path, SKOS_ALT_LABEL);
+    Optional<String> skosPrefLabel = readString(sourceNode, path, LABEL);
+    List<String> skosAlternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
@@ -368,10 +369,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    FieldInputType fieldInputType = readFieldInputType(sourceNode, path, INPUT_TYPE);
-    boolean valueRecommendationEnabled = readBoolean(sourceNode, path, VALUE_RECOMMENDATION_ENABLED, false);
+    FieldInputType fieldInputType = readFieldInputType(sourceNode, path, TYPE);
+    boolean valueRecommendation = readBoolean(sourceNode, path, VALUE_RECOMMENDATION, false);
     boolean hidden = readBoolean(sourceNode, path, HIDDEN, false);
-    boolean recommendedValue = readBoolean(sourceNode, path, RECOMMENDED_VALUE, false);
+    boolean recommendedValue = readBoolean(sourceNode, path, RECOMMENDED, false);
     boolean continuePreviousLine = readBoolean(sourceNode, path, CONTINUE_PREVIOUS_LINE, false);
 
     if (fieldInputType.isTemporal()) {
@@ -386,7 +387,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       Optional<String> content = readString(sourceNode, path, CONTENT, true);
       return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
     } else
-      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
+      return FieldUi.create(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
   }
 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,
@@ -397,6 +398,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
+      boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
       boolean multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
       Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
       Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
@@ -424,13 +426,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
           Optional.empty();
         return Optional.of(
           NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
-            numericDefaultValue, requiredValue, multipleChoice));
+            numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
         Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asTemporalDefaultValue()) :
           Optional.empty();
         return Optional.of(
-          TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, multipleChoice));
+          TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, recommendedValue, multipleChoice));
 
       } else if (fieldInputType == FieldInputType.LINK || (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()))) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
@@ -438,14 +440,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
           Optional.empty();
         return Optional.of(
           ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
-            actions, requiredValue, multipleChoice));
+            actions, requiredValue, recommendedValue,multipleChoice));
       } else {
         Optional<TextDefaultValue> textDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asTextDefaultValue()) :
           Optional.empty();
         return Optional.of(
-          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, multipleChoice,
-            regex));
+          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, recommendedValue,
+            multipleChoice, regex));
       }
     } else
       return Optional.empty();
@@ -578,7 +580,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String granularityString = readRequiredString(sourceNode, path, fieldName, false);
 
     if (!TEMPORAL_GRANULARITIES.contains(granularityString))
-      throw new ArtifactParseException("Invalid granularity" + granularityString, INPUT_TYPE, path);
+      throw new ArtifactParseException("Invalid granularity" + granularityString, TYPE, path);
 
     return TemporalGranularity.fromString(granularityString);
   }
@@ -592,7 +594,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return defaultInputTimeFormat;
 
     if (!TIME_FORMATS.contains(inputTimeFormatString.get()))
-      throw new ArtifactParseException("Invalid input time format" + inputTimeFormatString.get(), INPUT_TYPE, path);
+      throw new ArtifactParseException("Invalid input time format" + inputTimeFormatString.get(), TYPE, path);
 
     return InputTimeFormat.fromString(inputTimeFormatString.get());
   }
@@ -602,7 +604,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String inputTypeString = readRequiredString(sourceNode, path, fieldName, false);
 
     if (!INPUT_TYPES.contains(inputTypeString))
-      throw new ArtifactParseException("Invalid field input type" + inputTypeString, INPUT_TYPE, path);
+      throw new ArtifactParseException("Invalid field input type" + inputTypeString, TYPE, path);
 
     return FieldInputType.fromString(inputTypeString);
   }

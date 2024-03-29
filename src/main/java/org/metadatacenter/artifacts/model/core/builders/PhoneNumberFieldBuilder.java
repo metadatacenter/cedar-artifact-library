@@ -49,9 +49,9 @@ public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public PhoneNumberFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+  public PhoneNumberFieldBuilder withValueRecommendation(boolean valueRecommendation)
   {
-    fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+    fieldUiBuilder.withValueRecommendation(valueRecommendation);
     return this;
   }
 

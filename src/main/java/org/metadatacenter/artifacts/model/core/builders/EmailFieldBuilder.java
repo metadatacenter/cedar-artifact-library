@@ -48,9 +48,9 @@ public final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+  public EmailFieldBuilder withValueRecommendation(boolean valueRecommendation)
   {
-    fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+    fieldUiBuilder.withValueRecommendation(valueRecommendation);
     return this;
   }
 

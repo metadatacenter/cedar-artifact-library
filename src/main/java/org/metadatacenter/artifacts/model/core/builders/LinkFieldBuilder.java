@@ -37,9 +37,9 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public LinkFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+  public LinkFieldBuilder withValueRecommendation(boolean valueRecommendation)
   {
-    fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+    fieldUiBuilder.withValueRecommendation(valueRecommendation);
     return this;
   }
 

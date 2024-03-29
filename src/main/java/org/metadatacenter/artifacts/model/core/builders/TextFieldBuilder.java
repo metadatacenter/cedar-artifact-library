@@ -31,6 +31,12 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
+  public TextFieldBuilder withRecommendedValue(boolean recommendedValue)
+  {
+    valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+    return this;
+  }
+
   public TextFieldBuilder withDefaultValue(String defaultValue)
   {
     valueConstraintsBuilder.withDefaultValue(defaultValue);
@@ -49,9 +55,9 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public TextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+  public TextFieldBuilder withValueRecommendation(boolean valueRecommendation)
   {
-    fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+    fieldUiBuilder.withValueRecommendation(valueRecommendation);
     return this;
   }
 

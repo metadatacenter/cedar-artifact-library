@@ -35,10 +35,10 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
   static ValueConstraints create(List<OntologyValueConstraint> ontologies, List<ValueSetValueConstraint> valueSets, List<ClassValueConstraint> classes, List<BranchValueConstraint> branches,
     Optional<ControlledTermDefaultValue> defaultValue, List<ControlledTermValueConstraintsAction> actions,
-    boolean requiredValue, boolean multipleChoice)
+    boolean requiredValue, boolean recommendedValue, boolean multipleChoice)
   {
     return new ControlledTermValueConstraintsRecord(ontologies, valueSets, classes, branches, actions,
-      defaultValue, requiredValue, multipleChoice);
+      defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
   static Builder builder()
@@ -55,6 +55,7 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
     private final List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
     private Optional<ControlledTermDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
+    private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
     private Builder()
@@ -103,6 +104,10 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
       return this;
     }
 
+    public Builder withRecommendedValue(boolean recommendedValue) {
+      this.recommendedValue = recommendedValue;
+      return this;
+    }
     public Builder withMultipleChoice(boolean multipleChoice)
     {
       this.multipleChoice = multipleChoice;
@@ -112,7 +117,7 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
     public ValueConstraints build()
     {
       return new ControlledTermValueConstraintsRecord(ontologies, valueSets, classes, branches, actions,
-        defaultValue, requiredValue, multipleChoice);
+        defaultValue, requiredValue, recommendedValue, multipleChoice);
     }
   }
 }
@@ -121,7 +126,8 @@ record ControlledTermValueConstraintsRecord(List<OntologyValueConstraint> ontolo
                               List<ValueSetValueConstraint> valueSets, List<ClassValueConstraint> classes,
                               List<BranchValueConstraint> branches, List<ControlledTermValueConstraintsAction> actions,
                               Optional<ControlledTermDefaultValue> defaultValue,
-                              boolean requiredValue, boolean multipleChoice) implements ControlledTermValueConstraints {
+                              boolean requiredValue, boolean recommendedValue, boolean multipleChoice)
+  implements ControlledTermValueConstraints {
 
   public ControlledTermValueConstraintsRecord
   {

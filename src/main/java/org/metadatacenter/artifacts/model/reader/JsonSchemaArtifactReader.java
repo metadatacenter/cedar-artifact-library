@@ -2,47 +2,46 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.checkerframework.checker.units.qual.A;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
-import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
-import org.metadatacenter.artifacts.model.core.ui.ElementUi;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
-import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
-import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
-import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
-import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
-import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
-import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
-import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
-import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
-import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
-import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
-import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
-import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.ui.ElementUi;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
+import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
+import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -138,6 +137,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_T
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUM_TERMS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ONTOLOGIES;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_PREFLABEL;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_RECOMMENDED_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_REQUIRED_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SOURCE;
@@ -874,6 +874,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
+      boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
       boolean multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
       Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
       Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
@@ -901,32 +902,33 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           Optional.empty();
         return Optional.of(
           NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
-            numericDefaultValue, requiredValue, multipleChoice));
+            numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
         Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asTemporalDefaultValue()) :
           Optional.empty();
-        return Optional.of(TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, multipleChoice));
+        return Optional.of(TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue,
+          requiredValue, recommendedValue, multipleChoice));
 
       } else if (fieldInputType == FieldInputType.LINK) {
         Optional<LinkDefaultValue> linkDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asLinkDefaultValue()) :
           Optional.empty();
-        return Optional.of(LinkValueConstraints.create(linkDefaultValue, requiredValue, multipleChoice));
+        return Optional.of(LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty())) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
           Optional.empty();
         return Optional.of(
           ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
-            actions, requiredValue, multipleChoice));
+            actions, requiredValue, recommendedValue, multipleChoice));
       } else {
         Optional<TextDefaultValue> textDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asTextDefaultValue()) :
           Optional.empty();
         return Optional.of(
-          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, multipleChoice,
-            regex));
+          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, recommendedValue,
+            multipleChoice, regex));
       }
     } else
       return Optional.empty();
@@ -1189,7 +1191,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + fieldName;
 
     FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath, UI_FIELD_INPUT_TYPE);
-    boolean valueRecommendationEnabled = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
+    boolean valueRecommendation = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
     boolean recommendedValue = readBoolean(uiNode, uiPath, UI_RECOMMENDED_VALUE, false);
     boolean continuePreviousLine = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
@@ -1206,7 +1208,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       Optional<String> content = readString(uiNode, uiPath, UI_CONTENT);
       return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
     } else
-      return FieldUi.create(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
+      return FieldUi.create(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
   }
 
   private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName)

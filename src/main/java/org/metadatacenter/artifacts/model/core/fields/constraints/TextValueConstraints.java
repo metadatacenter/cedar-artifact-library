@@ -27,9 +27,10 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
 
   static TextValueConstraints create(Optional<Integer> minLength, Optional<Integer> maxLength,
     Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals,
-    boolean requiredValue, boolean multipleChoice, Optional<String> regex)
+    boolean requiredValue, boolean recommendedValue, boolean multipleChoice, Optional<String> regex)
   {
-    return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice, regex);
+    return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue,
+      recommendedValue, multipleChoice, regex);
   }
 
   static Builder builder() {
@@ -42,6 +43,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     private Optional<TextDefaultValue> defaultValue = Optional.empty();
     private final List<LiteralValueConstraint> literals = new ArrayList<>();
     private boolean requiredValue = false;
+    private boolean recommendedValue = false;
     private boolean multipleChoice = false;
     private Optional<String> regex = Optional.empty();
 
@@ -73,6 +75,10 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
+    public Builder withRecommendedValue(boolean recommendedValue) {
+      this.recommendedValue = recommendedValue;
+      return this;
+    }
     public Builder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
@@ -85,14 +91,16 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
 
     public ValueConstraints build()
     {
-      return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice, regex);
+      return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue,
+        recommendedValue, multipleChoice, regex);
     }
   }
 }
 
 record TextValueConstraintsRecord(Optional<Integer> minLength, Optional<Integer> maxLength,
                                   Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals,
-                                  boolean requiredValue, boolean multipleChoice, Optional<String> regex) implements TextValueConstraints {
+                                  boolean requiredValue, boolean recommendedValue, boolean multipleChoice,
+                                  Optional<String> regex) implements TextValueConstraints {
 
   public TextValueConstraintsRecord
   {

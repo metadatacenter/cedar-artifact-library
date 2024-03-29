@@ -233,8 +233,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
 
-    // TODO Generate JSON Schema field representation for isMultiple, minItem, maxItems
-
     for (String childName : elementSchemaArtifact.elementUi().order()) {
       if (elementSchemaArtifact.isField(childName)) {
         FieldSchemaArtifact childSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childName);
@@ -329,7 +327,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     }
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
-    // TODO Generate JSON Schema field representation for isMultiple, minItem, maxItems
 
     return rendering;
   }

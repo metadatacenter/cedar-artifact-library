@@ -9,6 +9,9 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
   FieldInputType inputType();
 
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  boolean recommendedValue();
+
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean hidden();
 
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -16,9 +19,6 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean continuePreviousLine();
-
-  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  boolean recommendedValue();
 
   @JsonIgnore
   default boolean isStatic() { return inputType().isStatic(); }
@@ -77,10 +77,10 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
   @JsonIgnore default boolean isYouTube() {return inputType() == FieldInputType.YOUTUBE;}
 
-  static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendationEnabled,
+  static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendation,
     boolean recommendedValue, boolean continuePreviousLine)
   {
-    return new FieldUiRecord(fieldInputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
+    return new FieldUiRecord(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
   }
 
   static Builder builder()
@@ -92,7 +92,7 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
   {
     private FieldInputType inputType;
     private boolean hidden = false;
-    private boolean valueRecommendationEnabled = false;
+    private boolean valueRecommendation = false;
     boolean recommendedValue = false;
     boolean continuePreviousLine = false;
 
@@ -106,9 +106,9 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
       return this;
     }
 
-    public Builder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public Builder withValueRecommendation(boolean valueRecommendation)
     {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
+      this.valueRecommendation = valueRecommendation;
       return this;
     }
 
@@ -132,7 +132,7 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
     public FieldUi build()
     {
-      return new FieldUiRecord(inputType, hidden, valueRecommendationEnabled, recommendedValue, continuePreviousLine);
+      return new FieldUiRecord(inputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
     }
   }
 }

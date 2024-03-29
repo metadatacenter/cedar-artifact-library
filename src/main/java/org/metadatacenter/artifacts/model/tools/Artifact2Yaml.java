@@ -43,7 +43,7 @@ public class Artifact2Yaml
   private static final String FIELD_SCHEMA_IRI_OPTION = "fsi";
   private static final String TEMPLATE_INSTANCE_IRI_OPTION = "tii";
   private static final String YAML_FILE_OPTION = "y";
-  private static final String YAML_EXPAND_OPTION = "x";
+  private static final String COMPACT_YAML_OPTION = "c";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
@@ -87,10 +87,10 @@ public class Artifact2Yaml
 
       checkCommandLine(command, options);
 
-      boolean yamlExpand = command.hasOption(YAML_EXPAND_OPTION);
+      boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
 
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(yamlExpand);
+      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml);
       LinkedHashMap<String, Object> yamlRendering = null;
 
       if (command.hasOption(TEMPLATE_SCHEMA_FILE_OPTION)) {
@@ -246,15 +246,15 @@ public class Artifact2Yaml
       .desc("Template instance IRI")
       .build();
 
-    Option yamlOption = Option.builder(YAML_FILE_OPTION)
+    Option yamlFileOption = Option.builder(YAML_FILE_OPTION)
       .argName("yaml-output-file")
       .hasArg()
       .desc("YAML output file")
       .build();
 
-    Option yamlExpandOption = Option.builder(YAML_EXPAND_OPTION)
-      .argName("yaml-expand")
-      .desc("Expand YAML")
+    Option compactYamlOption = Option.builder(COMPACT_YAML_OPTION)
+      .argName("compact-yaml")
+      .desc("Compact YAML")
       .build();
 
     Option resourceOption = Option.builder(CEDAR_RESOURCE_REST_API_BASE_OPTION)
@@ -282,8 +282,8 @@ public class Artifact2Yaml
 
     options.addOptionGroup(artifactGroup);
 
-    options.addOption(yamlOption);
-    options.addOption(yamlExpandOption);
+    options.addOption(yamlFileOption);
+    options.addOption(compactYamlOption);
     options.addOption(resourceOption);
     options.addOption(keyOption);
 

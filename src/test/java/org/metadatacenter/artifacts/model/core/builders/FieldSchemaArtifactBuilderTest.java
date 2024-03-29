@@ -23,15 +23,14 @@ public class FieldSchemaArtifactBuilderTest
     Integer minLength = 0;
     Integer maxLength = 10;
     String regex = "*";
-    boolean valueRecommendationEnabled = false;
+    boolean valueRecommendation = false;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
-      withRegex(regex).
-      withValueRecommendationEnabled(valueRecommendationEnabled).
+      withRegex(regex).withValueRecommendation(valueRecommendation).
       build();
 
     Assert.assertEquals(FieldInputType.TEXTFIELD, fieldSchemaArtifact.fieldUi().inputType());
@@ -40,7 +39,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
     Assert.assertEquals(regex, fieldSchemaArtifact.regex().get());
-    Assert.assertEquals(valueRecommendationEnabled, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
+    Assert.assertEquals(valueRecommendation, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
   }
 
   @Test public void testCreateNumericField()

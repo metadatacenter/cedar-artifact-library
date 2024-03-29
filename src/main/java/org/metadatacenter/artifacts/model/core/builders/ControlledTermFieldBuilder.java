@@ -92,9 +92,9 @@ public final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+  public ControlledTermFieldBuilder withValueRecommendation(boolean valueRecommendation)
   {
-    fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+    fieldUiBuilder.withValueRecommendation(valueRecommendation);
     return this;
   }
 
