@@ -42,7 +42,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(TEMPLATE, name);
+    expectedRendering.put(TYPE, TEMPLATE);
+    expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
 
     assertEquals(expectedRendering, rendering);

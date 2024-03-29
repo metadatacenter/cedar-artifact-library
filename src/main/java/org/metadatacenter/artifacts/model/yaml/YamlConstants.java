@@ -12,11 +12,11 @@ public class YamlConstants
   public static final String RADIO_FIELD = "radio-field";
   public static final String CHECKBOX_FIELD = "checkbox-field";
   public static final String SINGLE_SELECT_LIST_FIELD = "single-select-list-field";
-  public static final String ULTI_SELECT_LIST_FIELD = "multi-select-list-field";
+  public static final String MULTI_SELECT_LIST_FIELD = "multi-select-list-field";
   public static final String PHONE_FIELD = "phone-field";
   public static final String EMAIL_FIELD = "email-field";
   public static final String LINK_FIELD = "link-field";
-  public static final String ATTRIBUTE_VALUE = "attribute-value-field";
+  public static final String ATTRIBUTE_VALUE_FIELD = "attribute-value-field";
   public static final String STATIC_PAGE_BREAK = "static-page-break";
   public static final String STATIC_SECTION_BREAK = "static-section-break";
   public static final String STATIC_IMAGE = "static-image";

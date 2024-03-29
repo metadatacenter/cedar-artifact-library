@@ -28,9 +28,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ATTRIBUTE_VALUE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHECKBOX_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
@@ -39,6 +43,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLAC
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
@@ -46,7 +52,9 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
@@ -58,17 +66,30 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTI_SELECT_LIST_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUMERIC_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PHONE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RADIO_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_IMAGE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_PAGE_BREAK;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_TEXT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_SECTION_BREAK;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_YOUTUBE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_FORMAT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_ZONE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
@@ -77,8 +98,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_COLLECTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object>>
 {
@@ -143,8 +162,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     // TODO Generate YAML for header/footer
     // TODO Generate YAML for UI.propertyLabels, UI.propertyDescriptions
     // TODO Generate YAML for childPropertyUris
-    // TODO Generate YAML for annotations
-    // TODO Generate YAML for provenance
 
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(templateSchemaArtifact.getChildSchemas()));
@@ -179,10 +196,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    */
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderElementConfiguration(elementSchemaArtifact);
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifact(elementSchemaArtifact, ELEMENT);
 
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(elementSchemaArtifact.getChildSchemas()));
+
+    rendering.put(CONFIGURATION, renderElementConfiguration(elementSchemaArtifact));
 
     return rendering;
   }
@@ -195,25 +214,27 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    * type: controlled-term-field
    * name: Disease
    * values:
-   *       - ontology: Human Disease Ontology
+   *       - type: ontology
+   *         ontologyName: Human Disease Ontology
    *         acronym: DOID
-   *         termUri: "https://data.bioontology.org/ontologies/DOID"
-   *       - branch: Disease
+   *         iri: "https://data.bioontology.org/ontologies/DOID"
+   *       - type: branch
+   *         ontologyName: Disease
    *         acronym: DPCO
-   *         termUri: "http://purl.org/twc/dpo/ont/Disease"
-   *       - class: Translated Title
-   *         source: DATACITE-VOCAB
-   *         termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *         iri: "http://purl.org/twc/dpo/ont/Disease"
+   *       - type: class
+   *         ontologyName: Translated Title
+   *         acronym: DATACITE-VOCAB
+   *         iri: "http://purl.org/datacite/v4.4/TranslatedTitle"
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderFieldConfiguration(fieldSchemaArtifact);
+    LinkedHashMap<String, Object> rendering
+      = renderSchemaArtifact(fieldSchemaArtifact, generateFieldTypeName(fieldSchemaArtifact));
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
-
-    rendering.put(TYPE, fieldSchemaArtifact.fieldUi().inputType());
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
@@ -231,6 +252,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
       renderValueConstraintValues(valueConstraints, rendering);
     }
+
+    rendering.put(CONFIGURATION, renderFieldConfiguration(fieldSchemaArtifact));
 
     // TODO Generate YAML for _valueConstraints.actions
 
@@ -502,19 +525,18 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    rendering.put(artifactTypeName, schemaArtifact.name());
+    rendering.put(TYPE, artifactTypeName);
+
+    rendering.put(NAME, schemaArtifact.name());
 
     if (!schemaArtifact.description().isEmpty())
       rendering.put(DESCRIPTION, schemaArtifact.description());
 
-    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
-      rendering.put(ID, schemaArtifact.jsonLdId().get());
-
-    if (!isCompact && schemaArtifact.identifier().isPresent())
+    if (schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    if (!isCompact && schemaArtifact.version().isPresent())
-      rendering.put(VERSION, schemaArtifact.version().get().toString());
+    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
+      rendering.put(ID, schemaArtifact.jsonLdId().get());
 
     if (!isCompact && schemaArtifact.status().isPresent())
       rendering.put(STATUS, schemaArtifact.status().get().toString());
@@ -528,7 +550,66 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (!isCompact && schemaArtifact.derivedFrom().isPresent())
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
+    if (!isCompact) {
+      if (schemaArtifact.createdBy().isPresent())
+        rendering.put(CREATED_BY, schemaArtifact.createdBy().get().toString());
+      if (schemaArtifact.createdOn().isPresent())
+        rendering.put(CREATED_ON, schemaArtifact.createdOn().get().toString());
+      if (schemaArtifact.lastUpdatedOn().isPresent())
+        rendering.put(LAST_UPDATED_ON, schemaArtifact.lastUpdatedOn().get().toString());
+      if (schemaArtifact.modifiedBy().isPresent())
+        rendering.put(MODIFIED_BY, schemaArtifact.lastUpdatedOn().get().toString());
+    }
+
+    // TODO Generate YAML for annotations
+
     return rendering;
+  }
+
+  private String generateFieldTypeName(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    // TODO Use typesafe switch when available
+    switch (fieldSchemaArtifact.fieldUi().inputType()) {
+    case TEXTFIELD:
+      return TEXT_FIELD;
+    case TEXTAREA:
+      return TEXT_AREA_FIELD;
+    case PHONE_NUMBER:
+      return PHONE_FIELD;
+    case EMAIL:
+      return EMAIL_FIELD;
+    case RADIO:
+      return RADIO_FIELD;
+    case CHECKBOX:
+      return CHECKBOX_FIELD;
+    case LIST:
+      if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
+        .multipleChoice())
+        return MULTI_SELECT_LIST_FIELD;
+      else
+        return SINGLE_SELECT_LIST_FIELD;
+    case LINK:
+      return LINK_FIELD;
+    case NUMERIC:
+      return NUMERIC_FIELD;
+    case TEMPORAL:
+      return TEMPORAL_FIELD;
+    case ATTRIBUTE_VALUE:
+      return ATTRIBUTE_VALUE_FIELD;
+    case PAGE_BREAK:
+      return STATIC_PAGE_BREAK;
+    case SECTION_BREAK:
+      return STATIC_SECTION_BREAK;
+    case RICHTEXT:
+      return STATIC_RICH_TEXT;
+    case IMAGE:
+      return STATIC_IMAGE;
+    case YOUTUBE:
+      return STATIC_YOUTUBE_FIELD;
+    default:
+      throw new RuntimeException("Unknown field input type " + fieldSchemaArtifact.fieldUi().inputType() + " for field "
+        + fieldSchemaArtifact.name());
+    }
   }
 }
 
