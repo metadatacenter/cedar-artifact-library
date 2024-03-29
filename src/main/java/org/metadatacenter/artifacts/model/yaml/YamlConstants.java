@@ -47,7 +47,7 @@ public class YamlConstants
   public static final String CONTINUE_PREVIOUS_LINE = "continuePreviousLine";
   public static final String DATATYPE = "datatype";
   public static final String IRI = "iri";
-  public static final String STRING = "xsd:string";
+  public static final String STRING = "string";
   public static final String TIME_ZONE = "timeZone";
   public static final String GRANULARITY = "granularity";
   public static final String TIME_FORMAT = "timeFormat";

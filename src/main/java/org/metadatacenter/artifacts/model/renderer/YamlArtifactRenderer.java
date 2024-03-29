@@ -198,10 +198,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifact(elementSchemaArtifact, ELEMENT);
 
+    rendering.put(CONFIGURATION, renderElementConfiguration(elementSchemaArtifact));
+
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, getChildSchemasRendering(elementSchemaArtifact.getChildSchemas()));
-
-    rendering.put(CONFIGURATION, renderElementConfiguration(elementSchemaArtifact));
 
     return rendering;
   }
@@ -236,17 +236,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderCoreValueConstraints(valueConstraints, rendering);
-    }
-
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
       List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
       rendering.put(ALT_LABEL, skosAlternateLabelRendering);
     }
 
-    renderFieldUi(fieldSchemaArtifact.fieldUi(), rendering);
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderCoreValueConstraints(valueConstraints, rendering);
+    }
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
@@ -254,8 +252,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     }
 
     rendering.put(CONFIGURATION, renderFieldConfiguration(fieldSchemaArtifact));
-
-    // TODO Generate YAML for _valueConstraints.actions
 
     return rendering;
   }
@@ -289,26 +285,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     // TODO Need to generate YAML for children of template instance
 
     return rendering;
-  }
-
-  private void renderFieldUi(FieldUi fieldUi, LinkedHashMap<String, Object> rendering)
-  {
-    if (fieldUi.hidden())
-      rendering.put(HIDDEN, true);
-
-    if (!isCompact && fieldUi.valueRecommendationEnabled())
-      rendering.put(VALUE_RECOMMENDATION, true);
-
-    if (fieldUi.isStatic())
-      rendering.put(CONTENT, fieldUi.asStaticFieldUi()._content());
-    else if (fieldUi.isTemporal()) {
-
-      rendering.put(TIME_ZONE, fieldUi.asTemporalFieldUi().timezoneEnabled());
-
-      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity());
-
-      rendering.put(TIME_FORMAT, fieldUi.asTemporalFieldUi().inputTimeFormat());
-    }
   }
 
   /**
@@ -444,6 +420,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       if (textValueConstraints.maxLength().isPresent())
         rendering.put(MAX_LENGTH, textValueConstraints.maxLength().get());
     }
+
+    // TODO Generate YAML for _valueConstraints.actions
   }
 
   private List<LinkedHashMap<String, Object>> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {
@@ -491,6 +469,17 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      if (fieldSchemaArtifact.valueConstraints().get().requiredValue())
+        rendering.put(REQUIRED, true);
+
+      if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
+        rendering.put(RECOMMENDED, true);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().hidden())
+      rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
+
     if (fieldSchemaArtifact.isMultiple())
       rendering.put(MULTIPLE, true);
 
@@ -502,17 +491,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
-
-    if (fieldSchemaArtifact.fieldUi().hidden())
-      rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      if (fieldSchemaArtifact.valueConstraints().get().requiredValue())
-        rendering.put(REQUIRED, fieldSchemaArtifact.propertyUri().get().toString());
-
-      if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
-        rendering.put(RECOMMENDED, fieldSchemaArtifact.propertyUri().get().toString());
-    }
 
     // TODO valueRecommendation
     // TODO propertyLabels
