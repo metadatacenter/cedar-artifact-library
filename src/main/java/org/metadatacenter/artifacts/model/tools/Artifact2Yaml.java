@@ -42,7 +42,7 @@ public class Artifact2Yaml
   private static final String ELEMENT_SCHEMA_IRI_OPTION = "esi";
   private static final String FIELD_SCHEMA_IRI_OPTION = "fsi";
   private static final String TEMPLATE_INSTANCE_IRI_OPTION = "tii";
-  private static final String YAML_FILE_OPTION = "y";
+  private static final String YAML_OUTPUT_FILE_OPTION = "y";
   private static final String COMPACT_YAML_OPTION = "c";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
@@ -148,8 +148,8 @@ public class Artifact2Yaml
           disable(YAMLGenerator.Feature.SPLIT_LINES);
         ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
-        if (command.hasOption(YAML_FILE_OPTION)) {
-          String yamlOutputFileName = command.getOptionValue(YAML_FILE_OPTION);
+        if (command.hasOption(YAML_OUTPUT_FILE_OPTION)) {
+          String yamlOutputFileName = command.getOptionValue(YAML_OUTPUT_FILE_OPTION);
           File yamlOutputFile = new File(yamlOutputFileName);
           mapper.writeValue(yamlOutputFile, yamlRendering);
           System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
@@ -246,7 +246,7 @@ public class Artifact2Yaml
       .desc("Template instance IRI")
       .build();
 
-    Option yamlFileOption = Option.builder(YAML_FILE_OPTION)
+    Option yamlOutputFileOption = Option.builder(YAML_OUTPUT_FILE_OPTION)
       .argName("yaml-output-file")
       .hasArg()
       .desc("YAML output file")
@@ -282,7 +282,7 @@ public class Artifact2Yaml
 
     options.addOptionGroup(artifactGroup);
 
-    options.addOption(yamlFileOption);
+    options.addOption(yamlOutputFileOption);
     options.addOption(compactYamlOption);
     options.addOption(resourceOption);
     options.addOption(keyOption);
