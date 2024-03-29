@@ -75,6 +75,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VER
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RADIO_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REGEX;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
@@ -365,6 +366,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
       rendering.put(VALUES, valuesRendering);
   }
 
+  // TODO Clean this up
   private void renderCoreValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
     // TODO Use typesafe switch when available
@@ -413,6 +415,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (valueConstraints instanceof TextValueConstraints) {
       TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints;
+
+      if (textValueConstraints.regex().isPresent())
+        rendering.put(REGEX, textValueConstraints.regex().get());
 
       if (textValueConstraints.minLength().isPresent())
         rendering.put(MIN_LENGTH, textValueConstraints.minLength().get());

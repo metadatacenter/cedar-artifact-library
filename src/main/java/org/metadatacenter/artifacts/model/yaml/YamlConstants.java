@@ -55,6 +55,7 @@ public class YamlConstants
   public static final String DEFAULT = "default";
   public static final String MIN_VALUE = "minValue";
   public static final String MAX_VALUE = "maxValue";
+  public static final String REGEX = "regex";
   public static final String DECIMAL_PLACES = "decimalPlaces";
   public static final String MIN_LENGTH = "minLength";
   public static final String MAX_LENGTH = "maxLength";
