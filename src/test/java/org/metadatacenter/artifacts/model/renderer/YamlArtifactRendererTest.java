@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
@@ -30,11 +32,15 @@ public class YamlArtifactRendererTest {
 
     String name = "Study";
     String description = "Study template";
+    String header = "Study header";
+    String footer = "Study footer";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
       withName(name).
       withDescription(description).
+      withHeader(header).
+      withFooter(footer).
       build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
@@ -45,6 +51,8 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    expectedRendering.put(HEADER, header);
+    expectedRendering.put(FOOTER, footer);
 
     assertEquals(expectedRendering, rendering);
   }

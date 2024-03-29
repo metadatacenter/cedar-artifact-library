@@ -42,6 +42,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLAC
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
@@ -158,6 +160,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     LinkedHashMap<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
 
     // TODO Generate YAML for header/footer
+
+    if (templateSchemaArtifact.templateUi().header().isPresent())
+      rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
+
+    if (templateSchemaArtifact.templateUi().footer().isPresent())
+      rendering.put(FOOTER, templateSchemaArtifact.templateUi().footer().get());
+
     // TODO Generate YAML for UI.propertyLabels, UI.propertyDescriptions
     // TODO Generate YAML for childPropertyUris
 
