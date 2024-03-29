@@ -498,10 +498,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (fieldSchemaArtifact.fieldUi().hidden())
       rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
 
-    if (fieldSchemaArtifact.isMultiple())
+    if (fieldSchemaArtifact.isMultiple() &&
+      !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.fieldUi().isAttributeValue())
       rendering.put(MULTIPLE, true);
+    else if (fieldSchemaArtifact.fieldUi().isList())
+      rendering.put(MULTIPLE, false);
 
-    if (fieldSchemaArtifact.minItems().isPresent())
+    if (fieldSchemaArtifact.minItems().isPresent()
+      && !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.fieldUi().isAttributeValue())
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
     if (fieldSchemaArtifact.maxItems().isPresent())
