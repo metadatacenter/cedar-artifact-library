@@ -32,7 +32,7 @@ TemplateSchemaArtifact templateSchemaArtifact
 
 The `TemplateSchemaArtifact` contains a full representation of a CEDAR template.
 
-The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element and field artifacts.
+The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element, field and instance artifacts.
 
 ## Serializing Schema Artifacts
 
@@ -61,10 +61,10 @@ A class called `YamlArtifactRenderer` provides methods to serialize CEDAR schema
 For example, we can generate a YAML serialization of a CEDAR template as follows:
 
 ```java
-// Set to true for a complete YAML representation of an artifact, false for a condensed representation
-boolean isExpanded = true;
+// Set to 'false' for a complete YAML representation of an artifact, 'true' for a condensed representation
+boolean isCompact = false;
 // Create the renderer
-YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
+YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isCompact);
 // Generate a map containing a YAML representation of the template
 LinkedHashMap<String, Object> yamlRendering 
   = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
@@ -74,9 +74,10 @@ This map can be written to a file using the Jackson Library as follows:
 
 ```java
 YAMLFactory yamlFactory = new YAMLFactory()
-  .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-  .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-  .disable(YAMLGenerator.Feature.SPLIT_LINES);
+          disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
+          enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
+          enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
+          disable(YAMLGenerator.Feature.SPLIT_LINES);
 ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
 LinkedHashMap<String, Object> yamlRendering 

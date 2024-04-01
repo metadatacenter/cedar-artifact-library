@@ -14,20 +14,24 @@ import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ATTRIBUTE_VALUE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
@@ -40,15 +44,14 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLACES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DELETE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
@@ -68,10 +71,12 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MOVE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTI_SELECT_LIST_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUMERIC_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PHONE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
@@ -84,14 +89,19 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_IMAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_PAGE_BREAK;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_TEXT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_SECTION_BREAK;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_YOUTUBE_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
@@ -99,7 +109,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
 
-public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object>>
+public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
   private final boolean isCompact;
 
@@ -158,8 +168,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   public LinkedHashMap<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
-
-    // TODO Generate YAML for header/footer
 
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
@@ -223,18 +231,18 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
    * type: controlled-term-field
    * name: Disease
    * values:
-   *       - type: ontology
-   *         ontologyName: Human Disease Ontology
-   *         acronym: DOID
-   *         iri: "https://data.bioontology.org/ontologies/DOID"
-   *       - type: branch
-   *         ontologyName: Disease
-   *         acronym: DPCO
-   *         iri: "http://purl.org/twc/dpo/ont/Disease"
-   *       - type: class
-   *         ontologyName: Translated Title
-   *         acronym: DATACITE-VOCAB
-   *         iri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *   - branch: Disease
+   *     acronym: DPCO
+   *     termUri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: ontology
+   *     source: DOID
+   *     name: Human Disease Ontology
+   *     acronym: DOID
+   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *   - class: Translated Title
+   *     source: DATACITE-VOCAB
+   *     termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *     type: OntologyClass
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
@@ -262,6 +270,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
       renderValueConstraintValues(valueConstraints, rendering);
+      renderValueConstraintActions(valueConstraints, rendering);
     }
 
     if (!configurationRendering.isEmpty())
@@ -302,28 +311,29 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
   }
 
   /**
-   * Generate YAML rendering of a field schema artifact _valueConstraints specification
+   * Generate YAML rendering of a field schema artifact _valueConstraints values specification
    * <p>
    * e.g.,
    * <pre>
    * values:
-   *       - type: ontology
-   *         name: Human Disease Ontology
-   *         acronym: DOID
-   *         iri: "https://data.bioontology.org/ontologies/DOID"
-   *       - branch: Disease
-   *         acronym: DPCO
-   *         termUri: "http://purl.org/twc/dpo/ont/Disease"
-   *       - class: Translated Title
-   *         source: DATACITE-VOCAB
-   *         termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
-   *         type: OntologyClass
+   *   - type: ontology
+   *     name: Human Disease Ontology
+   *     acronym: DOID
+   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *   - branch: Disease
+   *     acronym: DPCO
+   *     termUri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - class: Translated Title
+   *     source: DATACITE-VOCAB
+   *     termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *     type: OntologyClass
    * </pre>
    */
   private void renderValueConstraintValues(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
 
+    // TODO Use typesafe switch when available
     if (valueConstraints instanceof ControlledTermValueConstraints) {
       ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
 
@@ -362,9 +372,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
         LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
         branchValueConstraintRendering.put(TYPE, BRANCH);
         branchValueConstraintRendering.put(SOURCE, branchValueConstraint.source());
-        branchValueConstraintRendering.put(NAME, branchValueConstraint.name());
-        branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
-        branchValueConstraintRendering.put(IRI, branchValueConstraint.uri());
+        branchValueConstraintRendering.put(SOURCE_NAME, branchValueConstraint.name());
+        branchValueConstraintRendering.put(SOURCE_ACRONYM, branchValueConstraint.acronym());
+        branchValueConstraintRendering.put(SOURCE_IRI, branchValueConstraint.uri());
         branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
         valuesRendering.add(branchValueConstraintRendering);
       }
@@ -384,6 +394,52 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
 
     if (!valuesRendering.isEmpty())
       rendering.put(VALUES, valuesRendering);
+  }
+
+  /**
+   * Generate YAML rendering of a field schema artifact _valueConstraints action specification
+   * <p>
+   * e.g.,
+   * <pre>
+   * actions:
+   *   - action: delete
+   *     termIri: http://www.semanticweb.org/navyarenjith/ontologies/2021/3/untitled-ontology-5#Baton
+   *     sourceIri: https://data.bioontology.org/ontologies/HOME
+   *     sourceAcronym: HOME
+   *   - action: move
+   *     to: 0
+   *     termIri: http://www.semanticweb.org/navyarenjith/ontologies/2021/3/untitled-ontology-5#Denial_Of_Counseling_Preventive_Service
+   *     sourceIri: https://data.bioontology.org/ontologies/HOME
+   *     sourceAcronym: HOME
+   * </pre>
+   */
+  private void renderValueConstraintActions(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  {
+    List<LinkedHashMap<String, Object>> actionsRendering = new ArrayList<>();
+
+    if (valueConstraints instanceof ControlledTermValueConstraints) {
+      ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
+
+      if (!controlledTermValueConstraints.actions().isEmpty()) {
+
+        for (ControlledTermValueConstraintsAction action : controlledTermValueConstraints.actions()) {
+
+          LinkedHashMap<String, Object> actionRendering = new LinkedHashMap<>();
+          actionRendering.put(ACTION, generateActionName(action.action()));
+          actionRendering.put(TERM_IRI, action.termUri());
+          actionRendering.put(SOURCE_ACRONYM, action.source());
+          if (action.sourceUri().isPresent())
+            actionRendering.put(SOURCE_IRI, action.sourceUri().get());
+          if (action.to().isPresent())
+            actionRendering.put(ACTION_TO, action.to().get());
+
+          actionsRendering.add(actionRendering);
+        }
+      }
+    }
+
+    if (!actionsRendering.isEmpty())
+      rendering.put(ACTIONS, actionsRendering);
   }
 
   // TODO Clean this up
@@ -582,7 +638,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<Map<String, Object
     case PUBLISHED:
       return PUBLISHED_STATUS;
     default:
-      throw new RuntimeException("Unknown statua " + status);
+      throw new RuntimeException("Unknown status " + status);
+    }
+  }
+
+  private String generateActionName(ValueConstraintsActionType actionType)
+  {
+    // TODO Use typesafe switch when available
+    switch (actionType) {
+    case MOVE:
+      return MOVE_ACTION;
+    case DELETE:
+      return DELETE_ACTION;
+    default:
+      throw new RuntimeException("Unknown action type " + actionType);
     }
   }
 
