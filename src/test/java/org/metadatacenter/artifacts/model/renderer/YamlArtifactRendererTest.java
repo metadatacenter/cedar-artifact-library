@@ -117,7 +117,6 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, actualRendering);
   }
 
-  @Ignore // TODO See why actions fail the comparison test
   @Test
   public void testRenderControlledTermField() {
 
@@ -187,7 +186,7 @@ public class YamlArtifactRendererTest {
     List<LinkedHashMap<String, Object>> expectedActionsRendering = new ArrayList<>();
 
     LinkedHashMap<String, Object>  actionRendering = new LinkedHashMap<>();
-    actionRendering.put(ACTION, actionType);
+    actionRendering.put(ACTION, actionType.toString());
     actionRendering.put(TERM_IRI, actionTermUri);
     actionRendering.put(SOURCE_ACRONYM, actionSourceAcronym);
     actionRendering.put(SOURCE_IRI, actionSourceIri);
@@ -197,7 +196,7 @@ public class YamlArtifactRendererTest {
 
     expectedRendering.put(ACTIONS, expectedActionsRendering);
 
-    assertEquals(expectedRendering, actualRendering);
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
 
 }
