@@ -600,8 +600,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.modelVersion().toString());
 
-    if (schemaArtifact.identifier().isPresent())
-      rendering.put(SCHEMA_ORG_IDENTIFIER, schemaArtifact.identifier().get());
+    if (schemaArtifact.identifier().isPresent()) {
+      String identifier = schemaArtifact.identifier().get();
+      if (!identifier.isEmpty())
+        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
+    }
 
     if (schemaArtifact.version().isPresent())
       rendering.put(PAV_VERSION, schemaArtifact.version().get().toString());
@@ -609,12 +612,17 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (schemaArtifact.status().isPresent())
       rendering.put(BIBO_STATUS, schemaArtifact.status().get().toString());
 
-    if (schemaArtifact.previousVersion().isPresent())
-      rendering.put(PAV_PREVIOUS_VERSION,
-        schemaArtifact.previousVersion().get().toString());
+    if (schemaArtifact.previousVersion().isPresent()) {
+      String previousVersion = schemaArtifact.previousVersion().get().toString();
+      if (!previousVersion.isEmpty())
+        rendering.put(PAV_PREVIOUS_VERSION, previousVersion);
+    }
 
-    if (schemaArtifact.derivedFrom().isPresent())
-      rendering.put(PAV_DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
+    if (schemaArtifact.derivedFrom().isPresent()) {
+      String derivedFrom = schemaArtifact.derivedFrom().get().toString();
+      if (!derivedFrom.isEmpty())
+        rendering.put(PAV_DERIVED_FROM, derivedFrom);
+    }
 
     return rendering;
   }
@@ -727,8 +735,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_VALUE, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_VALUE);
+    rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
+    rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_VALUE);
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     return rendering;

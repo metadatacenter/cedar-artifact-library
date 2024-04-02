@@ -1481,6 +1481,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     String uriValue = jsonNode.asText();
 
+    if (uriValue.isEmpty())
+      return Optional.empty();
+
     if (XsdDatatype.isKnownXsdDatatype(uriValue)) {
       return Optional.of(XsdDatatype.fromString(uriValue).toUri());
     } else {
