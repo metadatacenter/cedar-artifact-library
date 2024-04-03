@@ -827,8 +827,8 @@ public class ArtifactRoundTripTest
     testElementSchemaArtifactRoundTripFromFile("elements/element-001.json");
   }
 
-  @Ignore // TODO Find error
-  @Test public void testRoundTripElement002()
+  // TODO Find error
+  @Ignore @Test public void testRoundTripElement002()
   {
     testElementSchemaArtifactRoundTripFromFile("elements/element-002.json");
   }
@@ -914,12 +914,16 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateJsonSchema(originalRendering));
 
+    assertTrue(validateFieldSchemaArtifact(originalRendering));
+
     FieldSchemaArtifact originalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(
       originalRendering);
 
     ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
+
+    assertTrue(validateFieldSchemaArtifact(finalRendering));
 
     FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(finalRendering);
 
@@ -991,6 +995,19 @@ public class ArtifactRoundTripTest
   {
     try {
       ValidationReport validationReport = cedarModelValidator.validateTemplateElement(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private boolean validateFieldSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateField(schemaNode);
       if (validationReport.getValidationStatus().equals("true"))
         return true;
       else
