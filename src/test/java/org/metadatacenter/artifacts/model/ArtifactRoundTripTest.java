@@ -1016,5 +1016,4 @@ public class ArtifactRoundTripTest
       return false;
     }
   }
-
 }

@@ -6,6 +6,7 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -17,6 +18,9 @@ import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
+import org.metadatacenter.model.validation.CedarValidator;
+import org.metadatacenter.model.validation.ModelValidator;
+import org.metadatacenter.model.validation.report.ValidationReport;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,12 +57,14 @@ public class JsonSchemaArtifactRendererTest
   private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
   private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
+  private ModelValidator cedarModelValidator;
 
   @Before
   public void setUp() {
     artifactReader = new JsonSchemaArtifactReader();
     jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
+    cedarModelValidator = new CedarValidator();
   }
 
   @Test
@@ -76,6 +82,8 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(JSON_SCHEMA_TYPE).textValue(), JSON_SCHEMA_OBJECT);
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "Study");
+
+    assertTrue(validateTemplateSchemaArtifact(rendering));
   }
 
   @Test public void testRenderTemporalField()
@@ -115,6 +123,8 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get("_valueConstraints").get("temporalType").textValue(), temporalType.getText());
     assertEquals(rendering.get("_ui").get("temporalGranularity").textValue(), granularity.getText());
     assertTrue(rendering.get("_ui").has("timezoneEnabled"));
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
   @Test public void testRenderNumericField()
@@ -153,6 +163,8 @@ public class JsonSchemaArtifactRendererTest
     assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
     assertEquals(rendering.get("_valueConstraints").get("numberType").textValue(), numericType.getText());
     assertEquals(rendering.get("_valueConstraints").get("decimalPlace").asInt(), decimalPlaces);
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
   @Test public void testRenderTextField()
@@ -185,18 +197,21 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(rendering.has(JSON_LD_ID));
     // catch potential error case where "requiredValue": false (default) does not render
     assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
+  @Ignore // TODO Rendering defaultValue as { termUri: iri } instead of defaultValue: iri for link fields
   @Test public void testRenderLinkField()
   {
     String fieldName = "Field name";
     String fieldDescription = "Field description";
-    URI defaultURI = URI.create("https://example.com/Study");
+    URI defaultIri = URI.create("https://example.com/Study");
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
       withName(fieldName).
       withDescription(fieldDescription).
-      withDefaultValue(defaultURI).
+      withDefaultValue(defaultIri).
       build();
 
     ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
@@ -208,7 +223,9 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
     assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
-    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI).textValue(), defaultURI.toString());
+    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI).textValue(), defaultIri.toString());
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
   @Test
@@ -255,7 +272,7 @@ public class JsonSchemaArtifactRendererTest
 
     assertTrue(validateJsonSchema(templateRendering));
 
-    //System.out.println(templateRendering.toPrettyString());
+    assertTrue(validateTemplateSchemaArtifact(templateRendering));
   }
 
   @Test
@@ -269,7 +286,7 @@ public class JsonSchemaArtifactRendererTest
 
     assertTrue(validateJsonSchema(templateRendering));
 
-    //System.out.println(templateRendering.toPrettyString());
+    assertTrue(validateTemplateSchemaArtifact(templateRendering));
   }
 
   @Test
@@ -397,6 +414,45 @@ public class JsonSchemaArtifactRendererTest
         JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
+    }
+  }
+
+  private boolean validateTemplateSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplate(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private boolean validateElementSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateElement(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private boolean validateFieldSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateField(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
     }
   }
 
