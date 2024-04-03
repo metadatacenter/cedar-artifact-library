@@ -838,8 +838,8 @@ public class ArtifactRoundTripTest
     testElementSchemaArtifactRoundTripFromFile("elements/element-003.json");
   }
 
-  // TODO Nested field "Title" has no bibo entry in its @context
-  @Ignore @Test public void testRoundTripElement004()
+  @Ignore // TODO Nested field "Title" has no bibo entry in its @context
+  @Test public void testRoundTripElement004()
   {
     testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
   }
@@ -901,7 +901,7 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateJsonSchema(finalRendering));
 
-    //assertTrue(validateElementSchemaArtifact(finalRendering));
+    assertTrue(validateElementSchemaArtifact(finalRendering));
 
     ElementSchemaArtifact finalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(finalRendering);
 
