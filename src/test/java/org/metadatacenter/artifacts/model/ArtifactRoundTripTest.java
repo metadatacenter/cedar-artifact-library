@@ -20,6 +20,9 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
+import org.metadatacenter.model.validation.CedarValidator;
+import org.metadatacenter.model.validation.ModelValidator;
+import org.metadatacenter.model.validation.report.ValidationReport;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +37,14 @@ public class ArtifactRoundTripTest
   private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
   private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
+  private ModelValidator cedarModelValidator;
 
   @Before public void setUp()
   {
     artifactReader = new JsonSchemaArtifactReader();
     jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
+    cedarModelValidator = new CedarValidator();
   }
 
   @Test public void testRoundTripTemplateSchemaArtifact()
@@ -57,6 +62,8 @@ public class ArtifactRoundTripTest
     ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(finalTemplateSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
+
+    assertTrue(validateTemplateSchemaArtifact(finalRendering));
 
     assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
   }
@@ -948,6 +955,19 @@ public class ArtifactRoundTripTest
       JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
       return true;
     } catch (ProcessingException e) {
+      return false;
+    }
+  }
+
+  private boolean validateTemplateSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplate(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
       return false;
     }
   }
