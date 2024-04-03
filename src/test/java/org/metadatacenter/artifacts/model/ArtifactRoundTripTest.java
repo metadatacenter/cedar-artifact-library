@@ -84,6 +84,8 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateJsonSchema(finalRendering));
 
+    //assertTrue(validateElementSchemaArtifact(finalRendering));
+
     assertEquals(originalElementSchemaArtifact, finalElementSchemaArtifact);
   }
 
@@ -870,6 +872,8 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateJsonSchema(finalRendering));
 
+    //assertTrue(validateTemplateSchemaArtifact(finalRendering));
+
     TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
 
     assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
@@ -887,6 +891,8 @@ public class ArtifactRoundTripTest
     ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
+
+    //assertTrue(validateElementSchemaArtifact(finalRendering));
 
     ElementSchemaArtifact finalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(finalRendering);
 
@@ -971,4 +977,18 @@ public class ArtifactRoundTripTest
       return false;
     }
   }
+
+  private boolean validateElementSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateElement(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
 }
