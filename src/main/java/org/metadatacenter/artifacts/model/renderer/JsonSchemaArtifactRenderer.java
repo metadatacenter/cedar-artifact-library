@@ -37,6 +37,10 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PRO
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ARRAY;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_FORMAT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_FORMAT_URI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_FORMAT_DATE_TIME;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_NULL;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_STRING;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
@@ -959,7 +963,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p></p>
    * Defined as follows:
    * <pre>
-   * { "type": "string", "format": "termUri", "enum": [ "<IRI>" ] }
+   * { "type": "string", "format": "uri", "enum": [ "<IRI>" ] }
    * </pre>
    * A conforming value could look as follows:
    * <pre>
@@ -971,7 +975,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, ModelNodeNames.JSON_SCHEMA_FORMAT_URI);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
     rendering.withArray(ModelNodeNames.JSON_SCHEMA_ENUM).add(uri);
 
@@ -1248,8 +1252,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * {
    *   "@type": {
    *     "oneOf": [
-   *       { "type": "string", "format": "termUri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "termUri" },  "uniqueItems": true }
+   *       { "type": "string", "format": "uri" },
+   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
    *     ]
    *   },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
@@ -1284,12 +1288,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * {
    *   "@type": {
    *     "oneOf": [
-   *       { "type": "string", "format": "termUri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "termUri" },  "uniqueItems": true }
+   *       { "type": "string", "format": "uri" },
+   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
    *     ]
    *   },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
-   *   "@id": { "type": "string", "format": "termUri" }
+   *   "@id": { "type": "string", "format": "uri" }
    * }
    * </pre>
    * A conforming value could look like:
@@ -1355,7 +1359,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   //   { "type": [ "string", "null" ], "format": "termUri" },
+   //   { "type": [ "string", "null" ], "format": "uri" },
    * </pre>
    */
   private ObjectNode renderUriOrNullJsonSchemaTypeSpecification()
@@ -1366,7 +1370,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_TYPE).add("string");
     rendering.withArray(JSON_SCHEMA_TYPE).add("null");
 
-    rendering.put(JSON_SCHEMA_FORMAT, "termUri");
+    rendering.put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
 
     return rendering;
   }
@@ -1435,9 +1439,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
-    rendering.withArray(JSON_SCHEMA_TYPE).add("string");
-    rendering.withArray(JSON_SCHEMA_TYPE).add("null");
-    rendering.put(JSON_SCHEMA_FORMAT, "date-time");
+    rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_STRING);
+    rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_NULL);
+    rendering.put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_DATE_TIME);
 
     return rendering;
   }
@@ -1448,15 +1452,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   *   { "type": "string", "format": "termUri" }
+   *   { "type": "string", "format": "uri" }
    * </pre>
    */
   private ObjectNode renderUriJsonSchemaTypeSpecification()
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
+    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
 
     return rendering;
   }
@@ -1468,8 +1472,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <pre>
    * {
    *   "oneOf": [
-   *     { "type": "string", "format": "termUri" },
-   *     { "type": "array", "minItems": 1, "items": { "type": "string", "format": "termUri" }, "uniqueItems": true }
+   *     { "type": "string", "format": "uri" },
+   *     { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" }, "uniqueItems": true }
    *   ]
    * }
    * </pre>
@@ -1490,7 +1494,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "termUri" }, "uniqueItems": [uniqueItems] }
+   * { "type": "array", "minItems": [minItems], "items": { "type": "string", "format": "uri" }, "uniqueItems": [uniqueItems] }
    * </pre>
    */
   private ObjectNode renderUriArrayJsonSchemaTypeSpecification(int minItems, boolean uniqueItems)
@@ -1500,8 +1504,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_ARRAY);
     rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
     rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, "string");
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, "termUri");
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
+    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
     rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;
