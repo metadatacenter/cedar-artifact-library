@@ -884,7 +884,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       Optional<Integer> decimalPlaces = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_DECIMAL_PLACE);
       Optional<Integer> minLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
       Optional<Integer> maxLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
-      Optional<? extends DefaultValue> defaultValue = readDefaultValue(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE);
       Optional<String> regex = readString(vcNode, vcPath, "regex"); // TODO Add 'regex' to ModelNodeNames
       List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath,
         VALUE_CONSTRAINTS_ONTOLOGIES);
@@ -895,6 +894,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_LITERALS);
       List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath,
         VALUE_CONSTRAINTS_ACTIONS);
+      Optional<? extends DefaultValue> defaultValue = readDefaultValue(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE, fieldInputType);
 
       if (fieldInputType == FieldInputType.NUMERIC) {
         Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ?
@@ -934,7 +934,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.empty();
   }
 
-  private Optional<DefaultValue> readDefaultValue(ObjectNode sourceNode, String path, String fieldName)
+  private Optional<DefaultValue> readDefaultValue(ObjectNode sourceNode, String path, String fieldName,
+    FieldInputType fieldInputType)
   {
     JsonNode childNode = sourceNode.get(fieldName);
 
@@ -945,15 +946,15 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       ObjectNode defaultValueNode = (ObjectNode)childNode;
       URI termUri = readRequiredUri(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       Optional<String> rdfsLabel = readString(defaultValueNode, nestedPath, RDFS_LABEL);
-      if (rdfsLabel.isPresent() )
-        return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel.get()));
-      else
-        return Optional.of(new LinkDefaultValue(termUri));
-    } else if (childNode.isNumber())
+      return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel.orElse("")));
+    } else if (childNode.isNumber()) {
       return Optional.of(new NumericDefaultValue(childNode.asDouble()));
-    else if (childNode.isTextual())
-      return Optional.of(new TextDefaultValue(childNode.asText()));
-    else
+    } else if (childNode.isTextual()) {
+      if (fieldInputType == FieldInputType.LINK)
+        return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
+      else
+        return Optional.of(new TextDefaultValue(childNode.asText()));
+    } else
       throw new ArtifactParseException(
         "default value must be a string, a number, or an object containing URI/string pair", fieldName, path);
   }

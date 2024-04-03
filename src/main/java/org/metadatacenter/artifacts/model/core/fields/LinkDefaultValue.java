@@ -1,8 +1,10 @@
 package org.metadatacenter.artifacts.model.core.fields;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.net.URI;
 
-public record LinkDefaultValue(URI termUri) implements DefaultValue<URI>
+public record LinkDefaultValue(@JsonValue URI termUri) implements DefaultValue<URI>
 {
   @Override public DefaultValueType getValueType()
   {

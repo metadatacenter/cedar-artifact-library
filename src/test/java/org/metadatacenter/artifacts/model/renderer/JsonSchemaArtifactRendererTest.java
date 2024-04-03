@@ -6,7 +6,6 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -16,6 +15,8 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.model.validation.CedarValidator;
@@ -50,7 +51,6 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI;
 
 public class JsonSchemaArtifactRendererTest
 {
@@ -127,6 +127,55 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
+  @Test public void testCreateControlledTermField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI ontologyUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String ontologyAcronym = "DOID";
+    String ontologyName = "Human Disease Ontology";
+    URI branchUri = URI.create("http://purl.bioontology.org/ontology/SNOMEDCT/64572001");
+    String branchAcronym = "SNOMEDCT";
+    String branchName = "Disease";
+    String branchSource = "SNOMEDCT";
+    Integer branchMaxDepth = 3;
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel= "Human";
+    String classPrefLabel = "Homo Spiens";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+    URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
+    String valueSetCollection = "CADSR-VS";
+    String valueSetName = "Stable Disease";
+    Integer valueSetNumTerms = 1;
+    URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/NCBITaxon_51291");
+    URI actionSourceUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String actionSource = "DOID";
+    ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
+    Integer actionTo = 0;
+    URI defaultUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String defaultLabel = "Human";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
+      withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth).
+      withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
+      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumTerms).
+      withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE,
+      actionSourceUri, actionTo).
+      withDefaultValue(defaultUri, defaultLabel).
+      build();
+
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(rendering));
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
+  }
+
+  // TODO Add defaultValue
   @Test public void testRenderNumericField()
   {
     String fieldName = "Field name";
@@ -201,7 +250,6 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
-  @Ignore // TODO Rendering defaultValue as { termUri: iri } instead of defaultValue: iri for link fields
   @Test public void testRenderLinkField()
   {
     String fieldName = "Field name";
@@ -223,7 +271,7 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
     assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
-    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI).textValue(), defaultIri.toString());
+    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue(), defaultIri.toString());
 
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
