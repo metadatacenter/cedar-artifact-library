@@ -12,7 +12,6 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.JsonLdArtifact;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
 import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -132,7 +131,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.set(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification());
 
     rendering.put(JSON_SCHEMA_PROPERTIES,
-      renderParentSchemaArtifactPropertiesJsonSchemaSpecification(templateSchemaArtifact));
+      renderTemplateSchemaArtifactPropertiesJsonSchemaSpecification(templateSchemaArtifact));
 
     // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -219,7 +218,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification());
 
     rendering.put(JSON_SCHEMA_PROPERTIES,
-      renderParentSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
+      renderElementSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
 
     // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -716,7 +715,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   "type": "object",
    *   "properties": {
    *     "@value": { "type": [ "string", "null" ] },
-   *     "@type": { "type": "string", "format": "termUri" }
+   *     "@type": { "type": "string", "format": "uri" }
    *   },
    *   "required": [ "@value" ],
    *   "additionalProperties": false
@@ -748,9 +747,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Render a JSON Schema properties specification in a parent schema artifact. This specification defines
-   * the JSON-LD @context field in a parent artifact. In addition to standard prefixes (e.g., rdfs, xsd) and
-   * fields (schema:name, pav:createdOn) the @context also contains property IRI mappings for every child field.
+   * Render a JSON Schema properties specification in a template schema artifact. First, this specification defines
+   * the top-level fields that should be present in a template instance.
    * <p></p>
    * Defined as follows:
    * <pre>
@@ -758,12 +756,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "@context": {
    *       "type": "object",
    *       "properties": {
-   *         "schema": { "type": "string", "format": "termUri", "enum": ["http://schema.org/"] },
-   *         "oslc": { "type": "string", "format": "termUri", "enum": ["http://open-services.net/ns/core#"] },
-   *         "pav": { "type": "string", "format": "termUri", "enum": ["http://purl.org/pav/"] },
-   *         "rdfs": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
-   *         "xsd": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
-   *         "skos": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
+   *         "schema": { "type": "string", "format": "uri", "enum": ["http://schema.org/"] },
+   *         "oslc": { "type": "string", "format": "uri", "enum": ["http://open-services.net/ns/core#"] },
+   *         "pav": { "type": "string", "format": "uri", "enum": ["http://purl.org/pav/"] },
+   *         "rdfs": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
+   *         "xsd": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
+   *         "skos": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
    *         "rdfs:label": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
    *         "schema:isBasedOn": { "type": "object", "properties": {"@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "schema:name": { "type": "object", "properties": {"@type": { "type": "string",  "enum": ["xsd:string"] }}},
@@ -782,18 +780,18 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *                     "[Child Name 1]", ... "[Child Name n]" ],
    *       "additionalProperties": false
    *     },
-   *     "@id": { "type": [ "string", "null" ], "format": "termUri" },
-   *     "@type": { "oneOf": [ { "type": "string","format": "termUri" },
-   *                           { "type": "array", "minItems": 1, 'items": { "type": "string","format": "termUri" }, "uniqueItems": true } ]
+   *     "@id": { "type": [ "string", "null" ], "format": "uri" },
+   *     "@type": { "oneOf": [ { "type": "string","format": "uri" },
+   *                           { "type": "array", "minItems": 1, 'items": { "type": "string","format": "uri" }, "uniqueItems": true } ]
    *              },
-   *     "schema:isBasedOn": { "type": "string", "format": "termUri" },
+   *     "schema:isBasedOn": { "type": "string", "format": "uri" },
    *     "schema:name": { "type": "string","minLength": 1 },
    *     "schema:description": { "type": "string" },
-   *     "pav:derivedFrom": { "type": "string", "format": "termUri" },
+   *     "pav:derivedFrom": { "type": "string", "format": "uri" },
    *     "pav:createdOn": { "type": [ "string", "null" ], "format": "date-time" },
-   *     "pav:createdBy": { "type": [ "string", "null" ], "format": "termUri" },
+   *     "pav:createdBy": { "type": [ "string", "null" ], "format": "uri" },
    *     "pav:lastUpdatedOn": {  "type": [ "string", "null" ], "format": "date-time" },
-   *     "oslc:modifiedBy": { "type": [ "string", "null" ], "format": "termUri" }
+   *     "oslc:modifiedBy": { "type": [ "string", "null" ], "format": "uri" }
    *     "[Child Name 1]": { [Child JSON Schema 1] },
    *     ...
    *     "[Child Name n]": { [Child JSON Schema n] }
@@ -833,17 +831,17 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * }
    * </pre>
    */
-  private ObjectNode renderParentSchemaArtifactPropertiesJsonSchemaSpecification(ParentSchemaArtifact parentSchemaArtifact)
+  private ObjectNode renderTemplateSchemaArtifactPropertiesJsonSchemaSpecification(TemplateSchemaArtifact templateSchemaArtifact)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextPropertiesJsonSchemaSpecification(parentSchemaArtifact));
+    rendering.put(JSON_LD_CONTEXT, renderTemplateSchemaArtifactContextPropertiesJsonSchemaSpecification(templateSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
+    rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
     rendering.put(SCHEMA_ORG_DESCRIPTION, renderStringJsonSchemaTypeSpecification(0));
-    rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
     rendering.put(PAV_CREATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
     rendering.put(PAV_CREATED_BY, renderUriOrNullJsonSchemaTypeSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
@@ -853,19 +851,80 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate a JSON Schema specification for a @context properties specification in a parent schema artifact
+   * Render a JSON Schema properties specification in an element schema artifact. First, this specification defines
+   * the top-level fields that should be present in an element instance.
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   *   {
+   *     "@context": {
+   *       "type": "object",
+   *       "properties": {
+   *         "rdfs:label": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
+   *         "[Child Name 1]": { "enum": [ "[CHILD_PROPERTY_URI_1]"] },
+   *         ...
+   *         "[Child Name n]": { "enum": [ "[CHILD_PROPERTY_URI_n]"] }
+   *       },
+   *       "required": [ "[Child Name 1]", ... "[Child Name n]" ],
+   *       "additionalProperties": false
+   *     },
+   *     "@id": { "type": "string", "format": "uri" },
+   *     "@type": { "oneOf": [ { "type": "string","format": "uri" },
+   *                           { "type": "array", "minItems": 1, 'items": { "type": "string","format": "uri" }, "uniqueItems": true } ]
+   *              },
+   *     "[Child Name 1]": { [Child JSON Schema 1] },
+   *     ...
+   *     "[Child Name n]": { [Child JSON Schema n] }
+   *   }
+   * </pre>
+   * A conforming element instance should look as follows:
+   * <pre>
+   * {
+   *   "@context": {
+   *     "schema": "https://schema.org/",
+   *     "oslc": "http://open-services.net/ns/core#",
+   *     "pav": "http://purl.org/pav/",
+   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     "skos": "http://www.w3.org/2004/02/skos/core#",
+   *     "rdfs:label": { "@type": "xsd:string" },
+   *     "Child Name 1": "https://myschema.org/property/p1"
+   *     ...
+   *     "Child Name n": "https://myschema.org/property/pn"
+   *   },
+   *   "@type": "https://www.example.com/Study",
+   *   "@id": "https://repo.metadatacenter.org/template-instances/474378",
+   *   "Child Name 1": { [Child JSON-LD 1] },
+   *   ...
+   *   "Child Name n": { [Child JSON-LD n] }
+   * }
+   * </pre>
+   */
+  private ObjectNode renderElementSchemaArtifactPropertiesJsonSchemaSpecification(ElementSchemaArtifact elementSchemaArtifact)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_LD_CONTEXT, renderElementSchemaArtifactContextPropertiesJsonSchemaSpecification(elementSchemaArtifact));
+    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema specification for a @context properties specification in a template schema artifact
    * <p></p>
    * Defined as follows:
    * <pre>
    *   {
    *     "properties": {
    *         "type": "object",
-   *         "rdfs": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
-   *         "xsd": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
-   *         "pav": { "type": "string", "format": "termUri", "enum": ["http://purl.org/pav/"] },
-   *         "schema": { "type": "string", "format": "termUri", "enum": ["http://schema.org/"] },
-   *         "oslc": { "type": "string", "format": "termUri", "enum": ["http://open-services.net/ns/core#"] },
-   *         "skos": { "type": "string", "format": "termUri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
+   *         "rdfs": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2000/01/rdf-schema#"] },
+   *         "xsd": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2001/XMLSchema#"] },
+   *         "pav": { "type": "string", "format": "uri", "enum": ["http://purl.org/pav/"] },
+   *         "schema": { "type": "string", "format": "uri", "enum": ["http://schema.org/"] },
+   *         "oslc": { "type": "string", "format": "uri", "enum": ["http://open-services.net/ns/core#"] },
+   *         "skos": { "type": "string", "format": "uri", "enum": ["http://www.w3.org/2004/02/skos/core#"] },
    *         "rdfs:label": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
    *         "schema:isBasedOn": { "type": "object", "properties": {"@type": {  "type": "string",  "enum": ["@id"] }}},
    *         "schema:name": { "type": "object", "properties": {"@type": { "type": "string",  "enum": ["xsd:string"] }}},
@@ -882,7 +941,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     }
    *   }
    * </pre>
-   * A conforming instance should look as follows:
+   * A conforming template instance should look as follows:
    * <pre>
    *   {
    *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
@@ -906,7 +965,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   }
    * </pre>
    */
-  private ObjectNode renderParentSchemaArtifactContextPropertiesJsonSchemaSpecification(ParentSchemaArtifact parentSchemaArtifact)
+  private ObjectNode renderTemplateSchemaArtifactContextPropertiesJsonSchemaSpecification(TemplateSchemaArtifact templateSchemaArtifact)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
@@ -937,7 +996,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       JSON_LD_ID));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
 
-    for (var entry : parentSchemaArtifact.getChildPropertyUris().entrySet()) {
+    for (var entry : templateSchemaArtifact.getChildPropertyUris().entrySet()) {
       String childName = entry.getKey();
       URI propertyUri = entry.getValue();
       rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(propertyUri.toString()));
@@ -956,7 +1015,59 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
 
-    for (String childName : parentSchemaArtifact.getChildPropertyUris().keySet())
+    for (String childName : templateSchemaArtifact.getChildPropertyUris().keySet())
+      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
+
+    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema specification for a @context properties specification in an element schema artifact
+   * <p></p>
+   * Defined as follows:
+   * <pre>
+   *   {
+   *     "properties": {
+   *         "type": "object",
+   *         "rdfs:label": { "type": "object", "properties": { "@type": { "type": "string", "enum": ["xsd:string"] }}},
+   *         "skos:notation": { "type": "object", "properties": {"@type": { "type": "string",  "enum": ["xsd:string"] }}},
+   *         "<Child Name 1>": { "enum": [ "<PROPERTY URI 1>"] },
+   *         ...
+   *         "<Child Name n>": { "enum": [ "<PROPERTY URI n>"] }
+   *     }
+   *   }
+   * </pre>
+   * A conforming template instance should look as follows:
+   * <pre>
+   *   {
+   *     "skos:notation": { "@type": "xsd:string" },
+   *     "Child Name 1": "https://myschema.org/property/p1"
+   *     ...
+   *     "Child Name n": "https://myschema.org/property/pn"
+   *   }
+   * </pre>
+   */
+  private ObjectNode renderElementSchemaArtifactContextPropertiesJsonSchemaSpecification(ElementSchemaArtifact elementSchemaArtifact)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
+
+    rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
+
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS_NOTATION, renderJsonSchemaEnumSpecification(XSD_STRING));
+
+    for (var entry : elementSchemaArtifact.getChildPropertyUris().entrySet()) {
+      String childName = entry.getKey();
+      URI propertyUri = entry.getValue();
+      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(propertyUri.toString()));
+    }
+
+    rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
+
+    for (String childName : elementSchemaArtifact.getChildPropertyUris().keySet())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
@@ -1029,7 +1140,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_TYPE, mapper.createObjectNode());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-      .withObject("/" + JSON_LD_TYPE).put(JSON_SCHEMA_TYPE, "string");
+      .withObject("/" + JSON_LD_TYPE).put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
       .withObject("/" + JSON_LD_TYPE).put(ModelNodeNames.JSON_SCHEMA_ENUM, mapper.createArrayNode());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
