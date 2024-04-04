@@ -1644,6 +1644,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     if (minItems.isPresent())
       wrapperObjectNode.put(JSON_SCHEMA_MIN_ITEMS, minItems.get());
+    else
+      wrapperObjectNode.put(JSON_SCHEMA_MIN_ITEMS, 0);
 
     if (maxItems.isPresent())
       wrapperObjectNode.put(JSON_SCHEMA_MAX_ITEMS, maxItems.get());
