@@ -107,7 +107,8 @@ public class InstanceArtifactVisitorTest
     assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 4"));
   }
 
-  @Ignore @Test
+  @Ignore // TODO Instance may not be valid
+  @Test
   public void testVisitorsOnRADxMetadata()
   {
     ObjectNode templateObjectNode = getJSONFileContentAsObjectNode("templates/RADxMetadataSpecification.json");

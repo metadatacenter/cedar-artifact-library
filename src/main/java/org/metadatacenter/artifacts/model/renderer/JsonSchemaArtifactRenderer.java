@@ -18,6 +18,8 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,12 +90,14 @@ import static org.metadatacenter.model.ModelNodeValues.XSD_STRING;
 public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 {
   private final ObjectMapper mapper;
+  private final DateTimeFormatter datetimeFormatter;
 
   public JsonSchemaArtifactRenderer()
   {
     this.mapper = new ObjectMapper();
     mapper.registerModule(new Jdk8Module());
     mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+    datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   }
 
   /**
@@ -403,12 +407,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.putNull(OSLC_MODIFIED_BY);
 
     if (templateInstanceArtifact.createdOn().isPresent())
-      rendering.put(PAV_CREATED_ON, templateInstanceArtifact.createdOn().get().toString());
+      rendering.put(PAV_CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
     else
       rendering.putNull(PAV_CREATED_ON);
 
     if (templateInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(PAV_LAST_UPDATED_ON, templateInstanceArtifact.lastUpdatedOn().get().toString());
+      rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
     else
       rendering.putNull(PAV_LAST_UPDATED_ON);
 
@@ -436,10 +440,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(OSLC_MODIFIED_BY, elementInstanceArtifact.modifiedBy().get().toString());
 
     if (elementInstanceArtifact.createdOn().isPresent())
-      rendering.put(PAV_CREATED_ON, elementInstanceArtifact.createdOn().get().toString());
+      rendering.put(PAV_CREATED_ON, renderOffsetDateTime(elementInstanceArtifact.createdOn().get()));
 
     if (elementInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(PAV_LAST_UPDATED_ON, elementInstanceArtifact.lastUpdatedOn().get().toString());
+      rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(elementInstanceArtifact.lastUpdatedOn().get()));
 
     return rendering;
   }
@@ -691,13 +695,13 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     }
 
     if (monitoredArtifact.createdOn().isPresent()) {
-      rendering.put(PAV_CREATED_ON, monitoredArtifact.createdOn().get().toString());
+      rendering.put(PAV_CREATED_ON, renderOffsetDateTime(monitoredArtifact.createdOn().get()));
     } else {
       rendering.putNull(PAV_CREATED_ON);
     }
 
     if (monitoredArtifact.lastUpdatedOn().isPresent()) {
-      rendering.put(PAV_LAST_UPDATED_ON, monitoredArtifact.lastUpdatedOn().get().toString());
+      rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(monitoredArtifact.lastUpdatedOn().get()));
     } else {
       rendering.putNull(PAV_LAST_UPDATED_ON);
     }
@@ -1655,4 +1659,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     return wrapperObjectNode;
   }
 
+  private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
+  {
+    return offsetDateTime.format(datetimeFormatter);
+  }
 }

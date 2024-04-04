@@ -24,6 +24,8 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstrain
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -112,10 +114,12 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
   private final boolean isCompact;
+  private final DateTimeFormatter datetimeFormatter;
 
   public YamlArtifactRenderer(boolean isCompact)
   {
     this.isCompact = isCompact;
+    this.datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   }
 
   /**
@@ -248,7 +252,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering
-      = renderSchemaArtifact(fieldSchemaArtifact, generateFieldTypeName(fieldSchemaArtifact));
+      = renderSchemaArtifact(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
     LinkedHashMap<String, Object> configurationRendering = renderFieldConfiguration(fieldSchemaArtifact);
 
     if (!configurationRendering.isEmpty())
@@ -300,10 +304,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
 
     if (!isCompact && templateInstanceArtifact.createdOn().isPresent())
-      rendering.put(CREATED_ON, templateInstanceArtifact.createdOn().get().toString());
+      rendering.put(CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
 
     if (templateInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(LAST_UPDATED_ON, templateInstanceArtifact.lastUpdatedOn().get().toString());
+      rendering.put(LAST_UPDATED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
 
     // TODO Need to generate YAML for children of template instance
 
@@ -425,7 +429,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         for (ControlledTermValueConstraintsAction action : controlledTermValueConstraints.actions()) {
 
           LinkedHashMap<String, Object> actionRendering = new LinkedHashMap<>();
-          actionRendering.put(ACTION, generateActionName(action.action()));
+          actionRendering.put(ACTION, renderActionName(action.action()));
           actionRendering.put(TERM_IRI, action.termUri());
           actionRendering.put(SOURCE_ACRONYM, action.source());
           if (action.sourceUri().isPresent())
@@ -601,7 +605,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(ID, schemaArtifact.jsonLdId().get());
 
     if (!isCompact && schemaArtifact.status().isPresent())
-      rendering.put(STATUS, generateStatusName(schemaArtifact.status().get()));
+      rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
 
     if (!isCompact)
       rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
@@ -616,11 +620,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (schemaArtifact.createdBy().isPresent())
         rendering.put(CREATED_BY, schemaArtifact.createdBy().get().toString());
       if (schemaArtifact.createdOn().isPresent())
-        rendering.put(CREATED_ON, schemaArtifact.createdOn().get().toString());
+        rendering.put(CREATED_ON, renderOffsetDateTime(schemaArtifact.createdOn().get()));
       if (schemaArtifact.lastUpdatedOn().isPresent())
-        rendering.put(LAST_UPDATED_ON, schemaArtifact.lastUpdatedOn().get().toString());
+        rendering.put(LAST_UPDATED_ON, renderOffsetDateTime(schemaArtifact.lastUpdatedOn().get()));
       if (schemaArtifact.modifiedBy().isPresent())
-        rendering.put(MODIFIED_BY, schemaArtifact.lastUpdatedOn().get().toString());
+        rendering.put(MODIFIED_BY, schemaArtifact.modifiedBy().get().toString());
     }
 
     // TODO Generate YAML for annotations
@@ -628,8 +632,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-
-  private String generateStatusName(Status status)
+  private String renderStatusName(Status status)
   {
     // TODO Use typesafe switch when available
     switch (status) {
@@ -642,7 +645,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private String generateActionName(ValueConstraintsActionType actionType)
+  private String renderActionName(ValueConstraintsActionType actionType)
   {
     // TODO Use typesafe switch when available
     switch (actionType) {
@@ -655,7 +658,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private String generateFieldTypeName(FieldSchemaArtifact fieldSchemaArtifact)
+  private String renderFieldTypeName(FieldSchemaArtifact fieldSchemaArtifact)
   {
     // TODO Use typesafe switch when available
     switch (fieldSchemaArtifact.fieldUi().inputType()) {
@@ -700,5 +703,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         + fieldSchemaArtifact.name());
     }
   }
+
+  private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
+  {
+    return offsetDateTime.format(datetimeFormatter);
+  }
+
 }
 

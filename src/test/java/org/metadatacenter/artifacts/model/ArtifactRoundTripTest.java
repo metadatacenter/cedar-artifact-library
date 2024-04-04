@@ -482,7 +482,6 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/ATACseqV3.0.0.json");
   }
 
-  @Ignore // TODO Find error
   @Test public void testRoundTripHuBMAP10XMultiomeTemplate()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/10XMultiomeV2.0.0.json");
