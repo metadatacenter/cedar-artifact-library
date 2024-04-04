@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ValidationHelper
 {
@@ -68,7 +69,8 @@ public class ValidationHelper
     validateListFieldNotNull(obj, uriListField, fieldName);
 
     if (uriListField.stream().noneMatch(values::contains))
-      throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values + " in " + obj);
+      throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values +
+        " in " + obj + "; missing: " + uriListField.stream().filter(e -> !values.contains(e)).collect(Collectors.toSet()));
   }
 
   public static void validateUriListFieldContainsAllOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
@@ -76,7 +78,9 @@ public class ValidationHelper
     validateListFieldNotNull(obj, uriListField, fieldName);
 
     if (!uriListField.containsAll(values))
-      throw new IllegalStateException("URI list field " + fieldName + " must contain all values " + values + " in " + obj);
+      throw new IllegalStateException("URI list field " + fieldName + " must contain all values " + values + " in " +
+        obj + "; missing: " +
+        uriListField.stream().filter(e -> !values.contains(e)).collect(Collectors.toSet()));
   }
 
   public static <K, V> void validateMapFieldContainsAll(Object obj, Map<K, V> field, String fieldName, Map<K, V> values)
@@ -84,7 +88,9 @@ public class ValidationHelper
     validateMapFieldNotNull(obj, field, fieldName);
 
     if (!field.entrySet().containsAll(values.entrySet()))
-      throw new IllegalStateException("Map field " + fieldName + " must contain all entries " + values + " in " + obj);
+      throw new IllegalStateException("Map field " + fieldName + " must contain all entries " + values + " in " +
+        obj + "; missing: " +
+        values.entrySet().stream().filter(e -> !field.entrySet().contains(e)).collect(Collectors.toSet()));
   }
 
   public static void validateXsdTemporalDatatypeFieldNotNull(Object obj, XsdTemporalDatatype field, String fieldName)
