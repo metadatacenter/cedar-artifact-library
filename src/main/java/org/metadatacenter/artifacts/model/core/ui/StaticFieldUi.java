@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.ui;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.model.ModelNodeNames;
 
@@ -10,6 +11,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 
 public non-sealed interface StaticFieldUi extends FieldUi
 {
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   Optional<String> _content();
 
   boolean hidden();

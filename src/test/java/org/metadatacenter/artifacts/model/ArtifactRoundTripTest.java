@@ -477,7 +477,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-002.json");
   }
 
-  @Ignore // TODO Find error
+  @Ignore // TODO Static fields don't render _content as null if it is missing
   @Test public void testRoundTripTemplate004()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-004.json");
@@ -503,7 +503,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-008.json");
   }
 
-  @Ignore // TODO Find error
+  @Ignore // TODO YouTube fields not read/rendered correctly
   @Test public void testRoundTripTemplate009()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-009.json");
@@ -594,13 +594,11 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-026.json");
   }
 
-  @Ignore // TODO Find error
   @Test public void testRoundTripTemplate027()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-027.json");
   }
 
-  @Ignore // TODO Find error
   @Test public void testRoundTripTemplate028()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-028.json");
@@ -616,7 +614,6 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
   }
 
-  @Ignore // TODO Find error
   @Test public void testRoundTripRADxMetadataSpecification()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxMetadataSpecification.json");
@@ -632,7 +629,7 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithNesting.json");
   }
 
-  // TODO We have the wrong instance here
+  // TODO We have the wrong RADx instance here
   @Ignore @Test public void testRoundTripRADxMetadataInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADxMetadataInstance.json");
@@ -643,8 +640,7 @@ public class ArtifactRoundTripTest
     testElementSchemaArtifactRoundTripFromFile("elements/element-001.json");
   }
 
-  // TODO Find error
-  @Ignore @Test public void testRoundTripElement002()
+  @Test public void testRoundTripElement002()
   {
     testElementSchemaArtifactRoundTripFromFile("elements/element-002.json");
   }
