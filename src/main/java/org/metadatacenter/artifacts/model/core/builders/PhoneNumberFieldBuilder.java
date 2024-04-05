@@ -6,6 +6,7 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -20,6 +21,7 @@ public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
   private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
 
   public PhoneNumberFieldBuilder() {
+    super(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.PHONE_NUMBER);
     valueConstraintsBuilder.withMultipleChoice(false);

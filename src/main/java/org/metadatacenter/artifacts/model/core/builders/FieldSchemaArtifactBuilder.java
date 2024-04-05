@@ -1,19 +1,19 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 
@@ -23,7 +23,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
 {
   private Map<String, URI> jsonLdContext;
-  private final List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
+  private final List<URI> jsonLdTypes = new ArrayList<>();
   private Optional<URI> jsonLdId = Optional.empty();
   private Optional<URI> createdBy = Optional.empty();
   private Optional<URI> modifiedBy = Optional.empty();
@@ -50,7 +50,10 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   private FieldUi fieldUi;
   private Optional<ValueConstraints> valueConstraints = Optional.empty();
 
-  protected FieldSchemaArtifactBuilder() {}
+  protected FieldSchemaArtifactBuilder(URI artifactTypeIri)
+  {
+    jsonLdTypes.add(artifactTypeIri);
+  }
 
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {

@@ -333,6 +333,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel);
     }
 
+    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
     return rendering;

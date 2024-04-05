@@ -5,6 +5,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -18,6 +19,7 @@ public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
   private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
 
   public AttributeValueFieldBuilder() {
+    super(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.ATTRIBUTE_VALUE);
   }

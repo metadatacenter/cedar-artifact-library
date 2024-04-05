@@ -6,6 +6,7 @@ import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -20,6 +21,7 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
   private final NumericValueConstraints.Builder valueConstraintsBuilder = NumericValueConstraints.builder();
 
   public NumericFieldBuilder() {
+    super(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     valueConstraintsBuilder.withMultipleChoice(false);
   }

@@ -255,9 +255,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       = renderSchemaArtifact(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
     LinkedHashMap<String, Object> configurationRendering = renderFieldConfiguration(fieldSchemaArtifact);
 
-    if (!configurationRendering.isEmpty())
-      rendering.put(CONFIGURATION, configurationRendering);
-
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
@@ -278,7 +275,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
 
     if (!configurationRendering.isEmpty())
-      rendering.put(CONFIGURATION, renderFieldConfiguration(fieldSchemaArtifact));
+      rendering.put(CONFIGURATION, configurationRendering);
 
     return rendering;
   }

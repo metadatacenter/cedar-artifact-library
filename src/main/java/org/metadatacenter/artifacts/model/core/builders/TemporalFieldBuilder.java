@@ -8,6 +8,7 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -22,6 +23,7 @@ public final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
   private final TemporalValueConstraints.Builder valueConstraintsBuilder = TemporalValueConstraints.builder();
 
   public TemporalFieldBuilder() {
+    super(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     valueConstraintsBuilder.withMultipleChoice(false);
   }
 

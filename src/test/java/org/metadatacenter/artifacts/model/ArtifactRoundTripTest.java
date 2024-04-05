@@ -238,7 +238,6 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  @Ignore // TODO Fix
   @Test public void testRoundTripSectionBreakField()
   {
     String name = "Field name";
@@ -251,7 +250,6 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  @Ignore // TODO Fix
   @Test public void testRoundTripImageField()
   {
     String name = "Field name";
@@ -264,7 +262,6 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  @Ignore // TODO Fix
   @Test public void testRoundTripYouTubeField()
   {
     String name = "Field name";
@@ -277,7 +274,6 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  @Ignore // TODO Fix
   @Test public void testRoundTripRichTextField()
   {
     String name = "Field name";
