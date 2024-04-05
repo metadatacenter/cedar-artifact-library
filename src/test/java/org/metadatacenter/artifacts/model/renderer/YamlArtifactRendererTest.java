@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -135,33 +134,29 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, actualRendering);
   }
 
-  @Ignore @Test
+  @Test
   public void testRenderTextField() throws JsonProcessingException
   {
     String name = "Study Name";
     String description = "Study name field";
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
       withName(name).
       withDescription(description).
       build();
 
-    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
 
     String expectedYaml = """
+        type: text-field
         name: ${name}
         description: ${description}
-        type: text-field
         datatype: string
     """.replace("${name}", name).replace("${description}", description);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYaml, LinkedHashMap.class);
-
-//    Expected :{name=Study Name, description=Study name field, type=text-field, datatype=string}
-//    Actual   :{type=text-field, name=Study Name, description=Study name field, id=https://repo.metadatacenter.org/template_fields/123, status=draft, modelVersion=1.6.0, datatype=string}
 
     assertEquals(expectedRendering, actualRendering);
   }
