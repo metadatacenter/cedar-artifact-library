@@ -306,8 +306,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     else
       rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
 
-    // Static fields have no JSON Schema fields (properties, required, additionalProperties), or
-    // value constraints field.
+    // Static fields have no value constraints field.
     if (!fieldSchemaArtifact.isStatic()) {
 
       if (fieldSchemaArtifact.hasIRIValue()) {
@@ -318,8 +317,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.put(JSON_SCHEMA_PROPERTIES, renderLiteralFieldArtifactPropertiesJsonSchemaSpecification());
         // Non-IRI fields may have en empty object as a value so there are no required fields
       }
-
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
       rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints()));
     }

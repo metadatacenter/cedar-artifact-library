@@ -12,7 +12,6 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -87,7 +86,7 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, actualRendering);
   }
 
-  @Ignore @Test
+  @Test
   public void testRenderElementSchemaArtifact() {
 
     String name = "Address";
@@ -104,7 +103,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(ELEMENT, name);
+    expectedRendering.put(TYPE, ELEMENT);
+    expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
 
     assertEquals(expectedRendering, actualRendering);

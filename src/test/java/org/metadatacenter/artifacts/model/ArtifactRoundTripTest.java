@@ -226,7 +226,7 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  @Ignore // TODO Fix
+  @Ignore // TODO Fix standalone attribute-value field JSON Schema rendering
   @Test public void testRoundTripAttributeValueField()
   {
     String name = "Field name";
