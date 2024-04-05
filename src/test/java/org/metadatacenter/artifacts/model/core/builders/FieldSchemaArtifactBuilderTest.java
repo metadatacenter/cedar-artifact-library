@@ -359,6 +359,24 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
   }
 
+  @Test public void testCreatePageBreakField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    String content = "Content";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.pageBreakFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withContent(content).
+      build();
+
+    Assert.assertEquals(FieldInputType.PAGE_BREAK, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
+  }
+
   @Test public void testCreateSectionBreakField()
   {
     String name = "Field name";

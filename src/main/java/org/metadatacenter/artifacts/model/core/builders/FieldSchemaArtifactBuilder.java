@@ -20,7 +20,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder, TextAreaFieldBuilder, TemporalFieldBuilder,
   RadioFieldBuilder, PhoneNumberFieldBuilder, NumericFieldBuilder, ListFieldBuilder, LinkFieldBuilder,
   EmailFieldBuilder, ControlledTermFieldBuilder, CheckboxFieldBuilder, AttributeValueFieldBuilder,
-  SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
+  PageBreakFieldBuilder, SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
 {
   private Map<String, URI> jsonLdContext;
   private final List<URI> jsonLdTypes = new ArrayList<>();

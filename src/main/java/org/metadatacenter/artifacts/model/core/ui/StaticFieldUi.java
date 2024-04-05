@@ -25,6 +25,11 @@ public non-sealed interface StaticFieldUi extends FieldUi
     return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine);
   }
 
+  static PageBreakFieldUiBuilder pageBreakFieldUiBuilder()
+  {
+    return new PageBreakFieldUiBuilder();
+  }
+
   static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder()
   {
     return new SectionBreakFieldUiBuilder();
@@ -40,6 +45,31 @@ public non-sealed interface StaticFieldUi extends FieldUi
   static YouTubeFieldUiBuilder youTubeFieldUiBuilder()
   {
     return new YouTubeFieldUiBuilder();
+  }
+
+  class PageBreakFieldUiBuilder
+  {
+    private Optional<String> content = Optional.empty();
+    private boolean hidden = false;
+
+    private PageBreakFieldUiBuilder() {}
+
+    public PageBreakFieldUiBuilder withContent(String content)
+    {
+      this.content = Optional.ofNullable(content);
+      return this;
+    }
+
+    public PageBreakFieldUiBuilder withHidden(boolean hidden)
+    {
+      this.hidden = hidden;
+      return this;
+    }
+
+    public StaticFieldUi build()
+    {
+      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false);
+    }
   }
 
   class SectionBreakFieldUiBuilder
