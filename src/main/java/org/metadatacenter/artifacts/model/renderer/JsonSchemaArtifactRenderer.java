@@ -318,7 +318,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         // Non-IRI fields may have en empty object as a value so there are no required fields
       }
 
-      rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints()));
+      if (fieldSchemaArtifact.valueConstraints().isPresent())
+        rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints().get()));
     }
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())

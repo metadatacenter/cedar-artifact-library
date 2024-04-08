@@ -915,6 +915,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           Optional.of(defaultValue.get().asLinkDefaultValue()) :
           Optional.empty();
         return Optional.of(LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));
+      } else if (fieldInputType == FieldInputType.ATTRIBUTE_VALUE) {
+        return Optional.empty();
       } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty())) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asControlledTermDefaultValue()) :

@@ -226,7 +226,8 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  @Ignore // TODO Fix standalone attribute-value field JSON Schema rendering
+  // TODO Fix standalone attribute-value field; validator requires _valueConstraints presence for all fields
+  @Ignore
   @Test public void testRoundTripAttributeValueField()
   {
     String name = "Field name";
