@@ -47,7 +47,7 @@ public class ArtifactRoundTripTest
     cedarModelValidator = new CedarValidator();
   }
 
-  @Test public void testRoundTripSimpleTemplateSchemaArtifact()
+  @Test public void testRoundTripSimpleTemplate()
   {
     TemplateSchemaArtifact originalTemplateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName("Study").build();
@@ -287,6 +287,11 @@ public class ArtifactRoundTripTest
       .withDescription(description).withContent(content).withPreferredLabel(preferredLabel).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripTemplateWithAttributeValueField()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SimpleTemplateWithAttributeValues.json");
   }
 
   @Test public void testRoundTripHuBMAPAntibodiesTemplate()

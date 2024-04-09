@@ -164,7 +164,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       if (templateSchemaArtifact.isField(childName)) {
         FieldSchemaArtifact childFieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childName);
 
-        if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.fieldUi().isAttributeValue())
+        if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
             renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact), childFieldSchemaArtifact.minItems(),
               childFieldSchemaArtifact.maxItems()));
@@ -244,7 +244,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       if (elementSchemaArtifact.isField(childName)) {
         FieldSchemaArtifact childFieldSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childName);
 
-        if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.fieldUi().isAttributeValue())
+        if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
             renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact),
               childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
@@ -306,8 +306,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     else
       rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
 
-    // Static fields have no value constraints field.
-    if (!fieldSchemaArtifact.isStatic()) {
+    // Static fields or attribute-value field have no value constraints field or JSON Schema properties specification
+    if (!(fieldSchemaArtifact.isStatic() || fieldSchemaArtifact.isAttributeValue())) {
 
       if (fieldSchemaArtifact.hasIRIValue()) {
         rendering.put(JSON_SCHEMA_PROPERTIES, renderIRIFieldArtifactPropertiesJsonSchemaSpecification());
@@ -315,7 +315,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_ID);
       } else {
         rendering.put(JSON_SCHEMA_PROPERTIES, renderLiteralFieldArtifactPropertiesJsonSchemaSpecification());
-        // Non-IRI fields may have en empty object as a value so there are no required fields
+        // Non-IRI fields may have an empty object as a value so there are no required fields
       }
 
       if (fieldSchemaArtifact.valueConstraints().isPresent())
@@ -335,7 +335,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
-    if (fieldSchemaArtifact.fieldUi().isAttributeValue())
+    if (fieldSchemaArtifact.isAttributeValue())
       return renderJsonSchemaArrayWrapperSpecification(rendering, Optional.of(0), Optional.empty());
     else
       return rendering;

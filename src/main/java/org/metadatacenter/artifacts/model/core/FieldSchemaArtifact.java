@@ -84,6 +84,9 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
   @JsonIgnore
   default boolean isStatic() { return fieldUi().isStatic(); }
 
+  @JsonIgnore
+  default boolean isAttributeValue() { return fieldUi().isAttributeValue(); }
+
   default boolean hasIRIValue()
   {
     return (fieldUi().isTextField() &&

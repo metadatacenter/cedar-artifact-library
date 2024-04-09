@@ -562,13 +562,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
 
     if (fieldSchemaArtifact.isMultiple() &&
-      !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.fieldUi().isAttributeValue())
+      !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
       rendering.put(MULTIPLE, true);
     else if (fieldSchemaArtifact.fieldUi().isList())
       rendering.put(MULTIPLE, false);
 
     if (fieldSchemaArtifact.minItems().isPresent()
-      && !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.fieldUi().isAttributeValue())
+      && !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
     if (fieldSchemaArtifact.maxItems().isPresent())

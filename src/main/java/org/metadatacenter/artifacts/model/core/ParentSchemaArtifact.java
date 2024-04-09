@@ -30,7 +30,7 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
 
   default boolean hasAttributeValueField()
   {
-    return this.fieldSchemas().values().stream().anyMatch(fs -> fs.fieldUi().isAttributeValue());
+    return this.fieldSchemas().values().stream().anyMatch(fs -> fs.isAttributeValue());
   }
 
   default LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas()
