@@ -48,6 +48,7 @@ public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
 
   public TextFieldBuilder withMinLength(Integer minLength)
   {
+
     valueConstraintsBuilder.withMinLength(minLength);
     return this;
   }

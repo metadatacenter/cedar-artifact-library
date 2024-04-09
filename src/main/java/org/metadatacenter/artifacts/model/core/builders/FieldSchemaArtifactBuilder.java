@@ -58,24 +58,36 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
+    if (jsonLdContext == null)
+      throw new IllegalArgumentException("null JSON-LD @context passed to builder");
+
     this.jsonLdContext = Map.copyOf(jsonLdContext);
     return this;
   }
 
   public FieldSchemaArtifactBuilder withJsonLdType(URI jsonLdType)
   {
+    if (jsonLdType == null)
+      throw new IllegalArgumentException("null JSON-LD @type passed to builder");
+
     this.jsonLdTypes.add(jsonLdType);
     return this;
   }
 
   public FieldSchemaArtifactBuilder withJsonLdId(URI jsonLdId)
   {
+    if (jsonLdId== null)
+      throw new IllegalArgumentException("null JSON-LD @id passed to builder");
+
     this.jsonLdId = Optional.ofNullable(jsonLdId);
     return this;
   }
 
   public FieldSchemaArtifactBuilder withName(String name)
   {
+    if (name == null)
+      throw new IllegalArgumentException("null name passed to builder");
+
     this.name = name;
 
     if (this.jsonSchemaTitle.isEmpty())
@@ -89,36 +101,54 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
   public FieldSchemaArtifactBuilder withDescription(String description)
   {
+    if (description == null)
+      throw new IllegalArgumentException("null description passed to builder");
+
     this.description = description;
     return this;
   }
 
   public FieldSchemaArtifactBuilder withIdentifier(String identifier)
   {
+    if (identifier == null)
+      throw new IllegalArgumentException("null identifier passed to builder");
+
     this.identifier = Optional.ofNullable(identifier);
     return this;
   }
 
   public FieldSchemaArtifactBuilder withPreferredLabel(String skosPrefLabel)
   {
+    if (skosPrefLabel == null)
+      throw new IllegalArgumentException("null SKOS preferred label passed to builder");
+
     this.skosPrefLabel = Optional.ofNullable(skosPrefLabel);
     return this;
   }
 
   public FieldSchemaArtifactBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
+    if (skosAlternateLabels == null)
+      throw new IllegalArgumentException("null SKOS alternate labels passed to builder");
+
     this.skosAlternateLabels = skosAlternateLabels;
     return this;
   }
 
   public FieldSchemaArtifactBuilder withModelVersion(Version modelVersion)
   {
+    if (modelVersion == null)
+      throw new IllegalArgumentException("null model version passed to builder");
+
     this.modelVersion = modelVersion;
     return this;
   }
 
   public FieldSchemaArtifactBuilder withVersion(Version version)
   {
+    if (version == null)
+      throw new IllegalArgumentException("null artifact version passed to builder");
+
     this.version = Optional.ofNullable(version);
     return this;
   }
@@ -191,24 +221,36 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
   public FieldSchemaArtifactBuilder withJsonSchemaTitle(String jsonSchemaTitle)
   {
+    if (jsonSchemaTitle == null)
+      throw new IllegalArgumentException("null JSON Schema title passed to builder");
+
     this.jsonSchemaTitle = jsonSchemaTitle;
     return this;
   }
 
   public FieldSchemaArtifactBuilder withJsonSchemaDescription(String jsonSchemaDescription)
   {
+    if (jsonSchemaDescription == null)
+      throw new IllegalArgumentException("null JSON Schema description passed to builder");
+
     this.jsonSchemaDescription = jsonSchemaDescription;
     return this;
   }
 
   protected FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
   {
+    if (fieldUi == null)
+      throw new IllegalArgumentException("null field UI passed to builder");
+
     this.fieldUi = fieldUi;
     return this;
   }
 
   protected FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
   {
+    if (valueConstraints == null)
+      throw new IllegalArgumentException("null value constraints passed to builder");
+
     this.valueConstraints = Optional.ofNullable(valueConstraints);
     return this;
   }

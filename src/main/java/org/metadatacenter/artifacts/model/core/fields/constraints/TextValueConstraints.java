@@ -51,16 +51,27 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     }
 
     public Builder withMinLength(Integer minLength) {
+
+      if (minLength == null)
+        throw new IllegalArgumentException("null minimum length passed to builder");
+
       this.minLength = Optional.ofNullable(minLength);
       return this;
     }
 
     public Builder withMaxLength(Integer maxLength) {
+      if (maxLength == null)
+        throw new IllegalArgumentException("null maximum length passed to builder");
+
       this.maxLength = Optional.ofNullable(maxLength);
       return this;
     }
 
     public Builder withDefaultValue(String defaultValue) {
+      if (defaultValue == null)
+        throw new IllegalArgumentException("null default value passed to builder");
+
+
       this.defaultValue = Optional.of(new TextDefaultValue(defaultValue));
       return this;
     }
@@ -85,6 +96,9 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     }
 
     public Builder withRegex(String regex) {
+      if (regex == null)
+        throw new IllegalArgumentException("null regex passed to builder");
+
       this.regex = Optional.ofNullable(regex);
       return this;
     }
