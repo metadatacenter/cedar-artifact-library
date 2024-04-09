@@ -1,12 +1,11 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.model.ModelNodeNames;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -21,7 +22,7 @@ public final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
   private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
 
   public CheckboxFieldBuilder() {
-    super(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI);
+    super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.CHECKBOX);
     valueConstraintsBuilder.withMultipleChoice(true);

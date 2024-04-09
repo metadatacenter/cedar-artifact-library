@@ -6,7 +6,6 @@ import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -21,7 +22,7 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
   private final LinkValueConstraints.Builder valueConstraintsBuilder = LinkValueConstraints.builder();
 
   public LinkFieldBuilder() {
-    super(ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI);
+    super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.LINK);
     valueConstraintsBuilder.withMultipleChoice(false);

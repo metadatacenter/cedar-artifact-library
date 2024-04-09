@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 
 public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder, TextAreaFieldBuilder, TemporalFieldBuilder,
@@ -31,7 +30,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   private Optional<OffsetDateTime> createdOn = Optional.empty();
   private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
   private final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-  private final String jsonSchemaType = JSON_SCHEMA_OBJECT;
+  private final String jsonSchemaType;
   private String jsonSchemaTitle = "";
   private String jsonSchemaDescription = "";
   private String name;
@@ -51,9 +50,10 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   private FieldUi fieldUi;
   private Optional<ValueConstraints> valueConstraints = Optional.empty();
 
-  protected FieldSchemaArtifactBuilder(URI artifactTypeIri)
+  protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
-    jsonLdTypes.add(artifactTypeIri);
+    this.jsonSchemaType = jsonSchemaType;
+    this.jsonLdTypes.add(artifactTypeIri);
   }
 
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
