@@ -499,6 +499,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     if (parentInstanceArtifact.jsonLdId().isPresent())
       rendering.put(JSON_LD_ID, parentInstanceArtifact.jsonLdId().get().toString());
+    else
+      rendering.putNull(JSON_LD_ID);
 
     if (parentInstanceArtifact.name().isPresent())
       rendering.put(SCHEMA_ORG_NAME, parentInstanceArtifact.name().get());

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -463,10 +464,18 @@ public class ArtifactRoundTripTest
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumWithProbesV3.0.0.json");
   }
-
   @Test public void testRoundTripSimpleInstanceWithAttributeValues()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
+  }
+
+  @Ignore @Test // TODO Get proper instance
+  public void testRADxInstanceAgainstTemplate() {
+
+    ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGenerated.json");
+    ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/project58_META_origcopy_v1.json");
+
+    assertTrue(validateJsonSchema(templateNode, instanceNode));
   }
 
   @Test public void testRoundTripInstanceWithNestedAttributeValues()
@@ -860,6 +869,17 @@ public class ArtifactRoundTripTest
     }
   }
 
+  private boolean validateJsonSchema(ObjectNode schemaNode, ObjectNode instanceNode)
+  {
+    try {
+      JsonSchema schema = JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
+      schema.validate(instanceNode);
+      return true;
+    } catch (ProcessingException e) {
+      return false;
+    }
+  }
+
   private boolean validateTemplateSchemaArtifact(ObjectNode schemaNode)
   {
     try {
@@ -898,4 +918,5 @@ public class ArtifactRoundTripTest
       return false;
     }
   }
+
 }
