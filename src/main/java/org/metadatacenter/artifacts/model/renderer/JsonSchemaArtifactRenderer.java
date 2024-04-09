@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -499,8 +500,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     if (parentInstanceArtifact.jsonLdId().isPresent())
       rendering.put(JSON_LD_ID, parentInstanceArtifact.jsonLdId().get().toString());
-    else
-      rendering.putNull(JSON_LD_ID);
+    else // TODO Put constant in ModelNodeNames
+      rendering.put(JSON_LD_ID, URI.create("https://repo.metadatacenter.org/template-element-instances/" +
+        UUID.randomUUID()).toString());
 
     if (parentInstanceArtifact.name().isPresent())
       rendering.put(SCHEMA_ORG_NAME, parentInstanceArtifact.name().get());
