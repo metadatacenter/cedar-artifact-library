@@ -47,7 +47,7 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
     XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
-    Number defaultValue = 22.3;
+    Number defaultValue = 2.2;
     Number minValue = 0.0;
     Number maxValue = 100.0;
     String unitOfMeasure = "%";

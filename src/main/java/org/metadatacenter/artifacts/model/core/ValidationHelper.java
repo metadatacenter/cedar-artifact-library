@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ValidationHelper
 {
@@ -21,6 +20,12 @@ public class ValidationHelper
   }
 
   public static void validateIntegerFieldNotNull(Object obj, Integer field, String fieldName)
+  {
+    if (field == null)
+      throw new IllegalStateException("field " + fieldName + " is null in " + obj);
+  }
+
+  public static void validateNumberFieldNotNull(Object obj, Number field, String fieldName)
   {
     if (field == null)
       throw new IllegalStateException("field " + fieldName + " is null in " + obj);
