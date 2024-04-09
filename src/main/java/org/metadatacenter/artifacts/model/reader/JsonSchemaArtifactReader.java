@@ -954,6 +954,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     } else if (childNode.isTextual()) {
       if (fieldInputType == FieldInputType.LINK)
         return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
+      else if (fieldInputType == FieldInputType.TEMPORAL)
+        return Optional.of(new TemporalDefaultValue(childNode.asText()));
       else
         return Optional.of(new TextDefaultValue(childNode.asText()));
     } else

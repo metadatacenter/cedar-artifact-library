@@ -621,9 +621,14 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
   }
 
-  @Test public void testRoundTripRADxMetadataSpecification()
+  @Test public void testRoundTripRADxMetadataTemplate()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxMetadataSpecification.json");
+  }
+
+  @Test public void testRoundTripRADxCLIGeneratedTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGenerated.json");
   }
 
   @Test public void testRoundTripSimpleInstance()
