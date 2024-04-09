@@ -226,8 +226,9 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  // TODO Fix standalone attribute-value field; validator requires _valueConstraints presence for all fields
-  @Ignore
+  // Can add attribute-value to literalFieldUIContent.json in meta model but then it complains about missing
+  // valueConstraints
+  @Ignore // Fix standalone attribute-value field
   @Test public void testRoundTripAttributeValueField()
   {
     String name = "Field name";

@@ -141,6 +141,7 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
   static RadioFieldBuilder radioFieldBuilder() { return new RadioFieldBuilder(); }
 
   static PageBreakFieldBuilder pageBreakFieldBuilder() { return new PageBreakFieldBuilder(); }
+
   static SectionBreakFieldBuilder sectionBreakFieldBuilder() { return new SectionBreakFieldBuilder(); }
 
   static AttributeValueFieldBuilder attributeValueFieldBuilder() { return new AttributeValueFieldBuilder(); }

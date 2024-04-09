@@ -125,12 +125,6 @@ public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public AttributeValueFieldBuilder withIsMultiple(boolean isMultiple)
-  {
-    super.withIsMultiple(isMultiple);
-    return this;
-  }
-
   @Override public AttributeValueFieldBuilder withMinItems(Integer minItems)
   {
     super.withMinItems(minItems);

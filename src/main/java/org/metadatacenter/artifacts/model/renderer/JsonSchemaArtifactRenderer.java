@@ -162,26 +162,26 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     // TODO Think about moving this to renderParentSchemaArtifactPropertiesJsonSchemaSpecification above
     for (String childName : templateSchemaArtifact.templateUi().order()) {
       if (templateSchemaArtifact.isField(childName)) {
-        FieldSchemaArtifact childSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childName);
+        FieldSchemaArtifact childFieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childName);
 
-        if (childSchemaArtifact.isMultiple())
+        if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.fieldUi().isAttributeValue())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
-            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childSchemaArtifact), childSchemaArtifact.minItems(),
-              childSchemaArtifact.maxItems()));
+            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact), childFieldSchemaArtifact.minItems(),
+              childFieldSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
+            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact));
 
       } else if (templateSchemaArtifact.isElement(childName)) {
-        ElementSchemaArtifact childSchemaArtifact = templateSchemaArtifact.getElementSchemaArtifact(childName);
+        ElementSchemaArtifact childElementSchemaArtifact = templateSchemaArtifact.getElementSchemaArtifact(childName);
 
-        if (childSchemaArtifact.isMultiple())
+        if (childElementSchemaArtifact.isMultiple())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
-            renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childSchemaArtifact),
-              childSchemaArtifact.minItems(), childSchemaArtifact.maxItems()));
+            renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childElementSchemaArtifact),
+              childElementSchemaArtifact.minItems(), childElementSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderElementSchemaArtifact(childSchemaArtifact));
+            .put(childName, renderElementSchemaArtifact(childElementSchemaArtifact));
 
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
@@ -242,26 +242,26 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     for (String childName : elementSchemaArtifact.elementUi().order()) {
       if (elementSchemaArtifact.isField(childName)) {
-        FieldSchemaArtifact childSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childName);
+        FieldSchemaArtifact childFieldSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childName);
 
-        if (childSchemaArtifact.isMultiple())
+        if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.fieldUi().isAttributeValue())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
-            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childSchemaArtifact),
-              childSchemaArtifact.minItems(), childSchemaArtifact.maxItems()));
+            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact),
+              childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderFieldSchemaArtifact(childSchemaArtifact));
+            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact));
 
       } else if (elementSchemaArtifact.isElement(childName)) {
-        ElementSchemaArtifact childSchemaArtifact = elementSchemaArtifact.getElementSchemaArtifact(childName);
+        ElementSchemaArtifact childElementSchemaArtifact = elementSchemaArtifact.getElementSchemaArtifact(childName);
 
-        if (childSchemaArtifact.isMultiple())
+        if (childElementSchemaArtifact.isMultiple())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
-            renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childSchemaArtifact),
-              childSchemaArtifact.minItems(), childSchemaArtifact.maxItems()));
+            renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childElementSchemaArtifact),
+              childElementSchemaArtifact.minItems(), childElementSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderElementSchemaArtifact(childSchemaArtifact));
+            .put(childName, renderElementSchemaArtifact(childElementSchemaArtifact));
 
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
@@ -335,7 +335,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
-    return rendering;
+    if (fieldSchemaArtifact.fieldUi().isAttributeValue())
+      return renderJsonSchemaArrayWrapperSpecification(rendering, Optional.of(0), Optional.empty());
+    else
+      return rendering;
   }
 
   /**
