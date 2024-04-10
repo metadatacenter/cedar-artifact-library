@@ -469,11 +469,11 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
   }
 
-  @Ignore @Test // TODO Get proper instance
+  @Test
   public void testRADxInstanceAgainstTemplate() {
 
-    ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGenerated.json");
-    ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/project58_META_origcopy_v1.json");
+    ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
+    ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
 
     assertTrue(validateJsonSchema(templateNode, instanceNode));
   }
@@ -637,7 +637,7 @@ public class ArtifactRoundTripTest
 
   @Test public void testRoundTripRADxCLIGeneratedTemplate()
   {
-    testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGenerated.json");
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");
   }
 
   @Test public void testRoundTripSimpleInstance()
@@ -650,10 +650,9 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithNesting.json");
   }
 
-  // TODO We have the wrong RADx instance here
-  @Ignore @Test public void testRoundTripRADxMetadataInstance()
+  @Ignore @Test public void testRoundTripRADxCLIGeneratedInstance()
   {
-    testTemplateInstanceArtifactRoundTripFromFile("instances/RADxMetadataInstance.json");
+    testTemplateInstanceArtifactRoundTripFromFile("instances/RADxCLIGeneratedInstance.json");
   }
 
   @Test public void testRoundTripElement001()

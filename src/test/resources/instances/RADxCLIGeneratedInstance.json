@@ -1,0 +1,631 @@
+{
+  "@context": {
+    "Auxiliary Metadata": "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataDescriptor",
+    "Data Characteristics Summary": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsDescriptor",
+    "Data File Contributors": "http://purl.org/radx-terms/metadata-terms/contributorDescriptor",
+    "Data File Creation Processes": "http://purl.org/radx-terms/metadata-terms/dataFileCreationProcessDescriptor",
+    "Data File Creators": "http://purl.org/radx-terms/metadata-terms/creatorDescriptor",
+    "Data File Data Dictionary": "http://purl.org/radx-terms/metadata-terms/dataDictionaryDescriptor",
+    "Data File Dates": "http://purl.org/radx-terms/metadata-terms/eventsDescriptor",
+    "Data File Descriptions": "http://purl.org/radx-terms/metadata-terms/descriptionDescriptor",
+    "Data File Distributions": "http://purl.org/radx-terms/metadata-terms/distributionDescriptor",
+    "Data File Elevation Coverage": "http://purl.org/radx-terms/metadata-terms/elevationCoverageDescriptor",
+    "Data File Funding Sources": "http://purl.org/radx-terms/metadata-terms/fundingSourceDescriptor",
+    "Data File Identity": "http://purl.org/radx-terms/metadata-terms/identityDescriptor",
+    "Data File Language": "http://purl.org/radx-terms/metadata-terms/languageDescriptor",
+    "Data File Parent Studies": "http://purl.org/radx-terms/metadata-terms/parentStudyDescriptor",
+    "Data File Related Resources": "http://purl.org/radx-terms/metadata-terms/relatedResourceDescriptor",
+    "Data File Rights": "http://purl.org/radx-terms/metadata-terms/rightsDescriptor",
+    "Data File Spatial Coverage": "http://purl.org/radx-terms/metadata-terms/spatialCoverageDescriptor",
+    "Data File Subjects": "http://purl.org/radx-terms/metadata-terms/subjectsAndKeywordsDescriptor",
+    "Data File Temporal Coverage": "http://purl.org/radx-terms/metadata-terms/temporalCoverageDescriptor",
+    "Data File Titles": "http://purl.org/radx-terms/metadata-terms/titleDescriptor",
+    "Data Sources": "http://purl.org/radx-terms/metadata-terms/dataSourceDescriptor",
+    "Data Streams": "http://purl.org/radx-terms/metadata-terms/dataStreamDescriptor",
+    "oslc": "http://open-services.net/ns/core#",
+    "oslc:modifiedBy": {
+      "@type": "@id"
+    },
+    "pav": "http://purl.org/pav/",
+    "pav:createdBy": {
+      "@type": "@id"
+    },
+    "pav:createdOn": {
+      "@type": "xsd:dateTime"
+    },
+    "pav:derivedFrom": {
+      "@type": "@id"
+    },
+    "pav:lastUpdatedOn": {
+      "@type": "xsd:dateTime"
+    },
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "http://schema.org/",
+    "schema:description": {
+      "@type": "xsd:string"
+    },
+    "schema:isBasedOn": {
+      "@type": "@id"
+    },
+    "schema:name": {
+      "@type": "xsd:string"
+    },
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "skos:notation": {
+      "@type": "xsd:string"
+    },
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": null,
+  "Auxiliary Metadata": {
+    "@context": {
+      "Additional Commentary": "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataCommentary",
+      "Data File Descriptive Key-Value Pairs": "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataKeyValuePair"
+    },
+    "@id": "https://repo.metadatacenter.org/template-element-instances/ea3d0b52-8185-4822-853d-3134736f70b3",
+    "Additional Commentary": [
+      {}
+    ],
+    "Data File Descriptive Key-Value Pairs": []
+  },
+  "Data Characteristics Summary": {
+    "@context": {
+      "Data Characteristics Table in CSV": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInCsv",
+      "Data Characteristics Table in HTML": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInHtml",
+      "Data Characteristics Table in Key-Value Pairs": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInKeyValuePairs",
+      "Data Characteristics Table in TSV": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInTsv"
+    },
+    "@id": "https://repo.metadatacenter.org/template-element-instances/de1133b0-83fa-4891-b811-97a5b5456d0b",
+    "Data Characteristics Table in CSV": {},
+    "Data Characteristics Table in HTML": {},
+    "Data Characteristics Table in Key-Value Pairs": [],
+    "Data Characteristics Table in TSV": {}
+  },
+  "Data File Contributors": [
+    {
+      "@context": {
+        "Contributor Affiliation": "http://purl.org/radx-terms/metadata-terms/contributorAffiliation",
+        "Contributor Affiliation Identifier": "http://purl.org/radx-terms/metadata-terms/contributorAffiliationIdentifier",
+        "Contributor Affiliation Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/contributorAffiliationIdentifierScheme",
+        "Contributor Email": "http://purl.org/radx-terms/metadata-terms/contributorEmail",
+        "Contributor Family Name": "http://purl.org/radx-terms/metadata-terms/contributorFamilyName",
+        "Contributor Given Name": "http://purl.org/radx-terms/metadata-terms/contributorGivenName",
+        "Contributor Identifier": "http://purl.org/radx-terms/metadata-terms/contributorIdentifier",
+        "Contributor Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/contributorIdentifierScheme",
+        "Contributor Name": "http://purl.org/radx-terms/metadata-terms/contributorName",
+        "Contributor Role": "http://purl.org/radx-terms/metadata-terms/contributorRole",
+        "Contributor Type": "http://purl.org/radx-terms/metadata-terms/contributorType"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/4a04dd6e-38b4-4a35-b7b5-85a3a78bbd4f",
+      "Contributor Affiliation": {
+        "@value": "Brown University"
+      },
+      "Contributor Affiliation Identifier": {
+        "@value": "https://ror.org/05gq02987"
+      },
+      "Contributor Affiliation Identifier Scheme": {
+        "@id": "https://ror.org",
+        "rdfs:label": "ROR"
+      },
+      "Contributor Email": {
+        "@value": "josiah.carberry@example.com"
+      },
+      "Contributor Family Name": {
+        "@value": "Carberry"
+      },
+      "Contributor Given Name": {
+        "@value": "Josiah"
+      },
+      "Contributor Identifier": {
+        "@value": "https://orcid.org/0000-0002-1825-0097"
+      },
+      "Contributor Identifier Scheme": {
+        "@id": "https://orcid.org",
+        "rdfs:label": "ORCID"
+      },
+      "Contributor Name": {
+        "@value": "Josiah Carberry"
+      },
+      "Contributor Role": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/DataCollector",
+        "rdfs:label": "Data Collector"
+      },
+      "Contributor Type": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/Person",
+        "rdfs:label": "Person"
+      }
+    }
+  ],
+  "Data File Creation Processes": [
+    {
+      "@context": {
+        "Process Execution Identifier": "http://purl.org/radx-terms/metadata-terms/creationProcessExecutionIdentifier",
+        "Process IRI": "http://purl.org/radx-terms/metadata-terms/creationProcessIri",
+        "Process Name": "http://purl.org/radx-terms/metadata-terms/creationProcessName",
+        "Process Version": "http://purl.org/radx-terms/metadata-terms/creationProcessVersion"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/eb567a99-08a0-4fa2-867c-84ea464c2a6b",
+      "Process Execution Identifier": {},
+      "Process IRI": {},
+      "Process Name": {},
+      "Process Version": {}
+    }
+  ],
+  "Data File Creators": [
+    {
+      "@context": {
+        "Creator Affiliation": "http://purl.org/radx-terms/metadata-terms/creatorAffiliation",
+        "Creator Affiliation Identifier": "http://purl.org/radx-terms/metadata-terms/creatorAffiliationIdentifier",
+        "Creator Affiliation Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/creatorAffiliationIdentifierScheme",
+        "Creator Email": "http://purl.org/radx-terms/metadata-terms/creatorEmail",
+        "Creator Family Name": "http://purl.org/radx-terms/metadata-terms/creatorFamilyName",
+        "Creator Given Name": "http://purl.org/radx-terms/metadata-terms/creatorGivenName",
+        "Creator Identifier": "http://purl.org/radx-terms/metadata-terms/creatorIdentifier",
+        "Creator Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/creatorIdentifierScheme",
+        "Creator Name": "http://purl.org/radx-terms/metadata-terms/creatorName",
+        "Creator Role": "http://purl.org/radx-terms/metadata-terms/creatorRole",
+        "Creator Type": "http://purl.org/radx-terms/metadata-terms/creatorType"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/097eccc2-7241-4fb7-af22-2b0cef984325",
+      "Creator Affiliation": {
+        "@value": "Brown University"
+      },
+      "Creator Affiliation Identifier": {
+        "@value": "https://ror.org/05gq02987"
+      },
+      "Creator Affiliation Identifier Scheme": {
+        "@id": "https://ror.org",
+        "rdfs:label": "ROR"
+      },
+      "Creator Email": {
+        "@value": "josiah.carberry@example.com"
+      },
+      "Creator Family Name": {
+        "@value": "Carberry"
+      },
+      "Creator Given Name": {
+        "@value": "Josiah"
+      },
+      "Creator Identifier": {
+        "@value": "https://orcid.org/0000-0002-1825-0097"
+      },
+      "Creator Identifier Scheme": {
+        "@id": "https://orcid.org/",
+        "rdfs:label": "ORCID"
+      },
+      "Creator Name": {
+        "@value": "Josiah Carberry"
+      },
+      "Creator Role": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/DataManager",
+        "rdfs:label": "Data Manager"
+      },
+      "Creator Type": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/Person",
+        "rdfs:label": "Person"
+      }
+    }
+  ],
+  "Data File Data Dictionary": {
+    "@context": {
+      "Data Dictionary File Name": "http://purl.org/radx-terms/metadata-terms/dataDictionaryFileName"
+    },
+    "@id": "https://repo.metadatacenter.org/template-element-instances/00b3ae24-f248-4a0b-9d50-a011309cd543",
+    "Data Dictionary File Name": {
+      "@value": "COVID-19_Booster_Shot_June_2022_Responses--DICT.csv"
+    }
+  },
+  "Data File Dates": [
+    {
+      "@context": {
+        "Date": "http://purl.org/radx-terms/metadata-terms/eventDate",
+        "Event Type": "http://purl.org/radx-terms/metadata-terms/eventType"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/2d6bf783-ae61-4331-8b76-58b3d9db2989",
+      "Date": {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2022-11-23"
+      },
+      "Event Type": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/Created",
+        "rdfs:label": "Created"
+      }
+    }
+  ],
+  "Data File Descriptions": [
+    {
+      "@context": {
+        "Description": "http://purl.org/radx-terms/metadata-terms/description",
+        "Description Language": "http://purl.org/radx-terms/metadata-terms/language",
+        "Type Of Content": "http://purl.org/radx-terms/metadata-terms/typeOfContent"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/c04c7fa6-dbfc-4ec9-ab73-949b287fd78a",
+      "Description": {
+        "@value": "This dataset provides responses from a survey carried out in June 2022 whose purpose was to ascertain side-effects of receiving the COVID-19 booster shot."
+      },
+      "Description Language": {
+        "@value": "en"
+      },
+      "Type Of Content": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/Dataset",
+        "rdfs:label": "Dataset"
+      }
+    }
+  ],
+  "Data File Distributions": [
+    {
+      "@context": {
+        "Data File Publication Date": "http://purl.org/radx-terms/metadata-terms/distributionPublicationDescriptor",
+        "Distribution Access Configuration": "http://purl.org/radx-terms/metadata-terms/distributionAccessConfiguration",
+        "Distribution Access Protocol": "http://purl.org/radx-terms/metadata-terms/distributionAccessProtocol",
+        "Distribution Format": "http://purl.org/radx-terms/metadata-terms/distributionFormat",
+        "Distribution Identifier": "http://purl.org/radx-terms/metadata-terms/distributionIdentifier",
+        "Distribution Identifier Type": "http://purl.org/radx-terms/metadata-terms/distributionIdentifierType",
+        "Distribution Media Type": "http://purl.org/radx-terms/metadata-terms/distributionMediaType",
+        "Distribution Publisher": "http://purl.org/radx-terms/metadata-terms/distributionPublisher",
+        "Distribution Publisher Identifier": "http://purl.org/radx-terms/metadata-terms/distributionPublisherIdentifier",
+        "Distribution Publisher Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/distributionPublisherIdentifierScheme",
+        "Distribution Query Statement": "http://purl.org/radx-terms/metadata-terms/distributionQueryStatement",
+        "Distribution Size": "http://purl.org/radx-terms/metadata-terms/distributionSizeInBytes"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/83f80817-d351-4a27-b2c9-cdee45891ddf",
+      "Data File Publication Date": {
+        "@context": {
+          "Data File Publication Date": "http://purl.org/radx-terms/metadata-terms/distributionPublicationDate",
+          "Publication Date Type": "http://purl.org/radx-terms/metadata-terms/distributionPublicationDateType"
+        },
+        "@id": "https://repo.metadatacenter.org/template-element-instances/0e72d64f-c2f1-4229-91e7-7cdc7fa19561",
+        "Data File Publication Date": {},
+        "Publication Date Type": {
+          "@value": "[Published](http://vocab.fairdatacollective.org/gdmt/Published)"
+        }
+      },
+      "Distribution Access Configuration": {},
+      "Distribution Access Protocol": {},
+      "Distribution Format": {},
+      "Distribution Identifier": {},
+      "Distribution Identifier Type": {},
+      "Distribution Media Type": {},
+      "Distribution Publisher": {},
+      "Distribution Publisher Identifier": {},
+      "Distribution Publisher Identifier Scheme": {},
+      "Distribution Query Statement": {},
+      "Distribution Size": {}
+    }
+  ],
+  "Data File Elevation Coverage": [
+    {
+      "@context": {
+        "Vertical Extent Datum": "http://purl.org/radx-terms/metadata-terms/elevationReferenceFrame",
+        "Vertical Extent Datum IRI": "http://purl.org/radx-terms/metadata-terms/elevationReferenceFrameIri",
+        "Vertical Extent Maximum Value": "http://purl.org/radx-terms/metadata-terms/maxElevation",
+        "Vertical Extent Minimum Value": "http://purl.org/radx-terms/metadata-terms/minElevation"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/db604c05-75bf-4883-b322-45caee70c25b",
+      "Vertical Extent Datum": {
+        "@value": "WGS84"
+      },
+      "Vertical Extent Datum IRI": {
+        "@id": "https://epsg.io/4326"
+      },
+      "Vertical Extent Maximum Value": {
+        "@type": "http://www.w3.org/2001/XMLSchema#float",
+        "@value": "-2.5"
+      },
+      "Vertical Extent Minimum Value": {
+        "@type": "http://www.w3.org/2001/XMLSchema#float",
+        "@value": "-1223.0"
+      }
+    }
+  ],
+  "Data File Funding Sources": [
+    {
+      "@context": {
+        "Award Local Identifier": "http://purl.org/radx-terms/metadata-terms/awardIdentifier",
+        "Award Page URL": "http://purl.org/radx-terms/metadata-terms/awardPageUrl",
+        "Award Title": "http://purl.org/radx-terms/metadata-terms/awardTitle",
+        "Funder Identifier": "http://purl.org/radx-terms/metadata-terms/funderIdentifier",
+        "Funder Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/funderIdentifierScheme",
+        "Funder Name": "http://purl.org/radx-terms/metadata-terms/funderName"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/cade4b81-cfd1-48a9-8590-6ba5bac47289",
+      "Award Local Identifier": {
+        "@value": "1U01HD108787-01"
+      },
+      "Award Page URL": {
+        "@id": "https://reporter.nih.gov/search/44g5CsIy-EGIvKlnlFwXrA/project-details/10447530"
+      },
+      "Award Title": {
+        "@value": "Safer At School Early Alert (SASEA)"
+      },
+      "Funder Identifier": {
+        "@value": "https://ror.org/04byxyr05"
+      },
+      "Funder Identifier Scheme": {
+        "@id": "https://ror.org",
+        "rdfs:label": "ROR"
+      },
+      "Funder Name": {
+        "@value": "Eunice Kennedy Shriver National Institute of Child Health and Human Development"
+      }
+    }
+  ],
+  "Data File Identity": {
+    "@context": {
+      "File Name": "http://purl.org/radx-terms/metadata-terms/fileName",
+      "Identifier": "http://purl.org/radx-terms/metadata-terms/identifier",
+      "Identifier Type": "http://purl.org/radx-terms/metadata-terms/identifierType",
+      "SHA256 digest": "https://purl.org/radx-terms/sha256",
+      "Version": "http://purl.org/radx-terms/metadata-terms/version"
+    },
+    "@id": "https://repo.metadatacenter.org/template-element-instances/f468941d-bc87-4426-8ea2-5a8f9b3589f6",
+    "File Name": {
+      "@value": "COVID-19_Booster_Shot_June_2022_Responses.csv"
+    },
+    "Identifier": {
+      "@value": "http://doi.org/10.1000/182"
+    },
+    "Identifier Type": {
+      "@id": "http://vocab.fairdatacollective.org/gdmt/DOI",
+      "rdfs:label": "DOI"
+    },
+    "SHA256 digest": {
+      "@value": "ebff8d3da88b292622d3bfc36bdac4c4537ddc56cb07f344c5223d6b6f9cd011"
+    },
+    "Version": {
+      "@value": "1.0.1"
+    }
+  },
+  "Data File Language": {
+    "@context": {
+      "Other Languages": "http://purl.org/radx-terms/metadata-terms/otherLanguage",
+      "Primary Language": "http://purl.org/radx-terms/metadata-terms/primaryLanguage"
+    },
+    "@id": "https://repo.metadatacenter.org/template-element-instances/bc6c670a-7313-4af1-82e5-fa0e6084c994",
+    "Other Languages": [
+      {
+        "@value": "es"
+      }
+    ],
+    "Primary Language": {
+      "@value": "en"
+    }
+  },
+  "Data File Parent Studies": [
+    {
+      "@context": {
+        "PHS Identifier": "http://purl.org/radx-terms/metadata-terms/parentStudyPhsIdentifier",
+        "Study End Date": "http://purl.org/radx-terms/metadata-terms/endDate",
+        "Study Identifier": "http://purl.org/radx-terms/metadata-terms/ParentStudyIdentifier",
+        "Study Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/parentStudyIdentifierScheme",
+        "Study Name": "http://purl.org/radx-terms/metadata-terms/parentStudyName",
+        "Study Start Date": "http://purl.org/radx-terms/metadata-terms/startDate"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/6ee16b60-f976-4ccf-aca2-76e9e41e3122",
+      "PHS Identifier": {
+        "@value": "phs000296"
+      },
+      "Study End Date": {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2022-10-05"
+      },
+      "Study Identifier": {
+        "@value": "https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=phs000296"
+      },
+      "Study Identifier Scheme": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/IRI",
+        "rdfs:label": "IRI"
+      },
+      "Study Name": {
+        "@value": "NHLBI GO-ESP: Lung Cohorts Exome Sequencing Project (COPDGene)"
+      },
+      "Study Start Date": {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2021-10-05"
+      }
+    }
+  ],
+  "Data File Related Resources": [
+    {
+      "@context": {
+        "Related Resource File Name": "http://purl.org/radx-terms/metadata-terms/relatedResourceFileName",
+        "Related Resource Identifier": "http://purl.org/radx-terms/metadata-terms/relatedResourceIdentifier",
+        "Related Resource Identifier Type": "http://purl.org/radx-terms/metadata-terms/relatedResourceIdentifierType",
+        "Related Resource Relation": "http://purl.org/radx-terms/metadata-terms/relatedResourceRelation",
+        "Related Resource Type Category": "http://purl.org/radx-terms/metadata-terms/relatedResourceTypeCategory"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/ba90c8f0-3f32-45a7-b2fe-b00bd9325d9c",
+      "Related Resource File Name": {},
+      "Related Resource Identifier": {},
+      "Related Resource Identifier Type": {},
+      "Related Resource Relation": {
+        "@value": "The publication describes how the data file is constructed and can be used."
+      },
+      "Related Resource Type Category": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/Text",
+        "rdfs:label": "Text"
+      }
+    }
+  ],
+  "Data File Rights": [
+    {
+      "@context": {
+        "License Name": "http://purl.org/radx-terms/metadata-terms/licenseName",
+        "License Text": "http://purl.org/radx-terms/metadata-terms/licenseText"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/356ff61e-5fbc-4ce5-bd4c-9336a3016ad9",
+      "License Name": {
+        "@id": "http://vocab.fairdatacollective.org/gdmt/CCBYSA4.0",
+        "rdfs:label": "CC BY-SA 4.0"
+      },
+      "License Text": {}
+    }
+  ],
+  "Data File Spatial Coverage": [
+    {
+      "@context": {
+        "Bounding Boxes": "http://purl.org/radx-terms/metadata-terms/boundingBoxDescriptor",
+        "Bounding Shapes": "http://purl.org/radx-terms/metadata-terms/boundingShapeDescriptor",
+        "Data File Geopolitical Coverage": "http://purl.org/radx-terms/metadata-terms/geopoliticalCoverageDescriptor"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/a79e0623-405b-4d61-bacd-5e0d7e8a2130",
+      "Bounding Boxes": [
+        {
+          "@context": {
+            "Maximum Latitude": "http://purl.org/radx-terms/metadata-terms/maxLatitude",
+            "Maximum Longitude": "http://purl.org/radx-terms/metadata-terms/maxLongitude",
+            "Minimum Latitude": "http://purl.org/radx-terms/metadata-terms/minLatitude",
+            "Minimum Longitude": "http://purl.org/radx-terms/metadata-terms/minLongitude"
+          },
+          "@id": "https://repo.metadatacenter.org/template-element-instances/367efeee-3aa4-48f3-81fb-5da52281c411",
+          "Maximum Latitude": {
+            "@value": "-121.208178"
+          },
+          "Maximum Longitude": {
+            "@value": "37.484637"
+          },
+          "Minimum Latitude": {
+            "@value": "-122.202653"
+          },
+          "Minimum Longitude": {
+            "@value": "36.892976"
+          }
+        }
+      ],
+      "Bounding Shapes": [
+        {
+          "@context": {
+            "Latitude": "http://purl.org/radx-terms/metadata-terms/latitude",
+            "Longitude": "http://purl.org/radx-terms/metadata-terms/longitude",
+            "Point Number": "http://purl.org/radx-terms/metadata-terms/pointNumber"
+          },
+          "@id": "https://repo.metadatacenter.org/template-element-instances/8a80b90b-2341-4074-8d0a-77083180b546",
+          "Latitude": {
+            "@type": "http://www.w3.org/2001/XMLSchema#float",
+            "@value": "10.0"
+          },
+          "Longitude": {
+            "@type": "http://www.w3.org/2001/XMLSchema#float",
+            "@value": "150.0"
+          },
+          "Point Number": {
+            "@type": "http://www.w3.org/2001/XMLSchema#int",
+            "@value": "1"
+          }
+        }
+      ],
+      "Data File Geopolitical Coverage": [
+        {
+          "@context": {
+            "Geopolitical region": "http://purl.org/radx-terms/metadata-terms/geographicalPlaceName"
+          },
+          "@id": "https://repo.metadatacenter.org/template-element-instances/f2505cb0-0cf3-4561-84bf-52a762ee36aa",
+          "Geopolitical region": [
+            {
+              "@value": "[New York City](https://www.geonames.org/5128581)"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "Data File Subjects": [
+    {
+      "@context": {
+        "Keyword": "http://purl.org/radx-terms/metadata-terms/keyword",
+        "Subject Identifier": "http://purl.org/radx-terms/metadata-terms/subjectIdentifier",
+        "Subject Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/subjectIdentifierScheme"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/2df50418-788a-4f24-89c4-6f0d7157a11a",
+      "Keyword": {
+        "@value": "COVID-19 vaccine booster shot"
+      },
+      "Subject Identifier": {
+        "@id": "http://purl.bioontology.org/ontology/MESH/C000719227",
+        "rdfs:label": "COVID-19 vaccine booster shot"
+      },
+      "Subject Identifier Scheme": {
+        "@value": "http://purl.bioontology.org/ontology/MESH"
+      }
+    }
+  ],
+  "Data File Temporal Coverage": [
+    {
+      "@context": {
+        "Duration": "http://purl.org/radx-terms/metadata-terms/temporalCoverageDuration",
+        "Temporal Extent Maximum Value": "http://purl.org/radx-terms/metadata-terms/temporalExtentMaximumValue",
+        "Temporal Extent Minimum Value": "http://purl.org/radx-terms/metadata-terms/temporalExtentMinimumValue",
+        "Temporal Resolution": "http://purl.org/radx-terms/metadata-terms/temporalResolution"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/24822edd-94d4-4b31-8b3d-e171337e652d",
+      "Duration": {
+        "@value": "P8DT1.5H"
+      },
+      "Temporal Extent Maximum Value": {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2022-06-29"
+      },
+      "Temporal Extent Minimum Value": {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2022-06-01"
+      },
+      "Temporal Resolution": {
+        "@value": "3600"
+      }
+    }
+  ],
+  "Data File Titles": [
+    {
+      "@context": {
+        "Language": "http://purl.org/radx-terms/metadata-terms/language",
+        "Title": "http://purl.org/radx-terms/metadata-terms/title"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/d5a1d275-d8b0-49b1-9d35-703ac3172b2b",
+      "Language": {
+        "@value": "en"
+      },
+      "Title": {
+        "@value": "COVID-19 Booster Shot Side Effects Survey Responses"
+      }
+    }
+  ],
+  "Data Sources": [
+    {
+      "@context": {
+        "Data Source Identifier": "http://purl.org/radx-terms/metadata-terms/dataSourceIdentifier",
+        "Data Source Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/dataSourceIdentifierScheme",
+        "Data Source Name": "http://purl.org/radx-terms/metadata-terms/dataSourceName"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/9c2aebdb-6701-44c2-adc8-758f8dd69443",
+      "Data Source Identifier": {},
+      "Data Source Identifier Scheme": {},
+      "Data Source Name": {}
+    }
+  ],
+  "Data Streams": [
+    {
+      "@context": {
+        "Data Stream Data Source Identifier": "http://purl.org/radx-terms/metadata-terms/dataStreamDataSourceIdentifier",
+        "Data Stream Identifier": "http://purl.org/radx-terms/metadata-terms/dataStreamIdentifier",
+        "Data Stream Identifier Scheme": "http://purl.org/radx-terms/metadata-terms/dataStreamIdentifierScheme",
+        "Data Stream Name": "http://purl.org/radx-terms/metadata-terms/dataStreamName",
+        "Data Stream Variable Names": "http://purl.org/radx-terms/metadata-terms/dataStreamVariableName"
+      },
+      "@id": "https://repo.metadatacenter.org/template-element-instances/86209166-409f-42af-82a4-dd54363442e7",
+      "Data Stream Data Source Identifier": {},
+      "Data Stream Identifier": {},
+      "Data Stream Identifier Scheme": {},
+      "Data Stream Name": {},
+      "Data Stream Variable Names": [
+        {}
+      ]
+    }
+  ],
+  "oslc:modifiedBy": null,
+  "pav:createdBy": null,
+  "pav:createdOn": "2024-04-10T11:42:38-07:00",
+  "pav:lastUpdatedOn": null,
+  "schema:description": "Generated by CEDAR CLI from RADx Metadata Specification CSV",
+  "schema:isBasedOn": "https://repo.metadatacenter.org/templates/1dac1b8a-4987-458b-ada4-e750ccddd342",
+  "schema:name": "Template Example Metadata Metadata"
+}

@@ -107,12 +107,11 @@ public class InstanceArtifactVisitorTest
     assertTrue(instanceReporter.getInstanceReport().contains("/Attribute-value instance field 4"));
   }
 
-  @Ignore // TODO Instance may not be valid
   @Test
   public void testVisitorsOnRADxMetadata()
   {
-    ObjectNode templateObjectNode = getJSONFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
-    ObjectNode instanceObjectNode = getJSONFileContentAsObjectNode("instances/RADxMetadataInstance.json");
+    ObjectNode templateObjectNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
+    ObjectNode instanceObjectNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(instanceObjectNode);
@@ -122,8 +121,8 @@ public class InstanceArtifactVisitorTest
 
     templateInstanceArtifact.accept(instanceReporter);
 
-    assertEquals("RADx Metadata Specification", templateSchemaArtifact.name());
-    assertEquals("RADx Example Metadata Instance", templateInstanceArtifact.name().get());
+    assertEquals("RADxMetadataSpecification", templateSchemaArtifact.name());
+    assertEquals("Template Example Metadata Metadata", templateInstanceArtifact.name().get());
     assertTrue(Collections.frequency(instanceReporter.getInstanceReport().keySet(), null) == 0);
     assertTrue(Collections.frequency(instanceReporter.getInstanceReport().values(), null) == 0);
   }
