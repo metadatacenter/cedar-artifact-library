@@ -31,6 +31,7 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class ArtifactRoundTripTest
@@ -650,7 +651,7 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithNesting.json");
   }
 
-  @Ignore @Test public void testRoundTripRADxCLIGeneratedInstance()
+  @Test public void testRoundTripRADxCLIGeneratedInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADxCLIGeneratedInstance.json");
   }
@@ -670,10 +671,14 @@ public class ArtifactRoundTripTest
     testElementSchemaArtifactRoundTripFromFile("elements/element-003.json");
   }
 
-  @Ignore // TODO Nested field "Title" has no bibo entry in its @context
   @Test public void testRoundTripElement004()
   {
-    testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
+    try {
+      testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
+      fail("Expected IllegalStateException");
+    } catch (IllegalStateException e) {
+      // Expected exception
+    }
   }
 
   @Test public void testRoundTripField001()
