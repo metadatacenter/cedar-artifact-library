@@ -22,7 +22,7 @@ public class StaticFieldUiTest
 
     assertTrue(staticFieldUi.inputType().isStatic());
     assertEquals(FieldInputType.SECTION_BREAK, staticFieldUi.inputType());
-    assertEquals(content, staticFieldUi._content());
+    assertEquals(content, staticFieldUi._content().get());
     assertEquals(hidden, staticFieldUi.hidden());
   }
 
@@ -41,7 +41,7 @@ public class StaticFieldUiTest
 
     assertTrue(staticFieldUi.inputType().isStatic());
     assertEquals(FieldInputType.RICHTEXT, staticFieldUi.inputType());
-    assertEquals(content, staticFieldUi._content());
+    assertEquals(content, staticFieldUi._content().get());
     assertEquals(hidden, staticFieldUi.hidden());
     assertEquals(continuePreviousLine, staticFieldUi.continuePreviousLine());
   }
@@ -61,7 +61,7 @@ public class StaticFieldUiTest
 
     assertTrue(staticFieldUi.inputType().isStatic());
     assertEquals(FieldInputType.IMAGE, staticFieldUi.inputType());
-    assertEquals(content, staticFieldUi._content());
+    assertEquals(content, staticFieldUi._content().get());
     assertEquals(hidden, staticFieldUi.hidden());
     assertEquals(continuePreviousLine, staticFieldUi.continuePreviousLine());
   }
@@ -81,7 +81,7 @@ public class StaticFieldUiTest
 
     assertTrue(staticFieldUi.inputType().isStatic());
     assertEquals(FieldInputType.YOUTUBE, staticFieldUi.inputType());
-    assertEquals(content, staticFieldUi._content());
+    assertEquals(content, staticFieldUi._content().get());
     assertEquals(hidden, staticFieldUi.hidden());
     assertEquals(continuePreviousLine, staticFieldUi.continuePreviousLine());
   }

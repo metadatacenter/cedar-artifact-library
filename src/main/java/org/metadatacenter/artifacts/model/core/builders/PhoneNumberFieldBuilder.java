@@ -1,11 +1,11 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -20,6 +22,7 @@ public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
   private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
 
   public PhoneNumberFieldBuilder() {
+    super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.PHONE_NUMBER);
     valueConstraintsBuilder.withMultipleChoice(false);
@@ -49,9 +52,9 @@ public final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public PhoneNumberFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+  public PhoneNumberFieldBuilder withValueRecommendation(boolean valueRecommendation)
   {
-    fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+    fieldUiBuilder.withValueRecommendation(valueRecommendation);
     return this;
   }
 

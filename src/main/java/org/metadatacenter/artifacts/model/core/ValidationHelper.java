@@ -25,6 +25,12 @@ public class ValidationHelper
       throw new IllegalStateException("field " + fieldName + " is null in " + obj);
   }
 
+  public static void validateNumberFieldNotNull(Object obj, Number field, String fieldName)
+  {
+    if (field == null)
+      throw new IllegalStateException("field " + fieldName + " is null in " + obj);
+  }
+
   public static void validateStringFieldNotEmpty(Object obj, String field, String fieldName)
   {
     validateStringFieldNotNull(obj, field, fieldName);
@@ -68,7 +74,8 @@ public class ValidationHelper
     validateListFieldNotNull(obj, uriListField, fieldName);
 
     if (uriListField.stream().noneMatch(values::contains))
-      throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values + " in " + obj);
+      throw new IllegalStateException("URI list field " + fieldName + " must contain at least one of " + values +
+        " in " + obj + "; missing: " + uriListField.stream().filter(e -> !values.contains(e)).toList());
   }
 
   public static void validateUriListFieldContainsAllOf(Object obj, List<URI> uriListField, String fieldName, Set<URI> values)
@@ -76,7 +83,8 @@ public class ValidationHelper
     validateListFieldNotNull(obj, uriListField, fieldName);
 
     if (!uriListField.containsAll(values))
-      throw new IllegalStateException("URI list field " + fieldName + " must contain all values " + values + " in " + obj);
+      throw new IllegalStateException("URI list field " + fieldName + " must contain all values " + values + " in " +
+        obj + "; missing: " + uriListField.stream().filter(e -> !values.contains(e)).toList());
   }
 
   public static <K, V> void validateMapFieldContainsAll(Object obj, Map<K, V> field, String fieldName, Map<K, V> values)
@@ -84,7 +92,8 @@ public class ValidationHelper
     validateMapFieldNotNull(obj, field, fieldName);
 
     if (!field.entrySet().containsAll(values.entrySet()))
-      throw new IllegalStateException("Map field " + fieldName + " must contain all entries " + values + " in " + obj);
+      throw new IllegalStateException("Map field " + fieldName + " must contain all entries " + values + " in " +
+        obj + "; missing: " + values.entrySet().stream().filter(e -> !field.entrySet().contains(e)).toList());
   }
 
   public static void validateXsdTemporalDatatypeFieldNotNull(Object obj, XsdTemporalDatatype field, String fieldName)

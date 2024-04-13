@@ -1,14 +1,18 @@
 package org.metadatacenter.artifacts.model.core.ui;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.model.ModelNodeNames;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
+import java.util.Optional;
+
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 
 public non-sealed interface StaticFieldUi extends FieldUi
 {
-  String _content();
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  Optional<String> _content();
 
   boolean hidden();
 
@@ -18,9 +22,14 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   default boolean continuePreviousLine() { return false; }
 
-  static StaticFieldUi create(FieldInputType fieldInputType, String content, boolean hidden, boolean continuePreviousLine)
+  static StaticFieldUi create(FieldInputType fieldInputType, Optional<String> content, boolean hidden, boolean continuePreviousLine)
   {
     return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine);
+  }
+
+  static PageBreakFieldUiBuilder pageBreakFieldUiBuilder()
+  {
+    return new PageBreakFieldUiBuilder();
   }
 
   static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder()
@@ -40,16 +49,41 @@ public non-sealed interface StaticFieldUi extends FieldUi
     return new YouTubeFieldUiBuilder();
   }
 
+  class PageBreakFieldUiBuilder
+  {
+    private Optional<String> content = Optional.empty();
+    private boolean hidden = false;
+
+    private PageBreakFieldUiBuilder() {}
+
+    public PageBreakFieldUiBuilder withContent(String content)
+    {
+      this.content = Optional.ofNullable(content);
+      return this;
+    }
+
+    public PageBreakFieldUiBuilder withHidden(boolean hidden)
+    {
+      this.hidden = hidden;
+      return this;
+    }
+
+    public StaticFieldUi build()
+    {
+      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false);
+    }
+  }
+
   class SectionBreakFieldUiBuilder
   {
-    private String content;
+    private Optional<String> content = Optional.empty();
     private boolean hidden = false;
 
     private SectionBreakFieldUiBuilder() {}
 
     public SectionBreakFieldUiBuilder withContent(String content)
     {
-      this.content = content;
+      this.content = Optional.ofNullable(content);
       return this;
     }
 
@@ -67,7 +101,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   class RichTextFieldUiBuilder
   {
-    private String content;
+    private Optional<String> content = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
 
@@ -75,7 +109,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public RichTextFieldUiBuilder withContent(String content)
     {
-      this.content = content;
+      this.content = Optional.ofNullable(content);
       return this;
     }
 
@@ -99,7 +133,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   class ImageFieldUiBuilder
   {
-    private String content;
+    private Optional<String> content = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
 
@@ -109,7 +143,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public ImageFieldUiBuilder withContent(String content)
     {
-      this.content = content;
+      this.content = Optional.ofNullable(content);
       return this;
     }
 
@@ -133,7 +167,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   class YouTubeFieldUiBuilder
   {
-    private String content;
+    private Optional<String> content = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
 
@@ -143,7 +177,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public YouTubeFieldUiBuilder withContent(String content)
     {
-      this.content = content;
+      this.content = Optional.ofNullable(content);
       return this;
     }
 
@@ -167,12 +201,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
 }
 
-record StaticFieldUiRecord(FieldInputType inputType, String _content, boolean hidden, boolean continuePreviousLine) implements StaticFieldUi
+record StaticFieldUiRecord(FieldInputType inputType, Optional<String> _content, boolean hidden, boolean continuePreviousLine) implements StaticFieldUi
 {
   public StaticFieldUiRecord
   {
 
-    validateStringFieldNotNull(this, _content, ModelNodeNames.UI_CONTENT);
+    validateOptionalFieldNotNull(this, _content, ModelNodeNames.UI_CONTENT);
 
     if (inputType == null)
       throw new IllegalStateException("Field " + UI_FIELD_INPUT_TYPE + " must set for static  fields in " + this);

@@ -31,10 +31,10 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
   static NumericValueConstraints create(XsdNumericDatatype numericType,
     Optional<Number> minValue, Optional<Number> maxValue,
     Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,
-    boolean requiredValue, boolean multipleChoice)
+    boolean requiredValue, boolean  recommendedValue, boolean multipleChoice)
   {
     return new NumericValueConstraintsRecord(numericType, minValue, maxValue, decimalPlaces, unitOfMeasure, defaultValue,
-      requiredValue, multipleChoice);
+      requiredValue, recommendedValue, multipleChoice);
   }
 
   static Builder builder() {
@@ -49,6 +49,7 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
     private Optional<String> unitOfMeasure = Optional.empty();
     private Optional<NumericDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
+    private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
     private Builder() {
@@ -89,6 +90,11 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
       return this;
     }
 
+    public Builder withRecommendedValue(boolean recommendedValue) {
+      this.recommendedValue = recommendedValue;
+      return this;
+    }
+
     public Builder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
@@ -97,7 +103,7 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
     public NumericValueConstraints build()
     {
       return new NumericValueConstraintsRecord(numberType, minValue, maxValue,
-        decimalPlaces, unitOfMeasure, defaultValue, requiredValue, multipleChoice);
+        decimalPlaces, unitOfMeasure, defaultValue, requiredValue, recommendedValue, multipleChoice);
     }
   }
 }
@@ -105,7 +111,7 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
 record NumericValueConstraintsRecord(XsdNumericDatatype numberType,
                                      Optional<Number> minValue, Optional<Number> maxValue, Optional<Integer> decimalPlace,
                                      Optional<String> unitOfMeasure, Optional<NumericDefaultValue> defaultValue,
-                                     boolean requiredValue, boolean multipleChoice)
+                                     boolean requiredValue, boolean recommendedValue, boolean multipleChoice)
   implements NumericValueConstraints
 {
 

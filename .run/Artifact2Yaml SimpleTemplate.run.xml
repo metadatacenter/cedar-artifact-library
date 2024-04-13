@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Template2Yaml SampleSection" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Template2Yaml" />
+  <configuration default="false" name="Artifact2Yaml SimpleTemplate" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.Artifact2Yaml" />
     <module name="cedar-artifact-library" />
-    <option name="PROGRAM_PARAMETERS" value="src/test/resources/SampleSection.json /tmp/SampleSection.yml" />
+    <option name="PROGRAM_PARAMETERS" value="-tsf src/test/resources/templates/SimpleTemplate.json" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.metadatacenter.artifacts.model.tools.*" />

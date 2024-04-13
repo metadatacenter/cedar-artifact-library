@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
 {
@@ -20,6 +22,7 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
   private final LinkValueConstraints.Builder valueConstraintsBuilder = LinkValueConstraints.builder();
 
   public LinkFieldBuilder() {
+    super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.LINK);
     valueConstraintsBuilder.withMultipleChoice(false);
@@ -37,9 +40,9 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  public LinkFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+  public LinkFieldBuilder withValueRecommendation(boolean valueRecommendation)
   {
-    fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+    fieldUiBuilder.withValueRecommendation(valueRecommendation);
     return this;
   }
 

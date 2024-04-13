@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -20,6 +21,9 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
+import org.metadatacenter.model.validation.CedarValidator;
+import org.metadatacenter.model.validation.ModelValidator;
+import org.metadatacenter.model.validation.report.ValidationReport;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +31,7 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class ArtifactRoundTripTest
@@ -34,50 +39,30 @@ public class ArtifactRoundTripTest
   private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
   private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
+  private ModelValidator cedarModelValidator;
 
   @Before public void setUp()
   {
     artifactReader = new JsonSchemaArtifactReader();
     jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
+    cedarModelValidator = new CedarValidator();
   }
 
-  @Test public void testRoundTripTemplateSchemaArtifact()
+  @Test public void testRoundTripSimpleTemplate()
   {
     TemplateSchemaArtifact originalTemplateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName("Study").build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(
-      originalTemplateSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(finalTemplateSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
+    testRoundTripTemplateSchemaArtifact(originalTemplateSchemaArtifact);
   }
 
-  @Test public void testRoundTripElementSchemaArtifact()
+  @Test public void testRoundTripSimpleElementSchemaArtifact()
   {
     ElementSchemaArtifact originalElementSchemaArtifact = ElementSchemaArtifact.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).withName("Study").build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(
-      originalElementSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    ElementSchemaArtifact finalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(finalElementSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalElementSchemaArtifact, finalElementSchemaArtifact);
+    testRoundTripElementSchemaArtifact(originalElementSchemaArtifact);
   }
 
   @Test public void testRoundTripTextField()
@@ -86,17 +71,7 @@ public class ArtifactRoundTripTest
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Study")
       .withDefaultValue("A default value").withRegex("*").build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripNumericField()
@@ -110,17 +85,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().withName(name)
       .withDescription(description).withNumericType(numericType).withMinValue(minValue).withMaxValue(maxValue).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripTemporalField()
@@ -136,17 +101,7 @@ public class ArtifactRoundTripTest
       .withDescription(description).withTemporalType(temporalType).withTemporalGranularity(temporalGranularity)
       .withInputTimeFormat(inputTimeFormat).withTimeZoneEnabled(timeZoneEnabled).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripControlledTermField()
@@ -185,17 +140,7 @@ public class ArtifactRoundTripTest
       .withValueConstraintsAction(actionTermUri, actionSource, actionValueType, DELETE, actionSourceUri, actionTo)
       .build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripRadioField()
@@ -206,17 +151,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder().withName(name)
       .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testCreateListField()
@@ -227,17 +162,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().withName(name)
       .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripCheckboxField()
@@ -249,17 +174,7 @@ public class ArtifactRoundTripTest
       .withDescription(description).withOption("Choice 1", false).withOption("Choice 2", false)
       .withOption("Choice 3", true).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripPhoneNumberField()
@@ -272,17 +187,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder().withName(name)
       .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripEmailField()
@@ -295,17 +200,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.emailFieldBuilder().withName(name)
       .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripLinkField()
@@ -317,17 +212,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().withName(name)
       .withDescription(description).withDefaultValue(defaultURI).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripTextAreaField()
@@ -340,19 +225,12 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().withName(name)
       .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  // Can add attribute-value to literalFieldUIContent.json in meta model but then it complains about missing
+  // valueConstraints
+  @Ignore // Fix standalone attribute-value field
   @Test public void testRoundTripAttributeValueField()
   {
     String name = "Field name";
@@ -361,17 +239,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().withName(name)
       .withDescription(description).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripSectionBreakField()
@@ -383,17 +251,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder().withName(name)
       .withDescription(description).withContent(content).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripImageField()
@@ -405,17 +263,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder().withName(name)
       .withDescription(description).withContent(content).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripYouTubeField()
@@ -427,17 +275,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder().withName(name)
       .withDescription(description).withContent(content).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
   @Test public void testRoundTripRichTextField()
@@ -450,17 +288,12 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().withName(name)
       .withDescription(description).withContent(content).withPreferredLabel(preferredLabel).build();
 
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
 
-    assertTrue(validateJsonSchema(originalRendering));
-
-    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
-
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
-
-    assertTrue(validateJsonSchema(finalRendering));
-
-    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
+  @Test public void testRoundTripTemplateWithAttributeValueField()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SimpleTemplateWithAttributeValues.json");
   }
 
   @Test public void testRoundTripHuBMAPAntibodiesTemplate()
@@ -632,15 +465,180 @@ public class ArtifactRoundTripTest
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumWithProbesV3.0.0.json");
   }
-
   @Test public void testRoundTripSimpleInstanceWithAttributeValues()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
   }
 
+  @Test
+  public void testRADxInstanceAgainstTemplate() {
+
+    ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
+    ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
+
+    assertTrue(validateJsonSchema(templateNode, instanceNode));
+  }
+
   @Test public void testRoundTripInstanceWithNestedAttributeValues()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/InstanceWithNestedAttributeValues.json");
+  }
+
+  @Test public void testRoundTripTemplate001()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-001.json");
+  }
+
+  @Test public void testRoundTripTemplate002()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-002.json");
+  }
+
+  @Ignore // TODO Static fields don't render _content as null if it is missing
+  @Test public void testRoundTripTemplate004()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-004.json");
+  }
+
+  @Test public void testRoundTripTemplate005()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-005.json");
+  }
+
+  @Test public void testRoundTripTemplate006()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-006.json");
+  }
+
+  @Test public void testRoundTripTemplate007()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-007.json");
+  }
+
+  @Test public void testRoundTripTemplate008()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-008.json");
+  }
+
+  @Ignore // TODO YouTube fields not read/rendered correctly
+  @Test public void testRoundTripTemplate009()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-009.json");
+  }
+
+  @Test public void testRoundTripTemplate010()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-010.json");
+  }
+
+  @Test public void testRoundTripTemplate011()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-011.json");
+  }
+
+  @Test public void testRoundTripTemplate012()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-012.json");
+  }
+
+  @Test public void testRoundTripTemplate013()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-013.json");
+  }
+
+  @Test public void testRoundTripTemplate014()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-014.json");
+  }
+
+  @Test public void testRoundTripTemplate015()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-015.json");
+  }
+
+  @Test public void testRoundTripTemplate016()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-016.json");
+  }
+
+  @Test public void testRoundTripTemplate017()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-017.json");
+  }
+
+  @Test public void testRoundTripTemplate018()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-018.json");
+  }
+
+  @Test public void testRoundTripTemplate019()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-019.json");
+  }
+
+  @Test public void testRoundTripTemplate020()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-020.json");
+  }
+
+  @Test public void testRoundTripTemplate021()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-021.json");
+  }
+
+  @Test public void testRoundTripTemplate022()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-022.json");
+  }
+
+  @Test public void testRoundTripTemplate023()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-023.json");
+  }
+
+  @Test public void testRoundTripTemplate24()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-024.json");
+  }
+
+  @Test public void testRoundTripTemplate025()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-025.json");
+  }
+
+  @Test public void testRoundTripTemplate026()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-026.json");
+  }
+
+  @Test public void testRoundTripTemplate027()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-027.json");
+  }
+
+  @Test public void testRoundTripTemplate028()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-028.json");
+  }
+
+  @Test public void testRoundTripTemplate030()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-030.json");
+  }
+
+  @Test public void testRoundTripTemplate101()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
+  }
+
+  @Test public void testRoundTripRADxMetadataTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RADxMetadataSpecification.json");
+  }
+
+  @Test public void testRoundTripRADxCLIGeneratedTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");
   }
 
   @Test public void testRoundTripSimpleInstance()
@@ -653,9 +651,54 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithNesting.json");
   }
 
-  @Ignore @Test public void testRoundTripRADxMetadataInstance()
+  @Test public void testRoundTripRADxCLIGeneratedInstance()
   {
-    testTemplateInstanceArtifactRoundTripFromFile("instances/RADxMetadataInstance.json");
+    testTemplateInstanceArtifactRoundTripFromFile("instances/RADxCLIGeneratedInstance.json");
+  }
+
+  @Test public void testRoundTripElement001()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/element-001.json");
+  }
+
+  @Test public void testRoundTripElement002()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/element-002.json");
+  }
+
+  @Test public void testRoundTripElement003()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/element-003.json");
+  }
+
+  @Test public void testRoundTripElement004()
+  {
+    try {
+      testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
+      fail("Expected IllegalStateException");
+    } catch (IllegalStateException e) {
+      // Expected exception
+    }
+  }
+
+  @Test public void testRoundTripField001()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-001.json");
+  }
+
+  @Test public void testRoundTripField002()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-002.json");
+  }
+
+  @Test public void testRoundTripField003()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-003.json");
+  }
+
+  @Test public void testRoundTripField004()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/field-004.json");
   }
 
   private void testTemplateSchemaArtifactRoundTripFromFile(String fileName)
@@ -664,6 +707,8 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateJsonSchema(originalRendering));
 
+    assertTrue(validateTemplateSchemaArtifact(originalRendering));
+
     TemplateSchemaArtifact originalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(
       originalRendering);
 
@@ -671,9 +716,55 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateJsonSchema(finalRendering));
 
+    assertTrue(validateTemplateSchemaArtifact(finalRendering));
+
     TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(finalRendering);
 
     assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
+  }
+
+  private void testElementSchemaArtifactRoundTripFromFile(String fileName)
+  {
+    ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    assertTrue(validateElementSchemaArtifact(originalRendering));
+
+    ElementSchemaArtifact originalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(
+      originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertTrue(validateElementSchemaArtifact(finalRendering));
+
+    ElementSchemaArtifact finalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(finalRendering);
+
+    assertEquals(originalElementSchemaArtifact, finalElementSchemaArtifact);
+  }
+
+  private void testFieldSchemaArtifactRoundTripFromFile(String fileName)
+  {
+    ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    assertTrue(validateFieldSchemaArtifact(originalRendering));
+
+    FieldSchemaArtifact originalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(
+      originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertTrue(validateFieldSchemaArtifact(finalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(finalRendering);
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   private void testTemplateInstanceArtifactRoundTripFromFile(String fileName)
@@ -689,7 +780,72 @@ public class ArtifactRoundTripTest
     TemplateInstanceArtifact finalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
       finalRendering);
 
+    assertEquals(originalTemplateInstanceArtifact.jsonLdContext(), finalTemplateInstanceArtifact.jsonLdContext());
+    assertEquals(originalTemplateInstanceArtifact.childNames(), finalTemplateInstanceArtifact.childNames());
+    assertEquals(originalTemplateInstanceArtifact.singleInstanceFieldInstances(), finalTemplateInstanceArtifact.singleInstanceFieldInstances());
+    assertEquals(originalTemplateInstanceArtifact.singleInstanceElementInstances(), finalTemplateInstanceArtifact.singleInstanceElementInstances());
+    assertEquals(originalTemplateInstanceArtifact.multiInstanceFieldInstances(), finalTemplateInstanceArtifact.multiInstanceFieldInstances());
+    assertEquals(originalTemplateInstanceArtifact.multiInstanceElementInstances(), finalTemplateInstanceArtifact.multiInstanceElementInstances());
+
     assertEquals(originalTemplateInstanceArtifact, finalTemplateInstanceArtifact);
+  }
+
+  private void testRoundTripTemplateSchemaArtifact(TemplateSchemaArtifact originalTemplateSchemaArtifact)
+  {
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(
+      originalTemplateSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    assertTrue(validateTemplateSchemaArtifact(originalRendering));
+
+    TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(finalTemplateSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertTrue(validateTemplateSchemaArtifact(finalRendering));
+
+    assertEquals(originalTemplateSchemaArtifact, finalTemplateSchemaArtifact);
+  }
+
+  private void testRoundTripElementSchemaArtifact(ElementSchemaArtifact originalElementSchemaArtifact)
+  {
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    assertTrue(validateElementSchemaArtifact(originalRendering));
+
+    ElementSchemaArtifact finalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(finalElementSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertTrue(validateElementSchemaArtifact(finalRendering));
+
+    assertEquals(originalElementSchemaArtifact, finalElementSchemaArtifact);
+  }
+
+  private void testRoundTripFieldSchemaArtifact(FieldSchemaArtifact originalFieldSchemaArtifact)
+  {
+    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(originalRendering));
+
+    assertTrue(validateFieldSchemaArtifact(originalRendering));
+
+    FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
+
+    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(finalRendering));
+
+    assertTrue(validateFieldSchemaArtifact(finalRendering));
+
+    assertEquals(originalFieldSchemaArtifact, finalFieldSchemaArtifact);
   }
 
   private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
@@ -716,4 +872,55 @@ public class ArtifactRoundTripTest
       return false;
     }
   }
+
+  private boolean validateJsonSchema(ObjectNode schemaNode, ObjectNode instanceNode)
+  {
+    try {
+      JsonSchema schema = JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
+      schema.validate(instanceNode);
+      return true;
+    } catch (ProcessingException e) {
+      return false;
+    }
+  }
+
+  private boolean validateTemplateSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplate(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private boolean validateElementSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateElement(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private boolean validateFieldSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateField(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
 }

@@ -1,10 +1,10 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -12,12 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_STRING;
 
 public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
 {
   private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
 
   public AttributeValueFieldBuilder() {
+    super(JSON_SCHEMA_STRING, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.ATTRIBUTE_VALUE);
   }
@@ -120,12 +123,6 @@ public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
   @Override public AttributeValueFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
     super.withAlternateLabels(skosAlternateLabels);
-    return this;
-  }
-
-  @Override public AttributeValueFieldBuilder withIsMultiple(boolean isMultiple)
-  {
-    super.withIsMultiple(isMultiple);
     return this;
   }
 

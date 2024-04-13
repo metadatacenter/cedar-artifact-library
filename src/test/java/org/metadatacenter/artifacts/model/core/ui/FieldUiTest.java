@@ -2,7 +2,6 @@ package org.metadatacenter.artifacts.model.core.ui;
 
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,17 +39,17 @@ public class FieldUiTest
   }
 
   @Test
-  public void testValueRecommendationEnabled() {
-    boolean valueRecommendationEnabled = true;
+  public void testValueRecommendation() {
+    boolean valueRecommendation = true;
     boolean hidden = true;
 
     FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEXTFIELD)
-      .withValueRecommendationEnabled(valueRecommendationEnabled)
+      .withValueRecommendation(valueRecommendation)
       .withHidden(hidden)
       .build();
 
-    assertEquals(valueRecommendationEnabled, fieldUi.valueRecommendationEnabled());
+    assertEquals(valueRecommendation, fieldUi.valueRecommendationEnabled());
     assertEquals(hidden, fieldUi.hidden());
   }
 }

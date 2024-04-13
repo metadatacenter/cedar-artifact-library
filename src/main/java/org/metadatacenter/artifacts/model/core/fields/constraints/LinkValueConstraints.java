@@ -13,9 +13,9 @@ public non-sealed interface LinkValueConstraints extends ValueConstraints
   Optional<LinkDefaultValue> defaultValue();
 
   static LinkValueConstraints create(Optional<LinkDefaultValue> defaultValue,
-    boolean requiredValue, boolean multipleChoice)
+    boolean requiredValue, boolean recommendedValue, boolean multipleChoice)
   {
-    return new LinkValueConstraintsRecord(defaultValue, requiredValue, multipleChoice);
+    return new LinkValueConstraintsRecord(defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
   static Builder builder() {
@@ -25,6 +25,7 @@ public non-sealed interface LinkValueConstraints extends ValueConstraints
   class Builder {
     private Optional<LinkDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
+    private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
     private Builder() {
@@ -40,6 +41,11 @@ public non-sealed interface LinkValueConstraints extends ValueConstraints
       return this;
     }
 
+    public Builder withRecommendedValue(boolean recommendedValue) {
+      this.recommendedValue = recommendedValue;
+      return this;
+    }
+
     public Builder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
@@ -47,12 +53,13 @@ public non-sealed interface LinkValueConstraints extends ValueConstraints
 
     public LinkValueConstraints build()
     {
-      return new LinkValueConstraintsRecord(defaultValue, requiredValue, multipleChoice);
+      return new LinkValueConstraintsRecord(defaultValue, requiredValue, recommendedValue, multipleChoice);
     }
   }
 }
 
-record LinkValueConstraintsRecord(Optional<LinkDefaultValue> defaultValue, boolean requiredValue, boolean multipleChoice)
+record LinkValueConstraintsRecord(Optional<LinkDefaultValue> defaultValue, boolean requiredValue,
+                                  boolean recommendedValue, boolean multipleChoice)
   implements LinkValueConstraints
 {
   public LinkValueConstraintsRecord

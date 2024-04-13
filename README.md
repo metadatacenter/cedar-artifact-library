@@ -32,7 +32,7 @@ TemplateSchemaArtifact templateSchemaArtifact
 
 The `TemplateSchemaArtifact` contains a full representation of a CEDAR template.
 
-The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element and field artifacts.
+The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element, field and instance artifacts.
 
 ## Serializing Schema Artifacts
 
@@ -61,10 +61,10 @@ A class called `YamlArtifactRenderer` provides methods to serialize CEDAR schema
 For example, we can generate a YAML serialization of a CEDAR template as follows:
 
 ```java
-// Set to true for a complete YAML representation of an artifact, false for a condensed representation
-boolean isExpanded = true;
+// Set to 'false' for a complete YAML representation of an artifact, 'true' for a condensed representation
+boolean isCompact = false;
 // Create the renderer
-YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isExpanded);
+YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isCompact);
 // Generate a map containing a YAML representation of the template
 LinkedHashMap<String, Object> yamlRendering 
   = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
@@ -74,9 +74,10 @@ This map can be written to a file using the Jackson Library as follows:
 
 ```java
 YAMLFactory yamlFactory = new YAMLFactory()
-  .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-  .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-  .disable(YAMLGenerator.Feature.SPLIT_LINES);
+          disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
+          enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
+          enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
+          disable(YAMLGenerator.Feature.SPLIT_LINES);
 ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
 LinkedHashMap<String, Object> yamlRendering 
@@ -509,7 +510,7 @@ To generate a TSV file from a CEDAR template stored on the main CEDAR system:
 
 ```
     mvn exec:java@template2tsv 
-      -Dexec.args="-i <template_iri> 
+      -Dexec.args="-i <artifact_iri> 
                    -t <output_TSV_filename> 
                    -s https://terminology.metadatacenter.org/bioportal/integrated-search/ 
                    -r https://resource.metadatacenter.org/templates/ 
@@ -518,23 +519,29 @@ To generate a TSV file from a CEDAR template stored on the main CEDAR system:
 
 To generate a YAML file from a CEDAR template stored in a file:
 
-    mvn exec:java@template2yaml 
-      -Dexec.args="-x -tf <input_template_filename> -y <output_YAML_filename>"
+    mvn exec:java@artifact2yaml 
+      -Dexec.args="-tsf <input_artifact_filename> -y <output_YAML_filename>"
 
 This will read a JSON-Schema-based template and convert it into a YAML file. 
-If the optional -x argument is present then a full YAML rendering of the artifact is generated; otherwise a compact form is produced.
+If the optional -c argument is present then a compact YAML rendering of the artifact is generated; otherwise the full form is produced.
+
+If the `-y` option is omitted the YAML is written to the console.
+
+Other file-based options are `-esf` for element schema artifacts, `-fsf` for field schema artifacts, and `-tif` for template instance artifacts.
 
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
 ```
-    mvn exec:java@template2yaml 
-      -Dexec.args="-x
-                   -i <template_iri> 
+    mvn exec:java@artifact2yaml 
+      -Dexec.args="-tsi <artifact_iri> 
                    -y <output_YAML_filename> 
-                   -r https://resource.metadatacenter.org/templates/ 
+                   -r https://resource.metadatacenter.org
                    -k <CEDAR API key>"
 
-Again, the -x argument is optional.
+Other IRI-based options are `-esi` for element schema artifacts, `-fsi` for field schema artifacts, and `-tii` for template instance artifacts.
+
+Again, the -c argument is optional. If the `-y` option is omitted the YAML is written to the console.
+
 
 ```
 ## Building the Library

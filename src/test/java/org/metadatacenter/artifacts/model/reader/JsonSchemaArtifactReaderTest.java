@@ -148,7 +148,7 @@ public class JsonSchemaArtifactReaderTest
     assertNotNull(fieldSchemaArtifact);
 
     assertTrue(fieldSchemaArtifact.isMultiple());
-    assertTrue(fieldSchemaArtifact.fieldUi().isAttributeValue());
+    assertTrue(fieldSchemaArtifact.isAttributeValue());
   }
 
   @Test

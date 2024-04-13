@@ -15,8 +15,13 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
+import org.metadatacenter.model.validation.CedarValidator;
+import org.metadatacenter.model.validation.ModelValidator;
+import org.metadatacenter.model.validation.report.ValidationReport;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,19 +51,20 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI;
 
 public class JsonSchemaArtifactRendererTest
 {
   private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
   private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
   private ObjectMapper mapper;
+  private ModelValidator cedarModelValidator;
 
   @Before
   public void setUp() {
     artifactReader = new JsonSchemaArtifactReader();
     jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
     mapper = new ObjectMapper();
+    cedarModelValidator = new CedarValidator();
   }
 
   @Test
@@ -76,6 +82,8 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(JSON_SCHEMA_TYPE).textValue(), JSON_SCHEMA_OBJECT);
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "Study");
+
+    assertTrue(validateTemplateSchemaArtifact(rendering));
   }
 
   @Test public void testRenderTemporalField()
@@ -115,8 +123,59 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get("_valueConstraints").get("temporalType").textValue(), temporalType.getText());
     assertEquals(rendering.get("_ui").get("temporalGranularity").textValue(), granularity.getText());
     assertTrue(rendering.get("_ui").has("timezoneEnabled"));
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
+  @Test public void testCreateControlledTermField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI ontologyUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String ontologyAcronym = "DOID";
+    String ontologyName = "Human Disease Ontology";
+    URI branchUri = URI.create("http://purl.bioontology.org/ontology/SNOMEDCT/64572001");
+    String branchAcronym = "SNOMEDCT";
+    String branchName = "Disease";
+    String branchSource = "SNOMEDCT";
+    Integer branchMaxDepth = 3;
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel= "Human";
+    String classPrefLabel = "Homo Spiens";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+    URI valueSetUri = URI.create("https://cadsr.nci.nih.gov/metadata/CADSR-VS/77d61de250089d223d7153a4283e738043a15707");
+    String valueSetCollection = "CADSR-VS";
+    String valueSetName = "Stable Disease";
+    Integer valueSetNumTerms = 1;
+    URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/NCBITaxon_51291");
+    URI actionSourceUri = URI.create("https://data.bioontology.org/ontologies/DOID");
+    String actionSource = "DOID";
+    ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
+    Integer actionTo = 0;
+    URI defaultUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String defaultLabel = "Human";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
+      withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth).
+      withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
+      withValueSetValueConstraint(valueSetUri, valueSetCollection, valueSetName, valueSetNumTerms).
+      withValueConstraintsAction(actionTermUri, actionSource, actionValueType, ValueConstraintsActionType.DELETE,
+      actionSourceUri, actionTo).
+      withDefaultValue(defaultUri, defaultLabel).
+      build();
+
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+
+    assertTrue(validateJsonSchema(rendering));
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
+  }
+
+  // TODO Add defaultValue
   @Test public void testRenderNumericField()
   {
     String fieldName = "Field name";
@@ -153,6 +212,8 @@ public class JsonSchemaArtifactRendererTest
     assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
     assertEquals(rendering.get("_valueConstraints").get("numberType").textValue(), numericType.getText());
     assertEquals(rendering.get("_valueConstraints").get("decimalPlace").asInt(), decimalPlaces);
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
   @Test public void testRenderTextField()
@@ -185,18 +246,20 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(rendering.has(JSON_LD_ID));
     // catch potential error case where "requiredValue": false (default) does not render
     assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
   @Test public void testRenderLinkField()
   {
     String fieldName = "Field name";
     String fieldDescription = "Field description";
-    URI defaultURI = URI.create("https://example.com/Study");
+    URI defaultIri = URI.create("https://example.com/Study");
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
       withName(fieldName).
       withDescription(fieldDescription).
-      withDefaultValue(defaultURI).
+      withDefaultValue(defaultIri).
       build();
 
     ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
@@ -208,7 +271,9 @@ public class JsonSchemaArtifactRendererTest
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
     assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
-    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI).textValue(), defaultURI.toString());
+    assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue(), defaultIri.toString());
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
   @Test
@@ -255,7 +320,7 @@ public class JsonSchemaArtifactRendererTest
 
     assertTrue(validateJsonSchema(templateRendering));
 
-    //System.out.println(templateRendering.toPrettyString());
+    assertTrue(validateTemplateSchemaArtifact(templateRendering));
   }
 
   @Test
@@ -269,7 +334,7 @@ public class JsonSchemaArtifactRendererTest
 
     assertTrue(validateJsonSchema(templateRendering));
 
-    //System.out.println(templateRendering.toPrettyString());
+    assertTrue(validateTemplateSchemaArtifact(templateRendering));
   }
 
   @Test
@@ -397,6 +462,45 @@ public class JsonSchemaArtifactRendererTest
         JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
+    }
+  }
+
+  private boolean validateTemplateSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplate(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private boolean validateElementSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateElement(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private boolean validateFieldSchemaArtifact(ObjectNode schemaNode)
+  {
+    try {
+      ValidationReport validationReport = cedarModelValidator.validateTemplateField(schemaNode);
+      if (validationReport.getValidationStatus().equals("true"))
+        return true;
+      else
+        return false;
+    } catch (Exception e) {
+      return false;
     }
   }
 

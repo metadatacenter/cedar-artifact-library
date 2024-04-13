@@ -27,9 +27,10 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
 
   static TextValueConstraints create(Optional<Integer> minLength, Optional<Integer> maxLength,
     Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals,
-    boolean requiredValue, boolean multipleChoice, Optional<String> regex)
+    boolean requiredValue, boolean recommendedValue, boolean multipleChoice, Optional<String> regex)
   {
-    return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice, regex);
+    return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue,
+      recommendedValue, multipleChoice, regex);
   }
 
   static Builder builder() {
@@ -42,6 +43,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     private Optional<TextDefaultValue> defaultValue = Optional.empty();
     private final List<LiteralValueConstraint> literals = new ArrayList<>();
     private boolean requiredValue = false;
+    private boolean recommendedValue = false;
     private boolean multipleChoice = false;
     private Optional<String> regex = Optional.empty();
 
@@ -49,16 +51,27 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     }
 
     public Builder withMinLength(Integer minLength) {
+
+      if (minLength == null)
+        throw new IllegalArgumentException("null minimum length passed to builder");
+
       this.minLength = Optional.ofNullable(minLength);
       return this;
     }
 
     public Builder withMaxLength(Integer maxLength) {
+      if (maxLength == null)
+        throw new IllegalArgumentException("null maximum length passed to builder");
+
       this.maxLength = Optional.ofNullable(maxLength);
       return this;
     }
 
     public Builder withDefaultValue(String defaultValue) {
+      if (defaultValue == null)
+        throw new IllegalArgumentException("null default value passed to builder");
+
+
       this.defaultValue = Optional.of(new TextDefaultValue(defaultValue));
       return this;
     }
@@ -73,26 +86,35 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
+    public Builder withRecommendedValue(boolean recommendedValue) {
+      this.recommendedValue = recommendedValue;
+      return this;
+    }
     public Builder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }
 
     public Builder withRegex(String regex) {
+      if (regex == null)
+        throw new IllegalArgumentException("null regex passed to builder");
+
       this.regex = Optional.ofNullable(regex);
       return this;
     }
 
     public ValueConstraints build()
     {
-      return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue, multipleChoice, regex);
+      return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue,
+        recommendedValue, multipleChoice, regex);
     }
   }
 }
 
 record TextValueConstraintsRecord(Optional<Integer> minLength, Optional<Integer> maxLength,
                                   Optional<TextDefaultValue> defaultValue, List<LiteralValueConstraint> literals,
-                                  boolean requiredValue, boolean multipleChoice, Optional<String> regex) implements TextValueConstraints {
+                                  boolean requiredValue, boolean recommendedValue, boolean multipleChoice,
+                                  Optional<String> regex) implements TextValueConstraints {
 
   public TextValueConstraintsRecord
   {

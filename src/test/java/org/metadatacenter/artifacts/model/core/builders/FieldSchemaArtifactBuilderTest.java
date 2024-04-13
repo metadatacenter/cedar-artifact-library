@@ -23,15 +23,14 @@ public class FieldSchemaArtifactBuilderTest
     Integer minLength = 0;
     Integer maxLength = 10;
     String regex = "*";
-    boolean valueRecommendationEnabled = false;
+    boolean valueRecommendation = false;
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
-      withRegex(regex).
-      withValueRecommendationEnabled(valueRecommendationEnabled).
+      withRegex(regex).withValueRecommendation(valueRecommendation).
       build();
 
     Assert.assertEquals(FieldInputType.TEXTFIELD, fieldSchemaArtifact.fieldUi().inputType());
@@ -40,7 +39,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
     Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
     Assert.assertEquals(regex, fieldSchemaArtifact.regex().get());
-    Assert.assertEquals(valueRecommendationEnabled, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
+    Assert.assertEquals(valueRecommendation, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
   }
 
   @Test public void testCreateNumericField()
@@ -48,7 +47,7 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
     XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
-    Number defaultValue = 22.3;
+    Number defaultValue = 2.2;
     Number minValue = 0.0;
     Number maxValue = 100.0;
     String unitOfMeasure = "%";
@@ -360,6 +359,24 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(description, fieldSchemaArtifact.description());
   }
 
+  @Test public void testCreatePageBreakField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    String content = "Content";
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.pageBreakFieldBuilder().
+      withName(name).
+      withDescription(description).
+      withContent(content).
+      build();
+
+    Assert.assertEquals(FieldInputType.PAGE_BREAK, fieldSchemaArtifact.fieldUi().inputType());
+    Assert.assertEquals(name, fieldSchemaArtifact.name());
+    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
+  }
+
   @Test public void testCreateSectionBreakField()
   {
     String name = "Field name";
@@ -375,7 +392,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.SECTION_BREAK, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateImageField()
@@ -393,7 +410,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.IMAGE, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateYouTubeField()
@@ -411,7 +428,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.YOUTUBE, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateRichTextField()
@@ -429,7 +446,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(FieldInputType.RICHTEXT, fieldSchemaArtifact.fieldUi().inputType());
     Assert.assertEquals(name, fieldSchemaArtifact.name());
     Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content());
+    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
   }
 
 }

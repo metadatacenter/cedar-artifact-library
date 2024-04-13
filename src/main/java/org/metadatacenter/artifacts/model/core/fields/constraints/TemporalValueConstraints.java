@@ -17,9 +17,9 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
   Optional<TemporalDefaultValue> defaultValue();
 
   static TemporalValueConstraints create(XsdTemporalDatatype temporalType, Optional<TemporalDefaultValue> defaultValue,
-    boolean requiredValue, boolean multipleChoice)
+    boolean requiredValue, boolean recommendedValue, boolean multipleChoice)
   {
-    return new TemporalValueConstraintsRecord(temporalType, defaultValue, requiredValue, multipleChoice);
+    return new TemporalValueConstraintsRecord(temporalType, defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
   static Builder builder() {
@@ -30,6 +30,7 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
     private XsdTemporalDatatype temporalType;
     private Optional<TemporalDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
+    private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
     private Builder() {
@@ -50,6 +51,11 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
       return this;
     }
 
+    public Builder withRecommendedValue(boolean recommendedValue) {
+      this.recommendedValue = recommendedValue;
+      return this;
+    }
+
     public Builder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
@@ -57,13 +63,13 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
 
     public TemporalValueConstraints build()
     {
-      return new TemporalValueConstraintsRecord(temporalType, defaultValue, requiredValue, multipleChoice);
+      return new TemporalValueConstraintsRecord(temporalType, defaultValue, requiredValue, recommendedValue, multipleChoice);
     }
   }
 }
 
 record TemporalValueConstraintsRecord(XsdTemporalDatatype temporalType, Optional<TemporalDefaultValue> defaultValue,
-                                      boolean requiredValue, boolean multipleChoice)
+                                      boolean requiredValue, boolean recommendedValue, boolean multipleChoice)
   implements TemporalValueConstraints
 {
   public TemporalValueConstraintsRecord

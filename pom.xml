@@ -4,12 +4,12 @@
   <parent>
     <groupId>org.metadatacenter</groupId>
     <artifactId>cedar-parent</artifactId>
-    <version>2.6.56</version>
+    <version>2.6.57</version>
   </parent>
 
   <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-artifact-library</artifactId>
-  <version>2.6.56</version>
+  <version>2.6.57</version>
   <packaging>jar</packaging>
 
   <name>CEDAR Artifact Library</name>
@@ -20,12 +20,21 @@
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-artifact-library</url>
   </scm>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
     <dependency>
       <groupId>org.metadatacenter</groupId>
       <artifactId>cedar-model-library</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.metadatacenter</groupId>
+      <artifactId>cedar-model-validation-library</artifactId>
     </dependency>
 
     <dependency>
@@ -159,12 +168,12 @@
           </execution>
 
           <execution>
-            <id>template2yaml</id>
+            <id>artifact2yaml</id>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-	      <mainClass>org.metadatacenter.artifacts.model.tools.Template2Yaml</mainClass>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.Artifact2Yaml</mainClass>
             </configuration>
           </execution>
 
