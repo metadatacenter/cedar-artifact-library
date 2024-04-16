@@ -3,7 +3,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.artifacts.model.core.fields.ImageField;
+import org.metadatacenter.artifacts.model.core.ImageField;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 
 import java.net.URI;

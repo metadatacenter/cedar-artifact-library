@@ -1,8 +1,5 @@
-package org.metadatacenter.artifacts.model.core.fields;
+package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -32,9 +29,9 @@ import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFA
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
-public interface EmailField extends FieldSchemaArtifact
+public sealed interface AttributeValueField extends FieldSchemaArtifact
 {
-  static EmailField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static AttributeValueField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
@@ -43,7 +40,7 @@ public interface EmailField extends FieldSchemaArtifact
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
-    return new EmailFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+    return new AttributeValueFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
@@ -51,20 +48,20 @@ public interface EmailField extends FieldSchemaArtifact
 
 }
 
-record EmailFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                        Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                        String name, String description, Optional<String> identifier,
-                        Version modelVersion, Optional<Version> version, Optional<Status> status,
-                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                        Optional<URI> propertyUri,
-                        Optional<URI> createdBy, Optional<URI> modifiedBy,
-                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                        Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                        FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
-  implements EmailField
+record AttributeValueFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                                 Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                 String name, String description, Optional<String> identifier,
+                                 Version modelVersion, Optional<Version> version, Optional<Status> status,
+                                 Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                 boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                                 Optional<URI> propertyUri,
+                                 Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                 Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                                 FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+  implements AttributeValueField
 {
-  public EmailFieldRecord
+  public AttributeValueFieldRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
@@ -87,7 +84,8 @@ record EmailFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String j
       throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
 
     if (fieldUi.isStatic())
-      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT,
+        STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     else
       validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 

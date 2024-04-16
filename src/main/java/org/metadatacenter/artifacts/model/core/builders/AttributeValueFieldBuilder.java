@@ -3,13 +3,12 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
-import org.metadatacenter.artifacts.model.core.fields.AttributeValueField;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;

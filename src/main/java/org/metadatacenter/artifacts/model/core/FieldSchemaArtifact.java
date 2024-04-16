@@ -27,28 +27,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
-
-public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
+public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact permits TextField,
+  TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField, LinkField, EmailField,
+  ControlledTermField, CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField, YouTubeField,
+  RichTextField, FieldSchemaArtifactRecord
 {
   static FieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
     Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,

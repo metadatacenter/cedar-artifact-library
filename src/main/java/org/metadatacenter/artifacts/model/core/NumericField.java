@@ -1,8 +1,5 @@
-package org.metadatacenter.artifacts.model.core.fields;
+package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -32,9 +29,9 @@ import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFA
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
-public interface TemporalField extends FieldSchemaArtifact
+public sealed interface NumericField extends FieldSchemaArtifact
 {
-  static TemporalField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static NumericField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
@@ -43,7 +40,7 @@ public interface TemporalField extends FieldSchemaArtifact
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
-    return new TemporalFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+    return new NumericFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
@@ -51,20 +48,20 @@ public interface TemporalField extends FieldSchemaArtifact
 
 }
 
-record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                           Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                           String name, String description, Optional<String> identifier,
-                           Version modelVersion, Optional<Version> version, Optional<Status> status,
-                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                           Optional<URI> propertyUri,
-                           Optional<URI> createdBy, Optional<URI> modifiedBy,
-                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                           Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                           FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
-  implements TemporalField
+record NumericFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                          Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                          String name, String description, Optional<String> identifier,
+                          Version modelVersion, Optional<Version> version, Optional<Status> status,
+                          Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                          boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                          Optional<URI> propertyUri,
+                          Optional<URI> createdBy, Optional<URI> modifiedBy,
+                          Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                          Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                          FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+  implements NumericField
 {
-  public TemporalFieldRecord
+  public NumericFieldRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,

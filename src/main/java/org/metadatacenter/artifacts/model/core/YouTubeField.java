@@ -1,8 +1,5 @@
-package org.metadatacenter.artifacts.model.core.fields;
+package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -33,38 +30,38 @@ import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFA
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
-public interface RichTextField extends FieldSchemaArtifact
+public sealed interface YouTubeField extends FieldSchemaArtifact
 {
-  static RichTextField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static YouTubeField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+    Optional<URI> propertyUri,
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     FieldUi fieldUi)
   {
-    return new RichTextFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+    return new YouTubeFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), fieldUi, Optional.empty());
   }
-
 }
 
-record RichTextFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                           Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                           String name, String description, Optional<String> identifier,
-                           Version modelVersion, Optional<Version> version, Optional<Status> status,
-                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                           Optional<URI> propertyUri,
-                           Optional<URI> createdBy, Optional<URI> modifiedBy,
-                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                           Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                           FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
-  implements RichTextField
+record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                          Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                          String name, String description, Optional<String> identifier,
+                          Version modelVersion, Optional<Version> version, Optional<Status> status,
+                          Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                          boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                          Optional<URI> propertyUri,
+                          Optional<URI> createdBy, Optional<URI> modifiedBy,
+                          Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                          Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                          FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+  implements YouTubeField
 {
-  public RichTextFieldRecord
+  public YouTubeFieldRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,

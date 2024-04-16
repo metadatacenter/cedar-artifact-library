@@ -4,7 +4,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.fields.TemporalField;
+import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
