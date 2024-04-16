@@ -56,7 +56,7 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    FieldUi fieldUi, Optional<String> skosPrefLabel, List<String> skosAlternateLabels, Optional<ValueConstraints> valueConstraints)
+    Optional<String> skosPrefLabel, List<String> skosAlternateLabels, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
     return new FieldSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
@@ -64,7 +64,8 @@ public non-sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSch
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldUi, skosPrefLabel, skosAlternateLabels, valueConstraints);
+      skosPrefLabel, skosAlternateLabels,
+      fieldUi, valueConstraints);
   }
 
   FieldUi fieldUi();

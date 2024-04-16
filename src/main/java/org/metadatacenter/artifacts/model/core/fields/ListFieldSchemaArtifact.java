@@ -32,18 +32,18 @@ import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFA
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
-public interface TextFieldSchemaArtifact extends FieldSchemaArtifact
+public interface ListFieldSchemaArtifact extends FieldSchemaArtifact
 {
-  static TextFieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static ListFieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+    FieldUi fieldUi, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+    Optional<ValueConstraints> valueConstraints)
   {
-    return new TextFieldSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+    return new ListFieldSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
@@ -51,20 +51,20 @@ public interface TextFieldSchemaArtifact extends FieldSchemaArtifact
 
 }
 
-record TextFieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                                        Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                        String name, String description, Optional<String> identifier,
-                                        Version modelVersion, Optional<Version> version, Optional<Status> status,
-                                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                        Optional<URI> propertyUri,
-                                        Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+record ListFieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                                         Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                         String name, String description, Optional<String> identifier,
+                                         Version modelVersion, Optional<Version> version, Optional<Status> status,
+                                         Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                         boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                                         Optional<URI> propertyUri,
+                                         Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                         Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                      Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
                                      FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
-  implements TextFieldSchemaArtifact
+  implements ListFieldSchemaArtifact
 {
-  public TextFieldSchemaArtifactRecord
+  public ListFieldSchemaArtifactRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,

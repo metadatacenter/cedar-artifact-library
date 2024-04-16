@@ -407,7 +407,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldUi,  skosPrefLabel, skosAlternateLabels, valueConstraints);
+      skosPrefLabel, skosAlternateLabels,
+      fieldUi, valueConstraints);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,

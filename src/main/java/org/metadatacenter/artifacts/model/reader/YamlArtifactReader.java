@@ -341,7 +341,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, fieldUi, skosPrefLabel, skosAlternateLabels, valueConstraints);
+      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
   }
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)

@@ -38,8 +38,8 @@ public record FieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSche
                                  Optional<URI> propertyUri,
                                  Optional<URI> createdBy, Optional<URI> modifiedBy,
                                  Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                 FieldUi fieldUi, Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                                 Optional<ValueConstraints> valueConstraints)
+                                 Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                                 FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements FieldSchemaArtifact
 {
   public FieldSchemaArtifactRecord
@@ -65,7 +65,8 @@ public record FieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSche
       throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
 
     if (fieldUi.isStatic())
-      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT,
+        STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     else
       validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 

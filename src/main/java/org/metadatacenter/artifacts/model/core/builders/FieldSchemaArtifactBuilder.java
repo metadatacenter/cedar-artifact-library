@@ -292,6 +292,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldUi,  skosPrefLabel, skosAlternateLabels, valueConstraints);
+      skosPrefLabel, skosAlternateLabels,
+      fieldUi, valueConstraints);
   }
 }
