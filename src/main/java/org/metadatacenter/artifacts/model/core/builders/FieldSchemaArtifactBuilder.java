@@ -50,6 +50,12 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   private FieldUi fieldUi;
   private Optional<ValueConstraints> valueConstraints = Optional.empty();
 
+  protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
+  {
+    this.jsonSchemaType = jsonSchemaType;
+    this.jsonLdTypes.add(artifactTypeIri);
+  }
+
   protected FieldSchemaArtifactBuilder(FieldSchemaArtifact fieldSchemaArtifact)
   {
     this.jsonLdContext = Map.copyOf(fieldSchemaArtifact.jsonLdContext());
@@ -79,11 +85,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
   }
 
-  protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
-  {
-    this.jsonSchemaType = jsonSchemaType;
-    this.jsonLdTypes.add(artifactTypeIri);
-  }
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
     if (jsonLdContext == null)

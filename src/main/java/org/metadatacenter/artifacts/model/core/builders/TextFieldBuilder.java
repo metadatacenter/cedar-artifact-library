@@ -18,8 +18,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public final class TextFieldBuilder extends FieldSchemaArtifactBuilder
 {
-  private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-  private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
+  private FieldUi.Builder fieldUiBuilder = FieldUi.builder();
+  private TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
 
   public TextFieldBuilder() {
     super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
