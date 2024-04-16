@@ -124,18 +124,6 @@ public final class RichTextFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public RichTextFieldBuilder withPreferredLabel(String preferredLabel)
-  {
-    super.withPreferredLabel(preferredLabel);
-    return this;
-  }
-
-  @Override public RichTextFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
-  {
-    super.withAlternateLabels(skosAlternateLabels);
-    return this;
-  }
-
   @Override public RichTextFieldBuilder withIsMultiple(boolean isMultiple)
   {
     super.withIsMultiple(isMultiple);

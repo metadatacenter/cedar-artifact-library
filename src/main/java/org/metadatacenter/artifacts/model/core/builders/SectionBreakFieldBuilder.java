@@ -136,30 +136,6 @@ public final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public SectionBreakFieldBuilder withIsMultiple(boolean isMultiple)
-  {
-    super.withIsMultiple(isMultiple);
-    return this;
-  }
-
-  @Override public SectionBreakFieldBuilder withMinItems(Integer minItems)
-  {
-    super.withMinItems(minItems);
-    return this;
-  }
-
-  @Override public SectionBreakFieldBuilder withMaxItems(Integer maxItems)
-  {
-    super.withMaxItems(maxItems);
-    return this;
-  }
-
-  @Override public SectionBreakFieldBuilder withPropertyUri(URI propertyUri)
-  {
-    super.withPropertyUri(propertyUri);
-    return this;
-  }
-
   @Override public SectionBreakFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
   {
     super.withJsonSchemaTitle(jsonSchemaTitle);

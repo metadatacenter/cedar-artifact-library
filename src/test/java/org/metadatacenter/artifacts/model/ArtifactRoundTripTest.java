@@ -282,11 +282,10 @@ public class ArtifactRoundTripTest
   {
     String name = "Field name";
     String description = "Field description";
-    String preferredLabel = "Preferred label";
     String content = "Content";
 
     FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().withName(name)
-      .withDescription(description).withContent(content).withPreferredLabel(preferredLabel).build();
+      .withDescription(description).withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }

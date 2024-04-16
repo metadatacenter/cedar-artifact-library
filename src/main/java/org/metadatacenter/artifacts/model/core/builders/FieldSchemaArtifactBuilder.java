@@ -85,7 +85,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
   }
 
-  public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
+  protected FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
     if (jsonLdContext == null)
       throw new IllegalArgumentException("null JSON-LD @context passed to builder");
@@ -94,7 +94,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withJsonLdType(URI jsonLdType)
+  protected FieldSchemaArtifactBuilder withJsonLdType(URI jsonLdType)
   {
     if (jsonLdType == null)
       throw new IllegalArgumentException("null JSON-LD @type passed to builder");
@@ -103,7 +103,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withJsonLdId(URI jsonLdId)
+  protected FieldSchemaArtifactBuilder withJsonLdId(URI jsonLdId)
   {
     if (jsonLdId== null)
       throw new IllegalArgumentException("null JSON-LD @id passed to builder");
@@ -112,7 +112,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withName(String name)
+  protected FieldSchemaArtifactBuilder withName(String name)
   {
     if (name == null)
       throw new IllegalArgumentException("null name passed to builder");
@@ -128,7 +128,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withDescription(String description)
+  protected FieldSchemaArtifactBuilder withDescription(String description)
   {
     if (description == null)
       throw new IllegalArgumentException("null description passed to builder");
@@ -137,7 +137,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withIdentifier(String identifier)
+  protected FieldSchemaArtifactBuilder withIdentifier(String identifier)
   {
     if (identifier == null)
       throw new IllegalArgumentException("null identifier passed to builder");
@@ -146,7 +146,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withPreferredLabel(String skosPrefLabel)
+  protected FieldSchemaArtifactBuilder withPreferredLabel(String skosPrefLabel)
   {
     if (skosPrefLabel == null)
       throw new IllegalArgumentException("null SKOS preferred label passed to builder");
@@ -155,7 +155,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withAlternateLabels(List<String> skosAlternateLabels)
+  protected FieldSchemaArtifactBuilder withAlternateLabels(List<String> skosAlternateLabels)
   {
     if (skosAlternateLabels == null)
       throw new IllegalArgumentException("null SKOS alternate labels passed to builder");
@@ -164,7 +164,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withModelVersion(Version modelVersion)
+  protected FieldSchemaArtifactBuilder withModelVersion(Version modelVersion)
   {
     if (modelVersion == null)
       throw new IllegalArgumentException("null model version passed to builder");
@@ -173,7 +173,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withVersion(Version version)
+  protected FieldSchemaArtifactBuilder withVersion(Version version)
   {
     if (version == null)
       throw new IllegalArgumentException("null artifact version passed to builder");
@@ -182,73 +182,73 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withStatus(Status status)
+  protected FieldSchemaArtifactBuilder withStatus(Status status)
   {
     this.status = Optional.ofNullable(status);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withCreatedBy(URI createdBy)
+  protected FieldSchemaArtifactBuilder withCreatedBy(URI createdBy)
   {
     this.createdBy = Optional.ofNullable(createdBy);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withModifiedBy(URI modifiedBy)
+  protected FieldSchemaArtifactBuilder withModifiedBy(URI modifiedBy)
   {
     this.modifiedBy = Optional.ofNullable(modifiedBy);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withCreatedOn(OffsetDateTime createdOn)
+  protected FieldSchemaArtifactBuilder withCreatedOn(OffsetDateTime createdOn)
   {
     this.createdOn = Optional.ofNullable(createdOn);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
+  protected FieldSchemaArtifactBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
   {
     this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withPreviousVersion(URI previousVersion)
+  protected FieldSchemaArtifactBuilder withPreviousVersion(URI previousVersion)
   {
     this.previousVersion = Optional.ofNullable(previousVersion);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withDerivedFrom(URI derivedFrom)
+  protected FieldSchemaArtifactBuilder withDerivedFrom(URI derivedFrom)
   {
     this.derivedFrom = Optional.ofNullable(derivedFrom);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withIsMultiple(boolean isMultiple)
+  protected FieldSchemaArtifactBuilder withIsMultiple(boolean isMultiple)
   {
     this.isMultiple = isMultiple;
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withMinItems(Integer minItems)
+  protected FieldSchemaArtifactBuilder withMinItems(Integer minItems)
   {
     this.minItems = Optional.ofNullable(minItems);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withMaxItems(Integer maxItems)
+  protected FieldSchemaArtifactBuilder withMaxItems(Integer maxItems)
   {
     this.maxItems = Optional.ofNullable(maxItems);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withPropertyUri(URI propertyUri)
+  protected FieldSchemaArtifactBuilder withPropertyUri(URI propertyUri)
   {
     this.propertyUri = Optional.ofNullable(propertyUri);
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+  protected FieldSchemaArtifactBuilder withJsonSchemaTitle(String jsonSchemaTitle)
   {
     if (jsonSchemaTitle == null)
       throw new IllegalArgumentException("null JSON Schema title passed to builder");
@@ -257,7 +257,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+  protected FieldSchemaArtifactBuilder withJsonSchemaDescription(String jsonSchemaDescription)
   {
     if (jsonSchemaDescription == null)
       throw new IllegalArgumentException("null JSON Schema description passed to builder");

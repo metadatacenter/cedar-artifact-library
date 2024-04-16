@@ -124,42 +124,6 @@ public final class PageBreakFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public PageBreakFieldBuilder withPreferredLabel(String skosPrefLabel)
-  {
-    super.withPreferredLabel(skosPrefLabel);
-    return this;
-  }
-
-  @Override public PageBreakFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
-  {
-    super.withAlternateLabels(skosAlternateLabels);
-    return this;
-  }
-
-  @Override public PageBreakFieldBuilder withIsMultiple(boolean isMultiple)
-  {
-    super.withIsMultiple(isMultiple);
-    return this;
-  }
-
-  @Override public PageBreakFieldBuilder withMinItems(Integer minItems)
-  {
-    super.withMinItems(minItems);
-    return this;
-  }
-
-  @Override public PageBreakFieldBuilder withMaxItems(Integer maxItems)
-  {
-    super.withMaxItems(maxItems);
-    return this;
-  }
-
-  @Override public PageBreakFieldBuilder withPropertyUri(URI propertyUri)
-  {
-    super.withPropertyUri(propertyUri);
-    return this;
-  }
-
   @Override public PageBreakFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
   {
     super.withJsonSchemaTitle(jsonSchemaTitle);

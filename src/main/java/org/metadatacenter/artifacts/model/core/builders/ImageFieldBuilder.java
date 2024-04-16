@@ -124,42 +124,6 @@ public final class ImageFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public ImageFieldBuilder withPreferredLabel(String skosPrefLabel)
-  {
-    super.withPreferredLabel(skosPrefLabel);
-    return this;
-  }
-
-  @Override public ImageFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
-  {
-    super.withAlternateLabels(skosAlternateLabels);
-    return this;
-  }
-
-  @Override public ImageFieldBuilder withIsMultiple(boolean isMultiple)
-  {
-    super.withIsMultiple(isMultiple);
-    return this;
-  }
-
-  @Override public ImageFieldBuilder withMinItems(Integer minItems)
-  {
-    super.withMinItems(minItems);
-    return this;
-  }
-
-  @Override public ImageFieldBuilder withMaxItems(Integer maxItems)
-  {
-    super.withMaxItems(maxItems);
-    return this;
-  }
-
-  @Override public ImageFieldBuilder withPropertyUri(URI propertyUri)
-  {
-    super.withPropertyUri(propertyUri);
-    return this;
-  }
-
   @Override public ImageFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
   {
     super.withJsonSchemaTitle(jsonSchemaTitle);

@@ -124,18 +124,6 @@ public final class YouTubeFieldBuilder extends FieldSchemaArtifactBuilder
     return this;
   }
 
-  @Override public YouTubeFieldBuilder withPreferredLabel(String skosPrefLabel)
-  {
-    super.withPreferredLabel(skosPrefLabel);
-    return this;
-  }
-
-  @Override public YouTubeFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
-  {
-    super.withAlternateLabels(skosAlternateLabels);
-    return this;
-  }
-
   @Override public YouTubeFieldBuilder withIsMultiple(boolean isMultiple)
   {
     super.withIsMultiple(isMultiple);
