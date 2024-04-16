@@ -237,6 +237,18 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
+    public Builder withoutSingleInstanceFieldInstance(String childFieldName)
+    {
+      if (!childNames.contains(childFieldName) || !singleInstanceFieldInstances.containsKey(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " not present in instance");
+
+      childNames.remove(childFieldName);
+
+      singleInstanceFieldInstances.remove(childFieldName);
+
+      return this;
+    }
+
     public Builder withSingleInstanceElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
     {
       if (childNames.contains(childElementName))
@@ -245,6 +257,18 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       childNames.add(childElementName);
 
       singleInstanceElementInstances.put(childElementName, elementInstance);
+
+      return this;
+    }
+
+    public Builder withoutSingleInstanceElementInstance(String childElementName)
+    {
+      if (!childNames.contains(childElementName) || singleInstanceElementInstances.containsKey(childElementName))
+        throw new IllegalArgumentException("child " + childElementName + " not present in instance");
+
+      childNames.remove(childElementName);
+
+      singleInstanceElementInstances.remove(childElementName);
 
       return this;
     }
@@ -261,9 +285,14 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withEmptyMultiInstanceFieldInstances(String childFieldName)
+    public Builder withoutMultiInstanceFieldInstances(String childFieldName)
     {
-      withMultiInstanceFieldInstances(childFieldName, Collections.emptyList());
+      if (!childNames.contains(childFieldName) || !multiInstanceElementInstances.containsKey(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " not present in instance");
+
+      childNames.remove(childFieldName);
+
+      this.multiInstanceFieldInstances.remove(childFieldName);
 
       return this;
     }
@@ -280,9 +309,14 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withEmptyMultiInstanceElementInstances(String childFieldName)
+    public Builder withoutMultiInstanceElementInstances(String childElementName)
     {
-      withMultiInstanceElementInstances(childFieldName, Collections.emptyList());
+      if (!childNames.contains(childElementName) || multiInstanceElementInstances.containsKey(childElementName))
+        throw new IllegalArgumentException("child " + childElementName + " not present in instance");
+
+      childNames.remove(childElementName);
+
+      this.multiInstanceElementInstances.remove(childElementName);
 
       return this;
     }
@@ -312,6 +346,8 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
       return this;
     }
+
+    // TODO Add withoutAttributeValueFieldGroup
 
     public TemplateInstanceArtifact build()
     {

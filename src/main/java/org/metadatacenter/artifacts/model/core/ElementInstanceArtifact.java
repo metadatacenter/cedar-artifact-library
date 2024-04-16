@@ -113,6 +113,11 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     return new Builder();
   }
 
+  static Builder builder(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    return new Builder(elementInstanceArtifact);
+  }
+
   class Builder
   {
     private Map<String, URI> jsonLdContext = new HashMap<>();
@@ -227,6 +232,18 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    public Builder withoutSingleInstanceFieldInstance(String childFieldName)
+    {
+      if (!childNames.contains(childFieldName) || !singleInstanceFieldInstances.containsKey(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " not present in instance");
+
+      childNames.remove(childFieldName);
+
+      singleInstanceFieldInstances.remove(childFieldName);
+
+      return this;
+    }
+
     public Builder withSingleInstanceElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
     {
       if (childNames.contains(childElementName))
@@ -239,21 +256,38 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    public Builder withoutSingleInstanceElementInstance(String childElementName)
+    {
+      if (!this.childNames.contains(childElementName) || !singleInstanceElementInstances.containsKey(childElementName))
+        throw new IllegalArgumentException("child " + childElementName + " not present in instance");
+
+      this.childNames.remove(childElementName);
+
+      this.singleInstanceElementInstances.remove(childElementName);
+
+      return this;
+    }
+
     public Builder withMultiInstanceFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
     {
-      if (childNames.contains(childFieldName))
+      if (this.childNames.contains(childFieldName))
         throw new IllegalArgumentException("child " + childFieldName + " already present in instance");
 
-      childNames.add(childFieldName);
+      this.childNames.add(childFieldName);
 
       this.multiInstanceFieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
 
       return this;
     }
 
-    public Builder withEmptyMultiInstanceFieldInstances(String childFieldName)
+    public Builder withoutMultiInstanceFieldInstances(String childFieldName)
     {
-      withMultiInstanceFieldInstances(childFieldName, Collections.emptyList());
+      if (!childNames.contains(childFieldName) || !multiInstanceFieldInstances.containsKey(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " not present in instance");
+
+      this.childNames.remove(childFieldName);
+
+      this.multiInstanceFieldInstances.remove(childFieldName);
 
       return this;
     }
@@ -270,9 +304,14 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withEmptyMultiInstanceElementInstances(String childFieldName)
+    public Builder withoutMultiInstanceElementInstances(String childElementName)
     {
-      withMultiInstanceElementInstances(childFieldName, Collections.emptyList());
+      if (!childNames.contains(childElementName) || multiInstanceElementInstances.containsKey(childElementName))
+        throw new IllegalArgumentException("child " + childElementName + " not present in instance");
+
+      this.childNames.remove(childElementName);
+
+      this.multiInstanceElementInstances.remove(childElementName);
 
       return this;
     }
@@ -302,6 +341,8 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
 
       return this;
     }
+
+    // TODO Add withoutAttributeValueFieldGroup
 
     public ElementInstanceArtifact build()
     {
