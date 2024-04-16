@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 
 import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.LinkFieldInstance;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -11,8 +12,8 @@ public final class LinkFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
   public LinkFieldInstanceBuilder() {}
 
-  public LinkFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public LinkFieldInstanceBuilder(LinkFieldInstance linkFieldInstance) {
+    super(linkFieldInstance);
   }
 
   public LinkFieldInstanceBuilder withValue(URI value)

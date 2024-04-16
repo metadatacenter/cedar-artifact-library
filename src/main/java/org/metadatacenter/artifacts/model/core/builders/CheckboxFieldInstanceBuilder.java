@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
+import org.metadatacenter.artifacts.model.core.CheckboxField;
+import org.metadatacenter.artifacts.model.core.CheckboxFieldInstance;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 
 import java.net.URI;
@@ -10,8 +12,8 @@ public final class CheckboxFieldInstanceBuilder extends FieldInstanceArtifactBui
 {
   public CheckboxFieldInstanceBuilder() {}
 
-  public CheckboxFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public CheckboxFieldInstanceBuilder(CheckboxFieldInstance checkboxFieldInstance) {
+    super(checkboxFieldInstance);
   }
 
   public CheckboxFieldInstanceBuilder withValue(String value)

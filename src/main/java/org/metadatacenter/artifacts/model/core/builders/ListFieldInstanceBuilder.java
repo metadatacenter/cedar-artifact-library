@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.ListFieldInstance;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -10,8 +11,8 @@ public final class ListFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
   public ListFieldInstanceBuilder() {}
 
-  public ListFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public ListFieldInstanceBuilder(ListFieldInstance listFieldInstance) {
+    super(listFieldInstance);
   }
 
   public ListFieldInstanceBuilder withValue(String value)

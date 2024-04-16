@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalFieldInstance;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 
 import java.net.URI;
@@ -12,8 +13,8 @@ public final class TemporalFieldInstanceBuilder extends FieldInstanceArtifactBui
 
   public TemporalFieldInstanceBuilder() {}
 
-  public TemporalFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public TemporalFieldInstanceBuilder(TemporalFieldInstance temporalFieldInstance) {
+    super(temporalFieldInstance);
   }
 
   public TemporalFieldInstanceBuilder withValue(String value)

@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.PhoneNumberFieldInstance;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -10,8 +11,8 @@ public final class PhoneNumberFieldInstanceBuilder extends FieldInstanceArtifact
 {
   public PhoneNumberFieldInstanceBuilder() {}
 
-  public PhoneNumberFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public PhoneNumberFieldInstanceBuilder(PhoneNumberFieldInstance phoneNumberFieldInstance) {
+    super(phoneNumberFieldInstance);
   }
 
   public PhoneNumberFieldInstanceBuilder withValue(String value)

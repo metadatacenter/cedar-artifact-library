@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.NumericFieldInstance;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 
 import java.net.URI;
@@ -12,8 +13,8 @@ public final class NumericFieldInstanceBuilder extends FieldInstanceArtifactBuil
   public NumericFieldInstanceBuilder() {
   }
 
-  public NumericFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public NumericFieldInstanceBuilder(NumericFieldInstance numericFieldInstance) {
+    super(numericFieldInstance);
   }
 
   public NumericFieldInstanceBuilder withValue(Number value)

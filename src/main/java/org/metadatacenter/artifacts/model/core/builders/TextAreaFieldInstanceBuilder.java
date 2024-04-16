@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TextAreaField;
+import org.metadatacenter.artifacts.model.core.TextAreaFieldInstance;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -11,8 +12,8 @@ public final class TextAreaFieldInstanceBuilder extends FieldInstanceArtifactBui
 {
   public TextAreaFieldInstanceBuilder() {}
 
-  public TextAreaFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public TextAreaFieldInstanceBuilder(TextAreaFieldInstance textAreaFieldInstance) {
+    super(textAreaFieldInstance);
   }
 
   public TextAreaFieldInstanceBuilder withValue(String jsonLdValue)

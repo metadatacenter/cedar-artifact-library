@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
+import org.metadatacenter.artifacts.model.core.ControlledTermFieldInstance;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 
 import java.net.URI;
@@ -10,8 +11,8 @@ public final class ControlledTermFieldInstanceBuilder extends FieldInstanceArtif
 {
   public ControlledTermFieldInstanceBuilder() {}
 
-  public ControlledTermFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public ControlledTermFieldInstanceBuilder(ControlledTermFieldInstance controlledTermFieldInstance) {
+    super(controlledTermFieldInstance);
   }
 
   public ControlledTermFieldInstanceBuilder withValue(URI value)

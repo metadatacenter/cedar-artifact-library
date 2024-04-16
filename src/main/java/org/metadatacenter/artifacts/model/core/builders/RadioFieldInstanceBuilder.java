@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.RadioFieldInstance;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -10,8 +11,8 @@ public final class RadioFieldInstanceBuilder extends FieldInstanceArtifactBuilde
 {
   public RadioFieldInstanceBuilder() {}
 
-  public RadioFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public RadioFieldInstanceBuilder(RadioFieldInstance radioFieldInstance) {
+    super(radioFieldInstance);
   }
 
   public RadioFieldInstanceBuilder withValue(String value)

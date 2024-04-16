@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.TextFieldInstance;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -10,8 +11,8 @@ public final class TextFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
   public TextFieldInstanceBuilder() {}
 
-  public TextFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public TextFieldInstanceBuilder(TextFieldInstance textFieldInstance) {
+    super(textFieldInstance);
   }
 
   public TextFieldInstanceBuilder withValue(String value)

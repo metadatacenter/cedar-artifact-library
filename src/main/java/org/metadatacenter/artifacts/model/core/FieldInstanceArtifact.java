@@ -36,7 +36,10 @@ import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
-public interface FieldInstanceArtifact extends ChildInstanceArtifact
+public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact permits TextFieldInstance,
+  TextAreaFieldInstance, TemporalFieldInstance, NumericFieldInstance, ControlledTermFieldInstance, LinkFieldInstance,
+  EmailFieldInstance, CheckboxFieldInstance, ListFieldInstance, PhoneNumberFieldInstance, RadioFieldInstance,
+  FieldInstanceArtifactRecord
 {
   static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel,

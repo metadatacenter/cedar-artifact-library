@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
+import org.metadatacenter.artifacts.model.core.EmailFieldInstance;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 
 import java.net.URI;
@@ -10,8 +11,8 @@ public final class EmailFieldInstanceBuilder extends FieldInstanceArtifactBuilde
 {
   public EmailFieldInstanceBuilder() {}
 
-  public EmailFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
-    super(fieldInstanceArtifact);
+  public EmailFieldInstanceBuilder(EmailFieldInstance emailFieldInstance) {
+    super(emailFieldInstance);
   }
 
   public EmailFieldInstanceBuilder withValue(String value)
