@@ -20,18 +20,6 @@ public final class PhoneNumberFieldInstanceBuilder extends FieldInstanceArtifact
     return this;
   }
 
-  public PhoneNumberFieldInstanceBuilder withNotation(String notation)
-  {
-    super.withNotation(notation);
-    return this;
-  }
-
-  public PhoneNumberFieldInstanceBuilder withLanguage(String language)
-  {
-    super.withLanguage(language);
-    return this;
-  }
-
   public FieldInstanceArtifact build()
   {
     return super.build();

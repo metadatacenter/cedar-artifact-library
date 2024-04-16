@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract sealed class FieldInstanceArtifactBuilder permits
-  TextAreaFieldInstanceBuilder, TextFieldInstanceBuilder, TemporalFieldInstanceBuilder, NumericFieldInstanceBuilder,
+  TextFieldInstanceBuilder, TextAreaFieldInstanceBuilder, TemporalFieldInstanceBuilder, NumericFieldInstanceBuilder,
   ControlledTermFieldInstanceBuilder, LinkFieldInstanceBuilder,
   EmailFieldInstanceBuilder, CheckboxFieldInstanceBuilder, ListFieldInstanceBuilder, PhoneNumberFieldInstanceBuilder,
   RadioFieldInstanceBuilder

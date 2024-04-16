@@ -20,12 +20,6 @@ public final class RadioFieldInstanceBuilder extends FieldInstanceArtifactBuilde
     return this;
   }
 
-  public RadioFieldInstanceBuilder withNotation(String notation)
-  {
-    super.withNotation(notation);
-    return this;
-  }
-
   public RadioFieldInstanceBuilder withLanguage(String language)
   {
     super.withLanguage(language);

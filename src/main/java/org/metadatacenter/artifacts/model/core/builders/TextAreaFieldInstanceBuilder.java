@@ -21,12 +21,6 @@ public final class TextAreaFieldInstanceBuilder extends FieldInstanceArtifactBui
     return this;
   }
 
-  public TextAreaFieldInstanceBuilder withNotation(String notation)
-  {
-    super.withNotation(notation);
-    return this;
-  }
-
   public TextAreaFieldInstanceBuilder withLanguage(String language)
   {
     super.withLanguage(language);

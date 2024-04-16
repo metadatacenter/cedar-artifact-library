@@ -26,12 +26,6 @@ public final class CheckboxFieldInstanceBuilder extends FieldInstanceArtifactBui
     return this;
   }
 
-  public CheckboxFieldInstanceBuilder withNotation(String notation)
-  {
-    super.withNotation(notation);
-    return this;
-  }
-
   public FieldInstanceArtifact build()
   {
     return super.build();

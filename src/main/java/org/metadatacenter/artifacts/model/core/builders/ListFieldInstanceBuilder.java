@@ -20,12 +20,6 @@ public final class ListFieldInstanceBuilder extends FieldInstanceArtifactBuilder
     return this;
   }
 
-  public ListFieldInstanceBuilder withNotation(String notation)
-  {
-    super.withNotation(notation);
-    return this;
-  }
-
   public ListFieldInstanceBuilder withLanguage(String language)
   {
     super.withLanguage(language);

@@ -20,12 +20,6 @@ public final class TextFieldInstanceBuilder extends FieldInstanceArtifactBuilder
     return this;
   }
   
-  public TextFieldInstanceBuilder withNotation(String notation)
-  {
-    super.withNotation(notation);
-    return this;
-  }
-
   public TextFieldInstanceBuilder withLanguage(String language)
   {
     super.withLanguage(language);
