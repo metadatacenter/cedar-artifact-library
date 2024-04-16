@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.EmailField;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
@@ -25,6 +26,11 @@ public final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
     super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.EMAIL);
+  }
+
+  public EmailFieldBuilder(EmailField emailField)
+  {
+    super(emailField);
   }
 
   public EmailFieldBuilder withRequiredValue(boolean requiredValue)

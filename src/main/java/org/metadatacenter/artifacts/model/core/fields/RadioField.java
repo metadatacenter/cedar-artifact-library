@@ -32,9 +32,9 @@ import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFA
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
-public interface EmailFieldSchemaArtifact extends FieldSchemaArtifact
+public interface RadioField extends FieldSchemaArtifact
 {
-  static EmailFieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static RadioField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
@@ -43,7 +43,7 @@ public interface EmailFieldSchemaArtifact extends FieldSchemaArtifact
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
     FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
-    return new EmailFieldSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+    return new RadioFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
@@ -51,20 +51,20 @@ public interface EmailFieldSchemaArtifact extends FieldSchemaArtifact
 
 }
 
-record EmailFieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                                         Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                         String name, String description, Optional<String> identifier,
-                                         Version modelVersion, Optional<Version> version, Optional<Status> status,
-                                         Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                         boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                         Optional<URI> propertyUri,
-                                         Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                         Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                      Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                                      FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
-  implements EmailFieldSchemaArtifact
+record RadioFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                        Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                        String name, String description, Optional<String> identifier,
+                        Version modelVersion, Optional<Version> version, Optional<Status> status,
+                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                        Optional<URI> propertyUri,
+                        Optional<URI> createdBy, Optional<URI> modifiedBy,
+                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                        Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                        FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+  implements RadioField
 {
-  public EmailFieldSchemaArtifactRecord
+  public RadioFieldRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,

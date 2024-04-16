@@ -8,6 +8,7 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,39 +33,38 @@ import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFA
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
-public interface CheckboxFieldSchemaArtifact extends FieldSchemaArtifact
+public interface RichTextField extends FieldSchemaArtifact
 {
-  static CheckboxFieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static RichTextField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+    FieldUi fieldUi)
   {
-    return new CheckboxFieldSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+    return new RichTextFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), fieldUi, Optional.empty());
   }
 
 }
 
-record CheckboxFieldSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                                         Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                         String name, String description, Optional<String> identifier,
-                                         Version modelVersion, Optional<Version> version, Optional<Status> status,
-                                         Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                         boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                         Optional<URI> propertyUri,
-                                         Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                         Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                         Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                                         FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
-  implements CheckboxFieldSchemaArtifact
+record RichTextFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+                           Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           String name, String description, Optional<String> identifier,
+                           Version modelVersion, Optional<Version> version, Optional<Status> status,
+                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                           Optional<URI> propertyUri,
+                           Optional<URI> createdBy, Optional<URI> modifiedBy,
+                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                           Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                           FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+  implements RichTextField
 {
-  public CheckboxFieldSchemaArtifactRecord
+  public RichTextFieldRecord
   {
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,

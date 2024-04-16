@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.NumericField;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
@@ -25,6 +26,11 @@ public final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
     super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     valueConstraintsBuilder.withMultipleChoice(false);
+  }
+
+  public NumericFieldBuilder(NumericField numericField)
+  {
+    super(numericField);
   }
 
   public NumericFieldBuilder withNumericType(XsdNumericDatatype numericType) {

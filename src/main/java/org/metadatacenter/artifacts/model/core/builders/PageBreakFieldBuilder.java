@@ -3,11 +3,11 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.PageBreakField;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
@@ -21,6 +21,11 @@ public final class PageBreakFieldBuilder extends FieldSchemaArtifactBuilder
   public PageBreakFieldBuilder() {
     super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+  }
+
+  public PageBreakFieldBuilder(PageBreakField pageBreakField)
+  {
+    super(pageBreakField);
   }
 
   public PageBreakFieldBuilder withContent(String content)

@@ -4,6 +4,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.LinkField;
 import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -26,6 +27,11 @@ public final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.LINK);
     valueConstraintsBuilder.withMultipleChoice(false);
+  }
+
+  public LinkFieldBuilder(LinkField linkField)
+  {
+    super(linkField);
   }
 
   public LinkFieldBuilder withRequiredValue(boolean requiredValue)

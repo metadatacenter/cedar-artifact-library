@@ -4,6 +4,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.RadioField;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -26,6 +27,11 @@ public final class RadioFieldBuilder extends FieldSchemaArtifactBuilder
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.RADIO);
     valueConstraintsBuilder.withMultipleChoice(true);
+  }
+
+  public RadioFieldBuilder(RadioField radioField)
+  {
+    super(radioField);
   }
 
   public RadioFieldBuilder withRequiredValue(boolean requiredValue)

@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
@@ -34,6 +35,11 @@ public final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     valueConstraintsBuilder.withMultipleChoice(false);
     fieldUiBuilder.withInputType(FieldInputType.TEXTFIELD);
+  }
+
+  public ControlledTermFieldBuilder(ControlledTermField controlledTermField)
+  {
+    super(controlledTermField);
   }
 
   public ControlledTermFieldBuilder withOntologyValueConstraint(URI uri, String acronym, String name) {

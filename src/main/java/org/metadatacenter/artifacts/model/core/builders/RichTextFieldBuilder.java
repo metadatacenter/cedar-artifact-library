@@ -3,11 +3,11 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.RichTextField;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Map;
 
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
@@ -21,6 +21,11 @@ public final class RichTextFieldBuilder extends FieldSchemaArtifactBuilder
   public RichTextFieldBuilder() {
     super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+  }
+
+  public RichTextFieldBuilder(RichTextField richTextField)
+  {
+    super(richTextField);
   }
 
   public RichTextFieldBuilder withContent(String content)

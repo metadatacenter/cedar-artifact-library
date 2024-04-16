@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.AttributeValueField;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -23,6 +24,10 @@ public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
     super(JSON_SCHEMA_STRING, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
     withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     fieldUiBuilder.withInputType(FieldInputType.ATTRIBUTE_VALUE);
+  }
+
+  public AttributeValueFieldBuilder(AttributeValueField attributeValueField) {
+    super(attributeValueField);
   }
 
   @Override public AttributeValueFieldBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
@@ -111,18 +116,6 @@ public final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
   @Override public AttributeValueFieldBuilder withDerivedFrom(URI derivedFrom)
   {
     super.withDerivedFrom(derivedFrom);
-    return this;
-  }
-
-  @Override public AttributeValueFieldBuilder withPreferredLabel(String skosPrefLabel)
-  {
-    super.withPreferredLabel(skosPrefLabel);
-    return this;
-  }
-
-  @Override public AttributeValueFieldBuilder withAlternateLabels(List<String> skosAlternateLabels)
-  {
-    super.withAlternateLabels(skosAlternateLabels);
     return this;
   }
 
