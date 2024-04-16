@@ -5,6 +5,7 @@ import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -89,6 +90,10 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     return new Builder();
   }
 
+  static Builder builder(TemplateSchemaArtifact templateSchemaArtifact) {
+    return new Builder(templateSchemaArtifact);
+  }
+
   class Builder
   {
     private Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
@@ -104,18 +109,44 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private String jsonSchemaDescription = "";
     private String name;
     private String description = "";
-    private Optional<String> schemaOrgIdentifier = Optional.empty();
+    private Optional<String> identifier = Optional.empty();
     private Version modelVersion = new Version(1, 6, 0); // TODO
     private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private final LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
-    private final LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
-    private final TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
+    private LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
+    private LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+    private TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
 
     private Builder()
     {
+    }
+
+    private Builder(TemplateSchemaArtifact templateSchemaArtifact)
+    {
+      this.jsonLdContext = new HashMap<>(templateSchemaArtifact.jsonLdContext());
+      this.jsonLdTypes = new ArrayList<>(templateSchemaArtifact.jsonLdTypes());
+      this.jsonLdId = templateSchemaArtifact.jsonLdId();
+      this.createdBy = templateSchemaArtifact.createdBy();
+      this.modifiedBy = templateSchemaArtifact.modifiedBy();
+      this.createdOn = templateSchemaArtifact.createdOn();
+      this.lastUpdatedOn = templateSchemaArtifact.lastUpdatedOn();
+      this.jsonSchemaSchemaUri = templateSchemaArtifact.jsonSchemaSchemaUri();
+      this.jsonSchemaType = templateSchemaArtifact.jsonSchemaType();
+      this.jsonSchemaTitle = templateSchemaArtifact.jsonSchemaTitle();
+      this.jsonSchemaDescription = templateSchemaArtifact.jsonSchemaDescription();
+      this.name = templateSchemaArtifact.name();
+      this.description = templateSchemaArtifact.description();
+      this.identifier = templateSchemaArtifact.identifier();
+      this.modelVersion = templateSchemaArtifact.modelVersion();
+      this.version = templateSchemaArtifact.version();
+      this.status = templateSchemaArtifact.status();
+      this.previousVersion = templateSchemaArtifact.previousVersion();
+      this.derivedFrom = templateSchemaArtifact.derivedFrom();
+      this.fieldSchemas = new LinkedHashMap<>(templateSchemaArtifact.fieldSchemas());
+      this.elementSchemas = new LinkedHashMap<>(templateSchemaArtifact.elementSchemas());
+      this.templateUiBuilder = TemplateUi.builder(templateSchemaArtifact.templateUi());
     }
 
     public Builder withJsonLdId(URI jsonLdId)
@@ -186,7 +217,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier)
     {
-      this.schemaOrgIdentifier = Optional.ofNullable(schemaOrgIdentifier);
+      this.identifier = Optional.ofNullable(schemaOrgIdentifier);
       return this;
     }
 
@@ -298,7 +329,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     {
       return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
-        name, description, schemaOrgIdentifier,
+        name, description, identifier,
         modelVersion, version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas,

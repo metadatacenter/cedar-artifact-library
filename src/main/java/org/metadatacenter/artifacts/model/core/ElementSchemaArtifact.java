@@ -5,8 +5,10 @@ import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -103,15 +105,42 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private final Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    private final Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    private Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
+    private Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     private boolean isMultiple = false;
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
-    private final ElementUi.Builder elementUiBuilder = ElementUi.builder();
+    private ElementUi.Builder elementUiBuilder = ElementUi.builder();
 
     private Builder() {
+    }
+
+    private Builder(ElementSchemaArtifact elementSchemaArtifact)
+    {
+      this.jsonLdContext = new HashMap<>(elementSchemaArtifact.jsonLdContext());
+      this.jsonLdTypes = new ArrayList<>(elementSchemaArtifact.jsonLdTypes());
+      this.jsonLdId = elementSchemaArtifact.jsonLdId();
+      this.createdBy = elementSchemaArtifact.createdBy();
+      this.modifiedBy = elementSchemaArtifact.modifiedBy();
+      this.createdOn = elementSchemaArtifact.createdOn();
+      this.lastUpdatedOn = elementSchemaArtifact.lastUpdatedOn();
+      this.jsonSchemaSchemaUri = elementSchemaArtifact.jsonSchemaSchemaUri();
+      this.jsonSchemaType = elementSchemaArtifact.jsonSchemaType();
+      this.jsonSchemaTitle = elementSchemaArtifact.jsonSchemaTitle();
+      this.jsonSchemaDescription = elementSchemaArtifact.jsonSchemaDescription();
+      this.name = elementSchemaArtifact.name();
+      this.description = elementSchemaArtifact.description();
+      this.identifier = elementSchemaArtifact.identifier();
+      this.modelVersion = elementSchemaArtifact.modelVersion();
+      this.version = elementSchemaArtifact.version();
+      this.status = elementSchemaArtifact.status();
+      this.previousVersion = elementSchemaArtifact.previousVersion();
+      this.derivedFrom = elementSchemaArtifact.derivedFrom();
+      this.fieldSchemas = new LinkedHashMap<>(elementSchemaArtifact.fieldSchemas());
+      this.elementSchemas = new LinkedHashMap<>(elementSchemaArtifact.elementSchemas());
+
+      this.elementUiBuilder = ElementUi.builder(elementSchemaArtifact.elementUi());
     }
 
     public Builder withJsonLdType(URI jsonLdType)

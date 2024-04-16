@@ -10,6 +10,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,8 +59,8 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
   protected FieldSchemaArtifactBuilder(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    this.jsonLdContext = Map.copyOf(fieldSchemaArtifact.jsonLdContext());
-    this.jsonLdTypes = List.copyOf(fieldSchemaArtifact.jsonLdTypes());
+    this.jsonLdContext = new HashMap<>(fieldSchemaArtifact.jsonLdContext());
+    this.jsonLdTypes = new ArrayList<>(fieldSchemaArtifact.jsonLdTypes());
     this.jsonLdId = fieldSchemaArtifact.jsonLdId();
     this.createdBy = fieldSchemaArtifact.createdBy();
     this.modifiedBy = fieldSchemaArtifact.modifiedBy();
