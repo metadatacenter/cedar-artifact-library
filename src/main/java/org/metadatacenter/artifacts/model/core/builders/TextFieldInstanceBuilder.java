@@ -10,6 +10,10 @@ public final class TextFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
   public TextFieldInstanceBuilder() {}
 
+  public TextFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public TextFieldInstanceBuilder withValue(String value)
   {
     super.withJsonLdValue(value);

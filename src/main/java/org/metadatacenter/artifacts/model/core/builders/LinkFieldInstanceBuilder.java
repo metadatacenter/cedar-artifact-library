@@ -11,6 +11,10 @@ public final class LinkFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
   public LinkFieldInstanceBuilder() {}
 
+  public LinkFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public LinkFieldInstanceBuilder withValue(URI value)
   {
     super.withJsonLdId(value);

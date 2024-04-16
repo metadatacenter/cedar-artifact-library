@@ -1,5 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.checkerframework.checker.units.qual.A;
+import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -113,9 +116,14 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     return new Builder();
   }
 
+  static Builder builder(TemplateInstanceArtifact templateInstanceArtifact)
+  {
+    return new Builder(templateInstanceArtifact);
+  }
+
   class Builder
   {
-    private final List<URI> jsonLdTypes = Collections.emptyList();
+    private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
     private Map<String, URI> jsonLdContext = new HashMap<>();
     private URI isBasedOn;
@@ -125,15 +133,35 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private final List<String> childNames = new ArrayList<>();
-    private final Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
-    private final Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
-    private final Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
-    private final Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
-    private final Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
+    private List<String> childNames = new ArrayList<>();
+    private Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
+    private Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
+    private Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
+    private Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
+    private Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
 
     private Builder()
     {
+    }
+
+    private Builder(TemplateInstanceArtifact templateInstanceArtifact)
+    {
+      this.jsonLdTypes = new ArrayList<>(templateInstanceArtifact.jsonLdTypes());
+      this.jsonLdId = templateInstanceArtifact.jsonLdId();
+      this.jsonLdContext = new HashMap<>(templateInstanceArtifact.jsonLdContext());
+      this.isBasedOn = templateInstanceArtifact.isBasedOn();
+      this.name = templateInstanceArtifact.name();
+      this.description = templateInstanceArtifact.description();
+      this.createdBy = templateInstanceArtifact.createdBy();
+      this.modifiedBy = templateInstanceArtifact.modifiedBy();
+      this.createdOn = templateInstanceArtifact.createdOn();
+      this.lastUpdatedOn = templateInstanceArtifact.lastUpdatedOn();
+      this.childNames = new ArrayList<>(templateInstanceArtifact.childNames());
+      this.singleInstanceFieldInstances = new HashMap<>(templateInstanceArtifact.singleInstanceFieldInstances());
+      this.multiInstanceFieldInstances = new HashMap<>(templateInstanceArtifact.multiInstanceFieldInstances());
+      this.singleInstanceElementInstances = new HashMap<>(templateInstanceArtifact.singleInstanceElementInstances());
+      this.multiInstanceElementInstances = new HashMap<>(templateInstanceArtifact.multiInstanceElementInstances());
+      this.attributeValueFieldInstanceGroups = new HashMap<>(templateInstanceArtifact.attributeValueFieldInstanceGroups());
     }
 
     public Builder withJsonLdContextEntry(String name, URI property)

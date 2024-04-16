@@ -10,6 +10,10 @@ public final class RadioFieldInstanceBuilder extends FieldInstanceArtifactBuilde
 {
   public RadioFieldInstanceBuilder() {}
 
+  public RadioFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public RadioFieldInstanceBuilder withValue(String value)
   {
     super.withJsonLdValue(value);

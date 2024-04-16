@@ -124,15 +124,34 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private final List<String> childNames = new ArrayList<>();
-    private final Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
-    private final Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
-    private final Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
-    private final Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
-    private final Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
+    private List<String> childNames = new ArrayList<>();
+    private Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
+    private Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
+    private Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
+    private Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
+    private Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
 
     private Builder()
     {
+    }
+
+    private Builder(ElementInstanceArtifact elementInstanceArtifact)
+    {
+      this.jsonLdTypes = new ArrayList<>(elementInstanceArtifact.jsonLdTypes());
+      this.jsonLdId = elementInstanceArtifact.jsonLdId();
+      this.jsonLdContext = new HashMap<>(elementInstanceArtifact.jsonLdContext());
+      this.name = elementInstanceArtifact.name();
+      this.description = elementInstanceArtifact.description();
+      this.createdBy = elementInstanceArtifact.createdBy();
+      this.modifiedBy = elementInstanceArtifact.modifiedBy();
+      this.createdOn = elementInstanceArtifact.createdOn();
+      this.lastUpdatedOn = elementInstanceArtifact.lastUpdatedOn();
+      this.childNames = new ArrayList<>(elementInstanceArtifact.childNames());
+      this.singleInstanceFieldInstances = new HashMap<>(elementInstanceArtifact.singleInstanceFieldInstances());
+      this.multiInstanceFieldInstances = new HashMap<>(elementInstanceArtifact.multiInstanceFieldInstances());
+      this.singleInstanceElementInstances = new HashMap<>(elementInstanceArtifact.singleInstanceElementInstances());
+      this.multiInstanceElementInstances = new HashMap<>(elementInstanceArtifact.multiInstanceElementInstances());
+      this.attributeValueFieldInstanceGroups = new HashMap<>(elementInstanceArtifact.attributeValueFieldInstanceGroups());
     }
 
     public Builder withJsonLdContextEntry(String name, URI property)

@@ -10,6 +10,10 @@ public final class CheckboxFieldInstanceBuilder extends FieldInstanceArtifactBui
 {
   public CheckboxFieldInstanceBuilder() {}
 
+  public CheckboxFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public CheckboxFieldInstanceBuilder withValue(String value)
   {
     super.withJsonLdValue(value);

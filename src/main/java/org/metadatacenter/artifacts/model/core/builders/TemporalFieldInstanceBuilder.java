@@ -9,6 +9,13 @@ import java.util.Optional;
 
 public final class TemporalFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
+
+  public TemporalFieldInstanceBuilder() {}
+
+  public TemporalFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public TemporalFieldInstanceBuilder withValue(String value)
   {
     super.withJsonLdValue(value);

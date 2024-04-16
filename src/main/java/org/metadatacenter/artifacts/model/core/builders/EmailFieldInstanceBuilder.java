@@ -10,6 +10,10 @@ public final class EmailFieldInstanceBuilder extends FieldInstanceArtifactBuilde
 {
   public EmailFieldInstanceBuilder() {}
 
+  public EmailFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public EmailFieldInstanceBuilder withValue(String value)
   {
     super.withJsonLdValue(value);

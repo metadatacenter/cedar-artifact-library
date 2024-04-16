@@ -13,7 +13,7 @@ public abstract sealed class FieldInstanceArtifactBuilder permits
   EmailFieldInstanceBuilder, CheckboxFieldInstanceBuilder, ListFieldInstanceBuilder, PhoneNumberFieldInstanceBuilder,
   RadioFieldInstanceBuilder
 {
-  protected final List<URI> jsonLdTypes = new ArrayList<>();
+  protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();
   protected Optional<String> jsonLdValue = Optional.empty();
   protected Optional<String> label = Optional.empty();
@@ -23,6 +23,17 @@ public abstract sealed class FieldInstanceArtifactBuilder permits
 
   protected FieldInstanceArtifactBuilder()
   {
+  }
+
+  protected FieldInstanceArtifactBuilder(FieldInstanceArtifact fieldInstanceArtifact)
+  {
+    this.jsonLdTypes = new ArrayList<>(fieldInstanceArtifact.jsonLdTypes());
+    this.jsonLdId = fieldInstanceArtifact.jsonLdId();
+    this.jsonLdValue = fieldInstanceArtifact.jsonLdValue();
+    this.label = fieldInstanceArtifact.label();
+    this.notation = fieldInstanceArtifact.notation();
+    this.prefLabel = fieldInstanceArtifact.prefLabel();
+    this.language = fieldInstanceArtifact.language();
   }
 
   protected FieldInstanceArtifactBuilder withJsonLdType(URI jsonLdType)

@@ -10,6 +10,10 @@ public final class ListFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
   public ListFieldInstanceBuilder() {}
 
+  public ListFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public ListFieldInstanceBuilder withValue(String value)
   {
     super.withJsonLdValue(value);

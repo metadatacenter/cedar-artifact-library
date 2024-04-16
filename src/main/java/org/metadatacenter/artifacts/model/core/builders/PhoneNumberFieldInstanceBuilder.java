@@ -10,6 +10,10 @@ public final class PhoneNumberFieldInstanceBuilder extends FieldInstanceArtifact
 {
   public PhoneNumberFieldInstanceBuilder() {}
 
+  public PhoneNumberFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public PhoneNumberFieldInstanceBuilder withValue(String value)
   {
     super.withJsonLdValue(value);

@@ -9,6 +9,13 @@ import java.util.Optional;
 
 public final class NumericFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
+  public NumericFieldInstanceBuilder() {
+  }
+
+  public NumericFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public NumericFieldInstanceBuilder withValue(Number value)
   {
     super.withJsonLdValue(value.toString());

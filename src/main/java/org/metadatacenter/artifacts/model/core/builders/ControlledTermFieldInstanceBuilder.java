@@ -10,6 +10,10 @@ public final class ControlledTermFieldInstanceBuilder extends FieldInstanceArtif
 {
   public ControlledTermFieldInstanceBuilder() {}
 
+  public ControlledTermFieldInstanceBuilder(FieldInstanceArtifact fieldInstanceArtifact) {
+    super(fieldInstanceArtifact);
+  }
+
   public ControlledTermFieldInstanceBuilder withValue(URI value)
   {
     super.withJsonLdId(value);
