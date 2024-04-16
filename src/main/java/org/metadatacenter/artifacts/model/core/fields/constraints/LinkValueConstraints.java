@@ -22,6 +22,10 @@ public non-sealed interface LinkValueConstraints extends ValueConstraints
     return new Builder();
   }
 
+  static Builder builder(LinkValueConstraints linkValueConstraints) {
+    return new Builder(linkValueConstraints);
+  }
+
   class Builder {
     private Optional<LinkDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
@@ -29,6 +33,13 @@ public non-sealed interface LinkValueConstraints extends ValueConstraints
     private boolean multipleChoice = false;
 
     private Builder() {
+    }
+
+    private Builder(LinkValueConstraints linkValueConstraints) {
+      this.defaultValue = linkValueConstraints.defaultValue();
+      this.requiredValue = linkValueConstraints.requiredValue();
+      this.recommendedValue = linkValueConstraints.recommendedValue();
+      this.multipleChoice = linkValueConstraints.multipleChoice();
     }
 
     public Builder withDefaultValue(URI defaultValue) {

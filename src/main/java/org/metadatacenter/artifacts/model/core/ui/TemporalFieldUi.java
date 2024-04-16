@@ -30,9 +30,14 @@ public non-sealed interface TemporalFieldUi extends FieldUi
     return new TemporalFieldUi.Builder();
   }
 
+  static Builder builder(TemporalFieldUi temporalFieldUi)
+  {
+    return new TemporalFieldUi.Builder(temporalFieldUi);
+  }
+
   class Builder
   {
-    private final FieldInputType inputType = FieldInputType.TEMPORAL;
+    private FieldInputType inputType = FieldInputType.TEMPORAL;
     private TemporalGranularity temporalGranularity;
     private InputTimeFormat inputTimeFormat = InputTimeFormat.TWELVE_HOUR;
     boolean timezoneEnabled = false;
@@ -42,6 +47,17 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
     private Builder()
     {
+    }
+
+    private Builder(TemporalFieldUi temporalFieldUi)
+    {
+      this.inputType = temporalFieldUi.inputType();
+      this.temporalGranularity = temporalFieldUi.temporalGranularity();
+      this.inputTimeFormat = temporalFieldUi.inputTimeFormat();
+      this.timezoneEnabled = temporalFieldUi.timezoneEnabled();
+      this.hidden = temporalFieldUi.hidden();
+      this.recommendedValue = temporalFieldUi.recommendedValue();
+      this.continuePreviousLine = temporalFieldUi.continuePreviousLine();
     }
 
     public Builder withTemporalGranularity(TemporalGranularity temporalGranularity)

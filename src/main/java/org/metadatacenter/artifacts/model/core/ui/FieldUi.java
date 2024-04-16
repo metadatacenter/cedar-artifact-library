@@ -88,6 +88,11 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
     return new Builder();
   }
 
+  static Builder builder(FieldUi fieldUi)
+  {
+    return new Builder(fieldUi);
+  }
+
   class Builder
   {
     private FieldInputType inputType;
@@ -98,6 +103,15 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
     private Builder()
     {
+    }
+
+    private Builder(FieldUi fieldUi)
+    {
+      this.inputType = fieldUi.inputType();
+      this.hidden = fieldUi.hidden();
+      this.valueRecommendation = fieldUi.valueRecommendationEnabled();
+      this.recommendedValue = fieldUi.recommendedValue();
+      this.continuePreviousLine = fieldUi.continuePreviousLine();
     }
 
     public Builder withInputType(FieldInputType inputType)

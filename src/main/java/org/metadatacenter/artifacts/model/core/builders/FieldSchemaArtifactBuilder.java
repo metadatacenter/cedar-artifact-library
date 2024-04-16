@@ -23,14 +23,14 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   PageBreakFieldBuilder, SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
 {
   private Map<String, URI> jsonLdContext;
-  private final List<URI> jsonLdTypes = new ArrayList<>();
+  private List<URI> jsonLdTypes = new ArrayList<>();
   private Optional<URI> jsonLdId = Optional.empty();
   private Optional<URI> createdBy = Optional.empty();
   private Optional<URI> modifiedBy = Optional.empty();
   private Optional<OffsetDateTime> createdOn = Optional.empty();
   private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
   private final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-  private final String jsonSchemaType;
+  private String jsonSchemaType;
   private String jsonSchemaTitle = "";
   private String jsonSchemaDescription = "";
   private String name;
@@ -50,12 +50,40 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
   private FieldUi fieldUi;
   private Optional<ValueConstraints> valueConstraints = Optional.empty();
 
+  protected FieldSchemaArtifactBuilder(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    this.jsonLdContext = Map.copyOf(fieldSchemaArtifact.jsonLdContext());
+    this.jsonLdTypes = List.copyOf(fieldSchemaArtifact.jsonLdTypes());
+    this.jsonLdId = fieldSchemaArtifact.jsonLdId();
+    this.createdBy = fieldSchemaArtifact.createdBy();
+    this.modifiedBy = fieldSchemaArtifact.modifiedBy();
+    this.createdOn = fieldSchemaArtifact.createdOn();
+    this.lastUpdatedOn = fieldSchemaArtifact.lastUpdatedOn();
+    this.jsonSchemaType = fieldSchemaArtifact.jsonSchemaType();
+    this.jsonSchemaTitle = fieldSchemaArtifact.jsonSchemaTitle();
+    this.jsonSchemaDescription = fieldSchemaArtifact.jsonSchemaDescription();
+    this.name = fieldSchemaArtifact.name();
+    this.description = fieldSchemaArtifact.description();
+    this.identifier = fieldSchemaArtifact.identifier();
+    this.skosAlternateLabels = fieldSchemaArtifact.skosAlternateLabels();
+    this.modelVersion = fieldSchemaArtifact.modelVersion();
+    this.version = fieldSchemaArtifact.version();
+    this.status = fieldSchemaArtifact.status();
+    this.previousVersion = fieldSchemaArtifact.previousVersion();
+    this.derivedFrom = fieldSchemaArtifact.derivedFrom();
+    this.isMultiple = fieldSchemaArtifact.isMultiple();
+    this.minItems = fieldSchemaArtifact.minItems();
+    this.maxItems = fieldSchemaArtifact.maxItems();
+    this.propertyUri = fieldSchemaArtifact.propertyUri();
+    this.fieldUi = fieldSchemaArtifact.fieldUi();
+    this.valueConstraints = fieldSchemaArtifact.valueConstraints();
+  }
+
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
     this.jsonSchemaType = jsonSchemaType;
     this.jsonLdTypes.add(artifactTypeIri);
   }
-
   public FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
   {
     if (jsonLdContext == null)

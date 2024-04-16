@@ -32,6 +32,11 @@ public non-sealed interface StaticFieldUi extends FieldUi
     return new PageBreakFieldUiBuilder();
   }
 
+  static PageBreakFieldUiBuilder pageBreakFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new PageBreakFieldUiBuilder(staticFieldUi);
+  }
+
   static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder()
   {
     return new SectionBreakFieldUiBuilder();
@@ -39,14 +44,29 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   static RichTextFieldUiBuilder richTextFieldUiBuilder() { return new RichTextFieldUiBuilder(); }
 
+  static RichTextFieldUiBuilder richTextFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new RichTextFieldUiBuilder(staticFieldUi);
+  }
+
   static ImageFieldUiBuilder imageFieldUiBuilder()
   {
     return new ImageFieldUiBuilder();
   }
 
+  static ImageFieldUiBuilder imageFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new ImageFieldUiBuilder(staticFieldUi);
+  }
+
   static YouTubeFieldUiBuilder youTubeFieldUiBuilder()
   {
     return new YouTubeFieldUiBuilder();
+  }
+
+  static YouTubeFieldUiBuilder youTubeFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new YouTubeFieldUiBuilder(staticFieldUi);
   }
 
   class PageBreakFieldUiBuilder
@@ -55,6 +75,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private boolean hidden = false;
 
     private PageBreakFieldUiBuilder() {}
+
+    private PageBreakFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+    }
 
     public PageBreakFieldUiBuilder withContent(String content)
     {
@@ -81,6 +107,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     private SectionBreakFieldUiBuilder() {}
 
+    private SectionBreakFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+    }
+
     public SectionBreakFieldUiBuilder withContent(String content)
     {
       this.content = Optional.ofNullable(content);
@@ -106,6 +138,13 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private boolean continuePreviousLine = false;
 
     private RichTextFieldUiBuilder() {}
+
+    private RichTextFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
+    }
 
     public RichTextFieldUiBuilder withContent(String content)
     {
@@ -141,6 +180,13 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
     }
 
+    private ImageFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
+    }
+
     public ImageFieldUiBuilder withContent(String content)
     {
       this.content = Optional.ofNullable(content);
@@ -173,6 +219,13 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     private YouTubeFieldUiBuilder()
     {
+    }
+
+    private YouTubeFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public YouTubeFieldUiBuilder withContent(String content)

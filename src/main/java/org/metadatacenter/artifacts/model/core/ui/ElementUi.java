@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.fasterxml.jackson.databind.cfg.CoercionInputShape.Array;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
@@ -32,14 +33,26 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
     return new Builder();
   }
 
+  static Builder builder(ElementUi elementUi) {
+    return new Builder(elementUi);
+  }
+
   class Builder {
-    private final List<String> order = new ArrayList<>();
-    private final Map<String, String> propertyLabels = new HashMap<>();
-    private final Map<String, String> propertyDescriptions = new HashMap<>();
+    private List<String> order = new ArrayList<>();
+    private Map<String, String> propertyLabels = new HashMap<>();
+    private Map<String, String> propertyDescriptions = new HashMap<>();
     private Optional<String> header = Optional.empty();
     private Optional<String> footer = Optional.empty();
 
     private Builder() {
+    }
+
+    private Builder(ElementUi elementUi) {
+      this.order = List.copyOf(elementUi.order());
+      this.propertyLabels = Map.copyOf(elementUi.propertyLabels());
+      this.propertyDescriptions = Map.copyOf(elementUi.propertyDescriptions());
+      this.header = elementUi.header();
+      this.footer = elementUi.footer();
     }
 
     public Builder withOrder(String fieldName) {

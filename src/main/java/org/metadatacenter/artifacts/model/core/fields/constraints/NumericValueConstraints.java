@@ -41,6 +41,10 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
     return new Builder();
   }
 
+  static Builder builder(NumericValueConstraints numericValueConstraints) {
+    return new Builder(numericValueConstraints);
+  }
+
   class Builder {
     private XsdNumericDatatype numberType;
     private Optional<Number> minValue = Optional.empty();
@@ -53,6 +57,19 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
     private boolean multipleChoice = false;
 
     private Builder() {
+    }
+
+    private Builder(NumericValueConstraints numericValueConstraints)
+    {
+      this.numberType = numericValueConstraints.numberType();
+      this.minValue = numericValueConstraints.minValue();
+      this.maxValue = numericValueConstraints.maxValue();
+      this.decimalPlaces = numericValueConstraints.decimalPlace();
+      this.unitOfMeasure = numericValueConstraints.unitOfMeasure();
+      this.defaultValue = numericValueConstraints.defaultValue();
+      this.requiredValue = numericValueConstraints.requiredValue();
+      this.recommendedValue = numericValueConstraints.recommendedValue();
+      this.multipleChoice = numericValueConstraints.multipleChoice();
     }
 
     public Builder withNumberType(XsdNumericDatatype numberType) {

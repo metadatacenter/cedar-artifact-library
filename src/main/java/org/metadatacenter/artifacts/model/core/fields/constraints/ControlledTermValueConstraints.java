@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.fields.constraints;
 
+import org.checkerframework.checker.units.qual.C;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 
 import java.net.URI;
@@ -46,13 +47,18 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
     return new Builder();
   }
 
+  static Builder builder(ControlledTermValueConstraints controlledTermValueConstraints)
+  {
+    return new Builder(controlledTermValueConstraints);
+  }
+
   class Builder
   {
-    private final List<OntologyValueConstraint> ontologies = new ArrayList<>();
-    private final List<ValueSetValueConstraint> valueSets = new ArrayList<>();
-    private final List<ClassValueConstraint> classes = new ArrayList<>();
-    private final List<BranchValueConstraint> branches = new ArrayList<>();
-    private final List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
+    private List<OntologyValueConstraint> ontologies = new ArrayList<>();
+    private List<ValueSetValueConstraint> valueSets = new ArrayList<>();
+    private List<ClassValueConstraint> classes = new ArrayList<>();
+    private List<BranchValueConstraint> branches = new ArrayList<>();
+    private List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
     private Optional<ControlledTermDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
     private boolean recommendedValue = false;
@@ -60,6 +66,19 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
     private Builder()
     {
+    }
+
+    private Builder(ControlledTermValueConstraints controlledTermValueConstraints)
+    {
+      this.ontologies = List.copyOf(controlledTermValueConstraints.ontologies());
+      this.valueSets = List.copyOf(controlledTermValueConstraints.valueSets());
+      this.classes = List.copyOf(controlledTermValueConstraints.classes());
+      this.branches = List.copyOf(controlledTermValueConstraints.branches());
+      this.actions = List.copyOf(controlledTermValueConstraints.actions());
+      this.defaultValue = controlledTermValueConstraints.defaultValue();
+      this.requiredValue = controlledTermValueConstraints.requiredValue();
+      this.recommendedValue = controlledTermValueConstraints.recommendedValue();
+      this.multipleChoice = controlledTermValueConstraints.multipleChoice();
     }
 
     public Builder withOntologyValueConstraint(OntologyValueConstraint constraint)

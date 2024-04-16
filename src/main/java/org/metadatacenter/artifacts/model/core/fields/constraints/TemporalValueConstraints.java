@@ -26,6 +26,10 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
     return new Builder();
   }
 
+  static Builder builder(TemporalValueConstraints temporalValueConstraints) {
+    return new Builder(temporalValueConstraints);
+  }
+
   class Builder {
     private XsdTemporalDatatype temporalType;
     private Optional<TemporalDefaultValue> defaultValue = Optional.empty();
@@ -34,6 +38,14 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
     private boolean multipleChoice = false;
 
     private Builder() {
+    }
+
+    private Builder(TemporalValueConstraints temporalValueConstraints) {
+      this.temporalType = temporalValueConstraints.temporalType();
+      this.defaultValue = temporalValueConstraints.defaultValue();
+      this.requiredValue = temporalValueConstraints.requiredValue();
+      this.recommendedValue = temporalValueConstraints.recommendedValue();
+      this.multipleChoice = temporalValueConstraints.multipleChoice();
     }
 
     public Builder withTemporalType(XsdTemporalDatatype temporalType) {

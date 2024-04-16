@@ -36,17 +36,29 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
     return new Builder();
   }
 
+  static Builder builder(TemplateUi templateUi) {
+    return new Builder(templateUi);
+  }
+
   class Builder {
-    private final List<String> order = new ArrayList<>();
-    private final List<String> pages = new ArrayList<>();
-    private final Map<String, String> propertyLabels = new HashMap<>();
-    private final Map<String, String> propertyDescriptions = new HashMap<>();
+    private List<String> order = new ArrayList<>();
+    private List<String> pages = new ArrayList<>();
+    private Map<String, String> propertyLabels = new HashMap<>();
+    private Map<String, String> propertyDescriptions = new HashMap<>();
     private Optional<String> header = Optional.empty();
     private Optional<String> footer = Optional.empty();
 
     private Builder() {
     }
 
+    private Builder(TemplateUi templateUi)
+    {
+      this.order = List.copyOf(templateUi.order());
+      this.propertyLabels = Map.copyOf(templateUi.propertyLabels());
+      this.propertyDescriptions = Map.copyOf(templateUi.propertyDescriptions());
+      this.header = templateUi.header();
+      this.footer = templateUi.footer();
+    }
 
     public Builder withOrder(String fieldName) {
 
