@@ -1,10 +1,11 @@
 package org.metadatacenter.artifacts.model.visitors;
 
 import org.junit.Test;
-
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalField;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
@@ -27,17 +28,17 @@ public class TemplateSchemaInstanceReporterTest
     String elementName = "my element";
     String templateName = "my template";
 
-    FieldSchemaArtifact textFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
+    TextField textField = TextField.builder()
       .withName(textFieldName)
       .withRegex(regex)
       .build();
 
-    FieldSchemaArtifact numericFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder()
+    NumericField numericField = NumericField.builder()
       .withName(numericFieldName)
       .withNumericType(numericType)
       .build();
 
-    FieldSchemaArtifact temporalFieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder()
+    TemporalField temporalField = TemporalField.builder()
       .withName(temporalFieldName)
       .withTemporalType(temporalType)
       .withTemporalGranularity(temporalGranularity)
@@ -45,13 +46,13 @@ public class TemplateSchemaInstanceReporterTest
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().
       withName(elementName).
-      withFieldSchema(numericFieldSchemaArtifact).
-      withFieldSchema(temporalFieldSchemaArtifact).
+      withFieldSchema(numericField).
+      withFieldSchema(temporalField).
       build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
       withName(templateName).
-      withFieldSchema(textFieldSchemaArtifact).
+      withFieldSchema(textField).
       withElementSchema(elementSchemaArtifact).
       build();
 
@@ -61,9 +62,9 @@ public class TemplateSchemaInstanceReporterTest
     assertTrue(reporter.getValueConstraints("/" + elementName + "/" + numericFieldName).isPresent());
     assertTrue(reporter.getValueConstraints("/" + elementName + "/" + temporalFieldName).isPresent());
 
-    assertEquals(textFieldSchemaArtifact, reporter.getFieldSchema("/" + textFieldName).get());
-    assertEquals(numericFieldSchemaArtifact, reporter.getFieldSchema("/" + elementName + "/" + numericFieldName).get());
-    assertEquals(temporalFieldSchemaArtifact, reporter.getFieldSchema("/" + elementName + "/" + temporalFieldName).get());
+    assertEquals(textField, reporter.getFieldSchema("/" + textFieldName).get());
+    assertEquals(numericField, reporter.getFieldSchema("/" + elementName + "/" + numericFieldName).get());
+    assertEquals(temporalField, reporter.getFieldSchema("/" + elementName + "/" + temporalFieldName).get());
     assertEquals(elementSchemaArtifact, reporter.getElementSchema("/" + elementName ).get());
 
     assertTrue(reporter.getValueConstraints("/" + textFieldName).get().isTextValueConstraint());
@@ -84,14 +85,14 @@ public class TemplateSchemaInstanceReporterTest
     String elementName = "my element";
     String templateName = "my template";
 
-    FieldSchemaArtifact numericFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder()
+    NumericField numericField = NumericField.builder()
       .withName(numericFieldName)
       .withNumericType(numericType)
       .build();
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().
       withName(elementName).
-      withFieldSchema(numericFieldSchemaArtifact).
+      withFieldSchema(numericField).
       build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().

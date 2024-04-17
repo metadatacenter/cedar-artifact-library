@@ -15,11 +15,11 @@ public class SchemaArtifactVisitorTest
     String templateName = "Template 1";
     String textFieldName1 = "Text Field 1";
 
-    FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
+    TextField textField = TextField.builder().withName(textFieldName1).build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName(templateName)
-      .withFieldSchema(textField1)
+      .withFieldSchema(textField)
       .build();
 
     SchemaReporter schemaReporter = new SchemaReporter();

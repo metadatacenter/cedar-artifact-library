@@ -1,8 +1,5 @@
-package org.metadatacenter.artifacts.model.core.builders;
+package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -17,39 +14,42 @@ import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 
-public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder, TextAreaFieldBuilder, TemporalFieldBuilder,
-  RadioFieldBuilder, PhoneNumberFieldBuilder, NumericFieldBuilder, ListFieldBuilder, LinkFieldBuilder,
-  EmailFieldBuilder, ControlledTermFieldBuilder, CheckboxFieldBuilder,
-  AttributeValueFieldBuilder,
-  PageBreakFieldBuilder, SectionBreakFieldBuilder, ImageFieldBuilder, YouTubeFieldBuilder, RichTextFieldBuilder
+public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFieldBuilder,
+  TextAreaField.TextAreaFieldBuilder, TemporalField.TemporalFieldBuilder,
+  RadioField.RadioFieldBuilder, PhoneNumberField.PhoneNumberFieldBuilder,
+  NumericField.NumericFieldBuilder, ListField.ListFieldBuilder,
+  LinkField.LinkFieldBuilder, EmailField.EmailFieldBuilder, ControlledTermField.ControlledTermFieldBuilder,
+  CheckboxField.CheckboxFieldBuilder, AttributeValueField.AttributeValueFieldBuilder,
+  PageBreakField.PageBreakFieldBuilder, SectionBreakField.SectionBreakFieldBuilder, ImageField.ImageFieldBuilder,
+  YouTubeField.YouTubeFieldBuilder, RichTextField.RichTextFieldBuilder
 {
-  private Map<String, URI> jsonLdContext;
-  private List<URI> jsonLdTypes = new ArrayList<>();
-  private Optional<URI> jsonLdId = Optional.empty();
-  private Optional<URI> createdBy = Optional.empty();
-  private Optional<URI> modifiedBy = Optional.empty();
-  private Optional<OffsetDateTime> createdOn = Optional.empty();
-  private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-  private final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-  private String jsonSchemaType;
-  private String jsonSchemaTitle = "";
-  private String jsonSchemaDescription = "";
-  private String name;
-  private String description = "";
-  private Optional<String> identifier = Optional.empty();
-  private Optional<String> skosPrefLabel = Optional.empty();
-  private List<String> skosAlternateLabels = Collections.emptyList();
-  private Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
-  private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
-  private Optional<Status> status = Optional.of(Status.DRAFT);
-  private Optional<URI> previousVersion = Optional.empty();
-  private Optional<URI> derivedFrom = Optional.empty();
-  private boolean isMultiple = false;
-  private Optional<Integer> minItems = Optional.empty();
-  private Optional<Integer> maxItems = Optional.empty();
-  private Optional<URI> propertyUri = Optional.empty();
-  private FieldUi fieldUi;
-  private Optional<ValueConstraints> valueConstraints = Optional.empty();
+  protected Map<String, URI> jsonLdContext;
+  protected List<URI> jsonLdTypes = new ArrayList<>();
+  protected Optional<URI> jsonLdId = Optional.empty();
+  protected Optional<URI> createdBy = Optional.empty();
+  protected Optional<URI> modifiedBy = Optional.empty();
+  protected Optional<OffsetDateTime> createdOn = Optional.empty();
+  protected Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
+  protected final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
+  protected String jsonSchemaType;
+  protected String jsonSchemaTitle = "";
+  protected String jsonSchemaDescription = "";
+  protected String name;
+  protected String description = "";
+  protected Optional<String> identifier = Optional.empty();
+  protected Optional<String> skosPrefLabel = Optional.empty();
+  protected List<String> skosAlternateLabels = Collections.emptyList();
+  protected Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
+  protected Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
+  protected Optional<Status> status = Optional.of(Status.DRAFT);
+  protected Optional<URI> previousVersion = Optional.empty();
+  protected Optional<URI> derivedFrom = Optional.empty();
+  protected boolean isMultiple = false;
+  protected Optional<Integer> minItems = Optional.empty();
+  protected Optional<Integer> maxItems = Optional.empty();
+  protected Optional<URI> propertyUri = Optional.empty();
+  protected FieldUi fieldUi;
+  protected Optional<ValueConstraints> valueConstraints = Optional.empty();
 
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
@@ -283,17 +283,5 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextFieldBuilder
 
     this.valueConstraints = Optional.ofNullable(valueConstraints);
     return this;
-  }
-
-  public FieldSchemaArtifact build()
-  {
-    return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      isMultiple, minItems, maxItems, propertyUri,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      skosPrefLabel, skosAlternateLabels,
-      fieldUi, valueConstraints);
   }
 }

@@ -6,9 +6,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.junit.Before;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
@@ -115,7 +116,7 @@ public class YamlArtifactRendererTest {
     String name = "Study Name";
     String description = "Study name field";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
       withName(name).
       withDescription(description).
@@ -123,7 +124,7 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(NAME, name);
@@ -140,14 +141,14 @@ public class YamlArtifactRendererTest {
     String name = "Study Name";
     String description = "Study name field";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withName(name).
       withDescription(description).
       build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     String expectedYaml = """
         type: text-field
@@ -184,7 +185,7 @@ public class YamlArtifactRendererTest {
     URI actionSourceIri = URI.create("http://purl.obolibrary.org/obo/DOID_4");
     Integer actionTo = 2;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+    ControlledTermField controlledTermField = ControlledTermField.builder().
       withJsonLdId(fieldId).
       withName(name).
       withDescription(description).
@@ -195,7 +196,7 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(TYPE, TEXT_FIELD);

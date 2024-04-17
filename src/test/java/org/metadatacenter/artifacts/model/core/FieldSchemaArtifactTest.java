@@ -99,7 +99,7 @@ public class FieldSchemaArtifactTest
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
     URI propertyUri = URI.create("https://schema.metadatacenter.org/properties/854");
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withJsonLdId(jsonLdId).
       withName(name).
       withDescription(description).
@@ -120,24 +120,24 @@ public class FieldSchemaArtifactTest
       withPropertyUri(propertyUri).
       build();
 
-    Assert.assertEquals(jsonLdId, fieldSchemaArtifact.jsonLdId().get());
-    Assert.assertEquals(createdBy, fieldSchemaArtifact.createdBy().get());
-    Assert.assertEquals(modifiedBy, fieldSchemaArtifact.modifiedBy().get());
-    Assert.assertEquals(createdOn, fieldSchemaArtifact.createdOn().get());
-    Assert.assertEquals(lastUpdatedOn, fieldSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(identifier, fieldSchemaArtifact.identifier().get());
-    Assert.assertEquals(preferredLabel, fieldSchemaArtifact.skosPrefLabel().get());
-    Assert.assertEquals(alternateLabels, fieldSchemaArtifact.skosAlternateLabels());
-    Assert.assertEquals(version, fieldSchemaArtifact.version().get());
-    Assert.assertEquals(status, fieldSchemaArtifact.status().get());
-    Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion().get());
-    Assert.assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom().get());
-    Assert.assertEquals(propertyUri, fieldSchemaArtifact.propertyUri().get());
-    Assert.assertEquals(requiredValue, fieldSchemaArtifact.requiredValue());
-    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
-    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    Assert.assertEquals(jsonLdId, textField.jsonLdId().get());
+    Assert.assertEquals(createdBy, textField.createdBy().get());
+    Assert.assertEquals(modifiedBy, textField.modifiedBy().get());
+    Assert.assertEquals(createdOn, textField.createdOn().get());
+    Assert.assertEquals(lastUpdatedOn, textField.lastUpdatedOn().get());
+    Assert.assertEquals(name, textField.name());
+    Assert.assertEquals(description, textField.description());
+    Assert.assertEquals(identifier, textField.identifier().get());
+    Assert.assertEquals(preferredLabel, textField.skosPrefLabel().get());
+    Assert.assertEquals(alternateLabels, textField.skosAlternateLabels());
+    Assert.assertEquals(version, textField.version().get());
+    Assert.assertEquals(status, textField.status().get());
+    Assert.assertEquals(previousVersion, textField.previousVersion().get());
+    Assert.assertEquals(derivedFrom, textField.derivedFrom().get());
+    Assert.assertEquals(propertyUri, textField.propertyUri().get());
+    Assert.assertEquals(requiredValue, textField.requiredValue());
+    Assert.assertEquals(minLength, textField.minLength().get());
+    Assert.assertEquals(maxLength, textField.maxLength().get());
   }
 
 }

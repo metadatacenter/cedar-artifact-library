@@ -1,7 +1,25 @@
 package org.metadatacenter.artifacts.model.core.builders;
 
+import org.checkerframework.checker.units.qual.N;
 import org.junit.Assert;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
+import org.metadatacenter.artifacts.model.core.CheckboxField;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
+import org.metadatacenter.artifacts.model.core.EmailField;
+import org.metadatacenter.artifacts.model.core.ImageField;
+import org.metadatacenter.artifacts.model.core.LinkField;
+import org.metadatacenter.artifacts.model.core.ListField;
+import org.metadatacenter.artifacts.model.core.NumericField;
+import org.metadatacenter.artifacts.model.core.PageBreakField;
+import org.metadatacenter.artifacts.model.core.PhoneNumberField;
+import org.metadatacenter.artifacts.model.core.RadioField;
+import org.metadatacenter.artifacts.model.core.RichTextField;
+import org.metadatacenter.artifacts.model.core.SectionBreakField;
+import org.metadatacenter.artifacts.model.core.TemporalField;
+import org.metadatacenter.artifacts.model.core.TextAreaField;
+import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.core.YouTubeField;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
@@ -25,7 +43,7 @@ public class FieldSchemaArtifactBuilderTest
     String regex = "*";
     boolean valueRecommendation = false;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
@@ -33,13 +51,13 @@ public class FieldSchemaArtifactBuilderTest
       withRegex(regex).withValueRecommendation(valueRecommendation).
       build();
 
-    Assert.assertEquals(FieldInputType.TEXTFIELD, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
-    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
-    Assert.assertEquals(regex, fieldSchemaArtifact.regex().get());
-    Assert.assertEquals(valueRecommendation, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
+    Assert.assertEquals(FieldInputType.TEXTFIELD, textField.fieldUi().inputType());
+    Assert.assertEquals(name, textField.name());
+    Assert.assertEquals(description, textField.description());
+    Assert.assertEquals(minLength, textField.minLength().get());
+    Assert.assertEquals(maxLength, textField.maxLength().get());
+    Assert.assertEquals(regex, textField.regex().get());
+    Assert.assertEquals(valueRecommendation, textField.fieldUi().valueRecommendationEnabled());
   }
 
   @Test public void testCreateNumericField()
@@ -53,7 +71,7 @@ public class FieldSchemaArtifactBuilderTest
     String unitOfMeasure = "%";
     Integer decimalPlaces = 2;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
+    NumericField numericField = NumericField.builder().
       withName(name).
       withDescription(description).
       withNumericType(numericType).
@@ -64,16 +82,16 @@ public class FieldSchemaArtifactBuilderTest
       withDecimalPlaces(decimalPlaces).
       build();
 
-    Assert.assertEquals(FieldInputType.NUMERIC, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(numericType, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().numberType());
-    Assert.assertEquals(defaultValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().defaultValue().get().value());
-    Assert.assertEquals(minValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().minValue().get());
-    Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
-    Assert.assertEquals(maxValue, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().maxValue().get());
-    Assert.assertEquals(unitOfMeasure, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().unitOfMeasure().get());
-    Assert.assertEquals(decimalPlaces, fieldSchemaArtifact.valueConstraints().get().asNumericValueConstraints().decimalPlace().get());
+    Assert.assertEquals(FieldInputType.NUMERIC, numericField.fieldUi().inputType());
+    Assert.assertEquals(name, numericField.name());
+    Assert.assertEquals(description, numericField.description());
+    Assert.assertEquals(numericType, numericField.valueConstraints().get().asNumericValueConstraints().numberType());
+    Assert.assertEquals(defaultValue, numericField.valueConstraints().get().asNumericValueConstraints().defaultValue().get().value());
+    Assert.assertEquals(minValue, numericField.valueConstraints().get().asNumericValueConstraints().minValue().get());
+    Assert.assertEquals(maxValue, numericField.valueConstraints().get().asNumericValueConstraints().maxValue().get());
+    Assert.assertEquals(maxValue, numericField.valueConstraints().get().asNumericValueConstraints().maxValue().get());
+    Assert.assertEquals(unitOfMeasure, numericField.valueConstraints().get().asNumericValueConstraints().unitOfMeasure().get());
+    Assert.assertEquals(decimalPlaces, numericField.valueConstraints().get().asNumericValueConstraints().decimalPlace().get());
   }
 
   @Test public void testCreateTemporalField()
@@ -85,7 +103,7 @@ public class FieldSchemaArtifactBuilderTest
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timezoneEnabled = false;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
+    TemporalField temporalField = TemporalField.builder().
       withName(name).
       withDescription(description).
       withTemporalType(temporalType).
@@ -94,13 +112,13 @@ public class FieldSchemaArtifactBuilderTest
       withTimeZoneEnabled(timezoneEnabled).
       build();
 
-    Assert.assertEquals(FieldInputType.TEMPORAL, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(temporalGranularity, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().temporalGranularity());
-    Assert.assertEquals(inputTimeFormat, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().inputTimeFormat());
-    Assert.assertEquals(timezoneEnabled, fieldSchemaArtifact.fieldUi().asTemporalFieldUi().timezoneEnabled());
-    Assert.assertEquals(temporalType, fieldSchemaArtifact.valueConstraints().get().asTemporalValueConstraints().temporalType());
+    Assert.assertEquals(FieldInputType.TEMPORAL, temporalField.fieldUi().inputType());
+    Assert.assertEquals(name, temporalField.name());
+    Assert.assertEquals(description, temporalField.description());
+    Assert.assertEquals(temporalGranularity, temporalField.fieldUi().asTemporalFieldUi().temporalGranularity());
+    Assert.assertEquals(inputTimeFormat, temporalField.fieldUi().asTemporalFieldUi().inputTimeFormat());
+    Assert.assertEquals(timezoneEnabled, temporalField.fieldUi().asTemporalFieldUi().timezoneEnabled());
+    Assert.assertEquals(temporalType, temporalField.valueConstraints().get().asTemporalValueConstraints().temporalType());
   }
 
   @Test public void testCreateControlledTermField()
@@ -130,7 +148,7 @@ public class FieldSchemaArtifactBuilderTest
     ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
     Integer actionTo = 0;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+    ControlledTermField controlledTermField = ControlledTermField.builder().
       withName(name).
       withDescription(description).
       withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
@@ -141,53 +159,53 @@ public class FieldSchemaArtifactBuilderTest
       actionSourceUri, actionTo).
       build();
 
-    Assert.assertEquals(FieldInputType.TEXTFIELD, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    Assert.assertEquals(FieldInputType.TEXTFIELD, controlledTermField.fieldUi().inputType());
+    Assert.assertEquals(name, controlledTermField.name());
+    Assert.assertEquals(description, controlledTermField.description());
     Assert.assertEquals(ontologyUri,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).uri());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).uri());
     Assert.assertEquals(ontologyAcronym,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).acronym());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).acronym());
     Assert.assertEquals(ontologyName,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).name());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).name());
     Assert.assertEquals(branchUri,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).uri());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).uri());
     Assert.assertEquals(branchAcronym,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).acronym());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).acronym());
     Assert.assertEquals(branchName,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).name());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).name());
     Assert.assertEquals(branchSource,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).source());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).source());
     Assert.assertEquals(branchMaxDepth,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).maxDepth());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().branches().get(0).maxDepth());
     Assert.assertEquals(classUri,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).uri());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).uri());
     Assert.assertEquals(classSource,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).source());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).source());
     Assert.assertEquals(classLabel,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).label());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).label());
     Assert.assertEquals(classPrefLabel,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).prefLabel());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).prefLabel());
     Assert.assertEquals(classValueType,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).type());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().classes().get(0).type());
     Assert.assertEquals(valueSetUri,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).uri());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).uri());
     Assert.assertEquals(valueSetCollection,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).vsCollection());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).vsCollection());
     Assert.assertEquals(valueSetName,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).name());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).name());
     Assert.assertEquals(valueSetNumTerms,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).numTerms().get());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().valueSets().get(0).numTerms().get());
     Assert.assertEquals(actionTermUri,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).termUri());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).termUri());
     Assert.assertEquals(actionSourceUri,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).sourceUri().get());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).sourceUri().get());
     Assert.assertEquals(actionSource,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).source());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).source());
     Assert.assertEquals(actionValueType,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).type());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).type());
     Assert.assertEquals(actionTo,
-      fieldSchemaArtifact.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).to().get());
+      controlledTermField.valueConstraints().get().asControlledTermValueConstraints().actions().get(0).to().get());
   }
 
   @Test public void testCreateRadioField()
@@ -195,7 +213,7 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder().
+    RadioField radioField = RadioField.builder().
       withName(name).
       withDescription(description).
       withOption("Choice 1").
@@ -203,15 +221,15 @@ public class FieldSchemaArtifactBuilderTest
       withOption("Choice 3", true).
       build();
 
-    Assert.assertEquals(FieldInputType.RADIO, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals("Choice 1", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
-    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
-    Assert.assertEquals("Choice 2", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
-    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
-    Assert.assertEquals("Choice 3", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
-    Assert.assertEquals(true, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
+    Assert.assertEquals(FieldInputType.RADIO, radioField.fieldUi().inputType());
+    Assert.assertEquals(name, radioField.name());
+    Assert.assertEquals(description, radioField.description());
+    Assert.assertEquals("Choice 1", radioField.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
+    Assert.assertEquals(false, radioField.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
+    Assert.assertEquals("Choice 2", radioField.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
+    Assert.assertEquals(false, radioField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
+    Assert.assertEquals("Choice 3", radioField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
+    Assert.assertEquals(true, radioField.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
   }
 
   @Test public void testCreateListField()
@@ -219,7 +237,7 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().
+    ListField listField = ListField.builder().
       withName(name).
       withDescription(description).
       withOption("Choice 1").
@@ -227,15 +245,15 @@ public class FieldSchemaArtifactBuilderTest
       withOption("Choice 3", true).
       build();
 
-    Assert.assertEquals(FieldInputType.LIST, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals("Choice 1", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
-    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
-    Assert.assertEquals("Choice 2", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
-    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
-    Assert.assertEquals("Choice 3", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
-    Assert.assertEquals(true, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
+    Assert.assertEquals(FieldInputType.LIST, listField.fieldUi().inputType());
+    Assert.assertEquals(name, listField.name());
+    Assert.assertEquals(description, listField.description());
+    Assert.assertEquals("Choice 1", listField.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
+    Assert.assertEquals(false, listField.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
+    Assert.assertEquals("Choice 2", listField.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
+    Assert.assertEquals(false, listField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
+    Assert.assertEquals("Choice 3", listField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
+    Assert.assertEquals(true, listField.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
   }
 
   @Test public void testCreateCheckboxField()
@@ -243,7 +261,7 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder().
+    CheckboxField checkboxField = CheckboxField.builder().
       withName(name).
       withDescription(description).
       withOption("Choice 1", false).
@@ -251,15 +269,15 @@ public class FieldSchemaArtifactBuilderTest
       withOption("Choice 3", true).
       build();
 
-    Assert.assertEquals(FieldInputType.CHECKBOX, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals("Choice 1", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
-    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
-    Assert.assertEquals("Choice 2", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
-    Assert.assertEquals(false, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
-    Assert.assertEquals("Choice 3", fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
-    Assert.assertEquals(true, fieldSchemaArtifact.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
+    Assert.assertEquals(FieldInputType.CHECKBOX, checkboxField.fieldUi().inputType());
+    Assert.assertEquals(name, checkboxField.name());
+    Assert.assertEquals(description, checkboxField.description());
+    Assert.assertEquals("Choice 1", checkboxField.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
+    Assert.assertEquals(false, checkboxField.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
+    Assert.assertEquals("Choice 2", checkboxField.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
+    Assert.assertEquals(false, checkboxField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
+    Assert.assertEquals("Choice 3", checkboxField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
+    Assert.assertEquals(true, checkboxField.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
   }
 
   @Test public void testCreatePhoneNumberField()
@@ -269,18 +287,18 @@ public class FieldSchemaArtifactBuilderTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder().
+    PhoneNumberField phoneNumberField = PhoneNumberField.builder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
       build();
 
-    Assert.assertEquals(FieldInputType.PHONE_NUMBER, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
-    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    Assert.assertEquals(FieldInputType.PHONE_NUMBER, phoneNumberField.fieldUi().inputType());
+    Assert.assertEquals(name, phoneNumberField.name());
+    Assert.assertEquals(description, phoneNumberField.description());
+    Assert.assertEquals(minLength, phoneNumberField.minLength().get());
+    Assert.assertEquals(maxLength, phoneNumberField.maxLength().get());
   }
 
   @Test public void testCreateEmailField()
@@ -290,18 +308,18 @@ public class FieldSchemaArtifactBuilderTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.emailFieldBuilder().
+    EmailField emailField = EmailField.builder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
       build();
 
-    Assert.assertEquals(FieldInputType.EMAIL, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
-    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    Assert.assertEquals(FieldInputType.EMAIL, emailField.fieldUi().inputType());
+    Assert.assertEquals(name, emailField.name());
+    Assert.assertEquals(description, emailField.description());
+    Assert.assertEquals(minLength, emailField.minLength().get());
+    Assert.assertEquals(maxLength, emailField.maxLength().get());
   }
 
   @Test public void testCreateLinkField()
@@ -311,16 +329,16 @@ public class FieldSchemaArtifactBuilderTest
     URI defaultURI = URI.create("https://example.com/Study");
     String defaultLabel = "Study";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
+    LinkField linkField = LinkField.builder().
       withName(name).
       withDescription(description).
       withDefaultValue(defaultURI).
       build();
 
-    Assert.assertEquals(FieldInputType.LINK, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(defaultURI, fieldSchemaArtifact.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+    Assert.assertEquals(FieldInputType.LINK, linkField.fieldUi().inputType());
+    Assert.assertEquals(name, linkField.name());
+    Assert.assertEquals(description, linkField.description());
+    Assert.assertEquals(defaultURI, linkField.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
   }
 
   @Test public void testCreateTextAreaField()
@@ -330,18 +348,18 @@ public class FieldSchemaArtifactBuilderTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().
+    TextAreaField textAreaField = TextAreaField.builder().
       withName(name).
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
       build();
 
-    Assert.assertEquals(FieldInputType.TEXTAREA, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
-    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    Assert.assertEquals(FieldInputType.TEXTAREA, textAreaField.fieldUi().inputType());
+    Assert.assertEquals(name, textAreaField.name());
+    Assert.assertEquals(description, textAreaField.description());
+    Assert.assertEquals(minLength, textAreaField.minLength().get());
+    Assert.assertEquals(maxLength, textAreaField.maxLength().get());
   }
 
   @Test public void testCreateAttributeValueField()
@@ -349,14 +367,14 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().
+    AttributeValueField attributeValueField = AttributeValueField.builder().
       withName(name).
       withDescription(description).
       build();
 
-    Assert.assertEquals(FieldInputType.ATTRIBUTE_VALUE, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
+    Assert.assertEquals(FieldInputType.ATTRIBUTE_VALUE, attributeValueField.fieldUi().inputType());
+    Assert.assertEquals(name, attributeValueField.name());
+    Assert.assertEquals(description, attributeValueField.description());
   }
 
   @Test public void testCreatePageBreakField()
@@ -365,16 +383,16 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.pageBreakFieldBuilder().
+    PageBreakField pageBreakField = PageBreakField.builder().
       withName(name).
       withDescription(description).
       withContent(content).
       build();
 
-    Assert.assertEquals(FieldInputType.PAGE_BREAK, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
+    Assert.assertEquals(FieldInputType.PAGE_BREAK, pageBreakField.fieldUi().inputType());
+    Assert.assertEquals(name, pageBreakField.name());
+    Assert.assertEquals(description, pageBreakField.description());
+    Assert.assertEquals(content, pageBreakField.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateSectionBreakField()
@@ -383,16 +401,16 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder().
+    SectionBreakField sectionBreakField = SectionBreakField.builder().
       withName(name).
       withDescription(description).
       withContent(content).
       build();
 
-    Assert.assertEquals(FieldInputType.SECTION_BREAK, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
+    Assert.assertEquals(FieldInputType.SECTION_BREAK, sectionBreakField.fieldUi().inputType());
+    Assert.assertEquals(name, sectionBreakField.name());
+    Assert.assertEquals(description, sectionBreakField.description());
+    Assert.assertEquals(content, sectionBreakField.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateImageField()
@@ -401,16 +419,16 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder().
+    ImageField imageField = ImageField.builder().
       withName(name).
       withDescription(description).
       withContent(content).
       build();
 
-    Assert.assertEquals(FieldInputType.IMAGE, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
+    Assert.assertEquals(FieldInputType.IMAGE, imageField.fieldUi().inputType());
+    Assert.assertEquals(name, imageField.name());
+    Assert.assertEquals(description, imageField.description());
+    Assert.assertEquals(content, imageField.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateYouTubeField()
@@ -419,16 +437,16 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder().
+    YouTubeField youTubeField = YouTubeField.builder().
       withName(name).
       withDescription(description).
       withContent(content).
       build();
 
-    Assert.assertEquals(FieldInputType.YOUTUBE, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
+    Assert.assertEquals(FieldInputType.YOUTUBE, youTubeField.fieldUi().inputType());
+    Assert.assertEquals(name, youTubeField.name());
+    Assert.assertEquals(description, youTubeField.description());
+    Assert.assertEquals(content, youTubeField.fieldUi().asStaticFieldUi()._content().get());
   }
 
   @Test public void testCreateRichTextField()
@@ -437,16 +455,16 @@ public class FieldSchemaArtifactBuilderTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().
+    RichTextField richTextField = RichTextField.builder().
       withName(name).
       withDescription(description).
       withContent(content).
       build();
 
-    Assert.assertEquals(FieldInputType.RICHTEXT, fieldSchemaArtifact.fieldUi().inputType());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(content, fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get());
+    Assert.assertEquals(FieldInputType.RICHTEXT, richTextField.fieldUi().inputType());
+    Assert.assertEquals(name, richTextField.name());
+    Assert.assertEquals(description, richTextField.description());
+    Assert.assertEquals(content, richTextField.fieldUi().asStaticFieldUi()._content().get());
   }
 
 }

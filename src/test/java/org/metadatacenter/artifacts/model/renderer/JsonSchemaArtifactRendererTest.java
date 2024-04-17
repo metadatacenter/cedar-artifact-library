@@ -7,11 +7,16 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.LinkField;
+import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalField;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.TextFieldInstance;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
@@ -95,7 +100,7 @@ public class JsonSchemaArtifactRendererTest
     TemporalGranularity granularity = TemporalGranularity.DAY;
     XsdTemporalDatatype temporalType = XsdTemporalDatatype.DATE;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
+    TemporalField temporalField = TemporalField.builder().
             withName(fieldName).
             withDescription(fieldDescription).
             withRequiredValue(requiredValue).
@@ -103,7 +108,7 @@ public class JsonSchemaArtifactRendererTest
             withTemporalType(temporalType).
             build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(temporalField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -157,7 +162,7 @@ public class JsonSchemaArtifactRendererTest
     URI defaultUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
     String defaultLabel = "Human";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+    ControlledTermField controlledTermField = ControlledTermField.builder().
       withName(name).
       withDescription(description).
       withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
@@ -169,7 +174,7 @@ public class JsonSchemaArtifactRendererTest
       withDefaultValue(defaultUri, defaultLabel).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -185,7 +190,7 @@ public class JsonSchemaArtifactRendererTest
     XsdNumericDatatype numericType = XsdNumericDatatype.DECIMAL;
     int decimalPlaces = 3;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
+    NumericField numericField = NumericField.builder().
             withName(fieldName).
             withDescription(fieldDescription).
             withRequiredValue(requiredValue).
@@ -193,7 +198,7 @@ public class JsonSchemaArtifactRendererTest
             withDecimalPlaces(decimalPlaces).
             build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(numericField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -223,13 +228,13 @@ public class JsonSchemaArtifactRendererTest
     String fieldDescription = "Field description";
     String defaultValue = "default value";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withName(fieldName).
       withDescription(fieldDescription).
       withDefaultValue(defaultValue).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -257,13 +262,13 @@ public class JsonSchemaArtifactRendererTest
     String fieldDescription = "Field description";
     URI defaultIri = URI.create("https://example.com/Study");
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
+    LinkField linkField = LinkField.builder().
       withName(fieldName).
       withDescription(fieldDescription).
       withDefaultValue(defaultIri).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(linkField);
 
     assertTrue(validateJsonSchema(rendering));
 
