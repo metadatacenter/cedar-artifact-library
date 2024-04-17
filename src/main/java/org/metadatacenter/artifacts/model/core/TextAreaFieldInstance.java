@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.TextAreaFieldInstanceBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +30,32 @@ public sealed interface TextAreaFieldInstance extends FieldInstanceArtifact
   static TextAreaFieldInstanceBuilder builder(TextAreaFieldInstance textAreaFieldInstance)
   {
     return new TextAreaFieldInstanceBuilder(textAreaFieldInstance);
+  }
+
+  public final class TextAreaFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public TextAreaFieldInstanceBuilder() {}
+
+    public TextAreaFieldInstanceBuilder(TextAreaFieldInstance textAreaFieldInstance) {
+      super(textAreaFieldInstance);
+    }
+
+    public TextAreaFieldInstanceBuilder withValue(String jsonLdValue)
+    {
+      super.withJsonLdValue(jsonLdValue);
+      return this;
+    }
+
+    public TextAreaFieldInstanceBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
+    public TextAreaFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdValue, language);
+    }
   }
 
 }

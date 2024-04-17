@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.PhoneNumberFieldInstanceBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +31,27 @@ public sealed interface PhoneNumberFieldInstance extends FieldInstanceArtifact
   {
     return new PhoneNumberFieldInstanceBuilder(phoneNumberFieldInstance);
   }
+
+  final class PhoneNumberFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public PhoneNumberFieldInstanceBuilder() {}
+
+    public PhoneNumberFieldInstanceBuilder(PhoneNumberFieldInstance phoneNumberFieldInstance) {
+      super(phoneNumberFieldInstance);
+    }
+
+    public PhoneNumberFieldInstanceBuilder withValue(String value)
+    {
+      super.withJsonLdValue(value);
+      return this;
+    }
+
+    public PhoneNumberFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdValue);
+    }
+  }
+
 }
 
 record PhoneNumberFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,

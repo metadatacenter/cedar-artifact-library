@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.RadioFieldInstanceBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +31,33 @@ public sealed interface RadioFieldInstance extends FieldInstanceArtifact
   {
     return new RadioFieldInstanceBuilder(radioFieldInstance);
   }
+
+  final class RadioFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public RadioFieldInstanceBuilder() {}
+
+    public RadioFieldInstanceBuilder(RadioFieldInstance radioFieldInstance) {
+      super(radioFieldInstance);
+    }
+
+    public RadioFieldInstanceBuilder withValue(String value)
+    {
+      super.withJsonLdValue(value);
+      return this;
+    }
+
+    public RadioFieldInstanceBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
+    public RadioFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdValue, language);
+    }
+  }
+
 }
 
 record RadioFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,

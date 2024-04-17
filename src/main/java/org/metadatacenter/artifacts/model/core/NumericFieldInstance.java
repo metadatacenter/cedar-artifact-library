@@ -1,6 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.NumericFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 
 import java.net.URI;
 import java.util.List;
@@ -32,6 +32,33 @@ public sealed interface NumericFieldInstance extends FieldInstanceArtifact
   static NumericFieldInstanceBuilder builder(NumericFieldInstance numericFieldInstance)
   {
     return new NumericFieldInstanceBuilder(numericFieldInstance);
+  }
+
+   final class NumericFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public NumericFieldInstanceBuilder() {
+    }
+
+    public NumericFieldInstanceBuilder(NumericFieldInstance numericFieldInstance) {
+      super(numericFieldInstance);
+    }
+
+    public NumericFieldInstanceBuilder withValue(Number value)
+    {
+      super.withJsonLdValue(value.toString());
+      return this;
+    }
+
+    public NumericFieldInstanceBuilder withType(XsdNumericDatatype datatype)
+    {
+      super.withJsonLdType(datatype.toUri());
+      return this;
+    }
+
+    public NumericFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdValue);
+    }
   }
 }
 

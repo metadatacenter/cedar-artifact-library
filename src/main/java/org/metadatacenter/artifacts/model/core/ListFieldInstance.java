@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.ListFieldInstanceBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +30,32 @@ public sealed interface ListFieldInstance extends FieldInstanceArtifact
   static ListFieldInstanceBuilder builder(ListFieldInstance listFieldInstance)
   {
     return new ListFieldInstanceBuilder(listFieldInstance);
+  }
+
+  final class ListFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public ListFieldInstanceBuilder() {}
+
+    public ListFieldInstanceBuilder(ListFieldInstance listFieldInstance) {
+      super(listFieldInstance);
+    }
+
+    public ListFieldInstanceBuilder withValue(String value)
+    {
+      super.withJsonLdValue(value);
+      return this;
+    }
+
+    public ListFieldInstanceBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
+    public ListFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdValue, language);
+    }
   }
 }
 

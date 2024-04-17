@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.ControlledTermFieldInstanceBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +31,45 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
   {
     return new ControlledTermFieldInstanceBuilder(controlledTermFieldInstance);
   }
+
+  final class ControlledTermFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public ControlledTermFieldInstanceBuilder() {}
+
+    public ControlledTermFieldInstanceBuilder(ControlledTermFieldInstance controlledTermFieldInstance) {
+      super(controlledTermFieldInstance);
+    }
+
+    public ControlledTermFieldInstanceBuilder withValue(URI value)
+    {
+      super.withJsonLdId(value);
+      return this;
+    }
+
+    public ControlledTermFieldInstanceBuilder withLabel(String label)
+    {
+      super.withLabel(label);
+      return this;
+    }
+
+    public ControlledTermFieldInstanceBuilder withPrefLabel(String prefLabel)
+    {
+      this.prefLabel = Optional.ofNullable(prefLabel);
+      return this;
+    }
+
+    public ControlledTermFieldInstanceBuilder withNotation(String notation)
+    {
+      super.withNotation(notation);
+      return this;
+    }
+
+    public ControlledTermFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdId, label, notation, prefLabel, label);
+    }
+  }
+
 }
 
 record ControlledTermFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,

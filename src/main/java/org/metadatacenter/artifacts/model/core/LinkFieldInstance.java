@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.LinkFieldInstanceBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +31,45 @@ public sealed interface LinkFieldInstance extends FieldInstanceArtifact
   {
     return new LinkFieldInstanceBuilder(linkFieldInstance);
   }
+
+  final class LinkFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public LinkFieldInstanceBuilder() {}
+
+    public LinkFieldInstanceBuilder(LinkFieldInstance linkFieldInstance) {
+      super(linkFieldInstance);
+    }
+
+    public LinkFieldInstanceBuilder withValue(URI value)
+    {
+      super.withJsonLdId(value);
+      return this;
+    }
+
+    public LinkFieldInstanceBuilder withLabel(String label)
+    {
+      super.withLabel(label);
+      return this;
+    }
+
+    public LinkFieldInstanceBuilder withPrefLabel(String prefLabel)
+    {
+      this.prefLabel = Optional.ofNullable(prefLabel);
+      return this;
+    }
+
+    public LinkFieldInstanceBuilder withNotation(String notation)
+    {
+      super.withNotation(notation);
+      return this;
+    }
+
+    public LinkFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdId, label, notation, prefLabel, language);
+    }
+  }
+
 }
 
 record LinkFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,

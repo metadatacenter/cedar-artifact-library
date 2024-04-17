@@ -1,6 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.metadatacenter.artifacts.model.core.builders.TemporalFieldInstanceBuilder;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 
 import java.net.URI;
 import java.util.List;
@@ -32,6 +32,32 @@ public sealed interface TemporalFieldInstance extends FieldInstanceArtifact
   static TemporalFieldInstanceBuilder builder(TemporalFieldInstance temporalFieldInstance)
   {
     return new TemporalFieldInstanceBuilder(temporalFieldInstance);
+  }
+
+  final class TemporalFieldInstanceBuilder extends FieldInstanceArtifactBuilder
+  {
+    public TemporalFieldInstanceBuilder() {}
+
+    public TemporalFieldInstanceBuilder(TemporalFieldInstance temporalFieldInstance) {
+      super(temporalFieldInstance);
+    }
+
+    public TemporalFieldInstanceBuilder withValue(String value)
+    {
+      super.withJsonLdValue(value);
+      return this;
+    }
+
+    public TemporalFieldInstanceBuilder withType(XsdTemporalDatatype datatype)
+    {
+      super.withJsonLdType(datatype.toUri());
+      return this;
+    }
+
+    public TemporalFieldInstance build()
+    {
+      return create(jsonLdTypes, jsonLdValue);
+    }
   }
 }
 

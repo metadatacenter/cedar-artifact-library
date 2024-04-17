@@ -1,17 +1,16 @@
-package org.metadatacenter.artifacts.model.core.builders;
-
-import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract sealed class FieldInstanceArtifactBuilder permits
-  TextFieldInstanceBuilder, TextAreaFieldInstanceBuilder, TemporalFieldInstanceBuilder, NumericFieldInstanceBuilder,
-  ControlledTermFieldInstanceBuilder, LinkFieldInstanceBuilder,
-  EmailFieldInstanceBuilder, CheckboxFieldInstanceBuilder, ListFieldInstanceBuilder, PhoneNumberFieldInstanceBuilder,
-  RadioFieldInstanceBuilder
+public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInstance.TextFieldInstanceBuilder,
+  TextAreaFieldInstance.TextAreaFieldInstanceBuilder, TemporalFieldInstance.TemporalFieldInstanceBuilder,
+  NumericFieldInstance.NumericFieldInstanceBuilder, ControlledTermFieldInstance.ControlledTermFieldInstanceBuilder,
+  LinkFieldInstance.LinkFieldInstanceBuilder, EmailFieldInstance.EmailFieldInstanceBuilder,
+  CheckboxFieldInstance.CheckboxFieldInstanceBuilder, ListFieldInstance.ListFieldInstanceBuilder,
+  PhoneNumberFieldInstance.PhoneNumberFieldInstanceBuilder, RadioFieldInstance.RadioFieldInstanceBuilder
 {
   protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();
@@ -78,10 +77,5 @@ public abstract sealed class FieldInstanceArtifactBuilder permits
   {
     this.language = Optional.ofNullable(language);
     return this;
-  }
-
-  protected FieldInstanceArtifact build()
-  {
-    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation, prefLabel, language);
   }
 }
