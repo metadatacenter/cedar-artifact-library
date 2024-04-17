@@ -17,7 +17,7 @@ public class FieldInstanceArtifactTest
     String aValue = "a value";
     String language = "en";
 
-    FieldInstanceArtifact fieldInstance = TextFieldInstance.builder().
+    TextFieldInstance fieldInstance = TextFieldInstance.builder().
       withValue(aValue).
       withLanguage(language).
       build();
@@ -32,7 +32,7 @@ public class FieldInstanceArtifactTest
     String aValue = "a value";
     String language = "en";
 
-    FieldInstanceArtifact fieldInstance = TextAreaFieldInstance.builder().
+    TextAreaFieldInstance fieldInstance = TextAreaFieldInstance.builder().
       withValue(aValue).
       withLanguage(language).
       build();
@@ -47,7 +47,7 @@ public class FieldInstanceArtifactTest
     Integer value = 33;
     XsdNumericDatatype datatype = XsdNumericDatatype.DOUBLE;
 
-    FieldInstanceArtifact fieldInstance = NumericFieldInstance.builder().
+    NumericFieldInstance fieldInstance = NumericFieldInstance.builder().
       withValue(value).
       withType(datatype).
       build();
@@ -63,7 +63,7 @@ public class FieldInstanceArtifactTest
     String value = "1999-01-01";
     XsdTemporalDatatype datatype = XsdTemporalDatatype.DATE;
 
-    FieldInstanceArtifact fieldInstance = TemporalFieldInstance.builder().
+    TemporalFieldInstance fieldInstance = TemporalFieldInstance.builder().
       withValue(value).
       withType(datatype).
       build();
@@ -77,7 +77,7 @@ public class FieldInstanceArtifactTest
   {
     String aValue = "a value";
 
-    FieldInstanceArtifact fieldInstance = RadioFieldInstance.builder().
+    RadioFieldInstance fieldInstance = RadioFieldInstance.builder().
       withValue(aValue).
       build();
 
@@ -89,7 +89,7 @@ public class FieldInstanceArtifactTest
   {
     String aValue = "8675309";
 
-    FieldInstanceArtifact fieldInstance = PhoneNumberFieldInstance.builder().
+    PhoneNumberFieldInstance fieldInstance = PhoneNumberFieldInstance.builder().
       withValue(aValue).
       build();
 
@@ -102,7 +102,7 @@ public class FieldInstanceArtifactTest
   {
     String aValue = "bob@bob.com";
 
-    FieldInstanceArtifact fieldInstance = EmailFieldInstance.builder().
+    EmailFieldInstance fieldInstance = EmailFieldInstance.builder().
       withValue(aValue).
       build();
 
@@ -114,7 +114,7 @@ public class FieldInstanceArtifactTest
   {
     String aValue = "a value";
 
-    FieldInstanceArtifact fieldInstance = CheckboxFieldInstance.builder().
+    CheckboxFieldInstance fieldInstance = CheckboxFieldInstance.builder().
       withValue(aValue).
       build();
 
@@ -126,7 +126,7 @@ public class FieldInstanceArtifactTest
   {
     String aValue = "a value";
 
-    FieldInstanceArtifact fieldInstance = ListFieldInstance.builder().
+    ListFieldInstance fieldInstance = ListFieldInstance.builder().
       withValue(aValue).
       build();
 
@@ -138,7 +138,7 @@ public class FieldInstanceArtifactTest
   {
     URI aUriValue = URI.create("https://example.com/values/v1");
 
-    FieldInstanceArtifact fieldInstance = ControlledTermFieldInstance.builder().
+    ControlledTermFieldInstance fieldInstance = ControlledTermFieldInstance.builder().
       withValue(aUriValue).
       build();
 
@@ -150,7 +150,7 @@ public class FieldInstanceArtifactTest
   {
     URI aUriValue = URI.create("https://example.com/values/v1");
 
-    FieldInstanceArtifact fieldInstance = LinkFieldInstance.builder().
+    LinkFieldInstance fieldInstance = LinkFieldInstance.builder().
       withValue(aUriValue).
       build();
 
@@ -165,7 +165,7 @@ public class FieldInstanceArtifactTest
     String notation = "a notation";
     String prefLabel = "a prefLabel";
 
-    FieldInstanceArtifact fieldInstance = ControlledTermFieldInstance.builder().
+    ControlledTermFieldInstance fieldInstance = ControlledTermFieldInstance.builder().
       withValue(aUriValue).
       withLabel(label).
       withPrefLabel(prefLabel).
