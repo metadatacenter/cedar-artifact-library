@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public final class TemporalFieldInstanceBuilder extends FieldInstanceArtifactBuilder
 {
-
   public TemporalFieldInstanceBuilder() {}
 
   public TemporalFieldInstanceBuilder(TemporalFieldInstance temporalFieldInstance) {

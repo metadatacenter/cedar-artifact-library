@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.builders.CheckboxFieldInstanceBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,16 @@ public sealed interface CheckboxFieldInstance extends FieldInstanceArtifact
   {
     return new CheckboxFieldInstanceRecord(jsonLdTypes, Optional.empty(), jsonLdValue,
       Optional.empty(), Optional.empty(), Optional.empty(), language);
+  }
+
+  static CheckboxFieldInstanceBuilder builder()
+  {
+    return new CheckboxFieldInstanceBuilder();
+  }
+
+  static CheckboxFieldInstanceBuilder builder(CheckboxFieldInstance checkboxFieldInstance)
+  {
+    return new CheckboxFieldInstanceBuilder(checkboxFieldInstance);
   }
 }
 

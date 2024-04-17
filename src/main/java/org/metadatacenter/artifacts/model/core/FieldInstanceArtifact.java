@@ -72,61 +72,6 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
   {
     visitor.visitAttributeValueFieldInstanceArtifact(this, path, specificationPath);
   }
-
-  static TextFieldInstanceBuilder textFieldInstanceBuilder()
-  {
-    return new TextFieldInstanceBuilder();
-  }
-
-  static NumericFieldInstanceBuilder numericFieldInstanceBuilder()
-  {
-    return new NumericFieldInstanceBuilder();
-  }
-
-  static TemporalFieldInstanceBuilder temporalFieldInstanceBuilder()
-  {
-    return new TemporalFieldInstanceBuilder();
-  }
-
-  static TextAreaFieldInstanceBuilder textAreaFieldInstanceBuilder()
-  {
-    return new TextAreaFieldInstanceBuilder();
-  }
-
-  static RadioFieldInstanceBuilder radioFieldInstanceBuilder()
-  {
-    return new RadioFieldInstanceBuilder();
-  }
-
-  static PhoneNumberFieldInstanceBuilder phoneNumberFieldInstanceBuilder()
-  {
-    return new PhoneNumberFieldInstanceBuilder();
-  }
-
-  static EmailFieldInstanceBuilder emailFieldInstanceBuilder()
-  {
-    return new EmailFieldInstanceBuilder();
-  }
-
-  static CheckboxFieldInstanceBuilder checkboxFieldInstanceBuilder()
-  {
-    return new CheckboxFieldInstanceBuilder();
-  }
-
-  static ListFieldInstanceBuilder listFieldInstanceBuilder()
-  {
-    return new ListFieldInstanceBuilder();
-  }
-
-  static ControlledTermFieldInstanceBuilder controlledTermFieldInstanceBuilder()
-  {
-    return new ControlledTermFieldInstanceBuilder();
-  }
-
-  static LinkFieldInstanceBuilder linkFieldInstanceBuilder()
-  {
-    return new LinkFieldInstanceBuilder();
-  }
 }
 
 record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,

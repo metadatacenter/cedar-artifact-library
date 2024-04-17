@@ -1,6 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.apache.poi.sl.draw.geom.GuideIf;
+import org.metadatacenter.artifacts.model.core.builders.TextFieldInstanceBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -23,6 +23,17 @@ public sealed interface TextFieldInstance extends FieldInstanceArtifact
     return new TextFieldInstanceRecord(jsonLdTypes, Optional.empty(), jsonLdValue,
       Optional.empty(), Optional.empty(), Optional.empty(), language);
   }
+
+  static TextFieldInstanceBuilder builder()
+  {
+    return new TextFieldInstanceBuilder();
+  }
+
+  static TextFieldInstanceBuilder builder(TextFieldInstance textFieldInstance)
+  {
+    return new TextFieldInstanceBuilder(textFieldInstance);
+  }
+
 }
 
 record TextFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,

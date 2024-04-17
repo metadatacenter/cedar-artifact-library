@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.builders.TemporalFieldInstanceBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,16 @@ public sealed interface TemporalFieldInstance extends FieldInstanceArtifact
   {
     return new TemporalFieldInstanceRecord(jsonLdTypes, Optional.empty(), jsonLdValue,
       Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+  }
+
+  static TemporalFieldInstanceBuilder builder()
+  {
+    return new TemporalFieldInstanceBuilder();
+  }
+
+  static TemporalFieldInstanceBuilder builder(TemporalFieldInstance temporalFieldInstance)
+  {
+    return new TemporalFieldInstanceBuilder(temporalFieldInstance);
   }
 }
 

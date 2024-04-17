@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.builders.EmailFieldInstanceBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,16 @@ public sealed interface EmailFieldInstance extends FieldInstanceArtifact
   {
     return new EmailFieldInstanceRecord(jsonLdTypes, Optional.empty(), jsonLdValue,
       Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+  }
+
+  static EmailFieldInstanceBuilder builder()
+  {
+    return new EmailFieldInstanceBuilder();
+  }
+
+  static EmailFieldInstanceBuilder builder(EmailFieldInstance emailFieldInstance)
+  {
+    return new EmailFieldInstanceBuilder(emailFieldInstance);
   }
 }
 

@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.artifacts.model.core.builders.NumericFieldInstanceBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,16 @@ public sealed interface NumericFieldInstance extends FieldInstanceArtifact
   {
     return new NumericFieldInstanceRecord(jsonLdTypes, Optional.empty(), jsonLdValue,
       Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+  }
+
+  static NumericFieldInstanceBuilder builder()
+  {
+    return new NumericFieldInstanceBuilder();
+  }
+
+  static NumericFieldInstanceBuilder builder(NumericFieldInstance numericFieldInstance)
+  {
+    return new NumericFieldInstanceBuilder(numericFieldInstance);
   }
 }
 

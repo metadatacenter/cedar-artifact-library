@@ -19,10 +19,10 @@ public class TemplateInstanceArtifactTest
     String element1Name = "Element 1";
     String textField2Name = "Text Field 2";
 
-    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
+    FieldInstanceArtifact textField1Instance = TextFieldInstance.builder().withValue("Value 1").build();
     ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
-    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 2").build();
-    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 3").build();
+    FieldInstanceArtifact textField2Instance1 = TextFieldInstance.builder().withValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = TextFieldInstance.builder().withValue("Value 3").build();
     List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
     textField2Instances.add(textField2Instance1);
     textField2Instances.add(textField2Instance2);
