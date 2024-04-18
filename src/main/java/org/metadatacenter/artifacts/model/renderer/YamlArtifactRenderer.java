@@ -139,14 +139,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   - type: text-field
    *     name: Study Name
    *     description: Study name field
-   *     datatype: xsd:string
    *     configuration:
    *       required: true
    *
    *   - type: text-field
    *     name: Study ID
    *     description: Study ID field
-   *     datatype: xsd:string
    *     minLength: 2
    *     configuration:
    *       required: true
@@ -162,10 +160,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     children:
    *       - type: text-field
    *         name: field: Address 1
-   *         datatype: xsd:string
    *       - type: text-field
    *         name: field: ZIP
-   *         datatype: xsd:string
    *         minLength: 5
    *         maxLength: 5
    * </pre>
@@ -207,10 +203,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     children:
    *       - type: text-field
    *         name: field: Address 1
-   *         datatype: xsd:string
    *       - type: text-field
    *         name: field: ZIP
-   *         datatype: xsd:string
    *         minLength: 5
    *         maxLength: 5
    *
@@ -462,8 +456,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(DATATYPE, temporalValueConstraints.temporalType());
     } else if (valueConstraints instanceof ControlledTermValueConstraints)
       rendering.put(DATATYPE, IRI);
-    else
-      rendering.put(DATATYPE, STRING);
 
     if (valueConstraints.defaultValue().isPresent()) {
       DefaultValue defaultValue = valueConstraints.defaultValue().get();
