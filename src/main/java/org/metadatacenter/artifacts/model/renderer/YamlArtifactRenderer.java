@@ -174,7 +174,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
-    renderArtifactProvenance(templateSchemaArtifact, rendering);
+    addArtifactProvenanceRendering(templateSchemaArtifact, rendering);
 
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
@@ -221,7 +221,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
     LinkedHashMap<String, Object> configurationRendering = renderElementConfiguration(elementSchemaArtifact);
 
-    renderArtifactProvenance(elementSchemaArtifact, rendering);
+    addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (!configurationRendering.isEmpty())
       rendering.put(CONFIGURATION, configurationRendering);
@@ -279,7 +279,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       renderValueConstraintActions(valueConstraints, rendering);
     }
 
-    renderArtifactProvenance(fieldSchemaArtifact, rendering);
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
     if (!configurationRendering.isEmpty())
       rendering.put(CONFIGURATION, configurationRendering);
@@ -628,7 +628,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  private void renderArtifactProvenance(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
+  private void addArtifactProvenanceRendering(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
   {
     if (!isCompact) {
       if (schemaArtifact.createdOn().isPresent())

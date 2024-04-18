@@ -44,7 +44,7 @@ public class YamlConstants
   public static final String CREATED_ON = "createdOn";
   public static final String LAST_UPDATED_ON = "lastUpdatedOn";
 
-  public static final String LABEL = "label";
+  public static final String LABEL = "prefLabel";
   public static final String ALT_LABEL = "altLabels";
   public static final String CONTINUE_PREVIOUS_LINE = "continuePreviousLine";
   public static final String DATATYPE = "datatype";
