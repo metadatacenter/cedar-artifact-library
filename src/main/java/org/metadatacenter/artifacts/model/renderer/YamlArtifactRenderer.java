@@ -110,6 +110,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
@@ -603,6 +604,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!isCompact && schemaArtifact.status().isPresent())
       rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
+
+    if (!isCompact && schemaArtifact.version().isPresent())
+      rendering.put(VERSION, schemaArtifact.version().get().toString());
 
     if (!isCompact)
       rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
