@@ -172,7 +172,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
+
+    renderArtifactProvenance(templateSchemaArtifact, rendering);
 
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
@@ -216,8 +218,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifact(elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
     LinkedHashMap<String, Object> configurationRendering = renderElementConfiguration(elementSchemaArtifact);
+
+    renderArtifactProvenance(elementSchemaArtifact, rendering);
 
     if (!configurationRendering.isEmpty())
       rendering.put(CONFIGURATION, configurationRendering);
@@ -253,7 +257,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering
-      = renderSchemaArtifact(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
+      = renderSchemaArtifactBase(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
     LinkedHashMap<String, Object> configurationRendering = renderFieldConfiguration(fieldSchemaArtifact);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
@@ -274,6 +278,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       renderValueConstraintValues(valueConstraints, rendering);
       renderValueConstraintActions(valueConstraints, rendering);
     }
+
+    renderArtifactProvenance(fieldSchemaArtifact, rendering);
 
     if (!configurationRendering.isEmpty())
       rendering.put(CONFIGURATION, configurationRendering);
@@ -585,7 +591,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderSchemaArtifact(SchemaArtifact schemaArtifact, String artifactTypeName)
+  private LinkedHashMap<String, Object> renderSchemaArtifactBase(SchemaArtifact schemaArtifact, String artifactTypeName)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
@@ -617,6 +623,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && schemaArtifact.derivedFrom().isPresent())
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
+    // TODO Generate YAML for annotations
+
+    return rendering;
+  }
+
+  private void renderArtifactProvenance(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
+  {
     if (!isCompact) {
       if (schemaArtifact.createdOn().isPresent())
         rendering.put(CREATED_ON, renderOffsetDateTime(schemaArtifact.createdOn().get()));
@@ -627,10 +640,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (schemaArtifact.modifiedBy().isPresent())
         rendering.put(MODIFIED_BY, schemaArtifact.modifiedBy().get().toString());
     }
-
-    // TODO Generate YAML for annotations
-
-    return rendering;
   }
 
   private String renderStatusName(Status status)
