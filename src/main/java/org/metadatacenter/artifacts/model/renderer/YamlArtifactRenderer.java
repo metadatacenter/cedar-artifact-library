@@ -618,10 +618,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
     if (!isCompact) {
-      if (schemaArtifact.createdBy().isPresent())
-        rendering.put(CREATED_BY, schemaArtifact.createdBy().get().toString());
       if (schemaArtifact.createdOn().isPresent())
         rendering.put(CREATED_ON, renderOffsetDateTime(schemaArtifact.createdOn().get()));
+      if (schemaArtifact.createdBy().isPresent())
+        rendering.put(CREATED_BY, schemaArtifact.createdBy().get().toString());
       if (schemaArtifact.lastUpdatedOn().isPresent())
         rendering.put(LAST_UPDATED_ON, renderOffsetDateTime(schemaArtifact.lastUpdatedOn().get()));
       if (schemaArtifact.modifiedBy().isPresent())
