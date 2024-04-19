@@ -130,7 +130,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
     expectedRendering.put(TYPE, TEXT_FIELD);
-    expectedRendering.put(DATATYPE, STRING);
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -154,7 +153,6 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
-        datatype: string
     """.replace("${name}", name).replace("${description}", description);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYaml, LinkedHashMap.class);
