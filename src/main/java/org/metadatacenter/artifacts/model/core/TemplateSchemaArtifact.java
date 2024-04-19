@@ -52,14 +52,14 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-    TemplateUi templateUi)
+    Optional<String> language, TemplateUi templateUi)
   {
     return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, templateUi);
+      fieldSchemas, elementSchemas, language, templateUi);
   }
 
   TemplateUi templateUi();
@@ -117,6 +117,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<URI> derivedFrom = Optional.empty();
     private LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     private LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+    private Optional<String> language = Optional.empty();
     private TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
 
     private Builder()
@@ -146,6 +147,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       this.derivedFrom = templateSchemaArtifact.derivedFrom();
       this.fieldSchemas = new LinkedHashMap<>(templateSchemaArtifact.fieldSchemas());
       this.elementSchemas = new LinkedHashMap<>(templateSchemaArtifact.elementSchemas());
+      this.language = templateSchemaArtifact.language();
       this.templateUiBuilder = TemplateUi.builder(templateSchemaArtifact.templateUi());
     }
 
@@ -277,6 +279,12 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
+    public Builder withLanguage(String language)
+    {
+      this.language = Optional.ofNullable(language);
+      return this;
+    }
+
     public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact)
     {
       this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
@@ -333,7 +341,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
         modelVersion, version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas,
-        templateUiBuilder.build());
+        language, templateUiBuilder.build());
     }
   }
 }
@@ -345,7 +353,7 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
                                     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                     Map<String, FieldSchemaArtifact> fieldSchemas,
                                     Map<String, ElementSchemaArtifact> elementSchemas,
-                                    TemplateUi templateUi) implements TemplateSchemaArtifact
+                                    Optional<String> language, TemplateUi templateUi) implements TemplateSchemaArtifact
 {
   public TemplateSchemaArtifactRecord {
     validateUriFieldEquals(this, jsonSchemaSchemaUri, JSON_SCHEMA_SCHEMA, URI.create(JSON_SCHEMA_SCHEMA_IRI));
@@ -363,6 +371,7 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
     validateUriListFieldContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
+    validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, templateUi, UI);
 
     Set<String> order = new HashSet<>(templateUi.order());

@@ -61,6 +61,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
@@ -100,7 +101,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_SECTION_BREAK;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_YOUTUBE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
@@ -614,6 +614,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!isCompact && schemaArtifact.derivedFrom().isPresent())
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
+
+    if (schemaArtifact.language().isPresent())
+      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
 
     // TODO Generate YAML for annotations
 

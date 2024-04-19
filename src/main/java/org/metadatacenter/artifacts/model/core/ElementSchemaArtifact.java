@@ -46,16 +46,17 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-    ElementUi elementUi,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+    Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi)
   {
     return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, elementUi,
-      isMultiple, minItems, maxItems, propertyUri);
+      fieldSchemas, elementSchemas,
+      isMultiple, minItems, maxItems,
+      propertyUri, language, elementUi);
   }
 
   default ParentArtifactUi getUi() { return elementUi(); }
@@ -111,6 +112,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
+    private Optional<String> language = Optional.empty();
     private ElementUi.Builder elementUiBuilder = ElementUi.builder();
 
     private Builder() {
@@ -139,7 +141,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       this.derivedFrom = elementSchemaArtifact.derivedFrom();
       this.fieldSchemas = new LinkedHashMap<>(elementSchemaArtifact.fieldSchemas());
       this.elementSchemas = new LinkedHashMap<>(elementSchemaArtifact.elementSchemas());
-
+      this.language = elementSchemaArtifact.language();
       this.elementUiBuilder = ElementUi.builder(elementSchemaArtifact.elementUi());
     }
 
@@ -330,6 +332,12 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
+    public Builder withLanguage(String language)
+    {
+      this.language = Optional.ofNullable(language);
+      return this;
+    }
+
     public ElementSchemaArtifact build()
     {
       return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -338,8 +346,8 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
         modelVersion, version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas,
-        elementUiBuilder.build(),
-        isMultiple, minItems, maxItems, propertyUri);
+        isMultiple, minItems, maxItems, propertyUri,
+        language, elementUiBuilder.build());
     }
   }
 }
@@ -350,8 +358,8 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
                                    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-                                   ElementUi elementUi, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                   Optional<URI> propertyUri)  implements ElementSchemaArtifact
+                                   boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                                   Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi)  implements ElementSchemaArtifact
 {
   public ElementSchemaArtifactRecord
   {
@@ -366,6 +374,7 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUiFieldNotNull(this, elementUi, UI);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri");
+    validateOptionalFieldNotNull(this, language,  "language");
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
 

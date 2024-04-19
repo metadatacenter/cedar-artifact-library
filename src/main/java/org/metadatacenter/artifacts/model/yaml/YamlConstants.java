@@ -46,6 +46,7 @@ public class YamlConstants
 
   public static final String LABEL = "prefLabel";
   public static final String ALT_LABEL = "altLabels";
+  public static final String LANGUAGE = "language";
   public static final String CONTINUE_PREVIOUS_LINE = "continuePreviousLine";
   public static final String DATATYPE = "datatype";
   public static final String IRI = "iri";

@@ -44,6 +44,7 @@ public class ElementSchemaArtifactTest
     Optional<Integer> minItems = Optional.of(1);
     Optional<Integer> maxItems = Optional.of(3);
     Optional<URI> propertyUri = Optional.of(URI.create("https://schema.metadatacenter.org/properties/434"));
+    Optional<String> language = Optional.of("en");
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription,
@@ -51,8 +52,8 @@ public class ElementSchemaArtifactTest
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      Collections.emptyMap(), Collections.emptyMap(), ElementUi.builder().build(),
-      false, minItems, maxItems, propertyUri);
+      Collections.emptyMap(), Collections.emptyMap(),
+      false, minItems, maxItems, propertyUri, language, ElementUi.builder().build());
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
@@ -74,6 +75,7 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());
     Assert.assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom());
     Assert.assertEquals(propertyUri, elementSchemaArtifact.propertyUri());
+    Assert.assertEquals(language, elementSchemaArtifact.language());
   }
 
   @Test

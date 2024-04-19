@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.checkerframework.checker.units.qual.N;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
@@ -44,12 +43,12 @@ public sealed interface NumericField extends FieldSchemaArtifact
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
     return new NumericFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
   }
 
   static NumericFieldBuilder builder() { return new NumericFieldBuilder(); }
@@ -241,6 +240,12 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public NumericFieldBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
     @Override public NumericFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
     {
       super.withJsonSchemaTitle(jsonSchemaTitle);
@@ -261,7 +266,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+        skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
     }
   }
 }
@@ -276,7 +281,7 @@ record NumericFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
                           Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                           Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                          FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                          Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements NumericField
 {
   public NumericFieldRecord
@@ -289,6 +294,7 @@ record NumericFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
 

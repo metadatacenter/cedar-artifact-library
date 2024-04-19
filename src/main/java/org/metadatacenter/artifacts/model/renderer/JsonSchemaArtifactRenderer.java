@@ -133,7 +133,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = renderSchemaArtifact(templateSchemaArtifact);
 
-    rendering.set(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification());
+    rendering.set(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(templateSchemaArtifact));
 
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderTemplateSchemaArtifactPropertiesJsonSchemaSpecification(templateSchemaArtifact));
@@ -220,7 +220,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = renderSchemaArtifact(elementSchemaArtifact);
 
-    rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification());
+    rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(elementSchemaArtifact));
 
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderElementSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
@@ -303,9 +303,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = renderSchemaArtifact(fieldSchemaArtifact);
 
     if (fieldSchemaArtifact.isStatic())
-      rendering.put(JSON_LD_CONTEXT, renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification());
+      rendering.put(JSON_LD_CONTEXT, renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification(fieldSchemaArtifact));
     else
-      rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
+      rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification(fieldSchemaArtifact));
 
     // Static fields or attribute-value field have no value constraints field or JSON Schema properties specification
     if (!(fieldSchemaArtifact.isStatic() || fieldSchemaArtifact.isAttributeValue())) {
@@ -1177,7 +1177,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   }
    * </pre>
    */
-  private ObjectNode renderParentSchemaArtifactContextJsonLdSpecification()
+  private ObjectNode renderParentSchemaArtifactContextJsonLdSpecification(SchemaArtifact schemaArtifact)
   {
     ObjectNode rendering = renderParentSchemaArtifactContextPrefixesJsonLdSpecification();
 
@@ -1187,6 +1187,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
+
+    if (schemaArtifact.language().isPresent()) {
+      String language = schemaArtifact.language().get();
+      if (!language.isEmpty())
+        rendering.put(JSON_LD_LANGUAGE, language);
+    }
 
     return rendering;
   }
@@ -1302,7 +1308,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   }
    * </pre>
    */
-  private ObjectNode renderFieldSchemaArtifactContextPrefixesJsonLdSpecification()
+  private ObjectNode renderFieldSchemaArtifactContextPrefixesJsonLdSpecification(FieldSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
@@ -1317,6 +1323,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
     rendering.put(SKOS_PREFLABEL, renderXsdStringJsonLdSpecification());
     rendering.put(SKOS_ALTLABEL, renderXsdStringJsonLdSpecification());
+
+    if (fieldSchemaArtifact.language().isPresent()) {
+      String language = fieldSchemaArtifact.language().get();
+      if (!language.isEmpty())
+        rendering.put(JSON_LD_LANGUAGE, language);
+    }
 
     return rendering;
   }
@@ -1334,12 +1346,18 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   }
    * </pre>
    */
-  private ObjectNode renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification()
+  private ObjectNode renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification(FieldSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
     for (var entry: STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
       rendering.put(entry.getKey(), entry.getValue().toString());
+
+    if (fieldSchemaArtifact.language().isPresent()) {
+      String language = fieldSchemaArtifact.language().get();
+      if (!language.isEmpty())
+        rendering.put(JSON_LD_LANGUAGE, language);
+    }
 
     return rendering;
   }

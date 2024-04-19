@@ -40,13 +40,13 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> skosPrefLabel, List<String> skosAlternateLabels, FieldUi fieldUi,
-    Optional<ValueConstraints> valueConstraints)
+    Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
     return new AttributeValueFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
   }
 
   static AttributeValueFieldBuilder builder() { return new AttributeValueFieldBuilder(); }
@@ -179,6 +179,13 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       return this;
     }
 
+
+    @Override public AttributeValueFieldBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
     @Override public AttributeValueFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
     {
       super.withJsonSchemaTitle(jsonSchemaTitle);
@@ -198,7 +205,7 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+        skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
     }
 
   }
@@ -214,7 +221,7 @@ record AttributeValueFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType,
                                  Optional<URI> createdBy, Optional<URI> modifiedBy,
                                  Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                  Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                                 FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                                 Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements AttributeValueField
 {
   public AttributeValueFieldRecord
@@ -227,6 +234,7 @@ record AttributeValueFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType,
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
 

@@ -42,12 +42,12 @@ public sealed interface ListField extends FieldSchemaArtifact
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    FieldUi fieldUi,  Optional<ValueConstraints> valueConstraints)
+    Optional<String> language, FieldUi fieldUi,  Optional<ValueConstraints> valueConstraints)
   {
     return new ListFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
   }
 
   static ListFieldBuilder builder() { return new ListFieldBuilder(); }
@@ -226,6 +226,12 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public ListFieldBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
     @Override public ListFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
     {
       super.withJsonSchemaTitle(jsonSchemaTitle);
@@ -246,7 +252,7 @@ public sealed interface ListField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
         jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
         status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-        createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+        createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
     }
   }
 }
@@ -261,7 +267,7 @@ record ListFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String js
                        Optional<URI> createdBy, Optional<URI> modifiedBy,
                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                        Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                       FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                       Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements ListField
 {
   public ListFieldRecord
@@ -274,6 +280,7 @@ record ListFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String js
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
 

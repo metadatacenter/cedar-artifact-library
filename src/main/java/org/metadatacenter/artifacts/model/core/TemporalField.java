@@ -45,12 +45,12 @@ public sealed interface TemporalField extends FieldSchemaArtifact
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   {
     return new TemporalFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
   }
 
   static TemporalFieldBuilder builder() { return new TemporalFieldBuilder(); }
@@ -243,6 +243,12 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public TemporalFieldBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
     @Override public TemporalFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
     {
       super.withJsonSchemaTitle(jsonSchemaTitle);
@@ -262,7 +268,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+        skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
     }
   }
 }
@@ -277,7 +283,7 @@ record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
                            Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                            Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                           FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements TemporalField
 {
   public TemporalFieldRecord
@@ -290,6 +296,7 @@ record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
 

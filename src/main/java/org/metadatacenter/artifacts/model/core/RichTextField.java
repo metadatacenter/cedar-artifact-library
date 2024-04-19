@@ -41,12 +41,12 @@ public sealed interface RichTextField extends FieldSchemaArtifact
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    FieldUi fieldUi)
+    Optional<String> language, FieldUi fieldUi)
   {
     return new RichTextFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), fieldUi, Optional.empty());
+      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty());
   }
 
   static RichTextFieldBuilder builder() { return new RichTextFieldBuilder(); }
@@ -192,6 +192,12 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public RichTextFieldBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
     @Override public RichTextFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
     {
       super.withJsonSchemaTitle(jsonSchemaTitle);
@@ -210,7 +216,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        fieldUi);
+        language, fieldUi);
     }
   }
 }
@@ -225,7 +231,7 @@ record RichTextFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
                            Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                            Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                           FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements RichTextField
 {
   public RichTextFieldRecord
@@ -238,6 +244,7 @@ record RichTextFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
 

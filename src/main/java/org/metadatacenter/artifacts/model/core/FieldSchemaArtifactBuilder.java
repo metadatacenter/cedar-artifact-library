@@ -48,6 +48,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<Integer> minItems = Optional.empty();
   protected Optional<Integer> maxItems = Optional.empty();
   protected Optional<URI> propertyUri = Optional.empty();
+  protected Optional<String> language = Optional.empty();
   protected FieldUi fieldUi;
   protected Optional<ValueConstraints> valueConstraints = Optional.empty();
 
@@ -82,6 +83,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.minItems = fieldSchemaArtifact.minItems();
     this.maxItems = fieldSchemaArtifact.maxItems();
     this.propertyUri = fieldSchemaArtifact.propertyUri();
+    this.language = fieldSchemaArtifact.language();
     this.fieldUi = fieldSchemaArtifact.fieldUi();
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
   }
@@ -246,6 +248,12 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected FieldSchemaArtifactBuilder withPropertyUri(URI propertyUri)
   {
     this.propertyUri = Optional.ofNullable(propertyUri);
+    return this;
+  }
+
+  protected FieldSchemaArtifactBuilder withLanguage(String language)
+  {
+    this.language = Optional.ofNullable(language);
     return this;
   }
 

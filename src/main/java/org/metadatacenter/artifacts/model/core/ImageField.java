@@ -41,12 +41,12 @@ public sealed interface ImageField extends FieldSchemaArtifact
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    FieldUi fieldUi)
+    Optional<String> language, FieldUi fieldUi)
   {
     return new ImageFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), fieldUi, Optional.empty());
+      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty());
   }
 
   static ImageFieldBuilder builder() { return new ImageFieldBuilder(); }
@@ -168,6 +168,12 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public ImageFieldBuilder withLanguage(String language)
+    {
+      super.withLanguage(language);
+      return this;
+    }
+
     @Override public ImageFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
     {
       super.withJsonSchemaTitle(jsonSchemaTitle);
@@ -186,7 +192,7 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        fieldUi);
+        language, fieldUi);
     }
   }
 }
@@ -201,7 +207,7 @@ record ImageFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String j
                         Optional<URI> createdBy, Optional<URI> modifiedBy,
                         Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                         Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                        FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                        Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
   implements ImageField
 {
   public ImageFieldRecord
@@ -214,6 +220,7 @@ record ImageFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String j
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
+    validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
 

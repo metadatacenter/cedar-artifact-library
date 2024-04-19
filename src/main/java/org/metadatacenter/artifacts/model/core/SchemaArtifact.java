@@ -29,4 +29,6 @@ public interface SchemaArtifact extends Artifact, JsonLdArtifact, JsonSchemaArti
   Optional<URI> previousVersion();
 
   Optional<URI> derivedFrom();
+
+  Optional<String> language();
 }

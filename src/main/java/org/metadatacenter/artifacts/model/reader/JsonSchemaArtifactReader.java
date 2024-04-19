@@ -320,6 +320,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
     Map<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
+    Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     TemplateUi templateUi = readTemplateUi(sourceNode, path, UI);
 
     checkTemplateSchemaArtifactJsonLdType(jsonLdTypes, path);
@@ -331,7 +332,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, templateUi);
+      fieldSchemas, elementSchemas, language, templateUi);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode, String path,
@@ -357,6 +358,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
     Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     ElementUi elementUi = readElementUi(sourceNode, path, UI);
     Map<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
 
@@ -369,8 +371,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, elementUi,
-      isMultiple, minItems, maxItems, propertyUri);
+      fieldSchemas, elementSchemas,
+      isMultiple, minItems, maxItems,
+      propertyUri, language, elementUi);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path,
@@ -396,6 +399,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     List<String> skosAlternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
+    Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS, fieldUi.inputType());
 
@@ -408,7 +412,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       skosPrefLabel, skosAlternateLabels,
-      fieldUi, valueConstraints);
+      language, fieldUi, valueConstraints);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,
@@ -1378,6 +1382,35 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return string2StringMap;
   }
 
+  private Map<String, String> readSimpleContextEntries(ObjectNode parentNode, String path)
+  {
+    Map<String, String> string2StringMap = new HashMap<>();
+
+    JsonNode childNode = parentNode.get(JSON_LD_CONTEXT);
+
+    if (childNode != null && !childNode.isNull()) {
+
+      if (!childNode.isObject())
+        throw new ArtifactParseException("Value of field must be an object", JSON_LD_CONTEXT, path);
+
+      Iterator<Map.Entry<String, JsonNode>> fieldEntries = childNode.fields();
+
+      while (fieldEntries.hasNext()) {
+        var fieldEntry = fieldEntries.next();
+
+        if (fieldEntry.getValue().isTextual()) {
+          String currentFieldName = fieldEntry.getKey();
+          String currentFieldValue = fieldEntry.getValue().textValue();
+
+          if (currentFieldValue != null)
+            string2StringMap.put(currentFieldName, currentFieldValue);
+        }
+      }
+    }
+    return string2StringMap;
+  }
+
+
   private Map<String, URI> readString2UriMap(ObjectNode parentNode, String path, String fieldName)
   {
     Map<String, URI> string2UriMap = new HashMap<>();
@@ -1638,6 +1671,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       }
     }
     return uriValues;
+  }
+
+  private Optional<String> getLanguage(ObjectNode sourceNode, String path, String fieldName)
+  {
+    Map<String, String> contextEntries = readSimpleContextEntries(sourceNode, path);
+
+    if (contextEntries.containsKey(JSON_LD_LANGUAGE))
+      return Optional.of(contextEntries.get(JSON_LD_LANGUAGE));
+    else
+      return Optional.empty();
   }
 
   private boolean hasJsonLdContextField(ObjectNode sourceNode)

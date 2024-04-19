@@ -63,6 +63,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
@@ -268,12 +269,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO Read child elements
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO Read child fields
+    Optional<String> language = readString(sourceNode, path, LANGUAGE);
     TemplateUi templateUi = readTemplateUi(sourceNode, path);
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
-      templateUi);
+      language, templateUi);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
@@ -301,12 +303,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO  Read child elements
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO  Read child fields
+    Optional<String> language = readString(sourceNode, path, LANGUAGE);
     ElementUi elementUi = readElementUi(sourceNode, path);
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
-      elementUi, isMultiple, minItems, maxItems, propertyUri);
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
@@ -337,11 +340,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUES, fieldUi.inputType());
     Optional<String> skosPrefLabel = readString(sourceNode, path, LABEL);
     List<String> skosAlternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
+    Optional<String> language = readString(sourceNode, path, LANGUAGE);
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, fieldUi, valueConstraints);
+      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
   }
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)
