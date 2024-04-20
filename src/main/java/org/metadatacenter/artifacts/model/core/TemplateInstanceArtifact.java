@@ -1,8 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.checkerframework.checker.units.qual.A;
-import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
-
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -263,7 +260,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
     public Builder withoutSingleInstanceElementInstance(String childElementName)
     {
-      if (!childNames.contains(childElementName) || singleInstanceElementInstances.containsKey(childElementName))
+      if (!childNames.contains(childElementName) || !singleInstanceElementInstances.containsKey(childElementName))
         throw new IllegalArgumentException("child " + childElementName + " not present in instance");
 
       childNames.remove(childElementName);
@@ -311,7 +308,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
     public Builder withoutMultiInstanceElementInstances(String childElementName)
     {
-      if (!childNames.contains(childElementName) || multiInstanceElementInstances.containsKey(childElementName))
+      if (!childNames.contains(childElementName) || !multiInstanceElementInstances.containsKey(childElementName))
         throw new IllegalArgumentException("child " + childElementName + " not present in instance");
 
       childNames.remove(childElementName);
