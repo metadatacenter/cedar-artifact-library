@@ -306,7 +306,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
 
     public Builder withoutMultiInstanceElementInstances(String childElementName)
     {
-      if (!childNames.contains(childElementName) || multiInstanceElementInstances.containsKey(childElementName))
+      if (!childNames.contains(childElementName) || !multiInstanceElementInstances.containsKey(childElementName))
         throw new IllegalArgumentException("child " + childElementName + " not present in instance");
 
       this.childNames.remove(childElementName);
