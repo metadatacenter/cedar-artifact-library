@@ -41,12 +41,12 @@ public sealed interface RichTextField extends FieldSchemaArtifact
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> language, FieldUi fieldUi)
+    Optional<String> language, Optional<String> skosPrefLabel, FieldUi fieldUi)
   {
     return new RichTextFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty());
+      createdOn, lastUpdatedOn, skosPrefLabel, Collections.emptyList(), language, fieldUi, Optional.empty());
   }
 
   static RichTextFieldBuilder builder() { return new RichTextFieldBuilder(); }
@@ -216,7 +216,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, fieldUi);
+        language, skosPrefLabel, fieldUi);
     }
   }
 }
