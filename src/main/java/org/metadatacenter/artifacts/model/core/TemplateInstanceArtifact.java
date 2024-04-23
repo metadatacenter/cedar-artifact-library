@@ -168,6 +168,15 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
+    public Builder withoutJsonLdContextEntry(String name){
+      if (!this.jsonLdContext.containsKey(name))
+        throw new IllegalArgumentException("Property " + name + " not present in instance");
+
+      this.jsonLdContext.remove(name);
+
+      return this;
+    }
+
     public Builder withJsonLdType(URI jsonLdType)
     {
       this.jsonLdTypes.add(jsonLdType);
