@@ -24,7 +24,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
@@ -200,7 +200,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
     yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
-    yamlSource.put(LABEL, prefLabel);
+    yamlSource.put(PREF_LABEL, prefLabel);
     yamlSource.put(ALT_LABEL, altLabels);
     yamlSource.put(TYPE, FieldInputType.TEXTFIELD.toString());
     yamlSource.put(REQUIRED, requiredValue);

@@ -65,7 +65,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
@@ -274,7 +274,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       = renderSchemaArtifactBase(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
       List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
@@ -302,7 +302,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       = renderChildSchemaArtifactBase(fieldName, fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
       List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
@@ -410,7 +410,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         classValueConstraintRendering.put(SOURCE, classValueConstraint.source());
         classValueConstraintRendering.put(NAME, classValueConstraint.prefLabel());
         classValueConstraintRendering.put(IRI, classValueConstraint.uri());
-        classValueConstraintRendering.put(LABEL, classValueConstraint.label());
+        classValueConstraintRendering.put(PREF_LABEL, classValueConstraint.label());
         valuesRendering.add(classValueConstraintRendering);
       }
 

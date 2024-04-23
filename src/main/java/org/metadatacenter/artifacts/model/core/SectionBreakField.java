@@ -41,12 +41,12 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> language, FieldUi fieldUi)
+    Optional<String> skosPrefLabel, Optional<String> language, FieldUi fieldUi)
   {
     return new SectionBreakFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty());
+      createdOn, lastUpdatedOn, skosPrefLabel, Collections.emptyList(), language, fieldUi, Optional.empty());
   }
 
   static SectionBreakFieldBuilder builder() { return new SectionBreakFieldBuilder(); }
@@ -194,7 +194,7 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, fieldUi);
+        language, skosPrefLabel, fieldUi);
     }
   }
 }

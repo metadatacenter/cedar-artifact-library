@@ -62,7 +62,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
@@ -337,7 +337,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<XsdDatatype> datatype = readXsdDatatype(sourceNode, path, DATATYPE);
     FieldUi fieldUi = readFieldUi(sourceNode, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUES, fieldUi.inputType());
-    Optional<String> skosPrefLabel = readString(sourceNode, path, LABEL);
+    Optional<String> skosPrefLabel = readString(sourceNode, path, PREF_LABEL);
     List<String> skosAlternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
 

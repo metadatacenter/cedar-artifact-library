@@ -45,13 +45,12 @@ public class YamlConstants
   public static final String CREATED_ON = "createdOn";
   public static final String LAST_UPDATED_ON = "lastUpdatedOn";
 
-  public static final String LABEL = "prefLabel";
+  public static final String PREF_LABEL = "prefLabel";
   public static final String ALT_LABEL = "altLabels";
   public static final String LANGUAGE = "language";
   public static final String CONTINUE_PREVIOUS_LINE = "continuePreviousLine";
   public static final String DATATYPE = "datatype";
   public static final String IRI = "iri";
-  public static final String STRING = "string";
   public static final String TIME_ZONE = "timeZone";
   public static final String GRANULARITY = "granularity";
   public static final String TIME_FORMAT = "timeFormat";
