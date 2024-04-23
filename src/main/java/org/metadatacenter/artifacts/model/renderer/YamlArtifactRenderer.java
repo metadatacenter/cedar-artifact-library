@@ -44,6 +44,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHECKBOX_FIE
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
@@ -319,8 +320,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
       rendering.put(VALUE_RECOMMENDATION, true);
 
-    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+    if (fieldSchemaArtifact.isStatic()) {
+      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
+        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
 
+        if (!content.isEmpty())
+          rendering.put(CONTENT, content);
+      }
+    }
+
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
   }
