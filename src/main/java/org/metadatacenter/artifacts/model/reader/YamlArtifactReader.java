@@ -72,7 +72,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ORDER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PAGES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
@@ -351,13 +350,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
     List<String> order = readStringArray(sourceNode, path, ORDER);
-    List<String> pages = readStringArray(sourceNode, path, PAGES);
     Map<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
     Map<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(sourceNode, path, HEADER);
     Optional<String> footer = readString(sourceNode, path, FOOTER);
 
-    return TemplateUi.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
+    return TemplateUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
   private ElementUi readElementUi(LinkedHashMap<String, Object> sourceNode, String path)

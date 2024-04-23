@@ -107,7 +107,6 @@ import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
 import static org.metadatacenter.model.ModelNodeNames.UI_HIDDEN;
 import static org.metadatacenter.model.ModelNodeNames.UI_INPUT_TIME_FORMAT;
 import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
-import static org.metadatacenter.model.ModelNodeNames.UI_PAGES;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 import static org.metadatacenter.model.ModelNodeNames.UI_RECOMMENDED_VALUE;
@@ -1227,13 +1226,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + fieldName;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
-    List<String> pages = readStringArray(uiNode, uiPath, UI_PAGES);
     Map<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
     Map<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
-    return TemplateUi.create(order, pages, propertyLabels, propertyDescriptions, header, footer);
+    return TemplateUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
   private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldName)

@@ -87,7 +87,6 @@ public class YamlConstants
   public static final String HEADER = "header";
   public static final String FOOTER = "footer";
   public static final String ORDER = "order";
-  public static final String PAGES = "pages";
 
   public static final String CONFIGURATION = "configuration";
   public static final String MULTIPLE = "multiple";
