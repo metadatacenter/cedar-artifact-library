@@ -308,6 +308,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
+  // TOOD Cut and paste from above. Merge
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering
@@ -326,6 +327,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
       renderValueConstraintValues(valueConstraints, rendering);
       renderValueConstraintActions(valueConstraints, rendering);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
+      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
+      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+      rendering.put(INPUT_TIME_ZONE, templateUi.timezoneEnabled());
     }
 
     if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
