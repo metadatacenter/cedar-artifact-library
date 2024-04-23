@@ -25,6 +25,8 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstrain
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -62,6 +64,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_FORMAT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_ZONE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
@@ -287,6 +291,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
       renderValueConstraintValues(valueConstraints, rendering);
       renderValueConstraintActions(valueConstraints, rendering);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
+      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
+      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+      rendering.put(INPUT_TIME_ZONE, templateUi.timezoneEnabled());
     }
 
     if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())

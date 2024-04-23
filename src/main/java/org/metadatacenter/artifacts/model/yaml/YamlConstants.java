@@ -51,9 +51,9 @@ public class YamlConstants
   public static final String CONTINUE_PREVIOUS_LINE = "continuePreviousLine";
   public static final String DATATYPE = "datatype";
   public static final String IRI = "iri";
-  public static final String TIME_ZONE = "timeZone";
   public static final String GRANULARITY = "granularity";
-  public static final String TIME_FORMAT = "timeFormat";
+  public static final String INPUT_TIME_FORMAT = "inputTimeFormat";
+  public static final String INPUT_TIME_ZONE = "inputTimeZone";
   public static final String UNIT = "unit";
   public static final String DEFAULT = "default";
   public static final String MIN_VALUE = "minValue";

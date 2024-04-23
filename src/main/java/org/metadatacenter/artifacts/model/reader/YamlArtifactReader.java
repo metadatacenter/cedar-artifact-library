@@ -79,8 +79,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_LAB
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_FORMAT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TIME_ZONE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_FORMAT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_ZONE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
@@ -379,8 +379,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
-      InputTimeFormat inputTimeFormat = readInputTimeFormat(sourceNode, path, TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
-      boolean timeZoneEnabled = readBoolean(sourceNode, path, TIME_ZONE, false);
+      InputTimeFormat inputTimeFormat = readInputTimeFormat(sourceNode, path, INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
+      boolean timeZoneEnabled = readBoolean(sourceNode, path, INPUT_TIME_ZONE, false);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
