@@ -181,6 +181,29 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
+  @Test public void testCreateControlledTermFieldWithClassValueConstraint()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel= "Human";
+    String classPrefLabel = "Homo Spiens";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+
+    ControlledTermField controlledTermField = ControlledTermField.builder().
+      withName(name).
+      withDescription(description).
+      withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
+      build();
+
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
+
+    assertTrue(validateJsonSchema(rendering));
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
+  }
+
   // TODO Add defaultValue
   @Test public void testRenderNumericField()
   {
