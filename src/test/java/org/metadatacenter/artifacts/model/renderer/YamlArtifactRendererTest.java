@@ -198,8 +198,8 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(KEY, name);
-    expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, TEXT_FIELD);
+    expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
     expectedRendering.put(DATATYPE, IRI);
 

@@ -647,9 +647,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    rendering.put(NAME, schemaArtifact.name());
-
     rendering.put(TYPE, artifactTypeName);
+
+    rendering.put(NAME, schemaArtifact.name());
 
     if (!schemaArtifact.description().isEmpty())
       rendering.put(DESCRIPTION, schemaArtifact.description());
@@ -691,9 +691,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(KEY, childName);
 
-    rendering.put(NAME, schemaArtifact.name());
-
     rendering.put(TYPE, artifactTypeName);
+
+    rendering.put(NAME, schemaArtifact.name());
 
     if (!schemaArtifact.description().isEmpty())
       rendering.put(DESCRIPTION, schemaArtifact.description());
