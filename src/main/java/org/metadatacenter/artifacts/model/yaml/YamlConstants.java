@@ -13,7 +13,7 @@ public class YamlConstants
   public static final String CHECKBOX_FIELD = "checkbox-field";
   public static final String SINGLE_SELECT_LIST_FIELD = "single-select-list-field";
   public static final String MULTI_SELECT_LIST_FIELD = "multi-select-list-field";
-  public static final String PHONE_FIELD = "phone-field";
+  public static final String PHONE_FIELD = "phone-number-field";
   public static final String EMAIL_FIELD = "email-field";
   public static final String LINK_FIELD = "link-field";
   public static final String ATTRIBUTE_VALUE_FIELD = "attribute-value-field";
