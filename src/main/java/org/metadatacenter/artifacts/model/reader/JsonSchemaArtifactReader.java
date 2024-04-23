@@ -335,7 +335,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode, String path,
-    String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    String childName, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     Map<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
@@ -349,8 +349,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
     Version modelVersion = Version.fromString(readRequiredString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION));
-    String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
-    Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
+    String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
+    Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
     Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
@@ -367,7 +368,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier,
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas,
@@ -376,7 +377,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path,
-    String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    String childName, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     Map<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
@@ -390,8 +391,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
     Version modelVersion = Version.fromString(readRequiredString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION));
-    String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
-    Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
+    String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
+    Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
     Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
@@ -406,7 +408,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier,
+      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,

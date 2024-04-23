@@ -95,7 +95,7 @@ public class YamlConstants
   public static final String PROPERTY_DESCRIPTIONS = "propertyDescriptions";
   public static final String MIN_ITEMS = "minItems";
   public static final String MAX_ITEMS = "maxItems";
-  public static final String PROPERTY_IRI = "propertyUri";
+  public static final String PROPERTY_IRI = "propertyIri";
   public static final String REQUIRED = "required";
   public static final String RECOMMENDED = "recommended";
   public static final String HIDDEN = "hidden";
