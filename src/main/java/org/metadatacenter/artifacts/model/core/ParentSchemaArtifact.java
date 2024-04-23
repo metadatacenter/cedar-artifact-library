@@ -75,9 +75,12 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   {
     Map<String, URI> childPropertyUris = new HashMap<>();
 
-    for (ChildSchemaArtifact childSchemaArtifact : getChildSchemas())
+    for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : getChildSchemas().entrySet()) {
+      String childName = childSchemaArtifactEntry.getKey();
+      ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
       if (childSchemaArtifact.propertyUri().isPresent())
-        childPropertyUris.put(childSchemaArtifact.name(), childSchemaArtifact.propertyUri().get());
+        childPropertyUris.put(childName, childSchemaArtifact.propertyUri().get());
+    }
 
     return childPropertyUris;
   }
@@ -87,15 +90,15 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     return !elementSchemas().isEmpty() || !fieldSchemas().isEmpty();
   }
 
-  default List<ChildSchemaArtifact> getChildSchemas()
+  default LinkedHashMap<String, ChildSchemaArtifact> getChildSchemas()
   {
-    var childSchemas = new ArrayList<ChildSchemaArtifact>();
+    var childSchemas = new LinkedHashMap<String, ChildSchemaArtifact>();
 
     for (String childName : getUi().order()) {
       if (elementSchemas().containsKey(childName))
-        childSchemas.add(elementSchemas().get(childName));
+        childSchemas.put(childName, elementSchemas().get(childName));
       else if (fieldSchemas().containsKey(childName))
-        childSchemas.add(fieldSchemas().get(childName));
+        childSchemas.put(childName, fieldSchemas().get(childName));
       else
         throw new RuntimeException("internal error: no child " + childName + " present in artifact");
     }

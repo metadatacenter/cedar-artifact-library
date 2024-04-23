@@ -216,7 +216,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *  }
    * </pre>
    */
-  public ObjectNode renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  public ObjectNode renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
   {
     ObjectNode rendering = renderSchemaArtifact(elementSchemaArtifact);
 
@@ -298,7 +298,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *  }
    * </pre>
    */
-  public ObjectNode renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
+  public ObjectNode renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode rendering = renderSchemaArtifact(fieldSchemaArtifact);
 

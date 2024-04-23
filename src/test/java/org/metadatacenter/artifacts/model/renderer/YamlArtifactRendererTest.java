@@ -29,13 +29,13 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
@@ -100,7 +100,7 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderElementSchemaArtifact(name, elementSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(TYPE, ELEMENT);
@@ -124,7 +124,7 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, textField);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(NAME, name);
@@ -147,7 +147,7 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, textField);
 
     String expectedYaml = """
         type: text-field
@@ -194,9 +194,10 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, controlledTermField);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
     expectedRendering.put(TYPE, TEXT_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);

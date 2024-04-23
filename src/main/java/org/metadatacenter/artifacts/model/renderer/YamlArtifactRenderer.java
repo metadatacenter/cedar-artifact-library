@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
@@ -62,6 +63,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
@@ -139,7 +141,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *
    * children:
    *
-   *   - type: text-field
+   *   - key: study-name
+   *     type: text-field
    *     name: Study Name
    *     description: Study name field
    *     configuration:
@@ -152,7 +155,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     configuration:
    *       required: true
    *
-   *   - type: element
+   *   - key: address
+   *     type: element
    *     name: Address
    *     description: Address element
    *     configuration:
@@ -161,9 +165,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *       maxItems: 4
    *
    *     children:
-   *       - type: text-field
+   *       - key: address-1
+   *         type: text-field
    *         name: field: Address 1
-   *       - type: text-field
+   *       - key: zip
+   *         type: text-field
    *         name: field: ZIP
    *         minLength: 5
    *         maxLength: 5
@@ -185,7 +191,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Generate YAML for childPropertyUris
 
     if (templateSchemaArtifact.hasChildren())
-      rendering.put(CHILDREN, getChildSchemasRendering(templateSchemaArtifact.getChildSchemas()));
+      rendering.put(CHILDREN, renderChildSchemas(templateSchemaArtifact.getChildSchemas()));
 
     return rendering;
   }
@@ -195,7 +201,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <p>
    * e.g.,
    * <pre>
-   *   - type: element
+   *   - key: address
+   *     type: element
    *     name: Address
    *     description: Address element
    *     configuration:
@@ -204,18 +211,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *       maxItems: 4
    *
    *     children:
-   *       - type: text-field
+   *       - key: address-1
+   *         type: text-field
    *         name: field: Address 1
-   *       - type: text-field
+   *       - key: zip
+   *         type: text-field
    *         name: field: ZIP
    *         minLength: 5
    *         maxLength: 5
    *
    * </pre>
    */
-  public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(elementName, elementSchemaArtifact, ELEMENT);
     LinkedHashMap<String, Object> configurationRendering = renderElementConfiguration(elementSchemaArtifact);
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
@@ -224,7 +233,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(CONFIGURATION, configurationRendering);
 
     if (elementSchemaArtifact.hasChildren())
-      rendering.put(CHILDREN, getChildSchemasRendering(elementSchemaArtifact.getChildSchemas()));
+      rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact.getChildSchemas()));
 
     return rendering;
   }
@@ -251,10 +260,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     type: OntologyClass
    * </pre>
    */
-  public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
+  public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering
-      = renderSchemaArtifactBase(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
+      = renderChildSchemaArtifactBase(fieldName, fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
     LinkedHashMap<String, Object> configurationRendering = renderFieldConfiguration(fieldSchemaArtifact);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
@@ -508,18 +517,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Generate YAML for _valueConstraints.actions
   }
 
-  private List<LinkedHashMap<String, Object>> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {
+  private List<LinkedHashMap<String, Object>> renderChildSchemas(LinkedHashMap<String, ChildSchemaArtifact> childSchemaArtifacts) {
     List<LinkedHashMap<String, Object>> childSchemasRendering = new ArrayList<>();
 
     // TODO Use typesafe switch when available
-    for (ChildSchemaArtifact childSchemaArtifact : childSchemaArtifacts) {
+    for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : childSchemaArtifacts.entrySet()) {
+      String childName = childSchemaArtifactEntry.getKey();
+      ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
       if (childSchemaArtifact instanceof FieldSchemaArtifact) {
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
-        LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(fieldSchemaArtifact);
+        LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childName, fieldSchemaArtifact);
         childSchemasRendering.add(fieldSchemaRendering);
       } else if (childSchemaArtifact instanceof ElementSchemaArtifact) {
         ElementSchemaArtifact elementSchemaArtifact = (ElementSchemaArtifact)childSchemaArtifact;
-        LinkedHashMap<String, Object> elementSchemaRendering = renderElementSchemaArtifact(elementSchemaArtifact);
+        LinkedHashMap<String, Object> elementSchemaRendering = renderElementSchemaArtifact(childName, elementSchemaArtifact);
         childSchemasRendering.add(elementSchemaRendering);
       }
     }
@@ -618,6 +629,49 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (schemaArtifact.language().isPresent())
       rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
+
+    // TODO Generate YAML for annotations
+
+    return rendering;
+  }
+
+  private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childName,
+    ChildSchemaArtifact childSchemaArtifact, String artifactTypeName)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    rendering.put(KEY, childName);
+
+    rendering.put(TYPE, artifactTypeName);
+
+    rendering.put(NAME, childSchemaArtifact.name());
+
+    if (!childSchemaArtifact.description().isEmpty())
+      rendering.put(DESCRIPTION, childSchemaArtifact.description());
+
+    if (childSchemaArtifact.identifier().isPresent())
+      rendering.put(IDENTIFIER, childSchemaArtifact.identifier().get());
+
+    if (!isCompact && childSchemaArtifact.jsonLdId().isPresent())
+      rendering.put(ID, childSchemaArtifact.jsonLdId().get());
+
+    if (!isCompact && childSchemaArtifact.status().isPresent())
+      rendering.put(STATUS, renderStatusName(childSchemaArtifact.status().get()));
+
+    if (!isCompact && childSchemaArtifact.version().isPresent())
+      rendering.put(VERSION, childSchemaArtifact.version().get().toString());
+
+    if (!isCompact)
+      rendering.put(MODEL_VERSION, childSchemaArtifact.modelVersion().toString());
+
+    if (!isCompact && childSchemaArtifact.previousVersion().isPresent())
+      rendering.put(PREVIOUS_VERSION, childSchemaArtifact.previousVersion().get().toString());
+
+    if (!isCompact && childSchemaArtifact.derivedFrom().isPresent())
+      rendering.put(DERIVED_FROM, childSchemaArtifact.derivedFrom().get().toString());
+
+    if (childSchemaArtifact.language().isPresent())
+      rendering.put(LANGUAGE, childSchemaArtifact.language().get().toString());
 
     // TODO Generate YAML for annotations
 

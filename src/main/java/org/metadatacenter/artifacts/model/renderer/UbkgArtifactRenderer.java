@@ -103,10 +103,9 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     return ubkgRenderingBuilder;
   }
 
-  public UbkgRendering.Builder renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
+  public UbkgRendering.Builder renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
   {
     URI fieldUri = fieldSchemaArtifact.jsonLdId().get();
-    String fieldName = fieldSchemaArtifact.name();
     String fieldDescription = fieldSchemaArtifact.description();
 
     ubkgRenderingBuilder.withNode(fieldUri, fieldName, fieldDescription);
@@ -136,7 +135,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     return ubkgRenderingBuilder;
   }
 
-  public UbkgRendering.Builder renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  public UbkgRendering.Builder renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
   {
     return ubkgRenderingBuilder;
   }
