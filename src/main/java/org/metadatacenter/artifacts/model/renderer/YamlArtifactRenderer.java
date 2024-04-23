@@ -182,13 +182,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
-    addArtifactProvenanceRendering(templateSchemaArtifact, rendering);
-
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
 
     if (templateSchemaArtifact.templateUi().footer().isPresent())
       rendering.put(FOOTER, templateSchemaArtifact.templateUi().footer().get());
+
+    addArtifactProvenanceRendering(templateSchemaArtifact, rendering);
 
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(templateSchemaArtifact, templateSchemaArtifact.getChildSchemas()));
