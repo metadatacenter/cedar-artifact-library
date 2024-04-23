@@ -23,6 +23,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,6 +54,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
@@ -265,7 +267,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderCoreValueConstraints(valueConstraints, rendering);
+      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
       renderValueConstraintValues(valueConstraints, rendering);
       renderValueConstraintActions(valueConstraints, rendering);
     }
@@ -445,7 +447,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   }
 
   // TODO Clean this up
-  private void renderCoreValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  private void renderCoreValueConstraints(ValueConstraints valueConstraints, FieldUi fieldUi, LinkedHashMap<String, Object> rendering)
   {
     // TODO Use typesafe switch when available
     if (valueConstraints instanceof NumericValueConstraints) {
@@ -454,6 +456,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     } else if (valueConstraints instanceof TemporalValueConstraints) {
       TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
       rendering.put(DATATYPE, temporalValueConstraints.temporalType());
+      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity());
     } else if (valueConstraints instanceof ControlledTermValueConstraints)
       rendering.put(DATATYPE, IRI);
 
