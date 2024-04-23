@@ -629,8 +629,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.fieldUi().hidden())
       rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
 
-    if (fieldSchemaArtifact.maxItems().isPresent())
-      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
+    if (fieldSchemaArtifact.propertyUri().isPresent())
+      rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
     if (fieldSchemaArtifact.isMultiple() &&
       !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
@@ -642,9 +642,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-
-    if (fieldSchemaArtifact.propertyUri().isPresent())
-      rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
+    if (fieldSchemaArtifact.maxItems().isPresent())
+      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldName)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(fieldName);
