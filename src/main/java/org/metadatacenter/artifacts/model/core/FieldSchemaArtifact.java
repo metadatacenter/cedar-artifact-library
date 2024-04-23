@@ -154,7 +154,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
       return SectionBreakField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, language, skosPrefLabel, fieldUi);
+        lastUpdatedOn, skosPrefLabel, language, fieldUi);
     else if (fieldUi.inputType() == FieldInputType.RICHTEXT)
       return RichTextField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
