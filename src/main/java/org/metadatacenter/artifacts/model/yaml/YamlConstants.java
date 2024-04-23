@@ -100,4 +100,6 @@ public class YamlConstants
   public static final String RECOMMENDED = "recommended";
   public static final String HIDDEN = "hidden";
   public static final String VALUE_RECOMMENDATION = "valueRecommendation";
+  public static final String OVERRIDE_LABEL = "overrideLabel";
+  public static final String OVERRIDE_DESCRIPTION = "overrideDescription";
 }
