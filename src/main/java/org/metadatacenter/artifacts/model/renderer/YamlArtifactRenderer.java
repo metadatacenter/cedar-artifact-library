@@ -586,6 +586,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
+    if (elementSchemaArtifact.propertyUri().isPresent())
+      rendering.put(PROPERTY_IRI, elementSchemaArtifact.propertyUri().get().toString());
+
     if (elementSchemaArtifact.isMultiple())
       rendering.put(MULTIPLE, true);
 
@@ -594,9 +597,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (elementSchemaArtifact.maxItems().isPresent())
       rendering.put(MAX_ITEMS, elementSchemaArtifact.maxItems().get());
-
-    if (elementSchemaArtifact.propertyUri().isPresent())
-      rendering.put(PROPERTY_IRI, elementSchemaArtifact.propertyUri().get().toString());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(elementName)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(elementName);
@@ -629,6 +629,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.fieldUi().hidden())
       rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
 
+    if (fieldSchemaArtifact.maxItems().isPresent())
+      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
+
     if (fieldSchemaArtifact.isMultiple() &&
       !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
       rendering.put(MULTIPLE, true);
@@ -639,8 +642,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent())
-      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     if (fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
