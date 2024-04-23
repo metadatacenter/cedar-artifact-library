@@ -847,7 +847,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderTemplateSchemaArtifactContextPropertiesJsonSchemaSpecification(templateSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
-    // TODO Languege: rendering.put(JSON_LD_LANGUAGE, renderStringJsonSchemaTypeSpecification(1));
+    // TODO Language: rendering.put(JSON_LD_LANGUAGE, renderStringJsonSchemaTypeSpecification(1));
     rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
@@ -917,6 +917,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderElementSchemaArtifactContextPropertiesJsonSchemaSpecification(elementSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
+    // TODO Language: rendering.put(JSON_LD_LANGUAGE, renderStringJsonSchemaTypeSpecification(1));
 
     return rendering;
   }
@@ -1419,6 +1420,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_VALUE, renderStringOrNullJsonSchemaTypeSpecification());
+    // TODO Language: rendering.put(JSON_LD_LANGUAGE, renderStringJsonSchemaTypeSpecification(1));
 
     return rendering;
   }

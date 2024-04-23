@@ -266,13 +266,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
       renderCoreValueConstraints(valueConstraints, rendering);
-    }
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
       renderValueConstraintValues(valueConstraints, rendering);
       renderValueConstraintActions(valueConstraints, rendering);
     }
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
 
     addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
@@ -493,14 +492,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (valueConstraints instanceof TextValueConstraints) {
       TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints;
 
-      if (textValueConstraints.regex().isPresent())
-        rendering.put(REGEX, textValueConstraints.regex().get());
-
       if (textValueConstraints.minLength().isPresent())
         rendering.put(MIN_LENGTH, textValueConstraints.minLength().get());
 
       if (textValueConstraints.maxLength().isPresent())
         rendering.put(MAX_LENGTH, textValueConstraints.maxLength().get());
+
+      if (textValueConstraints.regex().isPresent())
+        rendering.put(REGEX, textValueConstraints.regex().get());
     }
 
     // TODO Generate YAML for _valueConstraints.actions
@@ -557,12 +556,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
         rendering.put(RECOMMENDED, true);
     }
-
-    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
-      rendering.put(VALUE_RECOMMENDATION, true);
-
-    if (fieldSchemaArtifact.regex().isPresent())
-      rendering.put(REGEX, fieldSchemaArtifact.regex().get());
 
     if (fieldSchemaArtifact.fieldUi().hidden())
       rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
