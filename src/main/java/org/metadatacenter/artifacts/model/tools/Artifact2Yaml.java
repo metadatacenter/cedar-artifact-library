@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.tools;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -147,6 +148,7 @@ public class Artifact2Yaml
           enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
           disable(YAMLGenerator.Feature.SPLIT_LINES);
         ObjectMapper mapper = new ObjectMapper(yamlFactory);
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
 
         if (command.hasOption(YAML_OUTPUT_FILE_OPTION)) {
           String yamlOutputFileName = command.getOptionValue(YAML_OUTPUT_FILE_OPTION);

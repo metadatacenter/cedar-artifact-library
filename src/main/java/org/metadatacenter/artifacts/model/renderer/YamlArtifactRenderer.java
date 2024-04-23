@@ -109,6 +109,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 
@@ -557,6 +558,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(RECOMMENDED, true);
     }
 
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
+
+    if (fieldSchemaArtifact.regex().isPresent())
+      rendering.put(REGEX, fieldSchemaArtifact.regex().get());
+
     if (fieldSchemaArtifact.fieldUi().hidden())
       rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
 
@@ -577,8 +584,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
     // TODO Generate YAML for propertyLabels, propertyDescriptions
-
-    // TODO valueRecommendation
 
     return rendering;
   }
