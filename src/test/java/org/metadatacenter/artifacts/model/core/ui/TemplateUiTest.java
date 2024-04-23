@@ -13,7 +13,6 @@ public class TemplateUiTest
   public void testGetUiType() {
     TemplateUi templateUi = TemplateUi.builder()
       .withOrder("field 1")
-      .withPage("page 1")
       .build();
     assertEquals(UiType.TEMPLATE_UI, templateUi.uiType());
   }
@@ -26,16 +25,6 @@ public class TemplateUiTest
       .build();
     assertFalse(templateUi.order().isEmpty());
     assertEquals(templateUi.order().get(0), fieldName);
-  }
-
-  @Test
-  public void testGetPages() {
-    String pageName = "Page 1";
-    TemplateUi templateUi = TemplateUi.builder()
-      .withPage(pageName)
-      .build();
-    assertFalse(templateUi.pages().isEmpty());
-    assertEquals(templateUi.pages().get(0), pageName);
   }
 
   @Test
