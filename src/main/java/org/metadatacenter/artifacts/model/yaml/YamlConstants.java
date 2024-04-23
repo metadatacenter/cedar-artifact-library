@@ -23,7 +23,7 @@ public class YamlConstants
   public static final String STATIC_RICH_TEXT = "static-rich-text";
   public static final String STATIC_YOUTUBE_FIELD = "static-youtube-video";
 
-  public static final String KEY = "name";
+  public static final String KEY = "key";
   public static final String NAME = "name";
   public static final String TYPE = "type";
   public static final String CHILDREN = "children";

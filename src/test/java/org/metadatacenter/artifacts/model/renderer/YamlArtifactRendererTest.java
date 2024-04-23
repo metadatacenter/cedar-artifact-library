@@ -77,8 +77,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(NAME, name);
+    expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(DESCRIPTION, description);
     expectedRendering.put(HEADER, header);
     expectedRendering.put(FOOTER, footer);
@@ -100,11 +100,11 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderElementSchemaArtifact(name, elementSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(NAME, name);
+    expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
 
     assertEquals(expectedRendering, actualRendering);
@@ -124,7 +124,7 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, textField);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(NAME, name);
@@ -147,7 +147,7 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, textField);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     String expectedYaml = """
         type: text-field
@@ -198,8 +198,8 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(KEY, name);
-    expectedRendering.put(TYPE, TEXT_FIELD);
     expectedRendering.put(NAME, name);
+    expectedRendering.put(TYPE, TEXT_FIELD);
     expectedRendering.put(DESCRIPTION, description);
     expectedRendering.put(DATATYPE, IRI);
 

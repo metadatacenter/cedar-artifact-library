@@ -222,6 +222,22 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *
    * </pre>
    */
+  public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> configurationRendering = renderElementConfiguration(elementSchemaArtifact);
+
+    addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
+
+    if (!configurationRendering.isEmpty())
+      rendering.put(CONFIGURATION, configurationRendering);
+
+    if (elementSchemaArtifact.hasChildren())
+      rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact.getChildSchemas()));
+
+    return rendering;
+  }
+
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(elementName, elementSchemaArtifact, ELEMENT);
@@ -260,6 +276,38 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     type: OntologyClass
    * </pre>
    */
+  public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    LinkedHashMap<String, Object> rendering
+      = renderSchemaArtifactBase(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
+    LinkedHashMap<String, Object> configurationRendering = renderFieldConfiguration(fieldSchemaArtifact);
+
+    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
+      rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
+
+    if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
+      List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
+      rendering.put(ALT_LABEL, skosAlternateLabelRendering);
+    }
+
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
+      renderValueConstraintValues(valueConstraints, rendering);
+      renderValueConstraintActions(valueConstraints, rendering);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
+
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+
+    if (!configurationRendering.isEmpty())
+      rendering.put(CONFIGURATION, configurationRendering);
+
+    return rendering;
+  }
+
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering
@@ -599,9 +647,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    rendering.put(TYPE, artifactTypeName);
-
     rendering.put(NAME, schemaArtifact.name());
+
+    rendering.put(TYPE, artifactTypeName);
 
     if (!schemaArtifact.description().isEmpty())
       rendering.put(DESCRIPTION, schemaArtifact.description());
@@ -635,48 +683,50 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
+
   private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childName,
-    ChildSchemaArtifact childSchemaArtifact, String artifactTypeName)
+    SchemaArtifact schemaArtifact, String artifactTypeName)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(KEY, childName);
 
+    rendering.put(NAME, schemaArtifact.name());
+
     rendering.put(TYPE, artifactTypeName);
 
-    rendering.put(NAME, childSchemaArtifact.name());
+    if (!schemaArtifact.description().isEmpty())
+      rendering.put(DESCRIPTION, schemaArtifact.description());
 
-    if (!childSchemaArtifact.description().isEmpty())
-      rendering.put(DESCRIPTION, childSchemaArtifact.description());
+    if (schemaArtifact.identifier().isPresent())
+      rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    if (childSchemaArtifact.identifier().isPresent())
-      rendering.put(IDENTIFIER, childSchemaArtifact.identifier().get());
+    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
+      rendering.put(ID, schemaArtifact.jsonLdId().get());
 
-    if (!isCompact && childSchemaArtifact.jsonLdId().isPresent())
-      rendering.put(ID, childSchemaArtifact.jsonLdId().get());
+    if (!isCompact && schemaArtifact.status().isPresent())
+      rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
 
-    if (!isCompact && childSchemaArtifact.status().isPresent())
-      rendering.put(STATUS, renderStatusName(childSchemaArtifact.status().get()));
-
-    if (!isCompact && childSchemaArtifact.version().isPresent())
-      rendering.put(VERSION, childSchemaArtifact.version().get().toString());
+    if (!isCompact && schemaArtifact.version().isPresent())
+      rendering.put(VERSION, schemaArtifact.version().get().toString());
 
     if (!isCompact)
-      rendering.put(MODEL_VERSION, childSchemaArtifact.modelVersion().toString());
+      rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
 
-    if (!isCompact && childSchemaArtifact.previousVersion().isPresent())
-      rendering.put(PREVIOUS_VERSION, childSchemaArtifact.previousVersion().get().toString());
+    if (!isCompact && schemaArtifact.previousVersion().isPresent())
+      rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
 
-    if (!isCompact && childSchemaArtifact.derivedFrom().isPresent())
-      rendering.put(DERIVED_FROM, childSchemaArtifact.derivedFrom().get().toString());
+    if (!isCompact && schemaArtifact.derivedFrom().isPresent())
+      rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
-    if (childSchemaArtifact.language().isPresent())
-      rendering.put(LANGUAGE, childSchemaArtifact.language().get().toString());
+    if (schemaArtifact.language().isPresent())
+      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
 
     // TODO Generate YAML for annotations
 
     return rendering;
   }
+
 
   private void addArtifactProvenanceRendering(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
   {
