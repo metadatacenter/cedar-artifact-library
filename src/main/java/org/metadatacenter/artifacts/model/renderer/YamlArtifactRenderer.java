@@ -463,6 +463,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
         valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
         valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
+        if (valueSetValueConstraint.numTerms().isPresent())
+          valueSetValueConstraintRendering.put(NUM_TERMS, valueSetValueConstraint.numTerms().get());
         valuesRendering.add(valueSetValueConstraintRendering);
       }
 

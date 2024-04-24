@@ -919,8 +919,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
 
-// TODO: These should probably be in elements too but current editors do not put them there.
+// TODO: These should probably be in elements too as non required entries but current editors do not put them there.
 
+//    rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
+//    rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
 //    rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
 //    rendering.put(SCHEMA_ORG_DESCRIPTION, renderStringJsonSchemaTypeSpecification(0));
 //    rendering.put(PAV_CREATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
