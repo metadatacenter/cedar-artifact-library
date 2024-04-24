@@ -39,6 +39,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRON
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
@@ -170,7 +171,7 @@ public class YamlArtifactRendererTest {
     URI doidDiseaseBranchIri = URI.create("http://purl.obolibrary.org/obo/DOID_4");
     String doidSource = "DOID";
     String doidSourceAcronym = "DOID";
-    String doidDiseaseBranchName = "disease";
+    String doidDiseaseBranchName = "Disease";
     Integer doidDiseaseBranchDepth = 0;
     URI pmrDiseaseBranchIri = URI.create("http://purl.bioontology.org/ontology/PMR.owl#Disease");
     String pmrSource = "Physical Medicine and Rehabilitation (PMR)";
@@ -208,8 +209,9 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object>  doidDiseaseBranchRendering = new LinkedHashMap<>();
     doidDiseaseBranchRendering.put(TYPE, BRANCH);
-    doidDiseaseBranchRendering.put(ONTOLOGY_NAME, doidDiseaseBranchName);
+    doidDiseaseBranchRendering.put(ONTOLOGY_NAME, doidSource);
     doidDiseaseBranchRendering.put(ACRONYM, doidSourceAcronym);
+    doidDiseaseBranchRendering.put(TERM_LABEL, doidDiseaseBranchName);
     doidDiseaseBranchRendering.put(IRI, doidDiseaseBranchIri);
     doidDiseaseBranchRendering.put(MAX_DEPTH, doidDiseaseBranchDepth);
 
@@ -217,8 +219,9 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object>  pmrDiseaseBranchRendering = new LinkedHashMap<>();
     pmrDiseaseBranchRendering.put(TYPE, BRANCH);
-    pmrDiseaseBranchRendering.put(ONTOLOGY_NAME, pmrDiseaseBranchName);
+    pmrDiseaseBranchRendering.put(ONTOLOGY_NAME, pmrSource);
     pmrDiseaseBranchRendering.put(ACRONYM, pmrSourceAcronym);
+    pmrDiseaseBranchRendering.put(TERM_LABEL, pmrDiseaseBranchName);
     pmrDiseaseBranchRendering.put(IRI, pmrDiseaseBranchIri);
     pmrDiseaseBranchRendering.put(MAX_DEPTH, pmrDiseaseBranchDepth);
 

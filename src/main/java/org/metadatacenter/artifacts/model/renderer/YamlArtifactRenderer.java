@@ -24,6 +24,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
@@ -72,6 +73,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
@@ -433,21 +435,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         valuesRendering.add(ontologyValueConstraintRendering);
       }
 
-      for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
-        LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
-        valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
-        valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
-        valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
-        valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
-        valuesRendering.add(valueSetValueConstraintRendering);
-      }
-
       for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
         LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
         classValueConstraintRendering.put(TYPE, CLASS);
-        classValueConstraintRendering.put(PREF_LABEL, classValueConstraint.label());
+        classValueConstraintRendering.put(LABEL, classValueConstraint.label());
         classValueConstraintRendering.put(ACRONYM, classValueConstraint.source());
-        classValueConstraintRendering.put(TERM_TYPE, classValueConstraint.type());
+        classValueConstraintRendering.put(TERM_TYPE, renderValueType(classValueConstraint.type()));
         classValueConstraintRendering.put(TERM_LABEL, classValueConstraint.prefLabel());
         classValueConstraintRendering.put(IRI, classValueConstraint.uri());
         valuesRendering.add(classValueConstraintRendering);
@@ -456,11 +449,21 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
         LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
         branchValueConstraintRendering.put(TYPE, BRANCH);
-        branchValueConstraintRendering.put(ONTOLOGY_NAME, branchValueConstraint.name());
+        branchValueConstraintRendering.put(ONTOLOGY_NAME, branchValueConstraint.source());
         branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
+        branchValueConstraintRendering.put(TERM_LABEL, branchValueConstraint.name());
         branchValueConstraintRendering.put(IRI, branchValueConstraint.uri());
         branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
         valuesRendering.add(branchValueConstraintRendering);
+      }
+
+      for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
+        LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
+        valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
+        valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
+        valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
+        valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
+        valuesRendering.add(valueSetValueConstraintRendering);
       }
 
     } else if (valueConstraints instanceof TextValueConstraints) {
@@ -878,6 +881,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
     return offsetDateTime.format(datetimeFormatter);
+  }
+
+  private String renderValueType(ValueType valueType)
+  {
+    if (valueType == ValueType.ONTOLOGY_CLASS)
+      return "class";
+    else if (valueType == ValueType.VALUE_SET)
+      return "value";
+    else
+      return ""; // TODO Use typesafe switch when available
   }
 
 }

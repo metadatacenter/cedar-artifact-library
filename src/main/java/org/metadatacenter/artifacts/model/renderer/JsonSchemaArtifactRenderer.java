@@ -20,7 +20,6 @@ import org.metadatacenter.model.ModelNodeNames;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -848,8 +847,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderTemplateSchemaArtifactContextPropertiesJsonSchemaSpecification(templateSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
+
     rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
+
     rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
     rendering.put(SCHEMA_ORG_DESCRIPTION, renderStringJsonSchemaTypeSpecification(0));
     rendering.put(PAV_CREATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
@@ -917,6 +918,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderElementSchemaArtifactContextPropertiesJsonSchemaSpecification(elementSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
+
+// TODO: These should probably be in elements too but current editors do not put them there.
+
+//    rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
+//    rendering.put(SCHEMA_ORG_DESCRIPTION, renderStringJsonSchemaTypeSpecification(0));
+//    rendering.put(PAV_CREATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
+//    rendering.put(PAV_CREATED_BY, renderUriOrNullJsonSchemaTypeSpecification());
+//    rendering.put(PAV_LAST_UPDATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
+//    rendering.put(OSLC_MODIFIED_BY, renderUriOrNullJsonSchemaTypeSpecification());
 
     return rendering;
   }
