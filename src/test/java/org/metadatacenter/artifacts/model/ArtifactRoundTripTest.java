@@ -480,6 +480,7 @@ public class ArtifactRoundTripTest
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumWithProbesV3.0.0.json");
   }
+
   @Test public void testRoundTripSimpleInstanceWithAttributeValues()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
@@ -490,6 +491,15 @@ public class ArtifactRoundTripTest
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
+
+    assertTrue(validateJsonSchema(templateNode, instanceNode));
+  }
+
+  @Test
+  public void testRADx2InstanceAgainstTemplate() {
+
+    ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADx2.0CLIGeneratedTemplate.json");
+    ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADx2.0CLIGeneratedInstance.json");
 
     assertTrue(validateJsonSchema(templateNode, instanceNode));
   }
@@ -656,6 +666,11 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");
   }
 
+  @Test public void testRoundTripRAD2xCLIGeneratedTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RADx2.0CLIGeneratedTemplate.json");
+  }
+
   @Test public void testRoundTripSimpleInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstance.json");
@@ -669,6 +684,11 @@ public class ArtifactRoundTripTest
   @Test public void testRoundTripRADxCLIGeneratedInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADxCLIGeneratedInstance.json");
+  }
+
+  @Test public void testRoundTripRAD2xCLIGeneratedInstance()
+  {
+    testTemplateInstanceArtifactRoundTripFromFile("instances/RADx2.0CLIGeneratedInstance.json");
   }
 
   @Test public void testRoundTripElement001()
