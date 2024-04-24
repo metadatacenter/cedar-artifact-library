@@ -230,10 +230,10 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object>  actionRendering = new LinkedHashMap<>();
     actionRendering.put(ACTION, actionType.toString());
-    actionRendering.put(TERM_IRI, actionTermUri);
-    actionRendering.put(SOURCE_ACRONYM, actionSourceAcronym);
-    actionRendering.put(SOURCE_IRI, actionSourceIri);
     actionRendering.put(ACTION_TO, actionTo);
+    actionRendering.put(TERM_IRI, actionTermUri);
+    actionRendering.put(SOURCE_IRI, actionSourceIri);
+    actionRendering.put(SOURCE_ACRONYM, actionSourceAcronym);
 
     expectedActionsRendering.add(actionRendering);
 

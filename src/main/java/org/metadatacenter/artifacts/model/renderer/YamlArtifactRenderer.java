@@ -73,7 +73,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
@@ -85,6 +84,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MOVE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTI_SELECT_LIST_FIELD;
@@ -510,12 +510,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
           LinkedHashMap<String, Object> actionRendering = new LinkedHashMap<>();
           actionRendering.put(ACTION, renderActionName(action.action()));
-          actionRendering.put(TERM_IRI, action.termUri());
-          actionRendering.put(SOURCE_ACRONYM, action.source());
-          if (action.sourceUri().isPresent())
-            actionRendering.put(SOURCE_IRI, action.sourceUri().get());
           if (action.to().isPresent())
             actionRendering.put(ACTION_TO, action.to().get());
+          actionRendering.put(TERM_IRI, action.termUri());
+          if (action.sourceUri().isPresent())
+            actionRendering.put(SOURCE_IRI, action.sourceUri().get());
+          actionRendering.put(SOURCE_ACRONYM, action.source());
 
           actionsRendering.add(actionRendering);
         }
