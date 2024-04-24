@@ -847,7 +847,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderTemplateSchemaArtifactContextPropertiesJsonSchemaSpecification(templateSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
-    // TODO Language: rendering.put(JSON_LD_LANGUAGE, renderStringJsonSchemaTypeSpecification(1));
     rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
@@ -917,7 +916,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderElementSchemaArtifactContextPropertiesJsonSchemaSpecification(elementSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
-    // TODO Language: rendering.put(JSON_LD_LANGUAGE, renderStringJsonSchemaTypeSpecification(1));
 
     return rendering;
   }
@@ -1402,7 +1400,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     ]
    *   },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
-   *   "@value": {  "type": [ "string", "null" ] }
+   *   "@value": {  "type": [ "string", "null" ] },
+   *   "@language": {  "type": [ "string", "null" ], "minLength": 1 },
    * }
    * </pre>
    * A conforming value could look like:
@@ -1410,6 +1409,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * {
    *   "@type": "http://www.w3.org/2001/XMLSchema#string",
    *   "@value": "Bob"
+   *   "@language": "en"
    * }
    * </pre>
    */
@@ -1420,7 +1420,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_VALUE, renderStringOrNullJsonSchemaTypeSpecification());
-    // TODO Language: rendering.put(JSON_LD_LANGUAGE, renderStringJsonSchemaTypeSpecification(1));
+    rendering.put(JSON_LD_LANGUAGE, renderStringOrNullJsonSchemaTypeSpecification(1));
 
     return rendering;
   }
@@ -1496,6 +1496,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_STRING);
     rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_NULL);
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema type specification for a string or null value
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *   { "type": [ "string", "null" ], "minLength": [minLength] }
+   * </pre>
+   */
+  private ObjectNode renderStringOrNullJsonSchemaTypeSpecification(int minLength)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
+    rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_STRING);
+    rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_NULL);
+
+    if (minLength > 0)
+      rendering.put(JSON_SCHEMA_MIN_LENGTH, minLength);
 
     return rendering;
   }

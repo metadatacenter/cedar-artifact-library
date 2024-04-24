@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.LinkField;
 import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -250,11 +249,13 @@ public class JsonSchemaArtifactRendererTest
     String fieldName = "Field name";
     String fieldDescription = "Field description";
     String defaultValue = "default value";
+    String language = "en";
 
     TextField textField = TextField.builder().
       withName(fieldName).
       withDescription(fieldDescription).
       withDefaultValue(defaultValue).
+      withLanguage(language).
       build();
 
     ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(textField);
