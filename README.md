@@ -519,29 +519,36 @@ To generate a TSV file from a CEDAR template stored on the main CEDAR system:
 
 To generate a YAML file from a CEDAR template stored in a file:
 
-    mvn exec:java@artifact2yaml 
-      -Dexec.args="-tsf <input_artifact_filename> -y <output_YAML_filename>"
+    mvn exec:java@artifact-convertor 
+      -Dexec.args="-tsf <input_artifact_filename> -yf -f <output_filename>"
 
 This will read a JSON-Schema-based template and convert it into a YAML file. 
-If the optional -c argument is present then a compact YAML rendering of the artifact is generated; otherwise the full form is produced.
+If the optional -cy argument is present then a compact YAML rendering of the artifact is generated; otherwise the full form is produced.
 
-If the `-y` option is omitted the YAML is written to the console.
+If the `-f` option is omitted the YAML is written to the console.
 
 Other file-based options are `-esf` for element schema artifacts, `-fsf` for field schema artifacts, and `-tif` for template instance artifacts.
 
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
 ```
-    mvn exec:java@artifact2yaml 
+    mvn exec:java@artifact-convertor 
       -Dexec.args="-tsi <artifact_iri> 
-                   -y <output_YAML_filename> 
+                   -yf
+                   -f <output_YAML_filename> 
                    -r https://resource.metadatacenter.org
                    -k <CEDAR API key>"
 
 Other IRI-based options are `-esi` for element schema artifacts, `-fsi` for field schema artifacts, and `-tii` for template instance artifacts.
 
-Again, the -c argument is optional. If the `-y` option is omitted the YAML is written to the console.
+If the `-y` option is omitted the output is written to the console.
 
+To generate a JSON Schema file from a CEDAR template stored in a file:
+
+    mvn exec:java@artifact-convertor 
+      -Dexec.args="-tsf <input_artifact_filename> -jf -f <output_filename>"
+
+This will read a JSON-Schema-based template,convert it to JSON Schema and write it into a file. 
 
 ```
 ## Building the Library
