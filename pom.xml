@@ -168,12 +168,12 @@
           </execution>
 
           <execution>
-            <id>artifact2yaml</id>
+            <id>artifact-convertor</id>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-	      <mainClass>org.metadatacenter.artifacts.model.tools.Artifact2Yaml</mainClass>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.ArtifactConvertor</mainClass>
             </configuration>
           </execution>
 

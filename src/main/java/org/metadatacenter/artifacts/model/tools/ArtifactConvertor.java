@@ -19,6 +19,7 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 
@@ -33,7 +34,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-public class Artifact2Yaml
+public class ArtifactConvertor
 {
   private static final String TEMPLATE_SCHEMA_FILE_OPTION = "tsf";
   private static final String ELEMENT_SCHEMA_FILE_OPTION = "esf";
@@ -43,8 +44,10 @@ public class Artifact2Yaml
   private static final String ELEMENT_SCHEMA_IRI_OPTION = "esi";
   private static final String FIELD_SCHEMA_IRI_OPTION = "fsi";
   private static final String TEMPLATE_INSTANCE_IRI_OPTION = "tii";
-  private static final String YAML_OUTPUT_FILE_OPTION = "y";
-  private static final String COMPACT_YAML_OPTION = "c";
+  private static final String YAML_FORMAT_OPTION = "yf";
+  private static final String JSON_FORMAT_OPTION = "jf";
+  private static final String COMPACT_YAML_OPTION = "cy";
+  private static final String OUTPUT_FILE_OPTION = "f";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
@@ -78,6 +81,10 @@ public class Artifact2Yaml
     TEMPLATE_INSTANCE_IRI_OPTION
   )));
 
+  private static final Set<String> FORMAT_OPTIONS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+    YAML_FORMAT_OPTION, JSON_FORMAT_OPTION
+  )));
+
   public static void main(String[] args) throws IOException
   {
     CommandLineParser parser = new DefaultParser();
@@ -92,74 +99,113 @@ public class Artifact2Yaml
 
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
       YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml);
+      JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
       LinkedHashMap<String, Object> yamlRendering = null;
+      ObjectNode jsonRendering = null;
 
       if (command.hasOption(TEMPLATE_SCHEMA_FILE_OPTION)) {
         ObjectNode templateObjectNode = readArtifactJsonFromFile(command, TEMPLATE_SCHEMA_FILE_OPTION);
         TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-        yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+        if (command.hasOption(YAML_FORMAT_OPTION))
+          yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
       } else if (command.hasOption(ELEMENT_SCHEMA_FILE_OPTION)) {
         ObjectNode elementObjectNode = readArtifactJsonFromFile(command, ELEMENT_SCHEMA_FILE_OPTION);
         ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
+        if (command.hasOption(YAML_FORMAT_OPTION))
         yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
       } else if (command.hasOption(FIELD_SCHEMA_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, FIELD_SCHEMA_FILE_OPTION);
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
+        if (command.hasOption(YAML_FORMAT_OPTION))
         yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
       } else if (command.hasOption(TEMPLATE_INSTANCE_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, TEMPLATE_INSTANCE_FILE_OPTION);
         TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(fieldObjectNode);
 
+        if (command.hasOption(YAML_FORMAT_OPTION))
         yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
       } else if (command.hasOption(TEMPLATE_SCHEMA_IRI_OPTION)) {
         ObjectNode templateObjectNode =
           readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION, TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION);
         TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
+        if (command.hasOption(YAML_FORMAT_OPTION))
         yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
       } else if (command.hasOption(ELEMENT_SCHEMA_IRI_OPTION)) {
         ObjectNode elementObjectNode =
           readArtifactJsonFromRestApi(command, ELEMENT_SCHEMA_IRI_OPTION, ELEMENT_SCHEMA_RESOURCE_PATH_EXTENSION);
         ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
+        if (command.hasOption(YAML_FORMAT_OPTION))
         yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
       } else if (command.hasOption(FIELD_SCHEMA_IRI_OPTION)) {
         ObjectNode fieldObjectNode =
           readArtifactJsonFromRestApi(command, FIELD_SCHEMA_IRI_OPTION, FIELD_SCHEMA_RESOURCE_PATH_EXTENSION);
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
+        if (command.hasOption(YAML_FORMAT_OPTION))
         yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
       } else if (command.hasOption(TEMPLATE_INSTANCE_IRI_OPTION)) {
-        ObjectNode fieldObjectNode =
-          readArtifactJsonFromRestApi(command, TEMPLATE_INSTANCE_IRI_OPTION, TEMPLATE_INSTANCE_RESOURCE_PATH_EXTENSION);
-        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(fieldObjectNode);
+        ObjectNode fieldObjectNode = readArtifactJsonFromRestApi(command, TEMPLATE_INSTANCE_IRI_OPTION,
+          TEMPLATE_INSTANCE_RESOURCE_PATH_EXTENSION);
+        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
+          fieldObjectNode);
 
-        yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+        if (command.hasOption(YAML_FORMAT_OPTION))
+          yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+        else if (command.hasOption(JSON_FORMAT_OPTION))
+          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
       } else
         Usage(options, "No artifact file or artifact IRI option specified");
 
       try {
-        YAMLFactory yamlFactory = new YAMLFactory().
-          disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
-          enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
-          enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
-          disable(YAMLGenerator.Feature.SPLIT_LINES);
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
-        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
+        if (command.hasOption(YAML_FORMAT_OPTION)) {
+          YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+            .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
+            .disable(YAMLGenerator.Feature.SPLIT_LINES);
+          ObjectMapper mapper = new ObjectMapper(yamlFactory);
+          mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
 
-        if (command.hasOption(YAML_OUTPUT_FILE_OPTION)) {
-          String yamlOutputFileName = command.getOptionValue(YAML_OUTPUT_FILE_OPTION);
-          File yamlOutputFile = new File(yamlOutputFileName);
-          mapper.writeValue(yamlOutputFile, yamlRendering);
-          System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
-        } else {
-          mapper.writeValue(System.out, yamlRendering);
+          if (command.hasOption(OUTPUT_FILE_OPTION)) {
+            String yamlOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
+            File yamlOutputFile = new File(yamlOutputFileName);
+            mapper.writeValue(yamlOutputFile, yamlRendering);
+            System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
+          } else {
+            mapper.writeValue(System.out, yamlRendering);
+          }
+        } else if (command.hasOption(JSON_FORMAT_OPTION)) {
+          ObjectMapper mapper = new ObjectMapper();
+
+          if (command.hasOption(OUTPUT_FILE_OPTION)) {
+            String jsonOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
+            File jsonOutputFile = new File(jsonOutputFileName);
+            mapper.writeValue(jsonOutputFile, jsonRendering);
+            System.out.println("Successfully generated JSON file " + jsonOutputFile.getAbsolutePath());
+          } else {
+            mapper.writeValue(System.out, jsonRendering);
+          }
+
         }
       } catch (IOException e) {
-        throw new RuntimeException("Error writing YAML: " + e.getMessage());
+        throw new RuntimeException("Error writing file: " + e.getMessage());
       }
     } catch (ParseException e) {
       Usage(options, e.getMessage());
@@ -248,10 +294,20 @@ public class Artifact2Yaml
       .desc("Template instance IRI")
       .build();
 
-    Option yamlOutputFileOption = Option.builder(YAML_OUTPUT_FILE_OPTION)
-      .argName("yaml-output-file")
+    Option outputFileOption = Option.builder(OUTPUT_FILE_OPTION)
+      .argName("output-file")
       .hasArg()
-      .desc("YAML output file")
+      .desc("output file")
+      .build();
+
+    Option yamlFormatOption = Option.builder(YAML_FORMAT_OPTION)
+      .argName("yaml-format")
+      .desc("YAML format")
+      .build();
+
+    Option jsonFormatOption = Option.builder(JSON_FORMAT_OPTION)
+      .argName("json-format")
+      .desc("JSON format")
       .build();
 
     Option compactYamlOption = Option.builder(COMPACT_YAML_OPTION)
@@ -284,7 +340,13 @@ public class Artifact2Yaml
 
     options.addOptionGroup(artifactGroup);
 
-    options.addOption(yamlOutputFileOption);
+    OptionGroup formatGroup = new OptionGroup();
+    formatGroup.addOption(yamlFormatOption);
+    formatGroup.addOption(jsonFormatOption);
+
+    options.addOptionGroup(formatGroup);
+
+    options.addOption(outputFileOption);
     options.addOption(compactYamlOption);
     options.addOption(resourceOption);
     options.addOption(keyOption);
@@ -295,7 +357,10 @@ public class Artifact2Yaml
   private static void checkCommandLine(CommandLine command, Options options)
   {
     if (ARTIFACT_OPTIONS.stream().filter(o -> command.hasOption(o)).count() != 1)
-      Usage(options, "Exactly one artifact option should be specified");
+      Usage(options, "One artifact option should be specified");
+
+    if (FORMAT_OPTIONS.stream().filter(o -> command.hasOption(o)).count() != 1)
+      Usage(options, "One output format should be specified");
 
     if (ARTIFACT_FILE_OPTIONS.stream().anyMatch(o -> command.hasOption(o))) {
       if (command.hasOption(CEDAR_RESOURCE_REST_API_BASE_OPTION) || command.hasOption(CEDAR_APIKEY_OPTION))
@@ -310,10 +375,10 @@ public class Artifact2Yaml
 
   private static void Usage(Options options, String errorMessage) {
 
-    String header = "CEDAR Artifact to YAML Translation Tool";
+    String header = "CEDAR Artifact Convertor Tool";
 
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp(Artifact2Yaml.class.getName(), header, options, errorMessage, true);
+    formatter.printHelp(ArtifactConvertor.class.getName(), header, options, errorMessage, true);
 
     System.exit(-1);
   }
