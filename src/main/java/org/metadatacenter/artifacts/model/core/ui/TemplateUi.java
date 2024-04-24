@@ -3,13 +3,11 @@ package org.metadatacenter.artifacts.model.core.ui;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
@@ -20,8 +18,8 @@ import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 
 public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
 {
- static TemplateUi create(List<String> order, Map<String, String> propertyLabels,
-    Map<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
+ static TemplateUi create(List<String> order, LinkedHashMap<String, String> propertyLabels,
+    LinkedHashMap<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
   {
     return new TemplateUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
   }
@@ -39,8 +37,8 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
 
   class Builder {
     private List<String> order = new ArrayList<>();
-    private Map<String, String> propertyLabels = new HashMap<>();
-    private Map<String, String> propertyDescriptions = new HashMap<>();
+    private LinkedHashMap<String, String> propertyLabels = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> propertyDescriptions = new LinkedHashMap<>();
     private Optional<String> header = Optional.empty();
     private Optional<String> footer = Optional.empty();
 
@@ -50,8 +48,8 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
     private Builder(TemplateUi templateUi)
     {
       this.order = List.copyOf(templateUi.order());
-      this.propertyLabels = Map.copyOf(templateUi.propertyLabels());
-      this.propertyDescriptions = Map.copyOf(templateUi.propertyDescriptions());
+      this.propertyLabels = new LinkedHashMap<>(templateUi.propertyLabels());
+      this.propertyDescriptions = new LinkedHashMap<>(templateUi.propertyDescriptions());
       this.header = templateUi.header();
       this.footer = templateUi.footer();
     }
@@ -114,8 +112,9 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
   }
 }
 
-record TemplateUiRecord(List<String> order, Map<String, String> propertyLabels,
-                        Map<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
+record TemplateUiRecord(List<String> order, LinkedHashMap<String, String> propertyLabels,
+                        LinkedHashMap<String, String> propertyDescriptions,
+                        Optional<String> header, Optional<String> footer)
   implements TemplateUi
 {
   public TemplateUiRecord
@@ -146,7 +145,7 @@ record TemplateUiRecord(List<String> order, Map<String, String> propertyLabels,
     **/
 
     order = List.copyOf(order);
-    propertyLabels = Map.copyOf(propertyLabels);
-    propertyDescriptions = Map.copyOf(propertyDescriptions);
+    propertyLabels = new LinkedHashMap<>(propertyLabels);
+    propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
   }
 }

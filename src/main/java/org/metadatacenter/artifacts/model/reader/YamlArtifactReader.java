@@ -350,8 +350,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
     List<String> order = readStringArray(sourceNode, path, ORDER);
-    Map<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
+    LinkedHashMap<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
+    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(sourceNode, path, HEADER);
     Optional<String> footer = readString(sourceNode, path, FOOTER);
 
@@ -361,8 +361,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private ElementUi readElementUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
     List<String> order = readStringArray(sourceNode, path, ORDER);
-    Map<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
+    LinkedHashMap<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
+    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(sourceNode, path, HEADER);
     Optional<String> footer = readString(sourceNode, path, FOOTER);
 
@@ -765,9 +765,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Collections.emptyList(); // TODO Implement read actions value constraints
   }
 
-  private Map<String, String> readString2StringMap(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private LinkedHashMap<String, String> readString2StringMap(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
-    return Collections.emptyMap(); // TODO Implement readString2StringMap
+    return new LinkedHashMap<>(); // TODO Implement readString2StringMap
   }
 
   private LinkedHashMap<String, Object> readChildNode(LinkedHashMap<String, Object> parentNode, String path, String fieldName)

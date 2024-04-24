@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1228,8 +1229,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + fieldName;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
-    Map<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    LinkedHashMap<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
@@ -1242,8 +1243,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + fieldName;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
-    Map<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    Map<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    LinkedHashMap<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
@@ -1353,9 +1354,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return (ObjectNode)childNode;
   }
 
-  private Map<String, String> readString2StringMap(ObjectNode parentNode, String path, String fieldName)
+  private LinkedHashMap<String, String> readString2StringMap(ObjectNode parentNode, String path, String fieldName)
   {
-    Map<String, String> string2StringMap = new HashMap<>();
+    LinkedHashMap<String, String> string2StringMap = new LinkedHashMap<>();
 
     JsonNode childNode = parentNode.get(fieldName);
 
