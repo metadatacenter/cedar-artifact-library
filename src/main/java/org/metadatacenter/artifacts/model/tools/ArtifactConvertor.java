@@ -3,9 +3,11 @@ package org.metadatacenter.artifacts.model.tools;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -193,6 +195,9 @@ public class ArtifactConvertor
           }
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
           ObjectMapper mapper = new ObjectMapper();
+          mapper.enable(SerializationFeature.INDENT_OUTPUT);
+          mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+          mapper.registerModule(new JavaTimeModule());
 
           if (command.hasOption(OUTPUT_FILE_OPTION)) {
             String jsonOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
@@ -202,7 +207,6 @@ public class ArtifactConvertor
           } else {
             mapper.writeValue(System.out, jsonRendering);
           }
-
         }
       } catch (IOException e) {
         throw new RuntimeException("Error writing file: " + e.getMessage());

@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.fields.constraints;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
 
   Optional<TextDefaultValue> defaultValue();
 
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   List<LiteralValueConstraint> literals();
 
   Optional<String> regex();

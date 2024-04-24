@@ -64,7 +64,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
@@ -265,7 +265,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO Read child elements
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO Read child fields
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
@@ -299,7 +299,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
     Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO  Read child elements
     Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO  Read child fields
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
@@ -333,7 +333,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
-    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, LAST_UPDATED_ON);
+    Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
     Optional<XsdDatatype> datatype = readXsdDatatype(sourceNode, path, DATATYPE);
     FieldUi fieldUi = readFieldUi(sourceNode, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUES, fieldUi.inputType());

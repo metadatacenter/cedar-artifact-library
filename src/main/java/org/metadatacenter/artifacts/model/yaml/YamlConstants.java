@@ -41,9 +41,9 @@ public class YamlConstants
   public static final String IS_BASED_ON = "isBasedOn";
   public static final String DERIVED_FROM = "derivedFrom";
   public static final String CREATED_BY = "createdBy";
-  public static final String MODIFIED_BY = "modifiedBy";
   public static final String CREATED_ON = "createdOn";
-  public static final String LAST_UPDATED_ON = "lastUpdatedOn";
+  public static final String MODIFIED_BY = "modifiedBy";
+  public static final String MODIFIED_ON = "modifiedOn";
 
   public static final String PREF_LABEL = "prefLabel";
   public static final String ALT_LABEL = "altLabels";

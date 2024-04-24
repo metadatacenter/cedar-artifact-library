@@ -73,7 +73,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
@@ -387,7 +387,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
 
     if (templateInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(LAST_UPDATED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
+      rendering.put(MODIFIED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
 
     // TODO Need to generate YAML for children of template instance
 
@@ -708,6 +708,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(TYPE, artifactTypeName);
 
+    if (schemaArtifact.language().isPresent())
+      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
+
     rendering.put(NAME, schemaArtifact.name());
 
     if (!schemaArtifact.description().isEmpty())
@@ -734,14 +737,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && schemaArtifact.derivedFrom().isPresent())
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
-    if (schemaArtifact.language().isPresent())
-      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
-
     // TODO Generate YAML for annotations
 
     return rendering;
   }
-
 
   private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childName,
     SchemaArtifact schemaArtifact, String artifactTypeName)
@@ -795,7 +794,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (schemaArtifact.createdBy().isPresent())
         rendering.put(CREATED_BY, schemaArtifact.createdBy().get().toString());
       if (schemaArtifact.lastUpdatedOn().isPresent())
-        rendering.put(LAST_UPDATED_ON, renderOffsetDateTime(schemaArtifact.lastUpdatedOn().get()));
+        rendering.put(MODIFIED_ON, renderOffsetDateTime(schemaArtifact.lastUpdatedOn().get()));
       if (schemaArtifact.modifiedBy().isPresent())
         rendering.put(MODIFIED_BY, schemaArtifact.modifiedBy().get().toString());
     }

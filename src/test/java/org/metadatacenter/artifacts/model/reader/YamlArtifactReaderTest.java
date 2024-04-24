@@ -26,7 +26,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
@@ -80,8 +80,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(CREATED_BY, createdBy.toString());
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
-    yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
-    yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
+    yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
     yamlSource.put(LANGUAGE, language);
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(yamlSource);
@@ -135,7 +134,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(CREATED_BY, createdBy.toString());
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
-    yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
+    yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
     yamlSource.put(MULTIPLE, isMultiple);
     yamlSource.put(MIN_ITEMS, minItems);
     yamlSource.put(MAX_ITEMS, maxItems);
@@ -199,7 +198,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(CREATED_BY, createdBy.toString());
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
-    yamlSource.put(LAST_UPDATED_ON, lastUpdatedOn.toString());
+    yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
     yamlSource.put(PREF_LABEL, prefLabel);
     yamlSource.put(ALT_LABEL, altLabels);
     yamlSource.put(TYPE, FieldInputType.TEXTFIELD.toString());
