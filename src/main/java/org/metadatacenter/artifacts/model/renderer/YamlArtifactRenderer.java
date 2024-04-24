@@ -25,7 +25,6 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstrain
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
-import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.time.OffsetDateTime;
@@ -47,11 +46,14 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLACES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DELETE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
@@ -70,7 +72,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
@@ -91,9 +92,11 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUMERIC_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PHONE_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PUBLISHED_STATUS;
@@ -103,10 +106,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REGEX;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_IMAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_PAGE_BREAK;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_TEXT;
@@ -116,6 +117,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
@@ -123,6 +126,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
@@ -420,8 +424,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
         LinkedHashMap<String, Object> ontologyValueConstraintRendering = new LinkedHashMap<>();
         ontologyValueConstraintRendering.put(TYPE, ONTOLOGY);
-        ontologyValueConstraintRendering.put(NAME, ontologyValueConstraint.name());
         ontologyValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
+        ontologyValueConstraintRendering.put(ONTOLOGY_NAME, ontologyValueConstraint.name());
         ontologyValueConstraintRendering.put(IRI, ontologyValueConstraint.uri());
         if (ontologyValueConstraint.numTerms().isPresent())
           ontologyValueConstraintRendering.put(NUM_TERMS, ontologyValueConstraint.numTerms().get());
@@ -432,8 +436,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
         LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
         valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
-        valueSetValueConstraintRendering.put(NAME, valueSetValueConstraint.name());
         valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
+        valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
         valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
         valuesRendering.add(valueSetValueConstraintRendering);
       }
@@ -441,20 +445,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
         LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
         classValueConstraintRendering.put(TYPE, CLASS);
-        classValueConstraintRendering.put(SOURCE, classValueConstraint.source());
-        classValueConstraintRendering.put(NAME, classValueConstraint.prefLabel());
-        classValueConstraintRendering.put(IRI, classValueConstraint.uri());
         classValueConstraintRendering.put(PREF_LABEL, classValueConstraint.label());
+        classValueConstraintRendering.put(ACRONYM, classValueConstraint.source());
+        classValueConstraintRendering.put(TERM_TYPE, classValueConstraint.type());
+        classValueConstraintRendering.put(TERM_LABEL, classValueConstraint.prefLabel());
+        classValueConstraintRendering.put(IRI, classValueConstraint.uri());
         valuesRendering.add(classValueConstraintRendering);
       }
 
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
         LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
         branchValueConstraintRendering.put(TYPE, BRANCH);
-        branchValueConstraintRendering.put(SOURCE, branchValueConstraint.source());
-        branchValueConstraintRendering.put(SOURCE_NAME, branchValueConstraint.name());
-        branchValueConstraintRendering.put(SOURCE_ACRONYM, branchValueConstraint.acronym());
-        branchValueConstraintRendering.put(SOURCE_IRI, branchValueConstraint.uri());
+        branchValueConstraintRendering.put(ONTOLOGY_NAME, branchValueConstraint.name());
+        branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
+        branchValueConstraintRendering.put(IRI, branchValueConstraint.uri());
         branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
         valuesRendering.add(branchValueConstraintRendering);
       }
@@ -547,7 +551,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(DEFAULT, numericDefaultValue.value());
       } else if (defaultValue.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = defaultValue.asControlledTermDefaultValue();
-        rendering.put(DEFAULT, controlledTermDefaultValue.value().getLeft());
+        LinkedHashMap<String, Object> defaultRendering = new LinkedHashMap<>();
+        defaultRendering.put(DEFAULT_VALUE, controlledTermDefaultValue.value().getLeft());
+        defaultRendering.put(DEFAULT_LABEL, controlledTermDefaultValue.value().getRight());
+
+        rendering.put(DEFAULT, defaultRendering);
       }
     }
 
@@ -824,6 +832,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Use typesafe switch when available
     switch (fieldSchemaArtifact.fieldUi().inputType()) {
     case TEXTFIELD:
+      if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get().isControlledTermValueConstraint())
+        return CONTROLLED_TERM_FIELD;
+      else
       return TEXT_FIELD;
     case TEXTAREA:
       return TEXT_AREA_FIELD;

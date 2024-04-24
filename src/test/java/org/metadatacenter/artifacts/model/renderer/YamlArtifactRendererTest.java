@@ -19,10 +19,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
@@ -32,10 +34,9 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
@@ -196,36 +197,34 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, controlledTermField);
 
-    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(KEY, name);
-    expectedRendering.put(TYPE, TEXT_FIELD);
-    expectedRendering.put(NAME, name);
-    expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(DATATYPE, IRI);
+    LinkedHashMap<String, Object> expectedBaseFieldRendering = new LinkedHashMap<>();
+    expectedBaseFieldRendering.put(KEY, name);
+    expectedBaseFieldRendering.put(TYPE, CONTROLLED_TERM_FIELD);
+    expectedBaseFieldRendering.put(NAME, name);
+    expectedBaseFieldRendering.put(DESCRIPTION, description);
+    expectedBaseFieldRendering.put(DATATYPE, IRI);
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
 
     LinkedHashMap<String, Object>  doidDiseaseBranchRendering = new LinkedHashMap<>();
     doidDiseaseBranchRendering.put(TYPE, BRANCH);
-    doidDiseaseBranchRendering.put(SOURCE, doidSource);
-    doidDiseaseBranchRendering.put(SOURCE_NAME, doidDiseaseBranchName);
-    doidDiseaseBranchRendering.put(SOURCE_ACRONYM, doidSourceAcronym);
-    doidDiseaseBranchRendering.put(SOURCE_IRI, doidDiseaseBranchIri);
+    doidDiseaseBranchRendering.put(ONTOLOGY_NAME, doidDiseaseBranchName);
+    doidDiseaseBranchRendering.put(ACRONYM, doidSourceAcronym);
+    doidDiseaseBranchRendering.put(IRI, doidDiseaseBranchIri);
     doidDiseaseBranchRendering.put(MAX_DEPTH, doidDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(doidDiseaseBranchRendering);
 
     LinkedHashMap<String, Object>  pmrDiseaseBranchRendering = new LinkedHashMap<>();
     pmrDiseaseBranchRendering.put(TYPE, BRANCH);
-    pmrDiseaseBranchRendering.put(SOURCE, pmrSource);
-    pmrDiseaseBranchRendering.put(SOURCE_NAME, pmrDiseaseBranchName);
-    pmrDiseaseBranchRendering.put(SOURCE_ACRONYM, pmrSourceAcronym);
-    pmrDiseaseBranchRendering.put(SOURCE_IRI, pmrDiseaseBranchIri);
+    pmrDiseaseBranchRendering.put(ONTOLOGY_NAME, pmrDiseaseBranchName);
+    pmrDiseaseBranchRendering.put(ACRONYM, pmrSourceAcronym);
+    pmrDiseaseBranchRendering.put(IRI, pmrDiseaseBranchIri);
     pmrDiseaseBranchRendering.put(MAX_DEPTH, pmrDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(pmrDiseaseBranchRendering);
 
-    expectedRendering.put(VALUES, expectedValueConstraintsRendering);
+    expectedBaseFieldRendering.put(VALUES, expectedValueConstraintsRendering);
 
     List<LinkedHashMap<String, Object>> expectedActionsRendering = new ArrayList<>();
 
@@ -238,9 +237,9 @@ public class YamlArtifactRendererTest {
 
     expectedActionsRendering.add(actionRendering);
 
-    expectedRendering.put(ACTIONS, expectedActionsRendering);
+    expectedBaseFieldRendering.put(ACTIONS, expectedActionsRendering);
 
-    assertEquals(expectedRendering.toString(), actualRendering.toString());
+    assertEquals(expectedBaseFieldRendering.toString(), actualRendering.toString());
   }
 
 }

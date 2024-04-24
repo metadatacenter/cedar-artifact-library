@@ -5,7 +5,7 @@ public class YamlConstants
   public static final String TEMPLATE = "template";
   public static final String ELEMENT = "element";
   public static final String TEXT_FIELD = "text-field";
-  public static final String CONTROLLD_TERM_FIELD = "controlled-term-field";
+  public static final String CONTROLLED_TERM_FIELD = "controlled-term-field";
   public static final String TEXT_AREA_FIELD = "text-area-field";
   public static final String NUMERIC_FIELD = "numeric-field";
   public static final String TEMPORAL_FIELD = "temporal-field";
@@ -56,6 +56,8 @@ public class YamlConstants
   public static final String INPUT_TIME_ZONE = "inputTimeZone";
   public static final String UNIT = "unit";
   public static final String DEFAULT = "default";
+  public static final String DEFAULT_VALUE = "value";
+  public static final String DEFAULT_LABEL = "label";
   public static final String MIN_VALUE = "minValue";
   public static final String MAX_VALUE = "maxValue";
   public static final String REGEX = "regex";
@@ -67,6 +69,10 @@ public class YamlConstants
   public static final String VALUES = "values";
   public static final String ACTIONS = "actions";
   public static final String ACRONYM = "acronym";
+  public static final String ONTOLOGY_NAME = "ontologyName";
+  public static final String VALUE_SET_NAME = "valueSetName";
+  public static final String TERM_TYPE = "termType";
+  public static final String TERM_LABEL = "termLabel";
   public static final String ONTOLOGY = "ontology";
   public static final String CLASS = "class";
   public static final String BRANCH = "branch";
@@ -78,8 +84,8 @@ public class YamlConstants
   public static final String ACTION_TO = "to";
   public static final String TERM_IRI = "termIri";
   public static final String SOURCE_ACRONYM = "sourceAcronym";
-  public static final String SOURCE_NAME = "sourceName";
   public static final String SOURCE_IRI = "sourceIri";
+  public static final String SOURCE_NAME = "sourceName";
   public static final String SELECTED_BY_DEFAULT = "selected";
   public static final String MAX_DEPTH = "maxDepth";
   public static final String NUM_TERMS = "numTerms";
