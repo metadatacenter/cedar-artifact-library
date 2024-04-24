@@ -747,7 +747,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  // TODO Lot of repetition of above method
+  // TODO Lot of repetition of above method. This has key: [childName] in YAML
   private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childName,
     SchemaArtifact schemaArtifact, String artifactTypeName)
   {
