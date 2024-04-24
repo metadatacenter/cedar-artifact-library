@@ -747,6 +747,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
+  // TODO Lot of repetition of above method
   private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childName,
     SchemaArtifact schemaArtifact, String artifactTypeName)
   {
@@ -755,6 +756,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     rendering.put(KEY, childName);
 
     rendering.put(TYPE, artifactTypeName);
+
+    if (schemaArtifact.language().isPresent())
+      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
 
     rendering.put(NAME, schemaArtifact.name());
 
@@ -781,9 +785,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!isCompact && schemaArtifact.derivedFrom().isPresent())
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
-
-    if (schemaArtifact.language().isPresent())
-      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
 
     // TODO Generate YAML for annotations
 
