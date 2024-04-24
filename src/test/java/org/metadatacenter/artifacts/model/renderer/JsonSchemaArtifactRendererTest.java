@@ -32,9 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -389,7 +388,7 @@ public class JsonSchemaArtifactRendererTest
     textField2Instances.add(textField2Instance2);
     FieldInstanceArtifact attributeValueFieldInstance1 = TextFieldInstance.builder().withValue("AV Value 1").build();
     FieldInstanceArtifact attributeValueFieldInstance2 = TextFieldInstance.builder().withValue("AV Value 2").build();
-    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances = new LinkedHashMap<>();
     attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
     attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
 
@@ -433,7 +432,7 @@ public class JsonSchemaArtifactRendererTest
     textField2Instances.add(textField2Instance2);
     FieldInstanceArtifact attributeValueFieldInstance1 = TextFieldInstance.builder().withValue("AV Value 1").build();
     FieldInstanceArtifact attributeValueFieldInstance2 = TextFieldInstance.builder().withValue("AV Value 2").build();
-    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances = new LinkedHashMap<>();
     attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
     attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
 

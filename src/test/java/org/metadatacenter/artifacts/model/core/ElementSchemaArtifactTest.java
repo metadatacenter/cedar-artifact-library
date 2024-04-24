@@ -7,8 +7,8 @@ import org.metadatacenter.artifacts.model.core.ui.ElementUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +22,7 @@ public class ElementSchemaArtifactTest
 
   @Test public void testConstructor()
   {
-    Map<String, URI> jsonLdContext = PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+    LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = Collections.singletonList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     URI jsonLdId = URI.create("http://example.com/artifact");
     URI createdBy = URI.create("http://example.com/user");
@@ -52,7 +52,7 @@ public class ElementSchemaArtifactTest
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      Collections.emptyMap(), Collections.emptyMap(),
+      new LinkedHashMap<>(), new LinkedHashMap<>(),
       false, minItems, maxItems, propertyUri, language, ElementUi.builder().build());
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());

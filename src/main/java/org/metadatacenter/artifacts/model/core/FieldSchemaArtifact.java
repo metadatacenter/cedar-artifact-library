@@ -8,8 +8,8 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact permits TextField,
@@ -75,7 +75,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
   }
 
   static FieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,

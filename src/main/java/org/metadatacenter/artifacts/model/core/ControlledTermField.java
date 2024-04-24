@@ -14,8 +14,8 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,7 +43,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 public sealed interface ControlledTermField extends FieldSchemaArtifact
 {
   static ControlledTermField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
@@ -71,7 +71,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     public ControlledTermFieldBuilder()
     {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
-      withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+      withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       valueConstraintsBuilder.withMultipleChoice(false);
       fieldUiBuilder.withInputType(FieldInputType.TEXTFIELD);
     }
@@ -166,7 +166,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
+    @Override public ControlledTermFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
       super.withJsonLdContext(jsonLdContext);
       return this;
@@ -323,7 +323,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
 }
 
 record ControlledTermFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                                 Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                 LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                  String name, String description, Optional<String> identifier,
                                  Version modelVersion, Optional<Version> version, Optional<Status> status,
                                  Optional<URI> previousVersion, Optional<URI> derivedFrom,
@@ -363,7 +363,7 @@ implements ControlledTermField
     else
       validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 
-    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

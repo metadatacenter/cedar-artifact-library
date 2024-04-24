@@ -4,7 +4,6 @@ import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,9 +70,9 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
       throw new IllegalArgumentException("Field " + name + "not present in element " + name());
   }
 
-  default Map<String, URI> getChildPropertyUris()
+  default LinkedHashMap<String, URI> getChildPropertyUris()
   {
-    Map<String, URI> childPropertyUris = new HashMap<>();
+    LinkedHashMap<String, URI> childPropertyUris = new LinkedHashMap<>();
 
     for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : getChildSchemas().entrySet()) {
       String childName = childSchemaArtifactEntry.getKey();

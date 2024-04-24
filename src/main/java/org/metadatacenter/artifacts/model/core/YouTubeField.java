@@ -7,8 +7,8 @@ import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,7 +36,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 public sealed interface YouTubeField extends FieldSchemaArtifact
 {
   static YouTubeField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
@@ -60,7 +60,7 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
 
     public YouTubeFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
-      withJsonLdContext(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+      withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     }
 
     public YouTubeFieldBuilder(YouTubeField youTubeField)
@@ -80,7 +80,7 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public YouTubeFieldBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
+    @Override public YouTubeFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
       super.withJsonLdContext(jsonLdContext);
       return this;
@@ -223,7 +223,7 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
 }
 
 record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                          Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                          LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                           String name, String description, Optional<String> identifier,
                           Version modelVersion, Optional<Version> version, Optional<Status> status,
                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
@@ -263,7 +263,7 @@ record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
     else
       validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 
-    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

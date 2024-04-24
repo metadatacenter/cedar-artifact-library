@@ -10,8 +10,8 @@ import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -39,7 +39,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 public sealed interface TemporalField extends FieldSchemaArtifact
 {
   static TemporalField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
@@ -75,7 +75,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
     public TemporalFieldBuilder withTemporalType(
       XsdTemporalDatatype temporalType)
     {
-      withJsonLdContext(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+      withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       valueConstraintsBuilder.withTemporalType(temporalType);
       return this;
     }
@@ -118,7 +118,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TemporalFieldBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
+    @Override public TemporalFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
       super.withJsonLdContext(jsonLdContext);
       return this;
@@ -274,7 +274,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
 }
 
 record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                           Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                            String name, String description, Optional<String> identifier,
                            Version modelVersion, Optional<Version> version, Optional<Status> status,
                            Optional<URI> previousVersion, Optional<URI> derivedFrom,
@@ -314,7 +314,7 @@ record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
     else
       validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 
-    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

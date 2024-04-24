@@ -7,9 +7,8 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
@@ -23,7 +22,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   PageBreakField.PageBreakFieldBuilder, SectionBreakField.SectionBreakFieldBuilder, ImageField.ImageFieldBuilder,
   YouTubeField.YouTubeFieldBuilder, RichTextField.RichTextFieldBuilder
 {
-  protected Map<String, URI> jsonLdContext;
+  protected LinkedHashMap<String, URI> jsonLdContext;
   protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();
   protected Optional<URI> createdBy = Optional.empty();
@@ -60,7 +59,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
 
   protected FieldSchemaArtifactBuilder(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    this.jsonLdContext = new HashMap<>(fieldSchemaArtifact.jsonLdContext());
+    this.jsonLdContext = new LinkedHashMap<>(fieldSchemaArtifact.jsonLdContext());
     this.jsonLdTypes = new ArrayList<>(fieldSchemaArtifact.jsonLdTypes());
     this.jsonLdId = fieldSchemaArtifact.jsonLdId();
     this.createdBy = fieldSchemaArtifact.createdBy();
@@ -88,12 +87,12 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
   }
 
-  protected FieldSchemaArtifactBuilder withJsonLdContext(Map<String, URI> jsonLdContext)
+  protected FieldSchemaArtifactBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
   {
     if (jsonLdContext == null)
       throw new IllegalArgumentException("null JSON-LD @context passed to builder");
 
-    this.jsonLdContext = Map.copyOf(jsonLdContext);
+    this.jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     return this;
   }
 

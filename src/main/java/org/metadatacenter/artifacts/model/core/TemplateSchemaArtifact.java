@@ -6,7 +6,6 @@ import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,12 +45,13 @@ import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact
 {
-  static TemplateSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+  static TemplateSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+    String jsonSchemaDescription,
+    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas, LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
     Optional<String> language, TemplateUi templateUi)
   {
     return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -96,7 +96,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
   class Builder
   {
-    private Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     private List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
@@ -126,7 +126,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     private Builder(TemplateSchemaArtifact templateSchemaArtifact)
     {
-      this.jsonLdContext = new HashMap<>(templateSchemaArtifact.jsonLdContext());
+      this.jsonLdContext = new LinkedHashMap<>(templateSchemaArtifact.jsonLdContext());
       this.jsonLdTypes = new ArrayList<>(templateSchemaArtifact.jsonLdTypes());
       this.jsonLdId = templateSchemaArtifact.jsonLdId();
       this.createdBy = templateSchemaArtifact.createdBy();
@@ -163,9 +163,9 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    public Builder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
-      this.jsonLdContext = Map.copyOf(jsonLdContext);
+      this.jsonLdContext = new LinkedHashMap<>(jsonLdContext);
       return this;
     }
 
@@ -347,12 +347,12 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 }
 
 record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                                    Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                     String name, String description, Optional<String> identifier,
                                     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                    Map<String, FieldSchemaArtifact> fieldSchemas,
-                                    Map<String, ElementSchemaArtifact> elementSchemas,
+                                    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
+                                    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
                                     Optional<String> language, TemplateUi templateUi) implements TemplateSchemaArtifact
 {
   public TemplateSchemaArtifactRecord {
@@ -384,9 +384,9 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
           name + "; missing fields: " + childNames);
     }
 
-    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
-    fieldSchemas = Map.copyOf(fieldSchemas);
-    elementSchemas = Map.copyOf(elementSchemas);
+    fieldSchemas = new LinkedHashMap<>(fieldSchemas);
+    elementSchemas = new LinkedHashMap<>(elementSchemas);
   }
 }

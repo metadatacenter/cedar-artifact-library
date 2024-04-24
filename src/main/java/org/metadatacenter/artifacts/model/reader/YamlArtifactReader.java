@@ -40,11 +40,9 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
@@ -62,16 +60,18 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_FORMAT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_ZONE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ORDER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
@@ -79,8 +79,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_LAB
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_FORMAT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_ZONE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
@@ -251,7 +249,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String jsonSchemaTitle = name + " template";
     String jsonSchemaDescription = name + " template generated from YAML";
 
-    Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
 
@@ -266,8 +264,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
-    Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO Read child elements
-    Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO Read child fields
+    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>(); // TODO Read child elements
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>(); // TODO Read child fields
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     TemplateUi templateUi = readTemplateUi(sourceNode, path);
 
@@ -285,7 +283,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String jsonSchemaTitle = name + " element";
     String jsonSchemaDescription = name + " element generated from YAML";
 
-    Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
 
@@ -300,8 +298,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
-    Map<String, ElementSchemaArtifact> elementSchemas = Collections.EMPTY_MAP; // TODO  Read child elements
-    Map<String, FieldSchemaArtifact> fieldSchemas = Collections.EMPTY_MAP; // TODO  Read child fields
+    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>(); // TODO  Read child elements
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>(); // TODO  Read child fields
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     ElementUi elementUi = readElementUi(sourceNode, path);
 
@@ -319,7 +317,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String jsonSchemaTitle = name + " field";
     String jsonSchemaDescription = name + " field generated from YAML";
 
-    Map<String, URI> jsonLdContext = new HashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
 
