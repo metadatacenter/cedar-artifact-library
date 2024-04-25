@@ -656,7 +656,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private void addCoreSchemaOrgRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
   {
-    rendering.put(JSON_SCHEMA_SCHEMA, schemaArtifact.jsonSchemaSchemaUri().toString());
     rendering.put(JSON_SCHEMA_TYPE, schemaArtifact.jsonSchemaType());
     rendering.put(JSON_SCHEMA_TITLE, schemaArtifact.jsonSchemaTitle());
     rendering.put(JSON_SCHEMA_DESCRIPTION, schemaArtifact.jsonSchemaDescription());
