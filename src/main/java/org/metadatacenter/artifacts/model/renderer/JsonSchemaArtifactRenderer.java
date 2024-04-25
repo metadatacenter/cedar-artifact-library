@@ -143,6 +143,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreJsonSchemaRendering(templateSchemaArtifact, rendering);
     addCoreSchemaOrgRendering(templateSchemaArtifact, rendering);
 
+    rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
+
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderTemplateSchemaArtifactPropertiesJsonSchemaSpecification(templateSchemaArtifact));
 
@@ -165,8 +167,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
     else
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
-
-    rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
     if (templateSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(templateSchemaArtifact.annotations().get()));
@@ -242,8 +242,16 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreJsonSchemaRendering(elementSchemaArtifact, rendering);
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
 
+    rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
+
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderElementSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
+
+    if (elementSchemaArtifact.hasAttributeValueField())
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
+        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
+    else
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -253,13 +261,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (String childName : elementSchemaArtifact.getChildNames())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
-    if (elementSchemaArtifact.hasAttributeValueField())
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
-        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
-    else
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
-
-    rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
 
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
@@ -338,8 +339,13 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreJsonSchemaRendering(fieldSchemaArtifact, rendering);
     addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
 
+    rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
+
     // Static fields or attribute-value field have no value constraints field or JSON Schema properties specification
     if (!(fieldSchemaArtifact.isStatic() || fieldSchemaArtifact.isAttributeValue())) {
+
+      if (fieldSchemaArtifact.valueConstraints().isPresent())
+        rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints().get()));
 
       if (fieldSchemaArtifact.hasIRIValue()) {
         rendering.put(JSON_SCHEMA_PROPERTIES, renderIRIFieldArtifactPropertiesJsonSchemaSpecification());
@@ -348,9 +354,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         // Non-IRI fields may have an empty object as a value so there are no required fields
       }
 
-      if (fieldSchemaArtifact.valueConstraints().isPresent())
-        rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints().get()));
     }
+
+    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.skosPrefLabel().get());
@@ -360,10 +366,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
         rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel);
     }
-
-    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
-
-    rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
     addVersionRendering(fieldSchemaArtifact, rendering);
     addProvenanceRendering(fieldSchemaArtifact, rendering);
