@@ -239,7 +239,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(elementSchemaArtifact));
 
     addCoreJsonSchemaRendering(elementSchemaArtifact, rendering);
-    addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
 
     rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
 
@@ -337,7 +336,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification(fieldSchemaArtifact));
 
     addCoreJsonSchemaRendering(fieldSchemaArtifact, rendering);
-    addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
@@ -737,28 +735,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private ObjectNode addProvenanceRendering(MonitoredArtifact monitoredArtifact, ObjectNode rendering)
   {
-    if (monitoredArtifact.createdBy().isPresent()) {
-      rendering.put(PAV_CREATED_BY, monitoredArtifact.createdBy().get().toString());
-    } else {
-      rendering.putNull(PAV_CREATED_BY);
-    }
-
-    if (monitoredArtifact.modifiedBy().isPresent()) {
-      rendering.put(OSLC_MODIFIED_BY, monitoredArtifact.modifiedBy().get().toString());
-    } else {
-      rendering.putNull(OSLC_MODIFIED_BY);
-    }
-
     if (monitoredArtifact.createdOn().isPresent()) {
       rendering.put(PAV_CREATED_ON, renderOffsetDateTime(monitoredArtifact.createdOn().get()));
     } else {
       rendering.putNull(PAV_CREATED_ON);
     }
 
+    if (monitoredArtifact.createdBy().isPresent()) {
+      rendering.put(PAV_CREATED_BY, monitoredArtifact.createdBy().get().toString());
+    } else {
+      rendering.putNull(PAV_CREATED_BY);
+    }
+
     if (monitoredArtifact.lastUpdatedOn().isPresent()) {
       rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(monitoredArtifact.lastUpdatedOn().get()));
     } else {
       rendering.putNull(PAV_LAST_UPDATED_ON);
+    }
+
+    if (monitoredArtifact.modifiedBy().isPresent()) {
+      rendering.put(OSLC_MODIFIED_BY, monitoredArtifact.modifiedBy().get().toString());
+    } else {
+      rendering.putNull(OSLC_MODIFIED_BY);
     }
 
     return rendering;
