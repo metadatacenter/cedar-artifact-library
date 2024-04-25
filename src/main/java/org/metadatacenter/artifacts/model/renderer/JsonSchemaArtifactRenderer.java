@@ -355,7 +355,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_VALUE);
       }
     }
-    
+
     addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
     addProvenanceRendering(fieldSchemaArtifact, rendering);
     addVersionRendering(fieldSchemaArtifact, rendering);
@@ -1469,7 +1469,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
     rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_VALUE, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_LANGUAGE, renderStringOrNullJsonSchemaTypeSpecification(1));
@@ -1506,7 +1506,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
     rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
 
