@@ -121,6 +121,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_SECTION_BREAK;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_YOUTUBE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
@@ -913,11 +914,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       // TODO Use typesafe switch when available
       if (annotationValue instanceof LiteralAnnotationValue) {
         LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
-        annotationRendering.put(TYPE, VALUE);
+        annotationRendering.put(TYPE, STRING);
         annotationRendering.put(VALUE, literalAnnotationValue.getValue());
       } else if (annotationValue instanceof IriAnnotationValue) {
         IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
-        annotationRendering.put(TYPE, ID);
+        annotationRendering.put(TYPE, IRI);
         annotationRendering.put(VALUE, iriAnnotationValue.getValue().toString());
       }
       annotationsRendering.add(annotationRendering);
