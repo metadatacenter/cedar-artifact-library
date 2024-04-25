@@ -197,9 +197,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
 
-    addVersionRendering(templateSchemaArtifact, rendering);
     addCoreSchemaOrgRendering(templateSchemaArtifact, rendering);
     addProvenanceRendering(templateSchemaArtifact, rendering);
+    addVersionRendering(templateSchemaArtifact, rendering);
 
     rendering.put(JSON_SCHEMA_SCHEMA, templateSchemaArtifact.jsonSchemaSchemaUri().toString());
 
@@ -260,7 +260,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (String childName : elementSchemaArtifact.getChildNames())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
-
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
@@ -290,9 +289,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
-    addVersionRendering(elementSchemaArtifact, rendering);
+
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
     addProvenanceRendering(elementSchemaArtifact, rendering);
+    addVersionRendering(elementSchemaArtifact, rendering);
 
     rendering.put(JSON_SCHEMA_SCHEMA, elementSchemaArtifact.jsonSchemaSchemaUri().toString());
 
@@ -356,9 +356,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     }
 
-    addVersionRendering(fieldSchemaArtifact, rendering);
     addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
     addProvenanceRendering(fieldSchemaArtifact, rendering);
+    addVersionRendering(fieldSchemaArtifact, rendering);
 
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
