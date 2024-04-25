@@ -31,4 +31,6 @@ public interface SchemaArtifact extends Artifact, JsonLdArtifact, JsonSchemaArti
   Optional<URI> derivedFrom();
 
   Optional<String> language();
+
+  Optional<Annotations> annotations();
 }

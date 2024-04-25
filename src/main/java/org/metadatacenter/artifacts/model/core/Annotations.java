@@ -1,14 +1,34 @@
 package org.metadatacenter.artifacts.model.core;
 
-import java.net.URI;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-
-public record Annotations(Map<String, String> literalAnnotations, Map<String, URI> iriAnnotations)
+public class Annotations
 {
-  public Annotations {
-    validateMapFieldNotNull(this, literalAnnotations, "literalAnnotations");
-    validateMapFieldNotNull(this, iriAnnotations, "iriAnnotations");
+  private final LinkedHashMap<String, AnnotationValue> annotations;
+
+  public Annotations(LinkedHashMap<String, AnnotationValue> annotations)
+  {
+    this.annotations = new LinkedHashMap<>(annotations);
+  }
+
+  public static Builder builder() { return new Builder(); }
+
+  static final class Builder
+  {
+    private LinkedHashMap<String, AnnotationValue> annotations = new LinkedHashMap<>();
+
+    private Builder() {}
+
+    public Builder withAnnotation(String annotationName, AnnotationValue annotationValue)
+    {
+      annotations.put(annotationName, annotationValue);
+
+      return this;
+    }
+
+    public Annotations build()
+    {
+      return new Annotations(this.annotations);
+    }
   }
 }

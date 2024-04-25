@@ -42,12 +42,13 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
     Optional<URI> propertyUri,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> language, FieldUi fieldUi)
+    Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations)
   {
     return new YouTubeFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty());
+      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), language, fieldUi,
+      Optional.empty(), annotations);
   }
 
   static YouTubeFieldBuilder builder() { return new YouTubeFieldBuilder(); }
@@ -211,13 +212,19 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public YouTubeFieldBuilder withAnnotations(Annotations annotations)
+    {
+      super.withAnnotations(annotations);
+      return this;
+    }
+
     public YouTubeField build()
     {
       withFieldUi(fieldUiBuilder.build());
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, fieldUi);
+        language, fieldUi, annotations);
     }
   }
 }
@@ -232,7 +239,8 @@ record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
                           Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                           Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                          Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                          Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                          Optional<Annotations> annotations)
   implements YouTubeField
 {
   public YouTubeFieldRecord
@@ -248,6 +256,7 @@ record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
     validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
+    validateOptionalFieldNotNull(this, annotations, "annotations");
 
     if (minItems.isPresent() && minItems.get() < 0)
       throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);

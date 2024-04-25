@@ -50,6 +50,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<String> language = Optional.empty();
   protected FieldUi fieldUi;
   protected Optional<ValueConstraints> valueConstraints = Optional.empty();
+  protected Optional<Annotations> annotations = Optional.empty();
 
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
@@ -85,6 +86,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.language = fieldSchemaArtifact.language();
     this.fieldUi = fieldSchemaArtifact.fieldUi();
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
+    this.annotations = fieldSchemaArtifact.annotations();
   }
 
   protected FieldSchemaArtifactBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
@@ -291,4 +293,14 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.valueConstraints = Optional.ofNullable(valueConstraints);
     return this;
   }
+
+  protected FieldSchemaArtifactBuilder withAnnotations(Annotations annotations)
+  {
+    if (annotations == null)
+      throw new IllegalArgumentException("null annotations passed to builder");
+
+    this.annotations = Optional.ofNullable(annotations);
+    return this;
+  }
+
 }

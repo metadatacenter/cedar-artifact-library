@@ -47,7 +47,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
     boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-    Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi)
+    Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations)
   {
     return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
@@ -56,7 +56,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas,
       isMultiple, minItems, maxItems,
-      propertyUri, language, elementUi);
+      propertyUri, language, elementUi, annotations);
   }
 
   default ParentArtifactUi getUi() { return elementUi(); }
@@ -114,6 +114,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<URI> propertyUri = Optional.empty();
     private Optional<String> language = Optional.empty();
     private ElementUi.Builder elementUiBuilder = ElementUi.builder();
+    private Optional<Annotations> annotations = Optional.empty();
 
     private Builder() {
     }
@@ -143,6 +144,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       this.elementSchemas = new LinkedHashMap<>(elementSchemaArtifact.elementSchemas());
       this.language = elementSchemaArtifact.language();
       this.elementUiBuilder = ElementUi.builder(elementSchemaArtifact.elementUi());
+      this.annotations = elementSchemaArtifact.annotations();
     }
 
     public Builder withJsonLdType(URI jsonLdType)
@@ -338,6 +340,12 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
+    public Builder withAnnotations(Annotations annotations)
+    {
+      this.annotations = Optional.ofNullable(annotations);
+      return this;
+    }
+
     public ElementSchemaArtifact build()
     {
       return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -347,7 +355,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas,
         isMultiple, minItems, maxItems, propertyUri,
-        language, elementUiBuilder.build());
+        language, elementUiBuilder.build(), annotations);
     }
   }
 }
@@ -360,7 +368,8 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
                                    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
                                    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
                                    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                   Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi)  implements ElementSchemaArtifact
+                                   Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi,
+                                   Optional<Annotations> annotations)  implements ElementSchemaArtifact
 {
   public ElementSchemaArtifactRecord
   {
@@ -378,6 +387,7 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
     validateOptionalFieldNotNull(this, language,  "language");
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
+    validateOptionalFieldNotNull(this, annotations, "annotations");
 
     if (minItems.isPresent() && minItems.get() < 0)
       throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name());

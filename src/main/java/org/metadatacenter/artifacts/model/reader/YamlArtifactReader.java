@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
@@ -268,11 +269,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>(); // TODO Read child fields
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     TemplateUi templateUi = readTemplateUi(sourceNode, path);
+    Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
-      language, templateUi);
+      language, templateUi, annotations);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
@@ -302,11 +304,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>(); // TODO  Read child fields
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     ElementUi elementUi = readElementUi(sourceNode, path);
+    Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
-      isMultiple, minItems, maxItems, propertyUri, language, elementUi);
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
@@ -338,11 +341,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> skosPrefLabel = readString(sourceNode, path, PREF_LABEL);
     List<String> skosAlternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
+    Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
+      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)
@@ -354,6 +358,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> footer = readString(sourceNode, path, FOOTER);
 
     return TemplateUi.create(order, propertyLabels, propertyDescriptions, header, footer);
+  }
+
+  private Optional<Annotations> readAnnotations(LinkedHashMap<String, Object> sourceNode, String path)
+  {
+    return Optional.empty(); // TODO Implement readAnnotations in YAML reader
   }
 
   private ElementUi readElementUi(LinkedHashMap<String, Object> sourceNode, String path)

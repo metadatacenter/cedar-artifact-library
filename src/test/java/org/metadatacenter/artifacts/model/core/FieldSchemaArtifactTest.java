@@ -52,7 +52,8 @@ public class FieldSchemaArtifactTest
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom, false, minItems, maxItems, propertyUri,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      preferredLabel, alternateLabels, language, FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty());
+      preferredLabel, alternateLabels, language, FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(),
+      Optional.empty(), Optional.empty());
 
     Assert.assertEquals(jsonSchemaSchemaUri, fieldSchemaArtifact.jsonSchemaSchemaUri());
     Assert.assertEquals(jsonSchemaType, fieldSchemaArtifact.jsonSchemaType());

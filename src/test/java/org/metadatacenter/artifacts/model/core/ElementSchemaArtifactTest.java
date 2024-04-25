@@ -53,7 +53,7 @@ public class ElementSchemaArtifactTest
       modelVersion, version, status, previousVersion, derivedFrom,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
       new LinkedHashMap<>(), new LinkedHashMap<>(),
-      false, minItems, maxItems, propertyUri, language, ElementUi.builder().build());
+      false, minItems, maxItems, propertyUri, language, ElementUi.builder().build(), Optional.empty());
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());

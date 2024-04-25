@@ -43,12 +43,13 @@ public sealed interface NumericField extends FieldSchemaArtifact
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+    Optional<Annotations> annotations)
   {
     return new NumericFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
+      createdOn, lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
   static NumericFieldBuilder builder() { return new NumericFieldBuilder(); }
@@ -258,6 +259,11 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public NumericFieldBuilder withAnnotations(Annotations annotations)
+    {
+      super.withAnnotations(annotations);
+      return this;
+    }
 
     public NumericField build()
     {
@@ -266,7 +272,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints);
+        skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
     }
   }
 }
@@ -281,7 +287,8 @@ record NumericFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
                           Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                           Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
-                          Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints)
+                          Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                          Optional<Annotations> annotations)
   implements NumericField
 {
   public NumericFieldRecord
@@ -297,6 +304,7 @@ record NumericFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
     validateOptionalFieldNotNull(this, language,  "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
+    validateOptionalFieldNotNull(this, annotations, "annotations");
 
     if (minItems.isPresent() && minItems.get() < 0)
       throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);

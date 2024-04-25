@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -55,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.metadatacenter.model.ModelNodeNames.ANNOTATIONS;
 import static org.metadatacenter.model.ModelNodeNames.ARTIFACT_CONTEXT_ENTRIES;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
@@ -321,6 +323,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
     Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     TemplateUi templateUi = readTemplateUi(sourceNode, path, UI);
+    Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkTemplateSchemaArtifactJsonLdType(jsonLdTypes, path);
 
@@ -331,7 +334,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, language, templateUi);
+      fieldSchemas, elementSchemas, language, templateUi, annotations);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode, String path,
@@ -361,6 +364,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     ElementUi elementUi = readElementUi(sourceNode, path, UI);
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
+    Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
 
@@ -373,7 +377,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas,
       isMultiple, minItems, maxItems,
-      propertyUri, language, elementUi);
+      propertyUri, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path,
@@ -403,6 +407,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS, fieldUi.inputType());
+    Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
 
@@ -413,7 +418,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       skosPrefLabel, skosAlternateLabels,
-      language, fieldUi, valueConstraints);
+      language, fieldUi, valueConstraints, annotations);
   }
 
   private void readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,
@@ -525,6 +530,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances = new LinkedHashMap<>();
     LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new LinkedHashMap<>();
     LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new LinkedHashMap<>();
+    Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     readNestedInstanceArtifacts(sourceNode, path, childNames, singleInstanceFieldInstances, multiInstanceFieldInstances,
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
@@ -532,7 +538,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childNames, singleInstanceFieldInstances,
       multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
-      attributeValueFieldInstances);
+      attributeValueFieldInstances, annotations);
   }
 
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path)
@@ -1248,6 +1254,11 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
     return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
+  }
+
+  private Optional<Annotations> readAnnotations(ObjectNode sourceNode, String path, String fieldName)
+  {
+    return Optional.empty(); // TODO Implement readAnnotations
   }
 
   private Optional<Integer> readInteger(ObjectNode sourceNode, String path, String fieldName)

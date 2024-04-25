@@ -36,16 +36,19 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
     LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
     LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-    LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
+    LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups,
+    Optional<Annotations> annotations)
   {
     return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, isBasedOn,
       childNames, singleInstanceFieldInstances, multiInstanceFieldInstances,
       singleInstanceElementInstances, multiInstanceElementInstances,
-      attributeValueFieldInstanceGroups);
+      attributeValueFieldInstanceGroups, annotations);
   }
 
   URI isBasedOn();
+
+  Optional<Annotations> annotations();
 
   default void accept(InstanceArtifactVisitor visitor)
   {
@@ -136,6 +139,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances = new LinkedHashMap<>();
     private LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new LinkedHashMap<>();
     private LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new LinkedHashMap<>();
+    private Optional<Annotations> annotations = Optional.empty();
 
     private Builder()
     {
@@ -159,6 +163,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       this.singleInstanceElementInstances = new LinkedHashMap<>(templateInstanceArtifact.singleInstanceElementInstances());
       this.multiInstanceElementInstances = new LinkedHashMap<>(templateInstanceArtifact.multiInstanceElementInstances());
       this.attributeValueFieldInstanceGroups = new LinkedHashMap<>(templateInstanceArtifact.attributeValueFieldInstanceGroups());
+      this.annotations = templateInstanceArtifact.annotations();
     }
 
     public Builder withJsonLdContextEntry(String name, URI property)
@@ -353,6 +358,12 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
+    public Builder withAnnotations(Annotations annotations)
+    {
+      this.annotations = Optional.ofNullable(annotations);
+      return this;
+    }
+
     // TODO Add withoutAttributeValueFieldGroup
 
     public TemplateInstanceArtifact build()
@@ -360,7 +371,8 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
         modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childNames,
         singleInstanceFieldInstances, multiInstanceFieldInstances,
-        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
+        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups,
+        annotations);
     }
   }
 }
@@ -375,7 +387,8 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
                                       LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
                                       LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
                                       LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-                                      LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
+                                      LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups,
+                                      Optional<Annotations> annotations)
   implements TemplateInstanceArtifact
 {
   public TemplateInstanceArtifactRecord
@@ -396,6 +409,7 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
     validateMapFieldNotNull(this, singleInstanceElementInstances, "singleInstanceElementInstances");
     validateMapFieldNotNull(this, multiInstanceElementInstances, "multiInstanceElementInstances");
     validateMapFieldNotNull(this, attributeValueFieldInstanceGroups, "attributeValueFieldInstanceGroups");
+    validateOptionalFieldNotNull(this, annotations, "annotations");
 
     // TODO check that all childFieldNames present in child instances maps and that there are no extra fields in maps
 
