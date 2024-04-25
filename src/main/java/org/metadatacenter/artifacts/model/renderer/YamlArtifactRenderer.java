@@ -205,10 +205,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateSchemaArtifact.templateUi().footer().isPresent())
       rendering.put(FOOTER, templateSchemaArtifact.templateUi().footer().get());
 
+    addArtifactProvenanceRendering(templateSchemaArtifact, rendering);
+
     if (templateSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(templateSchemaArtifact.annotations().get()));
-
-    addArtifactProvenanceRendering(templateSchemaArtifact, rendering);
 
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(templateSchemaArtifact, templateSchemaArtifact.getChildSchemas()));
@@ -258,10 +258,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(elementName, elementSchemaArtifact, ELEMENT);
 
+    addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
+
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
-    addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
@@ -324,10 +325,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
       rendering.put(VALUE_RECOMMENDATION, true);
 
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+
     if (fieldSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
-
-    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
   }
@@ -389,9 +390,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateInstanceArtifact.description().isPresent())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description());
 
-    if (templateInstanceArtifact.annotations().isPresent())
-      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
-
     if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
@@ -408,6 +406,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (templateInstanceArtifact.lastUpdatedOn().isPresent())
       rendering.put(MODIFIED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
+
+    if (templateInstanceArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
 
     // TODO Need to generate YAML for children of template instance
 
@@ -899,27 +900,30 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private LinkedHashMap<String, Object> renderAnnotations(Annotations annotations) {
-    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+  private List<LinkedHashMap<String, Object>> renderAnnotations(Annotations annotations) {
+    List<LinkedHashMap<String, Object>> annotationsRendering = new ArrayList<>();
 
     for (Map.Entry<String, AnnotationValue> annotationValueEntry : annotations.annotations().entrySet()) {
-      String annotationName  = annotationValueEntry.getKey();
+      String annotationName = annotationValueEntry.getKey();
       AnnotationValue annotationValue = annotationValueEntry.getValue();
-      rendering.put(NAME, annotationName);
+      LinkedHashMap<String, Object> annotationRendering = new LinkedHashMap<>();
+
+      annotationRendering.put(NAME, annotationName);
 
       // TODO Use typesafe switch when available
       if (annotationValue instanceof LiteralAnnotationValue) {
         LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
-        rendering.put(TYPE, VALUE);
-        rendering.put(VALUE, literalAnnotationValue.getValue());
+        annotationRendering.put(TYPE, VALUE);
+        annotationRendering.put(VALUE, literalAnnotationValue.getValue());
       } else if (annotationValue instanceof IriAnnotationValue) {
         IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
-        rendering.put(TYPE, ID);
-        rendering.put(VALUE, iriAnnotationValue.getValue().toString());
+        annotationRendering.put(TYPE, ID);
+        annotationRendering.put(VALUE, iriAnnotationValue.getValue().toString());
       }
+      annotationsRendering.add(annotationRendering);
     }
 
-    return rendering;
+    return annotationsRendering;
   }
 
  private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
