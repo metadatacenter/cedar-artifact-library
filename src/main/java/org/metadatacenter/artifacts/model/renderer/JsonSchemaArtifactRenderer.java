@@ -141,8 +141,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.set(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(templateSchemaArtifact));
 
     addCoreJsonSchemaRendering(templateSchemaArtifact, rendering);
-    addCoreSchemaOrgRendering(templateSchemaArtifact, rendering);
-
     rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
     rendering.put(JSON_SCHEMA_PROPERTIES,
@@ -200,6 +198,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     }
 
     addVersionRendering(templateSchemaArtifact, rendering);
+    addCoreSchemaOrgRendering(templateSchemaArtifact, rendering);
     addProvenanceRendering(templateSchemaArtifact, rendering);
 
     rendering.put(JSON_SCHEMA_SCHEMA, templateSchemaArtifact.jsonSchemaSchemaUri().toString());
@@ -292,6 +291,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
     addVersionRendering(elementSchemaArtifact, rendering);
+    addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
     addProvenanceRendering(elementSchemaArtifact, rendering);
 
     rendering.put(JSON_SCHEMA_SCHEMA, elementSchemaArtifact.jsonSchemaSchemaUri().toString());
@@ -368,6 +368,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     }
 
     addVersionRendering(fieldSchemaArtifact, rendering);
+    addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
     addProvenanceRendering(fieldSchemaArtifact, rendering);
 
     rendering.put(JSON_SCHEMA_SCHEMA, fieldSchemaArtifact.jsonSchemaSchemaUri().toString());
@@ -658,9 +659,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private void addCoreSchemaOrgRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
   {
-    rendering.put(JSON_SCHEMA_TYPE, schemaArtifact.jsonSchemaType());
-    rendering.put(JSON_SCHEMA_TITLE, schemaArtifact.jsonSchemaTitle());
-    rendering.put(JSON_SCHEMA_DESCRIPTION, schemaArtifact.jsonSchemaDescription());
     rendering.put(SCHEMA_ORG_NAME, schemaArtifact.name());
     rendering.put(SCHEMA_ORG_DESCRIPTION, schemaArtifact.description());
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.modelVersion().toString());
