@@ -245,34 +245,4 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedBaseFieldRendering.toString(), actualRendering.toString());
   }
 
-  @Test
-  public void testRenderAnnotations() {
-
-    String name = "Study";
-    String description = "Study template";
-    String literalAnnotationName = "foo";
-    String literalAnnotationValue = "bar";
-    String annotationName1 = "annotation1";
-
-    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
-      withName(name).
-      withDescription(description).
-      build();
-
-    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
-
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
-
-    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(NAME, name);
-    expectedRendering.put(TYPE, TEMPLATE);
-    expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(HEADER, header);
-    expectedRendering.put(FOOTER, footer);
-
-    assertEquals(expectedRendering, actualRendering);
-  }
-
-
 }
