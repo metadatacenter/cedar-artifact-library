@@ -1365,12 +1365,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
     rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
+    rendering.put(SKOS_PREFLABEL, renderXsdStringJsonLdSpecification());
+    rendering.put(SKOS_ALTLABEL, renderXsdStringJsonLdSpecification());
     rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
-    rendering.put(SKOS_PREFLABEL, renderXsdStringJsonLdSpecification());
-    rendering.put(SKOS_ALTLABEL, renderXsdStringJsonLdSpecification());
 
     if (fieldSchemaArtifact.language().isPresent()) {
       String language = fieldSchemaArtifact.language().get();
