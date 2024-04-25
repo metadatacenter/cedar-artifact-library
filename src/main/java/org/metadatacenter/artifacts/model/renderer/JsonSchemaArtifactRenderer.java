@@ -195,6 +195,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
+
+    addProvenanceRendering(templateSchemaArtifact, rendering);
+
     return rendering;
   }
 
@@ -278,6 +281,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
+    addProvenanceRendering(elementSchemaArtifact, rendering);
+
     return rendering;
   }
 
@@ -344,6 +349,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
+
+    addProvenanceRendering(fieldSchemaArtifact, rendering);
 
     if (fieldSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
@@ -626,7 +633,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_DESCRIPTION, schemaArtifact.jsonSchemaDescription());
     rendering.put(SCHEMA_ORG_NAME, schemaArtifact.name());
     rendering.put(SCHEMA_ORG_DESCRIPTION, schemaArtifact.description());
-
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.modelVersion().toString());
 
     if (schemaArtifact.identifier().isPresent()) {
@@ -635,6 +641,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
     }
 
+    return rendering;
+  }
+
+  private void addProvenanceRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
+  {
     if (schemaArtifact.version().isPresent())
       rendering.put(PAV_VERSION, schemaArtifact.version().get().toString());
 
@@ -652,8 +663,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       if (!derivedFrom.isEmpty())
         rendering.put(PAV_DERIVED_FROM, derivedFrom);
     }
-
-    return rendering;
   }
 
   /**
@@ -671,18 +680,18 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = renderMonitoredArtifact(jsonLdArtifact);
 
+    if (jsonLdArtifact.jsonLdId().isPresent()) {
+      rendering.put(JSON_LD_ID, jsonLdArtifact.jsonLdId().get().toString());
+    } else {
+      rendering.putNull(JSON_LD_ID);
+    }
+
     if (jsonLdArtifact.jsonLdTypes().size() == 1) {
       rendering.put(JSON_LD_TYPE, jsonLdArtifact.jsonLdTypes().get(0).toString());
     } else if (jsonLdArtifact.jsonLdTypes().size() > 1) {
       rendering.put(JSON_LD_TYPE, mapper.createArrayNode());
       for (URI jsonLdType : jsonLdArtifact.jsonLdTypes())
         rendering.withArray(JSON_LD_TYPE).add(jsonLdType.toString());
-    }
-
-    if (jsonLdArtifact.jsonLdId().isPresent()) {
-      rendering.put(JSON_LD_ID, jsonLdArtifact.jsonLdId().get().toString());
-    } else {
-      rendering.putNull(JSON_LD_ID);
     }
 
     return rendering;
