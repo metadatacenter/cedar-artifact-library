@@ -1445,12 +1445,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * Defined as follows:
    * <pre>
    * {
-   *   "@type": {
-   *     "oneOf": [
-   *       { "type": "string", "format": "uri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
-   *     ]
-   *   },
+   *   "@type": { "type": "string", "format": "uri" },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
    *   "@value": {  "type": [ "string", "null" ] },
    *   "@language": {  "type": [ "string", "null" ], "minLength": 1 },
@@ -1484,12 +1479,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * Defined as follows:
    * <pre>
    * {
-   *   "@type": {
-   *     "oneOf": [
-   *       { "type": "string", "format": "uri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
-   *     ]
-   *   },
+   *   "@type": { "type": "string", "format": "uri" },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
    *   "@id": { "type": "string", "format": "uri" }
    * }
