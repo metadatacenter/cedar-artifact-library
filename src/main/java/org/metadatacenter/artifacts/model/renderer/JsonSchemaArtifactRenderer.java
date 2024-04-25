@@ -356,6 +356,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     }
 
+    addVersionRendering(fieldSchemaArtifact, rendering);
+    addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
+    addProvenanceRendering(fieldSchemaArtifact, rendering);
+
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
@@ -366,10 +370,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
         rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel);
     }
-
-    addVersionRendering(fieldSchemaArtifact, rendering);
-    addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
-    addProvenanceRendering(fieldSchemaArtifact, rendering);
 
     rendering.put(JSON_SCHEMA_SCHEMA, fieldSchemaArtifact.jsonSchemaSchemaUri().toString());
 
