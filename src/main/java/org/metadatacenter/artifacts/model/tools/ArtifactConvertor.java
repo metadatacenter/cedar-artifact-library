@@ -213,10 +213,10 @@ public class ArtifactConvertor
           if (command.hasOption(OUTPUT_FILE_OPTION)) {
             String jsonOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
             File jsonOutputFile = new File(jsonOutputFileName);
-            PRETTY_OBJECT_WRITER.writeValue(jsonOutputFile, jsonRendering);
+            PRETTY_OBJECT_WRITER.writeValue(jsonOutputFile, jsonRendering + "\n");
             System.out.println("Successfully generated JSON file " + jsonOutputFile.getAbsolutePath());
           } else {
-            PRETTY_OBJECT_WRITER.writeValue(System.out, jsonRendering);
+            PRETTY_OBJECT_WRITER.writeValue(System.out, jsonRendering + "\n");
           }
         }
       } catch (IOException e) {
