@@ -252,12 +252,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderElementSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
 
-    if (elementSchemaArtifact.hasAttributeValueField())
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
-        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
-    else
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
-
     // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_CONTEXT);
@@ -299,7 +293,14 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
     addProvenanceRendering(elementSchemaArtifact, rendering);
     addVersionRendering(elementSchemaArtifact, rendering);
+
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, elementSchemaArtifact.modelVersion().toString());
+
+    if (elementSchemaArtifact.hasAttributeValueField())
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
+        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
+    else
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     if (elementSchemaArtifact.identifier().isPresent()) {
       String identifier = elementSchemaArtifact.identifier().get();
