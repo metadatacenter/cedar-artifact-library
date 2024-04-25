@@ -351,11 +351,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.put(JSON_SCHEMA_PROPERTIES, renderIRIFieldArtifactPropertiesJsonSchemaSpecification());
       } else {
         rendering.put(JSON_SCHEMA_PROPERTIES, renderLiteralFieldArtifactPropertiesJsonSchemaSpecification());
-        // Non-IRI fields may have an empty object as a value so there are no required fields
+        rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
+        rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_VALUE);
       }
-
     }
-
+    
     addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
     addProvenanceRendering(fieldSchemaArtifact, rendering);
     addVersionRendering(fieldSchemaArtifact, rendering);
