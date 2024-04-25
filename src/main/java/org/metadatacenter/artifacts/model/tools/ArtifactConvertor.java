@@ -1,8 +1,12 @@
 package org.metadatacenter.artifacts.model.tools;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.Separators;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -86,6 +90,17 @@ public class ArtifactConvertor
   private static final Set<String> FORMAT_OPTIONS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
     YAML_FORMAT_OPTION, JSON_FORMAT_OPTION
   )));
+
+  private static ObjectWriter PRETTY_OBJECT_WRITER;
+  static {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    mapper.registerModule(new JavaTimeModule());
+    DefaultPrettyPrinter prettyPrinter = new CustomPrettyPrinter();
+    prettyPrinter = prettyPrinter.withSeparators(Separators.createDefaultInstance());
+    prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+    PRETTY_OBJECT_WRITER = mapper.writer(prettyPrinter);
+  }
 
   public static void main(String[] args) throws IOException
   {
@@ -194,18 +209,14 @@ public class ArtifactConvertor
             mapper.writeValue(System.out, yamlRendering);
           }
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          ObjectMapper mapper = new ObjectMapper();
-          mapper.enable(SerializationFeature.INDENT_OUTPUT);
-          mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-          mapper.registerModule(new JavaTimeModule());
 
           if (command.hasOption(OUTPUT_FILE_OPTION)) {
             String jsonOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
             File jsonOutputFile = new File(jsonOutputFileName);
-            mapper.writeValue(jsonOutputFile, jsonRendering);
+            PRETTY_OBJECT_WRITER.writeValue(jsonOutputFile, jsonRendering);
             System.out.println("Successfully generated JSON file " + jsonOutputFile.getAbsolutePath());
           } else {
-            mapper.writeValue(System.out, jsonRendering);
+            PRETTY_OBJECT_WRITER.writeValue(System.out, jsonRendering);
           }
         }
       } catch (IOException e) {
