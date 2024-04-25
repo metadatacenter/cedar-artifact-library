@@ -2,13 +2,11 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.util.LinkedHashMap;
 
-public class Annotations
+public record Annotations(LinkedHashMap<String, AnnotationValue> annotations)
 {
-  private final LinkedHashMap<String, AnnotationValue> annotations;
-
-  public Annotations(LinkedHashMap<String, AnnotationValue> annotations)
+  public LinkedHashMap<String, AnnotationValue> annotations()
   {
-    this.annotations = new LinkedHashMap<>(annotations);
+    return new LinkedHashMap<>(annotations);
   }
 
   public static Builder builder() { return new Builder(); }

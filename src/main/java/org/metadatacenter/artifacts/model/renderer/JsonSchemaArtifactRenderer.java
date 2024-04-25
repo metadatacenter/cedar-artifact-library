@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import org.metadatacenter.artifacts.model.core.AnnotationValue;
+import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
 import org.metadatacenter.artifacts.model.core.JsonLdArtifact;
+import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
 import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
@@ -26,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.metadatacenter.model.ModelNodeNames.ANNOTATIONS;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.INSTANCE_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -160,6 +165,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
+    if (templateSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateSchemaArtifact.annotations().get()));
+
     // TODO Think about moving this to renderParentSchemaArtifactPropertiesJsonSchemaSpecification above
     for (String childName : templateSchemaArtifact.templateUi().order()) {
       if (templateSchemaArtifact.isField(childName)) {
@@ -240,6 +248,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
+
+    if (elementSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
     for (String childName : elementSchemaArtifact.elementUi().order()) {
       if (elementSchemaArtifact.isField(childName)) {
@@ -334,6 +345,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
+    if (fieldSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+
     if (fieldSchemaArtifact.isAttributeValue())
       return renderJsonSchemaArrayWrapperSpecification(rendering, Optional.of(0), Optional.empty());
     else
@@ -378,6 +392,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = renderParentInstanceArtifact(templateInstanceArtifact);
 
     rendering.put(JSON_LD_CONTEXT, renderTemplateInstanceArtifactContextJsonLdSpecification());
+
+    if (templateInstanceArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
 
     for (var propertyMapping : templateInstanceArtifact.jsonLdContext().entrySet()) {
       String fieldName = propertyMapping.getKey();
@@ -1707,6 +1724,31 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     wrapperObjectNode.put(JSON_SCHEMA_ITEMS, wrappedObjectNode);
 
     return wrapperObjectNode;
+  }
+
+  private ObjectNode renderAnnotations(Annotations annotations)
+  {
+    ObjectNode annotationsNode = mapper.createObjectNode();
+
+    for (Map.Entry<String, AnnotationValue> annotationValueEntry : annotations.annotations().entrySet()) {
+      String annotationName  = annotationValueEntry.getKey();
+      AnnotationValue annotationValue = annotationValueEntry.getValue();
+
+      // TODO Use typesafe switch when available
+      if (annotationValue instanceof LiteralAnnotationValue) {
+        LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
+        ObjectNode annotationValueNode = mapper.createObjectNode();
+        annotationValueNode.put(JSON_LD_VALUE, literalAnnotationValue.getValue());
+        annotationsNode.put(annotationName, annotationValueNode);
+      } else if (annotationValue instanceof IriAnnotationValue) {
+        IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
+        ObjectNode annotationValueNode = mapper.createObjectNode();
+        annotationValueNode.put(JSON_LD_ID, iriAnnotationValue.getValue().toString());
+        annotationsNode.put(annotationName, annotationValueNode);
+      }
+    }
+
+    return annotationsNode;
   }
 
   private String renderOffsetDateTime(OffsetDateTime offsetDateTime)

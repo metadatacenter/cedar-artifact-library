@@ -2,11 +2,14 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.artifacts.model.core.AnnotationValue;
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
+import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -1258,7 +1261,44 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
   private Optional<Annotations> readAnnotations(ObjectNode sourceNode, String path, String fieldName)
   {
-    return Optional.empty(); // TODO Implement readAnnotations
+    LinkedHashMap<String, AnnotationValue> annotations = new LinkedHashMap<>();
+    ObjectNode annotationNode = readAnnotationsNode(sourceNode, path, fieldName);
+
+    if (annotationNode == null)
+      return Optional.empty();
+
+    String annotationPath = path + "/" + fieldName;
+
+    Iterator<Map.Entry<String, JsonNode>> fieldEntries = annotationNode.fields();
+
+    while (fieldEntries.hasNext()) {
+      var fieldEntry = fieldEntries.next();
+      String annotationName = fieldEntry.getKey();
+
+      if (annotations.containsKey(annotationName))
+        throw new ArtifactParseException("Duplicate value for annotation", annotationName, annotationPath);
+
+      JsonNode valueNode = fieldEntry.getValue();
+
+      if (valueNode.isObject()) {
+        ObjectNode annotationValueNode = (ObjectNode)valueNode;
+
+        if (annotationValueNode.get(JSON_LD_VALUE) != null) {
+          String annnotationValue = readRequiredString(annotationValueNode, annotationPath, JSON_LD_VALUE);
+          annotations.put(annotationName, new LiteralAnnotationValue(annnotationValue));
+        } else if (annotationValueNode.get(JSON_LD_ID) != null) {
+          URI annnotationValue = readRequiredUri(annotationValueNode, annotationPath, JSON_LD_ID);
+          annotations.put(annotationName, new IriAnnotationValue(annnotationValue));
+        } else
+          throw new ArtifactParseException("Value of annotation must contain an @id or @value", annotationName,
+            annotationPath);
+      } else
+        throw new ArtifactParseException("Value of annotation must be an object", annotationName, annotationPath);
+    }
+    if (!annotations.isEmpty())
+      return Optional.of(new Annotations(annotations));
+    else
+      return Optional.empty();
   }
 
   private Optional<Integer> readInteger(ObjectNode sourceNode, String path, String fieldName)
@@ -1351,6 +1391,20 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private ObjectNode readValueConstraintsNode(ObjectNode parentNode, String path, String fieldName)
+  {
+    JsonNode childNode = parentNode.get(fieldName);
+
+    if (childNode == null)
+      return null;
+    else if (childNode.isNull())
+      return null;
+    else if (!childNode.isObject())
+      throw new ArtifactParseException("Value must be an object", fieldName, path);
+
+    return (ObjectNode)childNode;
+  }
+
+  private ObjectNode readAnnotationsNode(ObjectNode parentNode, String path, String fieldName)
   {
     JsonNode childNode = parentNode.get(fieldName);
 
