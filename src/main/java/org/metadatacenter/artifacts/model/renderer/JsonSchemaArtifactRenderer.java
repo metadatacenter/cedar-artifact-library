@@ -200,6 +200,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreSchemaOrgRendering(templateSchemaArtifact, rendering);
     addProvenanceRendering(templateSchemaArtifact, rendering);
     addVersionRendering(templateSchemaArtifact, rendering);
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, templateSchemaArtifact.modelVersion().toString());
 
     rendering.put(JSON_SCHEMA_SCHEMA, templateSchemaArtifact.jsonSchemaSchemaUri().toString());
 
@@ -292,6 +293,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
     addProvenanceRendering(elementSchemaArtifact, rendering);
     addVersionRendering(elementSchemaArtifact, rendering);
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, elementSchemaArtifact.modelVersion().toString());
 
     rendering.put(JSON_SCHEMA_SCHEMA, elementSchemaArtifact.jsonSchemaSchemaUri().toString());
 
@@ -357,6 +359,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
     addProvenanceRendering(fieldSchemaArtifact, rendering);
     addVersionRendering(fieldSchemaArtifact, rendering);
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, fieldSchemaArtifact.modelVersion().toString());
 
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
@@ -659,7 +662,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     rendering.put(SCHEMA_ORG_NAME, schemaArtifact.name());
     rendering.put(SCHEMA_ORG_DESCRIPTION, schemaArtifact.description());
-    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.modelVersion().toString());
 
     if (schemaArtifact.identifier().isPresent()) {
       String identifier = schemaArtifact.identifier().get();
