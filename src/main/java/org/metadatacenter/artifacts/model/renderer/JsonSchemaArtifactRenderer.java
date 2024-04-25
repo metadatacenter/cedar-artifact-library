@@ -306,7 +306,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       if (!identifier.isEmpty())
         rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
     }
-    
+
     rendering.put(JSON_SCHEMA_SCHEMA, elementSchemaArtifact.jsonSchemaSchemaUri().toString());
 
     return rendering;
