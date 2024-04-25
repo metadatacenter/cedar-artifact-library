@@ -11,6 +11,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 {
   boolean requiredValue();
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean recommendedValue();
 
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
