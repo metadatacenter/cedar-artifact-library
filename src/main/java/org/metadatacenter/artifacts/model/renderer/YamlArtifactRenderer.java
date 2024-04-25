@@ -1,8 +1,12 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.AnnotationValue;
+import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
+import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
 import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
@@ -40,6 +44,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ANNOTATIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ATTRIBUTE_VALUE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHECKBOX_FIELD;
@@ -125,6 +130,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FI
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
@@ -199,6 +205,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateSchemaArtifact.templateUi().footer().isPresent())
       rendering.put(FOOTER, templateSchemaArtifact.templateUi().footer().get());
 
+    if (templateSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateSchemaArtifact.annotations().get()));
+
     addArtifactProvenanceRendering(templateSchemaArtifact, rendering);
 
     if (templateSchemaArtifact.hasChildren())
@@ -248,6 +257,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(elementName, elementSchemaArtifact, ELEMENT);
+
+    if (elementSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
@@ -312,6 +324,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
       rendering.put(VALUE_RECOMMENDATION, true);
 
+    if (fieldSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+
     addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
@@ -373,6 +388,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (templateInstanceArtifact.description().isPresent())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description());
+
+    if (templateInstanceArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
 
     if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
@@ -881,7 +899,30 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
+  private LinkedHashMap<String, Object> renderAnnotations(Annotations annotations) {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    for (Map.Entry<String, AnnotationValue> annotationValueEntry : annotations.annotations().entrySet()) {
+      String annotationName  = annotationValueEntry.getKey();
+      AnnotationValue annotationValue = annotationValueEntry.getValue();
+      rendering.put(NAME, annotationName);
+
+      // TODO Use typesafe switch when available
+      if (annotationValue instanceof LiteralAnnotationValue) {
+        LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
+        rendering.put(TYPE, VALUE);
+        rendering.put(VALUE, literalAnnotationValue.getValue());
+      } else if (annotationValue instanceof IriAnnotationValue) {
+        IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
+        rendering.put(TYPE, ID);
+        rendering.put(VALUE, iriAnnotationValue.getValue().toString());
+      }
+    }
+
+    return rendering;
+  }
+
+ private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
     return offsetDateTime.format(datetimeFormatter);
   }

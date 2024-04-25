@@ -94,6 +94,9 @@ public class YamlConstants
   public static final String HEADER = "header";
   public static final String FOOTER = "footer";
   public static final String ORDER = "order";
+  public static final String ANNOTATIONS = "annotations";
+  public static final String VALUE = "value";
+
 
   public static final String CONFIGURATION = "configuration";
   public static final String MULTIPLE = "multiple";
