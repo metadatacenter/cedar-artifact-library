@@ -202,6 +202,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addVersionRendering(templateSchemaArtifact, rendering);
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, templateSchemaArtifact.modelVersion().toString());
 
+    if (templateSchemaArtifact.identifier().isPresent()) {
+      String identifier = templateSchemaArtifact.identifier().get();
+      if (!identifier.isEmpty())
+        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
+    }
+
     rendering.put(JSON_SCHEMA_SCHEMA, templateSchemaArtifact.jsonSchemaSchemaUri().toString());
 
     return rendering;
@@ -295,6 +301,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addVersionRendering(elementSchemaArtifact, rendering);
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, elementSchemaArtifact.modelVersion().toString());
 
+    if (elementSchemaArtifact.identifier().isPresent()) {
+      String identifier = elementSchemaArtifact.identifier().get();
+      if (!identifier.isEmpty())
+        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
+    }
+    
     rendering.put(JSON_SCHEMA_SCHEMA, elementSchemaArtifact.jsonSchemaSchemaUri().toString());
 
     return rendering;
@@ -370,6 +382,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(SKOS_ALTLABEL, mapper.createArrayNode());
       for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
         rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel);
+    }
+
+    if (fieldSchemaArtifact.identifier().isPresent()) {
+      String identifier = fieldSchemaArtifact.identifier().get();
+      if (!identifier.isEmpty())
+        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
     }
 
     rendering.put(JSON_SCHEMA_SCHEMA, fieldSchemaArtifact.jsonSchemaSchemaUri().toString());
@@ -662,12 +680,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     rendering.put(SCHEMA_ORG_NAME, schemaArtifact.name());
     rendering.put(SCHEMA_ORG_DESCRIPTION, schemaArtifact.description());
-
-    if (schemaArtifact.identifier().isPresent()) {
-      String identifier = schemaArtifact.identifier().get();
-      if (!identifier.isEmpty())
-        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
-    }
   }
 
   private void addVersionRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
