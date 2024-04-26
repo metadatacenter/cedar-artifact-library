@@ -366,6 +366,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.put(JSON_SCHEMA_PROPERTIES, renderLiteralFieldArtifactPropertiesJsonSchemaSpecification());
         rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
         rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_VALUE);
+
+        if (fieldSchemaArtifact.fieldUi().isTemporal() || fieldSchemaArtifact.fieldUi().isNumeric())
+          rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_TYPE);
       }
     }
 
@@ -1130,7 +1133,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
 
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
-    
+
     for (var entry : elementSchemaArtifact.getChildPropertyUris().entrySet()) {
       String childName = entry.getKey();
       URI propertyUri = entry.getValue();
