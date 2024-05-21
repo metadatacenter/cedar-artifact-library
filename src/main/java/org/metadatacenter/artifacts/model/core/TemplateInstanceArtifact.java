@@ -298,7 +298,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 
     public Builder withoutMultiInstanceFieldInstances(String childFieldName)
     {
-      if (!childNames.contains(childFieldName) || !multiInstanceElementInstances.containsKey(childFieldName))
+      if (!childNames.contains(childFieldName) || !multiInstanceFieldInstances.containsKey(childFieldName))
         throw new IllegalArgumentException("child " + childFieldName + " not present in instance");
 
       childNames.remove(childFieldName);
