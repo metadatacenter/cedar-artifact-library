@@ -528,6 +528,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (fieldInstanceArtifact instanceof IriFieldInstance) {
       if (fieldInstanceArtifact.jsonLdId().isPresent() && fieldInstanceArtifact.jsonLdId().get() != null)
         objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
+      else
+        objectNode.putNull(JSON_LD_ID);
 
     } else if (fieldInstanceArtifact instanceof LiteralFieldInstance) {
       if (fieldInstanceArtifact.jsonLdValue().isPresent() && fieldInstanceArtifact.jsonLdValue().get() != null)
