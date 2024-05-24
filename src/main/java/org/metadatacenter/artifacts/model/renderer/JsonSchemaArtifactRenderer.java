@@ -522,40 +522,41 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
-    // If JSON-LD @value is present, assume it is a non-IRI field
-    if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
-      if (fieldInstanceArtifact.jsonLdValue().get() != null)
-        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get());
-      else
-        objectNode.putNull(JSON_LD_VALUE);
-
-      if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
-        objectNode.put(JSON_LD_TYPE, fieldInstanceArtifact.jsonLdTypes().get(0).toString());
-      } else if (fieldInstanceArtifact.jsonLdTypes().size() > 1) {
-        ArrayNode jsonLdTypesArrayNode = mapper.createArrayNode();
-
-        for (int i = 0; i < fieldInstanceArtifact.jsonLdTypes().size(); i++)
-          jsonLdTypesArrayNode.add(fieldInstanceArtifact.jsonLdTypes().get(i).toString());
-
-        objectNode.put(JSON_LD_TYPE, jsonLdTypesArrayNode);
-      }
-
-      if (fieldInstanceArtifact.language().isPresent())
-        objectNode.put(JSON_LD_LANGUAGE, fieldInstanceArtifact.language().get());
-
-      if (fieldInstanceArtifact.notation().isPresent())
-        objectNode.put(SKOS_NOTATION, fieldInstanceArtifact.notation().get());
-
-      if (fieldInstanceArtifact.prefLabel().isPresent())
-        objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.prefLabel().get());
-
-    } else if (fieldInstanceArtifact.jsonLdId().isPresent()) {
+    if (fieldInstanceArtifact.jsonLdId().isPresent()) {
       if (fieldInstanceArtifact.jsonLdId().get() != null)
         objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
       if (fieldInstanceArtifact.label().isPresent())
         objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
+
+    } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
+      if (fieldInstanceArtifact.jsonLdValue().get() != null)
+        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get());
+      else
+        objectNode.putNull(JSON_LD_VALUE);
+    } else { // If no @id or @value present, assume @value
+      objectNode.putNull(JSON_LD_VALUE);
     }
+
+    if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
+      objectNode.put(JSON_LD_TYPE, fieldInstanceArtifact.jsonLdTypes().get(0).toString());
+    } else if (fieldInstanceArtifact.jsonLdTypes().size() > 1) {
+      ArrayNode jsonLdTypesArrayNode = mapper.createArrayNode();
+
+      for (int i = 0; i < fieldInstanceArtifact.jsonLdTypes().size(); i++)
+        jsonLdTypesArrayNode.add(fieldInstanceArtifact.jsonLdTypes().get(i).toString());
+
+      objectNode.put(JSON_LD_TYPE, jsonLdTypesArrayNode);
+    }
+
+    if (fieldInstanceArtifact.language().isPresent())
+      objectNode.put(JSON_LD_LANGUAGE, fieldInstanceArtifact.language().get());
+
+    if (fieldInstanceArtifact.notation().isPresent())
+      objectNode.put(SKOS_NOTATION, fieldInstanceArtifact.notation().get());
+
+    if (fieldInstanceArtifact.prefLabel().isPresent())
+      objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.prefLabel().get());
 
     return objectNode;
   }
