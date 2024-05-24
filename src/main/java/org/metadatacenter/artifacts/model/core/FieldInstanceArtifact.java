@@ -15,8 +15,9 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
 public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact permits TextFieldInstance,
-  TextAreaFieldInstance, TemporalFieldInstance, NumericFieldInstance, ControlledTermFieldInstance, LinkFieldInstance,
+  TextAreaFieldInstance, TemporalFieldInstance, NumericFieldInstance,
   EmailFieldInstance, CheckboxFieldInstance, ListFieldInstance, PhoneNumberFieldInstance, RadioFieldInstance,
+  ControlledTermFieldInstance, LinkFieldInstance,
   FieldInstanceArtifactRecord
 {
   static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,

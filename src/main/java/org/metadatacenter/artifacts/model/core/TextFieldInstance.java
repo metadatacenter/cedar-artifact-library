@@ -14,7 +14,7 @@ import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
-public sealed interface TextFieldInstance extends FieldInstanceArtifact
+public sealed interface TextFieldInstance extends FieldInstanceArtifact, LiteralFieldInstance
 {
   static TextFieldInstance create(List<URI> jsonLdTypes,Optional<String> jsonLdValue, Optional<String> language)
   {

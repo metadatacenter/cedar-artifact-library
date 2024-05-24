@@ -16,7 +16,7 @@ import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
-public sealed interface TemporalFieldInstance extends FieldInstanceArtifact
+public sealed interface TemporalFieldInstance extends FieldInstanceArtifact, LiteralFieldInstance
 {
   static TemporalFieldInstance create(List<URI> jsonLdTypes, Optional<String> jsonLdValue)
   {

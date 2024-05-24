@@ -12,8 +12,10 @@ import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
+import org.metadatacenter.artifacts.model.core.IriFieldInstance;
 import org.metadatacenter.artifacts.model.core.JsonLdArtifact;
 import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
+import org.metadatacenter.artifacts.model.core.LiteralFieldInstance;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
 import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
@@ -522,21 +524,31 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
-    if (fieldInstanceArtifact.jsonLdId().isPresent()) {
-      if (fieldInstanceArtifact.jsonLdId().get() != null)
+    // TODO Use typesafe switch when available
+    if (fieldInstanceArtifact instanceof IriFieldInstance) {
+      if (fieldInstanceArtifact.jsonLdId().isPresent() && fieldInstanceArtifact.jsonLdId().get() != null)
         objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
-      if (fieldInstanceArtifact.label().isPresent())
-        objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
-
-    } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
-      if (fieldInstanceArtifact.jsonLdValue().get() != null)
-        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get());
+    } else if (fieldInstanceArtifact instanceof LiteralFieldInstance) {
+      if (fieldInstanceArtifact.jsonLdValue().isPresent() && fieldInstanceArtifact.jsonLdValue().get() != null)
+        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
       else
         objectNode.putNull(JSON_LD_VALUE);
-    } else { // If no @id or @value present, assume @value
-      objectNode.putNull(JSON_LD_VALUE);
+    } else { // No type given so some guessing involved
+      if (fieldInstanceArtifact.jsonLdId().isPresent()) {
+        if (fieldInstanceArtifact.jsonLdId().get() != null)
+          objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
+      } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
+        if (fieldInstanceArtifact.jsonLdValue().get() != null)
+          objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
+        else
+          objectNode.putNull(JSON_LD_VALUE);
+      } else // No @id or @value present; assume @value
+        objectNode.putNull(JSON_LD_VALUE);
     }
+
+    if (fieldInstanceArtifact.label().isPresent() && fieldInstanceArtifact.label().get() != null)
+      objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
 
     if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
       objectNode.put(JSON_LD_TYPE, fieldInstanceArtifact.jsonLdTypes().get(0).toString());

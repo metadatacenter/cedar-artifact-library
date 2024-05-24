@@ -14,7 +14,7 @@ import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
-public sealed interface EmailFieldInstance extends FieldInstanceArtifact
+public sealed interface EmailFieldInstance extends FieldInstanceArtifact, LiteralFieldInstance
 {
   static EmailFieldInstance create(List<URI> jsonLdTypes, Optional<String> jsonLdValue)
   {

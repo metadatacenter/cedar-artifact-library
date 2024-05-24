@@ -14,7 +14,7 @@ import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
-public sealed interface PhoneNumberFieldInstance extends FieldInstanceArtifact
+public sealed interface PhoneNumberFieldInstance extends FieldInstanceArtifact, LiteralFieldInstance
 {
   static PhoneNumberFieldInstance create(List<URI> jsonLdTypes, Optional<String> jsonLdValue)
   {
