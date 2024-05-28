@@ -66,7 +66,7 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
 
     public ControlledTermFieldInstance build()
     {
-      return create(jsonLdTypes, jsonLdId, label, notation, prefLabel, label);
+      return create(jsonLdTypes, jsonLdId, label, notation, prefLabel, language);
     }
   }
 
