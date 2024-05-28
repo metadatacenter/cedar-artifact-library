@@ -21,6 +21,7 @@ import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -1808,6 +1809,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
   private String renderUri(URI uri)
   {
-    return uri.toString();
+    if (XsdDatatype.isKnownXsdDatatypeUri(uri))
+      return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
+    else
+      return uri.toString();
   }
 }
