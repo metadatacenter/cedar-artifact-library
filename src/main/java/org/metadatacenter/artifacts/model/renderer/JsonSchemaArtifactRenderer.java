@@ -1665,7 +1665,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate a JSON Schema type specification for a date-time or null value
+   * Generate a JSON Schema type specification for a datetime-formatted string or null value
    * <p>
    * Defined as follows:
    * <pre>
@@ -1754,7 +1754,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": [minItems], "maxItems": [maxItems], "items": wrappedObjectNode }
+   * { "type": "array", "minItems": [minItems], "maxItems": [maxItems], "items": [wrappedObjectNode] }
    * </pre>
    */
   private ObjectNode renderJsonSchemaArrayWrapperSpecification(ObjectNode wrappedObjectNode, Optional<Integer> minItems,
