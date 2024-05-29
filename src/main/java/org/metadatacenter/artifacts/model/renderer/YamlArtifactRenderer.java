@@ -1,10 +1,10 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import org.metadatacenter.artifacts.model.core.AnnotationValue;
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.AnnotationValue;
 import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
 import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
 import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
@@ -30,6 +30,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstrain
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.time.OffsetDateTime;
@@ -69,6 +70,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEIGHT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
@@ -137,6 +139,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMM
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.WIDTH;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
@@ -699,14 +702,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
-    if (fieldSchemaArtifact.isMultiple() &&
-      !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
+    if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
-    else if (fieldSchemaArtifact.fieldUi().isList())
-      rendering.put(MULTIPLE, false);
 
-    if (fieldSchemaArtifact.minItems().isPresent()
-      && !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
+    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
     if (fieldSchemaArtifact.maxItems().isPresent())
@@ -722,6 +723,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(fieldName);
       if (!overrideDescription.equals(fieldSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().isStatic()) {
+      StaticFieldUi staticFieldUi = fieldSchemaArtifact.fieldUi().asStaticFieldUi();
+      if (staticFieldUi.width().isPresent())
+        rendering.put(WIDTH, staticFieldUi.width().get());
+
+      if (staticFieldUi.height().isPresent())
+        rendering.put(HEIGHT, staticFieldUi.height().get());
     }
 
     return rendering;
@@ -940,6 +950,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       return "value";
     else
       return ""; // TODO Use typesafe switch when available
+  }
+
+  private boolean isMultiSelectListField(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    return fieldSchemaArtifact.fieldUi().isList() && fieldSchemaArtifact.valueConstraints().isPresent()
+      && fieldSchemaArtifact.valueConstraints().get().multipleChoice();
   }
 
 }

@@ -109,6 +109,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI_CONTENT;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
 import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
+import static org.metadatacenter.model.ModelNodeNames.UI_HEIGHT;
 import static org.metadatacenter.model.ModelNodeNames.UI_HIDDEN;
 import static org.metadatacenter.model.ModelNodeNames.UI_INPUT_TIME_FORMAT;
 import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
@@ -118,6 +119,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI_RECOMMENDED_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
 import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
 import static org.metadatacenter.model.ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED;
+import static org.metadatacenter.model.ModelNodeNames.UI_WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACRONYM;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTION;
@@ -1215,6 +1217,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     boolean hidden = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
     boolean recommendedValue = readBoolean(uiNode, uiPath, UI_RECOMMENDED_VALUE, false);
     boolean continuePreviousLine = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
+    Optional<Integer> width = readInteger(uiNode, uiPath, UI_WIDTH);
+    Optional<Integer> height = readInteger(uiNode, uiPath, UI_HEIGHT);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);
@@ -1226,7 +1230,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       Optional<String> content = readString(uiNode, uiPath, UI_CONTENT);
-      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
+      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine, width, height);
     } else
       return FieldUi.create(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
   }

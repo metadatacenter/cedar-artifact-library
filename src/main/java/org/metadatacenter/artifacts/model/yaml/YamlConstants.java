@@ -91,6 +91,8 @@ public class YamlConstants
   public static final String MAX_DEPTH = "maxDepth";
   public static final String NUM_TERMS = "numTerms";
   public static final String CONTENT = "content";
+  public static final String WIDTH = "width";
+  public static final String HEIGHT = "height";
   public static final String HEADER = "header";
   public static final String FOOTER = "footer";
   public static final String ORDER = "order";

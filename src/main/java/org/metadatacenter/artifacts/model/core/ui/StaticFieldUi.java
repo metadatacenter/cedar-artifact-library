@@ -22,9 +22,14 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   default boolean continuePreviousLine() { return false; }
 
-  static StaticFieldUi create(FieldInputType fieldInputType, Optional<String> content, boolean hidden, boolean continuePreviousLine)
+  Optional<Integer> width();
+
+  Optional<Integer> height();
+
+  static StaticFieldUi create(FieldInputType fieldInputType, Optional<String> content, boolean hidden,
+    boolean continuePreviousLine, Optional<Integer> width, Optional<Integer> height)
   {
-    return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine);
+    return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine, width, height);
   }
 
   static PageBreakFieldUiBuilder pageBreakFieldUiBuilder()
@@ -96,7 +101,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false);
+      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -127,7 +133,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, false);
+      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, false, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -166,7 +173,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, continuePreviousLine);
+      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, continuePreviousLine, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -207,7 +215,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine);
+      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -216,6 +225,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
+    private Optional<Integer> width = Optional.empty();
+    private Optional<Integer> height = Optional.empty();
 
     private YouTubeFieldUiBuilder()
     {
@@ -246,19 +257,31 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public YouTubeFieldUiBuilder withWidth(Integer width)
+    {
+      this.width = Optional.ofNullable(width);
+      return this;
+    }
+
+    public YouTubeFieldUiBuilder withHeight(Integer height)
+    {
+      this.height = Optional.ofNullable(height);
+      return this;
+    }
+
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden, continuePreviousLine);
+      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden, continuePreviousLine, width, height);
     }
   }
 
 }
 
-record StaticFieldUiRecord(FieldInputType inputType, Optional<String> _content, boolean hidden, boolean continuePreviousLine) implements StaticFieldUi
+record StaticFieldUiRecord(FieldInputType inputType, Optional<String> _content, boolean hidden,
+                           boolean continuePreviousLine, Optional<Integer> width, Optional<Integer> height) implements StaticFieldUi
 {
   public StaticFieldUiRecord
   {
-
     validateOptionalFieldNotNull(this, _content, ModelNodeNames.UI_CONTENT);
 
     if (inputType == null)

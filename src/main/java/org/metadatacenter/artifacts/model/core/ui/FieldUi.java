@@ -47,35 +47,35 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + StaticFieldUi.class.getName());
   }
 
-  @JsonIgnore default boolean isTemporal() {return inputType() == FieldInputType.TEMPORAL;}
+  @JsonIgnore default boolean isTemporal() { return inputType() == FieldInputType.TEMPORAL; }
 
-  @JsonIgnore default boolean isNumeric() {return inputType() == FieldInputType.NUMERIC;}
+  @JsonIgnore default boolean isNumeric() { return inputType() == FieldInputType.NUMERIC; }
 
-  @JsonIgnore default boolean isTextField() {return inputType() == FieldInputType.TEXTFIELD;}
+  @JsonIgnore default boolean isTextField() { return inputType() == FieldInputType.TEXTFIELD; }
 
-  @JsonIgnore default boolean isTextarea() {return inputType() == FieldInputType.TEXTAREA;}
+  @JsonIgnore default boolean isTextarea() { return inputType() == FieldInputType.TEXTAREA; }
 
-  @JsonIgnore default boolean isRadio() {return inputType() == FieldInputType.RADIO;}
+  @JsonIgnore default boolean isRadio() { return inputType() == FieldInputType.RADIO; }
 
-  @JsonIgnore default boolean isCheckbox() {return inputType() == FieldInputType.CHECKBOX;}
+  @JsonIgnore default boolean isCheckbox() { return inputType() == FieldInputType.CHECKBOX; }
 
-  @JsonIgnore default boolean isEmail() {return inputType() == FieldInputType.EMAIL;}
+  @JsonIgnore default boolean isEmail() { return inputType() == FieldInputType.EMAIL; }
 
-  @JsonIgnore default boolean isList() {return inputType() == FieldInputType.LIST;}
+  @JsonIgnore default boolean isList() { return inputType() == FieldInputType.LIST; }
 
-  @JsonIgnore default boolean isPhoneNumber() {return inputType() == FieldInputType.PHONE_NUMBER;}
+  @JsonIgnore default boolean isPhoneNumber() { return inputType() == FieldInputType.PHONE_NUMBER; }
 
-  @JsonIgnore default boolean isLink() {return inputType() == FieldInputType.LINK;}
+  @JsonIgnore default boolean isLink() { return inputType() == FieldInputType.LINK; }
 
-  @JsonIgnore default boolean isAttributeValue() {return inputType() == FieldInputType.ATTRIBUTE_VALUE;}
+  @JsonIgnore default boolean isAttributeValue() { return inputType() == FieldInputType.ATTRIBUTE_VALUE; }
 
-  @JsonIgnore default boolean isRichText() {return inputType() == FieldInputType.RICHTEXT;}
+  @JsonIgnore default boolean isRichText() { return inputType() == FieldInputType.RICHTEXT; }
 
-  @JsonIgnore default boolean isSectionBreak() {return inputType() == FieldInputType.SECTION_BREAK;}
+  @JsonIgnore default boolean isSectionBreak() { return inputType() == FieldInputType.SECTION_BREAK; }
 
-  @JsonIgnore default boolean isImage() {return inputType() == FieldInputType.IMAGE;}
+  @JsonIgnore default boolean isImage() { return inputType() == FieldInputType.IMAGE; }
 
-  @JsonIgnore default boolean isYouTube() {return inputType() == FieldInputType.YOUTUBE;}
+  @JsonIgnore default boolean isYouTube() { return inputType() == FieldInputType.YOUTUBE; }
 
   static FieldUi create(FieldInputType fieldInputType, boolean hidden, boolean valueRecommendation,
     boolean recommendedValue, boolean continuePreviousLine)

@@ -58,6 +58,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEIGHT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
@@ -84,6 +85,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -383,6 +385,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     boolean hidden = readBoolean(sourceNode, path, HIDDEN, false);
     boolean recommendedValue = readBoolean(sourceNode, path, RECOMMENDED, false);
     boolean continuePreviousLine = readBoolean(sourceNode, path, CONTINUE_PREVIOUS_LINE, false);
+    Optional<Integer> width = readInteger(sourceNode, path, WIDTH);
+    Optional<Integer> height = readInteger(sourceNode, path, HEIGHT);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
@@ -394,7 +398,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       Optional<String> content = readString(sourceNode, path, CONTENT, true);
-      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine);
+      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine, width, height);
     } else
       return FieldUi.create(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
   }
