@@ -26,20 +26,20 @@ public enum XsdDatatype
     return this.text;
   }
 
-  public static XsdDatatype fromString(String text)
+  public static XsdDatatype fromString(String datatype)
   {
-    for (XsdDatatype n : XsdDatatype.values()) {
-      if (n.text.equalsIgnoreCase(text)) {
-        return n;
+    for (XsdDatatype d : XsdDatatype.values()) {
+      if (d.text.equals(datatype) || d.toUri().toString().equals(datatype)) {
+        return d;
       }
     }
-    throw new IllegalArgumentException("No XSD datatype constant " + text + " found");
+    throw new IllegalArgumentException("No XSD datatype constant " + datatype + " found");
   }
 
   public static XsdDatatype fromUri(URI uri)
   {
     String uriString = uri.toString();
-    String base = uri.toString().substring(0, uriString.indexOf("#"));
+    String base = uri.toString().substring(0, uriString.indexOf("#") + 1);
     String fragment = uri.toString().substring(uriString.indexOf("#") + 1);
 
     if (base == null || !base.equals(XSD_IRI))
@@ -48,10 +48,10 @@ public enum XsdDatatype
     return fromString("xsd:" + fragment);
   }
 
-  public static boolean isKnownXsdDatatype(String text)
+  public static boolean isKnownXsdDatatype(String datatype)
   {
     for (XsdDatatype d : XsdDatatype.values()) {
-      if (d.text.equalsIgnoreCase(text)) {
+      if (d.toUri().toString().equalsIgnoreCase(datatype) || d.text.equals(datatype)) {
         return true;
       }
     }

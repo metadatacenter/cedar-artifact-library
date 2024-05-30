@@ -666,7 +666,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");
   }
 
-  @Test public void testRoundTripRAD2xCLIGeneratedTemplate()
+  @Test public void testRoundTripRADx2CLIGeneratedTemplate()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADx2.0CLIGeneratedTemplate.json");
   }
@@ -686,7 +686,7 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADxCLIGeneratedInstance.json");
   }
 
-  @Test public void testRoundTripRAD2xCLIGeneratedInstance()
+  @Test public void testRoundTripRADx2CLIGeneratedInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADx2.0CLIGeneratedInstance.json");
   }
