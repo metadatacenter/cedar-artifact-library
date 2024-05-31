@@ -6,9 +6,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.junit.Before;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
@@ -18,25 +19,27 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
@@ -76,8 +79,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(NAME, name);
+    expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(DESCRIPTION, description);
     expectedRendering.put(HEADER, header);
     expectedRendering.put(FOOTER, footer);
@@ -102,8 +105,8 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(NAME, name);
+    expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
 
     assertEquals(expectedRendering, actualRendering);
@@ -115,7 +118,7 @@ public class YamlArtifactRendererTest {
     String name = "Study Name";
     String description = "Study name field";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
       withName(name).
       withDescription(description).
@@ -123,13 +126,12 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
     expectedRendering.put(TYPE, TEXT_FIELD);
-    expectedRendering.put(DATATYPE, STRING);
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -140,20 +142,19 @@ public class YamlArtifactRendererTest {
     String name = "Study Name";
     String description = "Study name field";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withName(name).
       withDescription(description).
       build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     String expectedYaml = """
         type: text-field
         name: ${name}
         description: ${description}
-        datatype: string
     """.replace("${name}", name).replace("${description}", description);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYaml, LinkedHashMap.class);
@@ -170,7 +171,7 @@ public class YamlArtifactRendererTest {
     URI doidDiseaseBranchIri = URI.create("http://purl.obolibrary.org/obo/DOID_4");
     String doidSource = "DOID";
     String doidSourceAcronym = "DOID";
-    String doidDiseaseBranchName = "disease";
+    String doidDiseaseBranchName = "Disease";
     Integer doidDiseaseBranchDepth = 0;
     URI pmrDiseaseBranchIri = URI.create("http://purl.bioontology.org/ontology/PMR.owl#Disease");
     String pmrSource = "Physical Medicine and Rehabilitation (PMR)";
@@ -184,7 +185,7 @@ public class YamlArtifactRendererTest {
     URI actionSourceIri = URI.create("http://purl.obolibrary.org/obo/DOID_4");
     Integer actionTo = 2;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+    ControlledTermField controlledTermField = ControlledTermField.builder().
       withJsonLdId(fieldId).
       withName(name).
       withDescription(description).
@@ -195,52 +196,71 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, controlledTermField);
 
-    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(TYPE, TEXT_FIELD);
-    expectedRendering.put(NAME, name);
-    expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(DATATYPE, IRI);
+    LinkedHashMap<String, Object> expectedBaseFieldRendering = new LinkedHashMap<>();
+    expectedBaseFieldRendering.put(KEY, name);
+    expectedBaseFieldRendering.put(TYPE, CONTROLLED_TERM_FIELD);
+    expectedBaseFieldRendering.put(NAME, name);
+    expectedBaseFieldRendering.put(DESCRIPTION, description);
+    expectedBaseFieldRendering.put(DATATYPE, IRI);
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
 
     LinkedHashMap<String, Object>  doidDiseaseBranchRendering = new LinkedHashMap<>();
     doidDiseaseBranchRendering.put(TYPE, BRANCH);
-    doidDiseaseBranchRendering.put(SOURCE, doidSource);
-    doidDiseaseBranchRendering.put(SOURCE_NAME, doidDiseaseBranchName);
-    doidDiseaseBranchRendering.put(SOURCE_ACRONYM, doidSourceAcronym);
-    doidDiseaseBranchRendering.put(SOURCE_IRI, doidDiseaseBranchIri);
+    doidDiseaseBranchRendering.put(ONTOLOGY_NAME, doidSource);
+    doidDiseaseBranchRendering.put(ACRONYM, doidSourceAcronym);
+    doidDiseaseBranchRendering.put(TERM_LABEL, doidDiseaseBranchName);
+    doidDiseaseBranchRendering.put(IRI, doidDiseaseBranchIri);
     doidDiseaseBranchRendering.put(MAX_DEPTH, doidDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(doidDiseaseBranchRendering);
 
     LinkedHashMap<String, Object>  pmrDiseaseBranchRendering = new LinkedHashMap<>();
     pmrDiseaseBranchRendering.put(TYPE, BRANCH);
-    pmrDiseaseBranchRendering.put(SOURCE, pmrSource);
-    pmrDiseaseBranchRendering.put(SOURCE_NAME, pmrDiseaseBranchName);
-    pmrDiseaseBranchRendering.put(SOURCE_ACRONYM, pmrSourceAcronym);
-    pmrDiseaseBranchRendering.put(SOURCE_IRI, pmrDiseaseBranchIri);
+    pmrDiseaseBranchRendering.put(ONTOLOGY_NAME, pmrSource);
+    pmrDiseaseBranchRendering.put(ACRONYM, pmrSourceAcronym);
+    pmrDiseaseBranchRendering.put(TERM_LABEL, pmrDiseaseBranchName);
+    pmrDiseaseBranchRendering.put(IRI, pmrDiseaseBranchIri);
     pmrDiseaseBranchRendering.put(MAX_DEPTH, pmrDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(pmrDiseaseBranchRendering);
 
-    expectedRendering.put(VALUES, expectedValueConstraintsRendering);
+    expectedBaseFieldRendering.put(VALUES, expectedValueConstraintsRendering);
 
     List<LinkedHashMap<String, Object>> expectedActionsRendering = new ArrayList<>();
 
     LinkedHashMap<String, Object>  actionRendering = new LinkedHashMap<>();
     actionRendering.put(ACTION, actionType.toString());
-    actionRendering.put(TERM_IRI, actionTermUri);
-    actionRendering.put(SOURCE_ACRONYM, actionSourceAcronym);
-    actionRendering.put(SOURCE_IRI, actionSourceIri);
     actionRendering.put(ACTION_TO, actionTo);
+    actionRendering.put(TERM_IRI, actionTermUri);
+    actionRendering.put(SOURCE_IRI, actionSourceIri);
+    actionRendering.put(SOURCE_ACRONYM, actionSourceAcronym);
 
     expectedActionsRendering.add(actionRendering);
 
-    expectedRendering.put(ACTIONS, expectedActionsRendering);
+    expectedBaseFieldRendering.put(ACTIONS, expectedActionsRendering);
 
-    assertEquals(expectedRendering.toString(), actualRendering.toString());
+    assertEquals(expectedBaseFieldRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
+  public void testRenderAnnotations() {
+
+    String name = "Study";
+    String description = "Study template";
+    String literalAnnotationName = "foo";
+    String literalAnnotationValue = "bar";
+    String iriAnnotationName = "A";
+    String iriAnnotationValue = "https://example.com/A";
+
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
+      withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
+      withName(name).
+      withDescription(description).
+      build();
+
   }
 
 }

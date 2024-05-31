@@ -7,8 +7,8 @@ import org.metadatacenter.artifacts.model.core.ui.ElementUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +22,7 @@ public class ElementSchemaArtifactTest
 
   @Test public void testConstructor()
   {
-    Map<String, URI> jsonLdContext = PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+    LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = Collections.singletonList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     URI jsonLdId = URI.create("http://example.com/artifact");
     URI createdBy = URI.create("http://example.com/user");
@@ -44,6 +44,7 @@ public class ElementSchemaArtifactTest
     Optional<Integer> minItems = Optional.of(1);
     Optional<Integer> maxItems = Optional.of(3);
     Optional<URI> propertyUri = Optional.of(URI.create("https://schema.metadatacenter.org/properties/434"));
+    Optional<String> language = Optional.of("en");
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription,
@@ -51,8 +52,8 @@ public class ElementSchemaArtifactTest
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      Collections.emptyMap(), Collections.emptyMap(), ElementUi.builder().build(),
-      false, minItems, maxItems, propertyUri);
+      new LinkedHashMap<>(), new LinkedHashMap<>(),
+      false, minItems, maxItems, propertyUri, language, ElementUi.builder().build(), Optional.empty());
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
@@ -74,6 +75,7 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());
     Assert.assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom());
     Assert.assertEquals(propertyUri, elementSchemaArtifact.propertyUri());
+    Assert.assertEquals(language, elementSchemaArtifact.language());
   }
 
   @Test
@@ -85,8 +87,8 @@ public class ElementSchemaArtifactTest
     String textField2Label = "text field 2 label";
     String textField2Description = "text field 2 description";
 
-    FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
-    FieldSchemaArtifact textField2 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName2).build();
+    TextField textField1 = TextField.builder().withName(textFieldName1).build();
+    TextField textField2 = TextField.builder().withName(textFieldName2).build();
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
       .withName(elementName)

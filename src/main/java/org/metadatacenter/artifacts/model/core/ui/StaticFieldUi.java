@@ -22,14 +22,24 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   default boolean continuePreviousLine() { return false; }
 
-  static StaticFieldUi create(FieldInputType fieldInputType, Optional<String> content, boolean hidden, boolean continuePreviousLine)
+  Optional<Integer> width();
+
+  Optional<Integer> height();
+
+  static StaticFieldUi create(FieldInputType fieldInputType, Optional<String> content, boolean hidden,
+    boolean continuePreviousLine, Optional<Integer> width, Optional<Integer> height)
   {
-    return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine);
+    return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine, width, height);
   }
 
   static PageBreakFieldUiBuilder pageBreakFieldUiBuilder()
   {
     return new PageBreakFieldUiBuilder();
+  }
+
+  static PageBreakFieldUiBuilder pageBreakFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new PageBreakFieldUiBuilder(staticFieldUi);
   }
 
   static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder()
@@ -39,14 +49,29 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   static RichTextFieldUiBuilder richTextFieldUiBuilder() { return new RichTextFieldUiBuilder(); }
 
+  static RichTextFieldUiBuilder richTextFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new RichTextFieldUiBuilder(staticFieldUi);
+  }
+
   static ImageFieldUiBuilder imageFieldUiBuilder()
   {
     return new ImageFieldUiBuilder();
   }
 
+  static ImageFieldUiBuilder imageFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new ImageFieldUiBuilder(staticFieldUi);
+  }
+
   static YouTubeFieldUiBuilder youTubeFieldUiBuilder()
   {
     return new YouTubeFieldUiBuilder();
+  }
+
+  static YouTubeFieldUiBuilder youTubeFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new YouTubeFieldUiBuilder(staticFieldUi);
   }
 
   class PageBreakFieldUiBuilder
@@ -55,6 +80,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private boolean hidden = false;
 
     private PageBreakFieldUiBuilder() {}
+
+    private PageBreakFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+    }
 
     public PageBreakFieldUiBuilder withContent(String content)
     {
@@ -70,7 +101,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false);
+      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -80,6 +112,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private boolean hidden = false;
 
     private SectionBreakFieldUiBuilder() {}
+
+    private SectionBreakFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+    }
 
     public SectionBreakFieldUiBuilder withContent(String content)
     {
@@ -95,7 +133,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, false);
+      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, false, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -106,6 +145,13 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private boolean continuePreviousLine = false;
 
     private RichTextFieldUiBuilder() {}
+
+    private RichTextFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
+    }
 
     public RichTextFieldUiBuilder withContent(String content)
     {
@@ -127,7 +173,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, continuePreviousLine);
+      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, continuePreviousLine, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -139,6 +186,13 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     private ImageFieldUiBuilder()
     {
+    }
+
+    private ImageFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public ImageFieldUiBuilder withContent(String content)
@@ -161,7 +215,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine);
+      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine, Optional.empty(),
+        Optional.empty());
     }
   }
 
@@ -170,9 +225,18 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
+    private Optional<Integer> width = Optional.empty();
+    private Optional<Integer> height = Optional.empty();
 
     private YouTubeFieldUiBuilder()
     {
+    }
+
+    private YouTubeFieldUiBuilder(StaticFieldUi staticFieldUi)
+    {
+      this.content = staticFieldUi._content();
+      this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public YouTubeFieldUiBuilder withContent(String content)
@@ -193,19 +257,31 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public YouTubeFieldUiBuilder withWidth(Integer width)
+    {
+      this.width = Optional.ofNullable(width);
+      return this;
+    }
+
+    public YouTubeFieldUiBuilder withHeight(Integer height)
+    {
+      this.height = Optional.ofNullable(height);
+      return this;
+    }
+
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden, continuePreviousLine);
+      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden, continuePreviousLine, width, height);
     }
   }
 
 }
 
-record StaticFieldUiRecord(FieldInputType inputType, Optional<String> _content, boolean hidden, boolean continuePreviousLine) implements StaticFieldUi
+record StaticFieldUiRecord(FieldInputType inputType, Optional<String> _content, boolean hidden,
+                           boolean continuePreviousLine, Optional<Integer> width, Optional<Integer> height) implements StaticFieldUi
 {
   public StaticFieldUiRecord
   {
-
     validateOptionalFieldNotNull(this, _content, ModelNodeNames.UI_CONTENT);
 
     if (inputType == null)

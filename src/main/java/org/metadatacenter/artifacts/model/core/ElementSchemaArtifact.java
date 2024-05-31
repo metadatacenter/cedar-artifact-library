@@ -5,8 +5,9 @@ import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,17 +22,17 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateS
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContains;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.UI;
@@ -39,21 +40,23 @@ import static org.metadatacenter.model.ModelNodeNames.UI;
 public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact, ParentSchemaArtifact
 {
   static ElementSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-    Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier,
     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-    ElementUi elementUi,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
+    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
+    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+    Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations)
   {
     return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, elementUi,
-      isMultiple, minItems, maxItems, propertyUri);
+      fieldSchemas, elementSchemas,
+      isMultiple, minItems, maxItems,
+      propertyUri, language, elementUi, annotations);
   }
 
   default ParentArtifactUi getUi() { return elementUi(); }
@@ -84,7 +87,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
   class Builder
   {
-    private Map<String, URI> jsonLdContext = new HashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     private List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
@@ -103,15 +106,45 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
-    private final Map<String, FieldSchemaArtifact> fieldSchemas = new HashMap<>();
-    private final Map<String, ElementSchemaArtifact> elementSchemas = new HashMap<>();
+    private LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
+    private LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
     private boolean isMultiple = false;
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
-    private final ElementUi.Builder elementUiBuilder = ElementUi.builder();
+    private Optional<String> language = Optional.empty();
+    private ElementUi.Builder elementUiBuilder = ElementUi.builder();
+    private Optional<Annotations> annotations = Optional.empty();
 
     private Builder() {
+    }
+
+    private Builder(ElementSchemaArtifact elementSchemaArtifact)
+    {
+      this.jsonLdContext = new LinkedHashMap<>(elementSchemaArtifact.jsonLdContext());
+      this.jsonLdTypes = new ArrayList<>(elementSchemaArtifact.jsonLdTypes());
+      this.jsonLdId = elementSchemaArtifact.jsonLdId();
+      this.createdBy = elementSchemaArtifact.createdBy();
+      this.modifiedBy = elementSchemaArtifact.modifiedBy();
+      this.createdOn = elementSchemaArtifact.createdOn();
+      this.lastUpdatedOn = elementSchemaArtifact.lastUpdatedOn();
+      this.jsonSchemaSchemaUri = elementSchemaArtifact.jsonSchemaSchemaUri();
+      this.jsonSchemaType = elementSchemaArtifact.jsonSchemaType();
+      this.jsonSchemaTitle = elementSchemaArtifact.jsonSchemaTitle();
+      this.jsonSchemaDescription = elementSchemaArtifact.jsonSchemaDescription();
+      this.name = elementSchemaArtifact.name();
+      this.description = elementSchemaArtifact.description();
+      this.identifier = elementSchemaArtifact.identifier();
+      this.modelVersion = elementSchemaArtifact.modelVersion();
+      this.version = elementSchemaArtifact.version();
+      this.status = elementSchemaArtifact.status();
+      this.previousVersion = elementSchemaArtifact.previousVersion();
+      this.derivedFrom = elementSchemaArtifact.derivedFrom();
+      this.fieldSchemas = new LinkedHashMap<>(elementSchemaArtifact.fieldSchemas());
+      this.elementSchemas = new LinkedHashMap<>(elementSchemaArtifact.elementSchemas());
+      this.language = elementSchemaArtifact.language();
+      this.elementUiBuilder = ElementUi.builder(elementSchemaArtifact.elementUi());
+      this.annotations = elementSchemaArtifact.annotations();
     }
 
     public Builder withJsonLdType(URI jsonLdType)
@@ -126,9 +159,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
-    public Builder withJsonLdContext(Map<String, URI> jsonLdContext)
+    public Builder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
-      this.jsonLdContext = jsonLdContext;
+      this.jsonLdContext = new LinkedHashMap<>(jsonLdContext);
       return this;
     }
 
@@ -301,6 +334,18 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
+    public Builder withLanguage(String language)
+    {
+      this.language = Optional.ofNullable(language);
+      return this;
+    }
+
+    public Builder withAnnotations(Annotations annotations)
+    {
+      this.annotations = Optional.ofNullable(annotations);
+      return this;
+    }
+
     public ElementSchemaArtifact build()
     {
       return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
@@ -309,20 +354,22 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
         modelVersion, version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas,
-        elementUiBuilder.build(),
-        isMultiple, minItems, maxItems, propertyUri);
+        isMultiple, minItems, maxItems, propertyUri,
+        language, elementUiBuilder.build(), annotations);
     }
   }
 }
 
 record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                                   Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                   LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                    String name, String description, Optional<String> identifier,
                                    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                   Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-                                   ElementUi elementUi, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                   Optional<URI> propertyUri)  implements ElementSchemaArtifact
+                                   LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
+                                   LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
+                                   boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                                   Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi,
+                                   Optional<Annotations> annotations)  implements ElementSchemaArtifact
 {
   public ElementSchemaArtifactRecord
   {
@@ -337,8 +384,10 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUiFieldNotNull(this, elementUi, UI);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri");
+    validateOptionalFieldNotNull(this, language,  "language");
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
+    validateOptionalFieldNotNull(this, annotations, "annotations");
 
     if (minItems.isPresent() && minItems.get() < 0)
       throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name());
@@ -359,10 +408,10 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
           name + "; missing fields: " + childNames);
     }
 
-    jsonLdContext = Map.copyOf(jsonLdContext);
-    jsonLdTypes = List.copyOf(jsonLdTypes);
-    fieldSchemas = Map.copyOf(fieldSchemas);
-    elementSchemas = Map.copyOf(elementSchemas);
+    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
+    jsonLdTypes = new ArrayList<>(jsonLdTypes);
+    fieldSchemas = new LinkedHashMap<>(fieldSchemas);
+    elementSchemas = new LinkedHashMap<>(elementSchemas);
   }
 }
 

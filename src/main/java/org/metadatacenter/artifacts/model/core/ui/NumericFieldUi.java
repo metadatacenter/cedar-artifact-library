@@ -18,15 +18,27 @@ public non-sealed interface NumericFieldUi extends FieldUi
     return new NumericFieldUi.Builder();
   }
 
+  static Builder builder(NumericFieldUi numericFieldUi) {
+    return new NumericFieldUi.Builder(numericFieldUi);
+  }
+
   class Builder
   {
-    private final FieldInputType inputType = FieldInputType.NUMERIC;
+    private FieldInputType inputType = FieldInputType.NUMERIC;
     private boolean hidden = false;
     private boolean recommendedValue = false;
     private boolean continuePreviousLine = false;
 
     private Builder()
     {
+    }
+
+    private Builder(NumericFieldUi numericFieldUi)
+    {
+      this.inputType = numericFieldUi.inputType();
+      this.hidden = numericFieldUi.hidden();
+      this.recommendedValue = numericFieldUi.recommendedValue();
+      this.continuePreviousLine = numericFieldUi.continuePreviousLine();
     }
 
     public Builder withHidden(boolean hidden)

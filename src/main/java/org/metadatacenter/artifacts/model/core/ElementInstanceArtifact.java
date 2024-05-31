@@ -4,7 +4,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,15 +30,15 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
  */
 public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
-  static ElementInstanceArtifact create(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+  static ElementInstanceArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<String> name, Optional<String> description, Optional<URI> createdBy, Optional<URI> modifiedBy,
     Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     List<String> childNames,
-    Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
-    Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
-    Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
-    Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
+    LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+    LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+    LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
+    LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
+    LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   {
     return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, childNames,
@@ -113,9 +113,14 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     return new Builder();
   }
 
+  static Builder builder(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    return new Builder(elementInstanceArtifact);
+  }
+
   class Builder
   {
-    private Map<String, URI> jsonLdContext = new HashMap<>();
+    private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>();
     private List<URI> jsonLdTypes = Collections.emptyList();
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<String> name = Optional.empty();
@@ -124,20 +129,48 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private final List<String> childNames = new ArrayList<>();
-    private final Map<String, FieldInstanceArtifact> singleInstanceFieldInstances = new HashMap<>();
-    private final Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new HashMap<>();
-    private final Map<String, ElementInstanceArtifact> singleInstanceElementInstances = new HashMap<>();
-    private final Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new HashMap<>();
-    private final Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new HashMap<>();
+    private List<String> childNames = new ArrayList<>();
+    private LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances = new LinkedHashMap<>();
+    private LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances = new LinkedHashMap<>();
+    private LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances = new LinkedHashMap<>();
+    private LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances = new LinkedHashMap<>();
+    private LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups = new LinkedHashMap<>();
 
     private Builder()
     {
     }
 
+    private Builder(ElementInstanceArtifact elementInstanceArtifact)
+    {
+      this.jsonLdTypes = new ArrayList<>(elementInstanceArtifact.jsonLdTypes());
+      this.jsonLdId = elementInstanceArtifact.jsonLdId();
+      this.jsonLdContext = new LinkedHashMap<>(elementInstanceArtifact.jsonLdContext());
+      this.name = elementInstanceArtifact.name();
+      this.description = elementInstanceArtifact.description();
+      this.createdBy = elementInstanceArtifact.createdBy();
+      this.modifiedBy = elementInstanceArtifact.modifiedBy();
+      this.createdOn = elementInstanceArtifact.createdOn();
+      this.lastUpdatedOn = elementInstanceArtifact.lastUpdatedOn();
+      this.childNames = new ArrayList<>(elementInstanceArtifact.childNames());
+      this.singleInstanceFieldInstances = new LinkedHashMap<>(elementInstanceArtifact.singleInstanceFieldInstances());
+      this.multiInstanceFieldInstances = new LinkedHashMap<>(elementInstanceArtifact.multiInstanceFieldInstances());
+      this.singleInstanceElementInstances = new LinkedHashMap<>(elementInstanceArtifact.singleInstanceElementInstances());
+      this.multiInstanceElementInstances = new LinkedHashMap<>(elementInstanceArtifact.multiInstanceElementInstances());
+      this.attributeValueFieldInstanceGroups = new LinkedHashMap<>(elementInstanceArtifact.attributeValueFieldInstanceGroups());
+    }
+
     public Builder withJsonLdContextEntry(String name, URI property)
     {
       this.jsonLdContext.put(name, property);
+
+      return this;
+    }
+
+    public Builder withoutJsonLdContextEntry(String name){
+      if (!this.jsonLdContext.containsKey(name))
+        throw new IllegalArgumentException("Entry " + name + " not present in @context");
+
+      this.jsonLdContext.remove(name);
 
       return this;
     }
@@ -208,6 +241,18 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    public Builder withoutSingleInstanceFieldInstance(String childFieldName)
+    {
+      if (!childNames.contains(childFieldName) || !singleInstanceFieldInstances.containsKey(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " not present in instance");
+
+      childNames.remove(childFieldName);
+
+      singleInstanceFieldInstances.remove(childFieldName);
+
+      return this;
+    }
+
     public Builder withSingleInstanceElementInstance(String childElementName, ElementInstanceArtifact elementInstance)
     {
       if (childNames.contains(childElementName))
@@ -220,21 +265,38 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    public Builder withoutSingleInstanceElementInstance(String childElementName)
+    {
+      if (!this.childNames.contains(childElementName) || !singleInstanceElementInstances.containsKey(childElementName))
+        throw new IllegalArgumentException("child " + childElementName + " not present in instance");
+
+      this.childNames.remove(childElementName);
+
+      this.singleInstanceElementInstances.remove(childElementName);
+
+      return this;
+    }
+
     public Builder withMultiInstanceFieldInstances(String childFieldName, List<FieldInstanceArtifact> childFieldInstances)
     {
-      if (childNames.contains(childFieldName))
+      if (this.childNames.contains(childFieldName))
         throw new IllegalArgumentException("child " + childFieldName + " already present in instance");
 
-      childNames.add(childFieldName);
+      this.childNames.add(childFieldName);
 
       this.multiInstanceFieldInstances.put(childFieldName, List.copyOf(childFieldInstances));
 
       return this;
     }
 
-    public Builder withEmptyMultiInstanceFieldInstances(String childFieldName)
+    public Builder withoutMultiInstanceFieldInstances(String childFieldName)
     {
-      withMultiInstanceFieldInstances(childFieldName, Collections.emptyList());
+      if (!childNames.contains(childFieldName) || !multiInstanceFieldInstances.containsKey(childFieldName))
+        throw new IllegalArgumentException("child " + childFieldName + " not present in instance");
+
+      this.childNames.remove(childFieldName);
+
+      this.multiInstanceFieldInstances.remove(childFieldName);
 
       return this;
     }
@@ -251,15 +313,20 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withEmptyMultiInstanceElementInstances(String childFieldName)
+    public Builder withoutMultiInstanceElementInstances(String childElementName)
     {
-      withMultiInstanceElementInstances(childFieldName, Collections.emptyList());
+      if (!childNames.contains(childElementName) || !multiInstanceElementInstances.containsKey(childElementName))
+        throw new IllegalArgumentException("child " + childElementName + " not present in instance");
+
+      this.childNames.remove(childElementName);
+
+      this.multiInstanceElementInstances.remove(childElementName);
 
       return this;
     }
 
     public Builder withAttributeValueFieldGroup(String attributeValueFieldGroupName,
-      Map<String, FieldInstanceArtifact> attributeValueFieldInstances)
+      LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances)
     {
       Set<String> attributeValueFieldInstanceNames = attributeValueFieldInstances.keySet();
 
@@ -284,6 +351,8 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    // TODO Add withoutAttributeValueFieldGroup
+
     public ElementInstanceArtifact build()
     {
       return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
@@ -295,16 +364,16 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
   }
 }
 
-record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                      Optional<String> name, Optional<String> description,
                                      Optional<URI> createdBy, Optional<URI> modifiedBy,
                                      Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                      List<String> childNames,
-                                     Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
-                                     Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
-                                     Map<String, ElementInstanceArtifact> singleInstanceElementInstances,
-                                     Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-                                     Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
+                                     LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+                                     LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+                                     LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
+                                     LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
+                                     LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
   implements ElementInstanceArtifact
 {
   public ElementInstanceArtifactRecord
@@ -327,14 +396,14 @@ record ElementInstanceArtifactRecord(Map<String, URI> jsonLdContext, List<URI> j
 
     // TODO check that all childFieldNames present in child instances maps and that there are no extra fields in maps
 
-    jsonLdContext = Map.copyOf(jsonLdContext);
+    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
     childNames = List.copyOf(childNames);
-    singleInstanceFieldInstances = Map.copyOf(singleInstanceFieldInstances);
-    multiInstanceFieldInstances = Map.copyOf(multiInstanceFieldInstances);
-    singleInstanceElementInstances = Map.copyOf(singleInstanceElementInstances);
-    multiInstanceElementInstances = Map.copyOf(multiInstanceElementInstances);
-    attributeValueFieldInstanceGroups = Map.copyOf(attributeValueFieldInstanceGroups);
+    singleInstanceFieldInstances = new LinkedHashMap<>(singleInstanceFieldInstances);
+    multiInstanceFieldInstances = new LinkedHashMap<>(multiInstanceFieldInstances);
+    singleInstanceElementInstances = new LinkedHashMap<>(singleInstanceElementInstances);
+    multiInstanceElementInstances = new LinkedHashMap<>(multiInstanceElementInstances);
+    attributeValueFieldInstanceGroups = new LinkedHashMap<>(attributeValueFieldInstanceGroups);
   }
 }
 

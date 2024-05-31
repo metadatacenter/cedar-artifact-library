@@ -1,8 +1,13 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import org.metadatacenter.artifacts.model.core.AnnotationValue;
+import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
+import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
+import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -23,29 +28,39 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ANNOTATIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ATTRIBUTE_VALUE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHECKBOX_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLACES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DELETE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
@@ -53,15 +68,20 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEIGHT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_FORMAT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_ZONE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LAST_UPDATED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
@@ -73,6 +93,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MOVE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTI_SELECT_LIST_FIELD;
@@ -80,7 +101,11 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUMERIC_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_DESCRIPTION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PHONE_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PUBLISHED_STATUS;
@@ -90,10 +115,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REGEX;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_IMAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_PAGE_BREAK;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_TEXT;
@@ -104,12 +127,19 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_NAME;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.WIDTH;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
@@ -135,22 +165,22 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *
    * children:
    *
-   *   - type: text-field
+   *   - key: study-name
+   *     type: text-field
    *     name: Study Name
    *     description: Study name field
-   *     datatype: xsd:string
    *     configuration:
    *       required: true
    *
    *   - type: text-field
    *     name: Study ID
    *     description: Study ID field
-   *     datatype: xsd:string
    *     minLength: 2
    *     configuration:
    *       required: true
    *
-   *   - type: element
+   *   - key: address
+   *     type: element
    *     name: Address
    *     description: Address element
    *     configuration:
@@ -159,19 +189,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *       maxItems: 4
    *
    *     children:
-   *       - type: text-field
+   *       - key: address-1
+   *         type: text-field
    *         name: field: Address 1
-   *         datatype: xsd:string
-   *       - type: text-field
+   *       - key: zip
+   *         type: text-field
    *         name: field: ZIP
-   *         datatype: xsd:string
    *         minLength: 5
    *         maxLength: 5
    * </pre>
    */
   public LinkedHashMap<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifact(templateSchemaArtifact, TEMPLATE);
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
@@ -179,11 +209,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateSchemaArtifact.templateUi().footer().isPresent())
       rendering.put(FOOTER, templateSchemaArtifact.templateUi().footer().get());
 
-    // TODO Generate YAML for UI.propertyLabels, UI.propertyDescriptions
-    // TODO Generate YAML for childPropertyUris
+    addArtifactProvenanceRendering(templateSchemaArtifact, rendering);
+
+    if (templateSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateSchemaArtifact.annotations().get()));
 
     if (templateSchemaArtifact.hasChildren())
-      rendering.put(CHILDREN, getChildSchemasRendering(templateSchemaArtifact.getChildSchemas()));
+      rendering.put(CHILDREN, renderChildSchemas(templateSchemaArtifact, templateSchemaArtifact.getChildSchemas()));
 
     return rendering;
   }
@@ -193,7 +225,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <p>
    * e.g.,
    * <pre>
-   *   - type: element
+   *   - key: address
+   *     type: element
    *     name: Address
    *     description: Address element
    *     configuration:
@@ -202,12 +235,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *       maxItems: 4
    *
    *     children:
-   *       - type: text-field
+   *       - key: address-1
+   *         type: text-field
    *         name: field: Address 1
-   *         datatype: xsd:string
-   *       - type: text-field
+   *       - key: zip
+   *         type: text-field
    *         name: field: ZIP
-   *         datatype: xsd:string
    *         minLength: 5
    *         maxLength: 5
    *
@@ -215,14 +248,28 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifact(elementSchemaArtifact, ELEMENT);
-    LinkedHashMap<String, Object> configurationRendering = renderElementConfiguration(elementSchemaArtifact);
+    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
-    if (!configurationRendering.isEmpty())
-      rendering.put(CONFIGURATION, configurationRendering);
+    addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (elementSchemaArtifact.hasChildren())
-      rendering.put(CHILDREN, getChildSchemasRendering(elementSchemaArtifact.getChildSchemas()));
+      rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
+
+    return rendering;
+  }
+
+  public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(elementName, elementSchemaArtifact, ELEMENT);
+
+    addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
+
+    if (elementSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
+
+
+    if (elementSchemaArtifact.hasChildren())
+      rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
 
     return rendering;
   }
@@ -252,11 +299,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering
-      = renderSchemaArtifact(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
-    LinkedHashMap<String, Object> configurationRendering = renderFieldConfiguration(fieldSchemaArtifact);
+      = renderSchemaArtifactBase(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(LABEL, fieldSchemaArtifact.skosPrefLabel().get());
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
 
     if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
       List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
@@ -265,17 +311,76 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderCoreValueConstraints(valueConstraints, rendering);
-    }
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
       renderValueConstraintValues(valueConstraints, rendering);
       renderValueConstraintActions(valueConstraints, rendering);
     }
 
-    if (!configurationRendering.isEmpty())
-      rendering.put(CONFIGURATION, configurationRendering);
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
+      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
+      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth() &&
+        !templateUi.temporalGranularity().isDay()) {
+        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+        rendering.put(INPUT_TIME_ZONE, templateUi.timezoneEnabled());
+      }
+    }
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
+
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+
+    if (fieldSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+
+    return rendering;
+  }
+
+  // TOOD Cut and paste from above. Merge
+  public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    LinkedHashMap<String, Object> rendering
+      = renderChildSchemaArtifactBase(fieldName, fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
+
+    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
+
+    if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
+      List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
+      rendering.put(ALT_LABEL, skosAlternateLabelRendering);
+    }
+
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
+      renderValueConstraintValues(valueConstraints, rendering);
+      renderValueConstraintActions(valueConstraints, rendering);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
+      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
+      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth() &&
+        !templateUi.temporalGranularity().isDay()) {
+        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+        rendering.put(INPUT_TIME_ZONE, templateUi.timezoneEnabled());
+      }
+    }
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
+
+    if (fieldSchemaArtifact.isStatic()) {
+      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
+        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
+
+        if (!content.isEmpty())
+          rendering.put(CONTENT, content);
+      }
+    }
+
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
   }
@@ -304,7 +409,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
 
     if (templateInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(LAST_UPDATED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
+      rendering.put(MODIFIED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
+
+    if (templateInstanceArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
 
     // TODO Need to generate YAML for children of template instance
 
@@ -341,8 +449,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
         LinkedHashMap<String, Object> ontologyValueConstraintRendering = new LinkedHashMap<>();
         ontologyValueConstraintRendering.put(TYPE, ONTOLOGY);
-        ontologyValueConstraintRendering.put(NAME, ontologyValueConstraint.name());
         ontologyValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
+        ontologyValueConstraintRendering.put(ONTOLOGY_NAME, ontologyValueConstraint.name());
         ontologyValueConstraintRendering.put(IRI, ontologyValueConstraint.uri());
         if (ontologyValueConstraint.numTerms().isPresent())
           ontologyValueConstraintRendering.put(NUM_TERMS, ontologyValueConstraint.numTerms().get());
@@ -350,34 +458,37 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         valuesRendering.add(ontologyValueConstraintRendering);
       }
 
-      for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
-        LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
-        valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
-        valueSetValueConstraintRendering.put(NAME, valueSetValueConstraint.name());
-        valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
-        valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
-        valuesRendering.add(valueSetValueConstraintRendering);
-      }
-
       for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
         LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
         classValueConstraintRendering.put(TYPE, CLASS);
-        classValueConstraintRendering.put(SOURCE, classValueConstraint.source());
-        classValueConstraintRendering.put(NAME, classValueConstraint.prefLabel());
-        classValueConstraintRendering.put(IRI, classValueConstraint.uri());
         classValueConstraintRendering.put(LABEL, classValueConstraint.label());
+        classValueConstraintRendering.put(ACRONYM, classValueConstraint.source());
+        classValueConstraintRendering.put(TERM_TYPE, renderValueType(classValueConstraint.type()));
+        classValueConstraintRendering.put(TERM_LABEL, classValueConstraint.prefLabel());
+        classValueConstraintRendering.put(IRI, classValueConstraint.uri());
         valuesRendering.add(classValueConstraintRendering);
       }
 
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
         LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
         branchValueConstraintRendering.put(TYPE, BRANCH);
-        branchValueConstraintRendering.put(SOURCE, branchValueConstraint.source());
-        branchValueConstraintRendering.put(SOURCE_NAME, branchValueConstraint.name());
-        branchValueConstraintRendering.put(SOURCE_ACRONYM, branchValueConstraint.acronym());
-        branchValueConstraintRendering.put(SOURCE_IRI, branchValueConstraint.uri());
+        branchValueConstraintRendering.put(ONTOLOGY_NAME, branchValueConstraint.source());
+        branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
+        branchValueConstraintRendering.put(TERM_LABEL, branchValueConstraint.name());
+        branchValueConstraintRendering.put(IRI, branchValueConstraint.uri());
         branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
         valuesRendering.add(branchValueConstraintRendering);
+      }
+
+      for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
+        LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
+        valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
+        valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
+        valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
+        valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
+        if (valueSetValueConstraint.numTerms().isPresent())
+          valueSetValueConstraintRendering.put(NUM_TERMS, valueSetValueConstraint.numTerms().get());
+        valuesRendering.add(valueSetValueConstraintRendering);
       }
 
     } else if (valueConstraints instanceof TextValueConstraints) {
@@ -427,12 +538,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
           LinkedHashMap<String, Object> actionRendering = new LinkedHashMap<>();
           actionRendering.put(ACTION, renderActionName(action.action()));
-          actionRendering.put(TERM_IRI, action.termUri());
-          actionRendering.put(SOURCE_ACRONYM, action.source());
-          if (action.sourceUri().isPresent())
-            actionRendering.put(SOURCE_IRI, action.sourceUri().get());
           if (action.to().isPresent())
             actionRendering.put(ACTION_TO, action.to().get());
+          actionRendering.put(TERM_IRI, action.termUri());
+          if (action.sourceUri().isPresent())
+            actionRendering.put(SOURCE_IRI, action.sourceUri().get());
+          actionRendering.put(SOURCE_ACRONYM, action.source());
 
           actionsRendering.add(actionRendering);
         }
@@ -444,7 +555,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   }
 
   // TODO Clean this up
-  private void renderCoreValueConstraints(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  private void renderCoreValueConstraints(ValueConstraints valueConstraints, FieldUi fieldUi, LinkedHashMap<String, Object> rendering)
   {
     // TODO Use typesafe switch when available
     if (valueConstraints instanceof NumericValueConstraints) {
@@ -453,10 +564,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     } else if (valueConstraints instanceof TemporalValueConstraints) {
       TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
       rendering.put(DATATYPE, temporalValueConstraints.temporalType());
+      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity());
     } else if (valueConstraints instanceof ControlledTermValueConstraints)
       rendering.put(DATATYPE, IRI);
-    else
-      rendering.put(DATATYPE, STRING);
 
     if (valueConstraints.defaultValue().isPresent()) {
       DefaultValue defaultValue = valueConstraints.defaultValue().get();
@@ -469,7 +579,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(DEFAULT, numericDefaultValue.value());
       } else if (defaultValue.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = defaultValue.asControlledTermDefaultValue();
-        rendering.put(DEFAULT, controlledTermDefaultValue.value().getLeft());
+        LinkedHashMap<String, Object> defaultRendering = new LinkedHashMap<>();
+        defaultRendering.put(DEFAULT_VALUE, controlledTermDefaultValue.value().getLeft());
+        defaultRendering.put(DEFAULT_LABEL, controlledTermDefaultValue.value().getRight());
+
+        rendering.put(DEFAULT, defaultRendering);
       }
     }
 
@@ -493,31 +607,43 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (valueConstraints instanceof TextValueConstraints) {
       TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints;
 
-      if (textValueConstraints.regex().isPresent())
-        rendering.put(REGEX, textValueConstraints.regex().get());
-
       if (textValueConstraints.minLength().isPresent())
         rendering.put(MIN_LENGTH, textValueConstraints.minLength().get());
 
       if (textValueConstraints.maxLength().isPresent())
         rendering.put(MAX_LENGTH, textValueConstraints.maxLength().get());
+
+      if (textValueConstraints.regex().isPresent())
+        rendering.put(REGEX, textValueConstraints.regex().get());
     }
 
     // TODO Generate YAML for _valueConstraints.actions
   }
 
-  private List<LinkedHashMap<String, Object>> getChildSchemasRendering(List<ChildSchemaArtifact> childSchemaArtifacts) {
+  private List<LinkedHashMap<String, Object>> renderChildSchemas(ParentSchemaArtifact parentSchemaArtifact,
+    LinkedHashMap<String, ChildSchemaArtifact> childSchemaArtifacts) {
     List<LinkedHashMap<String, Object>> childSchemasRendering = new ArrayList<>();
 
     // TODO Use typesafe switch when available
-    for (ChildSchemaArtifact childSchemaArtifact : childSchemaArtifacts) {
+    for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : childSchemaArtifacts.entrySet()) {
+      String childName = childSchemaArtifactEntry.getKey();
+      ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
       if (childSchemaArtifact instanceof FieldSchemaArtifact) {
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
-        LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(fieldSchemaArtifact);
+        LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childName, fieldSchemaArtifact);
+        LinkedHashMap<String, Object> fieldConfigurationRendering =
+          renderFieldConfiguration(parentSchemaArtifact, childName, fieldSchemaArtifact);
+        if (!fieldConfigurationRendering.isEmpty())
+          fieldSchemaRendering.put(CONFIGURATION, fieldConfigurationRendering);
         childSchemasRendering.add(fieldSchemaRendering);
       } else if (childSchemaArtifact instanceof ElementSchemaArtifact) {
         ElementSchemaArtifact elementSchemaArtifact = (ElementSchemaArtifact)childSchemaArtifact;
-        LinkedHashMap<String, Object> elementSchemaRendering = renderElementSchemaArtifact(elementSchemaArtifact);
+        LinkedHashMap<String, Object> elementSchemaRendering = renderElementSchemaArtifact(childName, elementSchemaArtifact);
+        LinkedHashMap<String, Object> elementConfigurationRendering =
+          renderElementConfiguration(parentSchemaArtifact, childName, elementSchemaArtifact);
+        if (!elementConfigurationRendering.isEmpty())
+          elementSchemaRendering.put(CONFIGURATION, elementConfigurationRendering);
+
         childSchemasRendering.add(elementSchemaRendering);
       }
     }
@@ -525,9 +651,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return childSchemasRendering;
   }
 
-  private LinkedHashMap<String, Object> renderElementConfiguration(ElementSchemaArtifact elementSchemaArtifact)
+  private LinkedHashMap<String, Object> renderElementConfiguration(ParentSchemaArtifact parentSchemaArtifact,
+    String elementName, ElementSchemaArtifact elementSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    if (elementSchemaArtifact.propertyUri().isPresent())
+      rendering.put(PROPERTY_IRI, elementSchemaArtifact.propertyUri().get().toString());
 
     if (elementSchemaArtifact.isMultiple())
       rendering.put(MULTIPLE, true);
@@ -538,15 +668,23 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.maxItems().isPresent())
       rendering.put(MAX_ITEMS, elementSchemaArtifact.maxItems().get());
 
-    if (elementSchemaArtifact.propertyUri().isPresent())
-      rendering.put(PROPERTY_IRI, elementSchemaArtifact.propertyUri().get().toString());
+    if (parentSchemaArtifact.getUi().propertyLabels().containsKey(elementName)) {
+      String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(elementName);
+      if (!overrideLabel.equals(elementSchemaArtifact.name()))
+        rendering.put(OVERRIDE_LABEL, overrideLabel);
+    }
 
-    // TODO Generate YAML for propertyLabels, propertyDescriptions
+    if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(elementName)) {
+      String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(elementName);
+      if (!overrideDescription.equals(elementSchemaArtifact.description()))
+        rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
+    }
 
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderFieldConfiguration(FieldSchemaArtifact fieldSchemaArtifact)
+  private LinkedHashMap<String, Object> renderFieldConfiguration(ParentSchemaArtifact parentSchemaArtifact,
+    String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
@@ -559,36 +697,54 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
 
     if (fieldSchemaArtifact.fieldUi().hidden())
-      rendering.put(HIDDEN, fieldSchemaArtifact.propertyUri().get().toString());
+      rendering.put(HIDDEN, true);
 
-    if (fieldSchemaArtifact.isMultiple() &&
-      !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
+    if (fieldSchemaArtifact.propertyUri().isPresent())
+      rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
+
+    if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
-    else if (fieldSchemaArtifact.fieldUi().isList())
-      rendering.put(MULTIPLE, false);
 
-    if (fieldSchemaArtifact.minItems().isPresent()
-      && !fieldSchemaArtifact.fieldUi().isCheckbox() && !fieldSchemaArtifact.isAttributeValue())
+    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
     if (fieldSchemaArtifact.maxItems().isPresent())
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
-    if (fieldSchemaArtifact.propertyUri().isPresent())
-      rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
+    if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldName)) {
+      String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(fieldName);
+      if (!overrideLabel.equals(fieldSchemaArtifact.name()))
+        rendering.put(OVERRIDE_LABEL, overrideLabel);
+    }
 
-    // TODO Generate YAML for propertyLabels, propertyDescriptions
+    if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(fieldName)) {
+      String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(fieldName);
+      if (!overrideDescription.equals(fieldSchemaArtifact.description()))
+        rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
+    }
 
-    // TODO valueRecommendation
+    if (fieldSchemaArtifact.fieldUi().isStatic()) {
+      StaticFieldUi staticFieldUi = fieldSchemaArtifact.fieldUi().asStaticFieldUi();
+      if (staticFieldUi.width().isPresent())
+        rendering.put(WIDTH, staticFieldUi.width().get());
+
+      if (staticFieldUi.height().isPresent())
+        rendering.put(HEIGHT, staticFieldUi.height().get());
+    }
 
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderSchemaArtifact(SchemaArtifact schemaArtifact, String artifactTypeName)
+  private LinkedHashMap<String, Object> renderSchemaArtifactBase(SchemaArtifact schemaArtifact, String artifactTypeName)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(TYPE, artifactTypeName);
+
+    if (schemaArtifact.language().isPresent())
+      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
 
     rendering.put(NAME, schemaArtifact.name());
 
@@ -604,6 +760,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && schemaArtifact.status().isPresent())
       rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
 
+    if (!isCompact && schemaArtifact.version().isPresent())
+      rendering.put(VERSION, schemaArtifact.version().get().toString());
+
     if (!isCompact)
       rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
 
@@ -613,20 +772,68 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && schemaArtifact.derivedFrom().isPresent())
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
-    if (!isCompact) {
-      if (schemaArtifact.createdBy().isPresent())
-        rendering.put(CREATED_BY, schemaArtifact.createdBy().get().toString());
-      if (schemaArtifact.createdOn().isPresent())
-        rendering.put(CREATED_ON, renderOffsetDateTime(schemaArtifact.createdOn().get()));
-      if (schemaArtifact.lastUpdatedOn().isPresent())
-        rendering.put(LAST_UPDATED_ON, renderOffsetDateTime(schemaArtifact.lastUpdatedOn().get()));
-      if (schemaArtifact.modifiedBy().isPresent())
-        rendering.put(MODIFIED_BY, schemaArtifact.modifiedBy().get().toString());
-    }
+    // TODO Generate YAML for annotations
+
+    return rendering;
+  }
+
+  // TODO Lot of repetition of above method. This has key: [childName] in YAML
+  private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childName,
+    SchemaArtifact schemaArtifact, String artifactTypeName)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    rendering.put(KEY, childName);
+
+    rendering.put(TYPE, artifactTypeName);
+
+    if (schemaArtifact.language().isPresent())
+      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
+
+    rendering.put(NAME, schemaArtifact.name());
+
+    if (!schemaArtifact.description().isEmpty())
+      rendering.put(DESCRIPTION, schemaArtifact.description());
+
+    if (schemaArtifact.identifier().isPresent())
+      rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
+
+    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
+      rendering.put(ID, schemaArtifact.jsonLdId().get());
+
+    if (!isCompact && schemaArtifact.status().isPresent())
+      rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
+
+    if (!isCompact && schemaArtifact.version().isPresent())
+      rendering.put(VERSION, schemaArtifact.version().get().toString());
+
+    if (!isCompact)
+      rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
+
+    if (!isCompact && schemaArtifact.previousVersion().isPresent())
+      rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
+
+    if (!isCompact && schemaArtifact.derivedFrom().isPresent())
+      rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
 
     // TODO Generate YAML for annotations
 
     return rendering;
+  }
+
+
+  private void addArtifactProvenanceRendering(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
+  {
+    if (!isCompact) {
+      if (schemaArtifact.createdOn().isPresent())
+        rendering.put(CREATED_ON, renderOffsetDateTime(schemaArtifact.createdOn().get()));
+      if (schemaArtifact.createdBy().isPresent())
+        rendering.put(CREATED_BY, schemaArtifact.createdBy().get().toString());
+      if (schemaArtifact.lastUpdatedOn().isPresent())
+        rendering.put(MODIFIED_ON, renderOffsetDateTime(schemaArtifact.lastUpdatedOn().get()));
+      if (schemaArtifact.modifiedBy().isPresent())
+        rendering.put(MODIFIED_BY, schemaArtifact.modifiedBy().get().toString());
+    }
   }
 
   private String renderStatusName(Status status)
@@ -660,6 +867,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Use typesafe switch when available
     switch (fieldSchemaArtifact.fieldUi().inputType()) {
     case TEXTFIELD:
+      if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get().isControlledTermValueConstraint())
+        return CONTROLLED_TERM_FIELD;
+      else
       return TEXT_FIELD;
     case TEXTAREA:
       return TEXT_AREA_FIELD;
@@ -701,9 +911,51 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
+  private List<LinkedHashMap<String, Object>> renderAnnotations(Annotations annotations) {
+    List<LinkedHashMap<String, Object>> annotationsRendering = new ArrayList<>();
+
+    for (Map.Entry<String, AnnotationValue> annotationValueEntry : annotations.annotations().entrySet()) {
+      String annotationName = annotationValueEntry.getKey();
+      AnnotationValue annotationValue = annotationValueEntry.getValue();
+      LinkedHashMap<String, Object> annotationRendering = new LinkedHashMap<>();
+
+      annotationRendering.put(NAME, annotationName);
+
+      // TODO Use typesafe switch when available
+      if (annotationValue instanceof LiteralAnnotationValue) {
+        LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
+        annotationRendering.put(TYPE, STRING);
+        annotationRendering.put(VALUE, literalAnnotationValue.getValue());
+      } else if (annotationValue instanceof IriAnnotationValue) {
+        IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
+        annotationRendering.put(TYPE, IRI);
+        annotationRendering.put(VALUE, iriAnnotationValue.getValue().toString());
+      }
+      annotationsRendering.add(annotationRendering);
+    }
+
+    return annotationsRendering;
+  }
+
+ private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
     return offsetDateTime.format(datetimeFormatter);
+  }
+
+  private String renderValueType(ValueType valueType)
+  {
+    if (valueType == ValueType.ONTOLOGY_CLASS)
+      return "class";
+    else if (valueType == ValueType.VALUE_SET)
+      return "value";
+    else
+      return ""; // TODO Use typesafe switch when available
+  }
+
+  private boolean isMultiSelectListField(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    return fieldSchemaArtifact.fieldUi().isList() && fieldSchemaArtifact.valueConstraints().isPresent()
+      && fieldSchemaArtifact.valueConstraints().get().multipleChoice();
   }
 
 }

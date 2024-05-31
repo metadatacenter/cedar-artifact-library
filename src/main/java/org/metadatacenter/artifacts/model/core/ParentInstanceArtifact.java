@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import java.util.Optional;
 public sealed interface ParentInstanceArtifact extends ParentArtifact, JsonLdArtifact, MonitoredArtifact
   permits TemplateInstanceArtifact, ElementInstanceArtifact
 {
-  Map<String, URI> jsonLdContext();
+  LinkedHashMap<String, URI> jsonLdContext();
 
   Optional<URI> jsonLdId();
 
@@ -27,17 +28,17 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact, JsonLdArt
   List<String> childNames();
 
   // field name->field instance artifact
-  Map<String, FieldInstanceArtifact> singleInstanceFieldInstances();
+  LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances();
 
   // field name->[field instance artifact]
-  Map<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances();
+  LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances();
 
   // element name->element instance artifact
-  Map<String, ElementInstanceArtifact> singleInstanceElementInstances();
+  LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances();
 
   // field name->[field instance artifact]
-  Map<String, List<ElementInstanceArtifact>> multiInstanceElementInstances();
+  LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances();
 
   // attribute-value field name->(attribute-value field instance name->field instance artifact)
-  Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups();
+  LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups();
 }

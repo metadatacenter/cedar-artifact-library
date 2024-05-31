@@ -7,11 +7,16 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.LinkField;
+import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalField;
+import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.core.TextFieldInstance;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
@@ -27,9 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -94,7 +98,7 @@ public class JsonSchemaArtifactRendererTest
     TemporalGranularity granularity = TemporalGranularity.DAY;
     XsdTemporalDatatype temporalType = XsdTemporalDatatype.DATE;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().
+    TemporalField temporalField = TemporalField.builder().
             withName(fieldName).
             withDescription(fieldDescription).
             withRequiredValue(requiredValue).
@@ -102,7 +106,7 @@ public class JsonSchemaArtifactRendererTest
             withTemporalType(temporalType).
             build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(temporalField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -156,7 +160,7 @@ public class JsonSchemaArtifactRendererTest
     URI defaultUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
     String defaultLabel = "Human";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().
+    ControlledTermField controlledTermField = ControlledTermField.builder().
       withName(name).
       withDescription(description).
       withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName).
@@ -168,7 +172,30 @@ public class JsonSchemaArtifactRendererTest
       withDefaultValue(defaultUri, defaultLabel).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
+
+    assertTrue(validateJsonSchema(rendering));
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
+  }
+
+  @Test public void testCreateControlledTermFieldWithClassValueConstraint()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel= "Human";
+    String classPrefLabel = "Homo Spiens";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+
+    ControlledTermField controlledTermField = ControlledTermField.builder().
+      withName(name).
+      withDescription(description).
+      withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
+      build();
+
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -184,7 +211,7 @@ public class JsonSchemaArtifactRendererTest
     XsdNumericDatatype numericType = XsdNumericDatatype.DECIMAL;
     int decimalPlaces = 3;
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().
+    NumericField numericField = NumericField.builder().
             withName(fieldName).
             withDescription(fieldDescription).
             withRequiredValue(requiredValue).
@@ -192,7 +219,7 @@ public class JsonSchemaArtifactRendererTest
             withDecimalPlaces(decimalPlaces).
             build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(numericField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -221,14 +248,16 @@ public class JsonSchemaArtifactRendererTest
     String fieldName = "Field name";
     String fieldDescription = "Field description";
     String defaultValue = "default value";
+    String language = "en";
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withName(fieldName).
       withDescription(fieldDescription).
       withDefaultValue(defaultValue).
+      withLanguage(language).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -256,13 +285,13 @@ public class JsonSchemaArtifactRendererTest
     String fieldDescription = "Field description";
     URI defaultIri = URI.create("https://example.com/Study");
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().
+    LinkField linkField = LinkField.builder().
       withName(fieldName).
       withDescription(fieldDescription).
       withDefaultValue(defaultIri).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(linkField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -350,16 +379,16 @@ public class JsonSchemaArtifactRendererTest
     String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
     String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
 
-    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
+    FieldInstanceArtifact textField1Instance = TextFieldInstance.builder().withValue("Value 1").build();
     ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
-    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 2").build();
-    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 3").build();
+    FieldInstanceArtifact textField2Instance1 = TextFieldInstance.builder().withValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = TextFieldInstance.builder().withValue("Value 3").build();
     List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
     textField2Instances.add(textField2Instance1);
     textField2Instances.add(textField2Instance2);
-    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 1").build();
-    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 2").build();
-    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    FieldInstanceArtifact attributeValueFieldInstance1 = TextFieldInstance.builder().withValue("AV Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance2 = TextFieldInstance.builder().withValue("AV Value 2").build();
+    LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances = new LinkedHashMap<>();
     attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
     attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
 
@@ -394,16 +423,16 @@ public class JsonSchemaArtifactRendererTest
     String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
     String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
 
-    FieldInstanceArtifact textField1Instance = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 1").build();
+    FieldInstanceArtifact textField1Instance = TextFieldInstance.builder().withValue("Value 1").build();
     ElementInstanceArtifact element1Instance = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
-    FieldInstanceArtifact textField2Instance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 2").build();
-    FieldInstanceArtifact textField2Instance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("Value 3").build();
+    FieldInstanceArtifact textField2Instance1 = TextFieldInstance.builder().withValue("Value 2").build();
+    FieldInstanceArtifact textField2Instance2 = TextFieldInstance.builder().withValue("Value 3").build();
     List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
     textField2Instances.add(textField2Instance1);
     textField2Instances.add(textField2Instance2);
-    FieldInstanceArtifact attributeValueFieldInstance1 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 1").build();
-    FieldInstanceArtifact attributeValueFieldInstance2 = FieldInstanceArtifact.textFieldInstanceBuilder().withValue("AV Value 2").build();
-    Map<String, FieldInstanceArtifact> attributeValueFieldInstances = new HashMap<>();
+    FieldInstanceArtifact attributeValueFieldInstance1 = TextFieldInstance.builder().withValue("AV Value 1").build();
+    FieldInstanceArtifact attributeValueFieldInstance2 = TextFieldInstance.builder().withValue("AV Value 2").build();
+    LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances = new LinkedHashMap<>();
     attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
     attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
 

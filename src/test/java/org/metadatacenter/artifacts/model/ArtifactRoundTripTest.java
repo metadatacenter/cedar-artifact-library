@@ -9,10 +9,26 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
+import org.metadatacenter.artifacts.model.core.CheckboxField;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.EmailField;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ImageField;
+import org.metadatacenter.artifacts.model.core.LinkField;
+import org.metadatacenter.artifacts.model.core.ListField;
+import org.metadatacenter.artifacts.model.core.NumericField;
+import org.metadatacenter.artifacts.model.core.PhoneNumberField;
+import org.metadatacenter.artifacts.model.core.RadioField;
+import org.metadatacenter.artifacts.model.core.RichTextField;
+import org.metadatacenter.artifacts.model.core.SectionBreakField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalField;
+import org.metadatacenter.artifacts.model.core.TextAreaField;
+import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.core.YouTubeField;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
@@ -67,7 +83,7 @@ public class ArtifactRoundTripTest
 
   @Test public void testRoundTripTextField()
   {
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder()
+    TextField originalFieldSchemaArtifact = TextField.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Study")
       .withDefaultValue("A default value").withRegex("*").build();
 
@@ -82,7 +98,7 @@ public class ArtifactRoundTripTest
     Number minValue = 0.0;
     Number maxValue = 100.0;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.numericFieldBuilder().withName(name)
+    NumericField originalFieldSchemaArtifact = NumericField.builder().withName(name)
       .withDescription(description).withNumericType(numericType).withMinValue(minValue).withMaxValue(maxValue).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -97,7 +113,7 @@ public class ArtifactRoundTripTest
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.temporalFieldBuilder().withName(name)
+    TemporalField originalFieldSchemaArtifact = TemporalField.builder().withName(name)
       .withDescription(description).withTemporalType(temporalType).withTemporalGranularity(temporalGranularity)
       .withInputTimeFormat(inputTimeFormat).withTimeZoneEnabled(timeZoneEnabled).build();
 
@@ -132,7 +148,7 @@ public class ArtifactRoundTripTest
     ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
     Integer actionTo = 0;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.controlledTermFieldBuilder().withName(name)
+    ControlledTermField originalFieldSchemaArtifact = ControlledTermField.builder().withName(name)
       .withDescription(description).withOntologyValueConstraint(ontologyUri, ontologyAcronym, ontologyName)
       .withBranchValueConstraint(branchUri, branchSource, branchAcronym, branchName, branchMaxDepth)
       .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType)
@@ -148,7 +164,7 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.radioFieldBuilder().withName(name)
+    RadioField originalFieldSchemaArtifact = RadioField.builder().withName(name)
       .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -159,7 +175,7 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.listFieldBuilder().withName(name)
+    ListField originalFieldSchemaArtifact = ListField.builder().withName(name)
       .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -170,7 +186,7 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.checkboxFieldBuilder().withName(name)
+    CheckboxField originalFieldSchemaArtifact = CheckboxField.builder().withName(name)
       .withDescription(description).withOption("Choice 1", false).withOption("Choice 2", false)
       .withOption("Choice 3", true).build();
 
@@ -184,7 +200,7 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.phoneNumberFieldBuilder().withName(name)
+    PhoneNumberField originalFieldSchemaArtifact = PhoneNumberField.builder().withName(name)
       .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -197,7 +213,7 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.emailFieldBuilder().withName(name)
+    EmailField originalFieldSchemaArtifact = EmailField.builder().withName(name)
       .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -209,7 +225,7 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.linkFieldBuilder().withName(name)
+    LinkField originalFieldSchemaArtifact = LinkField.builder().withName(name)
       .withDescription(description).withDefaultValue(defaultURI).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -222,7 +238,7 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.textAreaFieldBuilder().withName(name)
+    TextAreaField originalFieldSchemaArtifact = TextAreaField.builder().withName(name)
       .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -236,7 +252,7 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().withName(name)
+    AttributeValueField originalFieldSchemaArtifact = AttributeValueField.builder().withName(name)
       .withDescription(description).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -248,7 +264,7 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.sectionBreakFieldBuilder().withName(name)
+    SectionBreakField originalFieldSchemaArtifact = SectionBreakField.builder().withName(name)
       .withDescription(description).withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -260,7 +276,7 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.imageFieldBuilder().withName(name)
+    ImageField originalFieldSchemaArtifact = ImageField.builder().withName(name)
       .withDescription(description).withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -272,7 +288,7 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.youTubeFieldBuilder().withName(name)
+    YouTubeField originalFieldSchemaArtifact = YouTubeField.builder().withName(name)
       .withDescription(description).withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
@@ -282,11 +298,10 @@ public class ArtifactRoundTripTest
   {
     String name = "Field name";
     String description = "Field description";
-    String preferredLabel = "Preferred label";
     String content = "Content";
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = FieldSchemaArtifact.richTextFieldBuilder().withName(name)
-      .withDescription(description).withContent(content).withPreferredLabel(preferredLabel).build();
+    RichTextField originalFieldSchemaArtifact = RichTextField.builder().withName(name)
+      .withDescription(description).withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -465,6 +480,7 @@ public class ArtifactRoundTripTest
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/VisiumWithProbesV3.0.0.json");
   }
+
   @Test public void testRoundTripSimpleInstanceWithAttributeValues()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
@@ -475,6 +491,15 @@ public class ArtifactRoundTripTest
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
+
+    assertTrue(validateJsonSchema(templateNode, instanceNode));
+  }
+
+  @Test
+  public void testRADx2InstanceAgainstTemplate() {
+
+    ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADx2.0CLIGeneratedTemplate.json");
+    ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADx2.0CLIGeneratedInstance.json");
 
     assertTrue(validateJsonSchema(templateNode, instanceNode));
   }
@@ -641,6 +666,11 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");
   }
 
+  @Test public void testRoundTripRADx2CLIGeneratedTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/RADx2.0CLIGeneratedTemplate.json");
+  }
+
   @Test public void testRoundTripSimpleInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstance.json");
@@ -654,6 +684,11 @@ public class ArtifactRoundTripTest
   @Test public void testRoundTripRADxCLIGeneratedInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADxCLIGeneratedInstance.json");
+  }
+
+  @Test public void testRoundTripRADx2CLIGeneratedInstance()
+  {
+    testTemplateInstanceArtifactRoundTripFromFile("instances/RADx2.0CLIGeneratedInstance.json");
   }
 
   @Test public void testRoundTripElement001()

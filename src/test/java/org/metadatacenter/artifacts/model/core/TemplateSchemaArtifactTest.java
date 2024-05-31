@@ -49,8 +49,8 @@ public class TemplateSchemaArtifactTest
     String textField2Label = "text field 2 label";
     String textField2Description = "text field 2 description";
 
-    FieldSchemaArtifact textField1 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName1).build();
-    FieldSchemaArtifact textField2 = FieldSchemaArtifact.textFieldBuilder().withName(textFieldName2).build();
+    TextField textField1 = TextField.builder().withName(textFieldName1).build();
+    TextField textField2 = TextField.builder().withName(textFieldName2).build();
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
       .withName(templateName)

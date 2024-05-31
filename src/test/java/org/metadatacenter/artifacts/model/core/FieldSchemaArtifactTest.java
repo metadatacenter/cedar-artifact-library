@@ -8,8 +8,8 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -20,7 +20,7 @@ public class FieldSchemaArtifactTest
 
   @Test public void testCreateTextField()
   {
-    Map<String, URI> jsonLdContext = FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+    LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = Collections.singletonList(URI.create("https://schema.metadatacenter.org/core/TemplateField"));
     URI jsonLdId = URI.create("https://repo.metadatacenter.org/fields/4455");
     URI createdBy = URI.create("http://example.com/user");
@@ -43,6 +43,7 @@ public class FieldSchemaArtifactTest
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/template-fields/3232"));
     Optional<URI> derivedFrom = Optional.of(URI.create("https://repo.metadatacenter.org/fields/7666"));
     Optional<URI> propertyUri = Optional.of(URI.create("https://schema.metadatacenter.org/properties/854"));
+    Optional<String> language = Optional.of("en");
     Optional<Integer> minItems = Optional.of(2);
     Optional<Integer> maxItems = Optional.of(4);
 
@@ -51,7 +52,8 @@ public class FieldSchemaArtifactTest
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom, false, minItems, maxItems, propertyUri,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), preferredLabel, alternateLabels,Optional.empty());
+      preferredLabel, alternateLabels, language, FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(),
+      Optional.empty(), Optional.empty());
 
     Assert.assertEquals(jsonSchemaSchemaUri, fieldSchemaArtifact.jsonSchemaSchemaUri());
     Assert.assertEquals(jsonSchemaType, fieldSchemaArtifact.jsonSchemaType());
@@ -75,6 +77,7 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion());
     Assert.assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom());
     Assert.assertEquals(propertyUri, fieldSchemaArtifact.propertyUri());
+    Assert.assertEquals(language, fieldSchemaArtifact.language());
     Assert.assertEquals(minItems, fieldSchemaArtifact.minItems());
   }
 
@@ -99,7 +102,7 @@ public class FieldSchemaArtifactTest
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
     URI propertyUri = URI.create("https://schema.metadatacenter.org/properties/854");
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.textFieldBuilder().
+    TextField textField = TextField.builder().
       withJsonLdId(jsonLdId).
       withName(name).
       withDescription(description).
@@ -120,24 +123,24 @@ public class FieldSchemaArtifactTest
       withPropertyUri(propertyUri).
       build();
 
-    Assert.assertEquals(jsonLdId, fieldSchemaArtifact.jsonLdId().get());
-    Assert.assertEquals(createdBy, fieldSchemaArtifact.createdBy().get());
-    Assert.assertEquals(modifiedBy, fieldSchemaArtifact.modifiedBy().get());
-    Assert.assertEquals(createdOn, fieldSchemaArtifact.createdOn().get());
-    Assert.assertEquals(lastUpdatedOn, fieldSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(name, fieldSchemaArtifact.name());
-    Assert.assertEquals(description, fieldSchemaArtifact.description());
-    Assert.assertEquals(identifier, fieldSchemaArtifact.identifier().get());
-    Assert.assertEquals(preferredLabel, fieldSchemaArtifact.skosPrefLabel().get());
-    Assert.assertEquals(alternateLabels, fieldSchemaArtifact.skosAlternateLabels());
-    Assert.assertEquals(version, fieldSchemaArtifact.version().get());
-    Assert.assertEquals(status, fieldSchemaArtifact.status().get());
-    Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion().get());
-    Assert.assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom().get());
-    Assert.assertEquals(propertyUri, fieldSchemaArtifact.propertyUri().get());
-    Assert.assertEquals(requiredValue, fieldSchemaArtifact.requiredValue());
-    Assert.assertEquals(minLength, fieldSchemaArtifact.minLength().get());
-    Assert.assertEquals(maxLength, fieldSchemaArtifact.maxLength().get());
+    Assert.assertEquals(jsonLdId, textField.jsonLdId().get());
+    Assert.assertEquals(createdBy, textField.createdBy().get());
+    Assert.assertEquals(modifiedBy, textField.modifiedBy().get());
+    Assert.assertEquals(createdOn, textField.createdOn().get());
+    Assert.assertEquals(lastUpdatedOn, textField.lastUpdatedOn().get());
+    Assert.assertEquals(name, textField.name());
+    Assert.assertEquals(description, textField.description());
+    Assert.assertEquals(identifier, textField.identifier().get());
+    Assert.assertEquals(preferredLabel, textField.skosPrefLabel().get());
+    Assert.assertEquals(alternateLabels, textField.skosAlternateLabels());
+    Assert.assertEquals(version, textField.version().get());
+    Assert.assertEquals(status, textField.status().get());
+    Assert.assertEquals(previousVersion, textField.previousVersion().get());
+    Assert.assertEquals(derivedFrom, textField.derivedFrom().get());
+    Assert.assertEquals(propertyUri, textField.propertyUri().get());
+    Assert.assertEquals(requiredValue, textField.requiredValue());
+    Assert.assertEquals(minLength, textField.minLength().get());
+    Assert.assertEquals(maxLength, textField.maxLength().get());
   }
 
 }

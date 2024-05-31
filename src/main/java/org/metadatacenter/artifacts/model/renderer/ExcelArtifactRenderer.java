@@ -19,27 +19,27 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
-import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
-import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
-import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.model.ModelNodeNames;
@@ -51,8 +51,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -432,10 +432,10 @@ public class ExcelArtifactRenderer
       return Optional.empty();
   }
 
-  private Map<String, String> getPossibleValues(Optional<ValueConstraints> valueConstraints)
+  private LinkedHashMap<String, String> getPossibleValues(Optional<ValueConstraints> valueConstraints)
   {
     if (valueConstraints.isPresent()) {
-      Map<String, String> possibleValues = new HashMap<>();
+      LinkedHashMap<String, String> possibleValues = new LinkedHashMap<>();
 
       if (valueConstraints.get() instanceof TextValueConstraints) {
         TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
@@ -458,7 +458,7 @@ public class ExcelArtifactRenderer
 
       return possibleValues;
     } else
-      return Collections.emptyMap();
+      return new LinkedHashMap<>();
   }
 
   // Return prefLabel->IRI

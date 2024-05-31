@@ -3,31 +3,26 @@ package org.metadatacenter.artifacts.model.core.ui;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
 import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
 import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
-import static org.metadatacenter.model.ModelNodeNames.UI_PAGES;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 
 public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
 {
- static TemplateUi create(List<String> order, List<String> pages, Map<String, String> propertyLabels,
-    Map<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
+ static TemplateUi create(List<String> order, LinkedHashMap<String, String> propertyLabels,
+    LinkedHashMap<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
   {
-    return new TemplateUiRecord(order, pages, propertyLabels, propertyDescriptions, header, footer);
+    return new TemplateUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
   }
-
-  List<String> pages();
 
   @JsonIgnore
   default UiType uiType() { return UiType.TEMPLATE_UI; }
@@ -36,17 +31,28 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
     return new Builder();
   }
 
+  static Builder builder(TemplateUi templateUi) {
+    return new Builder(templateUi);
+  }
+
   class Builder {
-    private final List<String> order = new ArrayList<>();
-    private final List<String> pages = new ArrayList<>();
-    private final Map<String, String> propertyLabels = new HashMap<>();
-    private final Map<String, String> propertyDescriptions = new HashMap<>();
+    private List<String> order = new ArrayList<>();
+    private LinkedHashMap<String, String> propertyLabels = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> propertyDescriptions = new LinkedHashMap<>();
     private Optional<String> header = Optional.empty();
     private Optional<String> footer = Optional.empty();
 
     private Builder() {
     }
 
+    private Builder(TemplateUi templateUi)
+    {
+      this.order = List.copyOf(templateUi.order());
+      this.propertyLabels = new LinkedHashMap<>(templateUi.propertyLabels());
+      this.propertyDescriptions = new LinkedHashMap<>(templateUi.propertyDescriptions());
+      this.header = templateUi.header();
+      this.footer = templateUi.footer();
+    }
 
     public Builder withOrder(String fieldName) {
 
@@ -57,17 +63,6 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
         throw new IllegalArgumentException("Duplicate order field name " + fieldName + " passed to " + this.getClass().getName());
 
       this.order.add(fieldName);
-      return this;
-    }
-
-    public Builder withPage(String pageName) {
-      if (pageName == null)
-        throw new IllegalArgumentException("Null page name passed to " + this.getClass().getName());
-
-      if (pages.contains(pageName))
-        throw new IllegalArgumentException("Duplicate page name " + pageName + " passed to " + this.getClass().getName());
-
-      this.pages.add(pageName);
       return this;
     }
 
@@ -112,19 +107,19 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
 
     public TemplateUi build()
     {
-      return new TemplateUiRecord(order, pages, propertyLabels, propertyDescriptions, header, footer);
+      return new TemplateUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
     }
   }
 }
 
-record TemplateUiRecord(List<String> order, List<String> pages, Map<String, String> propertyLabels,
-                        Map<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
+record TemplateUiRecord(List<String> order, LinkedHashMap<String, String> propertyLabels,
+                        LinkedHashMap<String, String> propertyDescriptions,
+                        Optional<String> header, Optional<String> footer)
   implements TemplateUi
 {
   public TemplateUiRecord
   {
     validateListFieldDoesNotHaveDuplicates(this, order, UI_ORDER);
-    validateListFieldNotNull(this, pages, UI_PAGES);
     validateMapFieldNotNull(this, propertyLabels, UI_PROPERTY_LABELS);
     validateMapFieldNotNull(this, propertyDescriptions, UI_PROPERTY_DESCRIPTIONS);
     validateOptionalFieldNotNull(this, header, UI_HEADER);
@@ -150,8 +145,7 @@ record TemplateUiRecord(List<String> order, List<String> pages, Map<String, Stri
     **/
 
     order = List.copyOf(order);
-    pages = List.copyOf(pages);
-    propertyLabels = Map.copyOf(propertyLabels);
-    propertyDescriptions = Map.copyOf(propertyDescriptions);
+    propertyLabels = new LinkedHashMap<>(propertyLabels);
+    propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
   }
 }

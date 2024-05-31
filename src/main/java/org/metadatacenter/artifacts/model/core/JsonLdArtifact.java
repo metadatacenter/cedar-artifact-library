@@ -1,8 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface JsonLdArtifact extends MonitoredArtifact
@@ -11,5 +11,5 @@ public interface JsonLdArtifact extends MonitoredArtifact
 
   Optional<URI> jsonLdId();
 
-  Map<String, URI> jsonLdContext();
+  LinkedHashMap<String, URI> jsonLdContext();
 }

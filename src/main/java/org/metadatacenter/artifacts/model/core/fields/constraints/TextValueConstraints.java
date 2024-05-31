@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.fields.constraints;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
 
   Optional<TextDefaultValue> defaultValue();
 
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   List<LiteralValueConstraint> literals();
 
   Optional<String> regex();
@@ -37,17 +39,33 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     return new Builder();
   }
 
+  static Builder builder(TextValueConstraints textValueConstraints) {
+    return new Builder(textValueConstraints);
+  }
+
   class Builder {
     private Optional<Integer> minLength = Optional.empty();
     private Optional<Integer> maxLength = Optional.empty();
     private Optional<TextDefaultValue> defaultValue = Optional.empty();
-    private final List<LiteralValueConstraint> literals = new ArrayList<>();
+    private List<LiteralValueConstraint> literals = new ArrayList<>();
     private boolean requiredValue = false;
     private boolean recommendedValue = false;
     private boolean multipleChoice = false;
     private Optional<String> regex = Optional.empty();
 
     private Builder() {
+    }
+
+    private Builder(TextValueConstraints textValueConstraints)
+    {
+      this.minLength = textValueConstraints.minLength();
+      this.maxLength = textValueConstraints.maxLength();
+      this.defaultValue = textValueConstraints.defaultValue();
+      this.literals = List.copyOf(textValueConstraints.literals());
+      this.requiredValue = textValueConstraints.requiredValue();
+      this.recommendedValue = textValueConstraints.recommendedValue();
+      this.multipleChoice = textValueConstraints.multipleChoice();
+      this.regex = textValueConstraints.regex();
     }
 
     public Builder withMinLength(Integer minLength) {

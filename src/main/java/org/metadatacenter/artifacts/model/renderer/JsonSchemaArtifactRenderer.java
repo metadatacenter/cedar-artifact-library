@@ -5,16 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import org.metadatacenter.artifacts.model.core.AnnotationValue;
+import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
+import org.metadatacenter.artifacts.model.core.IriFieldInstance;
 import org.metadatacenter.artifacts.model.core.JsonLdArtifact;
+import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
+import org.metadatacenter.artifacts.model.core.LiteralFieldInstance;
 import org.metadatacenter.artifacts.model.core.MonitoredArtifact;
 import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -26,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.metadatacenter.model.ModelNodeNames.ANNOTATIONS;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.INSTANCE_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -92,13 +100,14 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 {
   private final ObjectMapper mapper;
   private final DateTimeFormatter datetimeFormatter;
+  private final String datetimeFormat = "yyyy-MM-dd'T'HH:mm:ssXXX";
 
   public JsonSchemaArtifactRenderer()
   {
     this.mapper = new ObjectMapper();
-    mapper.registerModule(new Jdk8Module());
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-    datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+    this.mapper.registerModule(new Jdk8Module());
+    this.mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+    this.datetimeFormatter = DateTimeFormatter.ofPattern(datetimeFormat);
   }
 
   /**
@@ -131,9 +140,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   public ObjectNode renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    ObjectNode rendering = renderSchemaArtifact(templateSchemaArtifact);
+    ObjectNode rendering = renderJsonLdArtifact(templateSchemaArtifact);
 
-    rendering.set(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification());
+    rendering.set(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(templateSchemaArtifact));
+
+    addCoreJsonSchemaRendering(templateSchemaArtifact, rendering);
+    rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderTemplateSchemaArtifactPropertiesJsonSchemaSpecification(templateSchemaArtifact));
@@ -154,11 +166,13 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
     if (templateSchemaArtifact.hasAttributeValueField())
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
+        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
     else
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
-    rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
+    if (templateSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateSchemaArtifact.annotations().get()));
 
     // TODO Think about moving this to renderParentSchemaArtifactPropertiesJsonSchemaSpecification above
     for (String childName : templateSchemaArtifact.templateUi().order()) {
@@ -167,8 +181,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
         if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
-            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact), childFieldSchemaArtifact.minItems(),
-              childFieldSchemaArtifact.maxItems()));
+            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact),
+              childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
             .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact));
@@ -187,6 +201,20 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
+
+    addCoreSchemaOrgRendering(templateSchemaArtifact, rendering);
+    addProvenanceRendering(templateSchemaArtifact, rendering);
+    addVersionRendering(templateSchemaArtifact, rendering);
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, templateSchemaArtifact.modelVersion().toString());
+
+    if (templateSchemaArtifact.identifier().isPresent()) {
+      String identifier = templateSchemaArtifact.identifier().get();
+      if (!identifier.isEmpty())
+        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
+    }
+
+    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(templateSchemaArtifact.jsonSchemaSchemaUri()));
+
     return rendering;
   }
 
@@ -216,11 +244,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *  }
    * </pre>
    */
-  public ObjectNode renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
+  public ObjectNode renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
   {
-    ObjectNode rendering = renderSchemaArtifact(elementSchemaArtifact);
+    ObjectNode rendering = renderJsonLdArtifact(elementSchemaArtifact);
 
-    rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification());
+    rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(elementSchemaArtifact));
+
+    addCoreJsonSchemaRendering(elementSchemaArtifact, rendering);
+
+    rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
 
     rendering.put(JSON_SCHEMA_PROPERTIES,
       renderElementSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
@@ -233,13 +265,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (String childName : elementSchemaArtifact.getChildNames())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
-    if (elementSchemaArtifact.hasAttributeValueField())
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
-        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
-    else
-      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
-
-    rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
+    if (elementSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
     for (String childName : elementSchemaArtifact.elementUi().order()) {
       if (elementSchemaArtifact.isField(childName)) {
@@ -267,6 +294,27 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       } else // TODO Use typesafe switch on ChildSchemaArtifact when available
         throw new IllegalStateException("Order child " + childName + " is not a field or an element");
     }
+
+    addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
+    addProvenanceRendering(elementSchemaArtifact, rendering);
+    addVersionRendering(elementSchemaArtifact, rendering);
+
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, elementSchemaArtifact.modelVersion().toString());
+
+    if (elementSchemaArtifact.hasAttributeValueField())
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
+        renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification());
+    else
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+
+    if (elementSchemaArtifact.identifier().isPresent()) {
+      String identifier = elementSchemaArtifact.identifier().get();
+      if (!identifier.isEmpty())
+        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
+    }
+
+    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(elementSchemaArtifact.jsonSchemaSchemaUri()));
+
     return rendering;
   }
 
@@ -298,28 +346,44 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *  }
    * </pre>
    */
-  public ObjectNode renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
+  public ObjectNode renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
   {
-    ObjectNode rendering = renderSchemaArtifact(fieldSchemaArtifact);
+    ObjectNode rendering = renderJsonLdArtifact(fieldSchemaArtifact);
 
     if (fieldSchemaArtifact.isStatic())
-      rendering.put(JSON_LD_CONTEXT, renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification());
+      rendering.put(JSON_LD_CONTEXT,
+        renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification(fieldSchemaArtifact));
     else
-      rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification());
+      rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification(fieldSchemaArtifact));
+
+    addCoreJsonSchemaRendering(fieldSchemaArtifact, rendering);
+
+    rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
 
     // Static fields or attribute-value field have no value constraints field or JSON Schema properties specification
     if (!(fieldSchemaArtifact.isStatic() || fieldSchemaArtifact.isAttributeValue())) {
+
+      if (fieldSchemaArtifact.valueConstraints().isPresent())
+        rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints().get()));
 
       if (fieldSchemaArtifact.hasIRIValue()) {
         rendering.put(JSON_SCHEMA_PROPERTIES, renderIRIFieldArtifactPropertiesJsonSchemaSpecification());
       } else {
         rendering.put(JSON_SCHEMA_PROPERTIES, renderLiteralFieldArtifactPropertiesJsonSchemaSpecification());
-        // Non-IRI fields may have an empty object as a value so there are no required fields
-      }
+        rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
+        rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_VALUE);
 
-      if (fieldSchemaArtifact.valueConstraints().isPresent())
-        rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints().get()));
+        if (fieldSchemaArtifact.fieldUi().isTemporal() || fieldSchemaArtifact.fieldUi().isNumeric())
+          rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_TYPE);
+      }
     }
+
+    addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
+    addProvenanceRendering(fieldSchemaArtifact, rendering);
+    addVersionRendering(fieldSchemaArtifact, rendering);
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, fieldSchemaArtifact.modelVersion().toString());
+
+    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     if (fieldSchemaArtifact.skosPrefLabel().isPresent())
       rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.skosPrefLabel().get());
@@ -330,9 +394,16 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel);
     }
 
-    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+    if (fieldSchemaArtifact.identifier().isPresent()) {
+      String identifier = fieldSchemaArtifact.identifier().get();
+      if (!identifier.isEmpty())
+        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
+    }
 
-    rendering.put(UI, mapper.valueToTree(fieldSchemaArtifact.fieldUi()));
+    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(fieldSchemaArtifact.jsonSchemaSchemaUri()));
+
+    if (fieldSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
 
     if (fieldSchemaArtifact.isAttributeValue())
       return renderJsonSchemaArrayWrapperSpecification(rendering, Optional.of(0), Optional.empty());
@@ -379,16 +450,19 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(JSON_LD_CONTEXT, renderTemplateInstanceArtifactContextJsonLdSpecification());
 
+    if (templateInstanceArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
+
     for (var propertyMapping : templateInstanceArtifact.jsonLdContext().entrySet()) {
       String fieldName = propertyMapping.getKey();
       URI propertyUri = propertyMapping.getValue();
-      rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, propertyUri.toString());
+      rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, renderUri(propertyUri));
     }
 
-    rendering.put(SCHEMA_IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
+    rendering.put(SCHEMA_IS_BASED_ON, renderUri(templateInstanceArtifact.isBasedOn()));
 
     if (templateInstanceArtifact.jsonLdId().isPresent())
-      rendering.put(JSON_LD_ID, templateInstanceArtifact.jsonLdId().get().toString());
+      rendering.put(JSON_LD_ID, renderUri(templateInstanceArtifact.jsonLdId().get()));
     else
       rendering.putNull(JSON_LD_ID);
 
@@ -399,12 +473,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description().get());
 
     if (templateInstanceArtifact.createdBy().isPresent())
-      rendering.put(PAV_CREATED_BY, templateInstanceArtifact.createdBy().get().toString());
+      rendering.put(PAV_CREATED_BY, renderUri(templateInstanceArtifact.createdBy().get()));
     else
       rendering.putNull(PAV_CREATED_BY);
 
     if (templateInstanceArtifact.modifiedBy().isPresent())
-      rendering.put(OSLC_MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
+      rendering.put(OSLC_MODIFIED_BY, renderUri(templateInstanceArtifact.modifiedBy().get()));
     else
       rendering.putNull(OSLC_MODIFIED_BY);
 
@@ -431,15 +505,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       for (var propertyMapping : elementInstanceArtifact.jsonLdContext().entrySet()) {
         String fieldName = propertyMapping.getKey();
         URI propertyUri = propertyMapping.getValue();
-        rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, propertyUri.toString());
+        rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, renderUri(propertyUri));
       }
     }
 
     if (elementInstanceArtifact.createdBy().isPresent())
-      rendering.put(PAV_CREATED_BY, elementInstanceArtifact.createdBy().get().toString());
+      rendering.put(PAV_CREATED_BY, renderUri(elementInstanceArtifact.createdBy().get()));
 
     if (elementInstanceArtifact.modifiedBy().isPresent())
-      rendering.put(OSLC_MODIFIED_BY, elementInstanceArtifact.modifiedBy().get().toString());
+      rendering.put(OSLC_MODIFIED_BY, renderUri(elementInstanceArtifact.modifiedBy().get()));
 
     if (elementInstanceArtifact.createdOn().isPresent())
       rendering.put(PAV_CREATED_ON, renderOffsetDateTime(elementInstanceArtifact.createdOn().get()));
@@ -454,40 +528,51 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
-    // If JSON-LD @value is present, assume it is a non-IRI field
-    if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
-      if (fieldInstanceArtifact.jsonLdValue().get() != null)
-        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get());
+    // TODO Use typesafe switch when available
+    if (fieldInstanceArtifact instanceof IriFieldInstance) {
+      if (fieldInstanceArtifact.jsonLdId().isPresent() && fieldInstanceArtifact.jsonLdId().get() != null)
+        objectNode.put(JSON_LD_ID, renderUri(fieldInstanceArtifact.jsonLdId().get()));
+
+    } else if (fieldInstanceArtifact instanceof LiteralFieldInstance) {
+      if (fieldInstanceArtifact.jsonLdValue().isPresent() && fieldInstanceArtifact.jsonLdValue().get() != null)
+        objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
       else
         objectNode.putNull(JSON_LD_VALUE);
-
-      if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
-        objectNode.put(JSON_LD_TYPE, fieldInstanceArtifact.jsonLdTypes().get(0).toString());
-      } else if (fieldInstanceArtifact.jsonLdTypes().size() > 1) {
-        ArrayNode jsonLdTypesArrayNode = mapper.createArrayNode();
-
-        for (int i = 0; i < fieldInstanceArtifact.jsonLdTypes().size(); i++)
-          jsonLdTypesArrayNode.add(fieldInstanceArtifact.jsonLdTypes().get(i).toString());
-
-        objectNode.put(JSON_LD_TYPE, jsonLdTypesArrayNode);
-      }
-
-      if (fieldInstanceArtifact.language().isPresent())
-        objectNode.put(JSON_LD_LANGUAGE, fieldInstanceArtifact.language().get());
-
-      if (fieldInstanceArtifact.notation().isPresent())
-        objectNode.put(SKOS_NOTATION, fieldInstanceArtifact.notation().get());
-
-      if (fieldInstanceArtifact.prefLabel().isPresent())
-        objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.prefLabel().get());
-
-    } else if (fieldInstanceArtifact.jsonLdId().isPresent()) {
-      if (fieldInstanceArtifact.jsonLdId().get() != null)
-        objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdId().get().toString());
-
-      if (fieldInstanceArtifact.label().isPresent())
-        objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
+    } else { // No type given so some guessing involved
+      if (fieldInstanceArtifact.jsonLdId().isPresent()) {
+        if (fieldInstanceArtifact.jsonLdId().get() != null)
+          objectNode.put(JSON_LD_ID, renderUri(fieldInstanceArtifact.jsonLdId().get()));
+      } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
+        if (fieldInstanceArtifact.jsonLdValue().get() != null)
+          objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
+        else
+          objectNode.putNull(JSON_LD_VALUE);
+      } else // No @id or @value present; assume @value
+        objectNode.putNull(JSON_LD_VALUE);
     }
+
+    if (fieldInstanceArtifact.label().isPresent() && fieldInstanceArtifact.label().get() != null)
+      objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
+
+    if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
+      objectNode.put(JSON_LD_TYPE, renderUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
+    } else if (fieldInstanceArtifact.jsonLdTypes().size() > 1) {
+      ArrayNode jsonLdTypesArrayNode = mapper.createArrayNode();
+
+      for (int i = 0; i < fieldInstanceArtifact.jsonLdTypes().size(); i++)
+        jsonLdTypesArrayNode.add(renderUri(fieldInstanceArtifact.jsonLdTypes().get(i)));
+
+      objectNode.put(JSON_LD_TYPE, jsonLdTypesArrayNode);
+    }
+
+    if (fieldInstanceArtifact.language().isPresent())
+      objectNode.put(JSON_LD_LANGUAGE, fieldInstanceArtifact.language().get());
+
+    if (fieldInstanceArtifact.notation().isPresent())
+      objectNode.put(SKOS_NOTATION, fieldInstanceArtifact.notation().get());
+
+    if (fieldInstanceArtifact.prefLabel().isPresent())
+      objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.prefLabel().get());
 
     return objectNode;
   }
@@ -497,10 +582,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     if (parentInstanceArtifact.jsonLdId().isPresent())
-      rendering.put(JSON_LD_ID, parentInstanceArtifact.jsonLdId().get().toString());
+      rendering.put(JSON_LD_ID, renderUri(parentInstanceArtifact.jsonLdId().get()));
     else // TODO Put constant in ModelNodeNames
-      rendering.put(JSON_LD_ID, URI.create("https://repo.metadatacenter.org/template-element-instances/" +
-        UUID.randomUUID()).toString());
+      rendering.put(JSON_LD_ID,
+        renderUri(URI.create("https://repo.metadatacenter.org/template-element-instances/" + UUID.randomUUID())));
 
     if (parentInstanceArtifact.name().isPresent())
       rendering.put(SCHEMA_ORG_NAME, parentInstanceArtifact.name().get());
@@ -508,10 +593,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (parentInstanceArtifact.description().isPresent())
       rendering.put(SCHEMA_ORG_DESCRIPTION, parentInstanceArtifact.description().get());
 
-    for (String childName: parentInstanceArtifact.childNames()) {
+    for (String childName : parentInstanceArtifact.childNames()) {
 
       if (parentInstanceArtifact.singleInstanceFieldInstances().containsKey(childName)) {
-        FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances().get(childName);
+        FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances()
+          .get(childName);
 
         rendering.put(childName, renderFieldInstanceArtifact(fieldInstanceArtifact));
       } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childName)) {
@@ -520,11 +606,13 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
         rendering.put(childName, renderFieldInstanceArtifacts(fieldInstanceArtifacts));
       } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childName)) {
-        ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances().get(childName);
+        ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances()
+          .get(childName);
 
         rendering.put(childName, renderElementInstanceArtifact(elementInstanceArtifact));
       } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childName)) {
-        List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances().get(childName);
+        List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances()
+          .get(childName);
 
         rendering.put(childName, renderElementInstanceArtifacts(elementInstanceArtifacts));
       } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().containsKey(childName)) {
@@ -542,13 +630,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().values().stream()
         .anyMatch(instancesForAttributeValueField -> instancesForAttributeValueField.containsKey(childName))) {
 
-        for (var attributeValueFieldInstancesGroupEntry : parentInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
+        for (var attributeValueFieldInstancesGroupEntry : parentInstanceArtifact.attributeValueFieldInstanceGroups()
+          .entrySet()) {
           Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldInstancesGroupEntry.getValue();
 
           if (attributeValueFieldInstances.containsKey(childName))
             rendering.put(childName, renderFieldInstanceArtifact(attributeValueFieldInstances.get(childName)));
         }
-      } else throw new RuntimeException("unknown child " + childName + " in parent instance artifact");
+      } else
+        throw new RuntimeException("unknown child " + childName + " in parent instance artifact");
     }
 
     return rendering;
@@ -587,37 +677,39 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   "$schema": "http://json-schema.org/draft-04/schema#",
    *   "type": "object",
    *   "title": "Study template schema", "description": "Bare template schema generated by the CEDAR Template Editor 2.6.19",
-   *   "schema:name": "Study", "schema:description": "",
-   *   "schema:schemaVersion": "1.6.0", "schema:identifier": "id4343",
-   *   "pav:version": "0.0.1", "bibo:status": "bibo:draft",
-   *   "pav:previousVersion": "https://repo.metadatacenter.org/templates/435454",
-   *   "pav:derivedFrom": "https://repo.metadatacenter.org/templates/893443",
-   *   "@type": "https://schema.metadatacenter.org/core/Template",
-   *   "@id": "https://repo.metadatacenter.org/templates/127666",
-   *   "pav:createdOn": "2023-07-28T11:10:41-07:00", "pav:createdBy": "https://metadatacenter.org/users/656433",
-   *   "pav:lastUpdatedOn": "2023-07-28T11:10:41-07:00", "oslc:modifiedBy": "https://metadatacenter.org/users/524332"
-   *  }
+   * }
    * </pre>
    */
-  private ObjectNode renderSchemaArtifact(SchemaArtifact schemaArtifact)
+  private void addCoreJsonSchemaRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
   {
-    ObjectNode rendering = renderJsonLdArtifact(schemaArtifact);
-
-    rendering.put(JSON_SCHEMA_SCHEMA, schemaArtifact.jsonSchemaSchemaUri().toString());
     rendering.put(JSON_SCHEMA_TYPE, schemaArtifact.jsonSchemaType());
     rendering.put(JSON_SCHEMA_TITLE, schemaArtifact.jsonSchemaTitle());
     rendering.put(JSON_SCHEMA_DESCRIPTION, schemaArtifact.jsonSchemaDescription());
+  }
+
+  /**
+   * Generate a base schema artifact rendering. In addition to core artifact fields (@type, @id, pav:createdOn,
+   * pav:createdBy, pav:lastUpdatedOn, and oslc:modifiedBy), it will have JSON Schema fields (@schema, type,
+   * title, description), Schema.org fields (schema:name, schema:description, schema:schemaVersion,
+   * schema:identifier), version fields (pav:version, bibo:status, pav:previousVersion), and a derivation field
+   * (pav:derivedFrom).
+   * <p></p>
+   * An example artifact could look as follows:
+   * <pre>
+   * {
+   *   "schema:name": "Study", "schema:description": "",
+   *   "schema:schemaVersion": "1.6.0", "schema:identifier": "id4343",
+   *  }
+   * </pre>
+   */
+  private void addCoreSchemaOrgRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
+  {
     rendering.put(SCHEMA_ORG_NAME, schemaArtifact.name());
     rendering.put(SCHEMA_ORG_DESCRIPTION, schemaArtifact.description());
+  }
 
-    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, schemaArtifact.modelVersion().toString());
-
-    if (schemaArtifact.identifier().isPresent()) {
-      String identifier = schemaArtifact.identifier().get();
-      if (!identifier.isEmpty())
-        rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
-    }
-
+  private void addVersionRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
+  {
     if (schemaArtifact.version().isPresent())
       rendering.put(PAV_VERSION, schemaArtifact.version().get().toString());
 
@@ -625,18 +717,16 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(BIBO_STATUS, schemaArtifact.status().get().toString());
 
     if (schemaArtifact.previousVersion().isPresent()) {
-      String previousVersion = schemaArtifact.previousVersion().get().toString();
+      Optional<URI> previousVersion = schemaArtifact.previousVersion();
       if (!previousVersion.isEmpty())
-        rendering.put(PAV_PREVIOUS_VERSION, previousVersion);
+        rendering.put(PAV_PREVIOUS_VERSION, renderUri(previousVersion.get()));
     }
 
     if (schemaArtifact.derivedFrom().isPresent()) {
-      String derivedFrom = schemaArtifact.derivedFrom().get().toString();
+      Optional<URI> derivedFrom = schemaArtifact.derivedFrom();
       if (!derivedFrom.isEmpty())
-        rendering.put(PAV_DERIVED_FROM, derivedFrom);
+        rendering.put(PAV_DERIVED_FROM, renderUri(derivedFrom.get()));
     }
-
-    return rendering;
   }
 
   /**
@@ -652,20 +742,19 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private ObjectNode renderJsonLdArtifact(JsonLdArtifact jsonLdArtifact)
   {
-    ObjectNode rendering = renderMonitoredArtifact(jsonLdArtifact);
+    ObjectNode rendering = mapper.createObjectNode();
+
+    if (jsonLdArtifact.jsonLdId().isPresent())
+      rendering.put(JSON_LD_ID, renderUri(jsonLdArtifact.jsonLdId().get()));
+    else
+      rendering.putNull(JSON_LD_ID);
 
     if (jsonLdArtifact.jsonLdTypes().size() == 1) {
-      rendering.put(JSON_LD_TYPE, jsonLdArtifact.jsonLdTypes().get(0).toString());
+      rendering.put(JSON_LD_TYPE, renderUri(jsonLdArtifact.jsonLdTypes().get(0)));
     } else if (jsonLdArtifact.jsonLdTypes().size() > 1) {
       rendering.put(JSON_LD_TYPE, mapper.createArrayNode());
       for (URI jsonLdType : jsonLdArtifact.jsonLdTypes())
-        rendering.withArray(JSON_LD_TYPE).add(jsonLdType.toString());
-    }
-
-    if (jsonLdArtifact.jsonLdId().isPresent()) {
-      rendering.put(JSON_LD_ID, jsonLdArtifact.jsonLdId().get().toString());
-    } else {
-      rendering.putNull(JSON_LD_ID);
+        rendering.withArray(JSON_LD_TYPE).add(renderUri(jsonLdType));
     }
 
     return rendering;
@@ -683,33 +772,27 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *  }
    * </pre>
    */
-  private ObjectNode renderMonitoredArtifact(MonitoredArtifact monitoredArtifact)
+  private ObjectNode addProvenanceRendering(MonitoredArtifact monitoredArtifact, ObjectNode rendering)
   {
-    ObjectNode rendering = mapper.createObjectNode();
-
-    if (monitoredArtifact.createdBy().isPresent()) {
-      rendering.put(PAV_CREATED_BY, monitoredArtifact.createdBy().get().toString());
-    } else {
-      rendering.putNull(PAV_CREATED_BY);
-    }
-
-    if (monitoredArtifact.modifiedBy().isPresent()) {
-      rendering.put(OSLC_MODIFIED_BY, monitoredArtifact.modifiedBy().get().toString());
-    } else {
-      rendering.putNull(OSLC_MODIFIED_BY);
-    }
-
-    if (monitoredArtifact.createdOn().isPresent()) {
+    if (monitoredArtifact.createdOn().isPresent())
       rendering.put(PAV_CREATED_ON, renderOffsetDateTime(monitoredArtifact.createdOn().get()));
-    } else {
+    else
       rendering.putNull(PAV_CREATED_ON);
-    }
 
-    if (monitoredArtifact.lastUpdatedOn().isPresent()) {
+    if (monitoredArtifact.createdBy().isPresent())
+      rendering.put(PAV_CREATED_BY, renderUri(monitoredArtifact.createdBy().get()));
+    else
+      rendering.putNull(PAV_CREATED_BY);
+
+    if (monitoredArtifact.lastUpdatedOn().isPresent())
       rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(monitoredArtifact.lastUpdatedOn().get()));
-    } else {
+    else
       rendering.putNull(PAV_LAST_UPDATED_ON);
-    }
+
+    if (monitoredArtifact.modifiedBy().isPresent())
+      rendering.put(OSLC_MODIFIED_BY, renderUri(monitoredArtifact.modifiedBy().get()));
+    else
+      rendering.putNull(OSLC_MODIFIED_BY);
 
     return rendering;
   }
@@ -847,8 +930,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_CONTEXT, renderTemplateSchemaArtifactContextPropertiesJsonSchemaSpecification(templateSchemaArtifact));
     rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
+
     rendering.put(PAV_DERIVED_FROM, renderUriJsonSchemaTypeSpecification());
     rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
+
     rendering.put(SCHEMA_ORG_NAME, renderStringJsonSchemaTypeSpecification(1));
     rendering.put(SCHEMA_ORG_DESCRIPTION, renderStringJsonSchemaTypeSpecification(0));
     rendering.put(PAV_CREATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
@@ -914,8 +999,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_LD_CONTEXT, renderElementSchemaArtifactContextPropertiesJsonSchemaSpecification(elementSchemaArtifact));
-    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
+    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
 
     return rendering;
   }
@@ -1008,7 +1093,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (var entry : templateSchemaArtifact.getChildPropertyUris().entrySet()) {
       String childName = entry.getKey();
       URI propertyUri = entry.getValue();
-      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(propertyUri.toString()));
+      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(renderUri(propertyUri)));
     }
 
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -1066,12 +1151,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
-    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS_NOTATION, renderJsonSchemaEnumSpecification(XSD_STRING));
-
     for (var entry : elementSchemaArtifact.getChildPropertyUris().entrySet()) {
       String childName = entry.getKey();
       URI propertyUri = entry.getValue();
-      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(propertyUri.toString()));
+      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(renderUri(propertyUri)));
     }
 
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -1177,7 +1260,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   }
    * </pre>
    */
-  private ObjectNode renderParentSchemaArtifactContextJsonLdSpecification()
+  private ObjectNode renderParentSchemaArtifactContextJsonLdSpecification(SchemaArtifact schemaArtifact)
   {
     ObjectNode rendering = renderParentSchemaArtifactContextPrefixesJsonLdSpecification();
 
@@ -1187,6 +1270,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
+
+    if (schemaArtifact.language().isPresent()) {
+      String language = schemaArtifact.language().get();
+      if (!language.isEmpty())
+        rendering.put(JSON_LD_LANGUAGE, language);
+    }
 
     return rendering;
   }
@@ -1302,7 +1391,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   }
    * </pre>
    */
-  private ObjectNode renderFieldSchemaArtifactContextPrefixesJsonLdSpecification()
+  private ObjectNode renderFieldSchemaArtifactContextPrefixesJsonLdSpecification(FieldSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
@@ -1311,12 +1400,18 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
     rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
+    rendering.put(SKOS_PREFLABEL, renderXsdStringJsonLdSpecification());
+    rendering.put(SKOS_ALTLABEL, renderXsdStringJsonLdSpecification());
     rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
-    rendering.put(SKOS_PREFLABEL, renderXsdStringJsonLdSpecification());
-    rendering.put(SKOS_ALTLABEL, renderXsdStringJsonLdSpecification());
+
+    if (fieldSchemaArtifact.language().isPresent()) {
+      String language = fieldSchemaArtifact.language().get();
+      if (!language.isEmpty())
+        rendering.put(JSON_LD_LANGUAGE, language);
+    }
 
     return rendering;
   }
@@ -1334,12 +1429,18 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *   }
    * </pre>
    */
-  private ObjectNode renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification()
+  private ObjectNode renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification(FieldSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode rendering = mapper.createObjectNode();
 
     for (var entry: STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
       rendering.put(entry.getKey(), entry.getValue().toString());
+
+    if (fieldSchemaArtifact.language().isPresent()) {
+      String language = fieldSchemaArtifact.language().get();
+      if (!language.isEmpty())
+        rendering.put(JSON_LD_LANGUAGE, language);
+    }
 
     return rendering;
   }
@@ -1375,14 +1476,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * Defined as follows:
    * <pre>
    * {
-   *   "@type": {
-   *     "oneOf": [
-   *       { "type": "string", "format": "uri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
-   *     ]
-   *   },
+   *   "@type": { "type": "string", "format": "uri" },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
-   *   "@value": {  "type": [ "string", "null" ] }
+   *   "@value": {  "type": [ "string", "null" ] },
+   *   "@language": {  "type": [ "string", "null" ], "minLength": 1 },
    * }
    * </pre>
    * A conforming value could look like:
@@ -1390,6 +1487,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * {
    *   "@type": "http://www.w3.org/2001/XMLSchema#string",
    *   "@value": "Bob"
+   *   "@language": "en"
    * }
    * </pre>
    */
@@ -1397,9 +1495,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
     rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_VALUE, renderStringOrNullJsonSchemaTypeSpecification());
+    rendering.put(JSON_LD_LANGUAGE, renderStringOrNullJsonSchemaTypeSpecification(1));
 
     return rendering;
   }
@@ -1411,12 +1510,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * Defined as follows:
    * <pre>
    * {
-   *   "@type": {
-   *     "oneOf": [
-   *       { "type": "string", "format": "uri" },
-   *       { "type": "array", "minItems": 1, "items": { "type": "string", "format": "uri" },  "uniqueItems": true }
-   *     ]
-   *   },
+   *   "@type": { "type": "string", "format": "uri" },
    *   "rdfs:label": {  "type": [ "string", "null" ] },
    *   "@id": { "type": "string", "format": "uri" }
    * }
@@ -1433,7 +1527,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaSpecification(1, true));
+    rendering.put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
     rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
 
@@ -1475,6 +1569,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_STRING);
     rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_NULL);
+
+    return rendering;
+  }
+
+  /**
+   * Generate a JSON Schema type specification for a string or null value
+   * <p>
+   * Defined as follows:
+   * <pre>
+   *   { "type": [ "string", "null" ], "minLength": [minLength] }
+   * </pre>
+   */
+  private ObjectNode renderStringOrNullJsonSchemaTypeSpecification(int minLength)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_SCHEMA_TYPE, mapper.createArrayNode());
+    rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_STRING);
+    rendering.withArray(JSON_SCHEMA_TYPE).add(JSON_SCHEMA_NULL);
+
+    if (minLength > 0)
+      rendering.put(JSON_SCHEMA_MIN_LENGTH, minLength);
 
     return rendering;
   }
@@ -1552,7 +1668,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate a JSON Schema type specification for a date-time or null value
+   * Generate a JSON Schema type specification for a datetime-formatted string or null value
    * <p>
    * Defined as follows:
    * <pre>
@@ -1637,35 +1753,68 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
-   * Generate a JSON Schema array specification wrapping a supplied JSON Schema Specification
+   * Generate a JSON Schema array specification wrapping a supplied JSON Schema specification
    * <p>
    * Defined as follows:
    * <pre>
-   * { "type": "array", "minItems": [minItems], "maxItems": [maxItems], "items": wrappedObjectNode }
+   * { "type": "array", "minItems": [minItems], "maxItems": [maxItems], "items": [wrappedRendering] }
    * </pre>
    */
-  private ObjectNode renderJsonSchemaArrayWrapperSpecification(ObjectNode wrappedObjectNode, Optional<Integer> minItems,
+  private ObjectNode renderJsonSchemaArrayWrapperSpecification(ObjectNode wrappedRendering, Optional<Integer> minItems,
     Optional<Integer> maxItems)
   {
-    ObjectNode wrapperObjectNode = mapper.createObjectNode();
+    ObjectNode wrapperRendering = mapper.createObjectNode();
 
-    wrapperObjectNode.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_ARRAY);
+    wrapperRendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_ARRAY);
 
     if (minItems.isPresent())
-      wrapperObjectNode.put(JSON_SCHEMA_MIN_ITEMS, minItems.get());
+      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, minItems.get());
     else
-      wrapperObjectNode.put(JSON_SCHEMA_MIN_ITEMS, 0);
+      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, 0);
 
     if (maxItems.isPresent())
-      wrapperObjectNode.put(JSON_SCHEMA_MAX_ITEMS, maxItems.get());
+      wrapperRendering.put(JSON_SCHEMA_MAX_ITEMS, maxItems.get());
 
-    wrapperObjectNode.put(JSON_SCHEMA_ITEMS, wrappedObjectNode);
+    wrapperRendering.put(JSON_SCHEMA_ITEMS, wrappedRendering);
 
-    return wrapperObjectNode;
+    return wrapperRendering;
+  }
+
+  private ObjectNode renderAnnotations(Annotations annotations)
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    for (Map.Entry<String, AnnotationValue> annotationValueEntry : annotations.annotations().entrySet()) {
+      String annotationName  = annotationValueEntry.getKey();
+      AnnotationValue annotationValue = annotationValueEntry.getValue();
+
+      // TODO Use typesafe switch when available
+      if (annotationValue instanceof LiteralAnnotationValue) {
+        LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
+        ObjectNode annotationValueNode = mapper.createObjectNode();
+        annotationValueNode.put(JSON_LD_VALUE, literalAnnotationValue.getValue());
+        rendering.put(annotationName, annotationValueNode);
+      } else if (annotationValue instanceof IriAnnotationValue) {
+        IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
+        ObjectNode annotationValueNode = mapper.createObjectNode();
+        annotationValueNode.put(JSON_LD_ID, renderUri(iriAnnotationValue.getValue()));
+        rendering.put(annotationName, annotationValueNode);
+      }
+    }
+
+    return rendering;
   }
 
   private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
     return offsetDateTime.format(datetimeFormatter);
+  }
+
+  private String renderUri(URI uri)
+  {
+    if (XsdDatatype.isKnownXsdDatatypeUri(uri))
+      return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
+    else
+      return uri.toString();
   }
 }
