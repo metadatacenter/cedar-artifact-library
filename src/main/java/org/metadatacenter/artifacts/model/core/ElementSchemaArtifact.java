@@ -84,6 +84,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
   static Builder builder() {
     return new Builder();
   }
+  static Builder builder(ElementSchemaArtifact elementSchemaArtifact) {
+    return new Builder(elementSchemaArtifact);
+  }
 
   class Builder
   {
