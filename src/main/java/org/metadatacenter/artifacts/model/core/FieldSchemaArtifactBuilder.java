@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -109,9 +110,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
 
   protected FieldSchemaArtifactBuilder withJsonLdId(URI jsonLdId)
   {
-    if (jsonLdId== null)
-      throw new IllegalArgumentException("null JSON-LD @id passed to builder");
-
     this.jsonLdId = Optional.ofNullable(jsonLdId);
     return this;
   }
