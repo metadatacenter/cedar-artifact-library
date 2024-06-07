@@ -56,16 +56,19 @@ public sealed interface ImageField extends FieldSchemaArtifact
 
   final class ImageFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final StaticFieldUi.ImageFieldUiBuilder fieldUiBuilder = StaticFieldUi.imageFieldUiBuilder();
+    private final StaticFieldUi.ImageFieldUiBuilder fieldUiBuilder;
 
     public ImageFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+      this.fieldUiBuilder = StaticFieldUi.imageFieldUiBuilder();
     }
 
     public ImageFieldBuilder(ImageField imageField)
     {
       super(imageField);
+
+      this.fieldUiBuilder = StaticFieldUi.imageFieldUiBuilder(imageField.fieldUi().asStaticFieldUi());
     }
 
     public ImageFieldBuilder withContent(String content)

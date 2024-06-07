@@ -58,18 +58,20 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
 
   final class AttributeValueFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
+    private final FieldUi.Builder fieldUiBuilder;
 
     public AttributeValueFieldBuilder()
     {
       super(JSON_SCHEMA_STRING, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.ATTRIBUTE_VALUE);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.ATTRIBUTE_VALUE);
     }
 
     public AttributeValueFieldBuilder(AttributeValueField attributeValueField)
     {
       super(attributeValueField);
+
+      this.fieldUiBuilder = FieldUi.builder(attributeValueField.fieldUi());
     }
 
     @Override public AttributeValueFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)

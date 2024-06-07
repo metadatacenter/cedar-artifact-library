@@ -59,19 +59,25 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
 
   final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final TextValueConstraints.Builder valueConstraintsBuilder;
 
     public PhoneNumberFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.PHONE_NUMBER);
-      valueConstraintsBuilder.withMultipleChoice(false);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.PHONE_NUMBER);
+      this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public PhoneNumberFieldBuilder(PhoneNumberField phoneNumberField)
     {
       super(phoneNumberField);
+
+      this.fieldUiBuilder = FieldUi.builder(phoneNumberField.fieldUi());
+      if (phoneNumberField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = TextValueConstraints.builder(phoneNumberField.valueConstraints().get().asTextValueConstraints());
+      else
+        this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public PhoneNumberFieldBuilder withRequiredValue(boolean requiredValue)

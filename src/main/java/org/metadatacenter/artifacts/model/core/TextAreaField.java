@@ -57,19 +57,25 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
 
   final class TextAreaFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final TextValueConstraints.Builder valueConstraintsBuilder;
 
     public TextAreaFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.TEXTAREA);
-      valueConstraintsBuilder.withMultipleChoice(false);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.TEXTAREA);
+      this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public TextAreaFieldBuilder(TextAreaField textAreaField)
     {
       super(textAreaField);
+
+      this.fieldUiBuilder = FieldUi.builder(textAreaField.fieldUi());
+      if (textAreaField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = TextValueConstraints.builder(textAreaField.valueConstraints().get().asTextValueConstraints());
+      else
+        this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public TextAreaFieldBuilder withRequiredValue(boolean requiredValue)

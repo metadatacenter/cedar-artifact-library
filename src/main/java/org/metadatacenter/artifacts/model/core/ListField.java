@@ -57,19 +57,25 @@ public sealed interface ListField extends FieldSchemaArtifact
 
   final class ListFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final TextValueConstraints.Builder valueConstraintsBuilder;
 
     public ListFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.LIST);
-      valueConstraintsBuilder.withMultipleChoice(true);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.LIST);
+      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
     }
 
     public ListFieldBuilder(ListField listField)
     {
       super(listField);
+
+      this.fieldUiBuilder = FieldUi.builder(listField.fieldUi());
+      if (listField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = TextValueConstraints.builder(listField.valueConstraints().get().asTextValueConstraints());
+      else
+        this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public ListFieldBuilder withRequiredValue(boolean requiredValue)

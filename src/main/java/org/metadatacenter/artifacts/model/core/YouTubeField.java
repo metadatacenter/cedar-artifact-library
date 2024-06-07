@@ -57,16 +57,19 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
 
   final class YouTubeFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final StaticFieldUi.YouTubeFieldUiBuilder fieldUiBuilder = StaticFieldUi.youTubeFieldUiBuilder();
+    private final StaticFieldUi.YouTubeFieldUiBuilder fieldUiBuilder;
 
     public YouTubeFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+      this.fieldUiBuilder = StaticFieldUi.youTubeFieldUiBuilder();
     }
 
     public YouTubeFieldBuilder(YouTubeField youTubeField)
     {
       super(youTubeField);
+
+      this.fieldUiBuilder = StaticFieldUi.youTubeFieldUiBuilder(youTubeField.fieldUi().asStaticFieldUi());
     }
 
     public YouTubeFieldBuilder withContent(String content)

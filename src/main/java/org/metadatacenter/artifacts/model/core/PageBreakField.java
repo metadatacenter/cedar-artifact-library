@@ -56,16 +56,19 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
 
   final class PageBreakFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final StaticFieldUi.PageBreakFieldUiBuilder fieldUiBuilder = StaticFieldUi.pageBreakFieldUiBuilder();
+    private final StaticFieldUi.PageBreakFieldUiBuilder fieldUiBuilder;
 
     public PageBreakFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+      this.fieldUiBuilder = StaticFieldUi.pageBreakFieldUiBuilder();
     }
 
     public PageBreakFieldBuilder(PageBreakField pageBreakField)
     {
       super(pageBreakField);
+
+      this.fieldUiBuilder = StaticFieldUi.pageBreakFieldUiBuilder(pageBreakField.fieldUi().asStaticFieldUi());
     }
 
     public PageBreakFieldBuilder withContent(String content)

@@ -56,17 +56,20 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
 
   final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final StaticFieldUi.SectionBreakFieldUiBuilder fieldUiBuilder = StaticFieldUi.sectionBreakFieldUiBuilder();
+    private final StaticFieldUi.SectionBreakFieldUiBuilder fieldUiBuilder;
 
     public SectionBreakFieldBuilder()
     {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+      this.fieldUiBuilder = StaticFieldUi.sectionBreakFieldUiBuilder();
     }
 
     public SectionBreakFieldBuilder(SectionBreakField sectionBreakField)
     {
       super(sectionBreakField);
+
+      this.fieldUiBuilder = StaticFieldUi.sectionBreakFieldUiBuilder(sectionBreakField.fieldUi().asStaticFieldUi());
     }
 
     public SectionBreakFieldBuilder withContent(String content)
