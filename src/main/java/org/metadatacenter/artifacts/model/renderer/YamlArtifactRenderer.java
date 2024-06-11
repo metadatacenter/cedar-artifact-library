@@ -287,11 +287,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     ontologyName: Human Disease Ontology
    *     iri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
-   *     acronym: DATACITE-VOCAB
+   *     label: Human
+   *     acronym: LOINC
    *     termType: OntologyClass
-   *     termLabel: Translated Title
-   *     iri: "http://purl.org/datacite/v4.4/TranslatedTitle"
-   *     type: OntologyClass
+   *     termLabel: Homo Sapiens
+   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
    *   - type: branch
    *     ontologyName: Diabetes Pharmacology Ontology
    *     acronym: DPCO
@@ -437,11 +437,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     ontologyName: Human Disease Ontology
    *     iri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
-   *     acronym: DATACITE-VOCAB
+   *     label: Human
+   *     acronym: LOINC
    *     termType: OntologyClass
-   *     termLabel: Translated Title
-   *     iri: "http://purl.org/datacite/v4.4/TranslatedTitle"
-   *     type: OntologyClass
+   *     termLabel: Homo Sapiens
+   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
    *   - type: branch
    *     ontologyName: Diabetes Pharmacology Ontology
    *     acronym: DPCO
