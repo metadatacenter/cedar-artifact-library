@@ -28,12 +28,10 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
-import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -535,45 +533,35 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
 
-        LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
-        classValueConstraintRendering.put(TYPE, CLASS);
-        classValueConstraintRendering.put(LABEL, "class label");
-        classValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
-        classValueConstraintRendering.put(TERM_TYPE, ValueType.ONTOLOGY_CLASS);
-        classValueConstraintRendering.put(TERM_LABEL, "class pref label");
-        classValueConstraintRendering.put(IRI, URI.create("class uri"));
+        List<ClassValueConstraint> classValueConstraints = ont2classes(ontologyValueConstraint);
 
-        valuesRendering.add(classValueConstraintRendering);
+        for (ClassValueConstraint classValueConstraint : classValueConstraints) {
+          LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+          valuesRendering.add(classValueConstraintRendering);
+        }
       }
 
       for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
         LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
-
         valuesRendering.add(classValueConstraintRendering);
       }
 
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
-        LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
-        classValueConstraintRendering.put(TYPE, CLASS);
-        classValueConstraintRendering.put(LABEL, "class label");
-        classValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
-        classValueConstraintRendering.put(TERM_TYPE, ValueType.ONTOLOGY_CLASS);
-        classValueConstraintRendering.put(TERM_LABEL, "class pref label");
-        classValueConstraintRendering.put(IRI, URI.create("class uri"));
+        List<ClassValueConstraint> classValueConstraints = branch2classes(branchValueConstraint);
 
-        valuesRendering.add(classValueConstraintRendering);
+        for (ClassValueConstraint classValueConstraint : classValueConstraints) {
+          LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+          valuesRendering.add(classValueConstraintRendering);
+        }
       }
 
       for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
-        LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
-        classValueConstraintRendering.put(TYPE, CLASS);
-        classValueConstraintRendering.put(LABEL, "class label");
-        classValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.name());
-        classValueConstraintRendering.put(TERM_TYPE, ValueType.VALUE_SET);
-        classValueConstraintRendering.put(TERM_LABEL, "class pref label");
-        classValueConstraintRendering.put(IRI, URI.create("class uri"));
+        List<ClassValueConstraint> classValueConstraints = valueSet2Classes(valueSetValueConstraint);
 
-        valuesRendering.add(classValueConstraintRendering);
+        for (ClassValueConstraint classValueConstraint : classValueConstraints) {
+          LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+          valuesRendering.add(classValueConstraintRendering);
+        }
       }
 
     } else if (valueConstraints instanceof TextValueConstraints) {
@@ -587,6 +575,27 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!valuesRendering.isEmpty())
       rendering.put(VALUES, valuesRendering);
+  }
+
+  private List<ClassValueConstraint> ont2classes(OntologyValueConstraint ontologyValueConstraint)
+  {
+    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
+    return classValueConstraints;
+  }
+
+  private List<ClassValueConstraint> branch2classes(BranchValueConstraint branchValueConstraint)
+  {
+    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
+    return classValueConstraints;
+  }
+
+  private List<ClassValueConstraint> valueSet2Classes(ValueSetValueConstraint valueSetValueConstraint)
+  {
+    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
+    return classValueConstraints;
   }
 
   /**
