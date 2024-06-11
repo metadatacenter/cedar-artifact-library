@@ -57,19 +57,25 @@ public sealed interface LinkField extends FieldSchemaArtifact
 
   final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final LinkValueConstraints.Builder valueConstraintsBuilder = LinkValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final LinkValueConstraints.Builder valueConstraintsBuilder;
 
     public LinkFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.LINK);
-      valueConstraintsBuilder.withMultipleChoice(false);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.LINK);
+      this.valueConstraintsBuilder = LinkValueConstraints.builder();
     }
 
     public LinkFieldBuilder(LinkField linkField)
     {
       super(linkField);
+
+      this.fieldUiBuilder = FieldUi.builder(linkField.fieldUi());
+      if (linkField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = LinkValueConstraints.builder(linkField.valueConstraints().get().asLinkValueConstraints());
+      else
+        this.valueConstraintsBuilder = LinkValueConstraints.builder();
     }
 
     public LinkFieldBuilder withRequiredValue(boolean requiredValue)

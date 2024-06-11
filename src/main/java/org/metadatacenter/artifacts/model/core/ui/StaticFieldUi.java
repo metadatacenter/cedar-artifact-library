@@ -47,6 +47,11 @@ public non-sealed interface StaticFieldUi extends FieldUi
     return new SectionBreakFieldUiBuilder();
   }
 
+  static SectionBreakFieldUiBuilder sectionBreakFieldUiBuilder(StaticFieldUi staticFieldUi)
+  {
+    return new SectionBreakFieldUiBuilder(staticFieldUi);
+  }
+
   static RichTextFieldUiBuilder richTextFieldUiBuilder() { return new RichTextFieldUiBuilder(); }
 
   static RichTextFieldUiBuilder richTextFieldUiBuilder(StaticFieldUi staticFieldUi)

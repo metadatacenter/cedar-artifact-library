@@ -60,17 +60,24 @@ public sealed interface TemporalField extends FieldSchemaArtifact
 
   final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final TemporalFieldUi.Builder fieldUiBuilder = TemporalFieldUi.builder();
-    private final TemporalValueConstraints.Builder valueConstraintsBuilder = TemporalValueConstraints.builder();
+    private final TemporalFieldUi.Builder fieldUiBuilder;
+    private final TemporalValueConstraints.Builder valueConstraintsBuilder;
 
     public TemporalFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
-      valueConstraintsBuilder.withMultipleChoice(false);
+      this.fieldUiBuilder = TemporalFieldUi.builder();
+      this.valueConstraintsBuilder = TemporalValueConstraints.builder();
     }
 
     public TemporalFieldBuilder(TemporalField temporalField)
     {
       super(temporalField);
+
+      this.fieldUiBuilder = TemporalFieldUi.builder(temporalField.fieldUi().asTemporalFieldUi());
+      if (temporalField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = TemporalValueConstraints.builder(temporalField.valueConstraints().get().asTemporalValueConstraints());
+      else
+        this.valueConstraintsBuilder = TemporalValueConstraints.builder();
     }
 
     public TemporalFieldBuilder withTemporalType(

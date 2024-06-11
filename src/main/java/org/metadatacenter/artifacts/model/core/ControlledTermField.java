@@ -66,20 +66,26 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
 
   final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final ControlledTermValueConstraints.Builder valueConstraintsBuilder = ControlledTermValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final ControlledTermValueConstraints.Builder valueConstraintsBuilder;
 
     public ControlledTermFieldBuilder()
     {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      valueConstraintsBuilder.withMultipleChoice(false);
-      fieldUiBuilder.withInputType(FieldInputType.TEXTFIELD);
+      this.valueConstraintsBuilder = ControlledTermValueConstraints.builder();
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.TEXTFIELD);
     }
 
     public ControlledTermFieldBuilder(ControlledTermField controlledTermField)
     {
       super(controlledTermField);
+
+      this.fieldUiBuilder = FieldUi.builder(controlledTermField.fieldUi());
+      if (controlledTermField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = ControlledTermValueConstraints.builder(controlledTermField.valueConstraints().get().asControlledTermValueConstraints());
+      else
+        this.valueConstraintsBuilder = ControlledTermValueConstraints.builder();
     }
 
     public ControlledTermFieldBuilder withOntologyValueConstraint(URI uri, String acronym, String name)

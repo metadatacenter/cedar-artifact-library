@@ -57,18 +57,24 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 
   final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final TextValueConstraints.Builder valueConstraintsBuilder;
 
     public CheckboxFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.CHECKBOX);
-      valueConstraintsBuilder.withMultipleChoice(true);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.CHECKBOX);
+      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
     }
 
     public CheckboxFieldBuilder(CheckboxField checkboxField) {
       super(checkboxField);
+
+      this.fieldUiBuilder = FieldUi.builder(checkboxField.fieldUi());
+      if (checkboxField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = TextValueConstraints.builder(checkboxField.valueConstraints().get().asTextValueConstraints());
+      else
+        this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public CheckboxFieldBuilder withRequiredValue(boolean requiredValue)

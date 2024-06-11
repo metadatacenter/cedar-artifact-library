@@ -57,18 +57,25 @@ public sealed interface EmailField extends FieldSchemaArtifact
 
   final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final TextValueConstraints.Builder valueConstraintsBuilder;
 
     public EmailFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.EMAIL);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.EMAIL);
+      this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public EmailFieldBuilder(EmailField emailField)
     {
       super(emailField);
+
+      this.fieldUiBuilder = FieldUi.builder(emailField.fieldUi());
+      if (emailField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = TextValueConstraints.builder(emailField.valueConstraints().get().asTextValueConstraints());
+      else
+        this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public EmailFieldBuilder withRequiredValue(boolean requiredValue)

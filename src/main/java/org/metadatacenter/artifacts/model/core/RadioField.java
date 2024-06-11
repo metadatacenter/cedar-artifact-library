@@ -57,19 +57,25 @@ public sealed interface RadioField extends FieldSchemaArtifact
 
   final class RadioFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final FieldUi.Builder fieldUiBuilder = FieldUi.builder();
-    private final TextValueConstraints.Builder valueConstraintsBuilder = TextValueConstraints.builder();
+    private final FieldUi.Builder fieldUiBuilder;
+    private final TextValueConstraints.Builder valueConstraintsBuilder;
 
     public RadioFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      fieldUiBuilder.withInputType(FieldInputType.RADIO);
-      valueConstraintsBuilder.withMultipleChoice(true);
+      this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.RADIO);
+      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
     }
 
     public RadioFieldBuilder(RadioField radioField)
     {
       super(radioField);
+
+      this.fieldUiBuilder = FieldUi.builder(radioField.fieldUi());
+      if (radioField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = TextValueConstraints.builder(radioField.valueConstraints().get().asTextValueConstraints());
+      else
+        this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
     }
 
     public RadioFieldBuilder withRequiredValue(boolean requiredValue)

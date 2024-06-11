@@ -122,7 +122,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * Read a YAML specification of a template schema artifact
    * <p></p>
    * e.g.,
-   * <pre>
    * template: Study
    * description: Study template
    * identifier: SFY343
@@ -131,32 +130,36 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *
    * children:
    *
-   *   - field: Study Name
+   *   - key: study-name
+   *     type: text-field
+   *     name: Study Name
    *     description: Study name field
-   *     inputType: textfield
-   *     datatype: xsd:string
-   *     required: true
+   *     configuration:
+   *       required: true
    *
-   *   - field: Study ID
+   *   - type: text-field
+   *     name: Study ID
    *     description: Study ID field
-   *     inputType: textfield
-   *     datatype: xsd:string
-   *     required: true
    *     minLength: 2
+   *     configuration:
+   *       required: true
    *
-   *   - element: Address
+   *   - key: address
+   *     type: element
+   *     name: Address
    *     description: Address element
-   *     isMultiple: true
-   *     minItems: 0
-   *     maxItems: 4
+   *     configuration:
+   *       isMultiple: true
+   *       minItems: 0
+   *       maxItems: 4
    *
    *     children:
-   *       - field: Address 1
-   *         inputType: textfield
-   *         datatype: xsd:string
-   *       - field: ZIP
-   *         inputType: textfield
-   *         datatype: xsd:string
+   *       - key: address-1
+   *         type: text-field
+   *         name: field: Address 1
+   *       - key: zip
+   *         type: text-field
+   *         name: field: ZIP
    *         minLength: 5
    *         maxLength: 5
    * </pre>
@@ -174,24 +177,25 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * <p></p>
    * e.g.,
    * <pre>
-   * element: Address
-   * description: Address element
-   * identifier: SFY343
-   * version: 1.0.0
-   * status: published
-   * isMultiple: true
-   * minItems: 0
-   * maxItems: 4
+   *   - key: address
+   *     type: element
+   *     name: Address
+   *     description: Address element
+   *     configuration:
+   *       isMultiple: true
+   *       minItems: 0
+   *       maxItems: 4
    *
-   * children:
-   *  - field: Address 1
-   *    inputType: textfield
-   *    datatype: xsd:string
-   *  - field: ZIP
-   *    inputType: textfield
-   *    datatype: xsd:string
-   *    minLength: 5
-   *    maxLength: 5
+   *     children:
+   *       - key: address-1
+   *         type: text-field
+   *         name: field: Address 1
+   *       - key: zip
+   *         type: text-field
+   *         name: field: ZIP
+   *         minLength: 5
+   *         maxLength: 5
+   *
    * </pre>
    */
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
@@ -211,20 +215,21 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * <p>
    * e.g.,
    * <pre>
-   * field: Disease
-   * inputType: textfield
-   * datatype: xsd:anyURI
+   * type: controlled-term-field
+   * name: Disease
    * values:
-   *  - ontology: Human Disease Ontology
-   *    acronym: DOID
-   *    termUri: "https://data.bioontology.org/ontologies/DOID"
-   *  - branch: Disease
-   *    acronym: DPCO
-   *    termUri: "http://purl.org/twc/dpo/ont/Disease"
-   *  - class: Translated Title
-   *    source: DATACITE-VOCAB
-   *    termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
-   *    type: OntologyClass
+   *   - branch: Disease
+   *     acronym: DPCO
+   *     termUri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: ontology
+   *     source: DOID
+   *     name: Human Disease Ontology
+   *     acronym: DOID
+   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *   - class: Translated Title
+   *     source: DATACITE-VOCAB
+   *     termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *     type: OntologyClass
    * </pre>
    */
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)

@@ -58,18 +58,25 @@ public sealed interface NumericField extends FieldSchemaArtifact
 
   final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final NumericFieldUi.Builder fieldUiBuilder = NumericFieldUi.builder();
-    private final NumericValueConstraints.Builder valueConstraintsBuilder = NumericValueConstraints.builder();
+    private final NumericFieldUi.Builder fieldUiBuilder;
+    private final NumericValueConstraints.Builder valueConstraintsBuilder;
 
     public NumericFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
-      valueConstraintsBuilder.withMultipleChoice(false);
+      this.fieldUiBuilder = NumericFieldUi.builder();
+      this.valueConstraintsBuilder = NumericValueConstraints.builder();
     }
 
     public NumericFieldBuilder(NumericField numericField)
     {
       super(numericField);
+
+      this.fieldUiBuilder = NumericFieldUi.builder(numericField.fieldUi().asNumericFieldUi());
+      if (numericField.valueConstraints().isPresent())
+        this.valueConstraintsBuilder = NumericValueConstraints.builder(numericField.valueConstraints().get().asNumericValueConstraints());
+      else
+        this.valueConstraintsBuilder = NumericValueConstraints.builder();
     }
 
     public NumericFieldBuilder withNumericType(

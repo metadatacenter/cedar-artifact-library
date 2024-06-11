@@ -56,16 +56,19 @@ public sealed interface RichTextField extends FieldSchemaArtifact
 
   final class RichTextFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final StaticFieldUi.RichTextFieldUiBuilder fieldUiBuilder = StaticFieldUi.richTextFieldUiBuilder();
+    private final StaticFieldUi.RichTextFieldUiBuilder fieldUiBuilder;
 
     public RichTextFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
+      this.fieldUiBuilder = StaticFieldUi.richTextFieldUiBuilder();
     }
 
     public RichTextFieldBuilder(RichTextField richTextField)
     {
       super(richTextField);
+
+      this.fieldUiBuilder = StaticFieldUi.richTextFieldUiBuilder(richTextField.fieldUi().asStaticFieldUi());
     }
 
     public RichTextFieldBuilder withContent(String content)
