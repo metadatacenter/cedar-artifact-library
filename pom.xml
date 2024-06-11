@@ -124,7 +124,7 @@
 	<configuration>
 	  <archive> 
 	    <manifest>
-	      <mainClass>org.metadatacenter.artifacts.model.tools.TemplateReporter</mainClass>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.ArtifactConvertor</mainClass>
 	    </manifest>
 	  </archive>
 	  <descriptorRefs>

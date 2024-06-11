@@ -282,18 +282,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * type: controlled-term-field
    * name: Disease
    * values:
-   *   - branch: Disease
-   *     acronym: DPCO
-   *     termUri: "http://purl.org/twc/dpo/ont/Disease"
    *   - type: ontology
-   *     source: DOID
-   *     name: Human Disease Ontology
    *     acronym: DOID
+   *     ontologyName: Human Disease Ontology
    *     iri: "https://data.bioontology.org/ontologies/DOID"
-   *   - class: Translated Title
-   *     source: DATACITE-VOCAB
-   *     termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *   - type: class
+   *     acronym: DATACITE-VOCAB
+   *     termType: OntologyClass
+   *     termLabel: Translated Title
+   *     iri: "http://purl.org/datacite/v4.4/TranslatedTitle"
    *     type: OntologyClass
+   *   - type: branch
+   *     ontologyName: Diabetes Pharmacology Ontology
+   *     acronym: DPCO
+   *     termLabel: Disease
+   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: valueSet
+   *     acronym: HRAVS
+   *     valueSetName: Area unit
+   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
@@ -426,16 +433,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <pre>
    * values:
    *   - type: ontology
-   *     name: Human Disease Ontology
    *     acronym: DOID
+   *     ontologyName: Human Disease Ontology
    *     iri: "https://data.bioontology.org/ontologies/DOID"
-   *   - branch: Disease
-   *     acronym: DPCO
-   *     termUri: "http://purl.org/twc/dpo/ont/Disease"
-   *   - class: Translated Title
-   *     source: DATACITE-VOCAB
-   *     termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *   - type: class
+   *     acronym: DATACITE-VOCAB
+   *     termType: OntologyClass
+   *     termLabel: Translated Title
+   *     iri: "http://purl.org/datacite/v4.4/TranslatedTitle"
    *     type: OntologyClass
+   *   - type: branch
+   *     ontologyName: Diabetes Pharmacology Ontology
+   *     acronym: DPCO
+   *     termLabel: Disease
+   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: valueSet
+   *     acronym: HRAVS
+   *     valueSetName: Area unit
+   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
    * </pre>
    */
   private void renderValueConstraintValues(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
@@ -451,7 +466,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         ontologyValueConstraintRendering.put(TYPE, ONTOLOGY);
         ontologyValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
         ontologyValueConstraintRendering.put(ONTOLOGY_NAME, ontologyValueConstraint.name());
-        ontologyValueConstraintRendering.put(IRI, ontologyValueConstraint.uri());
+        ontologyValueConstraintRendering.put(IRI, ontologyValueConstraint.uri().toString());
         if (ontologyValueConstraint.numTerms().isPresent())
           ontologyValueConstraintRendering.put(NUM_TERMS, ontologyValueConstraint.numTerms().get());
 
@@ -463,9 +478,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         classValueConstraintRendering.put(TYPE, CLASS);
         classValueConstraintRendering.put(LABEL, classValueConstraint.label());
         classValueConstraintRendering.put(ACRONYM, classValueConstraint.source());
-        classValueConstraintRendering.put(TERM_TYPE, renderValueType(classValueConstraint.type()));
+        classValueConstraintRendering.put(TERM_TYPE, classValueConstraint.type().toString());
         classValueConstraintRendering.put(TERM_LABEL, classValueConstraint.prefLabel());
-        classValueConstraintRendering.put(IRI, classValueConstraint.uri());
+        classValueConstraintRendering.put(IRI, classValueConstraint.uri().toString());
         valuesRendering.add(classValueConstraintRendering);
       }
 
@@ -475,7 +490,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         branchValueConstraintRendering.put(ONTOLOGY_NAME, branchValueConstraint.source());
         branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
         branchValueConstraintRendering.put(TERM_LABEL, branchValueConstraint.name());
-        branchValueConstraintRendering.put(IRI, branchValueConstraint.uri());
+        branchValueConstraintRendering.put(IRI, branchValueConstraint.uri().toString());
         branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
         valuesRendering.add(branchValueConstraintRendering);
       }
@@ -485,7 +500,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
         valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
         valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
-        valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri());
+        valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri().toString());
         if (valueSetValueConstraint.numTerms().isPresent())
           valueSetValueConstraintRendering.put(NUM_TERMS, valueSetValueConstraint.numTerms().get());
         valuesRendering.add(valueSetValueConstraintRendering);

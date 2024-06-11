@@ -263,4 +263,45 @@ public class YamlArtifactRendererTest {
 
   }
 
+  @Test public void testCreateControlledTermFieldWithClassValueConstraint() throws JsonProcessingException
+  {
+    String fieldName = "Field name";
+    String description = "Field description";
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel = "Human";
+    String classPrefLabel = "Homo Spiens";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+    String expectedYaml = """
+          type: controlled-term-field
+          name: ${fieldName}
+          description: ${description}
+          datatype: iri
+          values:
+            - type: class
+              label: ${classLabel}
+              acronym: ${classSource}
+              termType: OntologyClass
+              termLabel: ${classPrefLabel}
+              iri: ${classUri}
+      """.replace("${fieldName}", fieldName)
+      .replace("${description}", description)
+      .replace("${classValueType}", classValueType.toString())
+      .replace("${classLabel}", classLabel)
+      .replace("${classSource}", classSource)
+      .replace("${classPrefLabel}", classPrefLabel)
+      .replace("${classUri}", classUri.toString());
+
+    ControlledTermField controlledTermField = ControlledTermField.builder().withName(fieldName).withDescription(description)
+      .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
+
+    LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYaml, LinkedHashMap.class);
+
+    assertEquals(expectedRendering, actualRendering);
+  }
+
 }
