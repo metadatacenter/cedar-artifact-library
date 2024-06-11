@@ -207,6 +207,12 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public AttributeValueFieldBuilder withPreferredLabel(String skosPrefLabel)
+    {
+      super.withPreferredLabel(skosPrefLabel);
+      return this;
+    }
+
     public AttributeValueField build()
     {
       withFieldUi(fieldUiBuilder.build());
