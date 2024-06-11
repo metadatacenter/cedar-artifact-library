@@ -270,7 +270,7 @@ public class YamlArtifactRendererTest {
     URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
     String classSource = "LOINC";
     String classLabel = "Human";
-    String classPrefLabel = "Homo Spiens";
+    String classPrefLabel = "Homo Sapiens";
     ValueType classValueType = ValueType.ONTOLOGY_CLASS;
     String expectedYaml = """
           type: controlled-term-field
@@ -281,7 +281,7 @@ public class YamlArtifactRendererTest {
             - type: class
               label: ${classLabel}
               acronym: ${classSource}
-              termType: OntologyClass
+              termType: ${classValueType}
               termLabel: ${classPrefLabel}
               iri: ${classUri}
       """.replace("${fieldName}", fieldName)
