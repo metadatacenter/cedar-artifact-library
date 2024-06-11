@@ -533,7 +533,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
 
-        List<ClassValueConstraint> classValueConstraints = ont2classes(ontologyValueConstraint);
+        List<ClassValueConstraint> classValueConstraints = ontology2classes(ontologyValueConstraint);
 
         for (ClassValueConstraint classValueConstraint : classValueConstraints) {
           LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
@@ -577,9 +577,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(VALUES, valuesRendering);
   }
 
-  private List<ClassValueConstraint> ont2classes(OntologyValueConstraint ontologyValueConstraint)
+  private List<ClassValueConstraint> ontology2classes(OntologyValueConstraint ontologyValueConstraint)
   {
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
+    // TODO ontology to classes
 
     return classValueConstraints;
   }
@@ -588,12 +590,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
+    // TODO branch to classes
+
     return classValueConstraints;
   }
 
   private List<ClassValueConstraint> valueSet2Classes(ValueSetValueConstraint valueSetValueConstraint)
   {
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
+    // TODO value set to classes
 
     return classValueConstraints;
   }

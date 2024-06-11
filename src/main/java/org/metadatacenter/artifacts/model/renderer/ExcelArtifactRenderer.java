@@ -1,7 +1,6 @@
 package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -42,6 +41,7 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
+import org.metadatacenter.artifacts.util.TerminologyServerClient;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.IOException;
@@ -50,7 +50,6 @@ import java.net.HttpURLConnection;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,8 +60,7 @@ import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
 
 public class ExcelArtifactRenderer
 {
-  private final String terminologyServerIntegratedSearchEndpoint;
-  private final String terminologyServerAPIKey;
+  private final TerminologyServerClient terminologyServerClient;
   private final Workbook workbook;
   private final ObjectMapper mapper;
   private final ObjectWriter objectWriter;
@@ -77,11 +75,11 @@ public class ExcelArtifactRenderer
   public static final DateTimeFormatter xsdDateTimeFormatter =
     DateTimeFormatter.ofPattern(xsdDateTimeFormatterString).withZone(ZoneId.systemDefault());
 
-  public ExcelArtifactRenderer(String terminologyServerIntegratedSearchEndpoint, String terminologyServerAPIKey)
+  public ExcelArtifactRenderer(TerminologyServerClient terminologyServerClient)
   {
+    this.terminologyServerClient = terminologyServerClient;
+
     this.workbook = SpreadsheetFactory.createEmptyWorkbook();
-    this.terminologyServerIntegratedSearchEndpoint = terminologyServerIntegratedSearchEndpoint;
-    this.terminologyServerAPIKey = terminologyServerAPIKey;
 
     this.mapper = new ObjectMapper();
     mapper.registerModule(new Jdk8Module());
@@ -450,93 +448,16 @@ public class ExcelArtifactRenderer
         ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints.get();
 
         if (controlledTermValueConstraints.hasExplicitConstraints()) {
-          Map<String, String> ontologyBasedValues = getValuesFromTerminologyServer(controlledTermValueConstraints);
+          Map<String, String> ontologyBasedValues = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
           possibleValues.putAll(ontologyBasedValues);
         }
       }
-
 
       return possibleValues;
     } else
       return new LinkedHashMap<>();
   }
 
-  // Return prefLabel->IRI
-  @SuppressWarnings("unchecked") private Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints valueConstraints)
-  {
-    Map<String, String> values = new HashMap<>();
-
-    try {
-      String vc = controlledTermValueConstraints2Json(valueConstraints);
-      Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
-
-      List<Map<String, String>> valueDescriptions;
-      // TODO Replace arbitrary 4000 BioPortal terms; show error if more
-      Map<String, Object> searchResult = integratedSearch(vcMap, 1, 4000,
-        terminologyServerIntegratedSearchEndpoint, terminologyServerAPIKey);
-      valueDescriptions = searchResult.containsKey("collection") ?
-        (List<Map<String, String>>)searchResult.get("collection") :
-        new ArrayList<>();
-      if (valueDescriptions.size() > 0) {
-        for (int valueDescriptionsIndex = 0; valueDescriptionsIndex < valueDescriptions.size(); valueDescriptionsIndex++) {
-          String uri = valueDescriptions.get(valueDescriptionsIndex).get("@id");
-          String prefLabel = valueDescriptions.get(valueDescriptionsIndex).get("prefLabel");
-          values.put(prefLabel, uri);
-        }
-      }
-    } catch (IOException | RuntimeException e) {
-      throw new RuntimeException("Error retrieving values from terminology server " + e.getMessage());
-    }
-    return values;
-  }
-
-  /**
-   *
-   * The terminology server is expecting a controlled term value constraints object that looks like the following:
-   * <p>
-   * public class ControlledTermValueConstraints
-   *   private List<OntologyValueConstraint> ontologies;
-   *   private List<BranchValueConstraint> branches;
-   *   private List<ValueSetValueConstraint> valueSets;
-   *   private List<ClassValueConstraint> classes;
-   *   private List<Action> actions;
-   * <p>
-   * public class BranchValueConstraint
-   *   private String termUri;
-   *   private String acronym;
-   * <p>
-   * public class OntologyValueConstraint
-   *   private String acronym;
-   * <p>
-   * public class ValueSetValueConstraint
-   *   private String termUri;
-   *   private String vsCollection;
-   * <p>
-   * public class ClassValueConstraint
-   *   private String termUri;
-   *   private String prefLabel;
-   *   private String type;
-   *   private String label; // Optional
-   *   private String source;
-   * <p>
-   * public class Action
-   *   private Integer to; // Optional
-   *   private String action;
-   *   private String label;
-   *   private String type;
-   *   private String source;
-   *   private String sourceUri; // Optional
-   *
-   */
-  private String controlledTermValueConstraints2Json(ControlledTermValueConstraints controlledTermValueConstraints)
-  {
-    // TODO Do a manual conversion of valueConstraints to JSON so we can do error checking
-    try {
-      return objectWriter.writeValueAsString(controlledTermValueConstraints);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException("Error generation value constraints object for terminology server " + e.getMessage());
-    }
-  }
 
   // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
   private int getValidationType(FieldSchemaArtifact fieldSchemaArtifact)
