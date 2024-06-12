@@ -104,6 +104,7 @@ public class ArtifactConvertor
     PRETTY_OBJECT_WRITER = mapper.writer(prettyPrinter);
   }
 
+  // TODO Clean up. 
   public static void main(String[] args) throws IOException
   {
     CommandLineParser parser = new DefaultParser();
@@ -136,7 +137,7 @@ public class ArtifactConvertor
         ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
       } else if (command.hasOption(FIELD_SCHEMA_FILE_OPTION)) {
@@ -144,42 +145,43 @@ public class ArtifactConvertor
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
       } else if (command.hasOption(TEMPLATE_INSTANCE_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, TEMPLATE_INSTANCE_FILE_OPTION);
-        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(fieldObjectNode);
+        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
+          fieldObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+          yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
       } else if (command.hasOption(TEMPLATE_SCHEMA_IRI_OPTION)) {
-        ObjectNode templateObjectNode =
-          readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION, TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION);
+        ObjectNode templateObjectNode = readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION,
+          TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION);
         TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+          yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
       } else if (command.hasOption(ELEMENT_SCHEMA_IRI_OPTION)) {
-        ObjectNode elementObjectNode =
-          readArtifactJsonFromRestApi(command, ELEMENT_SCHEMA_IRI_OPTION, ELEMENT_SCHEMA_RESOURCE_PATH_EXTENSION);
+        ObjectNode elementObjectNode = readArtifactJsonFromRestApi(command, ELEMENT_SCHEMA_IRI_OPTION,
+          ELEMENT_SCHEMA_RESOURCE_PATH_EXTENSION);
         ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
       } else if (command.hasOption(FIELD_SCHEMA_IRI_OPTION)) {
-        ObjectNode fieldObjectNode =
-          readArtifactJsonFromRestApi(command, FIELD_SCHEMA_IRI_OPTION, FIELD_SCHEMA_RESOURCE_PATH_EXTENSION);
+        ObjectNode fieldObjectNode = readArtifactJsonFromRestApi(command, FIELD_SCHEMA_IRI_OPTION,
+          FIELD_SCHEMA_RESOURCE_PATH_EXTENSION);
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
       } else if (command.hasOption(TEMPLATE_INSTANCE_IRI_OPTION)) {
