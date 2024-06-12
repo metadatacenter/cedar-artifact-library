@@ -41,12 +41,12 @@ public class TerminologyServerClient
   }
 
   // Return prefLabel->IRI
-  public Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints valueConstraints)
+  public Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints controlledTermValueConstraints)
   {
     Map<String, String> values = new HashMap<>();
 
     try {
-      String vc = controlledTermValueConstraints2Json(valueConstraints);
+      String vc = controlledTermValueConstraints2Json(controlledTermValueConstraints);
       Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
 
       List<Map<String, String>> valueDescriptions;
@@ -69,11 +69,12 @@ public class TerminologyServerClient
     return values;
   }
 
-  private java.util.Map<String, Object> integratedSearch(java.util.Map<String, Object> valueConstraints,
+  private Map<String, Object> integratedSearch(java.util.Map<String, Object> valueConstraints,
     Integer page, Integer pageSize, String integratedSearchEndpoint, String apiKey) throws IOException, RuntimeException
   {
     HttpURLConnection connection = null;
-    java.util.Map<String, Object> resultsMap;
+    Map<String, Object> resultsMap;
+
     try {
       java.util.Map<String, Object> vcMap = new HashMap<>();
       vcMap.put("valueConstraints", valueConstraints);
@@ -89,6 +90,39 @@ public class TerminologyServerClient
       int responseCode = connection.getResponseCode();
       if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
         String message = "Error running integrated search. Response code: " + responseCode + "; Payload: " + payload;
+        throw new RuntimeException(message);
+      } else {
+        String response = ConnectionUtil.readResponseMessage(connection.getInputStream());
+        resultsMap = mapper.readValue(response, HashMap.class);
+      }
+    } finally {
+      if (connection != null) {
+        connection.disconnect();
+      }
+    }
+    return resultsMap;
+  }
+
+  private java.util.Map<String, Object> integratedRetrieve(java.util.Map<String, Object> valueConstraints,
+    Integer page, Integer pageSize, String integratedRetrieveEndpoint, String apiKey) throws IOException, RuntimeException
+  {
+    HttpURLConnection connection = null;
+    java.util.Map<String, Object> resultsMap;
+    try {
+      java.util.Map<String, Object> vcMap = new HashMap<>();
+      vcMap.put("valueConstraints", valueConstraints);
+      Map<String, Object> payloadMap = new HashMap<>();
+      payloadMap.put("parameterObject", vcMap);
+      payloadMap.put("page", page);
+      payloadMap.put("pageSize", pageSize);
+      String payload = mapper.writeValueAsString(payloadMap);
+      connection = ConnectionUtil.createAndOpenConnection("POST", integratedRetrieveEndpoint, apiKey);
+      OutputStream os = connection.getOutputStream();
+      os.write(payload.getBytes());
+      os.flush();
+      int responseCode = connection.getResponseCode();
+      if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
+        String message = "Error running integrated retrieve. Response code: " + responseCode + "; Payload: " + payload;
         throw new RuntimeException(message);
       } else {
         String response = ConnectionUtil.readResponseMessage(connection.getInputStream());
