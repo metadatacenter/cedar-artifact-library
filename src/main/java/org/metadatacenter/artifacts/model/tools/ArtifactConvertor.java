@@ -28,6 +28,7 @@ import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
+import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +56,7 @@ public class ArtifactConvertor
   private static final String COMPACT_YAML_OPTION = "cy";
   private static final String OUTPUT_FILE_OPTION = "f";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
+  private static final String CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API = "t";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
   private static final String TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION = "templates";
@@ -115,7 +117,8 @@ public class ArtifactConvertor
       boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
 
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml);
+      TerminologyServerClient terminologyServerClient = createTerminologyServerClientIfPossible(command);
+      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml, terminologyServerClient);
       JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
       LinkedHashMap<String, Object> yamlRendering = null;
       ObjectNode jsonRendering = null;
@@ -257,6 +260,22 @@ public class ArtifactConvertor
     return (ObjectNode)artifactJsonNode;
   }
 
+  private static TerminologyServerClient createTerminologyServerClientIfPossible(CommandLine command)
+  {
+    if (command.hasOption(CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API)) {
+      String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(
+        CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API);
+
+      if (!command.hasOption(CEDAR_APIKEY_OPTION))
+        throw new RuntimeException("no CEDAR API key provided for terminology server");
+
+      String terminologyServerApiKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
+
+      return new TerminologyServerClient(terminologyServerIntegratedSearchEndpoint, terminologyServerApiKey);
+    } else
+      return null;
+  }
+
   private static Options buildCommandLineOptions()
   {
     Options options = new Options();
@@ -336,6 +355,12 @@ public class ArtifactConvertor
       .desc("CEDAR Resource Server REST API base, e.g., https://resource.metadatacenter.org")
       .build();
 
+    Option terminologySearchOption = Option.builder(CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API)
+      .argName("cedar-terminology-terminology-integrated-search-rest-api")
+      .hasArg()
+      .desc("CEDAR Terminology Server REST API, e.g., https://resource.metadatacenter.org")
+      .build();
+
     Option keyOption = Option.builder(CEDAR_APIKEY_OPTION)
       .argName("cedar-api-key")
       .hasArg()
@@ -364,6 +389,7 @@ public class ArtifactConvertor
     options.addOption(outputFileOption);
     options.addOption(compactYamlOption);
     options.addOption(resourceOption);
+    options.addOption(terminologySearchOption);
     options.addOption(keyOption);
 
     return options;

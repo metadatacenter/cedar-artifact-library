@@ -121,7 +121,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
-    public ValueConstraints build()
+    public TextValueConstraints build()
     {
       return new TextValueConstraintsRecord(minLength, maxLength, defaultValue, literals, requiredValue,
         recommendedValue, multipleChoice, regex);

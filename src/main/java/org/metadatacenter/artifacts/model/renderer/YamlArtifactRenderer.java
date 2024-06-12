@@ -31,6 +31,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueC
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
+import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -144,11 +145,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 {
   private final boolean isCompact;
   private final DateTimeFormatter datetimeFormatter;
+  private final TerminologyServerClient terminologyServerClient;
+
+  public YamlArtifactRenderer(boolean isCompact, TerminologyServerClient terminologyServerClient)
+  {
+    this.isCompact = isCompact;
+    this.datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+    this.terminologyServerClient = terminologyServerClient;
+  }
 
   public YamlArtifactRenderer(boolean isCompact)
   {
     this.isCompact = isCompact;
     this.datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+    this.terminologyServerClient = null;
   }
 
   /**
@@ -533,7 +543,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
 
-        List<ClassValueConstraint> classValueConstraints = ontology2classes(ontologyValueConstraint);
+        List<ClassValueConstraint> classValueConstraints = ontologyValueConstraint2ClassValueConstraints(ontologyValueConstraint);
 
         for (ClassValueConstraint classValueConstraint : classValueConstraints) {
           LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
@@ -547,7 +557,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       }
 
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
-        List<ClassValueConstraint> classValueConstraints = branch2classes(branchValueConstraint);
+        List<ClassValueConstraint> classValueConstraints = branchValueConstraint2ClassValueConstraints(branchValueConstraint);
 
         for (ClassValueConstraint classValueConstraint : classValueConstraints) {
           LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
@@ -556,7 +566,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       }
 
       for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
-        List<ClassValueConstraint> classValueConstraints = valueSet2Classes(valueSetValueConstraint);
+        List<ClassValueConstraint> classValueConstraints = valueSetValueConstraint2ClassValueConstraints(valueSetValueConstraint);
 
         for (ClassValueConstraint classValueConstraint : classValueConstraints) {
           LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
@@ -577,26 +587,48 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(VALUES, valuesRendering);
   }
 
-  private List<ClassValueConstraint> ontology2classes(OntologyValueConstraint ontologyValueConstraint)
+  private List<ClassValueConstraint> ontologyValueConstraint2ClassValueConstraints(OntologyValueConstraint ontologyValueConstraint)
   {
+    if (this.terminologyServerClient == null)
+      throw new RuntimeException("no terminology server configured");
+
+    ControlledTermValueConstraints controlledTermValueConstraints
+      = ControlledTermValueConstraints.builder().withOntologyValueConstraint(ontologyValueConstraint).build();
+
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
+    Map<String, String> r = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
 
     // TODO ontology to classes
 
     return classValueConstraints;
   }
 
-  private List<ClassValueConstraint> branch2classes(BranchValueConstraint branchValueConstraint)
+  private List<ClassValueConstraint> branchValueConstraint2ClassValueConstraints(BranchValueConstraint branchValueConstraint)
   {
+    if (this.terminologyServerClient == null)
+      throw new RuntimeException("no terminology server configured");
+
+    ControlledTermValueConstraints controlledTermValueConstraints
+      = ControlledTermValueConstraints.builder().withBranchValueConstraint(branchValueConstraint).build();
+
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
+    if (this.terminologyServerClient == null)
+      throw new RuntimeException("no terminology server configured");
     // TODO branch to classes
 
     return classValueConstraints;
   }
 
-  private List<ClassValueConstraint> valueSet2Classes(ValueSetValueConstraint valueSetValueConstraint)
+  private List<ClassValueConstraint> valueSetValueConstraint2ClassValueConstraints(ValueSetValueConstraint valueSetValueConstraint)
   {
+    if (this.terminologyServerClient == null)
+      throw new RuntimeException("no terminology server configured");
+
+    ControlledTermValueConstraints controlledTermValueConstraints
+      = ControlledTermValueConstraints.builder().withValueSetValueConstraint(valueSetValueConstraint).build();
+
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
     // TODO value set to classes
