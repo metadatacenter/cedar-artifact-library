@@ -406,8 +406,6 @@ public class ArtifactConvertor
       Usage(options, "One output format should be specified");
 
     if (ARTIFACT_FILE_OPTIONS.stream().anyMatch(o -> command.hasOption(o))) {
-      if (command.hasOption(CEDAR_RESOURCE_REST_API_BASE_OPTION) || command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "A CEDAR Resource Server REST API base or API key should not be provided when an artifact file option is selected");
     } else if (ARTIFACT_IRI_OPTIONS.stream().anyMatch(o -> command.hasOption(o))) {
       if (!command.hasOption(CEDAR_RESOURCE_REST_API_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
         Usage(options,

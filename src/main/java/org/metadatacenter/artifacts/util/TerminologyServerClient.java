@@ -40,7 +40,7 @@ public class TerminologyServerClient
     this.objectWriter = mapper.writer().withDefaultPrettyPrinter();
   }
 
-  // Return prefLabel->IRI
+  // Return prefLabel->URI
   public Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints controlledTermValueConstraints)
   {
     Map<String, String> values = new HashMap<>();

@@ -28,11 +28,13 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -592,14 +594,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (this.terminologyServerClient == null)
       throw new RuntimeException("no terminology server configured");
 
+    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
     ControlledTermValueConstraints controlledTermValueConstraints
       = ControlledTermValueConstraints.builder().withOntologyValueConstraint(ontologyValueConstraint).build();
 
-    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+    Map<String, String> prefLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
 
-    Map<String, String> r = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
-
-    // TODO ontology to classes
+    for (Map.Entry<String, String> prefLabel2UriEntry : prefLabel2Uri.entrySet()) {
+      String prefLabel = prefLabel2UriEntry.getKey();
+      URI uri = URI.create(prefLabel2UriEntry.getValue());
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, ontologyValueConstraint.acronym(),
+        prefLabel, prefLabel, ValueType.ONTOLOGY_CLASS);
+      classValueConstraints.add(classValueConstraint);
+    }
 
     return classValueConstraints;
   }
@@ -609,14 +617,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (this.terminologyServerClient == null)
       throw new RuntimeException("no terminology server configured");
 
+    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
     ControlledTermValueConstraints controlledTermValueConstraints
       = ControlledTermValueConstraints.builder().withBranchValueConstraint(branchValueConstraint).build();
 
-    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+    Map<String, String> prefLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
 
-    if (this.terminologyServerClient == null)
-      throw new RuntimeException("no terminology server configured");
-    // TODO branch to classes
+    for (Map.Entry<String, String> prefLabel2UriEntry : prefLabel2Uri.entrySet()) {
+      String prefLabel = prefLabel2UriEntry.getKey();
+      URI uri = URI.create(prefLabel2UriEntry.getValue());
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, branchValueConstraint.acronym(),
+        prefLabel, prefLabel, ValueType.ONTOLOGY_CLASS);
+      classValueConstraints.add(classValueConstraint);
+    }
 
     return classValueConstraints;
   }
@@ -626,12 +640,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (this.terminologyServerClient == null)
       throw new RuntimeException("no terminology server configured");
 
+    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+
     ControlledTermValueConstraints controlledTermValueConstraints
       = ControlledTermValueConstraints.builder().withValueSetValueConstraint(valueSetValueConstraint).build();
 
-    List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
+    Map<String, String> prefLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
 
-    // TODO value set to classes
+    for (Map.Entry<String, String> prefLabel2UriEntry : prefLabel2Uri.entrySet()) {
+      String prefLabel = prefLabel2UriEntry.getKey();
+      URI uri = URI.create(prefLabel2UriEntry.getValue());
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, valueSetValueConstraint.vsCollection(),
+        prefLabel, prefLabel, ValueType.VALUE_SET);
+      classValueConstraints.add(classValueConstraint);
+    }
 
     return classValueConstraints;
   }
