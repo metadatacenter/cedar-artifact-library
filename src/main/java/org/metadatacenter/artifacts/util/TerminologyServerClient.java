@@ -42,6 +42,7 @@ public class TerminologyServerClient
 
   // Return prefLabel->URI
   // TODO Replace this with call to integrated-retrieve endpoint so that more than 4000 values can be retrieved
+  // TODO Think about sleep to avoid BioPortal 15 calls per second limit
   public Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints controlledTermValueConstraints)
   {
     Map<String, String> values = new HashMap<>();
