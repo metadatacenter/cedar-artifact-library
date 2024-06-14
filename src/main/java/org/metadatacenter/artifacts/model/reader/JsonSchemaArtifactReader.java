@@ -366,6 +366,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
+    Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     ElementUi elementUi = readElementUi(sourceNode, path, UI);
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
@@ -382,7 +383,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas,
       isMultiple, minItems, maxItems,
-      propertyUri, language, elementUi, annotations);
+      propertyUri, preferredLabel, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path,
@@ -407,8 +408,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
-    Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
-    List<String> skosAlternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
+    Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
+    List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
     Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS, fieldUi.inputType());
@@ -422,7 +423,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       modelVersion, version, status, previousVersion, derivedFrom,
       isMultiple, minItems, maxItems, propertyUri,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      skosPrefLabel, skosAlternateLabels,
+      preferredLabel, alternateLabels,
       language, fieldUi, valueConstraints, annotations);
   }
 
@@ -579,11 +580,11 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
     Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
-    Optional<String> skosNotation = readString(sourceNode, path, SKOS_NOTATION);
-    Optional<String> skosPrefLabel = readString(sourceNode, path, SKOS_PREFLABEL);
+    Optional<String> notation = readString(sourceNode, path, SKOS_NOTATION);
+    Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
 
     return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId,
-      jsonLdValue, rdfsLabel, skosNotation, skosPrefLabel, language);
+      jsonLdValue, rdfsLabel, notation, preferredLabel, language);
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path,
@@ -1170,12 +1171,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private ClassValueConstraint readClassValueConstraint(ObjectNode sourceNode, String path)
   {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
-    String prefLabel = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_PREFLABEL);
+    String preferredLabel = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_PREFLABEL);
     ValueType valueType = readValueType(sourceNode, path, VALUE_CONSTRAINTS_TYPE);
     String label = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_LABEL);
     String source = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
 
-    return new ClassValueConstraint(uri, source, label, prefLabel, valueType);
+    return new ClassValueConstraint(uri, source, label, preferredLabel, valueType);
   }
 
   private ValueSetValueConstraint readValueSetValueConstraint(ObjectNode sourceNode, String path)

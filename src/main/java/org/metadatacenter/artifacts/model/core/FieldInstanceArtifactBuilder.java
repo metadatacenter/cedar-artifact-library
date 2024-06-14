@@ -17,7 +17,7 @@ public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInsta
   protected Optional<String> jsonLdValue = Optional.empty();
   protected Optional<String> label = Optional.empty();
   protected Optional<String> notation = Optional.empty();
-  protected Optional<String> prefLabel = Optional.empty();
+  protected Optional<String> preferredLabel = Optional.empty();
   protected Optional<String> language = Optional.empty();
 
   protected FieldInstanceArtifactBuilder()
@@ -31,7 +31,7 @@ public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInsta
     this.jsonLdValue = fieldInstanceArtifact.jsonLdValue();
     this.label = fieldInstanceArtifact.label();
     this.notation = fieldInstanceArtifact.notation();
-    this.prefLabel = fieldInstanceArtifact.prefLabel();
+    this.preferredLabel = fieldInstanceArtifact.preferredLabel();
     this.language = fieldInstanceArtifact.language();
   }
 
@@ -67,9 +67,9 @@ public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInsta
     return this;
   }
 
-  protected FieldInstanceArtifactBuilder withPrefLabel(String prefLabel)
+  protected FieldInstanceArtifactBuilder withPreferredLabel(String preferredLabel)
   {
-    this.prefLabel = Optional.ofNullable(prefLabel);
+    this.preferredLabel = Optional.ofNullable(preferredLabel);
     return this;
   }
 

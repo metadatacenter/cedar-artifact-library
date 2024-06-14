@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
@@ -37,8 +36,8 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected String name;
   protected String description = "";
   protected Optional<String> identifier = Optional.empty();
-  protected Optional<String> skosPrefLabel = Optional.empty();
-  protected List<String> skosAlternateLabels = Collections.emptyList();
+  protected Optional<String> preferredLabel = Optional.empty();
+  protected List<String> alternateLabels = Collections.emptyList();
   protected Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
   protected Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
   protected Optional<Status> status = Optional.of(Status.DRAFT);
@@ -74,7 +73,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.name = fieldSchemaArtifact.name();
     this.description = fieldSchemaArtifact.description();
     this.identifier = fieldSchemaArtifact.identifier();
-    this.skosAlternateLabels = fieldSchemaArtifact.skosAlternateLabels();
+    this.alternateLabels = fieldSchemaArtifact.alternateLabels();
     this.modelVersion = fieldSchemaArtifact.modelVersion();
     this.version = fieldSchemaArtifact.version();
     this.status = fieldSchemaArtifact.status();
@@ -148,21 +147,21 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     return this;
   }
 
-  protected FieldSchemaArtifactBuilder withPreferredLabel(String skosPrefLabel)
+  protected FieldSchemaArtifactBuilder withPreferredLabel(String preferredLabel)
   {
-    if (skosPrefLabel == null)
-      throw new IllegalArgumentException("null SKOS preferred label passed to builder");
+    if (preferredLabel == null)
+      throw new IllegalArgumentException("null preferred label passed to builder");
 
-    this.skosPrefLabel = Optional.ofNullable(skosPrefLabel);
+    this.preferredLabel = Optional.ofNullable(preferredLabel);
     return this;
   }
 
-  protected FieldSchemaArtifactBuilder withAlternateLabels(List<String> skosAlternateLabels)
+  protected FieldSchemaArtifactBuilder withAlternateLabels(List<String> alternateLabels)
   {
-    if (skosAlternateLabels == null)
-      throw new IllegalArgumentException("null SKOS alternate labels passed to builder");
+    if (alternateLabels == null)
+      throw new IllegalArgumentException("null alternate labels passed to builder");
 
-    this.skosAlternateLabels = skosAlternateLabels;
+    this.alternateLabels = alternateLabels;
     return this;
   }
 

@@ -129,8 +129,8 @@ public class ExcelArtifactRenderer
     Optional<? extends DefaultValue> defaultValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
       fieldSchemaArtifact.valueConstraints().get().defaultValue() : Optional.empty();
 
-    //    if (fieldSchemaArtifact.getSkosPrefLabel().isPresent())
-    //      columnNameCell.setCellValue(fieldSchemaArtifact.getSkosPrefLabel().get());
+    //    if (fieldSchemaArtifact.getPreferredLabel().isPresent())
+    //      columnNameCell.setCellValue(fieldSchemaArtifact.getPreferredLabel().get());
     //    else
     columnNameHeaderCell.setCellValue(fieldName);
     columnNameHeaderCell.setCellStyle(headerCellstyle);
@@ -409,11 +409,11 @@ public class ExcelArtifactRenderer
       String formula = "'" + sheetName + "'!$A$1:$A$" + numberOfValues;
 
       int rowNumber = 0;
-      for (String prefLabel : values.keySet()) {
-        String iri = values.get(prefLabel);
+      for (String preferredLabel : values.keySet()) {
+        String iri = values.get(preferredLabel);
         Row row = valueSheet.createRow(rowNumber);
         Cell valueCell = row.createCell(0);
-        valueCell.setCellValue(prefLabel);
+        valueCell.setCellValue(preferredLabel);
 
         // Even though we don't use them we put the IRI in the second column
         if (iri != null && !iri.isEmpty()) {

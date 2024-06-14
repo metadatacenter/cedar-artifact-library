@@ -261,6 +261,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
+    if (elementSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, elementSchemaArtifact.preferredLabel().get());
+
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (elementSchemaArtifact.hasChildren())
@@ -277,7 +280,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
-
 
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
@@ -319,12 +321,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> rendering
       = renderSchemaArtifactBase(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
 
-    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
+    if (fieldSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
 
-    if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-      List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
-      rendering.put(ALT_LABEL, skosAlternateLabelRendering);
+    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
     }
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
@@ -361,12 +363,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> rendering
       = renderChildSchemaArtifactBase(fieldName, fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
 
-    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(PREF_LABEL, fieldSchemaArtifact.skosPrefLabel().get());
+    if (fieldSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
 
-    if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
-      List<Object> skosAlternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.skosAlternateLabels());
-      rendering.put(ALT_LABEL, skosAlternateLabelRendering);
+    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
     }
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
@@ -599,13 +601,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints
       = ControlledTermValueConstraints.builder().withOntologyValueConstraint(ontologyValueConstraint).build();
 
-    Map<String, String> prefLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
+    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> prefLabel2UriEntry : prefLabel2Uri.entrySet()) {
-      String prefLabel = prefLabel2UriEntry.getKey();
-      URI uri = URI.create(prefLabel2UriEntry.getValue());
+    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
+      String preferredLabel = preferredLabel2UriEntry.getKey();
+      URI uri = URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, ontologyValueConstraint.acronym(),
-        prefLabel, prefLabel, ValueType.ONTOLOGY_CLASS);
+        preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -622,13 +624,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints
       = ControlledTermValueConstraints.builder().withBranchValueConstraint(branchValueConstraint).build();
 
-    Map<String, String> prefLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
+    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> prefLabel2UriEntry : prefLabel2Uri.entrySet()) {
-      String prefLabel = prefLabel2UriEntry.getKey();
-      URI uri = URI.create(prefLabel2UriEntry.getValue());
+    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
+      String preferredLabel = preferredLabel2UriEntry.getKey();
+      URI uri = URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, branchValueConstraint.acronym(),
-        prefLabel, prefLabel, ValueType.ONTOLOGY_CLASS);
+        preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -645,13 +647,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints
       = ControlledTermValueConstraints.builder().withValueSetValueConstraint(valueSetValueConstraint).build();
 
-    Map<String, String> prefLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
+    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> prefLabel2UriEntry : prefLabel2Uri.entrySet()) {
-      String prefLabel = prefLabel2UriEntry.getKey();
-      URI uri = URI.create(prefLabel2UriEntry.getValue());
+    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
+      String preferredLabel = preferredLabel2UriEntry.getKey();
+      URI uri = URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, valueSetValueConstraint.vsCollection(),
-        prefLabel, prefLabel, ValueType.VALUE_SET);
+        preferredLabel, preferredLabel, ValueType.VALUE_SET);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -921,8 +923,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!isCompact && schemaArtifact.derivedFrom().isPresent())
       rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
-
-    // TODO Generate YAML for annotations
 
     return rendering;
   }

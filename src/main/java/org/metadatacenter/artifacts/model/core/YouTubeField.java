@@ -241,7 +241,7 @@ record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
                           Optional<URI> propertyUri,
                           Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                          Optional<String> skosPrefLabel, List<String> skosAlternateLabels,
+                          Optional<String> preferredLabel, List<String> alternateLabels,
                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
                           Optional<Annotations> annotations)
   implements YouTubeField
@@ -251,8 +251,8 @@ record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
     validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
       Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
-    validateOptionalFieldNotNull(this, skosPrefLabel, SKOS_PREFLABEL);
-    validateListFieldNotNull(this, skosAlternateLabels, SKOS_ALTLABEL);
+    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
+    validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames

@@ -62,7 +62,7 @@ public sealed interface TemporalFieldInstance extends FieldInstanceArtifact, Lit
 }
 
 record TemporalFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-                               Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+                               Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
                                Optional<String> language)
   implements TemporalFieldInstance
 {
@@ -74,6 +74,6 @@ record TemporalFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
-    validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
+    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
   }
 }

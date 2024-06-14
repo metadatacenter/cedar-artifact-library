@@ -175,7 +175,7 @@ public class YamlArtifactReaderTest
     URI modifiedBy = URI.create("https://repo.metadatacenter.org/users/33");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    String prefLabel = "Study";
+    String preferredLabel = "Study";
     List<String> altLabels = List.of("Label 1", "Label 2");
     FieldInputType fieldInputType = FieldInputType.TEXTFIELD;
     boolean requiredValue = true;
@@ -199,7 +199,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
     yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
-    yamlSource.put(PREF_LABEL, prefLabel);
+    yamlSource.put(PREF_LABEL, preferredLabel);
     yamlSource.put(ALT_LABEL, altLabels);
     yamlSource.put(TYPE, FieldInputType.TEXTFIELD.toString());
     yamlSource.put(REQUIRED, requiredValue);
@@ -224,8 +224,8 @@ public class YamlArtifactReaderTest
     assertEquals(modifiedBy, fieldSchemaArtifact.modifiedBy().get());
     assertEquals(createdOn, fieldSchemaArtifact.createdOn().get());
     assertEquals(lastUpdatedOn, fieldSchemaArtifact.lastUpdatedOn().get());
-    assertEquals(prefLabel, fieldSchemaArtifact.skosPrefLabel().get());
-    assertEquals(altLabels, fieldSchemaArtifact.skosAlternateLabels());
+    assertEquals(preferredLabel, fieldSchemaArtifact.preferredLabel().get());
+    assertEquals(altLabels, fieldSchemaArtifact.alternateLabels());
     assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
     // TODO assertEquals(requiredValue, fieldSchemaArtifact.valueConstraints().get().requiredValue());
     assertEquals(valueRecommendation, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());

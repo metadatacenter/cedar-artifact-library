@@ -57,8 +57,8 @@ public class TerminologyServerClient
       if (valueDescriptions.size() > 0) {
         for (int valueDescriptionsIndex = 0; valueDescriptionsIndex < valueDescriptions.size(); valueDescriptionsIndex++) {
           String uri = valueDescriptions.get(valueDescriptionsIndex).get("@id");
-          String prefLabel = valueDescriptions.get(valueDescriptionsIndex).get("prefLabel");
-          values.put(prefLabel, uri);
+          String preferredLabel = valueDescriptions.get(valueDescriptionsIndex).get("prefLabel");
+          values.put(preferredLabel, uri);
         }
       }
     } catch (IOException | RuntimeException e) {
