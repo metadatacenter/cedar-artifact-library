@@ -66,7 +66,6 @@ public class YamlConstants
   public static final String MIN_LENGTH = "minLength";
   public static final String MAX_LENGTH = "maxLength";
   public static final String URI = "termUri";
-  public static final String SOURCE = "source";
   public static final String VALUES = "values";
   public static final String ACTIONS = "actions";
   public static final String ACRONYM = "acronym";
@@ -86,7 +85,6 @@ public class YamlConstants
   public static final String TERM_IRI = "termIri";
   public static final String SOURCE_ACRONYM = "sourceAcronym";
   public static final String SOURCE_IRI = "sourceIri";
-  public static final String SOURCE_NAME = "sourceName";
   public static final String SELECTED_BY_DEFAULT = "selected";
   public static final String MAX_DEPTH = "maxDepth";
   public static final String NUM_TERMS = "numTerms";

@@ -17,6 +17,7 @@ import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.ExcelArtifactRenderer;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
+import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.File;
 import java.net.HttpURLConnection;
@@ -32,7 +33,8 @@ public class Template2Excel
   private static final String CEDAR_RESOURCE_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception
+  {
 
     CommandLineParser parser = new DefaultParser();
     Options options = buildCommandLineOptions();
@@ -58,7 +60,7 @@ public class Template2Excel
         if (!jsonNode.isObject())
           throw new RuntimeException("Expecting JSON object");
 
-        templateObjectNode = (ObjectNode) jsonNode;
+        templateObjectNode = (ObjectNode)jsonNode;
       } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
         String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
         String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
@@ -76,7 +78,9 @@ public class Template2Excel
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-      ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
+      TerminologyServerClient terminologyServerClient = new TerminologyServerClient(
+        terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
+      ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerClient);
 
       Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 

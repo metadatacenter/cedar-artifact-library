@@ -17,9 +17,9 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 public sealed interface LinkFieldInstance extends FieldInstanceArtifact, IriFieldInstance
 {
   static LinkFieldInstance create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<String> label, Optional<String> notation, Optional<String> prefLabel, Optional<String> language)
+    Optional<String> label, Optional<String> notation, Optional<String> preferredLabel, Optional<String> language)
   {
-    return new LinkFieldInstanceRecord(jsonLdTypes, jsonLdId, Optional.empty(), label, notation, prefLabel, language);
+    return new LinkFieldInstanceRecord(jsonLdTypes, jsonLdId, Optional.empty(), label, notation, preferredLabel, language);
   }
 
   static LinkFieldInstanceBuilder builder()
@@ -52,9 +52,9 @@ public sealed interface LinkFieldInstance extends FieldInstanceArtifact, IriFiel
       return this;
     }
 
-    public LinkFieldInstanceBuilder withPrefLabel(String prefLabel)
+    public LinkFieldInstanceBuilder withPreferredLabel(String preferredLabel)
     {
-      this.prefLabel = Optional.ofNullable(prefLabel);
+      this.preferredLabel = Optional.ofNullable(preferredLabel);
       return this;
     }
 
@@ -66,14 +66,14 @@ public sealed interface LinkFieldInstance extends FieldInstanceArtifact, IriFiel
 
     public LinkFieldInstance build()
     {
-      return create(jsonLdTypes, jsonLdId, label, notation, prefLabel, language);
+      return create(jsonLdTypes, jsonLdId, label, notation, preferredLabel, language);
     }
   }
 
 }
 
 record LinkFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-                               Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+                               Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
                                Optional<String> language)
   implements LinkFieldInstance
 {
@@ -85,6 +85,6 @@ record LinkFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Op
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
-    validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
+    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
   }
 }

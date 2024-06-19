@@ -35,6 +35,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
@@ -93,11 +94,13 @@ public class YamlArtifactRendererTest {
 
     String name = "Address";
     String description = "Address element";
+    String preferredLabel = "preferred label";
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).
       withName(name).
       withDescription(description).
+      withPreferredLabel(preferredLabel).
       build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
@@ -108,6 +111,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
+    expectedRendering.put(PREF_LABEL, preferredLabel);
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -261,6 +265,47 @@ public class YamlArtifactRendererTest {
       withDescription(description).
       build();
 
+  }
+
+  @Test public void testCreateControlledTermFieldWithClassValueConstraint() throws JsonProcessingException
+  {
+    String fieldName = "Field name";
+    String description = "Field description";
+    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    String classSource = "LOINC";
+    String classLabel = "Human";
+    String classPrefLabel = "Homo Sapiens";
+    ValueType classValueType = ValueType.ONTOLOGY_CLASS;
+    String expectedYaml = """
+          type: controlled-term-field
+          name: ${fieldName}
+          description: ${description}
+          datatype: iri
+          values:
+            - type: class
+              label: ${classLabel}
+              acronym: ${classSource}
+              termType: ${classValueType}
+              termLabel: ${classPrefLabel}
+              iri: ${classUri}
+      """.replace("${fieldName}", fieldName)
+      .replace("${description}", description)
+      .replace("${classValueType}", classValueType.toString())
+      .replace("${classLabel}", classLabel)
+      .replace("${classSource}", classSource)
+      .replace("${classPrefLabel}", classPrefLabel)
+      .replace("${classUri}", classUri.toString());
+
+    ControlledTermField controlledTermField = ControlledTermField.builder().withName(fieldName).withDescription(description)
+      .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
+
+    LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYaml, LinkedHashMap.class);
+
+    assertEquals(expectedRendering, actualRendering);
   }
 
 }

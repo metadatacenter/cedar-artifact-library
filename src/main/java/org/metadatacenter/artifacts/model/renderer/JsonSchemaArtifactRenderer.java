@@ -297,6 +297,10 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
     addProvenanceRendering(elementSchemaArtifact, rendering);
+
+    if (elementSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(SKOS_PREFLABEL, elementSchemaArtifact.preferredLabel().get());
+
     addVersionRendering(elementSchemaArtifact, rendering);
 
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, elementSchemaArtifact.modelVersion().toString());
@@ -380,18 +384,19 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     addCoreSchemaOrgRendering(fieldSchemaArtifact, rendering);
     addProvenanceRendering(fieldSchemaArtifact, rendering);
+
+    if (fieldSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.preferredLabel().get());
+
     addVersionRendering(fieldSchemaArtifact, rendering);
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, fieldSchemaArtifact.modelVersion().toString());
 
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
-    if (fieldSchemaArtifact.skosPrefLabel().isPresent())
-      rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.skosPrefLabel().get());
-
-    if (!fieldSchemaArtifact.skosAlternateLabels().isEmpty()) {
+    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
       rendering.put(SKOS_ALTLABEL, mapper.createArrayNode());
-      for (String skosAlternateLabel : fieldSchemaArtifact.skosAlternateLabels())
-        rendering.withArray(SKOS_ALTLABEL).add(skosAlternateLabel);
+      for (String alternateLabel : fieldSchemaArtifact.alternateLabels())
+        rendering.withArray(SKOS_ALTLABEL).add(alternateLabel);
     }
 
     if (fieldSchemaArtifact.identifier().isPresent()) {
@@ -571,8 +576,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (fieldInstanceArtifact.notation().isPresent())
       objectNode.put(SKOS_NOTATION, fieldInstanceArtifact.notation().get());
 
-    if (fieldInstanceArtifact.prefLabel().isPresent())
-      objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.prefLabel().get());
+    if (fieldInstanceArtifact.preferredLabel().isPresent())
+      objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.preferredLabel().get());
 
     return objectNode;
   }

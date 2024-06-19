@@ -17,6 +17,7 @@ import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.ExcelArtifactRenderer;
 import org.metadatacenter.artifacts.ss.SpreadSheetUtil;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
+import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -79,7 +80,8 @@ public class Template2Tsv
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-      ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
+      TerminologyServerClient terminologyServerClient = new TerminologyServerClient(terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
+      ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerClient);
 
       Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 

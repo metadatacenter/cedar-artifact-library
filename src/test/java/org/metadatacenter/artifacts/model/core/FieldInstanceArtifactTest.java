@@ -163,18 +163,17 @@ public class FieldInstanceArtifactTest
     URI aUriValue = URI.create("https://example.com/values/v1");
     String label = "a label";
     String notation = "a notation";
-    String prefLabel = "a prefLabel";
+    String preferredLabel = "a prefLabel";
 
     ControlledTermFieldInstance fieldInstance = ControlledTermFieldInstance.builder().
       withValue(aUriValue).
-      withLabel(label).
-      withPrefLabel(prefLabel).
+      withLabel(label).withPreferredLabel(preferredLabel).
       withNotation(notation).
       build();
 
     assertEquals(aUriValue, fieldInstance.jsonLdId().get());
     assertEquals(label, fieldInstance.label().get());
     assertEquals(notation, fieldInstance.notation().get());
-    assertEquals(prefLabel, fieldInstance.prefLabel().get());
+    assertEquals(preferredLabel, fieldInstance.preferredLabel().get());
   }
 }

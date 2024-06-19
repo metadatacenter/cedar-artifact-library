@@ -21,9 +21,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
 
   Optional<ValueConstraints> valueConstraints();
 
-  Optional<String> skosPrefLabel();
-
-  List<String> skosAlternateLabels();
+  List<String> alternateLabels();
 
   default boolean hidden() { return fieldUi().hidden(); }
 
@@ -80,7 +78,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> skosPrefLabel, List<String> skosAlternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
     Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations)
   {
     // TODO Use typesafe switch when available
@@ -89,82 +87,82 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         return ControlledTermField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
           jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
           previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
       else
         return TextField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
           jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
           previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     } else if (fieldUi.inputType() == FieldInputType.TEXTAREA)
       return TextAreaField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.PHONE_NUMBER)
       return PhoneNumberField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.EMAIL)
       return EmailField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language,fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language,fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.RADIO)
       return RadioField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.CHECKBOX)
       return CheckboxField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.LIST)
       return ListField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.LINK)
       return LinkField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.NUMERIC)
       return NumericField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.TEMPORAL)
       return TemporalField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.ATTRIBUTE_VALUE)
       return AttributeValueField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.PAGE_BREAK)
       return PageBreakField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.SECTION_BREAK)
       return SectionBreakField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, skosPrefLabel, language, fieldUi, annotations);
+        lastUpdatedOn, preferredLabel, language, fieldUi, annotations);
     else if (fieldUi.inputType() == FieldInputType.RICHTEXT)
       return RichTextField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, language, skosPrefLabel, fieldUi, annotations);
+        lastUpdatedOn, language, preferredLabel, fieldUi, annotations);
     else if (fieldUi.inputType() == FieldInputType.IMAGE)
       return ImageField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, language, skosPrefLabel, fieldUi, annotations);
+        lastUpdatedOn, language, preferredLabel, fieldUi, annotations);
     else if (fieldUi.inputType() == FieldInputType.YOUTUBE)
       return YouTubeField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,

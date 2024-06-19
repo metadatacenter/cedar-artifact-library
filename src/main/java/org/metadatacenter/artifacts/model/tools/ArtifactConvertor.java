@@ -28,6 +28,7 @@ import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
+import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +56,7 @@ public class ArtifactConvertor
   private static final String COMPACT_YAML_OPTION = "cy";
   private static final String OUTPUT_FILE_OPTION = "f";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
+  private static final String CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API = "t";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
   private static final String TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION = "templates";
@@ -102,6 +104,7 @@ public class ArtifactConvertor
     PRETTY_OBJECT_WRITER = mapper.writer(prettyPrinter);
   }
 
+  // TODO Clean up. 
   public static void main(String[] args) throws IOException
   {
     CommandLineParser parser = new DefaultParser();
@@ -115,7 +118,8 @@ public class ArtifactConvertor
       boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
 
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml);
+      TerminologyServerClient terminologyServerClient = createTerminologyServerClientIfPossible(command);
+      YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml, terminologyServerClient);
       JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
       LinkedHashMap<String, Object> yamlRendering = null;
       ObjectNode jsonRendering = null;
@@ -133,7 +137,7 @@ public class ArtifactConvertor
         ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
       } else if (command.hasOption(FIELD_SCHEMA_FILE_OPTION)) {
@@ -141,42 +145,43 @@ public class ArtifactConvertor
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
       } else if (command.hasOption(TEMPLATE_INSTANCE_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, TEMPLATE_INSTANCE_FILE_OPTION);
-        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(fieldObjectNode);
+        TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
+          fieldObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+          yamlRendering = yamlRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
       } else if (command.hasOption(TEMPLATE_SCHEMA_IRI_OPTION)) {
-        ObjectNode templateObjectNode =
-          readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION, TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION);
+        ObjectNode templateObjectNode = readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION,
+          TEMPLATE_SCHEMA_RESOURCE_PATH_EXTENSION);
         TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+          yamlRendering = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
       } else if (command.hasOption(ELEMENT_SCHEMA_IRI_OPTION)) {
-        ObjectNode elementObjectNode =
-          readArtifactJsonFromRestApi(command, ELEMENT_SCHEMA_IRI_OPTION, ELEMENT_SCHEMA_RESOURCE_PATH_EXTENSION);
+        ObjectNode elementObjectNode = readArtifactJsonFromRestApi(command, ELEMENT_SCHEMA_IRI_OPTION,
+          ELEMENT_SCHEMA_RESOURCE_PATH_EXTENSION);
         ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(elementObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          yamlRendering = yamlRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
       } else if (command.hasOption(FIELD_SCHEMA_IRI_OPTION)) {
-        ObjectNode fieldObjectNode =
-          readArtifactJsonFromRestApi(command, FIELD_SCHEMA_IRI_OPTION, FIELD_SCHEMA_RESOURCE_PATH_EXTENSION);
+        ObjectNode fieldObjectNode = readArtifactJsonFromRestApi(command, FIELD_SCHEMA_IRI_OPTION,
+          FIELD_SCHEMA_RESOURCE_PATH_EXTENSION);
         FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(fieldObjectNode);
 
         if (command.hasOption(YAML_FORMAT_OPTION))
-        yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          yamlRendering = yamlRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         else if (command.hasOption(JSON_FORMAT_OPTION))
           jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
       } else if (command.hasOption(TEMPLATE_INSTANCE_IRI_OPTION)) {
@@ -255,6 +260,22 @@ public class ArtifactConvertor
       throw new RuntimeException("Expecting JSON object");
 
     return (ObjectNode)artifactJsonNode;
+  }
+
+  private static TerminologyServerClient createTerminologyServerClientIfPossible(CommandLine command)
+  {
+    if (command.hasOption(CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API)) {
+      String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(
+        CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API);
+
+      if (!command.hasOption(CEDAR_APIKEY_OPTION))
+        throw new RuntimeException("no CEDAR API key provided for terminology server");
+
+      String terminologyServerApiKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
+
+      return new TerminologyServerClient(terminologyServerIntegratedSearchEndpoint, terminologyServerApiKey);
+    } else
+      return null;
   }
 
   private static Options buildCommandLineOptions()
@@ -336,6 +357,12 @@ public class ArtifactConvertor
       .desc("CEDAR Resource Server REST API base, e.g., https://resource.metadatacenter.org")
       .build();
 
+    Option terminologySearchOption = Option.builder(CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API)
+      .argName("cedar-terminology-terminology-integrated-search-rest-api")
+      .hasArg()
+      .desc("CEDAR Terminology Server REST API, e.g., https://resource.metadatacenter.org")
+      .build();
+
     Option keyOption = Option.builder(CEDAR_APIKEY_OPTION)
       .argName("cedar-api-key")
       .hasArg()
@@ -364,6 +391,7 @@ public class ArtifactConvertor
     options.addOption(outputFileOption);
     options.addOption(compactYamlOption);
     options.addOption(resourceOption);
+    options.addOption(terminologySearchOption);
     options.addOption(keyOption);
 
     return options;
@@ -378,8 +406,6 @@ public class ArtifactConvertor
       Usage(options, "One output format should be specified");
 
     if (ARTIFACT_FILE_OPTIONS.stream().anyMatch(o -> command.hasOption(o))) {
-      if (command.hasOption(CEDAR_RESOURCE_REST_API_BASE_OPTION) || command.hasOption(CEDAR_APIKEY_OPTION))
-        Usage(options, "A CEDAR Resource Server REST API base or API key should not be provided when an artifact file option is selected");
     } else if (ARTIFACT_IRI_OPTIONS.stream().anyMatch(o -> command.hasOption(o))) {
       if (!command.hasOption(CEDAR_RESOURCE_REST_API_BASE_OPTION) || !command.hasOption(CEDAR_APIKEY_OPTION))
         Usage(options,

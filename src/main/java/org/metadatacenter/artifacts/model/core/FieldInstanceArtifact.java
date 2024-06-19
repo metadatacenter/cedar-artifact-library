@@ -21,11 +21,11 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
   FieldInstanceArtifactRecord
 {
   static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+    Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
     Optional<String> language)
   {
     return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
-      prefLabel, language);
+      preferredLabel, language);
   }
 
   List<URI> jsonLdTypes();
@@ -38,7 +38,7 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
 
   Optional<String> notation();
 
-  Optional<String> prefLabel();
+  Optional<String> preferredLabel();
 
   Optional<String> language();
 
@@ -54,7 +54,7 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
 }
 
 record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-                                   Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+                                   Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
                                    Optional<String> language)
   implements FieldInstanceArtifact
 {
@@ -66,7 +66,7 @@ record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
-    validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
+    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
   }
 }
 

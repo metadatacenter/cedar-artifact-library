@@ -17,9 +17,9 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifact, IriFieldInstance
 {
   static ControlledTermFieldInstance create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<String> label, Optional<String> notation, Optional<String> prefLabel, Optional<String> language)
+    Optional<String> label, Optional<String> notation, Optional<String> preferredLabel, Optional<String> language)
   {
-    return new ControlledTermFieldInstanceRecord(jsonLdTypes, jsonLdId, Optional.empty(), label, notation, prefLabel, language);
+    return new ControlledTermFieldInstanceRecord(jsonLdTypes, jsonLdId, Optional.empty(), label, notation, preferredLabel, language);
   }
 
   static ControlledTermFieldInstanceBuilder builder()
@@ -52,9 +52,9 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
       return this;
     }
 
-    public ControlledTermFieldInstanceBuilder withPrefLabel(String prefLabel)
+    public ControlledTermFieldInstanceBuilder withPreferredLabel(String preferredLabel)
     {
-      this.prefLabel = Optional.ofNullable(prefLabel);
+      this.preferredLabel = Optional.ofNullable(preferredLabel);
       return this;
     }
 
@@ -66,14 +66,14 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
 
     public ControlledTermFieldInstance build()
     {
-      return create(jsonLdTypes, jsonLdId, label, notation, prefLabel, language);
+      return create(jsonLdTypes, jsonLdId, label, notation, preferredLabel, language);
     }
   }
 
 }
 
 record ControlledTermFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
-                               Optional<String> label, Optional<String> notation, Optional<String> prefLabel,
+                               Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
                                Optional<String> language)
   implements ControlledTermFieldInstance
 {
@@ -85,6 +85,6 @@ record ControlledTermFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> js
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
-    validateOptionalFieldNotNull(this, prefLabel, SKOS_PREFLABEL);
+    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
   }
 }

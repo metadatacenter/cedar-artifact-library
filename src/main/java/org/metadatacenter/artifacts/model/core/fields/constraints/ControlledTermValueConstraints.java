@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core.fields.constraints;
 
-import org.checkerframework.checker.units.qual.C;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 
 import java.net.URI;
@@ -133,7 +132,7 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
       return this;
     }
 
-    public ValueConstraints build()
+    public ControlledTermValueConstraints build()
     {
       return new ControlledTermValueConstraintsRecord(ontologies, valueSets, classes, branches, actions,
         defaultValue, requiredValue, recommendedValue, multipleChoice);

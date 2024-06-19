@@ -309,6 +309,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>(); // TODO  Read child elements
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>(); // TODO  Read child fields
+    Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     ElementUi elementUi = readElementUi(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
@@ -316,7 +317,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
-      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations);
+      isMultiple, minItems, maxItems, propertyUri, preferredLabel, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
@@ -345,15 +346,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<XsdDatatype> datatype = readXsdDatatype(sourceNode, path, DATATYPE);
     FieldUi fieldUi = readFieldUi(sourceNode, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUES, fieldUi.inputType());
-    Optional<String> skosPrefLabel = readString(sourceNode, path, PREF_LABEL);
-    List<String> skosAlternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
+    Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL);
+    List<String> alternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, skosPrefLabel, skosAlternateLabels, language, fieldUi, valueConstraints, annotations);
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)
