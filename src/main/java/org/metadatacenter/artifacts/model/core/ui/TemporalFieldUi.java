@@ -117,6 +117,7 @@ record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity tempo
     if (temporalGranularity == null)
       throw new IllegalStateException("Field " + UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
 
+    // TODO We could possibly throw an error here rather than silently fix
     if (temporalGranularity == TemporalGranularity.DAY || temporalGranularity == TemporalGranularity.MONTH ||
       temporalGranularity == TemporalGranularity.YEAR) {
       inputTimeFormat = Optional.empty();
