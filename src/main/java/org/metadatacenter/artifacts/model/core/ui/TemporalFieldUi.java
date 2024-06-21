@@ -4,22 +4,25 @@ import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 
+import java.util.Optional;
+
 import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
 
 public non-sealed interface TemporalFieldUi extends FieldUi
 {
   TemporalGranularity temporalGranularity();
 
-  InputTimeFormat inputTimeFormat();
+  Optional<InputTimeFormat> inputTimeFormat();
 
-  boolean timezoneEnabled();
+  Optional<Boolean> timezoneEnabled();
 
   boolean hidden();
 
   default boolean valueRecommendationEnabled() { return false; }
 
-  static TemporalFieldUi create(TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat,
-    boolean timezoneEnabled, boolean hidden, boolean recommendedValue, boolean continuePreviousLine)
+  static TemporalFieldUi create(TemporalGranularity temporalGranularity,
+    Optional<InputTimeFormat> inputTimeFormat, Optional<Boolean> timezoneEnabled,
+    boolean hidden, boolean recommendedValue, boolean continuePreviousLine)
   {
     return new TemporalFieldUiRecord(FieldInputType.TEMPORAL, temporalGranularity, inputTimeFormat, timezoneEnabled,
       hidden, recommendedValue, continuePreviousLine);
@@ -39,8 +42,8 @@ public non-sealed interface TemporalFieldUi extends FieldUi
   {
     private FieldInputType inputType = FieldInputType.TEMPORAL;
     private TemporalGranularity temporalGranularity;
-    private InputTimeFormat inputTimeFormat = InputTimeFormat.TWELVE_HOUR;
-    boolean timezoneEnabled = false;
+    private Optional<InputTimeFormat> inputTimeFormat = Optional.empty();
+    private Optional<Boolean> timezoneEnabled = Optional.empty();
     private boolean hidden = false;
     private boolean recommendedValue = false;
     private boolean continuePreviousLine = false;
@@ -68,13 +71,13 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
     public Builder withInputTimeFormat(InputTimeFormat inputTimeFormat)
     {
-      this.inputTimeFormat = inputTimeFormat;
+      this.inputTimeFormat = Optional.ofNullable(inputTimeFormat);
       return this;
     }
 
     public Builder withTimezoneEnabled(boolean timezoneEnabled)
     {
-      this.timezoneEnabled = timezoneEnabled;
+      this.timezoneEnabled = Optional.ofNullable(timezoneEnabled);
       return this;
     }
 
@@ -104,15 +107,17 @@ public non-sealed interface TemporalFieldUi extends FieldUi
   }
 }
 
-record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat,
-                             boolean timezoneEnabled, boolean hidden, boolean recommendedValue,
-                             boolean continuePreviousLine) implements TemporalFieldUi
+record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity temporalGranularity,
+                             Optional<InputTimeFormat> inputTimeFormat, Optional<Boolean> timezoneEnabled,
+                             boolean hidden, boolean recommendedValue, boolean continuePreviousLine) implements TemporalFieldUi
 {
   public TemporalFieldUiRecord
   {
     if (temporalGranularity == null)
 
       throw new IllegalStateException("Field " + UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
+
+    // TODO Test that inputTimeFormat and timeZoneEnables are empty for granularity of day, month, year.
 
     // TODO Disable for moment until verify with Matthew that he is adding this to temporal fields
     //      if (inputTimeFormat == null)

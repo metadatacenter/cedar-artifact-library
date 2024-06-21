@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -396,8 +397,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
-      InputTimeFormat inputTimeFormat = readInputTimeFormat(sourceNode, path, INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
-      boolean timeZoneEnabled = readBoolean(sourceNode, path, INPUT_TIME_ZONE, false);
+      Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(sourceNode, path, INPUT_TIME_FORMAT);
+      Optional<Boolean> timeZoneEnabled = readBoolean(sourceNode, path, INPUT_TIME_ZONE);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
@@ -568,6 +569,22 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return (Boolean)rawValue;
   }
 
+  private Optional<Boolean> readBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  {
+    if (!sourceNode.containsKey(fieldName))
+      return Optional.empty();
+
+    Object rawValue = sourceNode.get(fieldName);
+
+    if (rawValue == null)
+      return Optional.empty();
+
+    if (!(rawValue instanceof Boolean))
+      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldName, path);
+
+    return Optional.of((Boolean)rawValue);
+  }
+
   private List<String> readStringArray(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
     Object rawValue = sourceNode.get(fieldName);
@@ -604,18 +621,17 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return TemporalGranularity.fromString(granularityString);
   }
 
-  private InputTimeFormat readInputTimeFormat(LinkedHashMap<String, Object> sourceNode, String path, String fieldName,
-    InputTimeFormat defaultInputTimeFormat)
+  private Optional<InputTimeFormat> readInputTimeFormat(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
   {
     Optional<String> inputTimeFormatString = readString(sourceNode, path, fieldName);
 
     if (inputTimeFormatString.isEmpty())
-      return defaultInputTimeFormat;
+      return Optional.empty();
 
     if (!TIME_FORMATS.contains(inputTimeFormatString.get()))
       throw new ArtifactParseException("Invalid input time format" + inputTimeFormatString.get(), TYPE, path);
 
-    return InputTimeFormat.fromString(inputTimeFormatString.get());
+    return Optional.of(InputTimeFormat.fromString(inputTimeFormatString.get()));
   }
 
   private FieldInputType readFieldInputType(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)

@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.AnnotationValue;
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
@@ -1223,10 +1224,11 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);
-      InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
-      boolean timeZoneEnabled = readBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
+      Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT);
+      Optional<Boolean> timeZoneEnabled = readOptionalBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED);
 
-      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled,
+        hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
       return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
@@ -1348,6 +1350,19 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return jsonNode.asBoolean();
   }
 
+  private Optional<Boolean> readOptionalBoolean(ObjectNode sourceNode, String path, String fieldName)
+  {
+    JsonNode jsonNode = sourceNode.get(fieldName);
+
+    if (jsonNode == null || jsonNode.isNull())
+      return Optional.empty();
+
+    if (!jsonNode.isBoolean())
+      throw new ArtifactParseException("Value must be boolean", fieldName, path);
+
+    return Optional.of(jsonNode.asBoolean());
+  }
+
   private FieldInputType readFieldInputType(ObjectNode sourceNode, String path, String fieldName)
   {
     String inputType = readRequiredString(sourceNode, path, fieldName);
@@ -1368,17 +1383,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return TemporalGranularity.fromString(granularityString);
   }
 
-  private InputTimeFormat readInputTimeFormat(ObjectNode sourceNode, String path, String fieldName, InputTimeFormat defaultInputTimeFormat)
+  private Optional<InputTimeFormat> readInputTimeFormat(ObjectNode sourceNode, String path, String fieldName)
   {
     Optional<String> timeFormatString = readString(sourceNode, path, fieldName);
 
     if (timeFormatString.isEmpty())
-      return defaultInputTimeFormat;
+      return Optional.empty();
 
     if (!TIME_FORMATS.contains(timeFormatString.get()))
       throw new ArtifactParseException("Invalid time format " + timeFormatString.get(), UI_INPUT_TIME_FORMAT, path);
 
-    return InputTimeFormat.fromString(timeFormatString.get());
+    return Optional.of(InputTimeFormat.fromString(timeFormatString.get()));
   }
 
   private ObjectNode readChildNode(ObjectNode parentNode, String path, String fieldName)

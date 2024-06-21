@@ -4,18 +4,17 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
-import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
-import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.util.Optional;
 
@@ -117,7 +116,6 @@ public class TemplateSchemaArtifact2REDCapConvertor
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
         XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
-        InputTimeFormat inputTimeFormat = temporalFieldUi.inputTimeFormat();
         TemporalGranularity temporalGranularity = temporalFieldUi.temporalGranularity();
 
         switch (temporalType) {

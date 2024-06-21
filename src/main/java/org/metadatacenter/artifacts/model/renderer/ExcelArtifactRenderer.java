@@ -241,7 +241,8 @@ public class ExcelArtifactRenderer
         TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi(); // TODO Temporary until we use typed switch
         XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
-        return getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
+        return getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(),
+          temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
 
       } else
         return "";
@@ -550,7 +551,8 @@ public class ExcelArtifactRenderer
   }
 
   private String getTemporalFormatString(String fieldName, XsdTemporalDatatype temporalType,
-    TemporalGranularity temporalGranularity, InputTimeFormat inputTimeFormat, boolean timeZoneEnabled)
+    TemporalGranularity temporalGranularity,
+    Optional<InputTimeFormat> inputTimeFormat, Optional<Boolean> timeZoneEnabled)
   {
     String temporalFormatString = "";
 
@@ -597,7 +599,7 @@ public class ExcelArtifactRenderer
     } else
       throw new RuntimeException("Unknown temporal type " + temporalType + " specified for temporal field " + fieldName);
 
-    if (inputTimeFormat.isTwelveHour())
+    if (inputTimeFormat.isPresent() && inputTimeFormat.get().isTwelveHour())
       temporalFormatString += " AM/PM";
 
     return temporalFormatString;
