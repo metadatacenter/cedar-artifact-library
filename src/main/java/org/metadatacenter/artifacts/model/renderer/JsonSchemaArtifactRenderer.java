@@ -1533,8 +1533,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
-    rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
+    rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
+    rendering.put(SKOS_NOTATION, renderStringOrNullJsonSchemaTypeSpecification());
 
     return rendering;
   }
