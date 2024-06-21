@@ -388,16 +388,16 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (fieldSchemaArtifact.preferredLabel().isPresent())
       rendering.put(SKOS_PREFLABEL, fieldSchemaArtifact.preferredLabel().get());
 
-    addVersionRendering(fieldSchemaArtifact, rendering);
-    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, fieldSchemaArtifact.modelVersion().toString());
-
-    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
-
     if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
       rendering.put(SKOS_ALTLABEL, mapper.createArrayNode());
       for (String alternateLabel : fieldSchemaArtifact.alternateLabels())
         rendering.withArray(SKOS_ALTLABEL).add(alternateLabel);
     }
+
+    addVersionRendering(fieldSchemaArtifact, rendering);
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, fieldSchemaArtifact.modelVersion().toString());
+
+    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     if (fieldSchemaArtifact.identifier().isPresent()) {
       String identifier = fieldSchemaArtifact.identifier().get();
