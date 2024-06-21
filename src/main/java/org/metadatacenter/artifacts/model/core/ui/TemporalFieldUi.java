@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.ui;
 
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -114,8 +115,14 @@ record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity tempo
   public TemporalFieldUiRecord
   {
     if (temporalGranularity == null)
-
       throw new IllegalStateException("Field " + UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
+
+    if (temporalGranularity == TemporalGranularity.DAY || temporalGranularity == TemporalGranularity.MONTH ||
+      temporalGranularity == TemporalGranularity.YEAR) {
+      inputTimeFormat = Optional.empty();
+      timezoneEnabled = Optional.empty();
+    }
+
 
     // TODO Test that inputTimeFormat and timeZoneEnables are empty for granularity of day, month, year.
 
