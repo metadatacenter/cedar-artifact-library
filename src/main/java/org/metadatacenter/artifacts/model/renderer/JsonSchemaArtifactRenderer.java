@@ -1244,6 +1244,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(JSON_LD_TYPE, mapper.createObjectNode());
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
