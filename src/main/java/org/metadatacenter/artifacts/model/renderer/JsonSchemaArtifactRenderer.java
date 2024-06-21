@@ -373,8 +373,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
         ObjectNode valueConstraintRendering = mapper.valueToTree(valueConstraints);
 
-        // Special case -- we want to render multiple choice for list fields even if false
-        if (fieldSchemaArtifact.fieldUi().isList() && !valueConstraints.multipleChoice())
+        // Special case -- we want to render multiple choice for list, checkbox and radio fields fields even if false
+        if ((fieldSchemaArtifact.fieldUi().isList() || fieldSchemaArtifact.fieldUi().isRadio() ||
+           fieldSchemaArtifact.fieldUi().isCheckbox()) && !valueConstraints.multipleChoice())
           valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
 
         rendering.put(VALUE_CONSTRAINTS, valueConstraintRendering);
