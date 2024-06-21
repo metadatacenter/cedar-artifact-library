@@ -112,7 +112,8 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
   }
 }
 
-record TemplateUiRecord(List<String> order, LinkedHashMap<String, String> propertyLabels,
+record TemplateUiRecord(List<String> order,
+                        LinkedHashMap<String, String> propertyLabels,
                         LinkedHashMap<String, String> propertyDescriptions,
                         Optional<String> header, Optional<String> footer)
   implements TemplateUi
@@ -145,7 +146,21 @@ record TemplateUiRecord(List<String> order, LinkedHashMap<String, String> proper
     **/
 
     order = List.copyOf(order);
-    propertyLabels = new LinkedHashMap<>(propertyLabels);
-    propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
+    propertyLabels = reorderPropertiesMap(propertyLabels, order);
+    propertyDescriptions = reorderPropertiesMap(propertyDescriptions, order);
+  }
+
+  private LinkedHashMap<String, String> reorderPropertiesMap(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
+  {
+    LinkedHashMap<String, String> reorderedMap = new LinkedHashMap<>();
+
+    for (String key : keyOrder) {
+      if (propertiesMap.containsKey(key))
+        reorderedMap.put(key, propertiesMap.get(key));
+      else
+        reorderedMap.put(key, key);
+    }
+
+    return reorderedMap;
   }
 }
