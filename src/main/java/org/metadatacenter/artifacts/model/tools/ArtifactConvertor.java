@@ -99,12 +99,10 @@ public class ArtifactConvertor
     mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     mapper.registerModule(new JavaTimeModule());
     DefaultPrettyPrinter prettyPrinter = new CustomPrettyPrinter();
-    prettyPrinter = prettyPrinter.withSeparators(Separators.createDefaultInstance());
-    prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
     PRETTY_OBJECT_WRITER = mapper.writer(prettyPrinter);
   }
 
-  // TODO Clean up. 
+  // TODO Clean up.
   public static void main(String[] args) throws IOException
   {
     CommandLineParser parser = new DefaultParser();
