@@ -22,6 +22,7 @@ import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -86,6 +87,7 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MULTIPLE_CHOICE;
 import static org.metadatacenter.model.ModelNodeNames.XSD;
 import static org.metadatacenter.model.ModelNodeNames.XSD_DATETIME;
 import static org.metadatacenter.model.ModelNodeValues.OSLC_IRI;
@@ -367,8 +369,16 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     // Static fields or attribute-value field have no value constraints field or JSON Schema properties specification
     if (!(fieldSchemaArtifact.isStatic() || fieldSchemaArtifact.isAttributeValue())) {
 
-      if (fieldSchemaArtifact.valueConstraints().isPresent())
-        rendering.put(VALUE_CONSTRAINTS, mapper.valueToTree(fieldSchemaArtifact.valueConstraints().get()));
+      if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+        ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+        ObjectNode valueConstraintRendering = mapper.valueToTree(valueConstraints);
+
+        // Special case -- we want to render multiple choice for list fields even if false
+        if (fieldSchemaArtifact.fieldUi().isList() && !valueConstraints.multipleChoice())
+          valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+
+        rendering.put(VALUE_CONSTRAINTS, valueConstraintRendering);
+      }
 
       if (fieldSchemaArtifact.hasIRIValue()) {
         rendering.put(JSON_SCHEMA_PROPERTIES, renderIRIFieldArtifactPropertiesJsonSchemaSpecification());
