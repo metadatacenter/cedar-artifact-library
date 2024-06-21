@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.core.fields.constraints;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 
 import java.net.URI;
@@ -25,6 +26,7 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
   List<BranchValueConstraint> branches();
 
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   List<ControlledTermValueConstraintsAction> actions();
 
   default boolean hasExplicitConstraints() {
