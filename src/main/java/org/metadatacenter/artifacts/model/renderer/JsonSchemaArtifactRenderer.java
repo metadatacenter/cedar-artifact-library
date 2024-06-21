@@ -1516,8 +1516,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    * <pre>
    * {
    *   "@type": { "type": "string", "format": "uri" },
-   *   "@id": { "type": "string", "format": "uri" },
-   *   "rdfs:label": {  "type": [ "string", "null" ] }
+   *   "rdfs:label": {  "type": [ "string", "null" ] },
+   *   "@id": { "type": "string", "format": "uri" }
    * }
    * </pre>
    * A conforming value could look like:
@@ -1535,6 +1535,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_LD_TYPE, renderUriJsonSchemaTypeSpecification());
     rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
     rendering.put(RDFS_LABEL, renderStringOrNullJsonSchemaTypeSpecification());
+    rendering.put(SKOS_NOTATION, renderStringOrNullJsonSchemaTypeSpecification());
 
     return rendering;
   }
