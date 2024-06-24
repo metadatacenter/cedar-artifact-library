@@ -390,7 +390,7 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
     if (!order.containsAll(childNames)) {
       childNames.removeAll(order);
       throw new IllegalStateException(
-        "UI order field must contain an entry for all child fields and elements in " + "template schema artifact " +
+        "UI order field must contain an entry for all child fields in parent schema artifact " +
           name + "; missing fields: " + childNames);
     }
 

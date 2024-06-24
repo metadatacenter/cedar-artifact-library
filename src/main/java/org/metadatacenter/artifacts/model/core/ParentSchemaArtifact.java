@@ -21,6 +21,10 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
 
   default boolean isField(String name) { return fieldSchemas().containsKey(name); }
 
+  default boolean isStaticField(String name) {
+    return fieldSchemas().containsKey(name) && fieldSchemas().get(name).isStatic();
+  }
+
   default boolean isElement(String name) { return elementSchemas().containsKey(name); }
 
   default boolean hasFields() { return !fieldSchemas().isEmpty(); }
@@ -129,8 +133,15 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
 
   default List<String> getChildNames()
   {
-
     ArrayList<String> childNames = new ArrayList<>(getUi().order());
+
+    return childNames;
+  }
+
+  default List<String> getNonStaticChildNames()
+  {
+
+    List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name) || isElement(name)).toList();
 
     return childNames;
   }
