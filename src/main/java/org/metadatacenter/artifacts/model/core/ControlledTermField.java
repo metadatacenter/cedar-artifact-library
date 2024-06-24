@@ -371,7 +371,7 @@ implements ControlledTermField
       throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
 
     if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
+      throw new IllegalStateException("minItems must be less than or equal to maxItems in element schema artifact " + name);
 
     if (fieldUi.isStatic())
       validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);

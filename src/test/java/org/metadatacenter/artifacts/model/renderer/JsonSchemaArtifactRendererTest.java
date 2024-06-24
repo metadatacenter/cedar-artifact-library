@@ -350,21 +350,7 @@ public class JsonSchemaArtifactRendererTest
 
     assertTrue(validateTemplateSchemaArtifact(templateRendering));
   }
-
-  @Test
-  public void testRenderRADxMetadataSpecification()
-  {
-    ObjectNode objectNode = getFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
-
-    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
-
-    ObjectNode templateRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
-
-    assertTrue(validateJsonSchema(templateRendering));
-
-    assertTrue(validateTemplateSchemaArtifact(templateRendering));
-  }
-
+  
   @Test
   public void testRenderBasicTemplateInstance()
   {

@@ -377,6 +377,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         if (fieldSchemaArtifact.fieldUi().isList() || fieldSchemaArtifact.fieldUi().isRadio()
           || fieldSchemaArtifact.fieldUi().isCheckbox())
           valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, valueConstraints.multipleChoice());
+        else
+          valueConstraintRendering.remove(VALUE_CONSTRAINTS_MULTIPLE_CHOICE); // Remove if present
 
         rendering.put(VALUE_CONSTRAINTS, valueConstraintRendering);
       }
