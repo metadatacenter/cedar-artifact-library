@@ -146,35 +146,7 @@ record TemplateUiRecord(List<String> order,
     **/
 
     order = List.copyOf(order);
-    propertyLabels = reorderPropertyLabelsMap(propertyLabels, order);
-    propertyDescriptions = reorderPropertyDescriptionsMap(propertyDescriptions, order);
-  }
-
-  private LinkedHashMap<String, String> reorderPropertyLabelsMap(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
-  {
-    LinkedHashMap<String, String> reorderedMap = new LinkedHashMap<>();
-
-    for (String key : keyOrder) {
-      if (propertiesMap.containsKey(key))
-        reorderedMap.put(key, propertiesMap.get(key));
-      else
-        reorderedMap.put(key, key);
-    }
-
-    return reorderedMap;
-  }
-
-  private LinkedHashMap<String, String> reorderPropertyDescriptionsMap(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
-  {
-    LinkedHashMap<String, String> reorderedMap = new LinkedHashMap<>();
-
-    for (String key : keyOrder) {
-      if (propertiesMap.containsKey(key))
-        reorderedMap.put(key, propertiesMap.get(key));
-      else
-        reorderedMap.put(key, "");
-    }
-
-    return reorderedMap;
+    propertyLabels = processPropertyLabels(propertyLabels, order);
+    propertyDescriptions = processPropertyDescriptions(propertyDescriptions, order);
   }
 }
