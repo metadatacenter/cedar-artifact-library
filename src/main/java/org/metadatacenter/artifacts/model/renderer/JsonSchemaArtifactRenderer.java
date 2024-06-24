@@ -1173,9 +1173,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(renderUri(propertyUri)));
     }
 
-    rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
-
     if (!elementSchemaArtifact.getChildPropertyUris().isEmpty()) {
+      rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
       for (String childName : elementSchemaArtifact.getChildPropertyUris().keySet())
         rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
     }
