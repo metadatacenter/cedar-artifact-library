@@ -415,10 +415,12 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
     if (!order.containsAll(childNames)) {
-      childNames.removeAll(order);
-      throw new IllegalStateException(
-        "UI order field must contain an entry for all child fields and elements in element schema artifact " +
-          name + "; missing fields: " + childNames);
+      childNames.removeAll(order); // Generate the names of children not in the order map
+      order.removeAll(childNames); // Silently remove these extra children from the order
+      for (String childToRemove: childNames) { // And from the
+        fieldSchemas.remove(childToRemove);
+        elementSchemas.remove(childToRemove);
+      }
     }
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);

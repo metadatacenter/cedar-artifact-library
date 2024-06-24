@@ -124,25 +124,6 @@ record ElementUiRecord(List<String> order,
     validateOptionalFieldNotNull(this, header, UI_HEADER);
     validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
-    // TODO Many CEDAR templates will have extra mappings for property labels and descriptions; probably remove silently
-    /*
-    if (!order.containsAll(propertyLabels.keySet())) {
-      Set<String> extraPropertyLabels = propertyLabels.keySet();
-      extraPropertyLabels.removeAll(order);
-      throw new IllegalStateException(
-        "propertyLabels field must contain only entries present in the order field in " +
-          ElementUi.class.getName() + " " + this.toString() + "; extra labels: " + extraPropertyLabels);
-    }
-
-    if (!order.containsAll(propertyDescriptions.keySet())) {
-      Set<String> extraPropertyDescriptions = propertyDescriptions.keySet();
-      extraPropertyDescriptions.removeAll(order);
-      throw new IllegalStateException(
-        "propertyDescriptions field must contain only entries present in the order field in " +
-          ElementUi.class.getName() + ": " + this.toString() + "; extra descriptions: " + extraPropertyDescriptions);
-    }
-    **/
-
     order = List.copyOf(order);
     propertyLabels = processPropertyLabels(propertyLabels, order);
     propertyDescriptions = processPropertyDescriptions(propertyDescriptions, order);

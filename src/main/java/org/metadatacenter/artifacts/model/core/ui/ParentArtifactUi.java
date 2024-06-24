@@ -16,13 +16,13 @@ public sealed interface ParentArtifactUi permits TemplateUi, ElementUi
 
   Optional<String> footer();
 
-  default LinkedHashMap<String, String> processPropertyLabels(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
+  default LinkedHashMap<String, String> processPropertyLabels(LinkedHashMap<String, String> propertyLabels, List<String> keyOrder)
   {
     LinkedHashMap<String, String> reorderedMap = new LinkedHashMap<>();
 
     for (String key : keyOrder) {
-      if (propertiesMap.containsKey(key))
-        reorderedMap.put(key, propertiesMap.get(key));
+      if (propertyLabels.containsKey(key))
+        reorderedMap.put(key, propertyLabels.get(key));
       else
         reorderedMap.put(key, key);
     }
@@ -30,13 +30,13 @@ public sealed interface ParentArtifactUi permits TemplateUi, ElementUi
     return reorderedMap;
   }
 
-  default LinkedHashMap<String, String> processPropertyDescriptions(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
+  default LinkedHashMap<String, String> processPropertyDescriptions(LinkedHashMap<String, String> propertyDescriptions, List<String> keyOrder)
   {
     LinkedHashMap<String, String> reorderedMap = new LinkedHashMap<>();
 
     for (String key : keyOrder) {
-      if (propertiesMap.containsKey(key))
-        reorderedMap.put(key, propertiesMap.get(key));
+      if (propertyDescriptions.containsKey(key))
+        reorderedMap.put(key, propertyDescriptions.get(key));
       else
         reorderedMap.put(key, "");
     }
