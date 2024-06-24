@@ -920,7 +920,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           Optional.of(defaultValue.get().asNumericDefaultValue()) :
           Optional.empty();
         if (!numberType.isPresent())
-          throw new ArtifactParseException("a number type must be present for a numeric field", fieldName, path);
+          numberType = Optional.of(XsdNumericDatatype.DECIMAL); // Default to xsd:decimal if unspecifed
         return Optional.of(
           NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
             numericDefaultValue, requiredValue, recommendedValue, multipleChoice));

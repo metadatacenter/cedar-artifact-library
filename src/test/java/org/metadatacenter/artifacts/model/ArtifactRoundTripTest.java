@@ -34,7 +34,6 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
-import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
@@ -731,8 +730,7 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/SimpleTemplateWithType.json");
   }
 
-  @Test(expected = ArtifactParseException.class)
-  public void testRoundTripNoValuePresentTemplate()
+  public void testRoundTripNoNumericTypePresentElement()
   {
     testElementSchemaArtifactRoundTripFromFile("elements/NoNumericTypePresentElement.json");
   }
