@@ -919,10 +919,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asNumericDefaultValue()) :
           Optional.empty();
+        if (!numberType.isPresent())
+          throw new ArtifactParseException("a number type must be present for a numeric field", fieldName, path);
         return Optional.of(
           NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
             numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
+        if (!temporalType.isPresent())
+          throw new ArtifactParseException("a temporal type must be present for a temporal field", fieldName, path);
         Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asTemporalDefaultValue()) :
           Optional.empty();
