@@ -350,7 +350,7 @@ public class JsonSchemaArtifactRendererTest
 
     assertTrue(validateTemplateSchemaArtifact(templateRendering));
   }
-  
+
   @Test
   public void testRenderBasicTemplateInstance()
   {

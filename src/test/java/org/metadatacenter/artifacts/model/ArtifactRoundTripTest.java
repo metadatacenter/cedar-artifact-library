@@ -47,7 +47,6 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class ArtifactRoundTripTest
@@ -703,12 +702,7 @@ public class ArtifactRoundTripTest
 
   @Test public void testRoundTripElement004()
   {
-    try {
       testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
-      fail("Expected IllegalStateException");
-    } catch (IllegalStateException e) {
-      // Expected exception
-    }
   }
 
   @Test public void testRoundTripField001()
