@@ -144,11 +144,11 @@ record ElementUiRecord(List<String> order,
     **/
 
     order = List.copyOf(order);
-    propertyLabels = reorderPropertiesMap(propertyLabels, order);
-    propertyDescriptions = reorderPropertiesMap(propertyDescriptions, order);
+    propertyLabels = reorderPropertyLabelsMap(propertyLabels, order);
+    propertyDescriptions = reorderPropertyDescriptionsMap(propertyDescriptions, order);
   }
 
-  private LinkedHashMap<String, String> reorderPropertiesMap(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
+  private LinkedHashMap<String, String> reorderPropertyLabelsMap(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
   {
     LinkedHashMap<String, String> reorderedMap = new LinkedHashMap<>();
 
@@ -157,6 +157,20 @@ record ElementUiRecord(List<String> order,
         reorderedMap.put(key, propertiesMap.get(key));
       else
         reorderedMap.put(key, key);
+    }
+
+    return reorderedMap;
+  }
+
+  private LinkedHashMap<String, String> reorderPropertyDescriptionsMap(LinkedHashMap<String, String> propertiesMap, List<String> keyOrder)
+  {
+    LinkedHashMap<String, String> reorderedMap = new LinkedHashMap<>();
+
+    for (String key : keyOrder) {
+      if (propertiesMap.containsKey(key))
+        reorderedMap.put(key, propertiesMap.get(key));
+      else
+        reorderedMap.put(key, "");
     }
 
     return reorderedMap;
