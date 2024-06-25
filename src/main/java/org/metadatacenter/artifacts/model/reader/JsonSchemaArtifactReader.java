@@ -1556,8 +1556,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     if (version.isEmpty())
       return Optional.empty();
-    else
-      return Optional.of(Version.fromString(version.get()));
+    else {
+      if (Version.isValidVersion(version.get()))
+        return Optional.of(Version.fromString(version.get()));
+      else // TODO Revisit this silent version fix
+        return Optional.of(Version.fromString("0.0.1"));
+    }
   }
 
   private Optional<Status> readStatus(ObjectNode sourceNode, String path, String fieldName)
