@@ -941,7 +941,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       } else if (fieldInputType == FieldInputType.ATTRIBUTE_VALUE) {
         return Optional.empty();
       } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty())) {
-        Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
+        Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() && defaultValue.get().asControlledTermDefaultValue() != null?
           Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
           Optional.empty();
         return Optional.of(
@@ -1577,12 +1577,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private Optional<OffsetDateTime> readOffsetDateTime(ObjectNode sourceNode, String path, String fieldName)
   {
     Optional<String> dateTimeValue = readString(sourceNode, path, fieldName);
-
     try {
-      if (dateTimeValue.isPresent())
-        return Optional.of(OffsetDateTime.parse(dateTimeValue.get()));
-      else
+      if (dateTimeValue.isPresent()) {
+        // Preprocess non-standard `+0100` timezone offset
+        String dateTimeString = dateTimeValue.get();
+        // Regex to find and correct timezone offset without colon
+        dateTimeString = dateTimeString.replaceAll("([+-]\\d{2})(\\d{2})$", "$1:$2");
+
+        return Optional.of(OffsetDateTime.parse(dateTimeString));
+      } else {
         return Optional.empty();
+      }
     } catch (DateTimeParseException e) {
       throw new ArtifactParseException(
         "Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(), fieldName, path);
