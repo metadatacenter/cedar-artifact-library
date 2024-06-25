@@ -32,7 +32,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
 
   @JsonIgnore default boolean isStatic() {return fieldUi().isStatic();}
 
-  @JsonIgnore default boolean isAttributeValue() {return fieldUi().isAttributeValue();}
+  @JsonIgnore default boolean isAttributeValue() { return fieldUi().isAttributeValue(); }
 
   default boolean hasIRIValue()
   {

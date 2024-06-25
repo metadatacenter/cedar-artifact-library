@@ -857,6 +857,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   }
 
   /**
+   * Generate a JSON Schema specification for an additionalProperties field for a template or element containing
+   * an attribute-value field
+   * <p>
+   * The specification is defined as follows:
+   * <pre>
+   "additionalProperties": {
+     "type": "string",
+     "format": "uri"
+   }
+   * </pre>
+   */
+  private ObjectNode renderAdditionalPropertiesForAttributeValueFieldContextPropertiesJsonSchemaSpecification()
+  {
+    ObjectNode rendering = mapper.createObjectNode();
+
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
+    rendering.put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
+
+    return rendering;
+  }
+
+  /**
    * Render a JSON Schema properties specification in a template schema artifact. First, this specification defines
    * the top-level fields that should be present in a template instance.
    * <p></p>
@@ -1128,7 +1150,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (String childName : templateSchemaArtifact.getChildPropertyUris().keySet())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
-    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+    if (templateSchemaArtifact.hasAttributeValueField())
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
+        renderAdditionalPropertiesForAttributeValueFieldContextPropertiesJsonSchemaSpecification());
+    else
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     return rendering;
   }
@@ -1179,7 +1205,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
     }
 
-    rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
+    if (elementSchemaArtifact.hasAttributeValueField())
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
+        renderAdditionalPropertiesForAttributeValueFieldContextPropertiesJsonSchemaSpecification());
+    else
+      rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 
     return rendering;
   }
