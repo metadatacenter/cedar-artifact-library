@@ -1,0 +1,1216 @@
+{    "_ui": {
+      "order": [
+        "templateType",
+        "fileName",
+        "name",
+        "schemaVersion",
+        "data"
+      ],
+      "propertyLabels": {
+        "data": "protocols"
+      }
+    },
+    "schema:name": "protocolsMultiForm",
+    "properties": {
+      "schema:isBasedOn": {
+        "type": "string",
+        "format": "uri"
+      },
+      "schema:name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "pav:createdBy": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "uri"
+      },
+      "@context": {
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "xsd",
+          "rdfs",
+          "pav",
+          "schema",
+          "oslc",
+          "schema:isBasedOn",
+          "schema:name",
+          "schema:description",
+          "pav:createdOn",
+          "pav:createdBy",
+          "pav:lastUpdatedOn",
+          "oslc:modifiedBy",
+          "templateType",
+          "fileName",
+          "name",
+          "data",
+          "rdfs:label",
+          "skos",
+          "skos:notation"
+        ],
+        "properties": {
+          "schema:isBasedOn": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "@id"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "schema:name": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "xsd:string"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "schema": {
+            "enum": [
+              "http://schema.org/"
+            ],
+            "type": "string",
+            "format": "uri"
+          },
+          "xsd": {
+            "enum": [
+              "http://www.w3.org/2001/XMLSchema#"
+            ],
+            "type": "string",
+            "format": "uri"
+          },
+          "rdfs:label": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "xsd:string"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "rdfs": {
+            "enum": [
+              "http://www.w3.org/2000/01/rdf-schema#"
+            ],
+            "type": "string",
+            "format": "uri"
+          },
+          "oslc:modifiedBy": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "@id"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "templateType": {
+            "enum": [
+              "https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-templateType"
+            ]
+          },
+          "pav:derivedFrom": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "@id"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "skos": {
+            "enum": [
+              "http://www.w3.org/2004/02/skos/core#"
+            ],
+            "type": "string",
+            "format": "uri"
+          },
+          "pav:createdBy": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "@id"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "pav:lastUpdatedOn": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "xsd:dateTime"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "oslc": {
+            "enum": [
+              "http://open-services.net/ns/core#"
+            ],
+            "type": "string",
+            "format": "uri"
+          },
+          "name": {
+            "enum": [
+              "https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-name"
+            ]
+          },
+          "pav:createdOn": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "xsd:dateTime"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "data": {
+            "enum": [
+              "https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-protocols"
+            ]
+          },
+          "skos:notation": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "xsd:string"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "fileName": {
+            "enum": [
+              "https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-fileName"
+            ]
+          },
+          "schema:description": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "enum": [
+                  "xsd:string"
+                ],
+                "type": "string"
+              }
+            }
+          },
+          "pav": {
+            "enum": [
+              "http://purl.org/pav/"
+            ],
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "templateType": {
+        "_ui": {
+          "inputType": "textfield",
+          "hidden": true
+        },
+        "schema:name": "templateType",
+        "title": "templateType",
+        "pav:createdBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+        "@id": null,
+        "@context": {
+          "schema:name": {
+            "@type": "xsd:string"
+          },
+          "schema": "http://schema.org/",
+          "pav:createdBy": {
+            "@type": "@id"
+          },
+          "xsd": "http://www.w3.org/2001/XMLSchema#",
+          "oslc:modifiedBy": {
+            "@type": "@id"
+          },
+          "skos": "http://www.w3.org/2004/02/skos/core#",
+          "pav:lastUpdatedOn": {
+            "@type": "xsd:dateTime"
+          },
+          "oslc": "http://open-services.net/ns/core#",
+          "skos:prefLabel": {
+            "@type": "xsd:string"
+          },
+          "pav": "http://purl.org/pav/",
+          "skos:altLabel": {
+            "@type": "xsd:string"
+          },
+          "schema:description": {
+            "@type": "xsd:string"
+          },
+          "pav:createdOn": {
+            "@type": "xsd:dateTime"
+          }
+        },
+        "_valueConstraints": {
+          "requiredValue": true,
+          "defaultValue": "single"
+        },
+        "type": "object",
+        "oslc:modifiedBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+        "description": "templateType",
+        "pav:lastUpdatedOn": "2017-07-13T12:37:48-07:00",
+        "pav:createdOn": "2017-07-13T12:37:48-07:00",
+        "additionalProperties": false,
+        "schema:schemaVersion": "1.6.0",
+        "properties": {
+          "@value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "@type": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "uniqueItems": true
+              }
+            ]
+          },
+          "rdfs:label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "schema:description": "templateType",
+        "@type": "https://schema.metadatacenter.org/core/TemplateField",
+        "required": [
+          "@value"
+        ],
+        "$schema": "http://json-schema.org/draft-04/schema#"
+      },
+      "oslc:modifiedBy": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "uri"
+      },
+      "pav:derivedFrom": {
+        "type": "string",
+        "format": "uri"
+      },
+      "pav:lastUpdatedOn": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date-time"
+      },
+      "name": {
+        "_ui": {
+          "inputType": "textfield",
+          "hidden": true
+        },
+        "schema:name": "name",
+        "title": "name",
+        "pav:createdBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+        "@id": null,
+        "@context": {
+          "schema:name": {
+            "@type": "xsd:string"
+          },
+          "schema": "http://schema.org/",
+          "pav:createdBy": {
+            "@type": "@id"
+          },
+          "xsd": "http://www.w3.org/2001/XMLSchema#",
+          "oslc:modifiedBy": {
+            "@type": "@id"
+          },
+          "skos": "http://www.w3.org/2004/02/skos/core#",
+          "pav:lastUpdatedOn": {
+            "@type": "xsd:dateTime"
+          },
+          "oslc": "http://open-services.net/ns/core#",
+          "skos:prefLabel": {
+            "@type": "xsd:string"
+          },
+          "pav": "http://purl.org/pav/",
+          "skos:altLabel": {
+            "@type": "xsd:string"
+          },
+          "schema:description": {
+            "@type": "xsd:string"
+          },
+          "pav:createdOn": {
+            "@type": "xsd:dateTime"
+          }
+        },
+        "_valueConstraints": {
+          "requiredValue": true,
+          "defaultValue": "protocols"
+        },
+        "type": "object",
+        "oslc:modifiedBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+        "description": "name",
+        "pav:lastUpdatedOn": "2017-07-13T12:37:48-07:00",
+        "pav:createdOn": "2017-07-13T12:37:48-07:00",
+        "additionalProperties": false,
+        "schema:schemaVersion": "1.6.0",
+        "properties": {
+          "@value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "@type": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "uniqueItems": true
+              }
+            ]
+          },
+          "rdfs:label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "schema:description": "name",
+        "@type": "https://schema.metadatacenter.org/core/TemplateField",
+        "required": [
+          "@value"
+        ],
+        "$schema": "http://json-schema.org/draft-04/schema#"
+      },
+      "pav:createdOn": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date-time"
+      },
+      "data": {
+        "minItems": 0,
+        "type": "array",
+        "items": {
+          "_ui": {
+            "order": [
+              "userDefinedId",
+              "fileName",
+              "name",
+              "description",
+              "type"
+            ],
+            "propertyLabels": {
+              "fileName": "File Name",
+              "type": "Type",
+              "name": "Name",
+              "description": "Description",
+              "userDefinedId": "User Defined ID"
+            }
+          },
+          "schema:name": "protocols",
+          "properties": {
+            "name": {
+              "_ui": {
+                "inputType": "textfield"
+              },
+              "schema:name": "Name",
+              "title": "Name field schema",
+              "pav:createdBy": null,
+              "@id": null,
+              "@context": {
+                "schema:name": {
+                  "@type": "xsd:string"
+                },
+                "schema": "http://schema.org/",
+                "pav:createdBy": {
+                  "@type": "@id"
+                },
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "oslc:modifiedBy": {
+                  "@type": "@id"
+                },
+                "skos": "http://www.w3.org/2004/02/skos/core#",
+                "pav:lastUpdatedOn": {
+                  "@type": "xsd:dateTime"
+                },
+                "oslc": "http://open-services.net/ns/core#",
+                "skos:prefLabel": {
+                  "@type": "xsd:string"
+                },
+                "pav": "http://purl.org/pav/",
+                "skos:altLabel": {
+                  "@type": "xsd:string"
+                },
+                "schema:description": {
+                  "@type": "xsd:string"
+                },
+                "pav:createdOn": {
+                  "@type": "xsd:dateTime"
+                }
+              },
+              "_valueConstraints": {
+                "requiredValue": true
+              },
+              "type": "object",
+              "oslc:modifiedBy": null,
+              "description": "Name field schema autogenerated by the ImmPort template generation",
+              "pav:lastUpdatedOn": null,
+              "pav:createdOn": null,
+              "additionalProperties": false,
+              "schema:schemaVersion": "1.6.0",
+              "properties": {
+                "@value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "@type": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "uniqueItems": true
+                    }
+                  ]
+                },
+                "rdfs:label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "schema:description": "The protocol name is not referenced by other data records.",
+              "@type": "https://schema.metadatacenter.org/core/TemplateField",
+              "required": [
+                "@value"
+              ],
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            },
+            "@id": {
+              "type": "string",
+              "format": "uri"
+            },
+            "userDefinedId": {
+              "_ui": {
+                "inputType": "textfield"
+              },
+              "schema:name": "User Defined ID",
+              "title": "User Defined ID field schema",
+              "pav:createdBy": null,
+              "@id": null,
+              "@context": {
+                "schema:name": {
+                  "@type": "xsd:string"
+                },
+                "schema": "http://schema.org/",
+                "pav:createdBy": {
+                  "@type": "@id"
+                },
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "oslc:modifiedBy": {
+                  "@type": "@id"
+                },
+                "skos": "http://www.w3.org/2004/02/skos/core#",
+                "pav:lastUpdatedOn": {
+                  "@type": "xsd:dateTime"
+                },
+                "oslc": "http://open-services.net/ns/core#",
+                "skos:prefLabel": {
+                  "@type": "xsd:string"
+                },
+                "pav": "http://purl.org/pav/",
+                "skos:altLabel": {
+                  "@type": "xsd:string"
+                },
+                "schema:description": {
+                  "@type": "xsd:string"
+                },
+                "pav:createdOn": {
+                  "@type": "xsd:dateTime"
+                }
+              },
+              "_valueConstraints": {
+                "requiredValue": true
+              },
+              "type": "object",
+              "oslc:modifiedBy": null,
+              "description": "User Defined ID field schema autogenerated by the ImmPort template generation",
+              "pav:lastUpdatedOn": null,
+              "pav:createdOn": null,
+              "additionalProperties": false,
+              "schema:schemaVersion": "1.6.0",
+              "properties": {
+                "@value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "@type": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "uniqueItems": true
+                    }
+                  ]
+                },
+                "rdfs:label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "schema:description": "The protocol user defined ID is an identifier chosen by the data provider to refer to a protocol document. This ID may be referenced by other data records (e.g. study). The user defined ID is not shared.",
+              "@type": "https://schema.metadatacenter.org/core/TemplateField",
+              "required": [
+                "@value"
+              ],
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            },
+            "@context": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "userDefinedId",
+                "fileName",
+                "name",
+                "description",
+                "type"
+              ],
+              "properties": {
+                "fileName": {
+                  "enum": [
+                    "https://schema.metadatacenter.net/properties/fileName"
+                  ]
+                },
+                "type": {
+                  "enum": [
+                    "http://www.co-ode.org/ontologies/ont.owl#Study_type"
+                  ]
+                },
+                "name": {
+                  "enum": [
+                    "http://purl.obolibrary.org/obo/IAO_0000590"
+                  ]
+                },
+                "description": {
+                  "enum": [
+                    "http://semanticscience.org/resource/SIO_000136"
+                  ]
+                },
+                "userDefinedId": {
+                  "enum": [
+                    "https://schema.metadatacenter.net/properties/userDefinedID"
+                  ]
+                }
+              }
+            },
+            "description": {
+              "_ui": {
+                "inputType": "textfield"
+              },
+              "schema:name": "Description",
+              "title": "Description field schema",
+              "pav:createdBy": null,
+              "@id": null,
+              "@context": {
+                "schema:name": {
+                  "@type": "xsd:string"
+                },
+                "schema": "http://schema.org/",
+                "pav:createdBy": {
+                  "@type": "@id"
+                },
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "oslc:modifiedBy": {
+                  "@type": "@id"
+                },
+                "skos": "http://www.w3.org/2004/02/skos/core#",
+                "pav:lastUpdatedOn": {
+                  "@type": "xsd:dateTime"
+                },
+                "oslc": "http://open-services.net/ns/core#",
+                "skos:prefLabel": {
+                  "@type": "xsd:string"
+                },
+                "pav": "http://purl.org/pav/",
+                "skos:altLabel": {
+                  "@type": "xsd:string"
+                },
+                "schema:description": {
+                  "@type": "xsd:string"
+                },
+                "pav:createdOn": {
+                  "@type": "xsd:dateTime"
+                }
+              },
+              "_valueConstraints": {
+                "requiredValue": false
+              },
+              "type": "object",
+              "oslc:modifiedBy": null,
+              "description": "Description field schema autogenerated by the ImmPort template generation",
+              "pav:lastUpdatedOn": null,
+              "pav:createdOn": null,
+              "additionalProperties": false,
+              "schema:schemaVersion": "1.6.0",
+              "properties": {
+                "@value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "@type": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "uniqueItems": true
+                    }
+                  ]
+                },
+                "rdfs:label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "schema:description": "The summary is a brief description of the protocol's content.",
+              "@type": "https://schema.metadatacenter.org/core/TemplateField",
+              "required": [
+                "@value"
+              ],
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            },
+            "type": {
+              "_ui": {
+                "inputType": "list"
+              },
+              "schema:name": "Type",
+              "title": "Type field schema",
+              "pav:createdBy": null,
+              "@id": null,
+              "@context": {
+                "schema:name": {
+                  "@type": "xsd:string"
+                },
+                "schema": "http://schema.org/",
+                "pav:createdBy": {
+                  "@type": "@id"
+                },
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "oslc:modifiedBy": {
+                  "@type": "@id"
+                },
+                "skos": "http://www.w3.org/2004/02/skos/core#",
+                "pav:lastUpdatedOn": {
+                  "@type": "xsd:dateTime"
+                },
+                "oslc": "http://open-services.net/ns/core#",
+                "skos:prefLabel": {
+                  "@type": "xsd:string"
+                },
+                "pav": "http://purl.org/pav/",
+                "skos:altLabel": {
+                  "@type": "xsd:string"
+                },
+                "schema:description": {
+                  "@type": "xsd:string"
+                },
+                "pav:createdOn": {
+                  "@type": "xsd:dateTime"
+                }
+              },
+              "_valueConstraints": {
+                "multipleChoice": false,
+                "literals": [
+                  {
+                    "label": "Assay"
+                  },
+                  {
+                    "label": "Bio Sample Preparation"
+                  },
+                  {
+                    "label": "Bio Sample Treatment"
+                  },
+                  {
+                    "label": "Biomaterial Transformation"
+                  },
+                  {
+                    "label": "Clinical"
+                  },
+                  {
+                    "label": "Data Processing"
+                  },
+                  {
+                    "label": "Data Transformation"
+                  },
+                  {
+                    "label": "Experiment"
+                  },
+                  {
+                    "label": "Experimental Sample"
+                  },
+                  {
+                    "label": "Not Specified"
+                  },
+                  {
+                    "label": "Other"
+                  },
+                  {
+                    "label": "Study Protocol"
+                  },
+                  {
+                    "label": "Study Summary"
+                  },
+                  {
+                    "label": "Subject Organism Treatment"
+                  }
+                ],
+                "requiredValue": false
+              },
+              "type": "object",
+              "oslc:modifiedBy": null,
+              "description": "Type field schema autogenerated by the ImmPort template generation",
+              "pav:lastUpdatedOn": null,
+              "pav:createdOn": null,
+              "additionalProperties": false,
+              "schema:schemaVersion": "1.6.0",
+              "properties": {
+                "@value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "@type": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "uniqueItems": true
+                    }
+                  ]
+                },
+                "rdfs:label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "schema:description": "The protocol type uses a preferred list of terms to characterize the protocol's content.",
+              "@type": "https://schema.metadatacenter.org/core/TemplateField",
+              "required": [
+                "@value"
+              ],
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            },
+            "fileName": {
+              "_ui": {
+                "inputType": "textfield"
+              },
+              "schema:name": "File Name",
+              "title": "File Name field schema",
+              "pav:createdBy": null,
+              "@id": null,
+              "@context": {
+                "schema:name": {
+                  "@type": "xsd:string"
+                },
+                "schema": "http://schema.org/",
+                "pav:createdBy": {
+                  "@type": "@id"
+                },
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "oslc:modifiedBy": {
+                  "@type": "@id"
+                },
+                "skos": "http://www.w3.org/2004/02/skos/core#",
+                "pav:lastUpdatedOn": {
+                  "@type": "xsd:dateTime"
+                },
+                "oslc": "http://open-services.net/ns/core#",
+                "skos:prefLabel": {
+                  "@type": "xsd:string"
+                },
+                "pav": "http://purl.org/pav/",
+                "skos:altLabel": {
+                  "@type": "xsd:string"
+                },
+                "schema:description": {
+                  "@type": "xsd:string"
+                },
+                "pav:createdOn": {
+                  "@type": "xsd:dateTime"
+                }
+              },
+              "_valueConstraints": {
+                "requiredValue": true
+              },
+              "type": "object",
+              "oslc:modifiedBy": null,
+              "description": "File Name field schema autogenerated by the ImmPort template generation",
+              "pav:lastUpdatedOn": null,
+              "pav:createdOn": null,
+              "additionalProperties": false,
+              "schema:schemaVersion": "1.6.0",
+              "properties": {
+                "@value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "@type": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "uniqueItems": true
+                    }
+                  ]
+                },
+                "rdfs:label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "schema:description": "The protocol file name in this column must be an exact spelling match to a file in the ZIP archive that is uploaded. This includes the file extensions which may be hidden depending upon your computer's settings. The file size name limit is 240 characters.",
+              "@type": "https://schema.metadatacenter.org/core/TemplateField",
+              "required": [
+                "@value"
+              ],
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            },
+            "@type": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+              ]
+            }
+          },
+          "oslc:modifiedBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+          "required": [
+            "@context",
+            "@id",
+            "userDefinedId",
+            "fileName",
+            "name",
+            "description",
+            "type"
+          ],
+          "@id": null,
+          "@context": {
+            "pav:lastUpdatedOn": {
+              "@type": "xsd:dateTime"
+            },
+            "schema:name": {
+              "@type": "xsd:string"
+            },
+            "schema": "http://schema.org/",
+            "pav:createdBy": {
+              "@type": "@id"
+            },
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "bibo": "http://purl.org/ontology/bibo/",
+            "pav": "http://purl.org/pav/",
+            "oslc": "http://open-services.net/ns/core#",
+            "oslc:modifiedBy": {
+              "@type": "@id"
+            },
+            "schema:description": {
+              "@type": "xsd:string"
+            },
+            "pav:createdOn": {
+              "@type": "xsd:dateTime"
+            }
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "title": "protocols",
+          "description": "The protocol template defines and annotates protocol documents that are to be linked to study, subjects, biological samples or experiments.",
+          "pav:lastUpdatedOn": "2017-07-13T12:37:48-07:00",
+          "pav:createdOn": "2017-07-13T12:37:48-07:00",
+          "_valueConstraints": {
+            "requiredValue": false
+          },
+          "bibo:status": "bibo:draft",
+          "schema:schemaVersion": "1.6.0",
+          "pav:version": "0.0.1",
+          "schema:description": "The protocol template defines and annotates protocol documents that are to be linked to study, subjects, biological samples or experiments.",
+          "@type": "https://schema.metadatacenter.org/core/TemplateElement",
+          "pav:createdBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+      },
+      "fileName": {
+        "_ui": {
+          "inputType": "textfield",
+          "hidden": true
+        },
+        "schema:name": "fileName",
+        "title": "fileName",
+        "pav:createdBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+        "@id": null,
+        "@context": {
+          "schema:name": {
+            "@type": "xsd:string"
+          },
+          "schema": "http://schema.org/",
+          "pav:createdBy": {
+            "@type": "@id"
+          },
+          "xsd": "http://www.w3.org/2001/XMLSchema#",
+          "oslc:modifiedBy": {
+            "@type": "@id"
+          },
+          "skos": "http://www.w3.org/2004/02/skos/core#",
+          "pav:lastUpdatedOn": {
+            "@type": "xsd:dateTime"
+          },
+          "oslc": "http://open-services.net/ns/core#",
+          "skos:prefLabel": {
+            "@type": "xsd:string"
+          },
+          "pav": "http://purl.org/pav/",
+          "skos:altLabel": {
+            "@type": "xsd:string"
+          },
+          "schema:description": {
+            "@type": "xsd:string"
+          },
+          "pav:createdOn": {
+            "@type": "xsd:dateTime"
+          }
+        },
+        "_valueConstraints": {
+          "requiredValue": true,
+          "defaultValue": "protocols.txt"
+        },
+        "type": "object",
+        "oslc:modifiedBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+        "description": "fileName",
+        "pav:lastUpdatedOn": "2017-07-13T12:37:48-07:00",
+        "pav:createdOn": "2017-07-13T12:37:48-07:00",
+        "additionalProperties": false,
+        "schema:schemaVersion": "1.6.0",
+        "properties": {
+          "@value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "@type": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "uniqueItems": true
+              }
+            ]
+          },
+          "rdfs:label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "schema:description": "fileName",
+        "@type": "https://schema.metadatacenter.org/core/TemplateField",
+        "required": [
+          "@value"
+        ],
+        "$schema": "http://json-schema.org/draft-04/schema#"
+      },
+      "schema:description": {
+        "type": "string"
+      },
+      "@type": {
+        "oneOf": [
+          {
+            "type": "string",
+            "format": "uri"
+          },
+          {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "uniqueItems": true
+          }
+        ]
+      },
+      "@id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "uri"
+      }
+    },
+    "oslc:modifiedBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+    "required": [
+      "@context",
+      "@id",
+      "schema:isBasedOn",
+      "schema:name",
+      "schema:description",
+      "pav:createdOn",
+      "pav:createdBy",
+      "pav:lastUpdatedOn",
+      "oslc:modifiedBy"
+    ],
+    "@context": {
+      "pav:lastUpdatedOn": {
+        "@type": "xsd:dateTime"
+      },
+      "schema:name": {
+        "@type": "xsd:string"
+      },
+      "schema": "http://schema.org/",
+      "pav:createdBy": {
+        "@type": "@id"
+      },
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "bibo": "http://purl.org/ontology/bibo/",
+      "pav": "http://purl.org/pav/",
+      "oslc": "http://open-services.net/ns/core#",
+      "oslc:modifiedBy": {
+        "@type": "@id"
+      },
+      "schema:description": {
+        "@type": "xsd:string"
+      },
+      "pav:createdOn": {
+        "@type": "xsd:dateTime"
+      }
+    },
+    "@id": "https://repo.metadatacenter.net/templates/11ef4f0a-aa4d-489b-b938-318f4de76a42",
+    "type": "object",
+    "title": "protocolsMultiForm",
+    "description": "Container to hold multiple instances",
+    "pav:lastUpdatedOn": "2017-07-13T12:37:48-07:00",
+    "pav:createdOn": "2017-07-13T12:37:48-07:00",
+    "additionalProperties": false,
+    "bibo:status": "bibo:draft",
+    "schema:schemaVersion": "1.6.0",
+    "pav:version": "0.0.1",
+    "schema:description": "Container to hold multiple instances",
+    "@type": "https://schema.metadatacenter.org/core/Template",
+    "pav:createdBy": "https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9",
+    "$schema": "http://json-schema.org/draft-04/schema#"
+  }

@@ -370,11 +370,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return TemplateUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  private Optional<Annotations> readAnnotations(LinkedHashMap<String, Object> sourceNode, String path)
-  {
-    return Optional.empty(); // TODO Implement readAnnotations in YAML reader
-  }
-
   private ElementUi readElementUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
     List<String> order = readStringArray(sourceNode, path, ORDER);
@@ -382,6 +377,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
 
     return ElementUi.create(order, propertyLabels, propertyDescriptions);
+  }
+
+  private Optional<Annotations> readAnnotations(LinkedHashMap<String, Object> sourceNode, String path)
+  {
+    return Optional.empty(); // TODO Implement readAnnotations in YAML reader
   }
 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path)

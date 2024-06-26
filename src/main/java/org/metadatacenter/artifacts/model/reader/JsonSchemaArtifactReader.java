@@ -54,11 +54,13 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.metadatacenter.model.ModelNodeNames.ANNOTATIONS;
 import static org.metadatacenter.model.ModelNodeNames.ARTIFACT_CONTEXT_ENTRIES;
@@ -1279,7 +1281,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return FieldUi.create(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
   }
 
-  private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName, Map<String, String> childSchemaOrgNames)
+  private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName, Map<String, String> childKey2Name)
   {
     ObjectNode uiNode = readChildNode(sourceNode, path, fieldName);
     String uiPath = path + "/" + fieldName;
@@ -1293,25 +1295,30 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, String> reorderedPropertyLabels = new LinkedHashMap<>();
     LinkedHashMap<String, String> reorderedPropertyDescriptions = new LinkedHashMap<>();
 
-    // Reorder to follow the order list
-    for (String childName: order) {
-      if (childSchemaOrgNames.containsKey(childName)) {
-        if (originalPropertyLabels.containsKey(childName))
-          reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
-        else
-          reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
+    Set<String> orderEntriesToRemove = new HashSet<>();
 
-        if (originalPropertyDescriptions.containsKey(childName))
-          reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
+    // Reorder to follow the order list
+    for (String childKey: order) {
+      if (childKey2Name.containsKey(childKey)) {
+        if (originalPropertyLabels.containsKey(childKey))
+          reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
         else
-          reorderedPropertyDescriptions.put(childName, "");
-      }
+          reorderedPropertyLabels.put(childKey, childKey2Name.get(childKey));
+
+        if (originalPropertyDescriptions.containsKey(childKey))
+          reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
+        else
+          reorderedPropertyDescriptions.put(childKey, "");
+      } else
+        orderEntriesToRemove.add(childKey);
     }
+
+    order.removeAll(orderEntriesToRemove); // Silently remove order entries with no corresponding children
 
     return TemplateUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
   }
 
-  private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldName, Map<String, String> childSchemaOrgNames)
+  private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldName, Map<String, String> childKey2Name)
   {
     ObjectNode uiNode = readChildNode(sourceNode, path, fieldName);
     String uiPath = path + "/" + fieldName;
@@ -1323,20 +1330,25 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, String> reorderedPropertyLabels = new LinkedHashMap<>();
     LinkedHashMap<String, String> reorderedPropertyDescriptions = new LinkedHashMap<>();
 
-    // Reorder to follow the order list
-    for (String childName: order) {
-      if (childSchemaOrgNames.containsKey(childName)) {
-        if (originalPropertyLabels.containsKey(childName))
-          reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
-        else
-          reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
+    Set<String> orderEntriesToRemove = new HashSet<>();
 
-        if (originalPropertyDescriptions.containsKey(childName))
-          reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
+    // Reorder to follow the order list
+    for (String childKey: order) {
+      if (childKey2Name.containsKey(childKey)) {
+        if (originalPropertyLabels.containsKey(childKey))
+          reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
         else
-          reorderedPropertyDescriptions.put(childName, "");
-      }
+          reorderedPropertyLabels.put(childKey, childKey2Name.get(childKey));
+
+        if (originalPropertyDescriptions.containsKey(childKey))
+          reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
+        else
+          reorderedPropertyDescriptions.put(childKey, "");
+      } else
+        orderEntriesToRemove.add(childKey);
     }
+
+    order.removeAll(orderEntriesToRemove); // Silently remove order entries with no corresponding children
 
     return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions);
   }
