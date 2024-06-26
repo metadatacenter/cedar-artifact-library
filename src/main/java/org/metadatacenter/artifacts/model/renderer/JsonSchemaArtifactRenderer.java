@@ -293,8 +293,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
             .put(childName, renderElementSchemaArtifact(childElementSchemaArtifact));
 
-      } else // TODO Use typesafe switch on ChildSchemaArtifact when available
-        throw new IllegalStateException("Order child " + childName + " is not a field or an element");
+      }  // TODO Use typesafe switch on ChildSchemaArtifact when available
     }
 
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);

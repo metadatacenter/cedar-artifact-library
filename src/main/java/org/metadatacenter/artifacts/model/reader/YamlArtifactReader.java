@@ -380,10 +380,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     List<String> order = readStringArray(sourceNode, path, ORDER);
     LinkedHashMap<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
     LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readString(sourceNode, path, HEADER);
-    Optional<String> footer = readString(sourceNode, path, FOOTER);
 
-    return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
+    return ElementUi.create(order, propertyLabels, propertyDescriptions);
   }
 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path)

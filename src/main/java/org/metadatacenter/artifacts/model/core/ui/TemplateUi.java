@@ -24,6 +24,10 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
     return new TemplateUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
+  Optional<String> header();
+
+  Optional<String> footer();
+
   @JsonIgnore
   default UiType uiType() { return UiType.TEMPLATE_UI; }
 

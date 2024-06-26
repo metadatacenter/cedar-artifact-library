@@ -1,11 +1,9 @@
 package org.metadatacenter.artifacts.model.core.ui;
 
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.core.ui.ElementUi;
-import org.metadatacenter.artifacts.model.core.ui.UiType;
 
-import static org.junit.Assert.*;
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ElementUiTest
 {
@@ -70,23 +68,5 @@ public class ElementUiTest
     assertEquals(elementUi.propertyDescriptions().size(), 2);
     assertEquals(elementUi.propertyDescriptions().get(fieldName1), propertyDescription1);
     assertEquals(elementUi.propertyDescriptions().get(fieldName2), propertyDescription2);
-  }
-
-  @Test
-  public void testGetHeader() {
-    String header = "Header";
-    ElementUi elementUi = ElementUi.builder()
-      .withHeader(header)
-      .build();
-    assertEquals(Optional.of(header), elementUi.header());
-  }
-
-  @Test
-  public void testGetFooter() {
-    String footer = "Footer";
-    ElementUi elementUi = ElementUi.builder()
-      .withFooter(footer)
-      .build();
-    assertEquals(Optional.of(footer), elementUi.footer());
   }
 }

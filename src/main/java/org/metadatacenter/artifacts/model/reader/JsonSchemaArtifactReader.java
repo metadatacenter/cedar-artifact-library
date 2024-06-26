@@ -1319,8 +1319,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
     LinkedHashMap<String, String> originalPropertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
     LinkedHashMap<String, String> originalPropertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
-    Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
-    Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
     LinkedHashMap<String, String> reorderedPropertyLabels = new LinkedHashMap<>();
     LinkedHashMap<String, String> reorderedPropertyDescriptions = new LinkedHashMap<>();
@@ -1340,7 +1338,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       }
     }
 
-    return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
+    return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions);
   }
 
   private Optional<Annotations> readAnnotations(ObjectNode sourceNode, String path, String fieldName)
