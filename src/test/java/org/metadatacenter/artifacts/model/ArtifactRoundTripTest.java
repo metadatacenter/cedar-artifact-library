@@ -655,6 +655,11 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
   }
 
+  @Test public void testRoundTripNullPropertyLabelsTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/NullPropertyLabelsTemplate.json");
+  }
+
   @Test public void testRoundTripRADxCLIGeneratedTemplate()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");

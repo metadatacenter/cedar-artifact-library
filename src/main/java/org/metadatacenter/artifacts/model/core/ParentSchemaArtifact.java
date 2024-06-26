@@ -105,8 +105,6 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
         childSchemas.put(childName, elementSchemas().get(childName));
       else if (fieldSchemas().containsKey(childName))
         childSchemas.put(childName, fieldSchemas().get(childName));
-      else
-        throw new RuntimeException("internal error: no child " + childName + " present in artifact");
     }
 
     return childSchemas;
@@ -121,8 +119,6 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
         childSchemaOrgNames.put(childName, elementSchemas().get(childName).name());
       else if (fieldSchemas().containsKey(childName))
         childSchemaOrgNames.put(childName, fieldSchemas().get(childName).name());
-      else
-        throw new RuntimeException("internal error: no child " + childName + " present in artifact");
     }
 
     return childSchemaOrgNames;

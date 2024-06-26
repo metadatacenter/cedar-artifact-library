@@ -337,7 +337,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     checkTemplateSchemaArtifactJsonLdType(jsonLdTypes, path);
 
-
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType,
@@ -1296,15 +1295,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     // Reorder to follow the order list
     for (String childName: order) {
-      if (!originalPropertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
-        reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
-      else
-        reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
+      if (childSchemaOrgNames.containsKey(childName)) {
+        if (originalPropertyLabels.containsKey(childName))
+          reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
+        else
+          reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
 
-      if (!originalPropertyDescriptions.containsKey(childName))
-        reorderedPropertyDescriptions.put(childName, "");
-      else
-        reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
+        if (originalPropertyDescriptions.containsKey(childName))
+          reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
+        else
+          reorderedPropertyDescriptions.put(childName, "");
+      }
     }
 
     return TemplateUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
@@ -1326,15 +1327,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     // Reorder to follow the order list
     for (String childName: order) {
-      if (!originalPropertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
-        reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
-      else
-        reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
+      if (childSchemaOrgNames.containsKey(childName)) {
+        if (originalPropertyLabels.containsKey(childName))
+          reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
+        else
+          reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
 
-      if (!originalPropertyDescriptions.containsKey(childName))
-        reorderedPropertyDescriptions.put(childName, "");
-      else
-        reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
+        if (originalPropertyDescriptions.containsKey(childName))
+          reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
+        else
+          reorderedPropertyDescriptions.put(childName, "");
+      }
     }
 
     return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
