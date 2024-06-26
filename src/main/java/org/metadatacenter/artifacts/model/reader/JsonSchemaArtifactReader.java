@@ -1304,7 +1304,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       if (!originalPropertyDescriptions.containsKey(childName))
         reorderedPropertyDescriptions.put(childName, "");
       else
-        reorderedPropertyDescriptions.put(childName, originalPropertyLabels.get(childName));
+        reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
     }
 
     return TemplateUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
@@ -1334,7 +1334,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       if (!originalPropertyDescriptions.containsKey(childName))
         reorderedPropertyDescriptions.put(childName, "");
       else
-        reorderedPropertyDescriptions.put(childName, originalPropertyLabels.get(childName));
+        reorderedPropertyDescriptions.put(childName, originalPropertyDescriptions.get(childName));
     }
 
     return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
