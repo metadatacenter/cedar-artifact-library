@@ -653,7 +653,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String preferredLabel = preferredLabel2UriEntry.getKey();
       URI uri = URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, valueSetValueConstraint.vsCollection(),
-        preferredLabel, preferredLabel, ValueType.VALUE_SET);
+        preferredLabel, preferredLabel, ValueType.VALUE);
       classValueConstraints.add(classValueConstraint);
     }
 

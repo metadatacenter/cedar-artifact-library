@@ -3,12 +3,12 @@ package org.metadatacenter.artifacts.model.core.fields.constraints;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE_ONTOLOGY_CLASS;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE_VALUE_SET;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE_VALUE;
 
 public enum ValueType
 {
   ONTOLOGY_CLASS(VALUE_CONSTRAINTS_TYPE_ONTOLOGY_CLASS),
-  VALUE_SET(VALUE_CONSTRAINTS_TYPE_VALUE_SET);
+  VALUE(VALUE_CONSTRAINTS_TYPE_VALUE);
 
   private final String text;
 
