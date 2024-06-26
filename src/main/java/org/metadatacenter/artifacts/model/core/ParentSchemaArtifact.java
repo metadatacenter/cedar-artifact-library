@@ -26,6 +26,11 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     return fieldSchemas().containsKey(name) && fieldSchemas().get(name).isStatic();
   }
 
+  default boolean isAttributeValueField(String name)
+  {
+    return fieldSchemas().containsKey(name) && fieldSchemas().get(name).isAttributeValue();
+  }
+
   default boolean isElement(String name) { return elementSchemas().containsKey(name); }
 
   default boolean hasFields() { return !fieldSchemas().isEmpty(); }
