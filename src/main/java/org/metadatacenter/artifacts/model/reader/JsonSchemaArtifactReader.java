@@ -319,7 +319,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
 
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = Version.fromString(readRequiredString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION));
+    Version modelVersion = getModelVersion(sourceNode, path);
     String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -361,7 +361,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaType = readRequiredString(sourceNode, path, JSON_SCHEMA_TYPE);
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = Version.fromString(readRequiredString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION));
+    Version modelVersion = getModelVersion(sourceNode, path);
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -407,7 +407,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaType = readRequiredString(sourceNode, path, JSON_SCHEMA_TYPE);
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = Version.fromString(readRequiredString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION));
+    Version modelVersion = getModelVersion(sourceNode, path);
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -1842,6 +1842,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       }
     }
     return uriValues;
+  }
+
+  private Version getModelVersion(ObjectNode sourceNode, String path)
+  {
+    Optional<String> versionString = readString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION);
+
+    if (versionString.isPresent())
+      return Version.fromString(versionString.get());
+    else
+      return Version.fromString("1.6.0"); // TODO Temporarily supply version
   }
 
   private Optional<String> getLanguage(ObjectNode sourceNode, String path, String fieldName)
