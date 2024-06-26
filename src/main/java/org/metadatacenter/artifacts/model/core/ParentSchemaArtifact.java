@@ -112,6 +112,22 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     return childSchemas;
   }
 
+  default LinkedHashMap<String, String> getChildSchemaOrgNames()
+  {
+    var childSchemaOrgNames = new LinkedHashMap<String, String>();
+
+    for (String childName : getUi().order()) {
+      if (elementSchemas().containsKey(childName))
+        childSchemaOrgNames.put(childName, elementSchemas().get(childName).name());
+      else if (fieldSchemas().containsKey(childName))
+        childSchemaOrgNames.put(childName, fieldSchemas().get(childName).name());
+      else
+        throw new RuntimeException("internal error: no child " + childName + " present in artifact");
+    }
+
+    return childSchemaOrgNames;
+  }
+
   default List<String> getFieldNames()
   {
     ArrayList<String> fieldNames = new ArrayList<>();

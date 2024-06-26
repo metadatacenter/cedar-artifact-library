@@ -53,6 +53,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -330,12 +331,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
     Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
-    TemplateUi templateUi = readTemplateUi(sourceNode, path, UI);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
+    Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas, elementSchemas, childPropertyUris);
+    TemplateUi templateUi = readTemplateUi(sourceNode, path, UI, childSchemaOrgNames);
 
     checkTemplateSchemaArtifactJsonLdType(jsonLdTypes, path);
 
-    readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas, elementSchemas, childPropertyUris);
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
@@ -373,13 +374,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
-    ElementUi elementUi = readElementUi(sourceNode, path, UI);
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
 
-    readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas, elementSchemas, childPropertyUris);
+    Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas, elementSchemas, childPropertyUris);
+
+    ElementUi elementUi = readElementUi(sourceNode, path, UI, childSchemaOrgNames);
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
@@ -433,11 +435,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       language, fieldUi, valueConstraints, annotations);
   }
 
-  private void readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,
+  private Map<String, String> readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,
     Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
     Map<String, URI> childPropertyUris)
   {
     JsonNode propertiesNode = parentNode.get(JSON_SCHEMA_PROPERTIES);
+    Map<String, String> childSchemaOrgNames = new HashMap<>();
 
     if (propertiesNode == null || !propertiesNode.isObject())
       throw new ArtifactParseException("Invalid JSON Schema properties node", JSON_SCHEMA_PROPERTIES, path);
@@ -506,12 +509,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiple, minItems, maxItems,
                 propertyUri);
               elementSchemas.put(childName, elementSchemaArtifact);
+              childSchemaOrgNames.put(childName, elementSchemaArtifact.name());
             }
             case FIELD_SCHEMA_ARTIFACT_TYPE_IRI, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
                 (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiple, minItems, maxItems,
                 propertyUri);
               fieldSchemas.put(childName, fieldSchemaArtifact);
+              childSchemaOrgNames.put(childName, fieldSchemaArtifact.name());
             }
             default -> throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType,
               childName, fieldOrElementPath);
@@ -522,6 +527,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
           }
         }
     }
+    return childSchemaOrgNames;
   }
 
   private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode, String path)
@@ -1274,7 +1280,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return FieldUi.create(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
   }
 
-  private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName)
+  private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName, Map<String, String> childSchemaOrgNames)
   {
     ObjectNode uiNode = readChildNode(sourceNode, path, fieldName);
     String uiPath = path + "/" + fieldName;
@@ -1284,11 +1290,18 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
+
+    for (String childName: order) {
+      if (!propertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
+        propertyLabels.put(childName, childSchemaOrgNames.get(childName));
+      if (!propertyDescriptions.containsKey(childName))
+        propertyDescriptions.put(childName, "");
+    }
 
     return TemplateUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
-  private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldName)
+  private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldName, Map<String, String> childSchemaOrgNames)
   {
     ObjectNode uiNode = readChildNode(sourceNode, path, fieldName);
     String uiPath = path + "/" + fieldName;
@@ -1298,6 +1311,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
+
+    for (String childName: order) {
+      if (!propertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
+        propertyLabels.put(childName, childSchemaOrgNames.get(childName));
+      if (!propertyDescriptions.containsKey(childName))
+        propertyDescriptions.put(childName, "");
+    }
 
     return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
