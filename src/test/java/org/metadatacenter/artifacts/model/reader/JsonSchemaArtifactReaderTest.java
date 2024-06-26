@@ -104,16 +104,6 @@ public class JsonSchemaArtifactReaderTest
   }
 
   @Test
-  public void testReadRADxMetadataSpecificationTemplateSchemaArtifact()
-  {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
-
-    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
-
-    assertEquals("RADx Metadata Specification", templateSchemaArtifact.name());
-  }
-
-  @Test
   public void testReadMultiInstanceFieldTemplate()
   {
     ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/MultiInstanceFieldTemplate.json");

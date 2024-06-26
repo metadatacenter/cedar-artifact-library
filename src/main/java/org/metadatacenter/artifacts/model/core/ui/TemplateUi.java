@@ -112,7 +112,8 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
   }
 }
 
-record TemplateUiRecord(List<String> order, LinkedHashMap<String, String> propertyLabels,
+record TemplateUiRecord(List<String> order,
+                        LinkedHashMap<String, String> propertyLabels,
                         LinkedHashMap<String, String> propertyDescriptions,
                         Optional<String> header, Optional<String> footer)
   implements TemplateUi
@@ -125,27 +126,8 @@ record TemplateUiRecord(List<String> order, LinkedHashMap<String, String> proper
     validateOptionalFieldNotNull(this, header, UI_HEADER);
     validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
-    // TODO Many CEDAR templates will have extra mappings for property labels and descriptions; probably remove silently
-    /*
-    if (!order.containsAll(propertyLabels.keySet())) {
-      Set<String> extraPropertyLabels = propertyLabels.keySet();
-      extraPropertyLabels.removeAll(order);
-      throw new IllegalStateException(
-        "propertyLabels field must contain only entries present in the order field in " +
-          TemplateUi.class.getName() + " " + this.toString() + "; extra labels: " + extraPropertyLabels);
-    }
-
-    if (!order.containsAll(propertyDescriptions.keySet())) {
-      Set<String> extraPropertyDescriptions = propertyDescriptions.keySet();
-      extraPropertyDescriptions.removeAll(order);
-      throw new IllegalStateException(
-        "propertyDescriptions field must contain only entries present in the order field in " +
-          TemplateUi.class.getName() + ": " + this.toString() + "; extra descriptions: " + extraPropertyDescriptions);
-    }
-    **/
-
     order = List.copyOf(order);
-    propertyLabels = new LinkedHashMap<>(propertyLabels);
-    propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
+    propertyLabels = processPropertyLabels(propertyLabels, order);
+    propertyDescriptions = processPropertyDescriptions(propertyDescriptions, order);
   }
 }

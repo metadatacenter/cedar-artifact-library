@@ -47,7 +47,6 @@ import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class ArtifactRoundTripTest
@@ -656,11 +655,6 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
   }
 
-  @Test public void testRoundTripRADxMetadataTemplate()
-  {
-    testTemplateSchemaArtifactRoundTripFromFile("templates/RADxMetadataSpecification.json");
-  }
-
   @Test public void testRoundTripRADxCLIGeneratedTemplate()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");
@@ -669,6 +663,11 @@ public class ArtifactRoundTripTest
   @Test public void testRoundTripRADx2CLIGeneratedTemplate()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADx2.0CLIGeneratedTemplate.json");
+  }
+
+  @Test public void testRoundTemplateWithCustomPropertyLabels()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/TemplateWithCustomPropertyLabels.json");
   }
 
   @Test public void testRoundTripSimpleInstance()
@@ -708,12 +707,7 @@ public class ArtifactRoundTripTest
 
   @Test public void testRoundTripElement004()
   {
-    try {
       testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
-      fail("Expected IllegalStateException");
-    } catch (IllegalStateException e) {
-      // Expected exception
-    }
   }
 
   @Test public void testRoundTripField001()
@@ -734,6 +728,16 @@ public class ArtifactRoundTripTest
   @Test public void testRoundTripField004()
   {
     testFieldSchemaArtifactRoundTripFromFile("fields/field-004.json");
+  }
+
+  @Test public void testRoundTripSimpleTemplateWithInstanceJsonLdType()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/SimpleTemplateWithType.json");
+  }
+
+  @Test public void testRoundTripNoNumericTypePresentElement()
+  {
+    testElementSchemaArtifactRoundTripFromFile("elements/NoNumericTypePresentElement.json");
   }
 
   private void testTemplateSchemaArtifactRoundTripFromFile(String fileName)

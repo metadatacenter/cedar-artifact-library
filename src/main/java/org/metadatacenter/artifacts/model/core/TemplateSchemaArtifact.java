@@ -26,6 +26,7 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateU
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
@@ -48,14 +49,17 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
   static TemplateSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    Optional<URI> instanceJsonLdType,
     String name, String description, Optional<String> identifier,
-    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Version modelVersion, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas, LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
     Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations)
   {
     return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdType,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -99,6 +103,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     private List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
+    private Optional<URI> instanceJsonLdType = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
@@ -130,6 +135,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       this.jsonLdContext = new LinkedHashMap<>(templateSchemaArtifact.jsonLdContext());
       this.jsonLdTypes = new ArrayList<>(templateSchemaArtifact.jsonLdTypes());
       this.jsonLdId = templateSchemaArtifact.jsonLdId();
+      this.instanceJsonLdType = templateSchemaArtifact.instanceJsonLdType();
       this.createdBy = templateSchemaArtifact.createdBy();
       this.modifiedBy = templateSchemaArtifact.modifiedBy();
       this.createdOn = templateSchemaArtifact.createdOn();
@@ -162,6 +168,12 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     public Builder withJsonLdType(URI jsonLdType)
     {
       this.jsonLdTypes.add(jsonLdType);
+      return this;
+    }
+
+    public Builder withInstanceJsonLdType(URI instanceJsonLdType)
+    {
+      this.instanceJsonLdType = Optional.ofNullable(instanceJsonLdType);
       return this;
     }
 
@@ -345,6 +357,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     {
       return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
+        instanceJsonLdType,
         name, description, identifier,
         modelVersion, version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -356,6 +369,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
 record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
                                     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                    Optional<URI> instanceJsonLdType,
                                     String name, String description, Optional<String> identifier,
                                     Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
@@ -378,6 +392,8 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
     validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
     validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     validateUriListFieldContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
+    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateOptionalFieldNotNull(this, instanceJsonLdType, "instanceJsonLdType");
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateOptionalFieldNotNull(this, language,  "language");
@@ -388,10 +404,12 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
     Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
     if (!order.containsAll(childNames)) {
-      childNames.removeAll(order);
-      throw new IllegalStateException(
-        "UI order field must contain an entry for all child fields and elements in " + "template schema artifact " +
-          name + "; missing fields: " + childNames);
+      childNames.removeAll(order); // Generate the names of children not in the order map
+      order.removeAll(childNames); // Silently remove these extra children from the order
+      for (String childToRemove: childNames) { // And from the
+        fieldSchemas.remove(childToRemove);
+        elementSchemas.remove(childToRemove);
+      }
     }
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);

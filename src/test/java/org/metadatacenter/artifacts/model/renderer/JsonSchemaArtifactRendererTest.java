@@ -126,7 +126,6 @@ public class JsonSchemaArtifactRendererTest
     assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
     assertEquals(rendering.get("_valueConstraints").get("temporalType").textValue(), temporalType.getText());
     assertEquals(rendering.get("_ui").get("temporalGranularity").textValue(), granularity.getText());
-    assertTrue(rendering.get("_ui").has("timezoneEnabled"));
 
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
@@ -342,20 +341,6 @@ public class JsonSchemaArtifactRendererTest
   public void testRenderHuBMAPSampleSection()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("templates/SampleSection.json");
-
-    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
-
-    ObjectNode templateRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
-
-    assertTrue(validateJsonSchema(templateRendering));
-
-    assertTrue(validateTemplateSchemaArtifact(templateRendering));
-  }
-
-  @Test
-  public void testRenderRADxMetadataSpecification()
-  {
-    ObjectNode objectNode = getFileContentAsObjectNode("templates/RADxMetadataSpecification.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 

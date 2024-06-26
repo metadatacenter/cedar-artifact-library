@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
@@ -256,21 +255,22 @@ record AttributeValueFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType,
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
     if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);
+      throw new IllegalStateException("minItems must be zero or greater in attribute-value field " + name);
 
     if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
+      throw new IllegalStateException("maxItems must be one or greater in attribute-value field " + name);
 
     if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
+      throw new IllegalStateException("minItems must be lass than maxItems in attribute-value field " + name);
+
+    if (!fieldUi.isAttributeValue())
+      throw new IllegalStateException("field UI must specify attribute-value type in attribute-value field  " + name);
 
     if (fieldUi.isStatic())
-      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT,
-        STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+      jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     else
-      validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+      jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 
-    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

@@ -80,6 +80,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ONE_OF;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
@@ -106,6 +107,7 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.UI_CONTENT;
+import static org.metadatacenter.model.ModelNodeNames.UI_CONTINUE_PREVIOUS_LINE;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
 import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
@@ -306,6 +308,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -336,6 +339,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdType,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -348,6 +352,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -378,6 +383,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdType,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -884,6 +890,33 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return childName2URI;
   }
 
+  /**
+   *
+   * <pre>
+   *   "@type": {
+   *     "oneOf": [
+   *       { "type": "string", "format": "uri", "enum": [ "https://example.com/T1" ] },
+   *       {
+   *         "type": "array", "minItems": 1,
+   *         "items": { "type": "string", "format": "uri", "enum": [ "https://example.com/T1" ] },
+   *         "uniqueItems": true
+   *       }
+   *     ]
+   *   }
+   * </pre>
+   */
+  private Optional<URI> readInstanceJsonLdType(ObjectNode sourceNode, String path)
+  {
+    String uriPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_TYPE + "/" + JSON_SCHEMA_ONE_OF + "/0/" + JSON_SCHEMA_ENUM + "/0";
+    JsonNode uriNode = sourceNode.at(uriPath);
+
+    if (uriNode != null && uriNode.isTextual()) {
+      return Optional.of(URI.create(uriNode.asText()));
+    } else
+      return Optional.empty();
+  }
+
+
   private Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path,
     String fieldName, FieldInputType fieldInputType)
   {
@@ -918,10 +951,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
         Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asNumericDefaultValue()) :
           Optional.empty();
+        if (!numberType.isPresent())
+          numberType = Optional.of(XsdNumericDatatype.DECIMAL); // Default to xsd:decimal if unspecifed
         return Optional.of(
           NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
             numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
+        if (!temporalType.isPresent())
+          throw new ArtifactParseException("a temporal type must be present for a temporal field", fieldName, path);
         Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
           Optional.of(defaultValue.get().asTemporalDefaultValue()) :
           Optional.empty();
@@ -936,7 +973,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       } else if (fieldInputType == FieldInputType.ATTRIBUTE_VALUE) {
         return Optional.empty();
       } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty())) {
-        Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() ?
+        Optional<ControlledTermDefaultValue> controlledTermDefaultValue = defaultValue.isPresent() && defaultValue.get().asControlledTermDefaultValue() != null?
           Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
           Optional.empty();
         return Optional.of(
@@ -1217,16 +1254,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     boolean valueRecommendation = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
     boolean recommendedValue = readBoolean(uiNode, uiPath, UI_RECOMMENDED_VALUE, false);
-    boolean continuePreviousLine = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
+    boolean continuePreviousLine = readBoolean(uiNode, uiPath, UI_CONTINUE_PREVIOUS_LINE, false);
     Optional<Integer> width = readInteger(uiNode, uiPath, UI_WIDTH);
     Optional<Integer> height = readInteger(uiNode, uiPath, UI_HEIGHT);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);
-      InputTimeFormat inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT, InputTimeFormat.TWELVE_HOUR);
-      boolean timeZoneEnabled = readBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED, false);
+      Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(uiNode, uiPath, UI_INPUT_TIME_FORMAT);
+      Optional<Boolean> timeZoneEnabled = readOptionalBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED);
 
-      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled,
+        hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
       return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
@@ -1348,6 +1386,19 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return jsonNode.asBoolean();
   }
 
+  private Optional<Boolean> readOptionalBoolean(ObjectNode sourceNode, String path, String fieldName)
+  {
+    JsonNode jsonNode = sourceNode.get(fieldName);
+
+    if (jsonNode == null || jsonNode.isNull())
+      return Optional.empty();
+
+    if (!jsonNode.isBoolean())
+      throw new ArtifactParseException("Value must be boolean", fieldName, path);
+
+    return Optional.of(jsonNode.asBoolean());
+  }
+
   private FieldInputType readFieldInputType(ObjectNode sourceNode, String path, String fieldName)
   {
     String inputType = readRequiredString(sourceNode, path, fieldName);
@@ -1368,17 +1419,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return TemporalGranularity.fromString(granularityString);
   }
 
-  private InputTimeFormat readInputTimeFormat(ObjectNode sourceNode, String path, String fieldName, InputTimeFormat defaultInputTimeFormat)
+  private Optional<InputTimeFormat> readInputTimeFormat(ObjectNode sourceNode, String path, String fieldName)
   {
     Optional<String> timeFormatString = readString(sourceNode, path, fieldName);
 
     if (timeFormatString.isEmpty())
-      return defaultInputTimeFormat;
+      return Optional.empty();
 
     if (!TIME_FORMATS.contains(timeFormatString.get()))
       throw new ArtifactParseException("Invalid time format " + timeFormatString.get(), UI_INPUT_TIME_FORMAT, path);
 
-    return InputTimeFormat.fromString(timeFormatString.get());
+    return Optional.of(InputTimeFormat.fromString(timeFormatString.get()));
   }
 
   private ObjectNode readChildNode(ObjectNode parentNode, String path, String fieldName)
@@ -1537,8 +1588,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     if (version.isEmpty())
       return Optional.empty();
-    else
-      return Optional.of(Version.fromString(version.get()));
+    else {
+      if (Version.isValidVersion(version.get()))
+        return Optional.of(Version.fromString(version.get()));
+      else // TODO Revisit this silent version fix
+        return Optional.of(Version.fromString("0.0.1"));
+    }
   }
 
   private Optional<Status> readStatus(ObjectNode sourceNode, String path, String fieldName)
@@ -1554,12 +1609,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private Optional<OffsetDateTime> readOffsetDateTime(ObjectNode sourceNode, String path, String fieldName)
   {
     Optional<String> dateTimeValue = readString(sourceNode, path, fieldName);
-
     try {
-      if (dateTimeValue.isPresent())
-        return Optional.of(OffsetDateTime.parse(dateTimeValue.get()));
-      else
+      if (dateTimeValue.isPresent()) {
+        // Preprocess non-standard `+0100` timezone offset
+        String dateTimeString = dateTimeValue.get();
+        // Regex to find and correct timezone offset without colon
+        dateTimeString = dateTimeString.replaceAll("([+-]\\d{2})(\\d{2})$", "$1:$2");
+
+        return Optional.of(OffsetDateTime.parse(dateTimeString));
+      } else {
         return Optional.empty();
+      }
     } catch (DateTimeParseException e) {
       throw new ArtifactParseException(
         "Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(), fieldName, path);

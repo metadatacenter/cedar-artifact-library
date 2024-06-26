@@ -25,6 +25,7 @@ public class ElementSchemaArtifactTest
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = Collections.singletonList(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     URI jsonLdId = URI.create("http://example.com/artifact");
+    URI instanceJsonLdType = URI.create("http://example.com/Study");
     URI createdBy = URI.create("http://example.com/user");
     URI modifiedBy = URI.create("http://example.com/user");
     OffsetDateTime createdOn = OffsetDateTime.now();
@@ -50,6 +51,7 @@ public class ElementSchemaArtifactTest
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
+      Optional.of(instanceJsonLdType),
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
@@ -59,6 +61,7 @@ public class ElementSchemaArtifactTest
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
+    Assert.assertEquals(instanceJsonLdType, elementSchemaArtifact.instanceJsonLdType().get());
     Assert.assertEquals(jsonLdContext, elementSchemaArtifact.jsonLdContext());
     Assert.assertEquals(createdBy, elementSchemaArtifact.createdBy().get());
     Assert.assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());

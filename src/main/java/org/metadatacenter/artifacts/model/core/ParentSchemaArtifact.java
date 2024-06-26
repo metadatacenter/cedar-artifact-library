@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public sealed interface ParentSchemaArtifact extends ParentArtifact permits TemplateSchemaArtifact,
   ElementSchemaArtifact
@@ -20,6 +21,10 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   Map<String, ElementSchemaArtifact> elementSchemas();
 
   default boolean isField(String name) { return fieldSchemas().containsKey(name); }
+
+  default boolean isStaticField(String name) {
+    return fieldSchemas().containsKey(name) && fieldSchemas().get(name).isStatic();
+  }
 
   default boolean isElement(String name) { return elementSchemas().containsKey(name); }
 
@@ -69,6 +74,8 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     else
       throw new IllegalArgumentException("Field " + name + "not present in element " + name());
   }
+
+  Optional<URI> instanceJsonLdType();
 
   default LinkedHashMap<String, URI> getChildPropertyUris()
   {
@@ -129,8 +136,15 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
 
   default List<String> getChildNames()
   {
-
     ArrayList<String> childNames = new ArrayList<>(getUi().order());
+
+    return childNames;
+  }
+
+  default List<String> getNonStaticChildNames()
+  {
+
+    List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name) || isElement(name)).toList();
 
     return childNames;
   }

@@ -178,8 +178,8 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(name, temporalField.name());
     Assert.assertEquals(description, temporalField.description());
     Assert.assertEquals(temporalGranularity, temporalField.fieldUi().asTemporalFieldUi().temporalGranularity());
-    Assert.assertEquals(inputTimeFormat, temporalField.fieldUi().asTemporalFieldUi().inputTimeFormat());
-    Assert.assertEquals(timezoneEnabled, temporalField.fieldUi().asTemporalFieldUi().timezoneEnabled());
+    Assert.assertEquals(inputTimeFormat, temporalField.fieldUi().asTemporalFieldUi().inputTimeFormat().get());
+    Assert.assertEquals(timezoneEnabled, temporalField.fieldUi().asTemporalFieldUi().timezoneEnabled().get());
     Assert.assertEquals(temporalType, temporalField.valueConstraints().get().asTemporalValueConstraints().temporalType());
   }
 
@@ -207,8 +207,8 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(name, clonedTemporalField.name());
     Assert.assertEquals(description, clonedTemporalField.description());
     Assert.assertEquals(temporalGranularity, clonedTemporalField.fieldUi().asTemporalFieldUi().temporalGranularity());
-    Assert.assertEquals(inputTimeFormat, clonedTemporalField.fieldUi().asTemporalFieldUi().inputTimeFormat());
-    Assert.assertEquals(timezoneEnabled, clonedTemporalField.fieldUi().asTemporalFieldUi().timezoneEnabled());
+    Assert.assertEquals(inputTimeFormat, clonedTemporalField.fieldUi().asTemporalFieldUi().inputTimeFormat().get());
+    Assert.assertEquals(timezoneEnabled, clonedTemporalField.fieldUi().asTemporalFieldUi().timezoneEnabled().get());
     Assert.assertEquals(temporalType, clonedTemporalField.valueConstraints().get().asTemporalValueConstraints().temporalType());
   }
 
