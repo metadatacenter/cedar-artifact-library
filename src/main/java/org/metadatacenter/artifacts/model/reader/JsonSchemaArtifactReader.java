@@ -319,7 +319,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
 
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = getModelVersion(sourceNode, path);
+    Version modelVersion = readModelVersion(sourceNode, path);
     String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -330,7 +330,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
-    Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
+    Optional<String> language = readLanguage(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
     Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas, elementSchemas, childPropertyUris);
     TemplateUi templateUi = readTemplateUi(sourceNode, path, UI, childSchemaOrgNames);
@@ -361,7 +361,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaType = readRequiredString(sourceNode, path, JSON_SCHEMA_TYPE);
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = getModelVersion(sourceNode, path);
+    Version modelVersion = readModelVersion(sourceNode, path);
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -372,7 +372,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
-    Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
+    Optional<String> language = readLanguage(sourceNode, path);
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
@@ -407,7 +407,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaType = readRequiredString(sourceNode, path, JSON_SCHEMA_TYPE);
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = getModelVersion(sourceNode, path);
+    Version modelVersion = readModelVersion(sourceNode, path);
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -417,7 +417,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
-    Optional<String> language = getLanguage(sourceNode, path, JSON_LD_CONTEXT);
+    Optional<String> language = readLanguage(sourceNode, path);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS, fieldUi.inputType());
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
@@ -1844,7 +1844,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return uriValues;
   }
 
-  private Version getModelVersion(ObjectNode sourceNode, String path)
+  private Version readModelVersion(ObjectNode sourceNode, String path)
   {
     Optional<String> versionString = readString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION);
 
@@ -1854,7 +1854,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       return Version.fromString("1.6.0"); // TODO Temporarily supply version
   }
 
-  private Optional<String> getLanguage(ObjectNode sourceNode, String path, String fieldName)
+  private Optional<String> readLanguage(ObjectNode sourceNode, String path)
   {
     Map<String, String> contextEntries = readSimpleContextEntries(sourceNode, path);
 
