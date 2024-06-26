@@ -64,7 +64,7 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     if (elementSchemas().containsKey(name))
       return elementSchemas().get(name);
     else
-      throw new IllegalArgumentException("Element " + name + "not present in template " + name());
+      throw new IllegalArgumentException("Element " + name + " not present in template " + name());
   }
 
   default FieldSchemaArtifact getFieldSchemaArtifact(String name)
@@ -72,7 +72,7 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     if (fieldSchemas().containsKey(name))
       return fieldSchemas().get(name);
     else
-      throw new IllegalArgumentException("Field " + name + "not present in element " + name());
+      throw new IllegalArgumentException("Field " + name + " not present in element " + name());
   }
 
   Optional<URI> instanceJsonLdType();
@@ -83,9 +83,11 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
 
     for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : getChildSchemas().entrySet()) {
       String childName = childSchemaArtifactEntry.getKey();
-      ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
-      if (childSchemaArtifact.propertyUri().isPresent())
-        childPropertyUris.put(childName, childSchemaArtifact.propertyUri().get());
+      if (!isStaticField(childName)) {
+        ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
+        if (childSchemaArtifact.propertyUri().isPresent())
+          childPropertyUris.put(childName, childSchemaArtifact.propertyUri().get());
+      }
     }
 
     return childPropertyUris;
