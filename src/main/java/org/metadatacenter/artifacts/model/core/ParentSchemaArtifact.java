@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public sealed interface ParentSchemaArtifact extends ParentArtifact permits TemplateSchemaArtifact,
   ElementSchemaArtifact
@@ -73,6 +74,8 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     else
       throw new IllegalArgumentException("Field " + name + "not present in element " + name());
   }
+
+  Optional<URI> instanceJsonLdType();
 
   default LinkedHashMap<String, URI> getChildPropertyUris()
   {

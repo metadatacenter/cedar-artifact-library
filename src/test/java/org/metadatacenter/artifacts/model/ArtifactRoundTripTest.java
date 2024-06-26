@@ -730,12 +730,12 @@ public class ArtifactRoundTripTest
     testFieldSchemaArtifactRoundTripFromFile("fields/field-004.json");
   }
 
-  @Test public void testRoundTripSimpleTemplateWithType()
+  @Test public void testRoundTripSimpleTemplateWithInstanceJsonLdType()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/SimpleTemplateWithType.json");
   }
 
-  public void testRoundTripNoNumericTypePresentElement()
+  @Test public void testRoundTripNoNumericTypePresentElement()
   {
     testElementSchemaArtifactRoundTripFromFile("elements/NoNumericTypePresentElement.json");
   }

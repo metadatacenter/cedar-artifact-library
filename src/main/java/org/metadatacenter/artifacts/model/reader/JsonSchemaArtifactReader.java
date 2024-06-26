@@ -80,6 +80,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ONE_OF;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
@@ -307,6 +308,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -337,6 +339,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdType,
       name, description, identifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -349,6 +352,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -379,6 +383,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdType,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -884,6 +889,33 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     }
     return childName2URI;
   }
+
+  /**
+   *
+   * <pre>
+   *   "@type": {
+   *     "oneOf": [
+   *       { "type": "string", "format": "uri", "enum": [ "https://example.com/T1" ] },
+   *       {
+   *         "type": "array", "minItems": 1,
+   *         "items": { "type": "string", "format": "uri", "enum": [ "https://example.com/T1" ] },
+   *         "uniqueItems": true
+   *       }
+   *     ]
+   *   }
+   * </pre>
+   */
+  private Optional<URI> readInstanceJsonLdType(ObjectNode sourceNode, String path)
+  {
+    String uriPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_TYPE + "/" + JSON_SCHEMA_ONE_OF + "/0/" + JSON_SCHEMA_ENUM + "/0";
+    JsonNode uriNode = sourceNode.at(uriPath);
+
+    if (uriNode != null && uriNode.isTextual()) {
+      return Optional.of(URI.create(uriNode.asText()));
+    } else
+      return Optional.empty();
+  }
+
 
   private Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path,
     String fieldName, FieldInputType fieldInputType)

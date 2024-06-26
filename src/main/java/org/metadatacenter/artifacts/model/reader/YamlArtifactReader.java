@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.reader;
 
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -261,7 +260,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
-
+    Optional<URI> instanceJsonLdType = Optional.empty(); // TODO Read instance JSON-LD type
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     Optional<Version> version = readVersion(sourceNode, path, VERSION);
@@ -280,7 +279,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
     return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
+      jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType,
+      name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
       language, templateUi, annotations);
   }
@@ -296,7 +296,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
-
+    Optional<URI> instanceJsonLdType = Optional.empty(); // TODO Read instance JSON-LD type
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     Optional<Version> version = readVersion(sourceNode, path, VERSION);
@@ -316,7 +316,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
     return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
+      jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType,
+      name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
       isMultiple, minItems, maxItems, propertyUri, preferredLabel, language, elementUi, annotations);
   }
