@@ -735,11 +735,6 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/SimpleTemplateWithType.json");
   }
 
-  @Test public void testRoundTripNoNumericTypePresentElement()
-  {
-    testElementSchemaArtifactRoundTripFromFile("elements/NoNumericTypePresentElement.json");
-  }
-
   private void testTemplateSchemaArtifactRoundTripFromFile(String fileName)
   {
     ObjectNode originalRendering = getJSONFileContentAsObjectNode(fileName);

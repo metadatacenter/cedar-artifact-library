@@ -5,6 +5,11 @@
       "title" : "Title",
       "description" : "Description",
       "externalLink" : "External Link"
+    },
+    "propertyDescriptions" : {
+      "title" : "",
+      "description" : "",
+      "externalLink" : ""
     }
   },
   "schema:name" : "BioSample Descriptor",

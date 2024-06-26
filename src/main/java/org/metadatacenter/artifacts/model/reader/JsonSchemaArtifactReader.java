@@ -1286,19 +1286,28 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + fieldName;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
-    LinkedHashMap<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    LinkedHashMap<String, String> originalPropertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    LinkedHashMap<String, String> originalPropertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
+    LinkedHashMap<String, String> reorderedPropertyLabels = new LinkedHashMap<>();
+    LinkedHashMap<String, String> reorderedPropertyDescriptions = new LinkedHashMap<>();
+
+    // Reorder to follow the order list
     for (String childName: order) {
-      if (!propertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
-        propertyLabels.put(childName, childSchemaOrgNames.get(childName));
-      if (!propertyDescriptions.containsKey(childName))
-        propertyDescriptions.put(childName, "");
+      if (!originalPropertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
+        reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
+      else
+        reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
+
+      if (!originalPropertyDescriptions.containsKey(childName))
+        reorderedPropertyDescriptions.put(childName, "");
+      else
+        reorderedPropertyDescriptions.put(childName, originalPropertyLabels.get(childName));
     }
 
-    return TemplateUi.create(order, propertyLabels, propertyDescriptions, header, footer);
+    return TemplateUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
   }
 
   private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldName, Map<String, String> childSchemaOrgNames)
@@ -1307,19 +1316,28 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String uiPath = path + "/" + fieldName;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
-    LinkedHashMap<String, String> propertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
-    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
+    LinkedHashMap<String, String> originalPropertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
+    LinkedHashMap<String, String> originalPropertyDescriptions = readString2StringMap(uiNode, uiPath, UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
+    LinkedHashMap<String, String> reorderedPropertyLabels = new LinkedHashMap<>();
+    LinkedHashMap<String, String> reorderedPropertyDescriptions = new LinkedHashMap<>();
+
+    // Reorder to follow the order list
     for (String childName: order) {
-      if (!propertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
-        propertyLabels.put(childName, childSchemaOrgNames.get(childName));
-      if (!propertyDescriptions.containsKey(childName))
-        propertyDescriptions.put(childName, "");
+      if (!originalPropertyLabels.containsKey(childName) && childSchemaOrgNames.containsKey(childName))
+        reorderedPropertyLabels.put(childName, childSchemaOrgNames.get(childName));
+      else
+        reorderedPropertyLabels.put(childName, originalPropertyLabels.get(childName));
+
+      if (!originalPropertyDescriptions.containsKey(childName))
+        reorderedPropertyDescriptions.put(childName, "");
+      else
+        reorderedPropertyDescriptions.put(childName, originalPropertyLabels.get(childName));
     }
 
-    return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
+    return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
   }
 
   private Optional<Annotations> readAnnotations(ObjectNode sourceNode, String path, String fieldName)
