@@ -4,6 +4,8 @@ import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -182,7 +184,8 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
 
   default URI generatePropertyUri(String childName)
   { // TODO Put constant in ModelNodeNames; childName is temporary
-    return URI.create("https://schema.metadatacenter.org/properties/" + childName);
+    return URI.create("https://schema.metadatacenter.org/properties/" +
+      URLEncoder.encode(childName, StandardCharsets.UTF_8));
   }
 
 }
