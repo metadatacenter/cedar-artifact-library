@@ -1159,13 +1159,13 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   private ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode sourceNode, String path)
   {
     URI termUri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_TERM_URI);
-    String source = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
+    Optional<String> source = readString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
     ValueConstraintsActionType actionType = readValueConstraintsActionType(sourceNode, path, VALUE_CONSTRAINTS_ACTION);
     ValueType valueType = readValueType(sourceNode, path, VALUE_CONSTRAINTS_TYPE);
     Optional<URI> sourceUri = readUri(sourceNode, path, VALUE_CONSTRAINTS_SOURCE_URI);
     Optional<Integer> to = readInteger(sourceNode, path, VALUE_CONSTRAINTS_ACTION_TO);
 
-    return new ControlledTermValueConstraintsAction(termUri, source, valueType, actionType, sourceUri, to);
+    return new ControlledTermValueConstraintsAction(termUri, source.orElse(""), valueType, actionType, sourceUri, to);
   }
 
   private Optional<XsdTemporalDatatype> readTemporalType(ObjectNode sourceNode, String path, String fieldName)
