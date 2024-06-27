@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public sealed interface ParentSchemaArtifact extends ParentArtifact permits TemplateSchemaArtifact,
   ElementSchemaArtifact
@@ -92,6 +94,8 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
         ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
         if (childSchemaArtifact.propertyUri().isPresent())
           childPropertyUris.put(childName, childSchemaArtifact.propertyUri().get());
+        else // Missing property-IRI mapping, generate one
+          childPropertyUris.put(childName, generatePropertyUri(childName));
       }
     }
 
@@ -174,6 +178,11 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name) && !isAttributeValueField(name)).toList();
 
     return childNames;
+  }
+
+  default URI generatePropertyUri(String childName)
+  { // TODO Put constant in ModelNodeNames; childName is temporary
+    return URI.create("https://schema.metadatacenter.org/properties/" + childName);
   }
 
 }
