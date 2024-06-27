@@ -12222,11 +12222,6 @@
                 "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInTsv"
               ]
             },
-            "Data Characteristics Table in Key-Value Pairs": {
-              "enum": [
-                "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInKeyValuePairs"
-              ]
-            },
             "Data Characteristics Table in HTML": {
               "enum": [
                 "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInHtml"
@@ -12236,7 +12231,6 @@
           "required": [
             "Data Characteristics Table in CSV",
             "Data Characteristics Table in TSV",
-            "Data Characteristics Table in Key-Value Pairs",
             "Data Characteristics Table in HTML"
           ],
           "additionalProperties": false
@@ -12592,8 +12586,7 @@
         "@id",
         "Data Characteristics Table in HTML",
         "Data Characteristics Table in CSV",
-        "Data Characteristics Table in TSV",
-        "Data Characteristics Table in Key-Value Pairs"
+        "Data Characteristics Table in TSV"
       ],
       "additionalProperties": {
         "type": "object",
@@ -16385,16 +16378,10 @@
               "enum": [
                 "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataCommentary"
               ]
-            },
-            "Data File Descriptive Key-Value Pairs": {
-              "enum": [
-                "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataKeyValuePair"
-              ]
             }
           },
           "required": [
-            "Additional Commentary",
-            "Data File Descriptive Key-Value Pairs"
+            "Additional Commentary"
           ],
           "additionalProperties": false
         },
@@ -16573,7 +16560,6 @@
       "required": [
         "@context",
         "@id",
-        "Data File Descriptive Key-Value Pairs",
         "Additional Commentary"
       ],
       "additionalProperties": {

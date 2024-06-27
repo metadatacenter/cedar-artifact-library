@@ -165,7 +165,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
 
-    for (String childName : templateSchemaArtifact.getNonStaticChildNames())
+    for (String childName : templateSchemaArtifact.getNonStaticNonAttributeValueChildNames())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
     if (templateSchemaArtifact.hasAttributeValueField())
@@ -264,7 +264,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_CONTEXT);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_ID);
 
-    for (String childName : elementSchemaArtifact.getNonStaticChildNames())
+    for (String childName : elementSchemaArtifact.getNonStaticNonAttributeValueChildNames())
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
 
     if (elementSchemaArtifact.annotations().isPresent())

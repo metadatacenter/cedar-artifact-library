@@ -195,11 +195,6 @@
               ]
             }
           }
-        },
-        "Attribute values": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/c7c108f2-3c9e-4f48-855b-434056897d5e"
-          ]
         }
       },
       "required": [

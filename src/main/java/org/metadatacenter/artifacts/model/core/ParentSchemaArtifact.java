@@ -88,7 +88,7 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
 
     for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : getChildSchemas().entrySet()) {
       String childName = childSchemaArtifactEntry.getKey();
-      if (!isStaticField(childName)) {
+      if (!isStaticField(childName) && !isAttributeValueField(childName)) {
         ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
         if (childSchemaArtifact.propertyUri().isPresent())
           childPropertyUris.put(childName, childSchemaArtifact.propertyUri().get());
@@ -163,8 +163,17 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   default List<String> getNonStaticChildNames()
   {
 
-    List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name) || isElement(name)).toList();
+    List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name)).toList();
 
     return childNames;
   }
+
+  default List<String> getNonStaticNonAttributeValueChildNames()
+  {
+
+    List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name) && !isAttributeValueField(name)).toList();
+
+    return childNames;
+  }
+
 }

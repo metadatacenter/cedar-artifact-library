@@ -7594,11 +7594,6 @@
                 "https://w3id.org/radx/radmo/dataCharacteristicsTableInTsv"
               ]
             },
-            "Data Characteristics Table in Key-Value Pairs": {
-              "enum": [
-                "https://w3id.org/radx/radmo/dataCharacteristicsTableInKeyValuePairs"
-              ]
-            },
             "Data Characteristics Table in HTML": {
               "enum": [
                 "https://w3id.org/radx/radmo/dataCharacteristicsTableInHtml"
@@ -7608,7 +7603,6 @@
           "required": [
             "Data Characteristics Table in CSV",
             "Data Characteristics Table in TSV",
-            "Data Characteristics Table in Key-Value Pairs",
             "Data Characteristics Table in HTML"
           ],
           "additionalProperties": false
@@ -7984,9 +7978,8 @@
         "@context",
         "@id",
         "Data Characteristics Table in HTML",
-        "Data Characteristics Table in CSV",
-        "Data Characteristics Table in TSV",
-        "Data Characteristics Table in Key-Value Pairs"
+          "Data Characteristics Table in CSV",
+          "Data Characteristics Table in TSV"
       ],
       "additionalProperties": {
         "type": "object",
@@ -11730,16 +11723,10 @@
               "enum": [
                 "https://w3id.org/radx/radmo/auxiliaryMetadataCommentary"
               ]
-            },
-            "Data File Descriptive Key-Value Pairs": {
-              "enum": [
-                "https://w3id.org/radx/radmo/auxiliaryMetadataKeyValuePair"
-              ]
             }
           },
           "required": [
-            "Additional Commentary",
-            "Data File Descriptive Key-Value Pairs"
+            "Additional Commentary"
           ],
           "additionalProperties": false
         },
@@ -11925,7 +11912,6 @@
       "required": [
         "@context",
         "@id",
-        "Data File Descriptive Key-Value Pairs",
         "Additional Commentary"
       ],
       "additionalProperties": {
