@@ -111,12 +111,12 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
     else if (fieldUi.inputType() == FieldInputType.RADIO)
       return RadioField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.CHECKBOX)
       return CheckboxField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.LIST)
       return ListField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,

@@ -1107,8 +1107,7 @@
           }
         ],
         "requiredValue": false,
-        "recommendedValue": false,
-        "multipleChoice": true
+        "multipleChoice": false
       },
       "additionalProperties": false,
       "_ui": {
@@ -1215,7 +1214,6 @@
             }
           ],
           "requiredValue": false,
-          "recommendedValue": false,
           "multipleChoice": true
         },
         "additionalProperties": false,

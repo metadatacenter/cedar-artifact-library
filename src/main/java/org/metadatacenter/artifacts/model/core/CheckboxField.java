@@ -37,7 +37,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
   static CheckboxField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
+    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> preferredLabel, List<String> alternateLabels,
@@ -46,9 +46,11 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
   {
     return new CheckboxFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
+
+  default boolean isMultiple() { return true; }
 
   static CheckboxFieldBuilder builder() { return new CheckboxFieldBuilder(); }
 
@@ -207,12 +209,6 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withIsMultiple(boolean isMultiple)
-    {
-      super.withIsMultiple(isMultiple);
-      return this;
-    }
-
     @Override public CheckboxFieldBuilder withMinItems(Integer minItems)
     {
       super.withMinItems(minItems);
@@ -262,7 +258,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
         jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy,
         createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     }
   }
@@ -273,7 +269,7 @@ record CheckboxFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
                            String name, String description, Optional<String> identifier,
                            Version modelVersion, Optional<Version> version, Optional<Status> status,
                            Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                           Optional<Integer> minItems, Optional<Integer> maxItems,
                            Optional<URI> propertyUri,
                            Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,

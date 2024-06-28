@@ -63,7 +63,7 @@ public sealed interface ListField extends FieldSchemaArtifact
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.LIST);
-      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
+      this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public ListFieldBuilder(ListField listField)

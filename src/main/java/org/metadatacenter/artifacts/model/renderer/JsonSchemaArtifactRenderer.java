@@ -375,9 +375,14 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         // We render multiple choice for list, checkbox and radio fields only (even if false)
         if (fieldSchemaArtifact.fieldUi().isCheckbox()) {
           valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, true);
-        } else if (fieldSchemaArtifact.fieldUi().isList() || fieldSchemaArtifact.fieldUi().isRadio())
-          valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, valueConstraints.multipleChoice());
-        else
+        } else if (fieldSchemaArtifact.fieldUi().isRadio()) {
+          valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+        } else if (fieldSchemaArtifact.fieldUi().isList()) {
+          if (fieldSchemaArtifact.isMultiple())
+            valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, true);
+          else
+            valueConstraintRendering.put(VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+        } else
           valueConstraintRendering.remove(VALUE_CONSTRAINTS_MULTIPLE_CHOICE); // Remove if present
 
         rendering.put(VALUE_CONSTRAINTS, valueConstraintRendering);

@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
@@ -38,7 +37,7 @@ public sealed interface RadioField extends FieldSchemaArtifact
   static RadioField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
+    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> preferredLabel, List<String> alternateLabels,
@@ -47,9 +46,11 @@ public sealed interface RadioField extends FieldSchemaArtifact
   {
     return new RadioFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
+
+  default boolean isMultiple() { return false; }
 
   static RadioFieldBuilder builder() { return new RadioFieldBuilder(); }
 
@@ -64,7 +65,7 @@ public sealed interface RadioField extends FieldSchemaArtifact
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.RADIO);
-      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
+      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(false);
     }
 
     public RadioFieldBuilder(RadioField radioField)
@@ -210,12 +211,6 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RadioFieldBuilder withIsMultiple(boolean isMultiple)
-    {
-      super.withIsMultiple(isMultiple);
-      return this;
-    }
-
     @Override public RadioFieldBuilder withMinItems(Integer minItems)
     {
       super.withMinItems(minItems);
@@ -264,7 +259,7 @@ public sealed interface RadioField extends FieldSchemaArtifact
       withValueConstraints(valueConstraintsBuilder.build());
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     }
   }
@@ -275,7 +270,7 @@ record RadioFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String j
                         String name, String description, Optional<String> identifier,
                         Version modelVersion, Optional<Version> version, Optional<Status> status,
                         Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                        Optional<Integer> minItems, Optional<Integer> maxItems,
                         Optional<URI> propertyUri,
                         Optional<URI> createdBy, Optional<URI> modifiedBy,
                         Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
