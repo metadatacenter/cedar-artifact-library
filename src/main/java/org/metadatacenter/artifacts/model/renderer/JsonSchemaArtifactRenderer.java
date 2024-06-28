@@ -578,12 +578,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
 
     if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
-      objectNode.put(JSON_LD_TYPE, renderUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
+      objectNode.put(JSON_LD_TYPE, renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
     } else if (fieldInstanceArtifact.jsonLdTypes().size() > 1) {
       ArrayNode jsonLdTypesArrayNode = mapper.createArrayNode();
 
       for (int i = 0; i < fieldInstanceArtifact.jsonLdTypes().size(); i++)
-        jsonLdTypesArrayNode.add(renderUri(fieldInstanceArtifact.jsonLdTypes().get(i)));
+        jsonLdTypesArrayNode.add(renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(i)));
 
       objectNode.put(JSON_LD_TYPE, jsonLdTypesArrayNode);
     }
@@ -1943,9 +1943,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
   private String renderUri(URI uri)
   {
+    return uri.toString();
+  }
+
+  private String renderPossiblyXsdPrefixedUri(URI uri)
+  {
     if (XsdDatatype.isKnownXsdDatatypeUri(uri))
       return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
     else
       return uri.toString();
   }
+
 }
