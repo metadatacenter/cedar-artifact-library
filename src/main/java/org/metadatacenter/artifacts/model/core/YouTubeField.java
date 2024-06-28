@@ -17,12 +17,9 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateM
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
@@ -38,17 +35,23 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-    Optional<URI> propertyUri,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations)
   {
     return new YouTubeFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, Optional.empty(), Collections.emptyList(), language, fieldUi,
-      Optional.empty(), annotations);
+      status, previousVersion, derivedFrom,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty(), annotations);
   }
+
+  default boolean isMultiple() { return false; }
+
+  default Optional<Integer> minItems() { return Optional.empty(); }
+
+  default Optional<Integer> maxItems() { return Optional.empty(); }
+
+  default Optional<URI> propertyUri() { return Optional.empty(); }
 
   static YouTubeFieldBuilder builder() { return new YouTubeFieldBuilder(); }
 
@@ -172,30 +175,6 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public YouTubeFieldBuilder withIsMultiple(boolean isMultiple)
-    {
-      super.withIsMultiple(isMultiple);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withMinItems(Integer minItems)
-    {
-      super.withMinItems(minItems);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withMaxItems(Integer maxItems)
-    {
-      super.withMaxItems(maxItems);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withPropertyUri(URI propertyUri)
-    {
-      super.withPropertyUri(propertyUri);
-      return this;
-    }
-
     @Override public YouTubeFieldBuilder withLanguage(String language)
     {
       super.withLanguage(language);
@@ -223,9 +202,10 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
     public YouTubeField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+        jsonLdContext, jsonLdTypes, jsonLdId,
+        name, description, identifier, modelVersion, version, status, previousVersion, derivedFrom,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn,
         language, fieldUi, annotations);
     }
   }
@@ -236,8 +216,6 @@ record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
                           String name, String description, Optional<String> identifier,
                           Version modelVersion, Optional<Version> version, Optional<Status> status,
                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                          boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                          Optional<URI> propertyUri,
                           Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                           Optional<String> preferredLabel, List<String> alternateLabels,
@@ -252,27 +230,12 @@ record YouTubeFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
       Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
     validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
-    validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
-    validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
-
-    if (fieldUi.isStatic())
-      jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    else
-      jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }

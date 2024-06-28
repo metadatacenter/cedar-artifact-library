@@ -147,27 +147,27 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
     else if (fieldUi.inputType() == FieldInputType.PAGE_BREAK)
       return PageBreakField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     else if (fieldUi.inputType() == FieldInputType.SECTION_BREAK)
       return SectionBreakField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, language, fieldUi, annotations);
     else if (fieldUi.inputType() == FieldInputType.RICHTEXT)
       return RichTextField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, language, preferredLabel, fieldUi.asStaticFieldUi(), annotations);
     else if (fieldUi.inputType() == FieldInputType.IMAGE)
       return ImageField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, language, preferredLabel, fieldUi, annotations);
     else if (fieldUi.inputType() == FieldInputType.YOUTUBE)
       return YouTubeField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, language, fieldUi, annotations);
     else
       throw new RuntimeException("unknown input type " + fieldUi.inputType() + " for field " + name);
