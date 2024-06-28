@@ -449,6 +449,7 @@ public class FieldSchemaArtifactBuilderTest
       withOption("Choice 1").
       withOption("Choice 2").
       withOption("Choice 3", true).
+      withIsMultiple(true).
       build();
 
     Assert.assertEquals(FieldInputType.LIST, listField.fieldUi().inputType());
@@ -460,6 +461,7 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(false, listField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
     Assert.assertEquals("Choice 3", listField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
     Assert.assertEquals(true, listField.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
+    Assert.assertEquals(true, listField.isMultiple());
   }
 
   @Test public void testCreateListFieldWithCopyBuilder()

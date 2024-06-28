@@ -158,6 +158,11 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  @Test public void testRoundTripListField()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/ListField.json");
+  }
+
   @Test public void testRoundTripRadioField()
   {
     String name = "Field name";
