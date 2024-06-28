@@ -421,19 +421,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
     Optional<String> language = readLanguage(sourceNode, path);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
-    Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS, fieldUi.inputType());
+    Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS,
+      fieldUi.inputType());
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
 
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      isMultiple, minItems, maxItems, propertyUri,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      preferredLabel, alternateLabels,
-      language, fieldUi, valueConstraints, annotations);
+      jsonLdContext, jsonLdTypes, jsonLdId, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, modelVersion,
+      version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
   private Map<String, String> readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,

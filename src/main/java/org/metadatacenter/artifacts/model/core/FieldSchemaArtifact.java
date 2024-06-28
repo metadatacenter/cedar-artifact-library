@@ -137,7 +137,8 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
       return TemporalField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(), valueConstraints, annotations);
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(), valueConstraints,
+        annotations);
     else if (fieldUi.inputType() == FieldInputType.ATTRIBUTE_VALUE)
       return AttributeValueField.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
