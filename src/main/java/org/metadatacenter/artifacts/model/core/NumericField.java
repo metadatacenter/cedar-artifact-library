@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.core;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
 
 import java.net.URI;
@@ -42,7 +41,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+    Optional<String> language, NumericFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
     Optional<Annotations> annotations)
   {
     return new NumericFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
@@ -278,7 +277,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+        preferredLabel, alternateLabels, language, fieldUi.asNumericFieldUi(), valueConstraints, annotations);
     }
   }
 }
@@ -293,7 +292,7 @@ record NumericFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String
                           Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                           Optional<String> preferredLabel, List<String> alternateLabels,
-                          Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                          Optional<String> language, NumericFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
                           Optional<Annotations> annotations)
   implements NumericField
 {

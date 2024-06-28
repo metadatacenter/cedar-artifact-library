@@ -1,7 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 
 import java.net.URI;
@@ -40,7 +39,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> language, Optional<String> preferredLLabel, FieldUi fieldUi, Optional<Annotations> annotations)
+    Optional<String> language, Optional<String> preferredLLabel, StaticFieldUi fieldUi, Optional<Annotations> annotations)
   {
     return new RichTextFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
@@ -225,7 +224,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, preferredLabel, fieldUi, annotations);
+        language, preferredLabel, fieldUi.asStaticFieldUi(), annotations);
     }
   }
 }
@@ -240,7 +239,7 @@ record RichTextFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
                            Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                            Optional<String> preferredLabel, List<String> alternateLabels,
-                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                           Optional<String> language, StaticFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
                            Optional<Annotations> annotations)
   implements RichTextField
 {

@@ -5,7 +5,6 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.net.URI;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
@@ -45,7 +43,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+    Optional<String> language, TemporalFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
     Optional<Annotations> annotations)
   {
     return new TemporalFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
@@ -282,7 +280,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+        preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(), valueConstraints, annotations);
     }
   }
 }
@@ -297,7 +295,7 @@ record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
                            Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                            Optional<String> preferredLabel, List<String> alternateLabels,
-                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                           Optional<String> language, TemporalFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
                            Optional<Annotations> annotations)
   implements TemporalField
 {
