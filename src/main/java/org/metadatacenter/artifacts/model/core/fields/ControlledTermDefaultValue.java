@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.net.URI;
 
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LABEL;
@@ -17,6 +18,7 @@ public record ControlledTermDefaultValue(URI termUri, @JsonProperty("rdfs:label"
   public ControlledTermDefaultValue {
     validateUriFieldNotNull(this, termUri, VALUE_CONSTRAINTS_TERM_URI);
     validateStringFieldNotNull(this, label, VALUE_CONSTRAINTS_LABEL);
+    validateStringFieldNotEmpty(this, label, VALUE_CONSTRAINTS_LABEL);
   }
 
   @Override public DefaultValueType getValueType()

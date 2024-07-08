@@ -6331,7 +6331,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "literals": [],
               "requiredValue": false,
               "recommendedValue": false
@@ -8447,7 +8446,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "literals": [],
               "requiredValue": false,
               "recommendedValue": false
@@ -9190,7 +9188,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -9788,7 +9785,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -9881,7 +9877,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -10215,7 +10210,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -11969,7 +11963,6 @@
                 },
                 "_valueConstraints": {
                   "temporalType": "xsd:date",
-                  "defaultValue": "",
                   "requiredValue": false,
                   "recommendedValue": false
                 },
@@ -14305,7 +14298,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -14398,7 +14390,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -16279,7 +16270,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
