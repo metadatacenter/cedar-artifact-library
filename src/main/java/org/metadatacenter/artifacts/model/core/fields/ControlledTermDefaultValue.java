@@ -8,13 +8,15 @@ import java.net.URI;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LABEL;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TERM_URI;
 
 public record ControlledTermDefaultValue(URI termUri, @JsonProperty("rdfs:label") String label)
   implements DefaultValue<Pair<URI, String>>
 {
   public ControlledTermDefaultValue {
-    validateUriFieldNotNull(this, termUri, "termUri");
-    validateStringFieldNotNull(this, label, "label");
+    validateUriFieldNotNull(this, termUri, VALUE_CONSTRAINTS_TERM_URI);
+    validateStringFieldNotNull(this, label, VALUE_CONSTRAINTS_LABEL);
   }
 
   @Override public DefaultValueType getValueType()
