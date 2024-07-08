@@ -91,7 +91,7 @@ public sealed interface LinkField extends FieldSchemaArtifact
 
     public LinkFieldBuilder withValueRecommendation(boolean valueRecommendation)
     {
-      fieldUiBuilder.withValueRecommendation(valueRecommendation);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendation);
       return this;
     }
 

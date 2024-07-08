@@ -110,7 +110,7 @@ public sealed interface TextField extends FieldSchemaArtifact
 
     public TextFieldBuilder withValueRecommendation(boolean valueRecommendation)
     {
-      fieldUiBuilder.withValueRecommendation(valueRecommendation);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendation);
       return this;
     }
 

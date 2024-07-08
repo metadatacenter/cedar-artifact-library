@@ -162,7 +162,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
 
     public ControlledTermFieldBuilder withValueRecommendation(boolean valueRecommendation)
     {
-      fieldUiBuilder.withValueRecommendation(valueRecommendation);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendation);
       return this;
     }
 

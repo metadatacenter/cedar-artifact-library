@@ -387,7 +387,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path)
   {
     FieldInputType fieldInputType = readFieldInputType(sourceNode, path, TYPE);
-    boolean valueRecommendation = readBoolean(sourceNode, path, VALUE_RECOMMENDATION, false);
+    boolean valueRecommendationEnabled = readBoolean(sourceNode, path, VALUE_RECOMMENDATION, false);
     boolean hidden = readBoolean(sourceNode, path, HIDDEN, false);
     boolean recommendedValue = readBoolean(sourceNode, path, RECOMMENDED, false);
     boolean continuePreviousLine = readBoolean(sourceNode, path, CONTINUE_PREVIOUS_LINE, false);
@@ -399,14 +399,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(sourceNode, path, INPUT_TIME_FORMAT);
       Optional<Boolean> timeZoneEnabled = readBoolean(sourceNode, path, INPUT_TIME_ZONE);
 
-      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, recommendedValue, continuePreviousLine);
+      return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden, continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
-      return NumericFieldUi.create(hidden, recommendedValue, continuePreviousLine);
+      return NumericFieldUi.create(hidden, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       Optional<String> content = readString(sourceNode, path, CONTENT, true);
       return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine, width, height);
     } else
-      return FieldUi.create(fieldInputType, hidden, valueRecommendation, recommendedValue, continuePreviousLine);
+      return FieldUi.create(fieldInputType, hidden, continuePreviousLine, valueRecommendationEnabled);
   }
 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,

@@ -12,12 +12,10 @@ public class NumericFieldUiTest
   public void testCreate() {
 
     boolean hidden = false;
-    boolean recommendedValue = false;
     boolean continuePreviousLine = false;
 
     NumericFieldUi numericFieldUi = NumericFieldUi.builder()
       .withHidden(hidden)
-      .withRecommendedValue(recommendedValue)
       .withContinuePreviousLine(continuePreviousLine)
       .build();
 
@@ -25,7 +23,6 @@ public class NumericFieldUiTest
     assertEquals(FieldInputType.NUMERIC, numericFieldUi.inputType());
     assertEquals(hidden, numericFieldUi.hidden());
     assertEquals(continuePreviousLine, numericFieldUi.continuePreviousLine());
-    assertEquals(recommendedValue, numericFieldUi.recommendedValue());
   }
 
 }

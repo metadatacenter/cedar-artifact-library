@@ -103,7 +103,7 @@ public sealed interface EmailField extends FieldSchemaArtifact
 
     public EmailFieldBuilder withValueRecommendation(boolean valueRecommendation)
     {
-      fieldUiBuilder.withValueRecommendation(valueRecommendation);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendation);
       return this;
     }
 
