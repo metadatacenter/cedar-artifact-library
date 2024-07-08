@@ -184,11 +184,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
         if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
-            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact),
-              childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
+            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact.name(),
+                childFieldSchemaArtifact), childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact));
+            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
 
       } else if (templateSchemaArtifact.isElement(childName)) {
         ElementSchemaArtifact childElementSchemaArtifact = templateSchemaArtifact.getElementSchemaArtifact(childName);
@@ -276,11 +276,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
         if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue())
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
-            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact),
+            renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact),
               childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact));
+            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
 
       } else if (elementSchemaArtifact.isElement(childName)) {
         ElementSchemaArtifact childElementSchemaArtifact = elementSchemaArtifact.getElementSchemaArtifact(childName);
