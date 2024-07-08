@@ -7,7 +7,8 @@ import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import java.util.Optional;
 
 public sealed interface ValueConstraints permits TextValueConstraints, NumericValueConstraints,
-  ControlledTermValueConstraints, TemporalValueConstraints, LinkValueConstraints, EmailValueConstraints
+  ControlledTermValueConstraints, TemporalValueConstraints, LinkValueConstraints, EmailValueConstraints,
+  PhoneNumberValueConstraints
 {
   boolean requiredValue();
 

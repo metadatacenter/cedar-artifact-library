@@ -4,7 +4,7 @@ package org.metadatacenter.artifacts.model.core.fields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefaultValue, ControlledTermDefaultValue,
-  TemporalDefaultValue, LinkDefaultValue, EmailDefaultValue
+  TemporalDefaultValue, LinkDefaultValue, EmailDefaultValue, PhoneNumberDefaultValue
 {
    @JsonIgnore
    DefaultValueType getValueType();

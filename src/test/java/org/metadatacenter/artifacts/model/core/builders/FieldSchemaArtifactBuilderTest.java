@@ -46,7 +46,7 @@ public class FieldSchemaArtifactBuilderTest
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
-      withRegex(regex).withValueRecommendation(valueRecommendation).
+      withRegex(regex).withValueRecommendationEnabled(valueRecommendation).
       build();
 
     Assert.assertEquals(FieldInputType.TEXTFIELD, textField.fieldUi().inputType());
@@ -72,7 +72,7 @@ public class FieldSchemaArtifactBuilderTest
       withDescription(description).
       withMinLength(minLength).
       withMaxLength(maxLength).
-      withRegex(regex).withValueRecommendation(valueRecommendation).
+      withRegex(regex).withValueRecommendationEnabled(valueRecommendation).
       build();
 
     TextField clonedTextField = new TextField.TextFieldBuilder(initialTextField).build();

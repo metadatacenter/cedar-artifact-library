@@ -103,9 +103,9 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
       return this;
     }
 
-    public PhoneNumberFieldBuilder withValueRecommendation(boolean valueRecommendation)
+    public PhoneNumberFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendation);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
