@@ -128,6 +128,14 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + ListField.class.getName());
   }
 
+  default LinkField asLinkField()
+  {
+    if (this instanceof LinkField)
+      return (LinkField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + LinkField.class.getName());
+  }
+
   default EmailField asEmailField()
   {
     if (this instanceof EmailField)
@@ -297,6 +305,6 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, language, fieldUi, annotations);
     else
-      throw new RuntimeException("unknown input type " + fieldUi.inputType() + " for field " + name);
+      throw new IllegalArgumentException("unknown input type " + fieldUi.inputType() + " for field " + name);
   }
 }

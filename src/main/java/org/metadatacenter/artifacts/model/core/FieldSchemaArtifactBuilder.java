@@ -54,10 +54,43 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
 
   static public FieldSchemaArtifactBuilder builder(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    if (fieldSchemaArtifact instanceof TextField) {
+    // TODO Use typesafe switch when available
+    if (fieldSchemaArtifact instanceof TextField)
       return TextField.TextFieldBuilder.builder(fieldSchemaArtifact.asTextField());
-    } else
-      return null; // TODO
+    else if (fieldSchemaArtifact instanceof TextAreaField)
+      return TextAreaField.TextAreaFieldBuilder.builder(fieldSchemaArtifact.asTextAreaField());
+    else if (fieldSchemaArtifact instanceof TemporalField)
+      return TemporalField.TemporalFieldBuilder.builder(fieldSchemaArtifact.asTemporalField());
+    else if (fieldSchemaArtifact instanceof RadioField)
+      return RadioField.RadioFieldBuilder.builder(fieldSchemaArtifact.asRadioField());
+    else if (fieldSchemaArtifact instanceof PhoneNumberField)
+      return PhoneNumberField.PhoneNumberFieldBuilder.builder(fieldSchemaArtifact.asPhoneNumberField());
+    else if (fieldSchemaArtifact instanceof NumericField)
+      return NumericField.NumericFieldBuilder.builder(fieldSchemaArtifact.asNumericField());
+    else if (fieldSchemaArtifact instanceof ListField)
+      return ListField.ListFieldBuilder.builder(fieldSchemaArtifact.asListField());
+    else if (fieldSchemaArtifact instanceof LinkField)
+      return LinkField.LinkFieldBuilder.builder(fieldSchemaArtifact.asLinkField());
+    else if (fieldSchemaArtifact instanceof EmailField)
+      return EmailField.EmailFieldBuilder.builder(fieldSchemaArtifact.asEmailField());
+    else if (fieldSchemaArtifact instanceof ControlledTermField)
+      return ControlledTermField.ControlledTermFieldBuilder.builder(fieldSchemaArtifact.asControlledTermField());
+    else if (fieldSchemaArtifact instanceof CheckboxField)
+      return CheckboxField.CheckboxFieldBuilder.builder(fieldSchemaArtifact.asCheckboxField());
+    else if (fieldSchemaArtifact instanceof AttributeValueField)
+      return AttributeValueField.AttributeValueFieldBuilder.builder(fieldSchemaArtifact.asAttributeValueField());
+    else if (fieldSchemaArtifact instanceof PageBreakField)
+      return PageBreakField.PageBreakFieldBuilder.builder(fieldSchemaArtifact.asPageBreakField());
+    else if (fieldSchemaArtifact instanceof SectionBreakField)
+      return SectionBreakField.SectionBreakFieldBuilder.builder(fieldSchemaArtifact.asSectionBreakField());
+    else if (fieldSchemaArtifact instanceof ImageField)
+      return ImageField.ImageFieldBuilder.builder(fieldSchemaArtifact.asImageField());
+    else if (fieldSchemaArtifact instanceof YouTubeField)
+      return YouTubeField.YouTubeFieldBuilder.builder(fieldSchemaArtifact.asYouTubeField());
+    else if (fieldSchemaArtifact instanceof RichTextField)
+      return RichTextField.RichTextFieldBuilder.builder(fieldSchemaArtifact.asRichTextField());
+    else
+      throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
   }
 
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)

@@ -79,7 +79,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     return new YouTubeFieldUiBuilder(staticFieldUi);
   }
 
-  class PageBreakFieldUiBuilder
+  final class PageBreakFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
@@ -111,7 +111,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class SectionBreakFieldUiBuilder
+  final class SectionBreakFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
@@ -143,7 +143,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class RichTextFieldUiBuilder
+  final class RichTextFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
@@ -183,7 +183,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class ImageFieldUiBuilder
+  final class ImageFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
@@ -225,7 +225,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class YouTubeFieldUiBuilder
+  final class YouTubeFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;

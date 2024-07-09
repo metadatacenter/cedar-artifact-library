@@ -90,7 +90,7 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
     return new Builder(fieldUi);
   }
 
-  class Builder
+  final class Builder implements FieldUiBuilder
   {
     private FieldInputType inputType;
     private boolean hidden = false;

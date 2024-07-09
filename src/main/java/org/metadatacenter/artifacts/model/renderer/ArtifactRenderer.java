@@ -20,6 +20,9 @@ public interface ArtifactRenderer<T>
 
   default T renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
+    //FieldSchemaArtifactBuilder builder = FieldSchemaArtifactBuilder.builder(fieldSchemaArtifact);
+
+
     return renderFieldSchemaArtifact(fieldSchemaArtifact.name(), fieldSchemaArtifact);
   }
 

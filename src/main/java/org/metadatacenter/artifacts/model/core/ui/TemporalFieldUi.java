@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core.ui;
 
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -29,17 +28,17 @@ public non-sealed interface TemporalFieldUi extends FieldUi
       hidden, continuePreviousLine);
   }
 
-  static Builder builder()
+  static TemporalFieldUiBuilder builder()
   {
-    return new TemporalFieldUi.Builder();
+    return new TemporalFieldUiBuilder();
   }
 
-  static Builder builder(TemporalFieldUi temporalFieldUi)
+  static TemporalFieldUiBuilder builder(TemporalFieldUi temporalFieldUi)
   {
-    return new TemporalFieldUi.Builder(temporalFieldUi);
+    return new TemporalFieldUiBuilder(temporalFieldUi);
   }
 
-  class Builder
+  final class TemporalFieldUiBuilder implements FieldUiBuilder
   {
     private FieldInputType inputType = FieldInputType.TEMPORAL;
     private TemporalGranularity temporalGranularity;
@@ -48,11 +47,11 @@ public non-sealed interface TemporalFieldUi extends FieldUi
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
 
-    private Builder()
+    private TemporalFieldUiBuilder()
     {
     }
 
-    private Builder(TemporalFieldUi temporalFieldUi)
+    private TemporalFieldUiBuilder(TemporalFieldUi temporalFieldUi)
     {
       this.inputType = temporalFieldUi.inputType();
       this.temporalGranularity = temporalFieldUi.temporalGranularity();
@@ -62,31 +61,31 @@ public non-sealed interface TemporalFieldUi extends FieldUi
       this.continuePreviousLine = temporalFieldUi.continuePreviousLine();
     }
 
-    public Builder withTemporalGranularity(TemporalGranularity temporalGranularity)
+    public TemporalFieldUiBuilder withTemporalGranularity(TemporalGranularity temporalGranularity)
     {
       this.temporalGranularity = temporalGranularity;
       return this;
     }
 
-    public Builder withInputTimeFormat(InputTimeFormat inputTimeFormat)
+    public TemporalFieldUiBuilder withInputTimeFormat(InputTimeFormat inputTimeFormat)
     {
       this.inputTimeFormat = Optional.ofNullable(inputTimeFormat);
       return this;
     }
 
-    public Builder withTimezoneEnabled(boolean timezoneEnabled)
+    public TemporalFieldUiBuilder withTimezoneEnabled(boolean timezoneEnabled)
     {
       this.timezoneEnabled = Optional.ofNullable(timezoneEnabled);
       return this;
     }
 
-    public Builder withHidden(boolean hidden)
+    public TemporalFieldUiBuilder withHidden(boolean hidden)
     {
       this.hidden = hidden;
       return this;
     }
 
-    public Builder withContinuePreviousLine(boolean continuePreviousLine)
+    public TemporalFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       this.continuePreviousLine = continuePreviousLine;
       return this;

@@ -14,38 +14,38 @@ public non-sealed interface NumericFieldUi extends FieldUi
     return new NumericFieldUiRecord(FieldInputType.NUMERIC, hidden, continuePreviousLine);
   }
 
-  static Builder builder() {
-    return new NumericFieldUi.Builder();
+  static NumericFieldUiBuilder builder() {
+    return new NumericFieldUiBuilder();
   }
 
-  static Builder builder(NumericFieldUi numericFieldUi) {
-    return new NumericFieldUi.Builder(numericFieldUi);
+  static NumericFieldUiBuilder builder(NumericFieldUi numericFieldUi) {
+    return new NumericFieldUiBuilder(numericFieldUi);
   }
 
-  class Builder
+  final class NumericFieldUiBuilder implements FieldUiBuilder
   {
     private FieldInputType inputType = FieldInputType.NUMERIC;
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
 
-    private Builder()
+    private NumericFieldUiBuilder()
     {
     }
 
-    private Builder(NumericFieldUi numericFieldUi)
+    private NumericFieldUiBuilder(NumericFieldUi numericFieldUi)
     {
       this.inputType = numericFieldUi.inputType();
       this.hidden = numericFieldUi.hidden();
       this.continuePreviousLine = numericFieldUi.continuePreviousLine();
     }
 
-    public Builder withHidden(boolean hidden)
+    public NumericFieldUiBuilder withHidden(boolean hidden)
     {
       this.hidden = hidden;
       return this;
     }
 
-    public Builder withContinuePreviousLine(boolean continuePreviousLine)
+    public NumericFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       this.continuePreviousLine = continuePreviousLine;
       return this;
