@@ -253,6 +253,24 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override  public RadioFieldBuilder withFieldUi(FieldUi fieldUi)
+    {
+      if (fieldUi == null)
+        throw new IllegalArgumentException("null field UI passed to builder");
+
+      this.fieldUi = fieldUi;
+      return this;
+    }
+
+    @Override public RadioFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
+    {
+      if (valueConstraints == null)
+        throw new IllegalArgumentException("null value constraints passed to builder");
+
+      this.valueConstraints = Optional.ofNullable(valueConstraints);
+      return this;
+    }
+
     public RadioField build()
     {
       withFieldUi(fieldUiBuilder.build());

@@ -202,6 +202,24 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public SectionBreakFieldBuilder withFieldUi(FieldUi fieldUi)
+    {
+      if (fieldUi == null)
+        throw new IllegalArgumentException("null field UI passed to builder");
+
+      this.fieldUi = fieldUi;
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
+    {
+      if (valueConstraints == null)
+        throw new IllegalArgumentException("null value constraints passed to builder");
+
+      this.valueConstraints = Optional.ofNullable(valueConstraints);
+      return this;
+    }
+
     public SectionBreakField build()
     {
       withFieldUi(fieldUiBuilder.build());

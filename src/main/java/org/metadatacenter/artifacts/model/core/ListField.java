@@ -256,6 +256,24 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public ListFieldBuilder withFieldUi(FieldUi fieldUi)
+    {
+      if (fieldUi == null)
+        throw new IllegalArgumentException("null field UI passed to builder");
+
+      this.fieldUi = fieldUi;
+      return this;
+    }
+
+    @Override public ListFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
+    {
+      if (valueConstraints == null)
+        throw new IllegalArgumentException("null value constraints passed to builder");
+
+      this.valueConstraints = Optional.ofNullable(valueConstraints);
+      return this;
+    }
+
     public ListField build()
     {
       withFieldUi(fieldUiBuilder.build());

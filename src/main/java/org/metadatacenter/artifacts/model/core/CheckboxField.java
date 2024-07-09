@@ -251,6 +251,24 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public CheckboxFieldBuilder withFieldUi(FieldUi fieldUi)
+    {
+      if (fieldUi == null)
+        throw new IllegalArgumentException("null field UI passed to builder");
+
+      this.fieldUi = fieldUi;
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
+    {
+      if (valueConstraints == null)
+        throw new IllegalArgumentException("null value constraints passed to builder");
+
+      this.valueConstraints = Optional.ofNullable(valueConstraints);
+      return this;
+    }
+
     public CheckboxField build()
     {
       withFieldUi(fieldUiBuilder.build());

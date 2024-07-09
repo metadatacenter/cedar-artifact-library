@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
 
 import java.net.URI;
@@ -267,6 +268,24 @@ public sealed interface NumericField extends FieldSchemaArtifact
     @Override public NumericFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
+      return this;
+    }
+
+    @Override public NumericFieldBuilder withFieldUi(FieldUi fieldUi)
+    {
+      if (fieldUi == null)
+        throw new IllegalArgumentException("null field UI passed to builder");
+
+      this.fieldUi = fieldUi;
+      return this;
+    }
+
+    @Override public NumericFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
+    {
+      if (valueConstraints == null)
+        throw new IllegalArgumentException("null value constraints passed to builder");
+
+      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 
