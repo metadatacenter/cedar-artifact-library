@@ -78,12 +78,6 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
-    public CheckboxFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
-    }
-
     public CheckboxFieldBuilder withDefaultValue(String defaultValue)
     {
       valueConstraintsBuilder.withDefaultValue(defaultValue);
@@ -102,11 +96,37 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    public CheckboxFieldBuilder withHidden(boolean hidden)
+    @Override public CheckboxFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
       return this;
     }
+
+    @Override public CheckboxFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+
+    @Override public CheckboxFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      return this;
+    }
+
 
     @Override public CheckboxFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
@@ -248,24 +268,6 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
     @Override public CheckboxFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

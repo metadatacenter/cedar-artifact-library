@@ -77,12 +77,6 @@ public sealed interface ListField extends FieldSchemaArtifact
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
-    public ListFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
-    }
-
     public ListFieldBuilder withDefaultValue(String defaultValue)
     {
       valueConstraintsBuilder.withDefaultValue(defaultValue);
@@ -101,9 +95,33 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
-    public ListFieldBuilder withHidden(boolean hidden)
+    @Override public ListFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -253,24 +271,6 @@ public sealed interface ListField extends FieldSchemaArtifact
     @Override public ListFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public ListFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public ListFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

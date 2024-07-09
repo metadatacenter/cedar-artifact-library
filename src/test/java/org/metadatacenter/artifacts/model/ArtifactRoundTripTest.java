@@ -725,6 +725,11 @@ public class ArtifactRoundTripTest
     testFieldSchemaArtifactRoundTripFromFile("fields/field-001.json");
   }
 
+  @Test public void testRoundTripStandaloneField()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/StandaloneField.json");
+  }
+
   @Test public void testRoundTripField002()
   {
     testFieldSchemaArtifactRoundTripFromFile("fields/field-002.json");

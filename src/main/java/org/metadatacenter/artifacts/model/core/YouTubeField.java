@@ -80,9 +80,31 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
-    public YouTubeFieldBuilder withHidden(boolean hidden)
+    @Override public YouTubeFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withRequiredValue(boolean requiredValue)
+    {
       return this;
     }
 
@@ -196,24 +218,6 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
     @Override public YouTubeFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

@@ -82,9 +82,31 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    public SectionBreakFieldBuilder withHidden(boolean hidden)
+    @Override public SectionBreakFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withRequiredValue(boolean requiredValue)
+    {
       return this;
     }
 
@@ -199,24 +221,6 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     @Override public SectionBreakFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

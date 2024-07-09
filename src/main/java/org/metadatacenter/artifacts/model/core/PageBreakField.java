@@ -80,9 +80,31 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    public PageBreakFieldBuilder withHidden(boolean hidden)
+    @Override public PageBreakFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withRequiredValue(boolean requiredValue)
+    {
       return this;
     }
 
@@ -196,24 +218,6 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
     @Override public PageBreakFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

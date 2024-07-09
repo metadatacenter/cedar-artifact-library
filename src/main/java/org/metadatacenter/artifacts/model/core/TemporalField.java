@@ -5,7 +5,6 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.net.URI;
@@ -119,9 +118,27 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
-    public TemporalFieldBuilder withHidden(boolean hidden)
+    @Override public TemporalFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public TemporalFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public TemporalFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      return this;
+    }
+
+    @Override public TemporalFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
@@ -271,24 +288,6 @@ public sealed interface TemporalField extends FieldSchemaArtifact
     @Override public TemporalFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override  public TemporalFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public TemporalFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

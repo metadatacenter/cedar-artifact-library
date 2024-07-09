@@ -182,6 +182,7 @@ public class JsonSchemaArtifactReaderTest
     assertNotNull(fieldSchemaArtifact.fieldUi());
   }
 
+
   @Test
   public void testReadSimpleTemplateInstance()
   {

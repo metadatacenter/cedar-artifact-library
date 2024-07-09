@@ -77,7 +77,7 @@ public sealed interface EmailField extends FieldSchemaArtifact
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
-    public EmailFieldBuilder withRequiredValue(boolean requiredValue)
+    @Override public EmailFieldBuilder withRequiredValue(boolean requiredValue)
     {
       valueConstraintsBuilder.withRequiredValue(requiredValue);
       return this;
@@ -101,15 +101,27 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendation)
+    @Override public EmailFieldBuilder withHidden(boolean hidden)
     {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendation);
+      fieldUiBuilder.withHidden(hidden);
       return this;
     }
 
-    public EmailFieldBuilder withHidden(boolean hidden)
+    @Override public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
-      fieldUiBuilder.withHidden(hidden);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public EmailFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public EmailFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -259,24 +271,6 @@ public sealed interface EmailField extends FieldSchemaArtifact
     @Override public EmailFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

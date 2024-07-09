@@ -79,12 +79,6 @@ public sealed interface RadioField extends FieldSchemaArtifact
         this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
     }
 
-    public RadioFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
-    }
-
     public RadioFieldBuilder withDefaultValue(String defaultValue)
     {
       valueConstraintsBuilder.withDefaultValue(defaultValue);
@@ -103,12 +97,35 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    public RadioFieldBuilder withHidden(boolean hidden)
+    @Override public RadioFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public RadioFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
       return this;
     }
 
+    @Override public RadioFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public RadioFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public RadioFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      return this;
+    }
 
     @Override public RadioFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
@@ -250,24 +267,6 @@ public sealed interface RadioField extends FieldSchemaArtifact
     @Override public RadioFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override  public RadioFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public RadioFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

@@ -103,15 +103,27 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
       return this;
     }
 
-    public PhoneNumberFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    @Override public PhoneNumberFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public PhoneNumberFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    public PhoneNumberFieldBuilder withHidden(boolean hidden)
+    @Override public PhoneNumberFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
-      fieldUiBuilder.withHidden(hidden);
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public PhoneNumberFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -261,24 +273,6 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
     @Override public PhoneNumberFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public PhoneNumberFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public PhoneNumberFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

@@ -17,14 +17,11 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.TextFieldInstance;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
 import org.metadatacenter.model.validation.CedarValidator;
@@ -285,22 +282,13 @@ public class JsonSchemaArtifactRendererTest
   {
     String fieldName = "Field name";
 
-    TextValueConstraints textValueConstraints = TextValueConstraints.builder().
-      withRequiredValue(true).
-      withRecommendedValue(true).
-      build();
-
-    FieldUi fieldUi = FieldUi.builder().
-      withInputType(FieldInputType.TEXTFIELD).
-      withContinuePreviousLine(true).
-      withHidden(true).
-      withValueRecommendationEnabled(true).
-      build();
-
     TextField textField = TextField.builder().
       withName(fieldName).
-      withFieldUi(fieldUi).
-      withValueConstraints(textValueConstraints).
+      withRequiredValue(true).
+      withRecommendedValue(true).
+      withHidden(true).
+      withContinuePreviousLine(true).
+      withValueRecommendationEnabled(true).
       build();
 
     ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(textField);

@@ -93,6 +93,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
   }
 
+
   public abstract FieldSchemaArtifact build();
 
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
@@ -132,6 +133,16 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
     this.annotations = fieldSchemaArtifact.annotations();
   }
+
+  public abstract FieldSchemaArtifactBuilder withRequiredValue(boolean required);
+
+  public abstract FieldSchemaArtifactBuilder withRecommendedValue(boolean recommendedValue);
+
+  public abstract FieldSchemaArtifactBuilder withContinuePreviousLine(boolean continuePreviousLine);
+
+  public abstract FieldSchemaArtifactBuilder withHidden(boolean hidden);
+
+  public abstract FieldSchemaArtifactBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled);
 
   protected FieldSchemaArtifactBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
   {
@@ -326,16 +337,17 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
+  protected FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
   {
     if (fieldUi == null)
       throw new IllegalArgumentException("null field UI passed to builder");
 
     this.fieldUi = fieldUi;
+
     return this;
   }
 
-  public FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
+  protected FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
   {
     if (valueConstraints == null)
       throw new IllegalArgumentException("null value constraints passed to builder");

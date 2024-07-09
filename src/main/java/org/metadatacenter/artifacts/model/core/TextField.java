@@ -108,15 +108,21 @@ public sealed interface TextField extends FieldSchemaArtifact
       return this;
     }
 
-    public TextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    @Override public TextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    public TextFieldBuilder withHidden(boolean hidden)
+    @Override public TextFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public TextFieldBuilder withContinuePreviousLine(boolean continuePreviousLne)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLne);
       return this;
     }
 
@@ -272,24 +278,6 @@ public sealed interface TextField extends FieldSchemaArtifact
     @Override public TextFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public TextFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public TextFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

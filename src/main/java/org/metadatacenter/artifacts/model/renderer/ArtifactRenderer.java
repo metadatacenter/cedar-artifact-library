@@ -5,8 +5,6 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifactBuilder;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsBuilder;
-import org.metadatacenter.artifacts.model.core.ui.FieldUiBuilder;
 
 public interface ArtifactRenderer<T>
 {
@@ -24,24 +22,16 @@ public interface ArtifactRenderer<T>
   default T renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
     FieldSchemaArtifactBuilder fieldSchemaArtifactBuilder = FieldSchemaArtifactBuilder.builder(fieldSchemaArtifact);
-    FieldUiBuilder fieldUiBuilder = FieldUiBuilder.builder(fieldSchemaArtifact.fieldUi());
 
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraintsBuilder valueConstraintsBuilder = ValueConstraintsBuilder.builder(
-        fieldSchemaArtifact.valueConstraints().get());
-      valueConstraintsBuilder.withRequiredValue(false);
-      valueConstraintsBuilder.withRecommendedValue(false);
+    fieldSchemaArtifactBuilder.withRequiredValue(false);
+    fieldSchemaArtifactBuilder.withRecommendedValue(false);
+    fieldSchemaArtifactBuilder.withContinuePreviousLine(false);
+    fieldSchemaArtifactBuilder.withHidden(false);
+    fieldSchemaArtifactBuilder.withValueRecommendationEnabled(false);
 
-      fieldSchemaArtifactBuilder.withValueConstraints(valueConstraintsBuilder.build());
-    }
+    FieldSchemaArtifact updatedFieldSchemaArtifact = fieldSchemaArtifactBuilder.build();
 
-    fieldUiBuilder.withContinuePreviousLine(false);
-    fieldUiBuilder.withHidden(false);
-    fieldUiBuilder.withValueRecommendationEnabled(false);
-
-    fieldSchemaArtifactBuilder.withFieldUi(fieldUiBuilder.build());
-
-    return renderFieldSchemaArtifact(fieldSchemaArtifact.name(), fieldSchemaArtifactBuilder.build());
+    return renderFieldSchemaArtifact(fieldSchemaArtifact.name(), updatedFieldSchemaArtifact);
   }
 
   T renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact);

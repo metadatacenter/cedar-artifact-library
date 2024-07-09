@@ -212,21 +212,31 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public AttributeValueFieldBuilder withFieldUi(FieldUi fieldUi)
+    @Override public AttributeValueFieldBuilder withHidden(boolean hidden)
     {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
+      fieldUiBuilder.withHidden(hidden);
       return this;
     }
 
-    @Override public AttributeValueFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
+    @Override public AttributeValueFieldBuilder withRequiredValue(boolean requiredValue)
     {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
+      return this;
+    }
 
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
+    @Override public AttributeValueFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public AttributeValueFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public AttributeValueFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
       return this;
     }
 

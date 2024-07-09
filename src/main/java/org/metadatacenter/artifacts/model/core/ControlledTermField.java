@@ -148,27 +148,40 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
-    public ControlledTermFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
-    }
-
     public ControlledTermFieldBuilder withDefaultValue(URI uri, String label)
     {
       valueConstraintsBuilder.withDefaultValue(uri, label);
       return this;
     }
 
-    public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    @Override public ControlledTermFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    public ControlledTermFieldBuilder withHidden(boolean hidden)
+    @Override public ControlledTermFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
-      fieldUiBuilder.withHidden(hidden);
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+
+    @Override public ControlledTermFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -319,24 +332,6 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     @Override public ControlledTermFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 

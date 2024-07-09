@@ -77,9 +77,15 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
-    public TextAreaFieldBuilder withRequiredValue(boolean requiredValue)
+    @Override public TextAreaFieldBuilder withRequiredValue(boolean requiredValue)
     {
       valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public TextAreaFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -95,9 +101,21 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
-    public TextAreaFieldBuilder withHidden(boolean hidden)
+    @Override public TextAreaFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public TextAreaFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public TextAreaFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
@@ -248,24 +266,6 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
     @Override public TextAreaFieldBuilder withAnnotations(Annotations annotations)
     {
       super.withAnnotations(annotations);
-      return this;
-    }
-
-    @Override public TextAreaFieldBuilder withFieldUi(FieldUi fieldUi)
-    {
-      if (fieldUi == null)
-        throw new IllegalArgumentException("null field UI passed to builder");
-
-      this.fieldUi = fieldUi;
-      return this;
-    }
-
-    @Override public TextAreaFieldBuilder withValueConstraints(ValueConstraints valueConstraints)
-    {
-      if (valueConstraints == null)
-        throw new IllegalArgumentException("null value constraints passed to builder");
-
-      this.valueConstraints = Optional.ofNullable(valueConstraints);
       return this;
     }
 
