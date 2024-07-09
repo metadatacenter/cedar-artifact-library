@@ -3,7 +3,7 @@
     <module name="cedar-artifact-library" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="org.metadatacenter.artifacts.model.core.ui.*" />
+        <option name="PATTERN" value="org.metadatacenter.artifacts.model.core.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

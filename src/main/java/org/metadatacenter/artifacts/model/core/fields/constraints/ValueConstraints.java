@@ -18,7 +18,6 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   boolean multipleChoice();
 
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   Optional<? extends DefaultValue> defaultValue();
 
   @JsonIgnore

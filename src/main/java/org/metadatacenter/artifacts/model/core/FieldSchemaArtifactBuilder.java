@@ -52,6 +52,14 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<ValueConstraints> valueConstraints = Optional.empty();
   protected Optional<Annotations> annotations = Optional.empty();
 
+  static public FieldSchemaArtifactBuilder builder(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    if (fieldSchemaArtifact instanceof TextField) {
+      return TextField.TextFieldBuilder.builder(fieldSchemaArtifact.asTextField());
+    } else
+      return null; // TODO
+  }
+
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
     this.jsonSchemaType = jsonSchemaType;

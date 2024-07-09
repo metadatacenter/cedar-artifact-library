@@ -120,7 +120,6 @@ import static org.metadatacenter.model.ModelNodeNames.UI_INPUT_TIME_FORMAT;
 import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
-import static org.metadatacenter.model.ModelNodeNames.UI_RECOMMENDED_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
 import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
 import static org.metadatacenter.model.ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED;
@@ -1011,12 +1010,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     } else if (childNode.isNumber()) {
       return Optional.of(new NumericDefaultValue(childNode.asDouble()));
     } else if (childNode.isTextual()) {
-      if (fieldInputType == FieldInputType.LINK)
-        return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-      else if (fieldInputType == FieldInputType.TEMPORAL)
-        return Optional.of(new TemporalDefaultValue(childNode.asText()));
-      else
-        return Optional.of(new TextDefaultValue(childNode.asText()));
+      String textValue = childNode.asText();
+      if (textValue.isEmpty())
+        return Optional.empty();
+      else {
+        if (fieldInputType == FieldInputType.LINK)
+          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
+        else if (fieldInputType == FieldInputType.TEMPORAL)
+          return Optional.of(new TemporalDefaultValue(childNode.asText()));
+        else
+          return Optional.of(new TextDefaultValue(childNode.asText()));
+      }
     } else
       throw new ArtifactParseException(
         "default value must be a string, a number, or an object containing URI/string pair", fieldName, path);

@@ -72,6 +72,133 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
     visitor.visitFieldSchemaArtifact(this, path);
   }
 
+  default TextField asTextField()
+  {
+    if (this instanceof TextField)
+      return (TextField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TextField.class.getName());
+  }
+
+  default TextAreaField asTextAreaField()
+  {
+    if (this instanceof TextAreaField)
+      return (TextAreaField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TextAreaField.class.getName());
+  }
+
+  default TemporalField asTemporalField()
+  {
+    if (this instanceof TemporalField)
+      return (TemporalField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TemporalField.class.getName());
+  }
+
+  default RadioField asRadioField()
+  {
+    if (this instanceof RadioField)
+      return (RadioField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + RadioField.class.getName());
+  }
+
+  default PhoneNumberField asPhoneNumberField()
+  {
+    if (this instanceof PhoneNumberField)
+      return (PhoneNumberField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PhoneNumberField.class.getName());
+  }
+
+  default NumericField asNumericField()
+  {
+    if (this instanceof NumericField)
+      return (NumericField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + NumericField.class.getName());
+  }
+
+  default ListField asListField()
+  {
+    if (this instanceof ListField)
+      return (ListField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + ListField.class.getName());
+  }
+
+  default EmailField asEmailField()
+  {
+    if (this instanceof EmailField)
+      return (EmailField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + EmailField.class.getName());
+  }
+
+  default ControlledTermField asControlledTermField()
+  {
+    if (this instanceof ControlledTermField)
+      return (ControlledTermField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + ControlledTermField.class.getName());
+  }
+
+  default CheckboxField asCheckboxField()
+  {
+    if (this instanceof CheckboxField)
+      return (CheckboxField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + CheckboxField.class.getName());
+  }
+
+  default AttributeValueField asAttributeValueField()
+  {
+    if (this instanceof AttributeValueField)
+      return (AttributeValueField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + AttributeValueField.class.getName());
+  }
+  default PageBreakField asPageBreakField()
+  {
+    if (this instanceof PageBreakField)
+      return (PageBreakField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PageBreakField.class.getName());
+  }
+
+  default SectionBreakField asSectionBreakField()
+  {
+    if (this instanceof SectionBreakField)
+      return (SectionBreakField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + SectionBreakField.class.getName());
+  }
+
+  default ImageField asImageField()
+  {
+    if (this instanceof ImageField)
+      return (ImageField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + ImageField.class.getName());
+  }
+
+  default YouTubeField asYouTubeField()
+  {
+    if (this instanceof YouTubeField)
+      return (YouTubeField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + YouTubeField.class.getName());
+  }
+
+  default RichTextField asRichTextField()
+  {
+    if (this instanceof RichTextField)
+      return (RichTextField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + RichTextField.class.getName());
+  }
+
   static FieldSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
