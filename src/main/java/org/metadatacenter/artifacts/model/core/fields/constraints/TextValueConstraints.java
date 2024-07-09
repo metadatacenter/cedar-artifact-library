@@ -89,6 +89,8 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       if (defaultValue == null)
         throw new IllegalArgumentException("null default value passed to builder");
 
+      if (defaultValue.isEmpty())
+        throw new IllegalArgumentException("empty default value passed to builder");
 
       this.defaultValue = Optional.of(new TextDefaultValue(defaultValue));
       return this;

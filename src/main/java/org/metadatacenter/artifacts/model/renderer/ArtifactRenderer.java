@@ -9,19 +9,19 @@ public interface ArtifactRenderer<T>
 {
   T renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact);
 
+  T renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact);
+
   default T renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
     return renderElementSchemaArtifact(elementSchemaArtifact.name(), elementSchemaArtifact);
   }
 
-  T renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact);
+  T renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact);
 
   default T renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
     return renderFieldSchemaArtifact(fieldSchemaArtifact.name(), fieldSchemaArtifact);
   }
-
-  T renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact);
 
   T renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact);
 }

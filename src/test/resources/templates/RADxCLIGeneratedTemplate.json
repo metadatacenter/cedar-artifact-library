@@ -3035,7 +3035,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "literals": [
                 {
                   "label": "aa"

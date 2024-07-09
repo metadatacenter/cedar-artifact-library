@@ -9,7 +9,6 @@
   "pav:version" : "0.9.1",
   "bibo:status" : "bibo:draft",
   "_valueConstraints" : {
-    "defaultValue" : "",
     "requiredValue" : false,
     "multipleChoice" : false
   },
