@@ -17,46 +17,47 @@ public non-sealed interface PhoneNumberValueConstraints extends ValueConstraints
     return new PhoneNumberValueConstraintsRecord(defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
-  static Builder builder() {
-    return new Builder();
+  static PhoneNumberValueConstraintsBuilder builder() {
+    return new PhoneNumberValueConstraintsBuilder();
   }
 
-  static Builder builder(PhoneNumberValueConstraints phoneNumberValueConstraints) {
-    return new Builder(phoneNumberValueConstraints);
+  static PhoneNumberValueConstraintsBuilder builder(PhoneNumberValueConstraints phoneNumberValueConstraints) {
+    return new PhoneNumberValueConstraintsBuilder(phoneNumberValueConstraints);
   }
 
-  class Builder {
+  final class PhoneNumberValueConstraintsBuilder implements ValueConstraintsBuilder
+  {
     private Optional<PhoneNumberDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
     private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
-    private Builder() {
+    private PhoneNumberValueConstraintsBuilder() {
     }
 
-    private Builder(PhoneNumberValueConstraints phoneNumberValueConstraints) {
+    private PhoneNumberValueConstraintsBuilder(PhoneNumberValueConstraints phoneNumberValueConstraints) {
       this.defaultValue = phoneNumberValueConstraints.defaultValue();
       this.requiredValue = phoneNumberValueConstraints.requiredValue();
       this.recommendedValue = phoneNumberValueConstraints.recommendedValue();
       this.multipleChoice = phoneNumberValueConstraints.multipleChoice();
     }
 
-    public Builder withDefaultValue(String defaultValue) {
+    public PhoneNumberValueConstraintsBuilder withDefaultValue(String defaultValue) {
       this.defaultValue = Optional.of(new PhoneNumberDefaultValue(defaultValue));
       return this;
     }
 
-    public Builder withRequiredValue(boolean requiredValue) {
+    public PhoneNumberValueConstraintsBuilder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue) {
+    public PhoneNumberValueConstraintsBuilder withRecommendedValue(boolean recommendedValue) {
       this.recommendedValue = recommendedValue;
       return this;
     }
 
-    public Builder withMultipleChoice(boolean multipleChoice) {
+    public PhoneNumberValueConstraintsBuilder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }

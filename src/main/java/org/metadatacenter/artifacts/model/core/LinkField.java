@@ -57,7 +57,7 @@ public sealed interface LinkField extends FieldSchemaArtifact
   final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final LinkValueConstraints.Builder valueConstraintsBuilder;
+    private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;
 
     public LinkFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);

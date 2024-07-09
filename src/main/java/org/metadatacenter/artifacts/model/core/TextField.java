@@ -57,7 +57,7 @@ public sealed interface TextField extends FieldSchemaArtifact
   final class TextFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private FieldUi.Builder fieldUiBuilder;
-    private TextValueConstraints.Builder valueConstraintsBuilder;
+    private TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
     public TextFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);

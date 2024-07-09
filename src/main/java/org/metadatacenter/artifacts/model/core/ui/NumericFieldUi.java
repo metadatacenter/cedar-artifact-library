@@ -27,6 +27,7 @@ public non-sealed interface NumericFieldUi extends FieldUi
     private FieldInputType inputType = FieldInputType.NUMERIC;
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled;
 
     private NumericFieldUiBuilder()
     {
@@ -48,6 +49,12 @@ public non-sealed interface NumericFieldUi extends FieldUi
     public NumericFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
+    public NumericFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
       return this;
     }
 

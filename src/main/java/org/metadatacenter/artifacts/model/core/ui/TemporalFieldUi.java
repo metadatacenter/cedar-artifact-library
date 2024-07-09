@@ -46,6 +46,7 @@ public non-sealed interface TemporalFieldUi extends FieldUi
     private Optional<Boolean> timezoneEnabled = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled = false;
 
     private TemporalFieldUiBuilder()
     {
@@ -88,6 +89,12 @@ public non-sealed interface TemporalFieldUi extends FieldUi
     public TemporalFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
+    public TemporalFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
       return this;
     }
 

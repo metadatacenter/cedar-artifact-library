@@ -57,7 +57,7 @@ public sealed interface EmailField extends FieldSchemaArtifact
   final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final TextValueConstraints.Builder valueConstraintsBuilder;
+    private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
     public EmailFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
@@ -101,7 +101,7 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    public EmailFieldBuilder withValueRecommendation(boolean valueRecommendation)
+    public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendation)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendation);
       return this;

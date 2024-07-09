@@ -57,7 +57,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
   final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final NumericFieldUi.NumericFieldUiBuilder fieldUiBuilder;
-    private final NumericValueConstraints.Builder valueConstraintsBuilder;
+    private final NumericValueConstraints.NumericValueConstraintsBuilder valueConstraintsBuilder;
 
     public NumericFieldBuilder() {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);

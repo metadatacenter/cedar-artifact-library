@@ -56,42 +56,44 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   {
     // TODO Use typesafe switch when available
     if (fieldSchemaArtifact instanceof TextField)
-      return TextField.TextFieldBuilder.builder(fieldSchemaArtifact.asTextField());
+      return new TextField.TextFieldBuilder(fieldSchemaArtifact.asTextField());
     else if (fieldSchemaArtifact instanceof TextAreaField)
-      return TextAreaField.TextAreaFieldBuilder.builder(fieldSchemaArtifact.asTextAreaField());
+      return new TextAreaField.TextAreaFieldBuilder(fieldSchemaArtifact.asTextAreaField());
     else if (fieldSchemaArtifact instanceof TemporalField)
-      return TemporalField.TemporalFieldBuilder.builder(fieldSchemaArtifact.asTemporalField());
+      return new TemporalField.TemporalFieldBuilder(fieldSchemaArtifact.asTemporalField());
     else if (fieldSchemaArtifact instanceof RadioField)
-      return RadioField.RadioFieldBuilder.builder(fieldSchemaArtifact.asRadioField());
+      return new RadioField.RadioFieldBuilder(fieldSchemaArtifact.asRadioField());
     else if (fieldSchemaArtifact instanceof PhoneNumberField)
-      return PhoneNumberField.PhoneNumberFieldBuilder.builder(fieldSchemaArtifact.asPhoneNumberField());
+      return new PhoneNumberField.PhoneNumberFieldBuilder(fieldSchemaArtifact.asPhoneNumberField());
     else if (fieldSchemaArtifact instanceof NumericField)
-      return NumericField.NumericFieldBuilder.builder(fieldSchemaArtifact.asNumericField());
+      return new NumericField.NumericFieldBuilder(fieldSchemaArtifact.asNumericField());
     else if (fieldSchemaArtifact instanceof ListField)
-      return ListField.ListFieldBuilder.builder(fieldSchemaArtifact.asListField());
+      return new ListField.ListFieldBuilder(fieldSchemaArtifact.asListField());
     else if (fieldSchemaArtifact instanceof LinkField)
-      return LinkField.LinkFieldBuilder.builder(fieldSchemaArtifact.asLinkField());
+      return new LinkField.LinkFieldBuilder(fieldSchemaArtifact.asLinkField());
     else if (fieldSchemaArtifact instanceof EmailField)
-      return EmailField.EmailFieldBuilder.builder(fieldSchemaArtifact.asEmailField());
+      return new EmailField.EmailFieldBuilder(fieldSchemaArtifact.asEmailField());
     else if (fieldSchemaArtifact instanceof ControlledTermField)
-      return ControlledTermField.ControlledTermFieldBuilder.builder(fieldSchemaArtifact.asControlledTermField());
+      return new ControlledTermField.ControlledTermFieldBuilder(fieldSchemaArtifact.asControlledTermField());
     else if (fieldSchemaArtifact instanceof CheckboxField)
-      return CheckboxField.CheckboxFieldBuilder.builder(fieldSchemaArtifact.asCheckboxField());
+      return new CheckboxField.CheckboxFieldBuilder(fieldSchemaArtifact.asCheckboxField());
     else if (fieldSchemaArtifact instanceof AttributeValueField)
-      return AttributeValueField.AttributeValueFieldBuilder.builder(fieldSchemaArtifact.asAttributeValueField());
+      return new AttributeValueField.AttributeValueFieldBuilder(fieldSchemaArtifact.asAttributeValueField());
     else if (fieldSchemaArtifact instanceof PageBreakField)
-      return PageBreakField.PageBreakFieldBuilder.builder(fieldSchemaArtifact.asPageBreakField());
+      return new PageBreakField.PageBreakFieldBuilder(fieldSchemaArtifact.asPageBreakField());
     else if (fieldSchemaArtifact instanceof SectionBreakField)
-      return SectionBreakField.SectionBreakFieldBuilder.builder(fieldSchemaArtifact.asSectionBreakField());
+      return new SectionBreakField.SectionBreakFieldBuilder(fieldSchemaArtifact.asSectionBreakField());
     else if (fieldSchemaArtifact instanceof ImageField)
-      return ImageField.ImageFieldBuilder.builder(fieldSchemaArtifact.asImageField());
+      return new ImageField.ImageFieldBuilder(fieldSchemaArtifact.asImageField());
     else if (fieldSchemaArtifact instanceof YouTubeField)
-      return YouTubeField.YouTubeFieldBuilder.builder(fieldSchemaArtifact.asYouTubeField());
+      return new YouTubeField.YouTubeFieldBuilder(fieldSchemaArtifact.asYouTubeField());
     else if (fieldSchemaArtifact instanceof RichTextField)
-      return RichTextField.RichTextFieldBuilder.builder(fieldSchemaArtifact.asRichTextField());
+      return new RichTextField.RichTextFieldBuilder(fieldSchemaArtifact.asRichTextField());
     else
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
   }
+
+  public abstract FieldSchemaArtifact build();
 
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
@@ -114,6 +116,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.name = fieldSchemaArtifact.name();
     this.description = fieldSchemaArtifact.description();
     this.identifier = fieldSchemaArtifact.identifier();
+    this.preferredLabel = fieldSchemaArtifact.preferredLabel();
     this.alternateLabels = fieldSchemaArtifact.alternateLabels();
     this.modelVersion = fieldSchemaArtifact.modelVersion();
     this.version = fieldSchemaArtifact.version();
@@ -314,24 +317,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     return this;
   }
 
-  protected FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
-  {
-    if (fieldUi == null)
-      throw new IllegalArgumentException("null field UI passed to builder");
-
-    this.fieldUi = fieldUi;
-    return this;
-  }
-
-  protected FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
-  {
-    if (valueConstraints == null)
-      throw new IllegalArgumentException("null value constraints passed to builder");
-
-    this.valueConstraints = Optional.ofNullable(valueConstraints);
-    return this;
-  }
-
   protected FieldSchemaArtifactBuilder withAnnotations(Annotations annotations)
   {
     if (annotations == null)
@@ -341,4 +326,21 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     return this;
   }
 
+  public FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
+  {
+    if (fieldUi == null)
+      throw new IllegalArgumentException("null field UI passed to builder");
+
+    this.fieldUi = fieldUi;
+    return this;
+  }
+
+  public FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
+  {
+    if (valueConstraints == null)
+      throw new IllegalArgumentException("null value constraints passed to builder");
+
+    this.valueConstraints = Optional.ofNullable(valueConstraints);
+    return this;
+  }
 }

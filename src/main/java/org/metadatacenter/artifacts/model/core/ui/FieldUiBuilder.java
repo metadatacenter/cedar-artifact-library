@@ -31,4 +31,12 @@ public sealed interface FieldUiBuilder permits FieldUi.Builder, TemporalFieldUi.
     } else
       return FieldUi.builder(fieldUi);
   }
+
+  FieldUi build();
+
+  FieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine);
+
+  FieldUiBuilder withHidden(boolean hidden);
+
+  FieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled);
 }

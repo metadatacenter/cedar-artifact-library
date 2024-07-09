@@ -21,6 +21,8 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
 
   Optional<ValueConstraints> valueConstraints();
 
+  Optional<String> preferredLabel();
+
   List<String> alternateLabels();
 
   default boolean hidden() { return fieldUi().hidden(); }

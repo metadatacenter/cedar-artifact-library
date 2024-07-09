@@ -22,25 +22,26 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
     return new TemporalValueConstraintsRecord(temporalType, defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
-  static Builder builder() {
-    return new Builder();
+  static TemporalValueConstraintsBuilder builder() {
+    return new TemporalValueConstraintsBuilder();
   }
 
-  static Builder builder(TemporalValueConstraints temporalValueConstraints) {
-    return new Builder(temporalValueConstraints);
+  static TemporalValueConstraintsBuilder builder(TemporalValueConstraints temporalValueConstraints) {
+    return new TemporalValueConstraintsBuilder(temporalValueConstraints);
   }
 
-  class Builder {
+  final class TemporalValueConstraintsBuilder implements ValueConstraintsBuilder
+  {
     private XsdTemporalDatatype temporalType;
     private Optional<TemporalDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
     private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
-    private Builder() {
+    private TemporalValueConstraintsBuilder() {
     }
 
-    private Builder(TemporalValueConstraints temporalValueConstraints) {
+    private TemporalValueConstraintsBuilder(TemporalValueConstraints temporalValueConstraints) {
       this.temporalType = temporalValueConstraints.temporalType();
       this.defaultValue = temporalValueConstraints.defaultValue();
       this.requiredValue = temporalValueConstraints.requiredValue();
@@ -48,27 +49,27 @@ public non-sealed interface TemporalValueConstraints extends ValueConstraints
       this.multipleChoice = temporalValueConstraints.multipleChoice();
     }
 
-    public Builder withTemporalType(XsdTemporalDatatype temporalType) {
+    public TemporalValueConstraintsBuilder withTemporalType(XsdTemporalDatatype temporalType) {
       this.temporalType = temporalType;
       return this;
     }
 
-    public Builder withDefaultValue(String defaultValue) {
+    public TemporalValueConstraintsBuilder withDefaultValue(String defaultValue) {
       this.defaultValue = Optional.of(new TemporalDefaultValue(defaultValue));
       return this;
     }
 
-    public Builder withRequiredValue(boolean requiredValue) {
+    public TemporalValueConstraintsBuilder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue) {
+    public TemporalValueConstraintsBuilder withRecommendedValue(boolean recommendedValue) {
       this.recommendedValue = recommendedValue;
       return this;
     }
 
-    public Builder withMultipleChoice(boolean multipleChoice) {
+    public TemporalValueConstraintsBuilder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }

@@ -37,15 +37,16 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
       requiredValue, recommendedValue, multipleChoice);
   }
 
-  static Builder builder() {
-    return new Builder();
+  static NumericValueConstraintsBuilder builder() {
+    return new NumericValueConstraintsBuilder();
   }
 
-  static Builder builder(NumericValueConstraints numericValueConstraints) {
-    return new Builder(numericValueConstraints);
+  static NumericValueConstraintsBuilder builder(NumericValueConstraints numericValueConstraints) {
+    return new NumericValueConstraintsBuilder(numericValueConstraints);
   }
 
-  class Builder {
+  final class NumericValueConstraintsBuilder implements ValueConstraintsBuilder
+  {
     private XsdNumericDatatype numberType;
     private Optional<Number> minValue = Optional.empty();
     private Optional<Number> maxValue = Optional.empty();
@@ -56,10 +57,10 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
     private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
-    private Builder() {
+    private NumericValueConstraintsBuilder() {
     }
 
-    private Builder(NumericValueConstraints numericValueConstraints)
+    private NumericValueConstraintsBuilder(NumericValueConstraints numericValueConstraints)
     {
       this.numberType = numericValueConstraints.numberType();
       this.minValue = numericValueConstraints.minValue();
@@ -72,47 +73,47 @@ public non-sealed interface NumericValueConstraints extends ValueConstraints
       this.multipleChoice = numericValueConstraints.multipleChoice();
     }
 
-    public Builder withNumberType(XsdNumericDatatype numberType) {
+    public NumericValueConstraintsBuilder withNumberType(XsdNumericDatatype numberType) {
       this.numberType = numberType;
       return this;
     }
 
-    public Builder withMinValue(Number minValue) {
+    public NumericValueConstraintsBuilder withMinValue(Number minValue) {
       this.minValue = Optional.ofNullable(minValue);
       return this;
     }
 
-    public Builder withMaxValue(Number maxValue) {
+    public NumericValueConstraintsBuilder withMaxValue(Number maxValue) {
       this.maxValue = Optional.ofNullable(maxValue);
       return this;
     }
 
-    public Builder withDecimalPlaces(Integer decimalPlaces) {
+    public NumericValueConstraintsBuilder withDecimalPlaces(Integer decimalPlaces) {
       this.decimalPlaces = Optional.ofNullable(decimalPlaces);
       return this;
     }
 
-    public Builder withUnitOfMeasure(String unitOfMeasure) {
+    public NumericValueConstraintsBuilder withUnitOfMeasure(String unitOfMeasure) {
       this.unitOfMeasure = Optional.ofNullable(unitOfMeasure);
       return this;
     }
 
-    public Builder withDefaultValue(Number defaultValue) {
+    public NumericValueConstraintsBuilder withDefaultValue(Number defaultValue) {
       this.defaultValue = Optional.of(new NumericDefaultValue(defaultValue));
       return this;
     }
 
-    public Builder withRequiredValue(boolean requiredValue) {
+    public NumericValueConstraintsBuilder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue) {
+    public NumericValueConstraintsBuilder withRecommendedValue(boolean recommendedValue) {
       this.recommendedValue = recommendedValue;
       return this;
     }
 
-    public Builder withMultipleChoice(boolean multipleChoice) {
+    public NumericValueConstraintsBuilder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }

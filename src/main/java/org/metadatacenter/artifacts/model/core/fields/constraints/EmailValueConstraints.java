@@ -17,46 +17,47 @@ public non-sealed interface EmailValueConstraints extends ValueConstraints
     return new EmailValueConstraintsRecord(defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
-  static Builder builder() {
-    return new Builder();
+  static EmailValueConstraintsBuilder builder() {
+    return new EmailValueConstraintsBuilder();
   }
 
-  static Builder builder(EmailValueConstraints emailValueConstraints) {
-    return new Builder(emailValueConstraints);
+  static EmailValueConstraintsBuilder builder(EmailValueConstraints emailValueConstraints) {
+    return new EmailValueConstraintsBuilder(emailValueConstraints);
   }
 
-  class Builder {
+  final class EmailValueConstraintsBuilder implements ValueConstraintsBuilder
+  {
     private Optional<EmailDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
     private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
-    private Builder() {
+    private EmailValueConstraintsBuilder() {
     }
 
-    private Builder(EmailValueConstraints emailValueConstraints) {
+    private EmailValueConstraintsBuilder(EmailValueConstraints emailValueConstraints) {
       this.defaultValue = emailValueConstraints.defaultValue();
       this.requiredValue = emailValueConstraints.requiredValue();
       this.recommendedValue = emailValueConstraints.recommendedValue();
       this.multipleChoice = emailValueConstraints.multipleChoice();
     }
 
-    public Builder withDefaultValue(String defaultValue) {
+    public EmailValueConstraintsBuilder withDefaultValue(String defaultValue) {
       this.defaultValue = Optional.of(new EmailDefaultValue(defaultValue));
       return this;
     }
 
-    public Builder withRequiredValue(boolean requiredValue) {
+    public EmailValueConstraintsBuilder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue) {
+    public EmailValueConstraintsBuilder withRecommendedValue(boolean recommendedValue) {
       this.recommendedValue = recommendedValue;
       return this;
     }
 
-    public Builder withMultipleChoice(boolean multipleChoice) {
+    public EmailValueConstraintsBuilder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }
