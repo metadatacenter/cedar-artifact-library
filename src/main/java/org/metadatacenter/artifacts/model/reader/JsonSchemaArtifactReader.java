@@ -421,7 +421,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> language = readLanguage(sourceNode, path);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS,
-      fieldUi.inputType());
+      fieldUi.inputType(), isMultiple);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
@@ -921,7 +921,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
 
   private Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path,
-    String fieldName, FieldInputType fieldInputType)
+    String fieldName, FieldInputType fieldInputType, boolean isMultiple)
   {
     String vcPath = path + "/" + fieldName;
     ObjectNode vcNode = readValueConstraintsNode(sourceNode, path, fieldName);
@@ -929,7 +929,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
-      boolean multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+      boolean multipleChoice = isMultiple ? true : readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
       Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
       Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
       Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
