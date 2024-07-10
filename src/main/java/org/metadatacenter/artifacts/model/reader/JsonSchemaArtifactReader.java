@@ -264,7 +264,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode)
   {
     String name = readRequiredString(sourceNode, "/", SCHEMA_ORG_NAME);
-    return readFieldSchemaArtifact(sourceNode, "", name, false, Optional.empty(), Optional.empty(), Optional.empty());
+    return readFieldSchemaArtifact(sourceNode, "", name, false, true, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
   /**
@@ -395,7 +395,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path,
-    String childName, boolean isMultiInstance, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    String childName, boolean isMultiInstance, boolean isStandalone,
+    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
@@ -421,7 +422,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> language = readLanguage(sourceNode, path);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS,
-      fieldUi.inputType(), isMultiInstance);
+      fieldUi.inputType(), isMultiInstance, isStandalone);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
@@ -468,11 +469,11 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
               isMultiInstance = true;
 
-              minItems = readInteger((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
-                fieldOrElementPath, JSON_SCHEMA_MIN_ITEMS);
+              minItems = readInteger((ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath,
+                JSON_SCHEMA_MIN_ITEMS);
 
-              maxItems = readInteger((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
-                fieldOrElementPath, JSON_SCHEMA_MAX_ITEMS);
+              maxItems = readInteger((ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath,
+                JSON_SCHEMA_MAX_ITEMS);
 
               jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode.get(JSON_SCHEMA_ITEMS);
 
@@ -489,8 +490,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
                 fieldOrElementPath);
             }
 
-            List<URI> subSchemaArtifactJsonLdTypes = readUriArray(
-              (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, JSON_LD_TYPE);
+            List<URI> subSchemaArtifactJsonLdTypes = readUriArray((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
+              fieldOrElementPath, JSON_LD_TYPE);
 
             checkSchemaArtifactJsonLdType(subSchemaArtifactJsonLdTypes, fieldOrElementPath);
 
@@ -505,20 +506,21 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
                 fieldOrElementPath);
             case ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI -> {
               ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
-                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiInstance, minItems, maxItems,
-                propertyUri);
+                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiInstance,
+                minItems, maxItems, propertyUri);
               elementSchemas.put(childName, elementSchemaArtifact);
               childSchemaOrgNames.put(childName, elementSchemaArtifact.name());
             }
             case FIELD_SCHEMA_ARTIFACT_TYPE_IRI, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
-                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiInstance, minItems, maxItems,
-                propertyUri);
+                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiInstance, false,
+                minItems, maxItems, propertyUri);
               fieldSchemas.put(childName, fieldSchemaArtifact);
               childSchemaOrgNames.put(childName, fieldSchemaArtifact.name());
             }
-            default -> throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType,
-              childName, fieldOrElementPath);
+            default ->
+              throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType, childName,
+                fieldOrElementPath);
             }
 
           } else {
@@ -923,7 +925,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
 
   private Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path,
-    String fieldName, FieldInputType fieldInputType, boolean isMultiInstance)
+    String fieldName, FieldInputType fieldInputType, boolean isMultiInstance, boolean isStandalone)
   {
     String vcPath = path + "/" + fieldName;
     ObjectNode vcNode = readValueConstraintsNode(sourceNode, path, fieldName);
@@ -931,7 +933,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
-      boolean multipleChoice = isMultiInstance ? true : readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+      boolean multipleChoice = isStandalone ? readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false) : isMultiInstance;
       Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
       Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
       Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
