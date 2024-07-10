@@ -348,7 +348,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode, String path,
-    String childName, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    String childName, boolean isMultiInstance, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
@@ -390,12 +390,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       modelVersion, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas,
-      isMultiple, minItems, maxItems,
+      isMultiInstance, minItems, maxItems,
       propertyUri, preferredLabel, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path,
-    String childName, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    String childName, boolean isMultiInstance, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
@@ -421,14 +421,16 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> language = readLanguage(sourceNode, path);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS,
-      fieldUi.inputType(), isMultiple);
+      fieldUi.inputType(), isMultiInstance);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
 
+    // update isMultiInstance, minItems, maxItems
+
     return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, modelVersion,
-      version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      version, status, previousVersion, derivedFrom, isMultiInstance, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
@@ -446,7 +448,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     while (jsonChildNames.hasNext()) {
       String childName = jsonChildNames.next();
-      boolean isMultiple = false;
+      boolean isMultiInstance = false;
       Optional<Integer> minItems = Optional.empty();
       Optional<Integer> maxItems = Optional.empty();
 
@@ -464,7 +466,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
             if (jsonSchemaType.equals(JSON_SCHEMA_ARRAY)) {
 
-              isMultiple = true;
+              isMultiInstance = true;
 
               minItems = readInteger((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
                 fieldOrElementPath, JSON_SCHEMA_MIN_ITEMS);
@@ -503,14 +505,14 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
                 fieldOrElementPath);
             case ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI -> {
               ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
-                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiple, minItems, maxItems,
+                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiInstance, minItems, maxItems,
                 propertyUri);
               elementSchemas.put(childName, elementSchemaArtifact);
               childSchemaOrgNames.put(childName, elementSchemaArtifact.name());
             }
             case FIELD_SCHEMA_ARTIFACT_TYPE_IRI, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
               FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
-                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiple, minItems, maxItems,
+                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childName, isMultiInstance, minItems, maxItems,
                 propertyUri);
               fieldSchemas.put(childName, fieldSchemaArtifact);
               childSchemaOrgNames.put(childName, fieldSchemaArtifact.name());
@@ -921,7 +923,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
 
   private Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path,
-    String fieldName, FieldInputType fieldInputType, boolean isMultiple)
+    String fieldName, FieldInputType fieldInputType, boolean isMultiInstance)
   {
     String vcPath = path + "/" + fieldName;
     ObjectNode vcNode = readValueConstraintsNode(sourceNode, path, fieldName);
@@ -929,7 +931,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
-      boolean multipleChoice = isMultiple ? true : readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+      boolean multipleChoice = isMultiInstance ? true : readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
       Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
       Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
       Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
