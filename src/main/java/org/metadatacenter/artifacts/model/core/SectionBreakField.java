@@ -33,13 +33,13 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
 {
   static SectionBreakField create(String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> preferredLabel, Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations)
   {
     return new SectionBreakFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier, modelVersion, version, status, previousVersion, derivedFrom, createdBy, modifiedBy,
+      name, description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, preferredLabel, Collections.emptyList(), language, fieldUi, Optional.empty(),
       annotations);
   }
@@ -144,12 +144,6 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
-      return this;
-    }
-
     @Override public SectionBreakFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -226,7 +220,7 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
+        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
         derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         language, preferredLabel, fieldUi, annotations);
     }
@@ -236,7 +230,7 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
 record SectionBreakFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                                LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                String name, String description, Optional<String> identifier,
-                               Version modelVersion, Optional<Version> version, Optional<Status> status,
+                               Optional<Version> version, Optional<Status> status,
                                Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                Optional<URI> createdBy, Optional<URI> modifiedBy,
                                Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,

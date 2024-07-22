@@ -3,7 +3,7 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.util.Optional;
 
-public interface SchemaArtifact extends Artifact, ModelSchemaArtifact, JsonLdArtifact, JsonSchemaArtifact, SchemaOrgArtifact,
+public interface SchemaArtifact extends Artifact, JsonLdArtifact, JsonSchemaArtifact, SchemaOrgArtifact,
   VersionedArtifact, MonitoredArtifact
 {
   String jsonSchemaTitle();
@@ -15,8 +15,6 @@ public interface SchemaArtifact extends Artifact, ModelSchemaArtifact, JsonLdArt
   String description();
 
   Optional<String> identifier();
-
-  Version modelVersion();
 
   Optional<Version> version();
 

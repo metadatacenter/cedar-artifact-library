@@ -22,7 +22,6 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateS
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContains;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
@@ -35,7 +34,6 @@ import static org.metadatacenter.model.ModelNodeNames.PAV_PREVIOUS_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 
@@ -45,7 +43,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> instanceJsonLdType,
     String name, String description, Optional<String> identifier,
-    Version modelVersion, Optional<Version> version, Optional<Status> status,
+    Optional<Version> version, Optional<Status> status,
     Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas, LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
@@ -55,7 +53,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType,
       name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
+      version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas, language, templateUi, annotations);
   }
@@ -107,7 +105,6 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private String name;
     private String description = "";
     private Optional<String> identifier = Optional.empty();
-    private Version modelVersion = new Version(1, 6, 0); // TODO
     private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
@@ -137,7 +134,6 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       this.name = templateSchemaArtifact.name();
       this.description = templateSchemaArtifact.description();
       this.identifier = templateSchemaArtifact.identifier();
-      this.modelVersion = templateSchemaArtifact.modelVersion();
       this.version = templateSchemaArtifact.version();
       this.status = templateSchemaArtifact.status();
       this.previousVersion = templateSchemaArtifact.previousVersion();
@@ -241,12 +237,6 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
-    public Builder withModelVersion(Version modelVersion)
-    {
-      this.modelVersion = modelVersion;
-      return this;
-    }
-
     public Builder withVersion(Version version)
     {
       this.version = Optional.ofNullable(version);
@@ -337,7 +327,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
         jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdType,
         name, description, identifier,
-        modelVersion, version, status, previousVersion, derivedFrom,
+        version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas,
         language, templateUiBuilder.build(), annotations);
@@ -349,7 +339,7 @@ record TemplateSchemaArtifactRecord(String jsonSchemaTitle, String jsonSchemaDes
                                     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                     Optional<URI> instanceJsonLdType,
                                     String name, String description, Optional<String> identifier,
-                                    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                    Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
                                     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
@@ -361,7 +351,6 @@ record TemplateSchemaArtifactRecord(String jsonSchemaTitle, String jsonSchemaDes
     validateStringFieldNotNull(this, jsonSchemaDescription, JSON_SCHEMA_DESCRIPTION);
     validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
     validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
-    validateVersionFieldNotNull(this, modelVersion, SCHEMA_ORG_SCHEMA_VERSION);
     validateOptionalFieldNotNull(this, version, PAV_VERSION);
     validateOptionalFieldNotNull(this, status, BIBO_STATUS);
     validateOptionalFieldNotNull(this, previousVersion, PAV_PREVIOUS_VERSION);

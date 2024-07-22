@@ -166,6 +166,7 @@ import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 {
   private final String jsonSchemaSchemaUri = JSON_SCHEMA_SCHEMA_IRI;
+  private final Version modelVersion = Version.fromString("1.6.0");
 
   public JsonSchemaArtifactReader()
   {
@@ -321,7 +322,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = readModelVersion(sourceNode, path);
     String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -341,9 +341,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     checkArtifactJsonSchemaSchemaUri(sourceNode, path);
     checkArtifactJsonSchemaType(sourceNode, path, JSON_SCHEMA_OBJECT);
     checkTemplateSchemaArtifactJsonLdType(jsonLdTypes, path);
+    checkSchemaArtifactModelVersion(sourceNode, path);
 
     return TemplateSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description, identifier, modelVersion, version,
+      jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description, identifier, version,
       status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas,
       elementSchemas, language, templateUi, annotations);
   }
@@ -361,7 +362,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = readModelVersion(sourceNode, path);
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -379,6 +379,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     checkArtifactJsonSchemaSchemaUri(sourceNode, path);
     checkArtifactJsonSchemaType(sourceNode, path, JSON_SCHEMA_OBJECT);
     checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
+    checkSchemaArtifactModelVersion(sourceNode, path);
 
     Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas,
       elementSchemas, childPropertyUris);
@@ -387,7 +388,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     return ElementSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, schemaOrgName, schemaOrgDescription,
-      schemaOrgIdentifier, modelVersion, version, status, previousVersion, derivedFrom, createdBy, modifiedBy,
+      schemaOrgIdentifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiInstance, minItems, maxItems, propertyUri,
       preferredLabel, language, elementUi, annotations);
   }
@@ -403,11 +404,8 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
-    URI jsonSchemaSchemaUri = readRequiredUri(sourceNode, path, JSON_SCHEMA_SCHEMA);
-    String jsonSchemaType = readRequiredString(sourceNode, path, JSON_SCHEMA_TYPE);
     String jsonSchemaTitle = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String jsonSchemaDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    Version modelVersion = readModelVersion(sourceNode, path);
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -425,11 +423,12 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
 
     checkArtifactJsonSchemaSchemaUri(sourceNode, path);
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
+    checkSchemaArtifactModelVersion(sourceNode, path);
 
     // update isMultiInstance, minItems, maxItems
 
     return FieldSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, modelVersion,
+      jsonLdContext, jsonLdTypes, jsonLdId, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier,
       version, status, previousVersion, derivedFrom, isMultiInstance, minItems, maxItems, propertyUri, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints,
       annotations);
@@ -1915,7 +1914,17 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     String jsonSchemaType = readRequiredString(sourceNode, path, JSON_SCHEMA_TYPE);
 
     if (!jsonSchemaType.equals(expectedJsonSchemaType))
-      throw new ArtifactParseException("Expecting " + expectedJsonSchemaType + ", got " + jsonSchemaType,
+      throw new ArtifactParseException("Expecting artifact JSON Schema type " + expectedJsonSchemaType + ", got " + jsonSchemaType,
         JSON_SCHEMA_TYPE, path);
   }
+
+  private void checkSchemaArtifactModelVersion(ObjectNode sourceNode, String path)
+  {
+    Version artifactModelVersion = readModelVersion(sourceNode, path);
+
+    if (!artifactModelVersion.equals(modelVersion))
+      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " + artifactModelVersion,
+        SCHEMA_ORG_SCHEMA_VERSION, path);
+  }
+
 }

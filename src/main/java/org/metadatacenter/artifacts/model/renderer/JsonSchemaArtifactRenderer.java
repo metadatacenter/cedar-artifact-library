@@ -21,6 +21,7 @@ import org.metadatacenter.artifacts.model.core.ParentInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 
@@ -105,6 +106,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   private final ObjectMapper mapper;
   private final DateTimeFormatter datetimeFormatter;
   private final String datetimeFormat = "yyyy-MM-dd'T'HH:mm:ssXXX";
+  private final Version modelVersion = Version.fromString("1.6.0");
 
   private final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
 
@@ -211,7 +213,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreSchemaOrgRendering(templateSchemaArtifact, rendering);
     addProvenanceRendering(templateSchemaArtifact, rendering);
     addVersionRendering(templateSchemaArtifact, rendering);
-    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, templateSchemaArtifact.modelVersion().toString());
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, modelVersion.toString());
 
     if (templateSchemaArtifact.identifier().isPresent()) {
       String identifier = templateSchemaArtifact.identifier().get();
@@ -309,7 +311,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     addVersionRendering(elementSchemaArtifact, rendering);
 
-    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, elementSchemaArtifact.modelVersion().toString());
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, modelVersion.toString());
 
     if (elementSchemaArtifact.hasAttributeValueField())
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
@@ -420,7 +422,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     }
 
     addVersionRendering(fieldSchemaArtifact, rendering);
-    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, fieldSchemaArtifact.modelVersion().toString());
+    rendering.put(SCHEMA_ORG_SCHEMA_VERSION, modelVersion.toString());
 
     rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES, false);
 

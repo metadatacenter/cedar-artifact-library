@@ -36,7 +36,6 @@ public class FieldSchemaArtifactTest
     Optional<String> identifier = Optional.of("Schema Org identifier");
     Optional<String> preferredLabel = Optional.of("My label");
     List<String> alternateLabels = Collections.emptyList();
-    Version modelVersion = new Version(1, 6, 0);
     Optional<Version> version = Optional.of(new Version(2, 0, 0));
     Optional<Status> status = Optional.of(Status.DRAFT);
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/template-fields/3232"));
@@ -47,7 +46,7 @@ public class FieldSchemaArtifactTest
     Optional<Integer> maxItems = Optional.of(4);
 
     FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), name, description, identifier, modelVersion, version, status,
+      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), name, description, identifier, version, status,
       previousVersion, derivedFrom, false, minItems, maxItems, propertyUri, Optional.of(createdBy),
       Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn), preferredLabel, alternateLabels,
       language, FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty(), Optional.empty());
@@ -66,7 +65,6 @@ public class FieldSchemaArtifactTest
     Assert.assertEquals(identifier, fieldSchemaArtifact.identifier());
     Assert.assertEquals(preferredLabel, fieldSchemaArtifact.preferredLabel());
     Assert.assertEquals(alternateLabels, fieldSchemaArtifact.alternateLabels());
-    Assert.assertEquals(modelVersion, fieldSchemaArtifact.modelVersion());
     Assert.assertEquals(version, fieldSchemaArtifact.version());
     Assert.assertEquals(status, fieldSchemaArtifact.status());
     Assert.assertEquals(previousVersion, fieldSchemaArtifact.previousVersion());

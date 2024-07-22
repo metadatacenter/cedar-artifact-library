@@ -36,7 +36,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 {
   static CheckboxField create(String jsonSchemaTitle, String jsonSchemaDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
@@ -45,7 +45,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
     Optional<Annotations> annotations)
   {
     return new CheckboxFieldRecord(jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
+      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
       status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
@@ -163,12 +163,6 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
-      return this;
-    }
-
     @Override public CheckboxFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -278,7 +272,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 
       return create(jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
-        name, description, identifier, modelVersion, version,
+        name, description, identifier, version,
         status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy,
         createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     }
@@ -288,7 +282,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 record CheckboxFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                            LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                            String name, String description, Optional<String> identifier,
-                           Version modelVersion, Optional<Version> version, Optional<Status> status,
+                           Optional<Version> version, Optional<Status> status,
                            Optional<URI> previousVersion, Optional<URI> derivedFrom,
                            Optional<Integer> minItems, Optional<Integer> maxItems,
                            Optional<URI> propertyUri,

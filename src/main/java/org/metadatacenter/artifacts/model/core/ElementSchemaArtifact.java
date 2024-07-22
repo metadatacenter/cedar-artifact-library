@@ -41,7 +41,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> instanceJsonLdType,
     String name, String description, Optional<String> identifier,
-    Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
@@ -53,7 +53,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType,
       name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
+      version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       fieldSchemas, elementSchemas,
       isMultiple, minItems, maxItems,
@@ -105,7 +105,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private String name;
     private String description = "";
     private Optional<String> identifier = Optional.empty();
-    private Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
     private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1 in ModelNodeNames
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
@@ -139,7 +138,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       this.name = elementSchemaArtifact.name();
       this.description = elementSchemaArtifact.description();
       this.identifier = elementSchemaArtifact.identifier();
-      this.modelVersion = elementSchemaArtifact.modelVersion();
       this.version = elementSchemaArtifact.version();
       this.status = elementSchemaArtifact.status();
       this.previousVersion = elementSchemaArtifact.previousVersion();
@@ -240,12 +238,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     public Builder withSchemaOrgIdentifier(String identifier)
     {
       this.identifier = Optional.ofNullable(identifier);
-      return this;
-    }
-
-    public Builder withModelVersion(Version modelVersion)
-    {
-      this.modelVersion = modelVersion;
       return this;
     }
 
@@ -357,7 +349,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
         jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdType,
         name, description, identifier,
-        modelVersion, version, status, previousVersion, derivedFrom,
+        version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas,
         isMultiple, minItems, maxItems, propertyUri, preferredLabel, language, elementUiBuilder.build(), annotations);
@@ -369,7 +361,7 @@ record ElementSchemaArtifactRecord(String jsonSchemaTitle, String jsonSchemaDesc
                                    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                    Optional<URI> instanceJsonLdType,
                                    String name, String description, Optional<String> identifier,
-                                   Version modelVersion, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                   Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
                                    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,

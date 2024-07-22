@@ -33,13 +33,13 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
 {
   static YouTubeField create(String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations)
   {
     return new YouTubeFieldRecord(jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
+      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
       status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty(), annotations);
@@ -143,12 +143,6 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public YouTubeFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
-      return this;
-    }
-
     @Override public YouTubeFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -226,7 +220,7 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       withFieldUi(fieldUiBuilder.build());
       return create(jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
-        name, description, identifier, modelVersion, version, status, previousVersion, derivedFrom,
+        name, description, identifier, version, status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         language, fieldUi, annotations);
     }
@@ -236,7 +230,7 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
 record YouTubeFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                           LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                           String name, String description, Optional<String> identifier,
-                          Version modelVersion, Optional<Version> version, Optional<Status> status,
+                          Optional<Version> version, Optional<Status> status,
                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
                           Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,

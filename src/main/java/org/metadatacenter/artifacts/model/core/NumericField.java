@@ -36,7 +36,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
 {
   static NumericField create(String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
@@ -45,7 +45,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
     Optional<Annotations> annotations)
   {
     return new NumericFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
-      description, identifier, modelVersion, version, status, previousVersion, derivedFrom, isMultiple, minItems,
+      description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems,
       maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
       fieldUi, valueConstraints, annotations);
   }
@@ -175,12 +175,6 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public NumericFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
-      return this;
-    }
-
     @Override public NumericFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -294,7 +288,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
       return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
+        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         preferredLabel, alternateLabels, language, fieldUi.asNumericFieldUi(), valueConstraints, annotations);
     }
@@ -304,7 +298,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
 record NumericFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                           LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                           String name, String description, Optional<String> identifier,
-                          Version modelVersion, Optional<Version> version, Optional<Status> status,
+                          Optional<Version> version, Optional<Status> status,
                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
                           Optional<URI> propertyUri,

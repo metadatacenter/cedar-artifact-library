@@ -34,7 +34,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<String> identifier = Optional.empty();
   protected Optional<String> preferredLabel = Optional.empty();
   protected List<String> alternateLabels = Collections.emptyList();
-  protected Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
   protected Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
   protected Optional<Status> status = Optional.of(Status.DRAFT);
   protected Optional<URI> previousVersion = Optional.empty();
@@ -113,7 +112,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.identifier = fieldSchemaArtifact.identifier();
     this.preferredLabel = fieldSchemaArtifact.preferredLabel();
     this.alternateLabels = fieldSchemaArtifact.alternateLabels();
-    this.modelVersion = fieldSchemaArtifact.modelVersion();
     this.version = fieldSchemaArtifact.version();
     this.status = fieldSchemaArtifact.status();
     this.previousVersion = fieldSchemaArtifact.previousVersion();
@@ -211,15 +209,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
       throw new IllegalArgumentException("null alternate labels passed to builder");
 
     this.alternateLabels = alternateLabels;
-    return this;
-  }
-
-  protected FieldSchemaArtifactBuilder withModelVersion(Version modelVersion)
-  {
-    if (modelVersion == null)
-      throw new IllegalArgumentException("null model version passed to builder");
-
-    this.modelVersion = modelVersion;
     return this;
   }
 

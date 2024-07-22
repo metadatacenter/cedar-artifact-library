@@ -35,7 +35,6 @@ public class ElementSchemaArtifactTest
     String name = "Schema Org name";
     String description = "Schema Org description";
     Optional<String> identifier = Optional.of("Schema Org identifier");
-    Version modelVersion = new Version(1, 6, 0);
     Optional<Version> version = Optional.of(new Version(2, 0, 0));
     Optional<Status> status = Optional.of(Status.DRAFT);
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
@@ -48,7 +47,7 @@ public class ElementSchemaArtifactTest
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), Optional.of(instanceJsonLdType), name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom, Optional.of(createdBy), Optional.of(modifiedBy),
+      version, status, previousVersion, derivedFrom, Optional.of(createdBy), Optional.of(modifiedBy),
       Optional.of(createdOn), Optional.of(lastUpdatedOn), new LinkedHashMap<>(), new LinkedHashMap<>(), false, minItems,
       maxItems, propertyUri, preferredLabel, language, ElementUi.builder().build(), Optional.empty());
 
@@ -65,7 +64,6 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(name, elementSchemaArtifact.name());
     Assert.assertEquals(description, elementSchemaArtifact.description());
     Assert.assertEquals(identifier, elementSchemaArtifact.identifier());
-    Assert.assertEquals(modelVersion, elementSchemaArtifact.modelVersion());
     Assert.assertEquals(version, elementSchemaArtifact.version());
     Assert.assertEquals(status, elementSchemaArtifact.status());
     Assert.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());

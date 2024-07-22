@@ -36,7 +36,7 @@ public sealed interface ListField extends FieldSchemaArtifact
 {
   static ListField create(String jsonSchemaTitle, String jsonSchemaDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId, String name,
-    String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
@@ -44,7 +44,7 @@ public sealed interface ListField extends FieldSchemaArtifact
     Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations)
   {
     return new ListFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
-      description, identifier, modelVersion, version, status, previousVersion, derivedFrom, isMultiple, minItems,
+      description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems,
       maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
       fieldUi, valueConstraints, annotations);
   }
@@ -162,12 +162,6 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ListFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
-      return this;
-    }
-
     @Override public ListFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -281,7 +275,7 @@ public sealed interface ListField extends FieldSchemaArtifact
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
       return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description,
-        identifier, modelVersion, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
+        identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
         propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
         fieldUi, valueConstraints, annotations);
     }
@@ -291,7 +285,7 @@ public sealed interface ListField extends FieldSchemaArtifact
 record ListFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                        LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                        String name, String description, Optional<String> identifier,
-                       Version modelVersion, Optional<Version> version, Optional<Status> status,
+                       Optional<Version> version, Optional<Status> status,
                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
                        Optional<URI> propertyUri,

@@ -35,31 +35,31 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 public sealed interface TextField extends FieldSchemaArtifact
 {
   static TextField create(String jsonSchemaTitle, String jsonSchemaDescription,
-    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId, String name,
+    String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+    Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations)
   {
-    return new TextFieldRecord(jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new TextFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
+      description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems,
+      maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
+      fieldUi, valueConstraints, annotations);
   }
 
-  static TextFieldBuilder builder() { return new TextFieldBuilder(); }
+  static TextFieldBuilder builder() {return new TextFieldBuilder();}
 
-  static TextFieldBuilder builder(TextField textField) { return new TextFieldBuilder(textField); }
+  static TextFieldBuilder builder(TextField textField) {return new TextFieldBuilder(textField);}
 
   final class TextFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private FieldUi.Builder fieldUiBuilder;
     private TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
-    public TextFieldBuilder() {
+    public TextFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.TEXTFIELD);
@@ -72,7 +72,8 @@ public sealed interface TextField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = FieldUi.builder(textField.fieldUi());
       if (textField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(textField.valueConstraints().get().asTextValueConstraints());
+        this.valueConstraintsBuilder = TextValueConstraints.builder(
+          textField.valueConstraints().get().asTextValueConstraints());
       else
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
@@ -138,7 +139,8 @@ public sealed interface TextField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TextFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public TextFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -164,12 +166,6 @@ public sealed interface TextField extends FieldSchemaArtifact
     @Override public TextFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public TextFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -285,11 +281,10 @@ public sealed interface TextField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription,
-        jsonLdContext, jsonLdTypes, jsonLdId,
-        name, description, identifier, modelVersion, version,
-        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description,
+        identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
+        valueConstraints, annotations);
     }
   }
 }
@@ -297,7 +292,7 @@ public sealed interface TextField extends FieldSchemaArtifact
 record TextFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                        LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                        String name, String description, Optional<String> identifier,
-                       Version modelVersion, Optional<Version> version, Optional<Status> status,
+                       Optional<Version> version, Optional<Status> status,
                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
                        Optional<URI> propertyUri,

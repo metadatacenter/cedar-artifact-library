@@ -32,7 +32,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
 {
   static PageBreakField create(String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> preferredLabel, List<String> alternateLabels,
@@ -40,7 +40,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
     Optional<Annotations> annotations)
   {
     return new PageBreakFieldRecord(jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
+      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
       status, previousVersion, derivedFrom, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
@@ -143,12 +143,6 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PageBreakFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
-      return this;
-    }
-
     @Override public PageBreakFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -226,7 +220,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       withFieldUi(fieldUiBuilder.build());
       return create(jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
-        name, description, identifier, modelVersion, version,
+        name, description, identifier, version,
         status, previousVersion, derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
         preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
@@ -237,7 +231,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
 record PageBreakFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                             LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                             String name, String description, Optional<String> identifier,
-                            Version modelVersion, Optional<Version> version, Optional<Status> status,
+                            Optional<Version> version, Optional<Status> status,
                             Optional<URI> previousVersion, Optional<URI> derivedFrom,
                             Optional<URI> createdBy, Optional<URI> modifiedBy,
                             Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,

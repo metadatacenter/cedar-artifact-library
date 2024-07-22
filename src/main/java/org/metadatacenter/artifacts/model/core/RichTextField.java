@@ -32,13 +32,13 @@ public sealed interface RichTextField extends FieldSchemaArtifact
 {
   static RichTextField create(String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+    String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> language, Optional<String> preferredLLabel, StaticFieldUi fieldUi, Optional<Annotations> annotations)
   {
     return new RichTextFieldRecord(jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
+      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
       status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn,
       preferredLLabel, Collections.emptyList(), language, fieldUi, Optional.empty(), annotations);
@@ -142,12 +142,6 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RichTextFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
-      return this;
-    }
-
     @Override public RichTextFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -224,7 +218,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
+        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
         derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         language, preferredLabel, fieldUi.asStaticFieldUi(), annotations);
     }
@@ -234,7 +228,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
 record RichTextFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                            LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                            String name, String description, Optional<String> identifier,
-                           Version modelVersion, Optional<Version> version, Optional<Status> status,
+                           Optional<Version> version, Optional<Status> status,
                            Optional<URI> previousVersion, Optional<URI> derivedFrom,
                            Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
