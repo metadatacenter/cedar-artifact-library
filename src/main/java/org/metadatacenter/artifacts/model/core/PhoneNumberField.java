@@ -34,26 +34,25 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface PhoneNumberField extends FieldSchemaArtifact
 {
-  static PhoneNumberField create(String jsonSchemaTitle, String jsonSchemaDescription,
-    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Optional<Version> version,
+  static PhoneNumberField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+    Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new PhoneNumberFieldRecord(jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new PhoneNumberFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId,
+      name, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
+      propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
+      valueConstraints, annotations, internalName, internalDescription);
   }
 
-  static PhoneNumberFieldBuilder builder() { return new PhoneNumberFieldBuilder(); }
+  static PhoneNumberFieldBuilder builder() {return new PhoneNumberFieldBuilder();}
 
-  static PhoneNumberFieldBuilder builder(PhoneNumberField phoneNumberField) {
+  static PhoneNumberFieldBuilder builder(PhoneNumberField phoneNumberField)
+  {
     return new PhoneNumberFieldBuilder(phoneNumberField);
   }
 
@@ -62,7 +61,8 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
-    public PhoneNumberFieldBuilder() {
+    public PhoneNumberFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.PHONE_NUMBER);
@@ -75,7 +75,8 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = FieldUi.builder(phoneNumberField.fieldUi());
       if (phoneNumberField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(phoneNumberField.valueConstraints().get().asTextValueConstraints());
+        this.valueConstraintsBuilder = TextValueConstraints.builder(
+          phoneNumberField.valueConstraints().get().asTextValueConstraints());
       else
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
@@ -134,7 +135,8 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PhoneNumberFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public PhoneNumberFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -253,15 +255,15 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PhoneNumberFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public PhoneNumberFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public PhoneNumberFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public PhoneNumberFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -275,26 +277,23 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
+        identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
+        valueConstraints, annotations, internalName, internalDescription);
     }
   }
 }
 
-record PhoneNumberFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                              LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                              String name, String description, Optional<String> identifier,
-                              Optional<Version> version, Optional<Status> status,
-                              Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record PhoneNumberFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                              String name, String description, Optional<String> identifier, Optional<Version> version,
+                              Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                               boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                              Optional<URI> propertyUri,
-                              Optional<URI> createdBy, Optional<URI> modifiedBy,
+                              Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                               Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                              Optional<String> preferredLabel, List<String> alternateLabels,
-                              Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                              Optional<Annotations> annotations)
+                              Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                              FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                              Optional<Annotations> annotations, String internalName, String internalDescription)
   implements PhoneNumberField
 {
   public PhoneNumberFieldRecord
@@ -307,7 +306,7 @@ record PhoneNumberFieldRecord(String jsonSchemaTitle, String jsonSchemaDescripti
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

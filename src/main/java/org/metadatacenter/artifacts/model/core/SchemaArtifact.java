@@ -6,10 +6,6 @@ import java.util.Optional;
 public interface SchemaArtifact extends Artifact, JsonLdArtifact, JsonSchemaArtifact, SchemaOrgArtifact,
   VersionedArtifact, MonitoredArtifact
 {
-  String jsonSchemaTitle();
-
-  String jsonSchemaDescription();
-
   String name();
 
   String description();
@@ -27,4 +23,8 @@ public interface SchemaArtifact extends Artifact, JsonLdArtifact, JsonSchemaArti
   Optional<String> language();
 
   Optional<Annotations> annotations();
+
+  String internalName();
+
+  String internalDescription();
 }

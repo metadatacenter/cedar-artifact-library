@@ -1,4 +1,3 @@
-
 package org.metadatacenter.artifacts.model.core;
 
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
@@ -35,19 +34,19 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface LinkField extends FieldSchemaArtifact
 {
-  static LinkField create(String jsonSchemaTitle, String jsonSchemaDescription,
-    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId, String name,
-    String description, Optional<String> identifier, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
-    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations)
+  static LinkField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new LinkFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
-      description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems,
-      maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
-      fieldUi, valueConstraints, annotations);
+    return new LinkFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
   static LinkFieldBuilder builder() {return new LinkFieldBuilder();}
@@ -223,15 +222,15 @@ public sealed interface LinkField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public LinkFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public LinkFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public LinkFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public LinkFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -263,27 +262,23 @@ public sealed interface LinkField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description,
-        identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
-        propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
-        fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
     }
   }
 }
 
-record LinkFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                       LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                       String name, String description, Optional<String> identifier,
-                       Optional<Version> version, Optional<Status> status,
-                       Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record LinkFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                       String name, String description, Optional<String> identifier, Optional<Version> version,
+                       Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                       Optional<URI> propertyUri,
-                       Optional<URI> createdBy, Optional<URI> modifiedBy,
+                       Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                       Optional<String> preferredLabel, List<String> alternateLabels,
-                       Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                       Optional<Annotations> annotations)
-  implements LinkField
+                       Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                       FieldUi fieldUi, Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                       String internalName, String internalDescription) implements LinkField
 {
   public LinkFieldRecord
   {

@@ -34,32 +34,32 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface NumericField extends FieldSchemaArtifact
 {
-  static NumericField create(String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, NumericFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+  static NumericField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, NumericFieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new NumericFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
-      description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems,
-      maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
-      fieldUi, valueConstraints, annotations);
+    return new NumericFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static NumericFieldBuilder builder() { return new NumericFieldBuilder(); }
+  static NumericFieldBuilder builder() {return new NumericFieldBuilder();}
 
-  static NumericFieldBuilder builder(NumericField numericField) { return new NumericFieldBuilder(numericField); }
+  static NumericFieldBuilder builder(NumericField numericField) {return new NumericFieldBuilder(numericField);}
 
   final class NumericFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final NumericFieldUi.NumericFieldUiBuilder fieldUiBuilder;
     private final NumericValueConstraints.NumericValueConstraintsBuilder valueConstraintsBuilder;
 
-    public NumericFieldBuilder() {
+    public NumericFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = NumericFieldUi.builder();
@@ -72,37 +72,41 @@ public sealed interface NumericField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = NumericFieldUi.builder(numericField.fieldUi().asNumericFieldUi());
       if (numericField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = NumericValueConstraints.builder(numericField.valueConstraints().get().asNumericValueConstraints());
+        this.valueConstraintsBuilder = NumericValueConstraints.builder(
+          numericField.valueConstraints().get().asNumericValueConstraints());
       else
         this.valueConstraintsBuilder = NumericValueConstraints.builder();
     }
 
-    public NumericFieldBuilder withNumericType(
-      XsdNumericDatatype numericType) {
+    public NumericFieldBuilder withNumericType(XsdNumericDatatype numericType)
+    {
       valueConstraintsBuilder.withNumberType(numericType);
       return this;
     }
 
-    public NumericFieldBuilder withMinValue(Number minValue) {
+    public NumericFieldBuilder withMinValue(Number minValue)
+    {
       valueConstraintsBuilder.withMinValue(minValue);
       return this;
     }
 
-    public NumericFieldBuilder withMaxValue(Number maxValue) {
+    public NumericFieldBuilder withMaxValue(Number maxValue)
+    {
       valueConstraintsBuilder.withMaxValue(maxValue);
       return this;
     }
 
-    public NumericFieldBuilder withDecimalPlaces(Integer decimalPlaces) {
+    public NumericFieldBuilder withDecimalPlaces(Integer decimalPlaces)
+    {
       valueConstraintsBuilder.withDecimalPlaces(decimalPlaces);
       return this;
     }
 
-    public NumericFieldBuilder withUnitOfMeasure(String unitOfMeasure) {
+    public NumericFieldBuilder withUnitOfMeasure(String unitOfMeasure)
+    {
       valueConstraintsBuilder.withUnitOfMeasure(unitOfMeasure);
       return this;
     }
-
 
     public NumericFieldBuilder withDefaultValue(Number defaultValue)
     {
@@ -146,7 +150,8 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public NumericFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public NumericFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -265,15 +270,15 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public NumericFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public NumericFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public NumericFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public NumericFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -287,26 +292,23 @@ public sealed interface NumericField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi.asNumericFieldUi(), valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asNumericFieldUi(), valueConstraints,
+        annotations, internalName, internalDescription);
     }
   }
 }
 
-record NumericFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                          LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                          String name, String description, Optional<String> identifier,
-                          Optional<Version> version, Optional<Status> status,
-                          Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record NumericFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                          String name, String description, Optional<String> identifier, Optional<Version> version,
+                          Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                          Optional<URI> propertyUri,
-                          Optional<URI> createdBy, Optional<URI> modifiedBy,
+                          Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                          Optional<String> preferredLabel, List<String> alternateLabels,
-                          Optional<String> language, NumericFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                          Optional<Annotations> annotations)
+                          Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                          NumericFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                          Optional<Annotations> annotations, String internalName, String internalDescription)
   implements NumericField
 {
   public NumericFieldRecord
@@ -319,7 +321,7 @@ record NumericFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

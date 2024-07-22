@@ -31,37 +31,35 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface YouTubeField extends FieldSchemaArtifact
 {
-  static YouTubeField create(String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations)
+  static YouTubeField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> language,
+    FieldUi fieldUi, Optional<Annotations> annotations, String internalName, String internalDescription)
   {
-    return new YouTubeFieldRecord(jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
-      status, previousVersion, derivedFrom,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      Optional.empty(), Collections.emptyList(), language, fieldUi, Optional.empty(), annotations);
+    return new YouTubeFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, Optional.empty(),
+      Collections.emptyList(), language, fieldUi, Optional.empty(), annotations, internalName, internalDescription);
   }
 
-  default boolean isMultiple() { return false; }
+  default boolean isMultiple() {return false;}
 
-  default Optional<Integer> minItems() { return Optional.empty(); }
+  default Optional<Integer> minItems() {return Optional.empty();}
 
-  default Optional<Integer> maxItems() { return Optional.empty(); }
+  default Optional<Integer> maxItems() {return Optional.empty();}
 
-  default Optional<URI> propertyUri() { return Optional.empty(); }
+  default Optional<URI> propertyUri() {return Optional.empty();}
 
-  static YouTubeFieldBuilder builder() { return new YouTubeFieldBuilder(); }
+  static YouTubeFieldBuilder builder() {return new YouTubeFieldBuilder();}
 
-  static YouTubeFieldBuilder builder(YouTubeField youTubeField) { return new YouTubeFieldBuilder(youTubeField); }
+  static YouTubeFieldBuilder builder(YouTubeField youTubeField) {return new YouTubeFieldBuilder(youTubeField);}
 
   final class YouTubeFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final StaticFieldUi.YouTubeFieldUiBuilder fieldUiBuilder;
 
-    public YouTubeFieldBuilder() {
+    public YouTubeFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = StaticFieldUi.youTubeFieldUiBuilder();
@@ -114,7 +112,8 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public YouTubeFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public YouTubeFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -197,15 +196,15 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public YouTubeFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public YouTubeFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public YouTubeFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public YouTubeFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -218,26 +217,21 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
     public YouTubeField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription,
-        jsonLdContext, jsonLdTypes, jsonLdId,
-        name, description, identifier, version, status, previousVersion, derivedFrom,
-        createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, fieldUi, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
+        identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        language, fieldUi, annotations, internalName, internalDescription);
     }
   }
 }
 
-record YouTubeFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                          LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                          String name, String description, Optional<String> identifier,
-                          Optional<Version> version, Optional<Status> status,
-                          Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                          Optional<URI> createdBy, Optional<URI> modifiedBy,
-                          Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                          Optional<String> preferredLabel, List<String> alternateLabels,
-                          Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                          Optional<Annotations> annotations)
-  implements YouTubeField
+record YouTubeFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                          String name, String description, Optional<String> identifier, Optional<Version> version,
+                          Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                          Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                          Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                          List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                          Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                          String internalName, String internalDescription) implements YouTubeField
 {
   public YouTubeFieldRecord
   {

@@ -33,25 +33,25 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface AttributeValueField extends FieldSchemaArtifact
 {
-  static AttributeValueField create(String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Optional<Version> version,
+  static AttributeValueField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+    Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new AttributeValueFieldRecord(jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new AttributeValueFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+      internalName, internalDescription);
   }
 
-  static AttributeValueFieldBuilder builder() { return new AttributeValueFieldBuilder(); }
+  static AttributeValueFieldBuilder builder() {return new AttributeValueFieldBuilder();}
 
-  static AttributeValueFieldBuilder builder(AttributeValueField attributeValueField) {
+  static AttributeValueFieldBuilder builder(AttributeValueField attributeValueField)
+  {
     return new AttributeValueFieldBuilder(attributeValueField);
   }
 
@@ -175,22 +175,21 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       return this;
     }
 
-
     @Override public AttributeValueFieldBuilder withLanguage(String language)
     {
       super.withLanguage(language);
       return this;
     }
 
-    @Override public AttributeValueFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public AttributeValueFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public AttributeValueFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public AttributeValueFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -238,28 +237,25 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
 
-      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
     }
 
   }
 }
 
-record AttributeValueFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                                 LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                 String name, String description, Optional<String> identifier,
-                                 Optional<Version> version, Optional<Status> status,
-                                 Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                 boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                 Optional<URI> propertyUri,
-                                 Optional<URI> createdBy, Optional<URI> modifiedBy,
-                                 Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                 Optional<String> preferredLabel, List<String> alternateLabels,
-                                 Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                                 Optional<Annotations> annotations)
-  implements AttributeValueField
+record AttributeValueFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+                                 Optional<URI> jsonLdId, String name, String description, Optional<String> identifier,
+                                 Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion,
+                                 Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+                                 Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
+                                 Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                                 Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                                 List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                                 Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                                 String internalName, String internalDescription) implements AttributeValueField
 {
   public AttributeValueFieldRecord
   {
@@ -271,7 +267,7 @@ record AttributeValueFieldRecord(String jsonSchemaTitle, String jsonSchemaDescri
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

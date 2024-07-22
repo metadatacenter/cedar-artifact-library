@@ -14,7 +14,6 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public class ElementSchemaArtifactTest
@@ -30,8 +29,8 @@ public class ElementSchemaArtifactTest
     URI modifiedBy = URI.create("http://example.com/user");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    String jsonSchemaTitle = "title";
-    String jsonSchemaDescription = "description";
+    String internalName = "title";
+    String internalDescription = "description";
     String name = "Schema Org name";
     String description = "Schema Org description";
     Optional<String> identifier = Optional.of("Schema Org identifier");
@@ -45,7 +44,7 @@ public class ElementSchemaArtifactTest
     Optional<String> preferredLabel = Optional.of("A preferred label");
     Optional<String> language = Optional.of("en");
 
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(internalName, internalDescription,
       jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), Optional.of(instanceJsonLdType), name, description, identifier,
       version, status, previousVersion, derivedFrom, Optional.of(createdBy), Optional.of(modifiedBy),
       Optional.of(createdOn), Optional.of(lastUpdatedOn), new LinkedHashMap<>(), new LinkedHashMap<>(), false, minItems,
@@ -59,8 +58,8 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());
     Assert.assertEquals(createdOn, elementSchemaArtifact.createdOn().get());
     Assert.assertEquals(lastUpdatedOn, elementSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(jsonSchemaTitle, elementSchemaArtifact.jsonSchemaTitle());
-    Assert.assertEquals(jsonSchemaDescription, elementSchemaArtifact.jsonSchemaDescription());
+    Assert.assertEquals(internalName, elementSchemaArtifact.internalName());
+    Assert.assertEquals(internalDescription, elementSchemaArtifact.internalDescription());
     Assert.assertEquals(name, elementSchemaArtifact.name());
     Assert.assertEquals(description, elementSchemaArtifact.description());
     Assert.assertEquals(identifier, elementSchemaArtifact.identifier());

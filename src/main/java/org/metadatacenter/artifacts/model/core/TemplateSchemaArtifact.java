@@ -39,30 +39,25 @@ import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact
 {
-  static TemplateSchemaArtifact create(String jsonSchemaTitle, String jsonSchemaDescription,
-    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<URI> instanceJsonLdType,
-    String name, String description, Optional<String> identifier,
-    Optional<Version> version, Optional<Status> status,
-    Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas, LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
-    Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations)
+  static TemplateSchemaArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, Optional<URI> instanceJsonLdType, String name, String description,
+    Optional<String> identifier, Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion,
+    Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+    Optional<OffsetDateTime> lastUpdatedOn, LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
+    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas, Optional<String> language, TemplateUi templateUi,
+    Optional<Annotations> annotations, String internalName, String internalDescription)
   {
-    return new TemplateSchemaArtifactRecord(jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      instanceJsonLdType,
-      name, description, identifier,
-      version, status, previousVersion, derivedFrom,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, language, templateUi, annotations);
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description,
+      identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
   }
 
   TemplateUi templateUi();
 
-  default ParentArtifactUi getUi() { return templateUi(); }
+  default ParentArtifactUi getUi() {return templateUi();}
 
-  default void accept(SchemaArtifactVisitor visitor) {
+  default void accept(SchemaArtifactVisitor visitor)
+  {
     String path = "/";
 
     visitor.visitTemplateSchemaArtifact(this);
@@ -82,17 +77,20 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     }
   }
 
-  static Builder builder() {
+  static Builder builder()
+  {
     return new Builder();
   }
 
-  static Builder builder(TemplateSchemaArtifact templateSchemaArtifact) {
+  static Builder builder(TemplateSchemaArtifact templateSchemaArtifact)
+  {
     return new Builder(templateSchemaArtifact);
   }
 
   class Builder
   {
-    private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(
+      PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     private List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> instanceJsonLdType = Optional.empty();
@@ -100,8 +98,6 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private String jsonSchemaTitle = "";
-    private String jsonSchemaDescription = "";
     private String name;
     private String description = "";
     private Optional<String> identifier = Optional.empty();
@@ -114,6 +110,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<String> language = Optional.empty();
     private TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
     private Optional<Annotations> annotations = Optional.empty();
+    private String internalName = "";
+    private String internalDescription = "";
 
     private Builder()
     {
@@ -129,8 +127,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       this.modifiedBy = templateSchemaArtifact.modifiedBy();
       this.createdOn = templateSchemaArtifact.createdOn();
       this.lastUpdatedOn = templateSchemaArtifact.lastUpdatedOn();
-      this.jsonSchemaTitle = templateSchemaArtifact.jsonSchemaTitle();
-      this.jsonSchemaDescription = templateSchemaArtifact.jsonSchemaDescription();
+      this.internalName = templateSchemaArtifact.internalName();
+      this.internalDescription = templateSchemaArtifact.internalDescription();
       this.name = templateSchemaArtifact.name();
       this.description = templateSchemaArtifact.description();
       this.identifier = templateSchemaArtifact.identifier();
@@ -193,19 +191,19 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
-    public Builder withJsonSchemaTitle(String jsonSchemaTitle)
+    public Builder withInternalName(String internalName)
     {
-      this.jsonSchemaTitle = jsonSchemaTitle;
+      this.internalName = internalName;
       return this;
     }
 
-    public Builder withJsonSchemaDescription(String jsonSchemaDescription)
+    public Builder withInternalDescription(String internalDescription)
     {
-      this.jsonSchemaDescription = jsonSchemaDescription;
+      this.internalDescription = internalDescription;
       return this;
     }
 
-    public Builder withSchemaOrgIdentifier(String schemaOrgIdentifier)
+    public Builder withIdentifier(String schemaOrgIdentifier)
     {
       this.identifier = Optional.ofNullable(schemaOrgIdentifier);
       return this;
@@ -221,11 +219,11 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     {
       this.name = name;
 
-      if (this.jsonSchemaTitle.isEmpty())
-        this.jsonSchemaTitle = name + " template schema";
+      if (this.internalName.isEmpty())
+        this.internalName = name + " template schema";
 
-      if (this.jsonSchemaDescription.isEmpty())
-        this.jsonSchemaDescription = name + " template schema generated by the CEDAR Artifact Library";
+      if (this.internalDescription.isEmpty())
+        this.internalDescription = name + " template schema generated by the CEDAR Artifact Library";
 
       return this;
     }
@@ -276,7 +274,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
-    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel,
+      String propertyDescription)
     {
       this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
       this.templateUiBuilder.withOrder(fieldSchemaArtifact.name());
@@ -294,7 +293,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
-    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel,
+      String propertyDescription)
     {
       this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
       this.templateUiBuilder.withOrder(elementSchemaArtifact.name());
@@ -323,32 +323,30 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     public TemplateSchemaArtifact build()
     {
-      return new TemplateSchemaArtifactRecord(jsonSchemaTitle, jsonSchemaDescription,
-        jsonLdContext, jsonLdTypes, jsonLdId,
-        instanceJsonLdType,
-        name, description, identifier,
-        version, status, previousVersion, derivedFrom,
-        createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        fieldSchemas, elementSchemas,
-        language, templateUiBuilder.build(), annotations);
+      return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
+        instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUiBuilder.build(),
+        annotations, internalName, internalDescription);
     }
   }
 }
 
-record TemplateSchemaArtifactRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                                    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                    Optional<URI> instanceJsonLdType,
-                                    String name, String description, Optional<String> identifier,
-                                    Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+record TemplateSchemaArtifactRecord(
+                                    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+                                    Optional<URI> jsonLdId, Optional<URI> instanceJsonLdType, String name,
+                                    String description, Optional<String> identifier, Optional<Version> version,
+                                    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                    Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
                                     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
-                                    Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations)
+                                    Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations, String internalName, String internalDescription)
   implements TemplateSchemaArtifact
 {
-  public TemplateSchemaArtifactRecord {
-    validateStringFieldNotNull(this, jsonSchemaTitle, JSON_SCHEMA_TITLE);
-    validateStringFieldNotNull(this, jsonSchemaDescription, JSON_SCHEMA_DESCRIPTION);
+  public TemplateSchemaArtifactRecord
+  {
+    validateStringFieldNotNull(this, internalName, JSON_SCHEMA_TITLE);
+    validateStringFieldNotNull(this, internalDescription, JSON_SCHEMA_DESCRIPTION);
     validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
     validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
     validateOptionalFieldNotNull(this, version, PAV_VERSION);
@@ -361,17 +359,18 @@ record TemplateSchemaArtifactRecord(String jsonSchemaTitle, String jsonSchemaDes
     validateOptionalFieldNotNull(this, instanceJsonLdType, "instanceJsonLdType");
     validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, templateUi, UI);
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
     Set<String> order = new HashSet<>(templateUi.order());
-    Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
+    Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream())
+      .collect(toSet());
 
     if (!order.containsAll(childNames)) {
       childNames.removeAll(order); // Generate the names of children not in the order map
       order.removeAll(childNames); // Silently remove these extra children from the order
-      for (String childToRemove: childNames) { // And from the
+      for (String childToRemove : childNames) { // And from the
         fieldSchemas.remove(childToRemove);
         elementSchemas.remove(childToRemove);
       }

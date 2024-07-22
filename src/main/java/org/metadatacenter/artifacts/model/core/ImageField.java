@@ -31,36 +31,37 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface ImageField extends FieldSchemaArtifact
 {
-  static ImageField create(String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> language, Optional<String> preferredLabel, FieldUi fieldUi, Optional<Annotations> annotations)
+  static ImageField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> language,
+    Optional<String> preferredLabel, FieldUi fieldUi, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new ImageFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
-      description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, Collections.emptyList(), language, fieldUi, Optional.empty(),
-      annotations);
+    return new ImageFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+      Collections.emptyList(), language, fieldUi, Optional.empty(), annotations, internalName,
+      internalDescription);
   }
 
-  default boolean isMultiple() { return false; }
+  default boolean isMultiple() {return false;}
 
-  default Optional<Integer> minItems() { return Optional.empty(); }
+  default Optional<Integer> minItems() {return Optional.empty();}
 
-  default Optional<Integer> maxItems() { return Optional.empty(); }
+  default Optional<Integer> maxItems() {return Optional.empty();}
 
-  default Optional<URI> propertyUri() { return Optional.empty(); }
+  default Optional<URI> propertyUri() {return Optional.empty();}
 
-  static ImageFieldBuilder builder() { return new ImageFieldBuilder(); }
+  static ImageFieldBuilder builder() {return new ImageFieldBuilder();}
 
-  static ImageFieldBuilder builder(ImageField imageField) { return new ImageFieldBuilder(imageField); }
+  static ImageFieldBuilder builder(ImageField imageField) {return new ImageFieldBuilder(imageField);}
 
   final class ImageFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final StaticFieldUi.ImageFieldUiBuilder fieldUiBuilder;
 
-    public ImageFieldBuilder() {
+    public ImageFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = StaticFieldUi.imageFieldUiBuilder();
@@ -113,7 +114,8 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ImageFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public ImageFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -196,15 +198,15 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ImageFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public ImageFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public ImageFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public ImageFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -217,26 +219,21 @@ public sealed interface ImageField extends FieldSchemaArtifact
     public ImageField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
-        derivedFrom,
-        createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, preferredLabel, fieldUi, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
+        fieldUi, annotations, internalName, internalDescription);
     }
   }
 }
 
-record ImageFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                        LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                        String name, String description, Optional<String> identifier,
-                        Optional<Version> version, Optional<Status> status,
-                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                        Optional<URI> createdBy, Optional<URI> modifiedBy,
-                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                        Optional<String> preferredLabel, List<String> alternateLabels,
-                        Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                        Optional<Annotations> annotations)
-  implements ImageField
+record ImageFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                        String name, String description, Optional<String> identifier, Optional<Version> version,
+                        Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                        Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                        Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                        List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                        Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                        String internalName, String internalDescription) implements ImageField
 {
   public ImageFieldRecord
   {

@@ -31,30 +31,33 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface SectionBreakField extends FieldSchemaArtifact
 {
-  static SectionBreakField create(String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations)
+  static SectionBreakField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, String name, String description, Optional<String> identifier, Optional<Version> version,
+    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy,
+    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    Optional<String> preferredLabel, Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations,
+    String internalName, String internalDescription)
   {
-    return new SectionBreakFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, Collections.emptyList(), language, fieldUi, Optional.empty(),
-      annotations);
+    return new SectionBreakFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+      Collections.emptyList(), language, fieldUi, Optional.empty(), annotations, internalName,
+      internalDescription);
   }
 
-  default boolean isMultiple() { return false; }
+  default boolean isMultiple() {return false;}
 
-  default Optional<Integer> minItems() { return Optional.empty(); }
+  default Optional<Integer> minItems() {return Optional.empty();}
 
-  default Optional<Integer> maxItems() { return Optional.empty(); }
+  default Optional<Integer> maxItems() {return Optional.empty();}
 
-  default Optional<URI> propertyUri() { return Optional.empty(); }
+  default Optional<URI> propertyUri() {return Optional.empty();}
 
-  static SectionBreakFieldBuilder builder() { return new SectionBreakFieldBuilder(); }
+  static SectionBreakFieldBuilder builder() {return new SectionBreakFieldBuilder();}
 
-  static SectionBreakFieldBuilder builder(SectionBreakField sectionBreakField) { return new SectionBreakFieldBuilder(sectionBreakField); }
+  static SectionBreakFieldBuilder builder(SectionBreakField sectionBreakField)
+  {
+    return new SectionBreakFieldBuilder(sectionBreakField);
+  }
 
   final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
   {
@@ -198,15 +201,15 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public SectionBreakFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public SectionBreakFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -219,25 +222,21 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     public SectionBreakField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
-        derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, preferredLabel, fieldUi, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
+        fieldUi, annotations, internalName, internalDescription);
     }
   }
 }
 
-record SectionBreakFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
-                               LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                               String name, String description, Optional<String> identifier,
-                               Optional<Version> version, Optional<Status> status,
-                               Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                               Optional<URI> createdBy, Optional<URI> modifiedBy,
-                               Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                               Optional<String> preferredLabel, List<String> alternateLabels,
-                               Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                               Optional<Annotations> annotations)
-  implements SectionBreakField
+record SectionBreakFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                               String name, String description, Optional<String> identifier, Optional<Version> version,
+                               Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                               Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                               Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                               List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                               Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                               String internalName, String internalDescription) implements SectionBreakField
 {
   public SectionBreakFieldRecord
   {
@@ -246,7 +245,7 @@ record SectionBreakFieldRecord(String jsonSchemaTitle, String jsonSchemaDescript
       Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
     validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

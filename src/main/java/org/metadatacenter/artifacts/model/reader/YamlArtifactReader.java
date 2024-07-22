@@ -255,8 +255,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name)
   {
-    String jsonSchemaTitle = name + " template";
-    String jsonSchemaDescription = name + " template generated from YAML";
+    String internalName = name + " template";
+    String internalDescription = name + " template generated from YAML";
 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
@@ -280,16 +280,16 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     checkSchemaArtifactModelVersion(sourceNode, path);
 
-    return TemplateSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId,
-      instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUi, annotations);
+    return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description,
+      identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    String jsonSchemaTitle = name + " element";
-    String jsonSchemaDescription = name + " element generated from YAML";
+    String internalName = name + " element";
+    String internalDescription = name + " element generated from YAML";
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
@@ -313,7 +313,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     checkSchemaArtifactModelVersion(sourceNode, path);
 
-    return ElementSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId,
+    return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri,
       preferredLabel, language, elementUi, annotations);
@@ -322,8 +322,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    String jsonSchemaTitle = name + " field";
-    String jsonSchemaDescription = name + " field generated from YAML";
+    String internalName = name + " field";
+    String internalDescription = name + " field generated from YAML";
 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
@@ -348,10 +348,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     checkSchemaArtifactModelVersion(sourceNode, path);
 
-    return FieldSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId,
-      name, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems,
-      maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
-      fieldUi, valueConstraints, annotations);
+    return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
+      description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
+      propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
+      valueConstraints, annotations);
   }
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path)

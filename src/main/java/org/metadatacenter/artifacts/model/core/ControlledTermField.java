@@ -41,7 +41,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface ControlledTermField extends FieldSchemaArtifact
 {
-  static ControlledTermField create(String jsonSchemaTitle, String jsonSchemaDescription,
+  static ControlledTermField create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
@@ -51,7 +51,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
     Optional<Annotations> annotations)
   {
-    return new ControlledTermFieldRecord(jsonSchemaTitle, jsonSchemaDescription,
+    return new ControlledTermFieldRecord(internalName, internalDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
       name, description, identifier, version,
       status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
@@ -313,15 +313,15 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public ControlledTermFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public ControlledTermFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -335,7 +335,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
+      return create(internalName, internalDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
@@ -343,7 +343,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
   }
 }
 
-record ControlledTermFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
+record ControlledTermFieldRecord(String internalName, String internalDescription,
                                  LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                  String name, String description, Optional<String> identifier,
                                  Optional<Version> version, Optional<Status> status,

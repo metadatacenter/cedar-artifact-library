@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 
 public class FieldSchemaArtifactTest
 {
@@ -29,8 +28,8 @@ public class FieldSchemaArtifactTest
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
 
-    String jsonSchemaTitle = "title";
-    String jsonSchemaDescription = "description";
+    String internalName = "title";
+    String internalDescription = "description";
     String name = "Schema Org name";
     String description = "Schema Org description";
     Optional<String> identifier = Optional.of("Schema Org identifier");
@@ -45,14 +44,14 @@ public class FieldSchemaArtifactTest
     Optional<Integer> minItems = Optional.of(2);
     Optional<Integer> maxItems = Optional.of(4);
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(internalName, internalDescription,
       jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), name, description, identifier, version, status,
       previousVersion, derivedFrom, false, minItems, maxItems, propertyUri, Optional.of(createdBy),
       Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn), preferredLabel, alternateLabels,
       language, FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty(), Optional.empty());
 
-    Assert.assertEquals(jsonSchemaTitle, fieldSchemaArtifact.jsonSchemaTitle());
-    Assert.assertEquals(jsonSchemaDescription, fieldSchemaArtifact.jsonSchemaDescription());
+    Assert.assertEquals(internalName, fieldSchemaArtifact.internalName());
+    Assert.assertEquals(internalDescription, fieldSchemaArtifact.internalDescription());
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, fieldSchemaArtifact.jsonLdId().get());
     Assert.assertEquals(jsonLdContext, fieldSchemaArtifact.jsonLdContext());

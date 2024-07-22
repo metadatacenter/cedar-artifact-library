@@ -36,8 +36,8 @@ public class TemplateSchemaArtifact2REDCapConvertor
 
   private void processTemplateSchemaArtifact(Workbook workbook)
   {
-    String templateName = templateSchemaArtifact.jsonSchemaTitle();
-    String templateDescription = templateSchemaArtifact.jsonSchemaDescription();
+    String templateName = templateSchemaArtifact.internalName();
+    String templateDescription = templateSchemaArtifact.internalDescription();
     Sheet sheet = workbook.createSheet(templateName);
     createHeader(sheet);
 
