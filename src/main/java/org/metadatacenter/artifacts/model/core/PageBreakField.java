@@ -30,7 +30,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface PageBreakField extends FieldSchemaArtifact
 {
-  static PageBreakField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static PageBreakField create(String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
@@ -39,7 +39,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
     Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
     Optional<Annotations> annotations)
   {
-    return new PageBreakFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
+    return new PageBreakFieldRecord(jsonSchemaTitle,
       jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
       status, previousVersion, derivedFrom, createdBy, modifiedBy,
       createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
@@ -224,7 +224,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
     public PageBreakField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      return create(jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
         name, description, identifier, modelVersion, version,
         status, previousVersion, derivedFrom,
@@ -234,7 +234,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
   }
 }
 
-record PageBreakFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+record PageBreakFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                             LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                             String name, String description, Optional<String> identifier,
                             Version modelVersion, Optional<Version> version, Optional<Status> status,

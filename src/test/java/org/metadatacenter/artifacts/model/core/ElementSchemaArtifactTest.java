@@ -30,8 +30,6 @@ public class ElementSchemaArtifactTest
     URI modifiedBy = URI.create("http://example.com/user");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    String jsonSchemaType = "type";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
     String name = "Schema Org name";
@@ -48,16 +46,11 @@ public class ElementSchemaArtifactTest
     Optional<String> preferredLabel = Optional.of("A preferred label");
     Optional<String> language = Optional.of("en");
 
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
-      Optional.of(instanceJsonLdType),
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      new LinkedHashMap<>(), new LinkedHashMap<>(),
-      false, minItems, maxItems, propertyUri,
-      preferredLabel, language, ElementUi.builder().build(), Optional.empty());
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
+      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), Optional.of(instanceJsonLdType), name, description, identifier,
+      modelVersion, version, status, previousVersion, derivedFrom, Optional.of(createdBy), Optional.of(modifiedBy),
+      Optional.of(createdOn), Optional.of(lastUpdatedOn), new LinkedHashMap<>(), new LinkedHashMap<>(), false, minItems,
+      maxItems, propertyUri, preferredLabel, language, ElementUi.builder().build(), Optional.empty());
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
@@ -67,8 +60,6 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());
     Assert.assertEquals(createdOn, elementSchemaArtifact.createdOn().get());
     Assert.assertEquals(lastUpdatedOn, elementSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(jsonSchemaSchemaUri, elementSchemaArtifact.jsonSchemaSchemaUri());
-    Assert.assertEquals(jsonSchemaType, elementSchemaArtifact.jsonSchemaType());
     Assert.assertEquals(jsonSchemaTitle, elementSchemaArtifact.jsonSchemaTitle());
     Assert.assertEquals(jsonSchemaDescription, elementSchemaArtifact.jsonSchemaDescription());
     Assert.assertEquals(name, elementSchemaArtifact.name());
@@ -84,8 +75,7 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(language, elementSchemaArtifact.language());
   }
 
-  @Test
-  public void testCreateElementSchemaArtifactWithChildren()
+  @Test public void testCreateElementSchemaArtifactWithChildren()
   {
     String elementName = "Element 1";
     String textFieldName1 = "Text Field 1";
@@ -96,11 +86,8 @@ public class ElementSchemaArtifactTest
     TextField textField1 = TextField.builder().withName(textFieldName1).build();
     TextField textField2 = TextField.builder().withName(textFieldName2).build();
 
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
-      .withName(elementName)
-      .withFieldSchema(textField1)
-      .withFieldSchema(textField2, textField2Label, textField2Description)
-      .build();
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().withName(elementName)
+      .withFieldSchema(textField1).withFieldSchema(textField2, textField2Label, textField2Description).build();
 
     assertEquals(elementSchemaArtifact.name(), elementName);
     assertTrue(elementSchemaArtifact.hasFields());
@@ -115,11 +102,9 @@ public class ElementSchemaArtifactTest
     assertEquals(elementSchemaArtifact.elementUi().propertyDescriptions().get(textFieldName2), textField2Description);
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void testMissingName()
+  @Test(expected = IllegalStateException.class) public void testMissingName()
   {
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
-      .build();
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().build();
   }
 
 }

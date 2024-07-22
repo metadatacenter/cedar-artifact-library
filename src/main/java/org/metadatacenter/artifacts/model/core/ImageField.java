@@ -31,18 +31,16 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface ImageField extends FieldSchemaArtifact
 {
-  static ImageField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
+  static ImageField create(String jsonSchemaTitle,
     String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
     Optional<String> language, Optional<String> preferredLabel, FieldUi fieldUi, Optional<Annotations> annotations)
   {
-    return new ImageFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      preferredLabel, Collections.emptyList(), language, fieldUi, Optional.empty(),
+    return new ImageFieldRecord(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
+      description, identifier, modelVersion, version, status, previousVersion, derivedFrom, createdBy, modifiedBy,
+      createdOn, lastUpdatedOn, preferredLabel, Collections.emptyList(), language, fieldUi, Optional.empty(),
       annotations);
   }
 
@@ -225,7 +223,7 @@ public sealed interface ImageField extends FieldSchemaArtifact
     public ImageField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
+      return create(jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
         derivedFrom,
         createdBy, modifiedBy, createdOn, lastUpdatedOn,
@@ -234,7 +232,7 @@ public sealed interface ImageField extends FieldSchemaArtifact
   }
 }
 
-record ImageFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+record ImageFieldRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                         LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                         String name, String description, Optional<String> identifier,
                         Version modelVersion, Optional<Version> version, Optional<Status> status,

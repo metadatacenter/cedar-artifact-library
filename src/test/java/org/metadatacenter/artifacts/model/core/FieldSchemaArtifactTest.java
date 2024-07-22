@@ -21,15 +21,14 @@ public class FieldSchemaArtifactTest
   @Test public void testCreateTextField()
   {
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    List<URI> jsonLdTypes = Collections.singletonList(URI.create("https://schema.metadatacenter.org/core/TemplateField"));
+    List<URI> jsonLdTypes = Collections.singletonList(
+      URI.create("https://schema.metadatacenter.org/core/TemplateField"));
     URI jsonLdId = URI.create("https://repo.metadatacenter.org/fields/4455");
     URI createdBy = URI.create("http://example.com/user");
     URI modifiedBy = URI.create("http://example.com/user");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
 
-    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    String jsonSchemaType = "object";
     String jsonSchemaTitle = "title";
     String jsonSchemaDescription = "description";
     String name = "Schema Org name";
@@ -47,16 +46,12 @@ public class FieldSchemaArtifactTest
     Optional<Integer> minItems = Optional.of(2);
     Optional<Integer> maxItems = Optional.of(4);
 
-    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom, false, minItems, maxItems, propertyUri,
-      Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      preferredLabel, alternateLabels, language, FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(),
-      Optional.empty(), Optional.empty());
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
+      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), name, description, identifier, modelVersion, version, status,
+      previousVersion, derivedFrom, false, minItems, maxItems, propertyUri, Optional.of(createdBy),
+      Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn), preferredLabel, alternateLabels,
+      language, FieldUi.builder().withInputType(FieldInputType.TEXTFIELD).build(), Optional.empty(), Optional.empty());
 
-    Assert.assertEquals(jsonSchemaSchemaUri, fieldSchemaArtifact.jsonSchemaSchemaUri());
-    Assert.assertEquals(jsonSchemaType, fieldSchemaArtifact.jsonSchemaType());
     Assert.assertEquals(jsonSchemaTitle, fieldSchemaArtifact.jsonSchemaTitle());
     Assert.assertEquals(jsonSchemaDescription, fieldSchemaArtifact.jsonSchemaDescription());
     Assert.assertEquals(jsonLdTypes, fieldSchemaArtifact.jsonLdTypes());
@@ -102,26 +97,12 @@ public class FieldSchemaArtifactTest
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/fields/7666");
     URI propertyUri = URI.create("https://schema.metadatacenter.org/properties/854");
 
-    TextField textField = TextField.builder().
-      withJsonLdId(jsonLdId).
-      withName(name).
-      withDescription(description).
-      withIdentifier(identifier).
-      withPreferredLabel(preferredLabel).
-      withAlternateLabels(alternateLabels).
-      withVersion(version).
-      withStatus(status).
-      withRequiredValue(requiredValue).
-      withMinLength(minLength).
-      withMaxLength(maxLength).
-      withCreatedBy(createdBy).
-      withCreatedOn(createdOn).
-      withModifiedBy(modifiedBy).
-      withLastUpdatedOn(lastUpdatedOn).
-      withPreviousVersion(previousVersion).
-      withDerivedFrom(derivedFrom).
-      withPropertyUri(propertyUri).
-      build();
+    TextField textField = TextField.builder().withJsonLdId(jsonLdId).withName(name).withDescription(description)
+      .withIdentifier(identifier).withPreferredLabel(preferredLabel).withAlternateLabels(alternateLabels)
+      .withVersion(version).withStatus(status).withRequiredValue(requiredValue).withMinLength(minLength)
+      .withMaxLength(maxLength).withCreatedBy(createdBy).withCreatedOn(createdOn).withModifiedBy(modifiedBy)
+      .withLastUpdatedOn(lastUpdatedOn).withPreviousVersion(previousVersion).withDerivedFrom(derivedFrom)
+      .withPropertyUri(propertyUri).build();
 
     Assert.assertEquals(jsonLdId, textField.jsonLdId().get());
     Assert.assertEquals(createdBy, textField.createdBy().get());

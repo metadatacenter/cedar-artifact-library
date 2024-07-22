@@ -29,10 +29,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
@@ -40,7 +37,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact, ParentSchemaArtifact
 {
-  static ElementSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+  static ElementSchemaArtifact create(String jsonSchemaTitle, String jsonSchemaDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> instanceJsonLdType,
     String name, String description, Optional<String> identifier,
@@ -52,7 +49,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     Optional<URI> propertyUri, Optional<String> preferredLabel, Optional<String> language,
     ElementUi elementUi, Optional<Annotations> annotations)
   {
-    return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+    return new ElementSchemaArtifactRecord(jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType,
       name, description, identifier,
@@ -103,8 +100,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    private String jsonSchemaType = JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
     private String name;
@@ -139,8 +134,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       this.modifiedBy = elementSchemaArtifact.modifiedBy();
       this.createdOn = elementSchemaArtifact.createdOn();
       this.lastUpdatedOn = elementSchemaArtifact.lastUpdatedOn();
-      this.jsonSchemaSchemaUri = elementSchemaArtifact.jsonSchemaSchemaUri();
-      this.jsonSchemaType = elementSchemaArtifact.jsonSchemaType();
       this.jsonSchemaTitle = elementSchemaArtifact.jsonSchemaTitle();
       this.jsonSchemaDescription = elementSchemaArtifact.jsonSchemaDescription();
       this.name = elementSchemaArtifact.name();
@@ -204,18 +197,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
     {
       this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
-      return this;
-    }
-
-    public Builder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri)
-    {
-      this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
-      return this;
-    }
-
-    public Builder withJsonSchemaType(String jsonSchemaType)
-    {
-      this.jsonSchemaType = jsonSchemaType;
       return this;
     }
 
@@ -372,7 +353,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
     public ElementSchemaArtifact build()
     {
-      return new ElementSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      return new ElementSchemaArtifactRecord(jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdType,
         name, description, identifier,
@@ -384,7 +365,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
   }
 }
 
-record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+record ElementSchemaArtifactRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                                    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                    Optional<URI> instanceJsonLdType,
                                    String name, String description, Optional<String> identifier,
@@ -399,7 +380,6 @@ record ElementSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTyp
 {
   public ElementSchemaArtifactRecord
   {
-    validateStringFieldNotNull(this, jsonSchemaType, JSON_SCHEMA_TYPE);
     validateStringFieldNotNull(this, jsonSchemaTitle, JSON_SCHEMA_TITLE);
     validateStringFieldNotNull(this, jsonSchemaDescription, JSON_SCHEMA_DESCRIPTION);
     validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);

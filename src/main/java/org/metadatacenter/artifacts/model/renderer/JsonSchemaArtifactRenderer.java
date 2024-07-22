@@ -23,7 +23,6 @@ import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -60,9 +59,11 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ONE_OF;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_REQUIRED;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_STRING;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.OSLC;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -104,6 +105,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   private final ObjectMapper mapper;
   private final DateTimeFormatter datetimeFormatter;
   private final String datetimeFormat = "yyyy-MM-dd'T'HH:mm:ssXXX";
+
+  private final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
 
   public JsonSchemaArtifactRenderer()
   {
@@ -147,6 +150,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.set(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(templateSchemaArtifact));
 
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
     addCoreJsonSchemaRendering(templateSchemaArtifact, rendering);
     rendering.put(UI, mapper.valueToTree(templateSchemaArtifact.templateUi()));
 
@@ -215,7 +219,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
     }
 
-    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(templateSchemaArtifact.jsonSchemaSchemaUri()));
+    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(jsonSchemaSchemaUri));
 
     return rendering;
   }
@@ -252,6 +256,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
     rendering.put(JSON_LD_CONTEXT, renderParentSchemaArtifactContextJsonLdSpecification(elementSchemaArtifact));
 
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
     addCoreJsonSchemaRendering(elementSchemaArtifact, rendering);
 
     rendering.put(UI, mapper.valueToTree(elementSchemaArtifact.elementUi()));
@@ -318,7 +323,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
     }
 
-    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(elementSchemaArtifact.jsonSchemaSchemaUri()));
+    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(jsonSchemaSchemaUri));
 
     return rendering;
   }
@@ -360,6 +365,11 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         renderStaticFieldSchemaArtifactContextPrefixesJsonLdSpecification(fieldSchemaArtifact));
     else
       rendering.put(JSON_LD_CONTEXT, renderFieldSchemaArtifactContextPrefixesJsonLdSpecification(fieldSchemaArtifact));
+
+    if (fieldSchemaArtifact.isAttributeValue())
+      rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
+    else
+      rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_OBJECT);
 
     addCoreJsonSchemaRendering(fieldSchemaArtifact, rendering);
 
@@ -420,7 +430,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
         rendering.put(SCHEMA_ORG_IDENTIFIER, identifier);
     }
 
-    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(fieldSchemaArtifact.jsonSchemaSchemaUri()));
+    rendering.put(JSON_SCHEMA_SCHEMA, renderUri(jsonSchemaSchemaUri));
 
     if (fieldSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
@@ -702,7 +712,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    */
   private void addCoreJsonSchemaRendering(SchemaArtifact schemaArtifact, ObjectNode rendering)
   {
-    rendering.put(JSON_SCHEMA_TYPE, schemaArtifact.jsonSchemaType());
     rendering.put(JSON_SCHEMA_TITLE, schemaArtifact.jsonSchemaTitle());
     rendering.put(JSON_SCHEMA_DESCRIPTION, schemaArtifact.jsonSchemaDescription());
   }
@@ -1245,8 +1254,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_SCHEMA_TYPE, "string");
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, ModelNodeNames.JSON_SCHEMA_FORMAT_URI);
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
+    rendering.put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
     rendering.put(JSON_SCHEMA_ENUM, mapper.createArrayNode());
     rendering.withArray(JSON_SCHEMA_ENUM).add(uri);
 
@@ -1765,7 +1774,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     ObjectNode rendering = mapper.createObjectNode();
 
     rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
-    rendering.put(ModelNodeNames.JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
+    rendering.put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
 
     return rendering;
   }
@@ -1842,12 +1851,12 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_ARRAY);
-    rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
-    rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(ModelNodeNames.JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
-    rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_ARRAY);
+    rendering.put(JSON_SCHEMA_MIN_ITEMS, minItems);
+    rendering.put(JSON_SCHEMA_ITEMS, mapper.createObjectNode());
+    rendering.withObject( "/" + JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
+    rendering.withObject( "/" + JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
+    rendering.put(JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;
   }
@@ -1868,14 +1877,14 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
   {
     ObjectNode rendering = mapper.createObjectNode();
 
-    rendering.put(JSON_SCHEMA_TYPE, ModelNodeNames.JSON_SCHEMA_ARRAY);
-    rendering.put(ModelNodeNames.JSON_SCHEMA_MIN_ITEMS, minItems);
-    rendering.put(ModelNodeNames.JSON_SCHEMA_ITEMS, mapper.createObjectNode());
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_ENUM, mapper.createArrayNode());
-    rendering.withObject( "/" + ModelNodeNames.JSON_SCHEMA_ITEMS).withArray(JSON_SCHEMA_ENUM).add(uri.toString());
-    rendering.put(ModelNodeNames.JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
+    rendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_ARRAY);
+    rendering.put(JSON_SCHEMA_MIN_ITEMS, minItems);
+    rendering.put(JSON_SCHEMA_ITEMS, mapper.createObjectNode());
+    rendering.withObject( "/" + JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_TYPE, JSON_SCHEMA_STRING);
+    rendering.withObject( "/" + JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_FORMAT, JSON_SCHEMA_FORMAT_URI);
+    rendering.withObject( "/" + JSON_SCHEMA_ITEMS).put(JSON_SCHEMA_ENUM, mapper.createArrayNode());
+    rendering.withObject( "/" + JSON_SCHEMA_ITEMS).withArray(JSON_SCHEMA_ENUM).add(uri.toString());
+    rendering.put(JSON_SCHEMA_UNIQUE_ITEMS, uniqueItems);
 
     return rendering;
   }

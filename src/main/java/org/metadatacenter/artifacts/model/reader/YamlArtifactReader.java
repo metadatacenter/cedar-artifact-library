@@ -252,8 +252,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name)
   {
-    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    String jsonSchemaType = TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
     String jsonSchemaTitle = name + " template";
     String jsonSchemaDescription = name + " template generated from YAML";
 
@@ -278,7 +276,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     TemplateUi templateUi = readTemplateUi(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
-    return TemplateSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+    return TemplateSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType,
       name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
@@ -288,11 +286,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    String jsonSchemaType = ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
     String jsonSchemaTitle = name + " element";
     String jsonSchemaDescription = name + " element generated from YAML";
-
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
@@ -315,7 +310,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     ElementUi elementUi = readElementUi(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
-    return ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+    return ElementSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType,
       name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
@@ -325,8 +320,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
     String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
   {
-    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    String jsonSchemaType = FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
     String jsonSchemaTitle = name + " field";
     String jsonSchemaDescription = name + " field generated from YAML";
 
@@ -353,7 +346,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
-    return FieldSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+    return FieldSchemaArtifact.create(jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status,
       previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);

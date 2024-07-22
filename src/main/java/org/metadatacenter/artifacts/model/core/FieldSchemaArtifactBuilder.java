@@ -11,8 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
-
 public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFieldBuilder,
   TextAreaField.TextAreaFieldBuilder, TemporalField.TemporalFieldBuilder,
   RadioField.RadioFieldBuilder, PhoneNumberField.PhoneNumberFieldBuilder,
@@ -29,8 +27,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<URI> modifiedBy = Optional.empty();
   protected Optional<OffsetDateTime> createdOn = Optional.empty();
   protected Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-  protected final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-  protected String jsonSchemaType;
   protected String jsonSchemaTitle = "";
   protected String jsonSchemaDescription = "";
   protected String name;
@@ -98,7 +94,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
 
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
-    this.jsonSchemaType = jsonSchemaType;
     this.jsonLdTypes.add(artifactTypeIri);
   }
 
@@ -111,7 +106,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.modifiedBy = fieldSchemaArtifact.modifiedBy();
     this.createdOn = fieldSchemaArtifact.createdOn();
     this.lastUpdatedOn = fieldSchemaArtifact.lastUpdatedOn();
-    this.jsonSchemaType = fieldSchemaArtifact.jsonSchemaType();
     this.jsonSchemaTitle = fieldSchemaArtifact.jsonSchemaTitle();
     this.jsonSchemaDescription = fieldSchemaArtifact.jsonSchemaDescription();
     this.name = fieldSchemaArtifact.name();

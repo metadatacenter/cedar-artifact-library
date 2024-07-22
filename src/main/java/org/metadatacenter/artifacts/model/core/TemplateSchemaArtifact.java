@@ -21,7 +21,6 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateO
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldEquals;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContains;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateVersionFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -29,11 +28,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
 import static org.metadatacenter.model.ModelNodeNames.PAV_PREVIOUS_VERSION;
@@ -46,8 +41,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact
 {
-  static TemplateSchemaArtifact create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription,
+  static TemplateSchemaArtifact create(String jsonSchemaTitle, String jsonSchemaDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> instanceJsonLdType,
     String name, String description, Optional<String> identifier,
@@ -57,7 +51,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas, LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
     Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations)
   {
-    return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+    return new TemplateSchemaArtifactRecord(jsonSchemaTitle, jsonSchemaDescription,
       jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType,
       name, description, identifier,
@@ -108,8 +102,6 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
     private Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-    private URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    private String jsonSchemaType = JSON_SCHEMA_OBJECT;
     private String jsonSchemaTitle = "";
     private String jsonSchemaDescription = "";
     private String name;
@@ -140,8 +132,6 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       this.modifiedBy = templateSchemaArtifact.modifiedBy();
       this.createdOn = templateSchemaArtifact.createdOn();
       this.lastUpdatedOn = templateSchemaArtifact.lastUpdatedOn();
-      this.jsonSchemaSchemaUri = templateSchemaArtifact.jsonSchemaSchemaUri();
-      this.jsonSchemaType = templateSchemaArtifact.jsonSchemaType();
       this.jsonSchemaTitle = templateSchemaArtifact.jsonSchemaTitle();
       this.jsonSchemaDescription = templateSchemaArtifact.jsonSchemaDescription();
       this.name = templateSchemaArtifact.name();
@@ -204,18 +194,6 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     public Builder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
     {
       this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
-      return this;
-    }
-
-    public Builder withJsonSchemaSchemaUri(URI jsonSchemaSchemaUri)
-    {
-      this.jsonSchemaSchemaUri = jsonSchemaSchemaUri;
-      return this;
-    }
-
-    public Builder withJsonSchemaType(String jsonSchemaType)
-    {
-      this.jsonSchemaType = jsonSchemaType;
       return this;
     }
 
@@ -355,7 +333,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     public TemplateSchemaArtifact build()
     {
-      return new TemplateSchemaArtifactRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription,
+      return new TemplateSchemaArtifactRecord(jsonSchemaTitle, jsonSchemaDescription,
         jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdType,
         name, description, identifier,
@@ -367,7 +345,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
   }
 }
 
-record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+record TemplateSchemaArtifactRecord(String jsonSchemaTitle, String jsonSchemaDescription,
                                     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                     Optional<URI> instanceJsonLdType,
                                     String name, String description, Optional<String> identifier,
@@ -379,8 +357,6 @@ record TemplateSchemaArtifactRecord(URI jsonSchemaSchemaUri, String jsonSchemaTy
   implements TemplateSchemaArtifact
 {
   public TemplateSchemaArtifactRecord {
-    validateUriFieldEquals(this, jsonSchemaSchemaUri, JSON_SCHEMA_SCHEMA, URI.create(JSON_SCHEMA_SCHEMA_IRI));
-    validateStringFieldNotNull(this, jsonSchemaType, JSON_SCHEMA_TYPE);
     validateStringFieldNotNull(this, jsonSchemaTitle, JSON_SCHEMA_TITLE);
     validateStringFieldNotNull(this, jsonSchemaDescription, JSON_SCHEMA_DESCRIPTION);
     validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
