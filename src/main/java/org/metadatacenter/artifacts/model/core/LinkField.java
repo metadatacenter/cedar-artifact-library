@@ -34,32 +34,32 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface LinkField extends FieldSchemaArtifact
 {
-  static LinkField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+  static LinkField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new LinkFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new LinkFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static LinkFieldBuilder builder() { return new LinkFieldBuilder(); }
+  static LinkFieldBuilder builder() {return new LinkFieldBuilder();}
 
-  static LinkFieldBuilder builder(LinkField linkField) { return new LinkFieldBuilder(linkField); }
+  static LinkFieldBuilder builder(LinkField linkField) {return new LinkFieldBuilder(linkField);}
 
   final class LinkFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final LinkValueConstraints.Builder valueConstraintsBuilder;
+    private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;
 
-    public LinkFieldBuilder() {
+    public LinkFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.LINK);
@@ -72,7 +72,8 @@ public sealed interface LinkField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = FieldUi.builder(linkField.fieldUi());
       if (linkField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = LinkValueConstraints.builder(linkField.valueConstraints().get().asLinkValueConstraints());
+        this.valueConstraintsBuilder = LinkValueConstraints.builder(
+          linkField.valueConstraints().get().asLinkValueConstraints());
       else
         this.valueConstraintsBuilder = LinkValueConstraints.builder();
     }
@@ -89,15 +90,9 @@ public sealed interface LinkField extends FieldSchemaArtifact
       return this;
     }
 
-    public LinkFieldBuilder withValueRecommendation(boolean valueRecommendation)
+    @Override public LinkFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
-      fieldUiBuilder.withValueRecommendation(valueRecommendation);
-      return this;
-    }
-
-    public LinkFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
@@ -107,7 +102,8 @@ public sealed interface LinkField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public LinkFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public LinkFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -133,12 +129,6 @@ public sealed interface LinkField extends FieldSchemaArtifact
     @Override public LinkFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public LinkFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -232,15 +222,15 @@ public sealed interface LinkField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public LinkFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public LinkFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public LinkFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public LinkFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -250,31 +240,45 @@ public sealed interface LinkField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public LinkFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public LinkFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public LinkFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      return this;
+    }
+
     public LinkField build()
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-        jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
     }
   }
 }
 
-record LinkFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                       LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                       String name, String description, Optional<String> identifier,
-                       Version modelVersion, Optional<Version> version, Optional<Status> status,
-                       Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record LinkFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                       String name, String description, Optional<String> identifier, Optional<Version> version,
+                       Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                       Optional<URI> propertyUri,
-                       Optional<URI> createdBy, Optional<URI> modifiedBy,
+                       Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                       Optional<String> preferredLabel, List<String> alternateLabels,
-                       Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                       Optional<Annotations> annotations)
-  implements LinkField
+                       Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                       FieldUi fieldUi, Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                       String internalName, String internalDescription) implements LinkField
 {
   public LinkFieldRecord
   {
@@ -286,7 +290,7 @@ record LinkFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String js
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

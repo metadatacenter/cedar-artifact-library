@@ -4,7 +4,7 @@ package org.metadatacenter.artifacts.model.core.fields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefaultValue, ControlledTermDefaultValue,
-  TemporalDefaultValue, LinkDefaultValue
+  TemporalDefaultValue, LinkDefaultValue, EmailDefaultValue, PhoneNumberDefaultValue
 {
    @JsonIgnore
    DefaultValueType getValueType();
@@ -26,6 +26,12 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
 
    @JsonIgnore
    default boolean isControlledTermDefaultValue() { return getValueType() == DefaultValueType.CONTROLLED_TERM; }
+
+   @JsonIgnore
+   default boolean isEmailDefaultValue() { return getValueType() == DefaultValueType.EMAIL; }
+
+   @JsonIgnore
+   default boolean isPhoneNumberDefaultValue() { return getValueType() == DefaultValueType.PHONE_NUMBER; }
 
    default TextDefaultValue asTextDefaultValue()
    {
@@ -67,4 +73,20 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
          throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TemporalDefaultValue.class.getName());
    }
 
+   default EmailDefaultValue asEmailDefaultValue()
+   {
+      if (getValueType() == DefaultValueType.EMAIL)
+         return (EmailDefaultValue)this;
+      else
+         throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + EmailDefaultValue.class.getName());
+   }
+
+   default PhoneNumberDefaultValue asPhoneNumberDefaultValue()
+   {
+      if (getValueType() == DefaultValueType.PHONE_NUMBER)
+         return (PhoneNumberDefaultValue)this;
+      else
+         throw new ClassCastException(
+           "Cannot convert " + this.getClass().getName() + " to " + PhoneNumberDefaultValue.class.getName());
+   }
 }

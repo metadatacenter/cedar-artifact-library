@@ -5,15 +5,15 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
 
-public record TextDefaultValue(@JsonValue String value) implements DefaultValue<String>
+public record PhoneNumberDefaultValue(@JsonValue String value) implements DefaultValue<String>
 {
-  public TextDefaultValue {
+  public PhoneNumberDefaultValue {
     validateStringFieldNotNull(this, value, "value");
     validateStringFieldNotEmpty(this, value, "value");
   }
 
   @Override public DefaultValueType getValueType()
   {
-    return DefaultValueType.TEXT;
+    return DefaultValueType.PHONE_NUMBER;
   }
 }

@@ -18,46 +18,47 @@ public non-sealed interface LinkValueConstraints extends ValueConstraints
     return new LinkValueConstraintsRecord(defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
-  static Builder builder() {
-    return new Builder();
+  static LinkValueConstraintsBuilder builder() {
+    return new LinkValueConstraintsBuilder();
   }
 
-  static Builder builder(LinkValueConstraints linkValueConstraints) {
-    return new Builder(linkValueConstraints);
+  static LinkValueConstraintsBuilder builder(LinkValueConstraints linkValueConstraints) {
+    return new LinkValueConstraintsBuilder(linkValueConstraints);
   }
 
-  class Builder {
+  final class LinkValueConstraintsBuilder implements ValueConstraintsBuilder
+  {
     private Optional<LinkDefaultValue> defaultValue = Optional.empty();
     private boolean requiredValue = false;
     private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
-    private Builder() {
+    private LinkValueConstraintsBuilder() {
     }
 
-    private Builder(LinkValueConstraints linkValueConstraints) {
+    private LinkValueConstraintsBuilder(LinkValueConstraints linkValueConstraints) {
       this.defaultValue = linkValueConstraints.defaultValue();
       this.requiredValue = linkValueConstraints.requiredValue();
       this.recommendedValue = linkValueConstraints.recommendedValue();
       this.multipleChoice = linkValueConstraints.multipleChoice();
     }
 
-    public Builder withDefaultValue(URI defaultValue) {
+    public LinkValueConstraintsBuilder withDefaultValue(URI defaultValue) {
       this.defaultValue = Optional.of(new LinkDefaultValue(defaultValue));
       return this;
     }
 
-    public Builder withRequiredValue(boolean requiredValue) {
+    public LinkValueConstraintsBuilder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue) {
+    public LinkValueConstraintsBuilder withRecommendedValue(boolean recommendedValue) {
       this.recommendedValue = recommendedValue;
       return this;
     }
 
-    public Builder withMultipleChoice(boolean multipleChoice) {
+    public LinkValueConstraintsBuilder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }

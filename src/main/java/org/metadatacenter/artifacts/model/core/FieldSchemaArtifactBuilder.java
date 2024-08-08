@@ -11,8 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
-
 public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFieldBuilder,
   TextAreaField.TextAreaFieldBuilder, TemporalField.TemporalFieldBuilder,
   RadioField.RadioFieldBuilder, PhoneNumberField.PhoneNumberFieldBuilder,
@@ -29,16 +27,13 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<URI> modifiedBy = Optional.empty();
   protected Optional<OffsetDateTime> createdOn = Optional.empty();
   protected Optional<OffsetDateTime> lastUpdatedOn = Optional.empty();
-  protected final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-  protected String jsonSchemaType;
-  protected String jsonSchemaTitle = "";
-  protected String jsonSchemaDescription = "";
+  protected String internalName = "";
+  protected String internalDescription = "";
   protected String name;
   protected String description = "";
   protected Optional<String> identifier = Optional.empty();
   protected Optional<String> preferredLabel = Optional.empty();
   protected List<String> alternateLabels = Collections.emptyList();
-  protected Version modelVersion = new Version(1, 6, 0); // TODO Put 1.6.0 in ModelNodeNames
   protected Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
   protected Optional<Status> status = Optional.of(Status.DRAFT);
   protected Optional<URI> previousVersion = Optional.empty();
@@ -52,9 +47,52 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<ValueConstraints> valueConstraints = Optional.empty();
   protected Optional<Annotations> annotations = Optional.empty();
 
+  static public FieldSchemaArtifactBuilder builder(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    // TODO Use typesafe switch when available
+    if (fieldSchemaArtifact instanceof TextField)
+      return new TextField.TextFieldBuilder(fieldSchemaArtifact.asTextField());
+    else if (fieldSchemaArtifact instanceof TextAreaField)
+      return new TextAreaField.TextAreaFieldBuilder(fieldSchemaArtifact.asTextAreaField());
+    else if (fieldSchemaArtifact instanceof TemporalField)
+      return new TemporalField.TemporalFieldBuilder(fieldSchemaArtifact.asTemporalField());
+    else if (fieldSchemaArtifact instanceof RadioField)
+      return new RadioField.RadioFieldBuilder(fieldSchemaArtifact.asRadioField());
+    else if (fieldSchemaArtifact instanceof PhoneNumberField)
+      return new PhoneNumberField.PhoneNumberFieldBuilder(fieldSchemaArtifact.asPhoneNumberField());
+    else if (fieldSchemaArtifact instanceof NumericField)
+      return new NumericField.NumericFieldBuilder(fieldSchemaArtifact.asNumericField());
+    else if (fieldSchemaArtifact instanceof ListField)
+      return new ListField.ListFieldBuilder(fieldSchemaArtifact.asListField());
+    else if (fieldSchemaArtifact instanceof LinkField)
+      return new LinkField.LinkFieldBuilder(fieldSchemaArtifact.asLinkField());
+    else if (fieldSchemaArtifact instanceof EmailField)
+      return new EmailField.EmailFieldBuilder(fieldSchemaArtifact.asEmailField());
+    else if (fieldSchemaArtifact instanceof ControlledTermField)
+      return new ControlledTermField.ControlledTermFieldBuilder(fieldSchemaArtifact.asControlledTermField());
+    else if (fieldSchemaArtifact instanceof CheckboxField)
+      return new CheckboxField.CheckboxFieldBuilder(fieldSchemaArtifact.asCheckboxField());
+    else if (fieldSchemaArtifact instanceof AttributeValueField)
+      return new AttributeValueField.AttributeValueFieldBuilder(fieldSchemaArtifact.asAttributeValueField());
+    else if (fieldSchemaArtifact instanceof PageBreakField)
+      return new PageBreakField.PageBreakFieldBuilder(fieldSchemaArtifact.asPageBreakField());
+    else if (fieldSchemaArtifact instanceof SectionBreakField)
+      return new SectionBreakField.SectionBreakFieldBuilder(fieldSchemaArtifact.asSectionBreakField());
+    else if (fieldSchemaArtifact instanceof ImageField)
+      return new ImageField.ImageFieldBuilder(fieldSchemaArtifact.asImageField());
+    else if (fieldSchemaArtifact instanceof YouTubeField)
+      return new YouTubeField.YouTubeFieldBuilder(fieldSchemaArtifact.asYouTubeField());
+    else if (fieldSchemaArtifact instanceof RichTextField)
+      return new RichTextField.RichTextFieldBuilder(fieldSchemaArtifact.asRichTextField());
+    else
+      throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
+  }
+
+
+  public abstract FieldSchemaArtifact build();
+
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)
   {
-    this.jsonSchemaType = jsonSchemaType;
     this.jsonLdTypes.add(artifactTypeIri);
   }
 
@@ -67,14 +105,13 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.modifiedBy = fieldSchemaArtifact.modifiedBy();
     this.createdOn = fieldSchemaArtifact.createdOn();
     this.lastUpdatedOn = fieldSchemaArtifact.lastUpdatedOn();
-    this.jsonSchemaType = fieldSchemaArtifact.jsonSchemaType();
-    this.jsonSchemaTitle = fieldSchemaArtifact.jsonSchemaTitle();
-    this.jsonSchemaDescription = fieldSchemaArtifact.jsonSchemaDescription();
+    this.internalName = fieldSchemaArtifact.internalName();
+    this.internalDescription = fieldSchemaArtifact.internalDescription();
     this.name = fieldSchemaArtifact.name();
     this.description = fieldSchemaArtifact.description();
     this.identifier = fieldSchemaArtifact.identifier();
+    this.preferredLabel = fieldSchemaArtifact.preferredLabel();
     this.alternateLabels = fieldSchemaArtifact.alternateLabels();
-    this.modelVersion = fieldSchemaArtifact.modelVersion();
     this.version = fieldSchemaArtifact.version();
     this.status = fieldSchemaArtifact.status();
     this.previousVersion = fieldSchemaArtifact.previousVersion();
@@ -88,6 +125,16 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
     this.annotations = fieldSchemaArtifact.annotations();
   }
+
+  public abstract FieldSchemaArtifactBuilder withRequiredValue(boolean required);
+
+  public abstract FieldSchemaArtifactBuilder withRecommendedValue(boolean recommendedValue);
+
+  public abstract FieldSchemaArtifactBuilder withContinuePreviousLine(boolean continuePreviousLine);
+
+  public abstract FieldSchemaArtifactBuilder withHidden(boolean hidden);
+
+  public abstract FieldSchemaArtifactBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled);
 
   protected FieldSchemaArtifactBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
   {
@@ -120,11 +167,11 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
 
     this.name = name;
 
-    if (this.jsonSchemaTitle.isEmpty())
-      this.jsonSchemaTitle = name + " field schema";
+    if (this.internalName.isEmpty())
+      this.internalName = name + " field schema";
 
-    if (this.jsonSchemaDescription.isEmpty())
-      this.jsonSchemaDescription = name + " field schema generated by the CEDAR Artifact Library";
+    if (this.internalDescription.isEmpty())
+      this.internalDescription = name + " field schema generated by the CEDAR Artifact Library";
 
     return this;
   }
@@ -162,15 +209,6 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
       throw new IllegalArgumentException("null alternate labels passed to builder");
 
     this.alternateLabels = alternateLabels;
-    return this;
-  }
-
-  protected FieldSchemaArtifactBuilder withModelVersion(Version modelVersion)
-  {
-    if (modelVersion == null)
-      throw new IllegalArgumentException("null model version passed to builder");
-
-    this.modelVersion = modelVersion;
     return this;
   }
 
@@ -255,39 +293,21 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     return this;
   }
 
-  protected FieldSchemaArtifactBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+  protected FieldSchemaArtifactBuilder withInternalName(String internalName)
   {
-    if (jsonSchemaTitle == null)
+    if (internalName == null)
       throw new IllegalArgumentException("null JSON Schema title passed to builder");
 
-    this.jsonSchemaTitle = jsonSchemaTitle;
+    this.internalName = internalName;
     return this;
   }
 
-  protected FieldSchemaArtifactBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+  protected FieldSchemaArtifactBuilder withInternalDescription(String internalDescription)
   {
-    if (jsonSchemaDescription == null)
+    if (internalDescription == null)
       throw new IllegalArgumentException("null JSON Schema description passed to builder");
 
-    this.jsonSchemaDescription = jsonSchemaDescription;
-    return this;
-  }
-
-  protected FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
-  {
-    if (fieldUi == null)
-      throw new IllegalArgumentException("null field UI passed to builder");
-
-    this.fieldUi = fieldUi;
-    return this;
-  }
-
-  protected FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
-  {
-    if (valueConstraints == null)
-      throw new IllegalArgumentException("null value constraints passed to builder");
-
-    this.valueConstraints = Optional.ofNullable(valueConstraints);
+    this.internalDescription = internalDescription;
     return this;
   }
 
@@ -300,4 +320,22 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     return this;
   }
 
+  protected FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi)
+  {
+    if (fieldUi == null)
+      throw new IllegalArgumentException("null field UI passed to builder");
+
+    this.fieldUi = fieldUi;
+
+    return this;
+  }
+
+  protected FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints)
+  {
+    if (valueConstraints == null)
+      throw new IllegalArgumentException("null value constraints passed to builder");
+
+    this.valueConstraints = Optional.ofNullable(valueConstraints);
+    return this;
+  }
 }

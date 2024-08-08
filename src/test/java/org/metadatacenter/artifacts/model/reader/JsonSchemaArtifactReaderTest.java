@@ -150,7 +150,6 @@ public class JsonSchemaArtifactReaderTest
 
     assertEquals(templateSchemaArtifact.name(), "Test name");
     assertEquals(templateSchemaArtifact.description(), "Test description");
-    assertEquals(templateSchemaArtifact.modelVersion(), new Version(1, 6, 0));
     assertNotNull(templateSchemaArtifact.templateUi());
   }
 
@@ -163,7 +162,6 @@ public class JsonSchemaArtifactReaderTest
 
     assertEquals(elementSchemaArtifact.name(), "Test name");
     assertEquals(elementSchemaArtifact.description(), "Test description");
-    assertEquals(elementSchemaArtifact.modelVersion(), new Version(1, 6, 0));
     assertNotNull(elementSchemaArtifact.elementUi());
   }
 
@@ -178,9 +176,9 @@ public class JsonSchemaArtifactReaderTest
 
     assertEquals(fieldSchemaArtifact.name(), "Test name");
     assertEquals(fieldSchemaArtifact.description(), "Test description");
-    assertEquals(fieldSchemaArtifact.modelVersion(), new Version(1, 6, 0));
     assertNotNull(fieldSchemaArtifact.fieldUi());
   }
+
 
   @Test
   public void testReadSimpleTemplateInstance()

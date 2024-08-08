@@ -43,17 +43,17 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
       defaultValue, requiredValue, recommendedValue, multipleChoice);
   }
 
-  static Builder builder()
+  static ControlledTermValueConstraintsBuilder builder()
   {
-    return new Builder();
+    return new ControlledTermValueConstraintsBuilder();
   }
 
-  static Builder builder(ControlledTermValueConstraints controlledTermValueConstraints)
+  static ControlledTermValueConstraintsBuilder builder(ControlledTermValueConstraints controlledTermValueConstraints)
   {
-    return new Builder(controlledTermValueConstraints);
+    return new ControlledTermValueConstraintsBuilder(controlledTermValueConstraints);
   }
 
-  class Builder
+  final class ControlledTermValueConstraintsBuilder implements ValueConstraintsBuilder
   {
     private List<OntologyValueConstraint> ontologies = new ArrayList<>();
     private List<ValueSetValueConstraint> valueSets = new ArrayList<>();
@@ -65,11 +65,11 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
     private boolean recommendedValue = false;
     private boolean multipleChoice = false;
 
-    private Builder()
+    private ControlledTermValueConstraintsBuilder()
     {
     }
 
-    private Builder(ControlledTermValueConstraints controlledTermValueConstraints)
+    private ControlledTermValueConstraintsBuilder(ControlledTermValueConstraints controlledTermValueConstraints)
     {
       this.ontologies = List.copyOf(controlledTermValueConstraints.ontologies());
       this.valueSets = List.copyOf(controlledTermValueConstraints.valueSets());
@@ -82,53 +82,53 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
       this.multipleChoice = controlledTermValueConstraints.multipleChoice();
     }
 
-    public Builder withOntologyValueConstraint(OntologyValueConstraint constraint)
+    public ControlledTermValueConstraintsBuilder withOntologyValueConstraint(OntologyValueConstraint constraint)
     {
       ontologies.add(constraint);
       return this;
     }
 
-    public Builder withValueSetValueConstraint(ValueSetValueConstraint constraint)
+    public ControlledTermValueConstraintsBuilder withValueSetValueConstraint(ValueSetValueConstraint constraint)
     {
       valueSets.add(constraint);
       return this;
     }
 
-    public Builder withClassValueConstraint(ClassValueConstraint constraint)
+    public ControlledTermValueConstraintsBuilder withClassValueConstraint(ClassValueConstraint constraint)
     {
       classes.add(constraint);
       return this;
     }
 
-    public Builder withBranchValueConstraint(BranchValueConstraint constraint)
+    public ControlledTermValueConstraintsBuilder withBranchValueConstraint(BranchValueConstraint constraint)
     {
       branches.add(constraint);
       return this;
     }
 
-    public Builder withValueConstraintsAction(ControlledTermValueConstraintsAction action)
+    public ControlledTermValueConstraintsBuilder withValueConstraintsAction(ControlledTermValueConstraintsAction action)
     {
       actions.add(action);
       return this;
     }
 
-    public Builder withDefaultValue(URI uri, String label)
+    public ControlledTermValueConstraintsBuilder withDefaultValue(URI uri, String label)
     {
       this.defaultValue = Optional.of(new ControlledTermDefaultValue(uri, label));
       return this;
     }
 
-    public Builder withRequiredValue(boolean requiredValue)
+    public ControlledTermValueConstraintsBuilder withRequiredValue(boolean requiredValue)
     {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue) {
+    public ControlledTermValueConstraintsBuilder withRecommendedValue(boolean recommendedValue) {
       this.recommendedValue = recommendedValue;
       return this;
     }
-    public Builder withMultipleChoice(boolean multipleChoice)
+    public ControlledTermValueConstraintsBuilder withMultipleChoice(boolean multipleChoice)
     {
       this.multipleChoice = multipleChoice;
       return this;

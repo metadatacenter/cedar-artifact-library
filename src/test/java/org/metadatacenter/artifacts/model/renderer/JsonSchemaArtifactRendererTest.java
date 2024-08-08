@@ -278,6 +278,32 @@ public class JsonSchemaArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
+  @Test public void testRenderStandaloneField()
+  {
+    String fieldName = "Field name";
+
+    TextField textField = TextField.builder().
+      withName(fieldName).
+      withRequiredValue(true).
+      withRecommendedValue(true).
+      withHidden(true).
+      withContinuePreviousLine(true).
+      withValueRecommendationEnabled(true).
+      build();
+
+    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(textField);
+
+    assertTrue(validateJsonSchema(rendering));
+
+    assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
+    assertEquals(null, rendering.get("_valueConstraints").get("recommendedValue"));
+    assertEquals(null, rendering.get("_ui").get("continuePreviousLine"));
+    assertEquals(null, rendering.get("_ui").get("hidden"));
+    assertEquals(null, rendering.get("_ui").get("valueRecommendationEnabled"));
+
+    assertTrue(validateFieldSchemaArtifact(rendering));
+  }
+
   @Test public void testRenderLinkField()
   {
     String fieldName = "Field name";

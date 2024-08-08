@@ -35,15 +35,16 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       recommendedValue, multipleChoice, regex);
   }
 
-  static Builder builder() {
-    return new Builder();
+  static TextValueConstraintsBuilder builder() {
+    return new TextValueConstraintsBuilder();
   }
 
-  static Builder builder(TextValueConstraints textValueConstraints) {
-    return new Builder(textValueConstraints);
+  static TextValueConstraintsBuilder builder(TextValueConstraints textValueConstraints) {
+    return new TextValueConstraintsBuilder(textValueConstraints);
   }
 
-  class Builder {
+  final class TextValueConstraintsBuilder implements ValueConstraintsBuilder
+  {
     private Optional<Integer> minLength = Optional.empty();
     private Optional<Integer> maxLength = Optional.empty();
     private Optional<TextDefaultValue> defaultValue = Optional.empty();
@@ -53,10 +54,10 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
     private boolean multipleChoice = false;
     private Optional<String> regex = Optional.empty();
 
-    private Builder() {
+    private TextValueConstraintsBuilder() {
     }
 
-    private Builder(TextValueConstraints textValueConstraints)
+    private TextValueConstraintsBuilder(TextValueConstraints textValueConstraints)
     {
       this.minLength = textValueConstraints.minLength();
       this.maxLength = textValueConstraints.maxLength();
@@ -68,7 +69,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       this.regex = textValueConstraints.regex();
     }
 
-    public Builder withMinLength(Integer minLength) {
+    public TextValueConstraintsBuilder withMinLength(Integer minLength) {
 
       if (minLength == null)
         throw new IllegalArgumentException("null minimum length passed to builder");
@@ -77,7 +78,7 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
-    public Builder withMaxLength(Integer maxLength) {
+    public TextValueConstraintsBuilder withMaxLength(Integer maxLength) {
       if (maxLength == null)
         throw new IllegalArgumentException("null maximum length passed to builder");
 
@@ -85,35 +86,37 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
-    public Builder withDefaultValue(String defaultValue) {
+    public TextValueConstraintsBuilder withDefaultValue(String defaultValue) {
       if (defaultValue == null)
         throw new IllegalArgumentException("null default value passed to builder");
 
+      if (defaultValue.isEmpty())
+        throw new IllegalArgumentException("empty default value passed to builder");
 
       this.defaultValue = Optional.of(new TextDefaultValue(defaultValue));
       return this;
     }
 
-    public Builder withChoice(String choice, boolean selectedByDefault) {
+    public TextValueConstraintsBuilder withChoice(String choice, boolean selectedByDefault) {
       this.literals.add(new LiteralValueConstraint(choice, selectedByDefault));
       return this;
     }
 
-    public Builder withRequiredValue(boolean requiredValue) {
+    public TextValueConstraintsBuilder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue) {
+    public TextValueConstraintsBuilder withRecommendedValue(boolean recommendedValue) {
       this.recommendedValue = recommendedValue;
       return this;
     }
-    public Builder withMultipleChoice(boolean multipleChoice) {
+    public TextValueConstraintsBuilder withMultipleChoice(boolean multipleChoice) {
       this.multipleChoice = multipleChoice;
       return this;
     }
 
-    public Builder withRegex(String regex) {
+    public TextValueConstraintsBuilder withRegex(String regex) {
       if (regex == null)
         throw new IllegalArgumentException("null regex passed to builder");
 

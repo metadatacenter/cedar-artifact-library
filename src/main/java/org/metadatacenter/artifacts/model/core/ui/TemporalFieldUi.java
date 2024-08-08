@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.core.ui;
 
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -23,94 +22,93 @@ public non-sealed interface TemporalFieldUi extends FieldUi
 
   static TemporalFieldUi create(TemporalGranularity temporalGranularity,
     Optional<InputTimeFormat> inputTimeFormat, Optional<Boolean> timezoneEnabled,
-    boolean hidden, boolean recommendedValue, boolean continuePreviousLine)
+    boolean hidden, boolean continuePreviousLine)
   {
     return new TemporalFieldUiRecord(FieldInputType.TEMPORAL, temporalGranularity, inputTimeFormat, timezoneEnabled,
-      hidden, recommendedValue, continuePreviousLine);
+      hidden, continuePreviousLine);
   }
 
-  static Builder builder()
+  static TemporalFieldUiBuilder builder()
   {
-    return new TemporalFieldUi.Builder();
+    return new TemporalFieldUiBuilder();
   }
 
-  static Builder builder(TemporalFieldUi temporalFieldUi)
+  static TemporalFieldUiBuilder builder(TemporalFieldUi temporalFieldUi)
   {
-    return new TemporalFieldUi.Builder(temporalFieldUi);
+    return new TemporalFieldUiBuilder(temporalFieldUi);
   }
 
-  class Builder
+  final class TemporalFieldUiBuilder implements FieldUiBuilder
   {
     private FieldInputType inputType = FieldInputType.TEMPORAL;
     private TemporalGranularity temporalGranularity;
     private Optional<InputTimeFormat> inputTimeFormat = Optional.empty();
     private Optional<Boolean> timezoneEnabled = Optional.empty();
     private boolean hidden = false;
-    private boolean recommendedValue = false;
     private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled = false;
 
-    private Builder()
+    private TemporalFieldUiBuilder()
     {
     }
 
-    private Builder(TemporalFieldUi temporalFieldUi)
+    private TemporalFieldUiBuilder(TemporalFieldUi temporalFieldUi)
     {
       this.inputType = temporalFieldUi.inputType();
       this.temporalGranularity = temporalFieldUi.temporalGranularity();
       this.inputTimeFormat = temporalFieldUi.inputTimeFormat();
       this.timezoneEnabled = temporalFieldUi.timezoneEnabled();
       this.hidden = temporalFieldUi.hidden();
-      this.recommendedValue = temporalFieldUi.recommendedValue();
       this.continuePreviousLine = temporalFieldUi.continuePreviousLine();
     }
 
-    public Builder withTemporalGranularity(TemporalGranularity temporalGranularity)
+    public TemporalFieldUiBuilder withTemporalGranularity(TemporalGranularity temporalGranularity)
     {
       this.temporalGranularity = temporalGranularity;
       return this;
     }
 
-    public Builder withInputTimeFormat(InputTimeFormat inputTimeFormat)
+    public TemporalFieldUiBuilder withInputTimeFormat(InputTimeFormat inputTimeFormat)
     {
       this.inputTimeFormat = Optional.ofNullable(inputTimeFormat);
       return this;
     }
 
-    public Builder withTimezoneEnabled(boolean timezoneEnabled)
+    public TemporalFieldUiBuilder withTimezoneEnabled(boolean timezoneEnabled)
     {
       this.timezoneEnabled = Optional.ofNullable(timezoneEnabled);
       return this;
     }
 
-    public Builder withHidden(boolean hidden)
+    public TemporalFieldUiBuilder withHidden(boolean hidden)
     {
       this.hidden = hidden;
       return this;
     }
 
-    public Builder withContinuePreviousLine(boolean continuePreviousLine)
+    public TemporalFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       this.continuePreviousLine = continuePreviousLine;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue)
+    public TemporalFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
-      this.recommendedValue = recommendedValue;
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
       return this;
     }
 
     public TemporalFieldUi build()
     {
       return new TemporalFieldUiRecord(inputType, temporalGranularity, inputTimeFormat, timezoneEnabled, hidden,
-        recommendedValue, continuePreviousLine);
+        continuePreviousLine);
     }
   }
 }
 
 record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity temporalGranularity,
                              Optional<InputTimeFormat> inputTimeFormat, Optional<Boolean> timezoneEnabled,
-                             boolean hidden, boolean recommendedValue, boolean continuePreviousLine) implements TemporalFieldUi
+                             boolean hidden, boolean continuePreviousLine) implements TemporalFieldUi
 {
   public TemporalFieldUiRecord
   {

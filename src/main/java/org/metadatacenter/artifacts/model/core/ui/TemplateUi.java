@@ -24,6 +24,10 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
     return new TemplateUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
+  Optional<String> header();
+
+  Optional<String> footer();
+
   @JsonIgnore
   default UiType uiType() { return UiType.TEMPLATE_UI; }
 
@@ -127,7 +131,7 @@ record TemplateUiRecord(List<String> order,
     validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
     order = List.copyOf(order);
-    propertyLabels = processPropertyLabels(propertyLabels, order);
-    propertyDescriptions = processPropertyDescriptions(propertyDescriptions, order);
+    propertyLabels = new LinkedHashMap<>(propertyLabels);
+    propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
   }
 }

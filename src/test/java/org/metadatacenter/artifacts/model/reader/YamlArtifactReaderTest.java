@@ -56,8 +56,8 @@ public class YamlArtifactReaderTest
     String description = "My study";
     String identifier = "ID1";
     URI id = URI.create("https://repo.metadatacenter.org/templates/66");
-    Version version = Version.fromString("1.2.3");
     Version modelVersion = Version.fromString("1.6.0");
+    Version version = Version.fromString("1.2.3");
     Status status = Status.DRAFT;
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/templates/4553");
     URI previousVersion = URI.create("https://repo.metadatacenter.org/templates/5465");
@@ -72,8 +72,8 @@ public class YamlArtifactReaderTest
     yamlSource.put(DESCRIPTION, description);
     yamlSource.put(IDENTIFIER, identifier);
     yamlSource.put(ID, id.toString());
-    yamlSource.put(VERSION, version.toString());
     yamlSource.put(MODEL_VERSION, modelVersion.toString());
+    yamlSource.put(VERSION, version.toString());
     yamlSource.put(STATUS, status.toString());
     yamlSource.put(DERIVED_FROM, derivedFrom.toString());
     yamlSource.put(PREVIOUS_VERSION, previousVersion.toString());
@@ -90,7 +90,6 @@ public class YamlArtifactReaderTest
     assertEquals(identifier, templateSchemaArtifact.identifier().get());
     assertEquals(id, templateSchemaArtifact.jsonLdId().get());
     assertEquals(version, templateSchemaArtifact.version().get());
-    assertEquals(modelVersion, templateSchemaArtifact.modelVersion());
     assertEquals(status, templateSchemaArtifact.status().get());
     assertEquals(derivedFrom, templateSchemaArtifact.derivedFrom().get());
     assertEquals(previousVersion, templateSchemaArtifact.previousVersion().get());
@@ -126,8 +125,8 @@ public class YamlArtifactReaderTest
     yamlSource.put(DESCRIPTION, description);
     yamlSource.put(IDENTIFIER, identifier);
     yamlSource.put(ID, id.toString());
-    yamlSource.put(VERSION, version.toString());
     yamlSource.put(MODEL_VERSION, modelVersion.toString());
+    yamlSource.put(VERSION, version.toString());
     yamlSource.put(STATUS, status.toString());
     yamlSource.put(DERIVED_FROM, derivedFrom.toString());
     yamlSource.put(PREVIOUS_VERSION, previousVersion.toString());
@@ -147,7 +146,6 @@ public class YamlArtifactReaderTest
     assertEquals(identifier, elementSchemaArtifact.identifier().get());
     assertEquals(id, elementSchemaArtifact.jsonLdId().get());
     assertEquals(version, elementSchemaArtifact.version().get());
-    assertEquals(modelVersion, elementSchemaArtifact.modelVersion());
     assertEquals(status, elementSchemaArtifact.status().get());
     assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom().get());
     assertEquals(previousVersion, elementSchemaArtifact.previousVersion().get());
@@ -190,8 +188,8 @@ public class YamlArtifactReaderTest
     yamlSource.put(NAME, name);
     yamlSource.put(DESCRIPTION, description);
     yamlSource.put(IDENTIFIER, identifier);
-    yamlSource.put(VERSION, version.toString());
     yamlSource.put(MODEL_VERSION, modelVersion.toString());
+    yamlSource.put(VERSION, version.toString());
     yamlSource.put(STATUS, status.toString());
     yamlSource.put(DERIVED_FROM, derivedFrom.toString());
     yamlSource.put(PREVIOUS_VERSION, previousVersion.toString());
@@ -216,7 +214,6 @@ public class YamlArtifactReaderTest
     assertEquals(description, fieldSchemaArtifact.description());
     assertEquals(identifier, fieldSchemaArtifact.identifier().get());
     assertEquals(version, fieldSchemaArtifact.version().get());
-    assertEquals(modelVersion, fieldSchemaArtifact.modelVersion());
     assertEquals(status, fieldSchemaArtifact.status().get());
     assertEquals(derivedFrom, fieldSchemaArtifact.derivedFrom().get());
     assertEquals(previousVersion, fieldSchemaArtifact.previousVersion().get());

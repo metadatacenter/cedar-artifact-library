@@ -1405,8 +1405,7 @@
                 }
               ],
               "requiredValue": false,
-              "recommendedValue": false,
-              "multipleChoice": true
+              "multipleChoice": false
             },
             "additionalProperties": false,
             "_ui": {
@@ -2945,8 +2944,7 @@
               }
             ],
             "requiredValue": false,
-            "recommendedValue": false,
-            "multipleChoice": true
+            "multipleChoice": false
           },
           "additionalProperties": false,
           "_ui": {
@@ -3037,7 +3035,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "literals": [
                 {
                   "label": "aa"
@@ -3779,7 +3776,6 @@
                 }
               ],
               "requiredValue": false,
-              "recommendedValue": false,
               "multipleChoice": true
             },
             "additionalProperties": false,
@@ -5222,8 +5218,7 @@
                 }
               ],
               "requiredValue": false,
-              "recommendedValue": false,
-              "multipleChoice": true
+              "multipleChoice": false
             },
             "additionalProperties": false,
             "_ui": {
@@ -6335,7 +6330,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "literals": [],
               "requiredValue": false,
               "recommendedValue": false
@@ -8451,7 +8445,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "literals": [],
               "requiredValue": false,
               "recommendedValue": false
@@ -9194,7 +9187,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -9792,7 +9784,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -9885,7 +9876,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -10219,7 +10209,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -11973,7 +11962,6 @@
                 },
                 "_valueConstraints": {
                   "temporalType": "xsd:date",
-                  "defaultValue": "",
                   "requiredValue": false,
                   "recommendedValue": false
                 },
@@ -12222,11 +12210,6 @@
                 "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInTsv"
               ]
             },
-            "Data Characteristics Table in Key-Value Pairs": {
-              "enum": [
-                "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInKeyValuePairs"
-              ]
-            },
             "Data Characteristics Table in HTML": {
               "enum": [
                 "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInHtml"
@@ -12236,7 +12219,6 @@
           "required": [
             "Data Characteristics Table in CSV",
             "Data Characteristics Table in TSV",
-            "Data Characteristics Table in Key-Value Pairs",
             "Data Characteristics Table in HTML"
           ],
           "additionalProperties": false
@@ -12592,8 +12574,7 @@
         "@id",
         "Data Characteristics Table in HTML",
         "Data Characteristics Table in CSV",
-        "Data Characteristics Table in TSV",
-        "Data Characteristics Table in Key-Value Pairs"
+        "Data Characteristics Table in TSV"
       ],
       "additionalProperties": {
         "type": "object",
@@ -14316,7 +14297,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -14409,7 +14389,6 @@
             },
             "_valueConstraints": {
               "temporalType": "xsd:date",
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -16290,7 +16269,6 @@
               }
             },
             "_valueConstraints": {
-              "defaultValue": "",
               "requiredValue": false,
               "recommendedValue": false
             },
@@ -16385,16 +16363,10 @@
               "enum": [
                 "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataCommentary"
               ]
-            },
-            "Data File Descriptive Key-Value Pairs": {
-              "enum": [
-                "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataKeyValuePair"
-              ]
             }
           },
           "required": [
-            "Additional Commentary",
-            "Data File Descriptive Key-Value Pairs"
+            "Additional Commentary"
           ],
           "additionalProperties": false
         },
@@ -16573,7 +16545,6 @@
       "required": [
         "@context",
         "@id",
-        "Data File Descriptive Key-Value Pairs",
         "Additional Commentary"
       ],
       "additionalProperties": {

@@ -34,32 +34,32 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface EmailField extends FieldSchemaArtifact
 {
-  static EmailField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+  static EmailField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new EmailFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new EmailFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static EmailFieldBuilder builder() { return new EmailFieldBuilder(); }
+  static EmailFieldBuilder builder() {return new EmailFieldBuilder();}
 
-  static EmailFieldBuilder builder(EmailField emailField) { return new EmailFieldBuilder(emailField); }
+  static EmailFieldBuilder builder(EmailField emailField) {return new EmailFieldBuilder(emailField);}
 
   final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final TextValueConstraints.Builder valueConstraintsBuilder;
+    private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
-    public EmailFieldBuilder() {
+    public EmailFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.EMAIL);
@@ -72,12 +72,13 @@ public sealed interface EmailField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = FieldUi.builder(emailField.fieldUi());
       if (emailField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(emailField.valueConstraints().get().asTextValueConstraints());
+        this.valueConstraintsBuilder = TextValueConstraints.builder(
+          emailField.valueConstraints().get().asTextValueConstraints());
       else
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
-    public EmailFieldBuilder withRequiredValue(boolean requiredValue)
+    @Override public EmailFieldBuilder withRequiredValue(boolean requiredValue)
     {
       valueConstraintsBuilder.withRequiredValue(requiredValue);
       return this;
@@ -101,15 +102,27 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    public EmailFieldBuilder withValueRecommendation(boolean valueRecommendation)
+    @Override public EmailFieldBuilder withHidden(boolean hidden)
     {
-      fieldUiBuilder.withValueRecommendation(valueRecommendation);
+      fieldUiBuilder.withHidden(hidden);
       return this;
     }
 
-    public EmailFieldBuilder withHidden(boolean hidden)
+    @Override public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
-      fieldUiBuilder.withHidden(hidden);
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public EmailFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public EmailFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -119,7 +132,8 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public EmailFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public EmailFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -145,12 +159,6 @@ public sealed interface EmailField extends FieldSchemaArtifact
     @Override public EmailFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -244,15 +252,15 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public EmailFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public EmailFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public EmailFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public EmailFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -266,27 +274,23 @@ public sealed interface EmailField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
     }
   }
 }
 
-record EmailFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                        LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                        String name, String description, Optional<String> identifier,
-                        Version modelVersion, Optional<Version> version, Optional<Status> status,
-                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record EmailFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                        String name, String description, Optional<String> identifier, Optional<Version> version,
+                        Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                         boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                        Optional<URI> propertyUri,
-                        Optional<URI> createdBy, Optional<URI> modifiedBy,
+                        Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                         Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                        Optional<String> preferredLabel, List<String> alternateLabels,
-                        Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                        Optional<Annotations> annotations)
-  implements EmailField
+                        Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                        FieldUi fieldUi, Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                        String internalName, String internalDescription) implements EmailField
 {
   public EmailFieldRecord
   {
@@ -298,7 +302,7 @@ record EmailFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String j
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

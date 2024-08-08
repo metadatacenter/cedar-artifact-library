@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
@@ -35,36 +34,37 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface RadioField extends FieldSchemaArtifact
 {
-  static RadioField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
+  static RadioField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<Integer> minItems, Optional<Integer> maxItems,
+    Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+    Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel, List<String> alternateLabels,
     Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+    Optional<Annotations> annotations, String internalName, String internalDescription)
   {
-    return new RadioFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new RadioFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static RadioFieldBuilder builder() { return new RadioFieldBuilder(); }
+  default boolean isMultiple() {return false;}
 
-  static RadioFieldBuilder builder(RadioField radioField) { return new RadioFieldBuilder(radioField); }
+  static RadioFieldBuilder builder() {return new RadioFieldBuilder();}
+
+  static RadioFieldBuilder builder(RadioField radioField) {return new RadioFieldBuilder(radioField);}
 
   final class RadioFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final TextValueConstraints.Builder valueConstraintsBuilder;
+    private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
-    public RadioFieldBuilder() {
+    public RadioFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.RADIO);
-      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
+      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(false);
     }
 
     public RadioFieldBuilder(RadioField radioField)
@@ -73,15 +73,10 @@ public sealed interface RadioField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = FieldUi.builder(radioField.fieldUi());
       if (radioField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(radioField.valueConstraints().get().asTextValueConstraints());
+        this.valueConstraintsBuilder = TextValueConstraints.builder(
+          radioField.valueConstraints().get().asTextValueConstraints());
       else
         this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
-    }
-
-    public RadioFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
     }
 
     public RadioFieldBuilder withDefaultValue(String defaultValue)
@@ -102,12 +97,35 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    public RadioFieldBuilder withHidden(boolean hidden)
+    @Override public RadioFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public RadioFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
       return this;
     }
 
+    @Override public RadioFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public RadioFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public RadioFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      return this;
+    }
 
     @Override public RadioFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
@@ -115,7 +133,8 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RadioFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public RadioFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -141,12 +160,6 @@ public sealed interface RadioField extends FieldSchemaArtifact
     @Override public RadioFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public RadioFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -210,12 +223,6 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RadioFieldBuilder withIsMultiple(boolean isMultiple)
-    {
-      super.withIsMultiple(isMultiple);
-      return this;
-    }
-
     @Override public RadioFieldBuilder withMinItems(Integer minItems)
     {
       super.withMinItems(minItems);
@@ -240,15 +247,15 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RadioFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public RadioFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public RadioFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public RadioFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -262,27 +269,23 @@ public sealed interface RadioField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+        internalDescription);
     }
   }
 }
 
-record RadioFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                        LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                        String name, String description, Optional<String> identifier,
-                        Version modelVersion, Optional<Version> version, Optional<Status> status,
-                        Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                        Optional<URI> propertyUri,
-                        Optional<URI> createdBy, Optional<URI> modifiedBy,
-                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                        Optional<String> preferredLabel, List<String> alternateLabels,
-                        Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                        Optional<Annotations> annotations)
-  implements RadioField
+record RadioFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                        String name, String description, Optional<String> identifier, Optional<Version> version,
+                        Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                        Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+                        Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                        Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                        List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                        Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                        String internalName, String internalDescription) implements RadioField
 {
   public RadioFieldRecord
   {
@@ -294,7 +297,7 @@ record RadioFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String j
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

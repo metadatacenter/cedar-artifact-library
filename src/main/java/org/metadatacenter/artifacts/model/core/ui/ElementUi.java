@@ -5,13 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
-import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
 import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
@@ -19,9 +15,9 @@ import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 public non-sealed interface ElementUi extends Ui, ParentArtifactUi
 {
   static ElementUi create(List<String> order, LinkedHashMap<String, String> propertyLabels,
-    LinkedHashMap<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
+    LinkedHashMap<String, String> propertyDescriptions)
   {
-    return new ElementUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
+    return new ElementUiRecord(order, propertyLabels, propertyDescriptions);
   }
 
   @JsonIgnore
@@ -39,8 +35,6 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
     private List<String> order = new ArrayList<>();
     private LinkedHashMap<String, String> propertyLabels = new LinkedHashMap<>();
     private LinkedHashMap<String, String> propertyDescriptions = new LinkedHashMap<>();
-    private Optional<String> header = Optional.empty();
-    private Optional<String> footer = Optional.empty();
 
     private Builder() {
     }
@@ -49,8 +43,6 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
       this.order = List.copyOf(elementUi.order());
       this.propertyLabels = new LinkedHashMap<>(elementUi.propertyLabels());
       this.propertyDescriptions = new LinkedHashMap<>(elementUi.propertyDescriptions());
-      this.header = elementUi.header();
-      this.footer = elementUi.footer();
     }
 
     public Builder withOrder(String fieldName) {
@@ -94,39 +86,26 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
       return this;
     }
 
-    public Builder withHeader(String header) {
-      this.header = Optional.ofNullable(header);
-      return this;
-    }
-
-    public Builder withFooter(String footer) {
-      this.footer = Optional.ofNullable(footer);
-      return this;
-    }
-
     public ElementUi build()
     {
-      return new ElementUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
+      return new ElementUiRecord(order, propertyLabels, propertyDescriptions);
     }
   }
 }
 
 record ElementUiRecord(List<String> order,
                        LinkedHashMap<String, String> propertyLabels,
-                       LinkedHashMap<String, String> propertyDescriptions,
-                       Optional<String> header, Optional<String> footer) implements ElementUi
+                       LinkedHashMap<String, String> propertyDescriptions) implements ElementUi
 {
   public ElementUiRecord
   {
     validateListFieldDoesNotHaveDuplicates(this, order, UI_ORDER);
     validateMapFieldNotNull(this, propertyLabels, UI_PROPERTY_LABELS);
     validateMapFieldNotNull(this, propertyDescriptions, UI_PROPERTY_DESCRIPTIONS);
-    validateOptionalFieldNotNull(this, header, UI_HEADER);
-    validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
     order = List.copyOf(order);
-    propertyLabels = processPropertyLabels(propertyLabels, order);
-    propertyDescriptions = processPropertyDescriptions(propertyDescriptions, order);
+    propertyLabels = new LinkedHashMap<>(propertyLabels);
+    propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
   }
 }
 

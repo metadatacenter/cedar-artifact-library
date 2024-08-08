@@ -9,62 +9,61 @@ public non-sealed interface NumericFieldUi extends FieldUi
 
   default boolean valueRecommendationEnabled() { return false; }
 
-  static NumericFieldUi create(boolean hidden, boolean recommendedValue, boolean continuePreviousLine)
+  static NumericFieldUi create(boolean hidden, boolean continuePreviousLine)
   {
-    return new NumericFieldUiRecord(FieldInputType.NUMERIC, hidden, recommendedValue, continuePreviousLine);
+    return new NumericFieldUiRecord(FieldInputType.NUMERIC, hidden, continuePreviousLine);
   }
 
-  static Builder builder() {
-    return new NumericFieldUi.Builder();
+  static NumericFieldUiBuilder builder() {
+    return new NumericFieldUiBuilder();
   }
 
-  static Builder builder(NumericFieldUi numericFieldUi) {
-    return new NumericFieldUi.Builder(numericFieldUi);
+  static NumericFieldUiBuilder builder(NumericFieldUi numericFieldUi) {
+    return new NumericFieldUiBuilder(numericFieldUi);
   }
 
-  class Builder
+  final class NumericFieldUiBuilder implements FieldUiBuilder
   {
     private FieldInputType inputType = FieldInputType.NUMERIC;
     private boolean hidden = false;
-    private boolean recommendedValue = false;
     private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled;
 
-    private Builder()
+    private NumericFieldUiBuilder()
     {
     }
 
-    private Builder(NumericFieldUi numericFieldUi)
+    private NumericFieldUiBuilder(NumericFieldUi numericFieldUi)
     {
       this.inputType = numericFieldUi.inputType();
       this.hidden = numericFieldUi.hidden();
-      this.recommendedValue = numericFieldUi.recommendedValue();
       this.continuePreviousLine = numericFieldUi.continuePreviousLine();
     }
 
-    public Builder withHidden(boolean hidden)
+    public NumericFieldUiBuilder withHidden(boolean hidden)
     {
       this.hidden = hidden;
       return this;
     }
 
-    public Builder withContinuePreviousLine(boolean continuePreviousLine)
+    public NumericFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       this.continuePreviousLine = continuePreviousLine;
       return this;
     }
 
-    public Builder withRecommendedValue(boolean recommendedValue)
+    public NumericFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
-      this.recommendedValue = recommendedValue;
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
       return this;
     }
 
     public NumericFieldUi build()
     {
-      return new NumericFieldUiRecord(inputType, hidden, recommendedValue, continuePreviousLine);
+      return new NumericFieldUiRecord(inputType, hidden, continuePreviousLine);
     }
   }
 }
 
-record NumericFieldUiRecord(FieldInputType inputType, boolean hidden, boolean recommendedValue, boolean continuePreviousLine) implements NumericFieldUi
+record NumericFieldUiRecord(FieldInputType inputType, boolean hidden, boolean continuePreviousLine) implements NumericFieldUi
 {}

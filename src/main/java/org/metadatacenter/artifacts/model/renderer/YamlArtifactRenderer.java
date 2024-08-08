@@ -12,6 +12,7 @@ import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
@@ -148,6 +149,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private final boolean isCompact;
   private final DateTimeFormatter datetimeFormatter;
   private final TerminologyServerClient terminologyServerClient;
+  private final Version modelVersion = Version.fromString("1.6.0");
 
   public YamlArtifactRenderer(boolean isCompact, TerminologyServerClient terminologyServerClient)
   {
@@ -653,7 +655,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String preferredLabel = preferredLabel2UriEntry.getKey();
       URI uri = URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, valueSetValueConstraint.vsCollection(),
-        preferredLabel, preferredLabel, ValueType.VALUE_SET);
+        preferredLabel, preferredLabel, ValueType.VALUE);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -916,7 +918,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(VERSION, schemaArtifact.version().get().toString());
 
     if (!isCompact)
-      rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
+      rendering.put(MODEL_VERSION, modelVersion);
 
     if (!isCompact && schemaArtifact.previousVersion().isPresent())
       rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
@@ -958,7 +960,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(VERSION, schemaArtifact.version().get().toString());
 
     if (!isCompact)
-      rendering.put(MODEL_VERSION, schemaArtifact.modelVersion().toString());
+      rendering.put(MODEL_VERSION, modelVersion);
 
     if (!isCompact && schemaArtifact.previousVersion().isPresent())
       rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());

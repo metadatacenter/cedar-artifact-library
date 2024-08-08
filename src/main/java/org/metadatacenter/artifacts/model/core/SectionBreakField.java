@@ -17,12 +17,9 @@ import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateM
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
@@ -34,24 +31,33 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface SectionBreakField extends FieldSchemaArtifact
 {
-  static SectionBreakField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
+  static SectionBreakField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, String name, String description, Optional<String> identifier, Optional<Version> version,
+    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations)
+    Optional<String> preferredLabel, Optional<String> language, FieldUi fieldUi, Optional<Annotations> annotations,
+    String internalName, String internalDescription)
   {
-    return new SectionBreakFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, Collections.emptyList(), language, fieldUi, Optional.empty(),
-      annotations);
+    return new SectionBreakFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+      Collections.emptyList(), language, fieldUi, Optional.empty(), annotations, internalName,
+      internalDescription);
   }
 
-  static SectionBreakFieldBuilder builder() { return new SectionBreakFieldBuilder(); }
+  default boolean isMultiple() {return false;}
 
-  static SectionBreakFieldBuilder builder(SectionBreakField sectionBreakField) { return new SectionBreakFieldBuilder(sectionBreakField); }
+  default Optional<Integer> minItems() {return Optional.empty();}
+
+  default Optional<Integer> maxItems() {return Optional.empty();}
+
+  default Optional<URI> propertyUri() {return Optional.empty();}
+
+  static SectionBreakFieldBuilder builder() {return new SectionBreakFieldBuilder();}
+
+  static SectionBreakFieldBuilder builder(SectionBreakField sectionBreakField)
+  {
+    return new SectionBreakFieldBuilder(sectionBreakField);
+  }
 
   final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
   {
@@ -77,9 +83,31 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    public SectionBreakFieldBuilder withHidden(boolean hidden)
+    @Override public SectionBreakFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withRequiredValue(boolean requiredValue)
+    {
       return this;
     }
 
@@ -116,12 +144,6 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     @Override public SectionBreakFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -179,15 +201,15 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public SectionBreakFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public SectionBreakFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -200,27 +222,21 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     public SectionBreakField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, preferredLabel, fieldUi, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
+        fieldUi, annotations, internalName, internalDescription);
     }
   }
 }
 
-record SectionBreakFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                               LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                               String name, String description, Optional<String> identifier,
-                               Version modelVersion, Optional<Version> version, Optional<Status> status,
-                               Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                               boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                               Optional<URI> propertyUri,
-                               Optional<URI> createdBy, Optional<URI> modifiedBy,
-                               Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                               Optional<String> preferredLabel, List<String> alternateLabels,
-                               Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                               Optional<Annotations> annotations)
-  implements SectionBreakField
+record SectionBreakFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                               String name, String description, Optional<String> identifier, Optional<Version> version,
+                               Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                               Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                               Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                               List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                               Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                               String internalName, String internalDescription) implements SectionBreakField
 {
   public SectionBreakFieldRecord
   {
@@ -229,27 +245,12 @@ record SectionBreakFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, S
       Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
     validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
-    validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
-    validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
-
-    if (fieldUi.isStatic())
-      jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    else
-      jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
 
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }

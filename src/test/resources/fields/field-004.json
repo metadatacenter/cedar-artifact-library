@@ -9,13 +9,11 @@
   "pav:version" : "0.9.1",
   "bibo:status" : "bibo:draft",
   "_valueConstraints" : {
-    "defaultValue" : "",
     "requiredValue" : false,
     "multipleChoice" : false
   },
   "_ui" : {
-    "inputType" : "textfield",
-    "hidden" : true
+    "inputType" : "textfield"
   },
   "pav:createdOn" : "2022-10-13T12:44:16-07:00",
   "pav:createdBy" : "https://metadatacenter.org/users/819b3cfd-49a9-4e72-b5d5-18166366f014",

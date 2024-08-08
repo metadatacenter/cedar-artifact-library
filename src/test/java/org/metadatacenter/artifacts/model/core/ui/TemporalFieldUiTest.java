@@ -17,7 +17,6 @@ public class TemporalFieldUiTest
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
     boolean hidden = false;
-    boolean recommendedValue = false;
     boolean continuePreviousLine = false;
 
     TemporalFieldUi temporalFieldUi = TemporalFieldUi.builder()
@@ -25,7 +24,6 @@ public class TemporalFieldUiTest
       .withInputTimeFormat(inputTimeFormat)
       .withTimezoneEnabled(timeZoneEnabled)
       .withHidden(hidden)
-      .withRecommendedValue(recommendedValue)
       .withContinuePreviousLine(continuePreviousLine)
       .build();
 
@@ -36,7 +34,6 @@ public class TemporalFieldUiTest
     assertEquals(timeZoneEnabled, temporalFieldUi.timezoneEnabled().get());
     assertEquals(hidden, temporalFieldUi.hidden());
     assertEquals(continuePreviousLine, temporalFieldUi.continuePreviousLine());
-    assertEquals(recommendedValue, temporalFieldUi.recommendedValue());
   }
 
 }

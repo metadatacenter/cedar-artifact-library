@@ -34,32 +34,32 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface TextAreaField extends FieldSchemaArtifact
 {
-  static TextAreaField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+  static TextAreaField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new TextAreaFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new TextAreaFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static TextAreaFieldBuilder builder() { return new TextAreaFieldBuilder(); }
+  static TextAreaFieldBuilder builder() {return new TextAreaFieldBuilder();}
 
-  static TextAreaFieldBuilder builder(TextAreaField textAreaField) { return new TextAreaFieldBuilder(textAreaField); }
+  static TextAreaFieldBuilder builder(TextAreaField textAreaField) {return new TextAreaFieldBuilder(textAreaField);}
 
   final class TextAreaFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final TextValueConstraints.Builder valueConstraintsBuilder;
+    private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
-    public TextAreaFieldBuilder() {
+    public TextAreaFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.TEXTAREA);
@@ -72,14 +72,21 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = FieldUi.builder(textAreaField.fieldUi());
       if (textAreaField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(textAreaField.valueConstraints().get().asTextValueConstraints());
+        this.valueConstraintsBuilder = TextValueConstraints.builder(
+          textAreaField.valueConstraints().get().asTextValueConstraints());
       else
         this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
-    public TextAreaFieldBuilder withRequiredValue(boolean requiredValue)
+    @Override public TextAreaFieldBuilder withRequiredValue(boolean requiredValue)
     {
       valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public TextAreaFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -95,9 +102,21 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
-    public TextAreaFieldBuilder withHidden(boolean hidden)
+    @Override public TextAreaFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public TextAreaFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public TextAreaFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
@@ -107,7 +126,8 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TextAreaFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public TextAreaFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -133,12 +153,6 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
     @Override public TextAreaFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public TextAreaFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -232,16 +246,15 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
-
-    @Override public TextAreaFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public TextAreaFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public TextAreaFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public TextAreaFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -251,31 +264,27 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
-
     public TextAreaField build()
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
+        identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
+        valueConstraints, annotations, internalName, internalDescription);
     }
   }
 }
 
-record TextAreaFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                           LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                           String name, String description, Optional<String> identifier,
-                           Version modelVersion, Optional<Version> version, Optional<Status> status,
-                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record TextAreaFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           String name, String description, Optional<String> identifier, Optional<Version> version,
+                           Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                            boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                           Optional<URI> propertyUri,
-                           Optional<URI> createdBy, Optional<URI> modifiedBy,
+                           Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                           Optional<String> preferredLabel, List<String> alternateLabels,
-                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                           Optional<Annotations> annotations)
+                           Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                           FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                           Optional<Annotations> annotations, String internalName, String internalDescription)
   implements TextAreaField
 {
   public TextAreaFieldRecord
@@ -288,7 +297,7 @@ record TextAreaFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

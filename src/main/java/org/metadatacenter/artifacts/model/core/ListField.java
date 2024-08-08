@@ -34,36 +34,36 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface ListField extends FieldSchemaArtifact
 {
-  static ListField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi,  Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+  static ListField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new ListFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new ListFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static ListFieldBuilder builder() { return new ListFieldBuilder(); }
+  static ListFieldBuilder builder() {return new ListFieldBuilder();}
 
-  static ListFieldBuilder builder(ListField listField) { return new ListFieldBuilder(listField); }
+  static ListFieldBuilder builder(ListField listField) {return new ListFieldBuilder(listField);}
 
   final class ListFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final TextValueConstraints.Builder valueConstraintsBuilder;
+    private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
-    public ListFieldBuilder() {
+    public ListFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.LIST);
-      this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
+      this.valueConstraintsBuilder = TextValueConstraints.builder();
     }
 
     public ListFieldBuilder(ListField listField)
@@ -72,15 +72,10 @@ public sealed interface ListField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = FieldUi.builder(listField.fieldUi());
       if (listField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(listField.valueConstraints().get().asTextValueConstraints());
+        this.valueConstraintsBuilder = TextValueConstraints.builder(
+          listField.valueConstraints().get().asTextValueConstraints());
       else
         this.valueConstraintsBuilder = TextValueConstraints.builder();
-    }
-
-    public ListFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
     }
 
     public ListFieldBuilder withDefaultValue(String defaultValue)
@@ -101,9 +96,33 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
-    public ListFieldBuilder withHidden(boolean hidden)
+    @Override public ListFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public ListFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -113,7 +132,8 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ListFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public ListFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -139,12 +159,6 @@ public sealed interface ListField extends FieldSchemaArtifact
     @Override public ListFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public ListFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -238,15 +252,15 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ListFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public ListFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public ListFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public ListFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -260,27 +274,23 @@ public sealed interface ListField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-        jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
     }
   }
 }
 
-record ListFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                       LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                       String name, String description, Optional<String> identifier,
-                       Version modelVersion, Optional<Version> version, Optional<Status> status,
-                       Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record ListFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                       String name, String description, Optional<String> identifier, Optional<Version> version,
+                       Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                        boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                       Optional<URI> propertyUri,
-                       Optional<URI> createdBy, Optional<URI> modifiedBy,
+                       Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                       Optional<String> preferredLabel, List<String> alternateLabels,
-                       Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                       Optional<Annotations> annotations)
-  implements ListField
+                       Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                       FieldUi fieldUi, Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                       String internalName, String internalDescription) implements ListField
 {
   public ListFieldRecord
   {
@@ -292,7 +302,7 @@ record ListFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String js
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

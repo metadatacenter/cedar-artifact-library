@@ -5,7 +5,6 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.net.URI;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
@@ -38,32 +36,32 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface TemporalField extends FieldSchemaArtifact
 {
-  static TemporalField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
-    Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+  static TemporalField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, TemporalFieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
   {
-    return new TemporalFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new TemporalFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static TemporalFieldBuilder builder() { return new TemporalFieldBuilder(); }
+  static TemporalFieldBuilder builder() {return new TemporalFieldBuilder();}
 
-  static TemporalFieldBuilder builder(TemporalField temporalField) { return new TemporalFieldBuilder(temporalField); }
+  static TemporalFieldBuilder builder(TemporalField temporalField) {return new TemporalFieldBuilder(temporalField);}
 
   final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder
   {
-    private final TemporalFieldUi.Builder fieldUiBuilder;
-    private final TemporalValueConstraints.Builder valueConstraintsBuilder;
+    private final TemporalFieldUi.TemporalFieldUiBuilder fieldUiBuilder;
+    private final TemporalValueConstraints.TemporalValueConstraintsBuilder valueConstraintsBuilder;
 
-    public TemporalFieldBuilder() {
+    public TemporalFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       this.fieldUiBuilder = TemporalFieldUi.builder();
       this.valueConstraintsBuilder = TemporalValueConstraints.builder();
@@ -75,28 +73,26 @@ public sealed interface TemporalField extends FieldSchemaArtifact
 
       this.fieldUiBuilder = TemporalFieldUi.builder(temporalField.fieldUi().asTemporalFieldUi());
       if (temporalField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TemporalValueConstraints.builder(temporalField.valueConstraints().get().asTemporalValueConstraints());
+        this.valueConstraintsBuilder = TemporalValueConstraints.builder(
+          temporalField.valueConstraints().get().asTemporalValueConstraints());
       else
         this.valueConstraintsBuilder = TemporalValueConstraints.builder();
     }
 
-    public TemporalFieldBuilder withTemporalType(
-      XsdTemporalDatatype temporalType)
+    public TemporalFieldBuilder withTemporalType(XsdTemporalDatatype temporalType)
     {
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       valueConstraintsBuilder.withTemporalType(temporalType);
       return this;
     }
 
-    public TemporalFieldBuilder withTemporalGranularity(
-      TemporalGranularity temporalGranularity)
+    public TemporalFieldBuilder withTemporalGranularity(TemporalGranularity temporalGranularity)
     {
       fieldUiBuilder.withTemporalGranularity(temporalGranularity);
       return this;
     }
 
-    public TemporalFieldBuilder withInputTimeFormat(
-      InputTimeFormat inputTimeFormat)
+    public TemporalFieldBuilder withInputTimeFormat(InputTimeFormat inputTimeFormat)
     {
       fieldUiBuilder.withInputTimeFormat(inputTimeFormat);
       return this;
@@ -120,9 +116,27 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
-    public TemporalFieldBuilder withHidden(boolean hidden)
+    @Override public TemporalFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public TemporalFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public TemporalFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      return this;
+    }
+
+    @Override public TemporalFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
@@ -132,7 +146,8 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TemporalFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public TemporalFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -158,12 +173,6 @@ public sealed interface TemporalField extends FieldSchemaArtifact
     @Override public TemporalFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public TemporalFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -257,15 +266,15 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TemporalFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public TemporalFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public TemporalFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public TemporalFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -279,26 +288,23 @@ public sealed interface TemporalField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
-        derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(), valueConstraints,
+        annotations, internalName, internalDescription);
     }
   }
 }
 
-record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                           LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                           String name, String description, Optional<String> identifier,
-                           Version modelVersion, Optional<Version> version, Optional<Status> status,
-                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
+record TemporalFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           String name, String description, Optional<String> identifier, Optional<Version> version,
+                           Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
                            boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                           Optional<URI> propertyUri,
-                           Optional<URI> createdBy, Optional<URI> modifiedBy,
+                           Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                           Optional<String> preferredLabel, List<String> alternateLabels,
-                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                           Optional<Annotations> annotations)
+                           Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                           TemporalFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                           Optional<Annotations> annotations, String internalName, String internalDescription)
   implements TemporalField
 {
   public TemporalFieldRecord
@@ -311,7 +317,7 @@ record TemporalFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

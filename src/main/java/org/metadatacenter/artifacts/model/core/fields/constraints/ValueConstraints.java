@@ -7,7 +7,8 @@ import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import java.util.Optional;
 
 public sealed interface ValueConstraints permits TextValueConstraints, NumericValueConstraints,
-  ControlledTermValueConstraints, TemporalValueConstraints, LinkValueConstraints
+  ControlledTermValueConstraints, TemporalValueConstraints, LinkValueConstraints, EmailValueConstraints,
+  PhoneNumberValueConstraints
 {
   boolean requiredValue();
 
@@ -33,6 +34,12 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   @JsonIgnore
   default boolean isLinkValueConstraint() { return this instanceof LinkValueConstraints; }
+
+  @JsonIgnore
+  default boolean isEmailValueConstraint() { return this instanceof EmailValueConstraints; }
+
+  @JsonIgnore
+  default boolean isPhoneNumberValueConstraint() { return this instanceof PhoneNumberValueConstraints; }
 
   default TextValueConstraints asTextValueConstraints()
   {
@@ -72,6 +79,22 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
       return (TemporalValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TemporalValueConstraints.class.getName());
+  }
+
+  default EmailValueConstraints asEmailValueConstraints()
+  {
+    if (this instanceof EmailValueConstraints) // TODO Use typesafe switch when available
+      return (EmailValueConstraints)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + EmailValueConstraints.class.getName());
+  }
+
+  default PhoneNumberValueConstraints asPhoneNumberValueConstraints()
+  {
+    if (this instanceof PhoneNumberValueConstraints) // TODO Use typesafe switch when available
+      return (PhoneNumberValueConstraints)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PhoneNumberValueConstraints.class.getName());
   }
 
 }

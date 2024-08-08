@@ -41,9 +41,9 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface ControlledTermField extends FieldSchemaArtifact
 {
-  static ControlledTermField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
+  static ControlledTermField create(String internalName, String internalDescription,
+    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
     Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
     Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
@@ -51,10 +51,12 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
     Optional<Annotations> annotations)
   {
-    return new ControlledTermFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new ControlledTermFieldRecord(internalName, internalDescription,
+      jsonLdContext, jsonLdTypes, jsonLdId,
+      name, description, identifier, version,
+      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
+      createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
   static ControlledTermFieldBuilder builder() { return new ControlledTermFieldBuilder(); }
@@ -66,7 +68,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
   final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final ControlledTermValueConstraints.Builder valueConstraintsBuilder;
+    private final ControlledTermValueConstraints.ControlledTermValueConstraintsBuilder valueConstraintsBuilder;
 
     public ControlledTermFieldBuilder()
     {
@@ -148,27 +150,40 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
-    public ControlledTermFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
-    }
-
     public ControlledTermFieldBuilder withDefaultValue(URI uri, String label)
     {
       valueConstraintsBuilder.withDefaultValue(uri, label);
       return this;
     }
 
-    public ControlledTermFieldBuilder withValueRecommendation(boolean valueRecommendation)
+    @Override public ControlledTermFieldBuilder withRequiredValue(boolean requiredValue)
     {
-      fieldUiBuilder.withValueRecommendation(valueRecommendation);
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
       return this;
     }
 
-    public ControlledTermFieldBuilder withHidden(boolean hidden)
+    @Override public ControlledTermFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+
+    @Override public ControlledTermFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -205,12 +220,6 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     @Override public ControlledTermFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -304,15 +313,15 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public ControlledTermFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public ControlledTermFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -326,18 +335,18 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle, jsonSchemaDescription, jsonLdContext,
-        jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version, status, previousVersion,
+      return create(internalName, internalDescription, jsonLdContext,
+        jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     }
   }
 }
 
-record ControlledTermFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
+record ControlledTermFieldRecord(String internalName, String internalDescription,
                                  LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                  String name, String description, Optional<String> identifier,
-                                 Version modelVersion, Optional<Version> version, Optional<Status> status,
+                                 Optional<Version> version, Optional<Status> status,
                                  Optional<URI> previousVersion, Optional<URI> derivedFrom,
                                  boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
                                  Optional<URI> propertyUri,

@@ -14,7 +14,6 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
 public class ElementSchemaArtifactTest
@@ -30,14 +29,11 @@ public class ElementSchemaArtifactTest
     URI modifiedBy = URI.create("http://example.com/user");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
-    String jsonSchemaType = "type";
-    String jsonSchemaTitle = "title";
-    String jsonSchemaDescription = "description";
+    String internalName = "title";
+    String internalDescription = "description";
     String name = "Schema Org name";
     String description = "Schema Org description";
     Optional<String> identifier = Optional.of("Schema Org identifier");
-    Version modelVersion = new Version(1, 6, 0);
     Optional<Version> version = Optional.of(new Version(2, 0, 0));
     Optional<Status> status = Optional.of(Status.DRAFT);
     Optional<URI> previousVersion = Optional.of(URI.create("https://repo.metadatacenter.org/templates/3232"));
@@ -48,16 +44,11 @@ public class ElementSchemaArtifactTest
     Optional<String> preferredLabel = Optional.of("A preferred label");
     Optional<String> language = Optional.of("en");
 
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription,
-      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId),
-      Optional.of(instanceJsonLdType),
-      name, description, identifier,
-      modelVersion, version, status, previousVersion, derivedFrom,
-      Optional.of(createdBy), Optional.of(modifiedBy), Optional.of(createdOn), Optional.of(lastUpdatedOn),
-      new LinkedHashMap<>(), new LinkedHashMap<>(),
-      false, minItems, maxItems, propertyUri,
-      preferredLabel, language, ElementUi.builder().build(), Optional.empty());
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.create(internalName, internalDescription,
+      jsonLdContext, jsonLdTypes, Optional.of(jsonLdId), Optional.of(instanceJsonLdType), name, description, identifier,
+      version, status, previousVersion, derivedFrom, Optional.of(createdBy), Optional.of(modifiedBy),
+      Optional.of(createdOn), Optional.of(lastUpdatedOn), new LinkedHashMap<>(), new LinkedHashMap<>(), false, minItems,
+      maxItems, propertyUri, preferredLabel, language, ElementUi.builder().build(), Optional.empty());
 
     Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
     Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
@@ -67,14 +58,11 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());
     Assert.assertEquals(createdOn, elementSchemaArtifact.createdOn().get());
     Assert.assertEquals(lastUpdatedOn, elementSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(jsonSchemaSchemaUri, elementSchemaArtifact.jsonSchemaSchemaUri());
-    Assert.assertEquals(jsonSchemaType, elementSchemaArtifact.jsonSchemaType());
-    Assert.assertEquals(jsonSchemaTitle, elementSchemaArtifact.jsonSchemaTitle());
-    Assert.assertEquals(jsonSchemaDescription, elementSchemaArtifact.jsonSchemaDescription());
+    Assert.assertEquals(internalName, elementSchemaArtifact.internalName());
+    Assert.assertEquals(internalDescription, elementSchemaArtifact.internalDescription());
     Assert.assertEquals(name, elementSchemaArtifact.name());
     Assert.assertEquals(description, elementSchemaArtifact.description());
     Assert.assertEquals(identifier, elementSchemaArtifact.identifier());
-    Assert.assertEquals(modelVersion, elementSchemaArtifact.modelVersion());
     Assert.assertEquals(version, elementSchemaArtifact.version());
     Assert.assertEquals(status, elementSchemaArtifact.status());
     Assert.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());
@@ -84,8 +72,7 @@ public class ElementSchemaArtifactTest
     Assert.assertEquals(language, elementSchemaArtifact.language());
   }
 
-  @Test
-  public void testCreateElementSchemaArtifactWithChildren()
+  @Test public void testCreateElementSchemaArtifactWithChildren()
   {
     String elementName = "Element 1";
     String textFieldName1 = "Text Field 1";
@@ -96,11 +83,8 @@ public class ElementSchemaArtifactTest
     TextField textField1 = TextField.builder().withName(textFieldName1).build();
     TextField textField2 = TextField.builder().withName(textFieldName2).build();
 
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
-      .withName(elementName)
-      .withFieldSchema(textField1)
-      .withFieldSchema(textField2, textField2Label, textField2Description)
-      .build();
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().withName(elementName)
+      .withFieldSchema(textField1).withFieldSchema(textField2, textField2Label, textField2Description).build();
 
     assertEquals(elementSchemaArtifact.name(), elementName);
     assertTrue(elementSchemaArtifact.hasFields());
@@ -115,11 +99,9 @@ public class ElementSchemaArtifactTest
     assertEquals(elementSchemaArtifact.elementUi().propertyDescriptions().get(textFieldName2), textField2Description);
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void testMissingName()
+  @Test(expected = IllegalStateException.class) public void testMissingName()
   {
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
-      .build();
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().build();
   }
 
 }

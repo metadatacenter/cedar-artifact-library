@@ -34,52 +34,49 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface CheckboxField extends FieldSchemaArtifact
 {
-  static CheckboxField create(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle,
-    String jsonSchemaDescription, LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    String name, String description, Optional<String> identifier, Version modelVersion, Optional<Version> version,
-    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
-    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    Optional<String> preferredLabel, List<String> alternateLabels,
+  static CheckboxField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<Integer> minItems, Optional<Integer> maxItems,
+    Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+    Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel, List<String> alternateLabels,
     Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-    Optional<Annotations> annotations)
+    Optional<Annotations> annotations, String internalName, String internalDescription)
   {
-    return new CheckboxFieldRecord(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-      jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    return new CheckboxFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+      previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription);
   }
 
-  static CheckboxFieldBuilder builder() { return new CheckboxFieldBuilder(); }
+  default boolean isMultiple() {return true;}
 
-  static CheckboxFieldBuilder builder(CheckboxField checkboxField) { return new CheckboxFieldBuilder(checkboxField); }
+  static CheckboxFieldBuilder builder() {return new CheckboxFieldBuilder();}
+
+  static CheckboxFieldBuilder builder(CheckboxField checkboxField) {return new CheckboxFieldBuilder(checkboxField);}
 
   final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
-    private final TextValueConstraints.Builder valueConstraintsBuilder;
+    private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
 
-    public CheckboxFieldBuilder() {
+    public CheckboxFieldBuilder()
+    {
       super(JSON_SCHEMA_OBJECT, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
       withJsonLdContext(new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
       this.fieldUiBuilder = FieldUi.builder().withInputType(FieldInputType.CHECKBOX);
       this.valueConstraintsBuilder = TextValueConstraints.builder().withMultipleChoice(true);
     }
 
-    public CheckboxFieldBuilder(CheckboxField checkboxField) {
+    public CheckboxFieldBuilder(CheckboxField checkboxField)
+    {
       super(checkboxField);
 
       this.fieldUiBuilder = FieldUi.builder(checkboxField.fieldUi());
       if (checkboxField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(checkboxField.valueConstraints().get().asTextValueConstraints());
+        this.valueConstraintsBuilder = TextValueConstraints.builder(
+          checkboxField.valueConstraints().get().asTextValueConstraints());
       else
         this.valueConstraintsBuilder = TextValueConstraints.builder();
-    }
-
-    public CheckboxFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
     }
 
     public CheckboxFieldBuilder withDefaultValue(String defaultValue)
@@ -100,9 +97,33 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    public CheckboxFieldBuilder withHidden(boolean hidden)
+    @Override public CheckboxFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withHidden(boolean hidden)
     {
       fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -112,7 +133,8 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withJsonLdType(URI jsonLdType) {
+    @Override public CheckboxFieldBuilder withJsonLdType(URI jsonLdType)
+    {
       super.withJsonLdType(jsonLdType);
       return this;
     }
@@ -138,12 +160,6 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
     @Override public CheckboxFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withModelVersion(Version modelVersion)
-    {
-      super.withModelVersion(modelVersion);
       return this;
     }
 
@@ -207,12 +223,6 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withIsMultiple(boolean isMultiple)
-    {
-      super.withIsMultiple(isMultiple);
-      return this;
-    }
-
     @Override public CheckboxFieldBuilder withMinItems(Integer minItems)
     {
       super.withMinItems(minItems);
@@ -237,15 +247,15 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withJsonSchemaTitle(String jsonSchemaTitle)
+    @Override public CheckboxFieldBuilder withInternalName(String internalName)
     {
-      super.withJsonSchemaTitle(jsonSchemaTitle);
+      super.withInternalName(internalName);
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withJsonSchemaDescription(String jsonSchemaDescription)
+    @Override public CheckboxFieldBuilder withInternalDescription(String internalDescription)
     {
-      super.withJsonSchemaDescription(jsonSchemaDescription);
+      super.withInternalDescription(internalDescription);
       return this;
     }
 
@@ -260,27 +270,23 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
 
-      return create(jsonSchemaSchemaUri, jsonSchemaType, jsonSchemaTitle,
-        jsonSchemaDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, modelVersion, version,
-        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
-        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+        internalDescription);
     }
   }
 }
 
-record CheckboxFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, String jsonSchemaTitle, String jsonSchemaDescription,
-                           LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                           String name, String description, Optional<String> identifier,
-                           Version modelVersion, Optional<Version> version, Optional<Status> status,
-                           Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                           Optional<URI> propertyUri,
-                           Optional<URI> createdBy, Optional<URI> modifiedBy,
-                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                           Optional<String> preferredLabel, List<String> alternateLabels,
-                           Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                           Optional<Annotations> annotations)
-  implements CheckboxField
+record CheckboxFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           String name, String description, Optional<String> identifier, Optional<Version> version,
+                           Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                           Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+                           Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                           Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                           List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                           Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                           String internalName, String internalDescription) implements CheckboxField
 {
   public CheckboxFieldRecord
   {
@@ -292,7 +298,7 @@ record CheckboxFieldRecord(URI jsonSchemaSchemaUri, String jsonSchemaType, Strin
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "language");
     validateUiFieldNotNull(this, fieldUi, UI);
     validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(this, annotations, "annotations");

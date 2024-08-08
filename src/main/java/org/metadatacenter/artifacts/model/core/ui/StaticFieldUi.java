@@ -79,10 +79,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     return new YouTubeFieldUiBuilder(staticFieldUi);
   }
 
-  class PageBreakFieldUiBuilder
+  final class PageBreakFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
+    private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled = false;
 
     private PageBreakFieldUiBuilder() {}
 
@@ -104,6 +106,18 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public PageBreakFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      this.hidden = hidden;
+      return this;
+    }
+
+    public PageBreakFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
+      return this;
+    }
+
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false, Optional.empty(),
@@ -111,10 +125,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class SectionBreakFieldUiBuilder
+  final class SectionBreakFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
+    private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled = false;
 
     private SectionBreakFieldUiBuilder() {}
 
@@ -136,6 +152,19 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public SectionBreakFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
+      return this;
+    }
+
+    public SectionBreakFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
+
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, false, Optional.empty(),
@@ -143,11 +172,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class RichTextFieldUiBuilder
+  final class RichTextFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled = false;
 
     private RichTextFieldUiBuilder() {}
 
@@ -176,6 +206,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public RichTextFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
+      return this;
+    }
+
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, continuePreviousLine, Optional.empty(),
@@ -183,11 +219,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class ImageFieldUiBuilder
+  final class ImageFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
+    private boolean valueRecommendationEnabled = false;
 
     private ImageFieldUiBuilder()
     {
@@ -218,6 +255,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
+    public ImageFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
+      return this;
+    }
+
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine, Optional.empty(),
@@ -225,10 +268,11 @@ public non-sealed interface StaticFieldUi extends FieldUi
     }
   }
 
-  class YouTubeFieldUiBuilder
+  final class YouTubeFieldUiBuilder implements FieldUiBuilder
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
+    private boolean valueRecommendationEnabled = false;
     private boolean continuePreviousLine = false;
     private Optional<Integer> width = Optional.empty();
     private Optional<Integer> height = Optional.empty();
@@ -259,6 +303,12 @@ public non-sealed interface StaticFieldUi extends FieldUi
     public YouTubeFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       this.continuePreviousLine = continuePreviousLine;
+      return this;
+    }
+
+    public YouTubeFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      this.valueRecommendationEnabled = valueRecommendationEnabled;
       return this;
     }
 

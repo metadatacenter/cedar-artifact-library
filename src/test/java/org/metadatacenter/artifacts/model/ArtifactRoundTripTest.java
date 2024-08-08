@@ -158,6 +158,11 @@ public class ArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  @Test public void testRoundTripListField()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/ListField.json");
+  }
+
   @Test public void testRoundTripRadioField()
   {
     String name = "Field name";
@@ -655,6 +660,11 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
   }
 
+  @Test public void testRoundTripNullPropertyLabelsTemplate()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/NullPropertyLabelsTemplate.json");
+  }
+
   @Test public void testRoundTripRADxCLIGeneratedTemplate()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/RADxCLIGeneratedTemplate.json");
@@ -715,6 +725,11 @@ public class ArtifactRoundTripTest
     testFieldSchemaArtifactRoundTripFromFile("fields/field-001.json");
   }
 
+  @Test public void testRoundTripStandaloneField()
+  {
+    testFieldSchemaArtifactRoundTripFromFile("fields/StandaloneField.json");
+  }
+
   @Test public void testRoundTripField002()
   {
     testFieldSchemaArtifactRoundTripFromFile("fields/field-002.json");
@@ -733,11 +748,6 @@ public class ArtifactRoundTripTest
   @Test public void testRoundTripSimpleTemplateWithInstanceJsonLdType()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/SimpleTemplateWithType.json");
-  }
-
-  @Test public void testRoundTripNoNumericTypePresentElement()
-  {
-    testElementSchemaArtifactRoundTripFromFile("elements/NoNumericTypePresentElement.json");
   }
 
   private void testTemplateSchemaArtifactRoundTripFromFile(String fileName)

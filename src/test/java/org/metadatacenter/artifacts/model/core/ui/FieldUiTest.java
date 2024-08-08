@@ -45,7 +45,7 @@ public class FieldUiTest
 
     FieldUi fieldUi = FieldUi.builder()
       .withInputType(FieldInputType.TEXTFIELD)
-      .withValueRecommendation(valueRecommendation)
+      .withValueRecommendationEnabled(valueRecommendation)
       .withHidden(hidden)
       .build();
 

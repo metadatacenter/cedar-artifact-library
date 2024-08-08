@@ -195,11 +195,6 @@
               ]
             }
           }
-        },
-        "ATTR-Value": {
-          "enum": [
-            "https://schema.metadatacenter.org/properties/d4eb0536-f01a-4075-a624-1f6b1d436f4f"
-          ]
         }
       },
       "required": [
