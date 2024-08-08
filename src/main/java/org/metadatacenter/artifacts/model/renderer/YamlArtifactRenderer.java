@@ -349,9 +349,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(INPUT_TIME_ZONE, true);
     }
 
-    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
-      rendering.put(VALUE_RECOMMENDATION, true);
-
     addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
     if (fieldSchemaArtifact.annotations().isPresent())
@@ -390,9 +387,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(INPUT_TIME_ZONE, templateUi.timezoneEnabled());
       }
     }
-
-    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
-      rendering.put(VALUE_RECOMMENDATION, true);
 
     if (fieldSchemaArtifact.isStatic()) {
       if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
@@ -854,6 +848,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
 
     if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
