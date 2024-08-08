@@ -334,8 +334,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
       renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
-      renderValueConstraintValues(valueConstraints, rendering);
-      renderValueConstraintActions(valueConstraints, rendering);
+      renderValueConstraintsValues(valueConstraints, rendering);
+      renderValueConstraintsActions(valueConstraints, rendering);
     }
 
     if (fieldSchemaArtifact.fieldUi().isTemporal()) {
@@ -376,8 +376,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
       renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
-      renderValueConstraintValues(valueConstraints, rendering);
-      renderValueConstraintActions(valueConstraints, rendering);
+      renderValueConstraintsValues(valueConstraints, rendering);
+      renderValueConstraintsActions(valueConstraints, rendering);
     }
 
     if (fieldSchemaArtifact.fieldUi().isTemporal()) {
@@ -468,7 +468,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
    * </pre>
    */
-  private void renderValueConstraintValues(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  private void renderValueConstraintsValues(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
 
@@ -679,7 +679,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     sourceAcronym: HOME
    * </pre>
    */
-  private void renderValueConstraintActions(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  private void renderValueConstraintsActions(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
   {
     List<LinkedHashMap<String, Object>> actionsRendering = new ArrayList<>();
 
@@ -770,8 +770,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (textValueConstraints.regex().isPresent())
         rendering.put(REGEX, textValueConstraints.regex().get());
     }
-
-    // TODO Generate YAML for _valueConstraints.actions
   }
 
   private List<LinkedHashMap<String, Object>> renderChildSchemas(ParentSchemaArtifact parentSchemaArtifact,
@@ -918,7 +916,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(VERSION, schemaArtifact.version().get().toString());
 
     if (!isCompact)
-      rendering.put(MODEL_VERSION, modelVersion);
+      rendering.put(MODEL_VERSION, modelVersion.toString());
 
     if (!isCompact && schemaArtifact.previousVersion().isPresent())
       rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
@@ -960,7 +958,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(VERSION, schemaArtifact.version().get().toString());
 
     if (!isCompact)
-      rendering.put(MODEL_VERSION, modelVersion);
+      rendering.put(MODEL_VERSION, modelVersion.toString());
 
     if (!isCompact && schemaArtifact.previousVersion().isPresent())
       rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
