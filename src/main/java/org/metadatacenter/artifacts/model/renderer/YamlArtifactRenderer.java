@@ -958,12 +958,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact)
       rendering.put(MODEL_VERSION, modelVersion.toString());
 
-    if (!isCompact && schemaArtifact.previousVersion().isPresent())
-      rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
-
-    if (!isCompact && schemaArtifact.derivedFrom().isPresent())
-      rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
-
     // TODO Generate YAML for annotations
 
     return rendering;
