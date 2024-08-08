@@ -874,7 +874,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(fieldName)) {
       String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(fieldName);
-      if (!overrideDescription.equals(fieldSchemaArtifact.description()))
+      if (!overrideDescription.isEmpty() && !overrideDescription.equals(fieldSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
 
