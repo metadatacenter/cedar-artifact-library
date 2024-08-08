@@ -695,6 +695,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
             actionRendering.put(SOURCE_IRI, action.sourceUri().get());
           actionRendering.put(SOURCE_ACRONYM, action.source());
 
+          // TODO Use typesafe switch when available
+          if (action.type() == ValueType.ONTOLOGY_CLASS)
+            actionRendering.put(TYPE, "class");
+          else
+            actionRendering.put(TYPE, "value");
+
           actionsRendering.add(actionRendering);
         }
       }

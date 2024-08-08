@@ -289,6 +289,7 @@ public class YamlArtifactRendererTest {
     actionRendering.put(TERM_IRI, actionTermUri);
     actionRendering.put(SOURCE_IRI, actionSourceIri);
     actionRendering.put(SOURCE_ACRONYM, actionSourceAcronym);
+    actionRendering.put(TYPE, "class");
 
     expectedActionsRendering.add(actionRendering);
 
