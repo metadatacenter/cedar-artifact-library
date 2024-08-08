@@ -333,7 +333,7 @@ public class YamlArtifactRendererTest {
             - type: class
               label: ${classLabel}
               acronym: ${classSource}
-              termType: ${classValueType}
+              termType: class
               termLabel: ${classPrefLabel}
               iri: ${classUri}
       """.replace("${fieldName}", fieldName)

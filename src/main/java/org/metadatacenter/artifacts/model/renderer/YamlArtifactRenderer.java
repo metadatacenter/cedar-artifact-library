@@ -1101,7 +1101,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   type: class
    *   label: Human
    *   acronym: LOINC
-   *   termType: OntologyClass
+   *   termType: class
    *   termLabel: Homo Sapiens
    *   iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
    * </pre>
@@ -1113,7 +1113,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     classValueConstraintRendering.put(TYPE, CLASS);
     classValueConstraintRendering.put(LABEL, classValueConstraint.label());
     classValueConstraintRendering.put(ACRONYM, classValueConstraint.source());
-    classValueConstraintRendering.put(TERM_TYPE, classValueConstraint.type().toString());
+
+    // TODO Use typesafe switch when available
+    if (classValueConstraint.type() == ValueType.ONTOLOGY_CLASS)
+      classValueConstraintRendering.put(TERM_TYPE, "class");
+    else
+      classValueConstraintRendering.put(TERM_TYPE, "value");
+
     classValueConstraintRendering.put(TERM_LABEL, classValueConstraint.prefLabel());
     classValueConstraintRendering.put(IRI, classValueConstraint.uri().toString());
 
