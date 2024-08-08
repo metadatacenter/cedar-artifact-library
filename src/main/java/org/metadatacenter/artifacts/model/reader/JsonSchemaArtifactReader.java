@@ -423,7 +423,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
 
-    // update isMultiInstance, minItems, maxItems
+    // TODO: Update isMultiInstance, minItems, maxItems
 
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion, derivedFrom,
@@ -1920,9 +1920,10 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
   {
     Version artifactModelVersion = readModelVersion(sourceNode, path);
 
-    if (!artifactModelVersion.equals(modelVersion))
-      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " + artifactModelVersion,
-        SCHEMA_ORG_SCHEMA_VERSION, path);
+// TODO Renable eventually after patching older artifacts
+//    if (!artifactModelVersion.equals(modelVersion))
+//      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " + artifactModelVersion,
+//        SCHEMA_ORG_SCHEMA_VERSION, path);
   }
 
 }
