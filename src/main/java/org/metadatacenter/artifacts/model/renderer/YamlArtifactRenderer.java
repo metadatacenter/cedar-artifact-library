@@ -344,8 +344,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth() &&
         !templateUi.temporalGranularity().isDay()) {
         rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
-        rendering.put(INPUT_TIME_ZONE, templateUi.timezoneEnabled());
       }
+      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
+        rendering.put(INPUT_TIME_ZONE, true);
     }
 
     if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())

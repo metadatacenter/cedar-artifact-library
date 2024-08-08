@@ -1,9 +1,11 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
@@ -55,29 +57,40 @@ public class YamlArtifactRendererTest {
     yamlFactory = new YAMLFactory().
       disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
       enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
-      enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
-      disable(YAMLGenerator.Feature.SPLIT_LINES);
-    mapper = new ObjectMapper(yamlFactory);
-  }
-  @Test
-  public void testRenderTemplateSchemaArtifact() {
+      //enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS).
+      enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
 
+    mapper = new ObjectMapper(yamlFactory);
+    mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
+
+//    YAMLFactory yamlFactory = new YAMLFactory()
+//      .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+//      .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+//      .enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
+//      .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
+      //.enable(YAMLGenerator.Feature.SPLIT_LINES);
+
+    //mapper = new ObjectMapper(yamlFactory);
+    //mapper.registerModule(new Jdk8Module());
+//    mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
+  }
+
+  @Test
+  public void testRenderTemplateSchemaArtifact()
+  {
     String name = "Study";
     String description = "Study template";
     String header = "Study header";
     String footer = "Study footer";
 
-    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
-      withName(name).
-      withDescription(description).
-      withHeader(header).
-      withFooter(footer).
-      build();
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
+      .withDescription(description).withHeader(header).withFooter(footer).build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(
+      templateSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(NAME, name);
@@ -87,6 +100,37 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(FOOTER, footer);
 
     assertEquals(expectedRendering, actualRendering);
+  }
+
+  @Test
+  public void testRenderTemplateSchemaArtifactWithMapper() throws JsonProcessingException
+  {
+    String name = "Study";
+    String description = "Study template";
+    String header = "Study header";
+    String footer = "Study footer";
+
+    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
+      .withDescription(description).withHeader(header).withFooter(footer).build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(
+      templateSchemaArtifact);
+
+    String actualStringRendering = mapper.writeValueAsString(actualRendering);
+
+    String expectedStringRendering = """
+    type: template
+    name: ${name}
+    description: ${description}
+    header: ${header}
+    footer: ${footer}
+    """.replace("${name}", name).replace("${description}", description).
+      replace("${header}", header).replace("${footer}", footer);
+
+    assertEquals(expectedStringRendering, actualStringRendering);
   }
 
   @Test
@@ -117,7 +161,8 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testRenderTextFieldCompact() {
+  public void testRenderTextFieldCompact() throws JsonProcessingException
+  {
 
     String name = "Study Name";
     String description = "Study name field";
@@ -132,10 +177,13 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
-    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
-    expectedRendering.put(NAME, name);
-    expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(TYPE, TEXT_FIELD);
+    String expectedYamlRendering = """
+    type: text-field
+    name: ${name}
+    description: ${description}
+    """.replace("${name}", name).replace("${description}", description);
+
+    LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -155,13 +203,13 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
-    String expectedYaml = """
-        type: text-field
-        name: ${name}
-        description: ${description}
+    String expectedYamlRendering = """
+    type: text-field
+    name: ${name}
+    description: ${description}
     """.replace("${name}", name).replace("${description}", description);
 
-    LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYaml, LinkedHashMap.class);
+    LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
     assertEquals(expectedRendering, actualRendering);
   }
