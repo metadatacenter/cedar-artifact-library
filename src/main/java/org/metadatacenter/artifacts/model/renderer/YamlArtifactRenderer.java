@@ -807,6 +807,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, elementSchemaArtifact.propertyUri().get().toString());
 
+    if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(elementName)) {
+      String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(elementName);
+      if (!overrideDescription.isEmpty() && !overrideDescription.equals(elementSchemaArtifact.description()))
+        rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
+    }
+
     if (elementSchemaArtifact.isMultiple())
       rendering.put(MULTIPLE, true);
 
@@ -820,12 +826,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(elementName);
       if (!overrideLabel.equals(elementSchemaArtifact.name()))
         rendering.put(OVERRIDE_LABEL, overrideLabel);
-    }
-
-    if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(elementName)) {
-      String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(elementName);
-      if (!overrideDescription.isEmpty() && !overrideDescription.equals(elementSchemaArtifact.description()))
-        rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
 
     return rendering;
@@ -852,12 +852,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
-    if (fieldSchemaArtifact.fieldUi().continuePreviousLine())
-      rendering.put(CONTINUE_PREVIOUS_LINE, true);
-
-    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
-      rendering.put(VALUE_RECOMMENDATION, true);
-
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldName)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(fieldName);
       if (!overrideLabel.equals(fieldSchemaArtifact.name()))
@@ -869,6 +863,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (!overrideDescription.isEmpty() && !overrideDescription.equals(fieldSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
+
+    if (fieldSchemaArtifact.fieldUi().continuePreviousLine())
+      rendering.put(CONTINUE_PREVIOUS_LINE, true);
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
 
     if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
@@ -922,12 +922,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact)
       rendering.put(MODEL_VERSION, modelVersion.toString());
 
-    if (!isCompact && schemaArtifact.previousVersion().isPresent())
-      rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
-
-    if (!isCompact && schemaArtifact.derivedFrom().isPresent())
-      rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
-
     return rendering;
   }
 
@@ -979,6 +973,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private void addArtifactProvenanceRendering(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
   {
     if (!isCompact) {
+      if (schemaArtifact.previousVersion().isPresent())
+        rendering.put(PREVIOUS_VERSION, schemaArtifact.previousVersion().get().toString());
+      if (schemaArtifact.derivedFrom().isPresent())
+        rendering.put(DERIVED_FROM, schemaArtifact.derivedFrom().get().toString());
       if (schemaArtifact.createdOn().isPresent())
         rendering.put(CREATED_ON, renderOffsetDateTime(schemaArtifact.createdOn().get()));
       if (schemaArtifact.createdBy().isPresent())
