@@ -784,20 +784,22 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
       if (childSchemaArtifact instanceof FieldSchemaArtifact) {
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
+        LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childName, fieldSchemaArtifact);
+
         if (!(fieldSchemaArtifact.isAttributeValue() || fieldSchemaArtifact.isStatic())) {
-          LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childName,
-            fieldSchemaArtifact);
           LinkedHashMap<String, Object> fieldConfigurationRendering = renderFieldConfiguration(parentSchemaArtifact,
             childName, fieldSchemaArtifact);
           if (!fieldConfigurationRendering.isEmpty())
             fieldSchemaRendering.put(CONFIGURATION, fieldConfigurationRendering);
-          childSchemasRendering.add(fieldSchemaRendering);
         }
+
+        childSchemasRendering.add(fieldSchemaRendering);
       } else if (childSchemaArtifact instanceof ElementSchemaArtifact) {
         ElementSchemaArtifact elementSchemaArtifact = (ElementSchemaArtifact)childSchemaArtifact;
-        LinkedHashMap<String, Object> elementSchemaRendering = renderElementSchemaArtifact(childName, elementSchemaArtifact);
-        LinkedHashMap<String, Object> elementConfigurationRendering =
-          renderElementConfiguration(parentSchemaArtifact, childName, elementSchemaArtifact);
+        LinkedHashMap<String, Object> elementSchemaRendering = renderElementSchemaArtifact(childName,
+          elementSchemaArtifact);
+        LinkedHashMap<String, Object> elementConfigurationRendering = renderElementConfiguration(parentSchemaArtifact,
+          childName, elementSchemaArtifact);
         if (!elementConfigurationRendering.isEmpty())
           elementSchemaRendering.put(CONFIGURATION, elementConfigurationRendering);
 
