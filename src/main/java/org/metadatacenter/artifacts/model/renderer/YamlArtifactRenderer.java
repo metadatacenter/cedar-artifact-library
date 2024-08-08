@@ -56,6 +56,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTINUE_PREVIOUS_LINE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
@@ -838,30 +839,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       if (fieldSchemaArtifact.valueConstraints().get().requiredValue())
         rendering.put(REQUIRED, true);
-
-      if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
-        rendering.put(RECOMMENDED, true);
     }
 
     if (fieldSchemaArtifact.fieldUi().hidden())
       rendering.put(HIDDEN, true);
 
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
+        rendering.put(RECOMMENDED, true);
+    }
+
     if (fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
+    if (fieldSchemaArtifact.fieldUi().continuePreviousLine())
+      rendering.put(CONTINUE_PREVIOUS_LINE, true);
+
     if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
       rendering.put(VALUE_RECOMMENDATION, true);
-
-    if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
-      rendering.put(MULTIPLE, true);
-
-    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
-      rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
-
-    if (fieldSchemaArtifact.maxItems().isPresent())
-      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldName)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(fieldName);
@@ -874,6 +869,17 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (!overrideDescription.isEmpty() && !overrideDescription.equals(fieldSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
+
+    if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MULTIPLE, true);
+
+    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
+
+    if (fieldSchemaArtifact.maxItems().isPresent())
+      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     if (fieldSchemaArtifact.fieldUi().isStatic()) {
       StaticFieldUi staticFieldUi = fieldSchemaArtifact.fieldUi().asStaticFieldUi();
