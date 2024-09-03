@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
@@ -43,7 +42,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 
@@ -62,17 +60,6 @@ public class YamlArtifactRendererTest {
 
     mapper = new ObjectMapper(yamlFactory);
     mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
-
-//    YAMLFactory yamlFactory = new YAMLFactory()
-//      .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-//      .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-//      .enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
-//      .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
-      //.enable(YAMLGenerator.Feature.SPLIT_LINES);
-
-    //mapper = new ObjectMapper(yamlFactory);
-    //mapper.registerModule(new Jdk8Module());
-//    mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
   }
 
   @Test

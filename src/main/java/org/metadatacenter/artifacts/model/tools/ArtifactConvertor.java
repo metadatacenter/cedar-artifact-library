@@ -1,9 +1,7 @@
 package org.metadatacenter.artifacts.model.tools;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.core.util.Separators;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -11,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -201,6 +200,7 @@ public class ArtifactConvertor
             .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
             .disable(YAMLGenerator.Feature.SPLIT_LINES);
           ObjectMapper mapper = new ObjectMapper(yamlFactory);
+          mapper.registerModule(new Jdk8Module());
           mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
 
           if (command.hasOption(OUTPUT_FILE_OPTION)) {

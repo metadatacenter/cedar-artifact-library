@@ -2,7 +2,7 @@
   <configuration default="false" name="SampleBlockArtifactRead" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.tools.TemplateReporter" />
     <module name="cedar-artifact-library" />
-    <option name="PROGRAM_PARAMETERS" value="src/test/resources/SampleBlock.json" />
+    <option name="PROGRAM_PARAMETERS" value="src/test/resources/templates/SampleBlock.json" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.metadatacenter.artifacts.model.tools.*" />
