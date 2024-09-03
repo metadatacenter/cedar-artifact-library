@@ -816,7 +816,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    if (elementSchemaArtifact.propertyUri().isPresent())
+    if (!isCompact && elementSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, elementSchemaArtifact.propertyUri().get().toString());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(elementName)) {
