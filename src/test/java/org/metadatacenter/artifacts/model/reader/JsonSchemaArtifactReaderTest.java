@@ -9,7 +9,6 @@ import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 
 import java.io.File;
@@ -139,6 +138,19 @@ public class JsonSchemaArtifactReaderTest
 
     assertTrue(fieldSchemaArtifact.isMultiple());
     assertTrue(fieldSchemaArtifact.isAttributeValue());
+  }
+
+  @Test
+  public void testReadTemplateWithOverrideLabels()
+  {
+    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/TemplateWithOverrideLabels.json");
+
+    TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
+
+    assertEquals(3, templateSchemaArtifact.getUi().propertyLabels().size());
+    assertEquals("Hardware", templateSchemaArtifact.getUi().propertyLabels().get("hardware"));
+    assertEquals("Hardware1", templateSchemaArtifact.getUi().propertyLabels().get("hardware1"));
+    assertEquals("Hardware Component", templateSchemaArtifact.getUi().propertyLabels().get("Hardware Component"));
   }
 
   @Test

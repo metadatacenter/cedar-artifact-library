@@ -1,0 +1,971 @@
+{
+  "bibo:status": "bibo:draft",
+  "_ui": {
+    "order": [
+      "hardware",
+      "Hardware Component",
+      "hardware1"
+    ],
+    "propertyLabels": {
+      "hardware": "Hardware",
+      "hardware1": "Hardware1",
+      "Hardware Component": "Hardware Component"
+    }
+  },
+  "properties": {
+    "schema:isBasedOn": {
+      "type": "string",
+      "format": "uri"
+    },
+    "schema:name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pav:createdBy": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "@context": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "xsd",
+        "rdfs",
+        "pav",
+        "schema",
+        "oslc",
+        "hardware",
+        "hardware1",
+        "schema:isBasedOn",
+        "schema:description",
+        "schema:name",
+        "rdfs:label",
+        "oslc:modifiedBy",
+        "pav:createdBy",
+        "pav:createdOn",
+        "pav:lastUpdatedOn",
+        "skos",
+        "skos:notation"
+      ],
+      "properties": {
+        "schema:isBasedOn": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "@id"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "schema:name": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "xsd:string"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "schema": {
+          "enum": [
+            "http://schema.org/"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "xsd": {
+          "enum": [
+            "http://www.w3.org/2001/XMLSchema#"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "rdfs:label": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "xsd:string"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "rdfs": {
+          "enum": [
+            "http://www.w3.org/2000/01/rdf-schema#"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "hardware": {
+          "enum": [
+            "https://schema.metadatacenter.net/properties/hardware"
+          ]
+        },
+        "oslc:modifiedBy": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "@id"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "pav:derivedFrom": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "@id"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "skos": {
+          "enum": [
+            "http://www.w3.org/2004/02/skos/core#"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "pav:createdBy": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "@id"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "pav:lastUpdatedOn": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "xsd:dateTime"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "oslc": {
+          "enum": [
+            "http://open-services.net/ns/core#"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "pav:createdOn": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "xsd:dateTime"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "hardware1": {
+          "enum": [
+            "https://schema.metadatacenter.net/properties/hardware1"
+          ]
+        },
+        "skos:notation": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "xsd:string"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "schema:description": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "enum": [
+                "xsd:string"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "pav": {
+          "enum": [
+            "http://purl.org/pav/"
+          ],
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "hardware": {
+      "bibo:status": "bibo:draft",
+      "_ui": {
+        "order": [
+          "instrumentName",
+          "instrumentType"
+        ],
+        "propertyLabels": {
+          "instrumentName": "Instrument Name",
+          "instrumentType": "Instrument Type"
+        }
+      },
+      "properties": {
+        "instrumentName": {
+          "_ui": {
+            "inputType": "textfield"
+          },
+          "schema:name": "Instrument Name",
+          "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "required": [
+            "@value"
+          ],
+          "@context": {
+            "schema:name": {
+              "@type": "xsd:string"
+            },
+            "schema": "http://schema.org/",
+            "pav:createdBy": {
+              "@type": "@id"
+            },
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "pav:createdOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc:modifiedBy": {
+              "@type": "@id"
+            },
+            "skos": "http://www.w3.org/2004/02/skos/core#",
+            "pav:lastUpdatedOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc": "http://open-services.net/ns/core#",
+            "skos:prefLabel": {
+              "@type": "xsd:string"
+            },
+            "skos:altLabel": {
+              "@type": "xsd:string"
+            },
+            "schema:description": {
+              "@type": "xsd:string"
+            },
+            "pav": "http://purl.org/pav/"
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "title": "Instrument Name field schema",
+          "description": "Instrument Name field schema generated by the CEDAR Template Editor 2.6.61",
+          "pav:lastUpdatedOn": "2016-10-06T06:40:41-07:00",
+          "pav:createdOn": "2016-10-06T06:40:41-07:00",
+          "@id": "https://repo.metadatacenter.net/template-fields/f90d9547-502b-4e13-b85c-7fdb35a403c5",
+          "_valueConstraints": {
+            "requiredValue": false
+          },
+          "schema:schemaVersion": "1.6.0",
+          "properties": {
+            "@value": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "@type": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+              ]
+            },
+            "rdfs:label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "schema:description": "",
+          "@type": "https://schema.metadatacenter.org/core/TemplateField",
+          "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        },
+        "instrumentType": {
+          "_ui": {
+            "inputType": "textfield"
+          },
+          "schema:name": "Instrument Type",
+          "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "required": [
+            "@value"
+          ],
+          "@context": {
+            "schema:name": {
+              "@type": "xsd:string"
+            },
+            "schema": "http://schema.org/",
+            "pav:createdBy": {
+              "@type": "@id"
+            },
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "pav:createdOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc:modifiedBy": {
+              "@type": "@id"
+            },
+            "skos": "http://www.w3.org/2004/02/skos/core#",
+            "pav:lastUpdatedOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc": "http://open-services.net/ns/core#",
+            "skos:prefLabel": {
+              "@type": "xsd:string"
+            },
+            "skos:altLabel": {
+              "@type": "xsd:string"
+            },
+            "schema:description": {
+              "@type": "xsd:string"
+            },
+            "pav": "http://purl.org/pav/"
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "title": "Instrument Type field schema",
+          "description": "Instrument Type field schema generated by the CEDAR Template Editor 2.6.61",
+          "pav:lastUpdatedOn": "2016-10-06T06:40:41-07:00",
+          "pav:createdOn": "2016-10-06T06:40:41-07:00",
+          "@id": "https://repo.metadatacenter.net/template-fields/f51eef1c-61df-4e7f-b61d-14d033e5ac03",
+          "_valueConstraints": {
+            "requiredValue": false
+          },
+          "schema:schemaVersion": "1.6.0",
+          "properties": {
+            "@value": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "@type": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+              ]
+            },
+            "rdfs:label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "schema:description": "",
+          "@type": "https://schema.metadatacenter.org/core/TemplateField",
+          "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        },
+        "@context": {
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "instrumentName",
+            "instrumentType"
+          ],
+          "properties": {
+            "instrumentName": {
+              "enum": [
+                "https://schema.metadatacenter.net/properties/instrumentName"
+              ]
+            },
+            "instrumentType": {
+              "enum": [
+                "https://schema.metadatacenter.net/properties/instrumentType"
+              ]
+            }
+          }
+        },
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "@id": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "title": "Hardware element schema",
+      "required": [
+        "@context",
+        "@id",
+        "instrumentName",
+        "instrumentType"
+      ],
+      "schema:name": "hardware",
+      "@context": {
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "pav": "http://purl.org/pav/",
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        },
+        "bibo": "http://purl.org/ontology/bibo/",
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+      "description": "Hardware element schema autogenerated by the CEDAR Template Editor",
+      "pav:lastUpdatedOn": "2016-10-06T06:43:13-07:00",
+      "pav:createdOn": "2016-10-06T06:43:13-07:00",
+      "_valueConstraints": {
+        "requiredValue": false
+      },
+      "@id": "https://repo.metadatacenter.net/template-elements/a438e305-055e-4e64-bbda-37467209ee0f",
+      "schema:schemaVersion": "1.6.0",
+      "pav:version": "0.0.1",
+      "schema:description": "instrument",
+      "@type": "https://schema.metadatacenter.org/core/TemplateElement",
+      "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "oslc:modifiedBy": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "pav:derivedFrom": {
+      "type": "string",
+      "format": "uri"
+    },
+    "pav:lastUpdatedOn": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "pav:createdOn": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "hardware1": {
+      "bibo:status": "bibo:draft",
+      "_ui": {
+        "order": [
+          "instrumentName",
+          "instrumentType"
+        ],
+        "propertyLabels": {
+          "instrumentName": "Instrument Name",
+          "instrumentType": "Instrument Type"
+        }
+      },
+      "properties": {
+        "instrumentName": {
+          "_ui": {
+            "inputType": "textfield"
+          },
+          "schema:name": "Instrument Name",
+          "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "required": [
+            "@value"
+          ],
+          "@context": {
+            "schema:name": {
+              "@type": "xsd:string"
+            },
+            "schema": "http://schema.org/",
+            "pav:createdBy": {
+              "@type": "@id"
+            },
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "pav:createdOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc:modifiedBy": {
+              "@type": "@id"
+            },
+            "skos": "http://www.w3.org/2004/02/skos/core#",
+            "pav:lastUpdatedOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc": "http://open-services.net/ns/core#",
+            "skos:prefLabel": {
+              "@type": "xsd:string"
+            },
+            "skos:altLabel": {
+              "@type": "xsd:string"
+            },
+            "schema:description": {
+              "@type": "xsd:string"
+            },
+            "pav": "http://purl.org/pav/"
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "title": "Instrument Name field schema",
+          "description": "Instrument Name field schema generated by the CEDAR Template Editor 2.6.61",
+          "pav:lastUpdatedOn": "2016-10-06T06:40:41-07:00",
+          "pav:createdOn": "2016-10-06T06:40:41-07:00",
+          "@id": "https://repo.metadatacenter.net/template-fields/f90d9547-502b-4e13-b85c-7fdb35a403c5",
+          "_valueConstraints": {
+            "requiredValue": false
+          },
+          "schema:schemaVersion": "1.6.0",
+          "properties": {
+            "@value": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "@type": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+              ]
+            },
+            "rdfs:label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "schema:description": "",
+          "@type": "https://schema.metadatacenter.org/core/TemplateField",
+          "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        },
+        "instrumentType": {
+          "_ui": {
+            "inputType": "textfield"
+          },
+          "schema:name": "Instrument Type",
+          "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "required": [
+            "@value"
+          ],
+          "@context": {
+            "schema:name": {
+              "@type": "xsd:string"
+            },
+            "schema": "http://schema.org/",
+            "pav:createdBy": {
+              "@type": "@id"
+            },
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "pav:createdOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc:modifiedBy": {
+              "@type": "@id"
+            },
+            "skos": "http://www.w3.org/2004/02/skos/core#",
+            "pav:lastUpdatedOn": {
+              "@type": "xsd:dateTime"
+            },
+            "oslc": "http://open-services.net/ns/core#",
+            "skos:prefLabel": {
+              "@type": "xsd:string"
+            },
+            "skos:altLabel": {
+              "@type": "xsd:string"
+            },
+            "schema:description": {
+              "@type": "xsd:string"
+            },
+            "pav": "http://purl.org/pav/"
+          },
+          "additionalProperties": false,
+          "type": "object",
+          "title": "Instrument Type field schema",
+          "description": "Instrument Type field schema generated by the CEDAR Template Editor 2.6.61",
+          "pav:lastUpdatedOn": "2016-10-06T06:40:41-07:00",
+          "pav:createdOn": "2016-10-06T06:40:41-07:00",
+          "@id": "https://repo.metadatacenter.net/template-fields/f51eef1c-61df-4e7f-b61d-14d033e5ac03",
+          "_valueConstraints": {
+            "requiredValue": false
+          },
+          "schema:schemaVersion": "1.6.0",
+          "properties": {
+            "@value": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "@type": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+              ]
+            },
+            "rdfs:label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "schema:description": "",
+          "@type": "https://schema.metadatacenter.org/core/TemplateField",
+          "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        },
+        "@context": {
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "instrumentName",
+            "instrumentType"
+          ],
+          "properties": {
+            "instrumentName": {
+              "enum": [
+                "https://schema.metadatacenter.net/properties/instrumentName"
+              ]
+            },
+            "instrumentType": {
+              "enum": [
+                "https://schema.metadatacenter.net/properties/instrumentType"
+              ]
+            }
+          }
+        },
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "@id": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "title": "Hardware element schema",
+      "required": [
+        "@context",
+        "@id",
+        "instrumentName",
+        "instrumentType"
+      ],
+      "schema:name": "hardware",
+      "@context": {
+        "pav:lastUpdatedOn": {
+          "@type": "xsd:dateTime"
+        },
+        "oslc": "http://open-services.net/ns/core#",
+        "schema": "http://schema.org/",
+        "pav:createdBy": {
+          "@type": "@id"
+        },
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "pav": "http://purl.org/pav/",
+        "oslc:modifiedBy": {
+          "@type": "@id"
+        },
+        "bibo": "http://purl.org/ontology/bibo/",
+        "schema:description": {
+          "@type": "xsd:string"
+        },
+        "pav:createdOn": {
+          "@type": "xsd:dateTime"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+      "description": "Hardware element schema autogenerated by the CEDAR Template Editor",
+      "pav:lastUpdatedOn": "2016-10-06T06:43:13-07:00",
+      "pav:createdOn": "2016-10-06T06:43:13-07:00",
+      "_valueConstraints": {
+        "requiredValue": false
+      },
+      "@id": "https://repo.metadatacenter.net/template-elements/a438e305-055e-4e64-bbda-37467209ee0f",
+      "schema:schemaVersion": "1.6.0",
+      "pav:version": "0.0.1",
+      "schema:description": "instrument",
+      "@type": "https://schema.metadatacenter.org/core/TemplateElement",
+      "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    },
+    "schema:description": {
+      "type": "string"
+    },
+    "@type": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "uniqueItems": true
+        }
+      ]
+    },
+    "@id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "Hardware Component": {
+      "_ui": {
+        "inputType": "section-break",
+        "_content": null
+      },
+      "schema:name": "Hardware Component",
+      "title": "Hardware Component field schema",
+      "required": [
+        "_content"
+      ],
+      "@context": {
+        "oslc": "http://open-services.net/ns/core#",
+        "schema:name": {
+          "@type": "xsd:string"
+        },
+        "schema": "http://schema.org/",
+        "pav": "http://purl.org/pav/",
+        "schema:description": {
+          "@type": "xsd:string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+      "description": "Hardware Component field schema generated by the CEDAR Template Editor 2.6.61",
+      "pav:lastUpdatedOn": "2016-10-06T06:43:13-07:00",
+      "pav:createdOn": "2016-10-06T06:43:13-07:00",
+      "@id": "https://repo.metadatacenter.net/template-fields/2c97b339-e079-48b7-93b7-8d166ef6bb7d",
+      "schema:schemaVersion": "1.6.0",
+      "properties": {
+        "pav:lastUpdatedOn": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "@id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "oslc:modifiedBy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "pav:createdBy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "@type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "pav:createdOn": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "schema:description": "",
+      "@type": "https://schema.metadatacenter.org/core/StaticTemplateField",
+      "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+      "$schema": "http://json-schema.org/draft-04/schema#"
+    }
+  },
+  "title": "Instrument template schema",
+  "required": [
+    "@context",
+    "@id",
+    "schema:isBasedOn",
+    "schema:name",
+    "schema:description",
+    "pav:createdOn",
+    "pav:createdBy",
+    "pav:lastUpdatedOn",
+    "oslc:modifiedBy",
+    "hardware1",
+    "hardware",
+    "Hardware Component"
+  ],
+  "schema:name": "Instrument",
+  "@context": {
+    "pav:lastUpdatedOn": {
+      "@type": "xsd:dateTime"
+    },
+    "oslc": "http://open-services.net/ns/core#",
+    "schema": "http://schema.org/",
+    "pav:createdBy": {
+      "@type": "@id"
+    },
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "schema:name": {
+      "@type": "xsd:string"
+    },
+    "pav": "http://purl.org/pav/",
+    "oslc:modifiedBy": {
+      "@type": "@id"
+    },
+    "bibo": "http://purl.org/ontology/bibo/",
+    "schema:description": {
+      "@type": "xsd:string"
+    },
+    "pav:createdOn": {
+      "@type": "xsd:dateTime"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "oslc:modifiedBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+  "description": "Instrument template schema generated by the CEDAR Template Editor 2.6.61",
+  "pav:lastUpdatedOn": "2016-10-06T06:43:13-07:00",
+  "pav:createdOn": "2016-10-06T06:42:37-07:00",
+  "@id": "https://repo.metadatacenter.net/templates/123cc888-af46-4389-a216-c77be8e1a6dd",
+  "schema:schemaVersion": "1.6.0",
+  "pav:version": "0.0.1",
+  "schema:description": "Description",
+  "@type": "https://schema.metadatacenter.org/core/Template",
+  "pav:createdBy": "https://repo.metadatacenter.net/users/184ce0be-2fe8-400c-925c-788d56ff1202",
+  "$schema": "http://json-schema.org/draft-04/schema#"
+}
