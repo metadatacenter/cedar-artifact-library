@@ -11,7 +11,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 
 public non-sealed interface StaticFieldUi extends FieldUi
 {
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   Optional<String> _content();
 
   boolean hidden();
