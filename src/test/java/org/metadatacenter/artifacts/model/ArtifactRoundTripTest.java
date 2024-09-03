@@ -835,7 +835,7 @@ public class ArtifactRoundTripTest
       finalRendering);
 
     assertEquals(originalTemplateInstanceArtifact.jsonLdContext(), finalTemplateInstanceArtifact.jsonLdContext());
-    assertEquals(originalTemplateInstanceArtifact.childNames(), finalTemplateInstanceArtifact.childNames());
+    assertEquals(originalTemplateInstanceArtifact.childKeys(), finalTemplateInstanceArtifact.childKeys());
     assertEquals(originalTemplateInstanceArtifact.singleInstanceFieldInstances(), finalTemplateInstanceArtifact.singleInstanceFieldInstances());
     assertEquals(originalTemplateInstanceArtifact.singleInstanceElementInstances(), finalTemplateInstanceArtifact.singleInstanceElementInstances());
     assertEquals(originalTemplateInstanceArtifact.multiInstanceFieldInstances(), finalTemplateInstanceArtifact.multiInstanceFieldInstances());

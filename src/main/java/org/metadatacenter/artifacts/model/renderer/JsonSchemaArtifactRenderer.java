@@ -171,8 +171,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
 
-    for (String childName : templateSchemaArtifact.getNonStaticNonAttributeValueChildNames())
-      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
+    for (String childKey : templateSchemaArtifact.getNonStaticNonAttributeValueChildKeys())
+      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childKey);
 
     if (templateSchemaArtifact.hasAttributeValueField())
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
@@ -184,28 +184,28 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(ANNOTATIONS, renderAnnotations(templateSchemaArtifact.annotations().get()));
 
     // TODO Think about moving this to renderParentSchemaArtifactPropertiesJsonSchemaSpecification above
-    for (String childName : templateSchemaArtifact.templateUi().order()) {
-      if (templateSchemaArtifact.isField(childName)) {
-        FieldSchemaArtifact childFieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childName);
+    for (String childKey : templateSchemaArtifact.templateUi().order()) {
+      if (templateSchemaArtifact.isField(childKey)) {
+        FieldSchemaArtifact childFieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(childKey);
 
         if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue())
-          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey,
             renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact.name(),
                 childFieldSchemaArtifact), childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
+            .put(childKey, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
 
-      } else if (templateSchemaArtifact.isElement(childName)) {
-        ElementSchemaArtifact childElementSchemaArtifact = templateSchemaArtifact.getElementSchemaArtifact(childName);
+      } else if (templateSchemaArtifact.isElement(childKey)) {
+        ElementSchemaArtifact childElementSchemaArtifact = templateSchemaArtifact.getElementSchemaArtifact(childKey);
 
         if (childElementSchemaArtifact.isMultiple())
-          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey,
             renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childElementSchemaArtifact),
               childElementSchemaArtifact.minItems(), childElementSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderElementSchemaArtifact(childElementSchemaArtifact));
+            .put(childKey, renderElementSchemaArtifact(childElementSchemaArtifact));
 
       } // TODO Use typesafe switch on ChildSchemaArtifact when available
     }
@@ -252,7 +252,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *  }
    * </pre>
    */
-  public ObjectNode renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
+  public ObjectNode renderElementSchemaArtifact(String elementKey, ElementSchemaArtifact elementSchemaArtifact)
   {
     ObjectNode rendering = renderJsonLdArtifact(elementSchemaArtifact);
 
@@ -271,34 +271,34 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_CONTEXT);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_ID);
 
-    for (String childName : elementSchemaArtifact.getNonStaticNonAttributeValueChildNames())
-      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
+    for (String childKey : elementSchemaArtifact.getNonStaticNonAttributeValueChildKeys())
+      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childKey);
 
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
-    for (String childName : elementSchemaArtifact.elementUi().order()) {
-      if (elementSchemaArtifact.isField(childName)) {
-        FieldSchemaArtifact childFieldSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childName);
+    for (String childKey : elementSchemaArtifact.elementUi().order()) {
+      if (elementSchemaArtifact.isField(childKey)) {
+        FieldSchemaArtifact childFieldSchemaArtifact = elementSchemaArtifact.getFieldSchemaArtifact(childKey);
 
         if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue())
-          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey,
             renderJsonSchemaArrayWrapperSpecification(renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact),
               childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
+            .put(childKey, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
 
-      } else if (elementSchemaArtifact.isElement(childName)) {
-        ElementSchemaArtifact childElementSchemaArtifact = elementSchemaArtifact.getElementSchemaArtifact(childName);
+      } else if (elementSchemaArtifact.isElement(childKey)) {
+        ElementSchemaArtifact childElementSchemaArtifact = elementSchemaArtifact.getElementSchemaArtifact(childKey);
 
         if (childElementSchemaArtifact.isMultiple())
-          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName,
+          rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey,
             renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childElementSchemaArtifact),
               childElementSchemaArtifact.minItems(), childElementSchemaArtifact.maxItems()));
         else
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
-            .put(childName, renderElementSchemaArtifact(childElementSchemaArtifact));
+            .put(childKey, renderElementSchemaArtifact(childElementSchemaArtifact));
 
       }  // TODO Use typesafe switch on ChildSchemaArtifact when available
     }
@@ -358,7 +358,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *  }
    * </pre>
    */
-  public ObjectNode renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
+  public ObjectNode renderFieldSchemaArtifact(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact)
   {
     ObjectNode rendering = renderJsonLdArtifact(fieldSchemaArtifact);
 
@@ -486,9 +486,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
 
     for (var propertyMapping : templateInstanceArtifact.jsonLdContext().entrySet()) {
-      String fieldName = propertyMapping.getKey();
+      String fieldKey = propertyMapping.getKey();
       URI propertyUri = propertyMapping.getValue();
-      rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, renderUri(propertyUri));
+      rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldKey, renderUri(propertyUri));
     }
 
     rendering.put(SCHEMA_IS_BASED_ON, renderUri(templateInstanceArtifact.isBasedOn()));
@@ -535,9 +535,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(JSON_LD_CONTEXT, mapper.createObjectNode());
 
       for (var propertyMapping : elementInstanceArtifact.jsonLdContext().entrySet()) {
-        String fieldName = propertyMapping.getKey();
+        String fieldKey = propertyMapping.getKey();
         URI propertyUri = propertyMapping.getValue();
-        rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldName, renderUri(propertyUri));
+        rendering.withObject("/" + JSON_LD_CONTEXT).put(fieldKey, renderUri(propertyUri));
       }
     }
 
@@ -625,52 +625,52 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (parentInstanceArtifact.description().isPresent())
       rendering.put(SCHEMA_ORG_DESCRIPTION, parentInstanceArtifact.description().get());
 
-    for (String childName : parentInstanceArtifact.childNames()) {
+    for (String childKey : parentInstanceArtifact.childKeys()) {
 
-      if (parentInstanceArtifact.singleInstanceFieldInstances().containsKey(childName)) {
+      if (parentInstanceArtifact.singleInstanceFieldInstances().containsKey(childKey)) {
         FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances()
-          .get(childName);
+          .get(childKey);
 
-        rendering.put(childName, renderFieldInstanceArtifact(fieldInstanceArtifact));
-      } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childName)) {
+        rendering.put(childKey, renderFieldInstanceArtifact(fieldInstanceArtifact));
+      } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childKey)) {
         List<FieldInstanceArtifact> fieldInstanceArtifacts = parentInstanceArtifact.multiInstanceFieldInstances()
-          .get(childName);
+          .get(childKey);
 
-        rendering.put(childName, renderFieldInstanceArtifacts(fieldInstanceArtifacts));
-      } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childName)) {
+        rendering.put(childKey, renderFieldInstanceArtifacts(fieldInstanceArtifacts));
+      } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
         ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances()
-          .get(childName);
+          .get(childKey);
 
-        rendering.put(childName, renderElementInstanceArtifact(elementInstanceArtifact));
-      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childName)) {
+        rendering.put(childKey, renderElementInstanceArtifact(elementInstanceArtifact));
+      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
         List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances()
-          .get(childName);
+          .get(childKey);
 
-        rendering.put(childName, renderElementInstanceArtifacts(elementInstanceArtifacts));
-      } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().containsKey(childName)) {
+        rendering.put(childKey, renderElementInstanceArtifacts(elementInstanceArtifacts));
+      } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().containsKey(childKey)) {
         Map<String, FieldInstanceArtifact> attributeValueFieldInstances = parentInstanceArtifact.attributeValueFieldInstanceGroups()
-          .get(childName);
+          .get(childKey);
 
-        Set<String> attributeValueInstanceFieldNames = attributeValueFieldInstances.keySet();
-        ArrayNode attributeValueFieldInstanceNamesNode = mapper.createArrayNode();
+        Set<String> attributeValueInstanceFieldKeys = attributeValueFieldInstances.keySet();
+        ArrayNode attributeValueFieldInstanceKeysNode = mapper.createArrayNode();
 
-        for (String attributeValueFieldInstanceName : attributeValueInstanceFieldNames)
-          attributeValueFieldInstanceNamesNode.add(attributeValueFieldInstanceName);
+        for (String attributeValueFieldInstanceKey : attributeValueInstanceFieldKeys)
+          attributeValueFieldInstanceKeysNode.add(attributeValueFieldInstanceKey);
 
-        rendering.put(childName, attributeValueFieldInstanceNamesNode);
+        rendering.put(childKey, attributeValueFieldInstanceKeysNode);
 
       } else if (parentInstanceArtifact.attributeValueFieldInstanceGroups().values().stream()
-        .anyMatch(instancesForAttributeValueField -> instancesForAttributeValueField.containsKey(childName))) {
+        .anyMatch(instancesForAttributeValueField -> instancesForAttributeValueField.containsKey(childKey))) {
 
         for (var attributeValueFieldInstancesGroupEntry : parentInstanceArtifact.attributeValueFieldInstanceGroups()
           .entrySet()) {
           Map<String, FieldInstanceArtifact> attributeValueFieldInstances = attributeValueFieldInstancesGroupEntry.getValue();
 
-          if (attributeValueFieldInstances.containsKey(childName))
-            rendering.put(childName, renderFieldInstanceArtifact(attributeValueFieldInstances.get(childName)));
+          if (attributeValueFieldInstances.containsKey(childKey))
+            rendering.put(childKey, renderFieldInstanceArtifact(attributeValueFieldInstances.get(childKey)));
         }
       } else
-        throw new RuntimeException("unknown child " + childName + " in parent instance artifact");
+        throw new RuntimeException("unknown child " + childKey + " in parent instance artifact");
     }
 
     return rendering;
@@ -1155,9 +1155,9 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
 
     for (var entry : templateSchemaArtifact.getChildPropertyUris().entrySet()) {
-      String childName = entry.getKey();
+      String childKey = entry.getKey();
       URI propertyUri = entry.getValue();
-      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(renderUri(propertyUri)));
+      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey, renderJsonSchemaEnumSpecification(renderUri(propertyUri)));
     }
 
     rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
@@ -1173,8 +1173,8 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
     rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
 
-    for (String childName : templateSchemaArtifact.getChildPropertyUris().keySet())
-      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
+    for (String childKey : templateSchemaArtifact.getChildPropertyUris().keySet())
+      rendering.withArray(JSON_SCHEMA_REQUIRED).add(childKey);
 
     if (templateSchemaArtifact.hasAttributeValueField())
       rendering.put(JSON_SCHEMA_ADDITIONAL_PROPERTIES,
@@ -1220,15 +1220,15 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(JSON_SCHEMA_PROPERTIES, mapper.createObjectNode());
 
     for (var entry : elementSchemaArtifact.getChildPropertyUris().entrySet()) {
-      String childName = entry.getKey();
+      String childKey = entry.getKey();
       URI propertyUri = entry.getValue();
-      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childName, renderJsonSchemaEnumSpecification(renderUri(propertyUri)));
+      rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey, renderJsonSchemaEnumSpecification(renderUri(propertyUri)));
     }
 
     if (!elementSchemaArtifact.getChildPropertyUris().isEmpty()) {
       rendering.put(JSON_SCHEMA_REQUIRED, mapper.createArrayNode());
-      for (String childName : elementSchemaArtifact.getChildPropertyUris().keySet())
-        rendering.withArray(JSON_SCHEMA_REQUIRED).add(childName);
+      for (String childKey : elementSchemaArtifact.getChildPropertyUris().keySet())
+        rendering.withArray(JSON_SCHEMA_REQUIRED).add(childKey);
     }
 
     if (elementSchemaArtifact.hasAttributeValueField())

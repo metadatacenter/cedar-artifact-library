@@ -25,7 +25,7 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact, JsonLdArt
 
   Optional<String> description();
 
-  List<String> childNames();
+  List<String> childKeys();
 
   // field name->field instance artifact
   LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances();
