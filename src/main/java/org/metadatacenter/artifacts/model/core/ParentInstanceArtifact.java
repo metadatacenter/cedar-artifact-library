@@ -27,18 +27,18 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact, JsonLdArt
 
   List<String> childKeys();
 
-  // field name->field instance artifact
+  // field key->field instance artifact
   LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances();
 
-  // field name->[field instance artifact]
+  // field key->[field instance artifact]
   LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances();
 
-  // element name->element instance artifact
+  // element key->element instance artifact
   LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances();
 
-  // field name->[field instance artifact]
+  // field key->[field instance artifact]
   LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances();
 
-  // attribute-value field name->(attribute-value field instance name->field instance artifact)
+  // attribute-value field group name->(attribute-value field instance name->field instance artifact)
   LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups();
 }
