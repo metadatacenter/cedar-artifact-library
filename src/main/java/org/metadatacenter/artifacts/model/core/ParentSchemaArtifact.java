@@ -11,20 +11,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public sealed interface ParentSchemaArtifact extends ParentArtifact permits TemplateSchemaArtifact,
-  ElementSchemaArtifact
+public sealed interface ParentSchemaArtifact extends ParentArtifact
+  permits TemplateSchemaArtifact, ElementSchemaArtifact
 {
   String name();
 
   ParentArtifactUi getUi();
 
+  // fieldKey -> field schema artifact. Note that a child field's key is distinct from the child field's name
   Map<String, FieldSchemaArtifact> fieldSchemas();
 
+  // elementKey -> element schema artifact. Note that a child element's key is distinct from the child element's name
   Map<String, ElementSchemaArtifact> elementSchemas();
 
-  default boolean isField(String fieldKey) { return fieldSchemas().containsKey(fieldKey); }
+  default boolean isField(String fieldKey) {return fieldSchemas().containsKey(fieldKey);}
 
-  default boolean isStaticField(String fieldKey) {
+  default boolean isStaticField(String fieldKey)
+  {
     return fieldSchemas().containsKey(fieldKey) && fieldSchemas().get(fieldKey).isStatic();
   }
 
@@ -33,11 +36,11 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     return fieldSchemas().containsKey(fieldKey) && fieldSchemas().get(fieldKey).isAttributeValue();
   }
 
-  default boolean isElement(String elementKey) { return elementSchemas().containsKey(elementKey); }
+  default boolean isElement(String elementKey) {return elementSchemas().containsKey(elementKey);}
 
-  default boolean hasFields() { return !fieldSchemas().isEmpty(); }
+  default boolean hasFields() {return !fieldSchemas().isEmpty();}
 
-  default boolean hasElements() { return !elementSchemas().isEmpty(); }
+  default boolean hasElements() {return !elementSchemas().isEmpty();}
 
   default boolean hasAttributeValueField()
   {
@@ -48,7 +51,7 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   {
     LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
-    for (String fieldKey: getUi().order()) {
+    for (String fieldKey : getUi().order()) {
       if (fieldSchemas().containsKey(fieldKey))
         orderedFieldSchemas.put(fieldKey, fieldSchemas().get(fieldKey));
     }
@@ -175,15 +178,15 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   default List<String> getNonStaticNonAttributeValueChildKeys()
   {
 
-    List<String> childKeys = getUi().order().stream().filter(name -> !isStaticField(name) && !isAttributeValueField(name)).toList();
+    List<String> childKeys = getUi().order().stream()
+      .filter(name -> !isStaticField(name) && !isAttributeValueField(name)).toList();
 
     return childKeys;
   }
 
   default URI generatePropertyUri(String childKey)
   { // TODO Put constant in ModelNodeNames; childKey is temporary
-    return URI.create("https://schema.metadatacenter.org/properties/" +
-      URLEncoder.encode(childKey, StandardCharsets.UTF_8));
+    return URI.create(
+      "https://schema.metadatacenter.org/properties/" + URLEncoder.encode(childKey, StandardCharsets.UTF_8));
   }
-
 }
