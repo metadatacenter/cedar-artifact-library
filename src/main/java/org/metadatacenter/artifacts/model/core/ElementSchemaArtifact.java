@@ -265,40 +265,66 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
+    public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact)
+    {
+      this.fieldSchemas.put(fieldKey, fieldSchemaArtifact);
+      this.elementUiBuilder.withOrder(fieldKey);
+      this.elementUiBuilder.withPropertyLabel(fieldKey, fieldSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyDescription(fieldKey, fieldSchemaArtifact.description());
+      return this;
+    }
+
     public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact)
     {
-      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
-      this.elementUiBuilder.withOrder(fieldSchemaArtifact.name());
-      this.elementUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), fieldSchemaArtifact.name());
-      this.elementUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), fieldSchemaArtifact.description());
+      return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+    }
+
+    public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
+    {
+      if (this.fieldSchemas.containsKey(fieldKey) || this.elementSchemas.containsKey(fieldKey))
+        throw new IllegalArgumentException("Element already has a child " + fieldKey);
+
+      this.fieldSchemas.put(fieldKey, fieldSchemaArtifact);
+      this.elementUiBuilder.withOrder(fieldKey);
+      this.elementUiBuilder.withPropertyLabel(fieldKey, propertyLabel);
+      this.elementUiBuilder.withPropertyDescription(fieldKey, propertyDescription);
       return this;
     }
 
     public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
     {
-      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
-      this.elementUiBuilder.withOrder(fieldSchemaArtifact.name());
-      this.elementUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), propertyLabel);
-      this.elementUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), propertyDescription);
+      return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact, propertyLabel, propertyDescription);
+    }
+
+    public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact)
+    {
+      if (this.fieldSchemas.containsKey(elementKey) || this.elementSchemas.containsKey(elementKey))
+        throw new IllegalArgumentException("Element already has a child " + elementKey);
+
+      this.elementSchemas.put(elementKey, elementSchemaArtifact);
+      this.elementUiBuilder.withOrder(elementKey);
+      this.elementUiBuilder.withPropertyLabel(elementKey, elementSchemaArtifact.name());
+      this.elementUiBuilder.withPropertyDescription(elementKey, elementSchemaArtifact.description());
       return this;
     }
 
     public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact)
     {
-      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
-      this.elementUiBuilder.withOrder(elementSchemaArtifact.name());
-      this.elementUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), elementSchemaArtifact.name());
-      this.elementUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), elementSchemaArtifact.description());
+      return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact);
+    }
+
+    public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
+    {
+      this.elementSchemas.put(elementKey, elementSchemaArtifact);
+      this.elementUiBuilder.withOrder(elementKey);
+      this.elementUiBuilder.withPropertyLabel(elementKey, propertyLabel);
+      this.elementUiBuilder.withPropertyDescription(elementKey, propertyDescription);
       return this;
     }
 
     public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
     {
-      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
-      this.elementUiBuilder.withOrder(elementSchemaArtifact.name());
-      this.elementUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), propertyLabel);
-      this.elementUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), propertyDescription);
-      return this;
+      return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact, propertyLabel, propertyDescription);
     }
 
     public Builder withIsMultiple(boolean isMultiple)

@@ -265,42 +265,70 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return this;
     }
 
+    public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact)
+    {
+      this.fieldSchemas.put(fieldKey, fieldSchemaArtifact);
+      this.templateUiBuilder.withOrder(fieldKey);
+      this.templateUiBuilder.withPropertyLabel(fieldKey, fieldSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyDescription(fieldKey, fieldSchemaArtifact.description());
+      return this;
+    }
+
     public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact)
     {
-      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
-      this.templateUiBuilder.withOrder(fieldSchemaArtifact.name());
-      this.templateUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), fieldSchemaArtifact.name());
-      this.templateUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), fieldSchemaArtifact.description());
+      return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+    }
+
+    public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel,
+      String propertyDescription)
+    {
+      if (this.fieldSchemas.containsKey(fieldKey) || this.elementSchemas.containsKey(fieldKey))
+        throw new IllegalArgumentException("Template already has a child " + fieldKey);
+
+      this.fieldSchemas.put(fieldKey, fieldSchemaArtifact);
+      this.templateUiBuilder.withOrder(fieldKey);
+      this.templateUiBuilder.withPropertyLabel(fieldKey, propertyLabel);
+      this.templateUiBuilder.withPropertyDescription(fieldKey, propertyDescription);
       return this;
     }
 
     public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel,
       String propertyDescription)
     {
-      this.fieldSchemas.put(fieldSchemaArtifact.name(), fieldSchemaArtifact);
-      this.templateUiBuilder.withOrder(fieldSchemaArtifact.name());
-      this.templateUiBuilder.withPropertyLabel(fieldSchemaArtifact.name(), propertyLabel);
-      this.templateUiBuilder.withPropertyDescription(fieldSchemaArtifact.name(), propertyDescription);
+      return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact, propertyLabel, propertyDescription);
+    }
+
+    public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact)
+    {
+      this.elementSchemas.put(elementKey, elementSchemaArtifact);
+      this.templateUiBuilder.withOrder(elementKey);
+      this.templateUiBuilder.withPropertyLabel(elementKey, elementSchemaArtifact.name());
+      this.templateUiBuilder.withPropertyDescription(elementKey, elementSchemaArtifact.description());
       return this;
     }
 
     public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact)
     {
-      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
-      this.templateUiBuilder.withOrder(elementSchemaArtifact.name());
-      this.templateUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), elementSchemaArtifact.name());
-      this.templateUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), elementSchemaArtifact.description());
+      return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact);
+    }
+
+    public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact, String propertyLabel,
+      String propertyDescription)
+    {
+      if (this.fieldSchemas.containsKey(elementKey) || this.elementSchemas.containsKey(elementKey))
+        throw new IllegalArgumentException("Element already has a child " + elementKey);
+
+      this.elementSchemas.put(elementKey, elementSchemaArtifact);
+      this.templateUiBuilder.withOrder(elementKey);
+      this.templateUiBuilder.withPropertyLabel(elementKey, propertyLabel);
+      this.templateUiBuilder.withPropertyDescription(elementKey, propertyDescription);
       return this;
     }
 
     public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel,
       String propertyDescription)
     {
-      this.elementSchemas.put(elementSchemaArtifact.name(), elementSchemaArtifact);
-      this.templateUiBuilder.withOrder(elementSchemaArtifact.name());
-      this.templateUiBuilder.withPropertyLabel(elementSchemaArtifact.name(), propertyLabel);
-      this.templateUiBuilder.withPropertyDescription(elementSchemaArtifact.name(), propertyDescription);
-      return this;
+      return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact, propertyLabel, propertyDescription);
     }
 
     public Builder withHeader(String header)
