@@ -861,7 +861,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(RECOMMENDED, true);
     }
 
-    if (fieldSchemaArtifact.propertyUri().isPresent())
+    if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldName)) {
