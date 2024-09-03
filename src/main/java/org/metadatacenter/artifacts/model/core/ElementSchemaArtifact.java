@@ -400,12 +400,12 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
       throw new IllegalStateException("minItems must be less than maxItems in element schema artifact " + name());
 
     Set<String> order = new HashSet<>(elementUi.order());
-    Set<String> childNames = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
+    Set<String> childKeys = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
 
-    if (!order.containsAll(childNames)) {
-      childNames.removeAll(order); // Generate the names of children not in the order map
-      order.removeAll(childNames); // Silently remove these extra children from the order
-      for (String childToRemove: childNames) { // And from the
+    if (!order.containsAll(childKeys)) {
+      childKeys.removeAll(order); // Generate the names of children not in the order map
+      order.removeAll(childKeys); // Silently remove these extra children from the order
+      for (String childToRemove: childKeys) { // And from the
         fieldSchemas.remove(childToRemove);
         elementSchemas.remove(childToRemove);
       }
