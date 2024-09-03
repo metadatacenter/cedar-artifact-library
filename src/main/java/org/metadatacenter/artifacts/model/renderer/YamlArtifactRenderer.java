@@ -821,7 +821,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(elementName)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(elementName);
-      if (!overrideLabel.equals(elementName))
+      if (!overrideLabel.isEmpty() && !overrideLabel.equals(elementSchemaArtifact.name()))
         rendering.put(OVERRIDE_LABEL, overrideLabel);
     }
 
@@ -866,7 +866,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldName)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(fieldName);
-      if (!overrideLabel.equals(fieldName))
+      if (!overrideLabel.isEmpty() && !overrideLabel.equals(fieldSchemaArtifact.name()))
         rendering.put(OVERRIDE_LABEL, overrideLabel);
     }
 
