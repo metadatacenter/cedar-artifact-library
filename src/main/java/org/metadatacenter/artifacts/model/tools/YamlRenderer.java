@@ -26,7 +26,7 @@ public class YamlRenderer {
     YAMLFactory yamlFactory = new YAMLFactory()
         .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES) //enable this
-        .enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
+        //.enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
         .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
         .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
