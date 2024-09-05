@@ -350,6 +350,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(INPUT_TIME_ZONE, true);
     }
 
+    if (fieldSchemaArtifact.isStatic()) {
+      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
+        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
+
+        if (!content.isEmpty())
+          rendering.put(CONTENT, content);
+      }
+    }
+
     addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
 
     if (fieldSchemaArtifact.annotations().isPresent())
