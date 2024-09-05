@@ -787,7 +787,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
         LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childKey, fieldSchemaArtifact);
 
-        if (!(fieldSchemaArtifact.isAttributeValue() || fieldSchemaArtifact.isStatic())) {
+        if (!(fieldSchemaArtifact.isAttributeValue())) {
           LinkedHashMap<String, Object> fieldConfigurationRendering = renderFieldConfiguration(parentSchemaArtifact,
             childKey, fieldSchemaArtifact);
           if (!fieldConfigurationRendering.isEmpty())
