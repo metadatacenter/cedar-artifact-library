@@ -1316,13 +1316,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       if (childKey2Name.containsKey(childKey)) {
         if (originalPropertyLabels.containsKey(childKey))
           reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
-        else
-          reorderedPropertyLabels.put(childKey, childKey2Name.get(childKey));
 
         if (originalPropertyDescriptions.containsKey(childKey))
           reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
-        else
-          reorderedPropertyDescriptions.put(childKey, "");
       } else
         orderEntriesToRemove.add(childKey);
     }
@@ -1353,13 +1349,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       if (childKey2Name.containsKey(childKey)) {
         if (originalPropertyLabels.containsKey(childKey))
           reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
-        else
-          reorderedPropertyLabels.put(childKey, childKey2Name.get(childKey));
 
         if (originalPropertyDescriptions.containsKey(childKey))
           reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
-        else
-          reorderedPropertyDescriptions.put(childKey, "");
       } else
         orderEntriesToRemove.add(childKey);
     }
