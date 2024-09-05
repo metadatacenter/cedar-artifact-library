@@ -8,8 +8,6 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifac
 {
   String name();
 
-  Optional<String> preferredLabel();
-
   boolean isMultiple();
 
   Optional<Integer> minItems();

@@ -39,32 +39,26 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 {
   static ElementSchemaArtifact create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<URI> instanceJsonLdType,
-    String name, String description, Optional<String> identifier,
+    Optional<URI> instanceJsonLdType, String name, String description, Optional<String> identifier,
     Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
-    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
-    boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-    Optional<URI> propertyUri, Optional<String> preferredLabel, Optional<String> language,
-    ElementUi elementUi, Optional<Annotations> annotations)
+    Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+    Optional<OffsetDateTime> lastUpdatedOn, LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
+    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple, Optional<Integer> minItems,
+    Optional<Integer> maxItems, Optional<URI> propertyUri, Optional<String> language, ElementUi elementUi,
+    Optional<Annotations> annotations)
   {
-    return new ElementSchemaArtifactRecord(internalName, internalDescription,
-      jsonLdContext, jsonLdTypes, jsonLdId,
-      instanceJsonLdType,
-      name, description, identifier,
-      version, status, previousVersion, derivedFrom,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas,
-      isMultiple, minItems, maxItems,
-      propertyUri, preferredLabel, language, elementUi, annotations);
+    return new ElementSchemaArtifactRecord(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri,
+      language, elementUi, annotations);
   }
 
-  default ParentArtifactUi getUi() { return elementUi(); }
+  default ParentArtifactUi getUi() {return elementUi();}
 
   ElementUi elementUi();
 
-  @Override default void accept(SchemaArtifactVisitor visitor, String path) {
+  @Override default void accept(SchemaArtifactVisitor visitor, String path)
+  {
     visitor.visitElementSchemaArtifact(this, path);
 
     for (Map.Entry<String, FieldSchemaArtifact> entry : fieldSchemas().entrySet()) {
@@ -82,17 +76,20 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     }
   }
 
-  static Builder builder() {
+  static Builder builder()
+  {
     return new Builder();
   }
 
-  static Builder builder(ElementSchemaArtifact elementSchemaArtifact) {
+  static Builder builder(ElementSchemaArtifact elementSchemaArtifact)
+  {
     return new Builder(elementSchemaArtifact);
   }
 
   class Builder
   {
-    private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(
+      PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     private List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> instanceJsonLdType = Optional.empty();
@@ -115,12 +112,12 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<Integer> minItems = Optional.empty();
     private Optional<Integer> maxItems = Optional.empty();
     private Optional<URI> propertyUri = Optional.empty();
-    private Optional<String> preferredLabel = Optional.empty();
     private Optional<String> language = Optional.empty();
     private ElementUi.Builder elementUiBuilder = ElementUi.builder();
     private Optional<Annotations> annotations = Optional.empty();
 
-    private Builder() {
+    private Builder()
+    {
     }
 
     private Builder(ElementSchemaArtifact elementSchemaArtifact)
@@ -144,7 +141,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       this.derivedFrom = elementSchemaArtifact.derivedFrom();
       this.fieldSchemas = new LinkedHashMap<>(elementSchemaArtifact.fieldSchemas());
       this.elementSchemas = new LinkedHashMap<>(elementSchemaArtifact.elementSchemas());
-      this.preferredLabel = elementSchemaArtifact.preferredLabel();
       this.language = elementSchemaArtifact.language();
       this.elementUiBuilder = ElementUi.builder(elementSchemaArtifact.elementUi());
       this.annotations = elementSchemaArtifact.annotations();
@@ -279,7 +275,8 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact);
     }
 
-    public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
+    public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel,
+      String propertyDescription)
     {
       if (this.fieldSchemas.containsKey(fieldKey) || this.elementSchemas.containsKey(fieldKey))
         throw new IllegalArgumentException("Element already has a child " + fieldKey);
@@ -291,7 +288,8 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
-    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel, String propertyDescription)
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel,
+      String propertyDescription)
     {
       return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact, propertyLabel, propertyDescription);
     }
@@ -313,7 +311,8 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact);
     }
 
-    public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
+    public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact,
+      String propertyLabel, String propertyDescription)
     {
       this.elementSchemas.put(elementKey, elementSchemaArtifact);
       this.elementUiBuilder.withOrder(elementKey);
@@ -322,7 +321,8 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
-    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel, String propertyDescription)
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel,
+      String propertyDescription)
     {
       return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact, propertyLabel, propertyDescription);
     }
@@ -351,12 +351,6 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
-    public Builder withPreferredLabel(String preferredLabel)
-    {
-      this.preferredLabel = Optional.ofNullable(preferredLabel);
-      return this;
-    }
-
     public Builder withLanguage(String language)
     {
       this.language = Optional.ofNullable(language);
@@ -371,30 +365,26 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
     public ElementSchemaArtifact build()
     {
-      return new ElementSchemaArtifactRecord(internalName, internalDescription,
-        jsonLdContext, jsonLdTypes, jsonLdId,
-        instanceJsonLdType,
-        name, description, identifier,
-        version, status, previousVersion, derivedFrom,
-        createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        fieldSchemas, elementSchemas,
-        isMultiple, minItems, maxItems, propertyUri, preferredLabel, language, elementUiBuilder.build(), annotations);
+      return new ElementSchemaArtifactRecord(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
+        instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri,
+        language, elementUiBuilder.build(), annotations);
     }
   }
 }
 
 record ElementSchemaArtifactRecord(String internalName, String internalDescription,
-                                   LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                   Optional<URI> instanceJsonLdType,
-                                   String name, String description, Optional<String> identifier,
-                                   Optional<Version> version, Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
-                                   Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                   LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+                                   Optional<URI> jsonLdId, Optional<URI> instanceJsonLdType, String name,
+                                   String description, Optional<String> identifier, Optional<Version> version,
+                                   Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                   Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                   Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
-                                   LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
-                                   boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-                                   Optional<URI> propertyUri,
-                                   Optional<String> preferredLabel, Optional<String> language, ElementUi elementUi,
-                                   Optional<Annotations> annotations)  implements ElementSchemaArtifact
+                                   LinkedHashMap<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple,
+                                   Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+                                   Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations)
+  implements ElementSchemaArtifact
 {
   public ElementSchemaArtifactRecord
   {
@@ -410,8 +400,8 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUiFieldNotNull(this, elementUi, UI);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri");
-    validateOptionalFieldNotNull(this, language,  "prefLabel");
-    validateOptionalFieldNotNull(this, language,  "language");
+    validateOptionalFieldNotNull(this, language, "prefLabel");
+    validateOptionalFieldNotNull(this, language, "language");
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
     validateOptionalFieldNotNull(this, annotations, "annotations");
@@ -426,12 +416,13 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
       throw new IllegalStateException("minItems must be less than maxItems in element schema artifact " + name());
 
     Set<String> order = new HashSet<>(elementUi.order());
-    Set<String> childKeys = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream()).collect(toSet());
+    Set<String> childKeys = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream())
+      .collect(toSet());
 
     if (!order.containsAll(childKeys)) {
       childKeys.removeAll(order); // Generate the names of children not in the order map
       order.removeAll(childKeys); // Silently remove these extra children from the order
-      for (String childToRemove: childKeys) { // And from the
+      for (String childToRemove : childKeys) { // And from the
         fieldSchemas.remove(childToRemove);
         elementSchemas.remove(childToRemove);
       }

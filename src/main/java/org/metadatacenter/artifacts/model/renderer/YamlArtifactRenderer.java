@@ -264,9 +264,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
-    if (elementSchemaArtifact.preferredLabel().isPresent())
-      rendering.put(PREF_LABEL, elementSchemaArtifact.preferredLabel().get());
-
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (elementSchemaArtifact.hasChildren())

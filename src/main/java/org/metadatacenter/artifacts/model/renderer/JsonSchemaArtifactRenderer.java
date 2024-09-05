@@ -306,9 +306,6 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
     addProvenanceRendering(elementSchemaArtifact, rendering);
 
-    if (elementSchemaArtifact.preferredLabel().isPresent())
-      rendering.put(SKOS_PREFLABEL, elementSchemaArtifact.preferredLabel().get());
-
     addVersionRendering(elementSchemaArtifact, rendering);
 
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, modelVersion.toString());

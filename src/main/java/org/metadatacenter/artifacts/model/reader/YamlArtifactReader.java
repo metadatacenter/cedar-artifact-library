@@ -304,7 +304,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>(); // TODO  Read child elements
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>(); // TODO  Read child fields
-    Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     ElementUi elementUi = readElementUi(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
@@ -314,7 +313,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri,
-      preferredLabel, language, elementUi, annotations);
+      language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
