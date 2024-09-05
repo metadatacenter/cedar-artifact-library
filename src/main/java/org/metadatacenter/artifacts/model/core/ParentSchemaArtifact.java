@@ -1,7 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
-import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -11,35 +10,37 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
-public sealed interface ParentSchemaArtifact extends ParentArtifact permits TemplateSchemaArtifact,
-  ElementSchemaArtifact
+public sealed interface ParentSchemaArtifact extends ParentArtifact
+  permits TemplateSchemaArtifact, ElementSchemaArtifact
 {
   String name();
 
   ParentArtifactUi getUi();
 
+  // fieldKey -> field schema artifact. Note that a child field's key is distinct from the child field's name
   Map<String, FieldSchemaArtifact> fieldSchemas();
 
+  // elementKey -> element schema artifact. Note that a child element's key is distinct from the child element's name
   Map<String, ElementSchemaArtifact> elementSchemas();
 
-  default boolean isField(String name) { return fieldSchemas().containsKey(name); }
+  default boolean isField(String fieldKey) {return fieldSchemas().containsKey(fieldKey);}
 
-  default boolean isStaticField(String name) {
-    return fieldSchemas().containsKey(name) && fieldSchemas().get(name).isStatic();
-  }
-
-  default boolean isAttributeValueField(String name)
+  default boolean isStaticField(String fieldKey)
   {
-    return fieldSchemas().containsKey(name) && fieldSchemas().get(name).isAttributeValue();
+    return fieldSchemas().containsKey(fieldKey) && fieldSchemas().get(fieldKey).isStatic();
   }
 
-  default boolean isElement(String name) { return elementSchemas().containsKey(name); }
+  default boolean isAttributeValueField(String fieldKey)
+  {
+    return fieldSchemas().containsKey(fieldKey) && fieldSchemas().get(fieldKey).isAttributeValue();
+  }
 
-  default boolean hasFields() { return !fieldSchemas().isEmpty(); }
+  default boolean isElement(String elementKey) {return elementSchemas().containsKey(elementKey);}
 
-  default boolean hasElements() { return !elementSchemas().isEmpty(); }
+  default boolean hasFields() {return !fieldSchemas().isEmpty();}
+
+  default boolean hasElements() {return !elementSchemas().isEmpty();}
 
   default boolean hasAttributeValueField()
   {
@@ -50,9 +51,9 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   {
     LinkedHashMap<String, FieldSchemaArtifact> orderedFieldSchemas = new LinkedHashMap<>();
 
-    for (String fieldName: getUi().order()) {
-      if (fieldSchemas().containsKey(fieldName))
-        orderedFieldSchemas.put(fieldName, fieldSchemas().get(fieldName));
+    for (String fieldKey : getUi().order()) {
+      if (fieldSchemas().containsKey(fieldKey))
+        orderedFieldSchemas.put(fieldKey, fieldSchemas().get(fieldKey));
     }
     return orderedFieldSchemas;
   }
@@ -61,27 +62,27 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   {
     LinkedHashMap<String, ElementSchemaArtifact> orderedElementSchemas = new LinkedHashMap<>();
 
-    for (String elementName : getUi().order()) {
-      if (elementSchemas().containsKey(elementName))
-        orderedElementSchemas.put(elementName, elementSchemas().get(elementName));
+    for (String elementKey : getUi().order()) {
+      if (elementSchemas().containsKey(elementKey))
+        orderedElementSchemas.put(elementKey, elementSchemas().get(elementKey));
     }
     return orderedElementSchemas;
   }
 
-  default ElementSchemaArtifact getElementSchemaArtifact(String name)
+  default ElementSchemaArtifact getElementSchemaArtifact(String elementKey)
   {
-    if (elementSchemas().containsKey(name))
-      return elementSchemas().get(name);
+    if (elementSchemas().containsKey(elementKey))
+      return elementSchemas().get(elementKey);
     else
-      throw new IllegalArgumentException("Element " + name + " not present in template " + name());
+      throw new IllegalArgumentException("Element " + elementKey + " not present in template " + name());
   }
 
-  default FieldSchemaArtifact getFieldSchemaArtifact(String name)
+  default FieldSchemaArtifact getFieldSchemaArtifact(String fieldKey)
   {
-    if (fieldSchemas().containsKey(name))
-      return fieldSchemas().get(name);
+    if (fieldSchemas().containsKey(fieldKey))
+      return fieldSchemas().get(fieldKey);
     else
-      throw new IllegalArgumentException("Field " + name + " not present in element " + name());
+      throw new IllegalArgumentException("Field " + fieldKey + " not present in element " + name());
   }
 
   Optional<URI> instanceJsonLdType();
@@ -91,13 +92,13 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
     LinkedHashMap<String, URI> childPropertyUris = new LinkedHashMap<>();
 
     for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : getChildSchemas().entrySet()) {
-      String childName = childSchemaArtifactEntry.getKey();
-      if (!isStaticField(childName) && !isAttributeValueField(childName)) {
+      String childKey = childSchemaArtifactEntry.getKey();
+      if (!isStaticField(childKey) && !isAttributeValueField(childKey)) {
         ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
         if (childSchemaArtifact.propertyUri().isPresent())
-          childPropertyUris.put(childName, childSchemaArtifact.propertyUri().get());
+          childPropertyUris.put(childKey, childSchemaArtifact.propertyUri().get());
         else // Missing property-IRI mapping, generate one
-          childPropertyUris.put(childName, generatePropertyUri(childName));
+          childPropertyUris.put(childKey, generatePropertyUri(childKey));
       }
     }
 
@@ -113,11 +114,11 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   {
     var childSchemas = new LinkedHashMap<String, ChildSchemaArtifact>();
 
-    for (String childName : getUi().order()) {
-      if (elementSchemas().containsKey(childName))
-        childSchemas.put(childName, elementSchemas().get(childName));
-      else if (fieldSchemas().containsKey(childName))
-        childSchemas.put(childName, fieldSchemas().get(childName));
+    for (String childKey : getUi().order()) {
+      if (elementSchemas().containsKey(childKey))
+        childSchemas.put(childKey, elementSchemas().get(childKey));
+      else if (fieldSchemas().containsKey(childKey))
+        childSchemas.put(childKey, fieldSchemas().get(childKey));
     }
 
     return childSchemas;
@@ -127,65 +128,65 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact permits Temp
   {
     var childSchemaOrgNames = new LinkedHashMap<String, String>();
 
-    for (String childName : getUi().order()) {
-      if (elementSchemas().containsKey(childName))
-        childSchemaOrgNames.put(childName, elementSchemas().get(childName).name());
-      else if (fieldSchemas().containsKey(childName))
-        childSchemaOrgNames.put(childName, fieldSchemas().get(childName).name());
+    for (String childKey : getUi().order()) {
+      if (elementSchemas().containsKey(childKey))
+        childSchemaOrgNames.put(childKey, elementSchemas().get(childKey).name());
+      else if (fieldSchemas().containsKey(childKey))
+        childSchemaOrgNames.put(childKey, fieldSchemas().get(childKey).name());
     }
 
     return childSchemaOrgNames;
   }
 
-  default List<String> getFieldNames()
+  default List<String> getFieldKeys()
   {
-    ArrayList<String> fieldNames = new ArrayList<>();
+    ArrayList<String> fieldKeys = new ArrayList<>();
 
-    for (String name : getUi().order())
-      if (isField(name))
-        fieldNames.add(name);
+    for (String childKey : getUi().order())
+      if (isField(childKey))
+        fieldKeys.add(childKey);
 
-    return fieldNames;
+    return fieldKeys;
   }
 
-  default List<String> getElementNames()
+  default List<String> getElementKeys()
   {
-    ArrayList<String> elementNames = new ArrayList<>();
+    ArrayList<String> elementKeys = new ArrayList<>();
 
-    for (String name : getUi().order())
-      if (isElement(name))
-        elementNames.add(name);
+    for (String childKey : getUi().order())
+      if (isElement(childKey))
+        elementKeys.add(childKey);
 
-    return elementNames;
+    return elementKeys;
   }
 
-  default List<String> getChildNames()
+  default List<String> getChildKeys()
   {
-    ArrayList<String> childNames = new ArrayList<>(getUi().order());
+    ArrayList<String> childKeys = new ArrayList<>(getUi().order());
 
-    return childNames;
+    return childKeys;
   }
 
-  default List<String> getNonStaticChildNames()
-  {
-
-    List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name)).toList();
-
-    return childNames;
-  }
-
-  default List<String> getNonStaticNonAttributeValueChildNames()
+  default List<String> getNonStaticChildKeys()
   {
 
-    List<String> childNames = getUi().order().stream().filter(name -> !isStaticField(name) && !isAttributeValueField(name)).toList();
+    List<String> childKeys = getUi().order().stream().filter(name -> !isStaticField(name)).toList();
 
-    return childNames;
+    return childKeys;
   }
 
-  default URI generatePropertyUri(String childName)
-  { // TODO Put constant in ModelNodeNames; childName is temporary
-    return URI.create("https://schema.metadatacenter.org/properties/" +
-      URLEncoder.encode(childName, StandardCharsets.UTF_8));
+  default List<String> getNonStaticNonAttributeValueChildKeys()
+  {
+
+    List<String> childKeys = getUi().order().stream()
+      .filter(name -> !isStaticField(name) && !isAttributeValueField(name)).toList();
+
+    return childKeys;
   }
 
+  default URI generatePropertyUri(String childKey)
+  { // TODO Put constant in ModelNodeNames; childKey is temporary
+    return URI.create(
+      "https://schema.metadatacenter.org/properties/" + URLEncoder.encode(childKey, StandardCharsets.UTF_8));
+  }
 }

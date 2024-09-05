@@ -98,7 +98,7 @@ public class ExcelArtifactRenderer
     Row headerRow = sheet.createRow(headerRowNumber);
     Row firstDataRow = sheet.createRow(headerRowNumber + 1);
 
-    for (String fieldName : templateSchemaArtifact.getFieldNames()) {
+    for (String fieldName : templateSchemaArtifact.getFieldKeys()) {
       FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldName);
 
       render(fieldSchemaArtifact, sheet, columnIndex, headerRow, firstDataRow);

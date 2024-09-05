@@ -655,6 +655,11 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-030.json");
   }
 
+  @Test public void testRoundTripTemplate037()
+  {
+    testTemplateSchemaArtifactRoundTripFromFile("templates/template-037.json");
+  }
+
   @Test public void testRoundTripTemplate101()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-101.json");
@@ -830,7 +835,7 @@ public class ArtifactRoundTripTest
       finalRendering);
 
     assertEquals(originalTemplateInstanceArtifact.jsonLdContext(), finalTemplateInstanceArtifact.jsonLdContext());
-    assertEquals(originalTemplateInstanceArtifact.childNames(), finalTemplateInstanceArtifact.childNames());
+    assertEquals(originalTemplateInstanceArtifact.childKeys(), finalTemplateInstanceArtifact.childKeys());
     assertEquals(originalTemplateInstanceArtifact.singleInstanceFieldInstances(), finalTemplateInstanceArtifact.singleInstanceFieldInstances());
     assertEquals(originalTemplateInstanceArtifact.singleInstanceElementInstances(), finalTemplateInstanceArtifact.singleInstanceElementInstances());
     assertEquals(originalTemplateInstanceArtifact.multiInstanceFieldInstances(), finalTemplateInstanceArtifact.multiInstanceFieldInstances());

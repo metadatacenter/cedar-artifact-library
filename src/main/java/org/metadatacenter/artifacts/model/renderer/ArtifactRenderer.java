@@ -10,7 +10,7 @@ public interface ArtifactRenderer<T>
 {
   T renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact);
 
-  T renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact);
+  T renderElementSchemaArtifact(String elementKey, ElementSchemaArtifact elementSchemaArtifact);
 
   default T renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {

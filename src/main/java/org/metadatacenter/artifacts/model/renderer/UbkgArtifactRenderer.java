@@ -135,7 +135,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     return ubkgRenderingBuilder;
   }
 
-  public UbkgRendering.Builder renderElementSchemaArtifact(String elementName, ElementSchemaArtifact elementSchemaArtifact)
+  public UbkgRendering.Builder renderElementSchemaArtifact(String elementKey, ElementSchemaArtifact elementSchemaArtifact)
   {
     return ubkgRenderingBuilder;
   }
