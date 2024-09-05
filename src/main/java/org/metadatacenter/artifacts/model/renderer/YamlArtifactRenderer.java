@@ -821,13 +821,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(elementKey)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(elementKey);
-      if (!overrideLabel.isEmpty() && !overrideLabel.equals(elementSchemaArtifact.name()))
+      if (!overrideLabel.equals(elementSchemaArtifact.name()))
         rendering.put(OVERRIDE_LABEL, overrideLabel);
     }
 
     if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(elementKey)) {
       String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(elementKey);
-      if (!overrideDescription.isEmpty() && !overrideDescription.equals(elementSchemaArtifact.description()))
+      if (!overrideDescription.equals(elementSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
 
@@ -866,13 +866,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldKey)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(fieldKey);
-      if (!overrideLabel.isEmpty() && !overrideLabel.equals(fieldSchemaArtifact.name()))
+      if (!overrideLabel.equals(fieldSchemaArtifact.name()))
         rendering.put(OVERRIDE_LABEL, overrideLabel);
     }
 
     if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(fieldKey)) {
       String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(fieldKey);
-      if (!overrideDescription.isEmpty() && !overrideDescription.equals(fieldSchemaArtifact.description()))
+      if (!overrideDescription.equals(fieldSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
 
