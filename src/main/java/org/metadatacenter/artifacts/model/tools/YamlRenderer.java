@@ -13,6 +13,7 @@ import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -49,7 +50,7 @@ public class YamlRenderer {
       if (value == value.intValue()) {
         gen.writeNumber(value.intValue());
       } else {
-        gen.writeNumber(value);
+        gen.writeNumber(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
       }
     }
   }
@@ -61,7 +62,7 @@ public class YamlRenderer {
       if (value == value.intValue()) {
         gen.writeNumber(value.intValue());
       } else {
-        gen.writeNumber(value);
+        gen.writeNumber(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
       }
     }
   }
@@ -75,6 +76,7 @@ public class YamlRenderer {
         String unicodeString = Character.toString(i);
         v = v.replaceAll(hexString, unicodeString);
       }
+      v = v.replaceAll("\\\\N", Character.toString(0x85));
       v = v.replaceAll("\\\\_", "\u00a0");
       Files.writeString(outputFilePath, v, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
