@@ -213,7 +213,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
+    LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
@@ -260,7 +260,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
@@ -273,7 +273,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementKey,
     ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(elementKey, elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(elementKey, elementSchemaArtifact, ELEMENT);
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
@@ -317,7 +317,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(fieldSchemaArtifact,
+    LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(fieldSchemaArtifact,
       renderFieldTypeName(fieldSchemaArtifact));
 
     if (fieldSchemaArtifact.preferredLabel().isPresent())
@@ -367,7 +367,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey,
     FieldSchemaArtifact fieldSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(fieldKey, fieldSchemaArtifact,
+    LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(fieldKey, fieldSchemaArtifact,
       renderFieldTypeName(fieldSchemaArtifact));
 
     if (fieldSchemaArtifact.preferredLabel().isPresent())
@@ -932,46 +932,31 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderSchemaArtifactBase(SchemaArtifact schemaArtifact, String artifactTypeName)
+  private LinkedHashMap<String, Object> renderTopLevelSchemaArtifactBase(SchemaArtifact schemaArtifact,
+    String artifactTypeName)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    rendering.put(TYPE, artifactTypeName);
-
-    if (schemaArtifact.language().isPresent())
-      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
-
-    rendering.put(NAME, schemaArtifact.name());
-
-    if (!schemaArtifact.description().isEmpty())
-      rendering.put(DESCRIPTION, schemaArtifact.description());
-
-    if (schemaArtifact.identifier().isPresent())
-      rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
-
-    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
-      rendering.put(ID, schemaArtifact.jsonLdId().get());
-
-    if (!isCompact && schemaArtifact.status().isPresent())
-      rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
-
-    if (!isCompact && schemaArtifact.version().isPresent())
-      rendering.put(VERSION, schemaArtifact.version().get().toString());
-
-    if (!isCompact)
-      rendering.put(MODEL_VERSION, modelVersion.toString());
+    addSchemaArtifactBaseRendering(schemaArtifact, artifactTypeName, rendering);
 
     return rendering;
   }
 
-  // TODO Lot of repetition of above method. This has key: [childKey] in YAML
-  private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childKey, SchemaArtifact schemaArtifact,
-    String artifactTypeName)
+  private LinkedHashMap<String, Object> renderNestedSchemaArtifactBase(String childKey,
+    ChildSchemaArtifact childSchemaArtifact, String artifactTypeName)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(KEY, childKey);
 
+    addSchemaArtifactBaseRendering(childSchemaArtifact, artifactTypeName, rendering);
+
+    return rendering;
+  }
+
+  private void addSchemaArtifactBaseRendering(SchemaArtifact schemaArtifact, String artifactTypeName,
+    LinkedHashMap<String, Object> rendering)
+  {
     rendering.put(TYPE, artifactTypeName);
 
     if (schemaArtifact.language().isPresent())
@@ -996,10 +981,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!isCompact)
       rendering.put(MODEL_VERSION, modelVersion.toString());
-
-    // TODO Generate YAML for annotations
-
-    return rendering;
   }
 
   private void addArtifactProvenanceRendering(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
