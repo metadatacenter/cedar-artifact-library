@@ -11,6 +11,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
+import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,18 +20,18 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedHashMap;
 
-public class YamlRenderer {
+public class YamlRenderer
+{
 
   private static ObjectMapper YAML_OBJECT_MAPPER;
 
   static {
-    YAMLFactory yamlFactory = new YAMLFactory()
-        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-        .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES) //enable this
-        //.enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
-        .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
-        .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
-        .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
+    YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+      .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES) //enable this
+      //.enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
+      .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
+      .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
+      .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
 
     YAML_OBJECT_MAPPER = new ObjectMapper(yamlFactory);
     YAML_OBJECT_MAPPER.registerModule(new Jdk8Module());
@@ -44,9 +45,10 @@ public class YamlRenderer {
   }
 
   // Custom serializer for Double
-  private static class CustomDoubleSerializer extends JsonSerializer<Double> {
-    @Override
-    public void serialize(Double value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+  private static class CustomDoubleSerializer extends JsonSerializer<Double>
+  {
+    @Override public void serialize(Double value, JsonGenerator gen, SerializerProvider serializers) throws IOException
+    {
       if (value == value.intValue()) {
         gen.writeNumber(value.intValue());
       } else {
@@ -56,9 +58,10 @@ public class YamlRenderer {
   }
 
   // Custom serializer for Float
-  private static class CustomFloatSerializer extends JsonSerializer<Float> {
-    @Override
-    public void serialize(Float value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+  private static class CustomFloatSerializer extends JsonSerializer<Float>
+  {
+    @Override public void serialize(Float value, JsonGenerator gen, SerializerProvider serializers) throws IOException
+    {
       if (value == value.intValue()) {
         gen.writeNumber(value.intValue());
       } else {
@@ -67,8 +70,11 @@ public class YamlRenderer {
     }
   }
 
-  public static void saveYAML(Artifact artifact, Path outputFilePath) {
-    LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact);
+  public static void saveYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient,
+    Path outputFilePath)
+  {
+
+    LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact, compactYaml, terminologyServerClient);
     try {
       String v = YAML_OBJECT_MAPPER.writeValueAsString(yamlSerialized);
       for (int i = 0x80; i <= 0x9f; i++) {
@@ -84,23 +90,29 @@ public class YamlRenderer {
     }
   }
 
-  private static LinkedHashMap<String, Object> getSerializedYaml(Artifact artifact) {
-    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+  private static LinkedHashMap<String, Object> getSerializedYaml(Artifact artifact, boolean compactYaml,
+    TerminologyServerClient terminologyServerClient)
+  {
+    YamlArtifactRenderer yamlArtifactRenderer = terminologyServerClient == null ?
+      new YamlArtifactRenderer(compactYaml) :
+      new YamlArtifactRenderer(compactYaml, terminologyServerClient);
+
     LinkedHashMap<String, Object> yamlSerialized = null;
     if (artifact instanceof FieldSchemaArtifact) {
-      yamlSerialized = yamlArtifactRenderer.renderFieldSchemaArtifact((FieldSchemaArtifact) artifact);
+      yamlSerialized = yamlArtifactRenderer.renderFieldSchemaArtifact((FieldSchemaArtifact)artifact);
     } else if (artifact instanceof ElementSchemaArtifact) {
-      yamlSerialized = yamlArtifactRenderer.renderElementSchemaArtifact((ElementSchemaArtifact) artifact);
+      yamlSerialized = yamlArtifactRenderer.renderElementSchemaArtifact((ElementSchemaArtifact)artifact);
     } else if (artifact instanceof TemplateSchemaArtifact) {
-      yamlSerialized = yamlArtifactRenderer.renderTemplateSchemaArtifact((TemplateSchemaArtifact) artifact);
+      yamlSerialized = yamlArtifactRenderer.renderTemplateSchemaArtifact((TemplateSchemaArtifact)artifact);
     } else if (artifact instanceof TemplateInstanceArtifact) {
-      yamlSerialized = yamlArtifactRenderer.renderTemplateInstanceArtifact((TemplateInstanceArtifact) artifact);
+      yamlSerialized = yamlArtifactRenderer.renderTemplateInstanceArtifact((TemplateInstanceArtifact)artifact);
     }
     return yamlSerialized;
   }
 
-  public static void outputYAML(Artifact artifact) {
-    LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact);
+  public static void outputYAML(Artifact artifact, boolean isCompact, TerminologyServerClient terminologyServerClient)
+  {
+    LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact, isCompact, terminologyServerClient);
     System.out.println(yamlSerialized);
   }
 

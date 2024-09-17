@@ -30,21 +30,18 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
  */
 public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
-  static ElementInstanceArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<String> name, Optional<String> description, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-    List<String> childKeys,
-    LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+  static ElementInstanceArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, Optional<String> name, Optional<String> description, Optional<URI> createdBy,
+    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    List<String> childKeys, LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
     LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
     LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
     LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
     LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances)
   {
     return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, childKeys,
-      singleInstanceFieldInstances, multiInstanceFieldInstances,
-      singleInstanceElementInstances, multiInstanceElementInstances,
-      attributeValueFieldInstances);
+      modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
   }
 
   // NOTE: Even though this method looks almost identical to the equivalent method in the TemplateInstanceArtifact
@@ -154,9 +151,11 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       this.childKeys = new ArrayList<>(elementInstanceArtifact.childKeys());
       this.singleInstanceFieldInstances = new LinkedHashMap<>(elementInstanceArtifact.singleInstanceFieldInstances());
       this.multiInstanceFieldInstances = new LinkedHashMap<>(elementInstanceArtifact.multiInstanceFieldInstances());
-      this.singleInstanceElementInstances = new LinkedHashMap<>(elementInstanceArtifact.singleInstanceElementInstances());
+      this.singleInstanceElementInstances = new LinkedHashMap<>(
+        elementInstanceArtifact.singleInstanceElementInstances());
       this.multiInstanceElementInstances = new LinkedHashMap<>(elementInstanceArtifact.multiInstanceElementInstances());
-      this.attributeValueFieldInstanceGroups = new LinkedHashMap<>(elementInstanceArtifact.attributeValueFieldInstanceGroups());
+      this.attributeValueFieldInstanceGroups = new LinkedHashMap<>(
+        elementInstanceArtifact.attributeValueFieldInstanceGroups());
     }
 
     public Builder withJsonLdContextEntry(String name, URI property)
@@ -166,7 +165,8 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withoutJsonLdContextEntry(String name){
+    public Builder withoutJsonLdContextEntry(String name)
+    {
       if (!this.jsonLdContext.containsKey(name))
         throw new IllegalArgumentException("Entry " + name + " not present in @context");
 
@@ -301,7 +301,8 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
-    public Builder withMultiInstanceElementInstances(String childKey, List<ElementInstanceArtifact> childElementInstances)
+    public Builder withMultiInstanceElementInstances(String childKey,
+      List<ElementInstanceArtifact> childElementInstances)
     {
       if (childKeys.contains(childKey))
         throw new IllegalArgumentException("child " + childKey + " already present in instance");
@@ -336,17 +337,17 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       childKeys.add(attributeValueFieldGroupName);
 
       Set<String> overlappingChildKeys = attributeValueFieldInstanceKeys.stream()
-        .filter(childName -> childKeys.contains(childName))
-        .collect(Collectors.toSet());
+        .filter(childName -> childKeys.contains(childName)).collect(Collectors.toSet());
 
       if (!overlappingChildKeys.isEmpty())
-        throw new IllegalArgumentException("at least one of field instance names " +
-          overlappingChildKeys + " of attribute-value field " + attributeValueFieldGroupName +
-          " already present in parent instance");
+        throw new IllegalArgumentException(
+          "at least one of field instance names " + overlappingChildKeys + " of attribute-value field "
+            + attributeValueFieldGroupName + " already present in parent instance");
 
       childKeys.addAll(attributeValueFieldInstanceKeys);
 
-      this.attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName, Map.copyOf(attributeValueFieldInstances));
+      this.attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName,
+        Map.copyOf(attributeValueFieldInstances));
 
       return this;
     }
@@ -356,16 +357,14 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     public ElementInstanceArtifact build()
     {
       return new ElementInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-        modifiedBy, createdOn, lastUpdatedOn, childKeys,
-        singleInstanceFieldInstances, multiInstanceFieldInstances,
-        singleInstanceElementInstances, multiInstanceElementInstances,
-        attributeValueFieldInstanceGroups);
+        modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
+        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
     }
   }
 }
 
-record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                     Optional<String> name, Optional<String> description,
+record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+                                     Optional<URI> jsonLdId, Optional<String> name, Optional<String> description,
                                      Optional<URI> createdBy, Optional<URI> modifiedBy,
                                      Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                      List<String> childKeys,
@@ -394,7 +393,7 @@ record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, L
     validateMapFieldNotNull(this, multiInstanceElementInstances, "multiInstanceElementInstances");
     validateMapFieldNotNull(this, attributeValueFieldInstanceGroups, "attributeValueFieldInstanceGroups");
 
-    // TODO check that all childKeys present in child instances maps and that there are no extra fields in maps
+    // TODO Check that all childKeys present in child instances maps and that there are no extra fields in maps
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

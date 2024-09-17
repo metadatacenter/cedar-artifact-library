@@ -96,13 +96,8 @@ public class ArtifactConvertor {
 
       checkCommandLine(command, options);
 
-      boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
-
       JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-      TerminologyServerClient terminologyServerClient = createTerminologyServerClientIfPossible(command);
-      // YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml, terminologyServerClient);
       JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
-      // LinkedHashMap<String, Object> yamlRendering = null;
       ObjectNode jsonRendering = null;
 
       if (command.hasOption(TEMPLATE_SCHEMA_FILE_OPTION)) {
@@ -188,23 +183,6 @@ public class ArtifactConvertor {
       }
 
       try {
-        /* if (command.hasOption(YAML_FORMAT_OPTION)) {
-          YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-            .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
-            .disable(YAMLGenerator.Feature.SPLIT_LINES);
-          ObjectMapper mapper = new ObjectMapper(yamlFactory);
-          mapper.registerModule(new Jdk8Module());
-          mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
-
-          if (command.hasOption(OUTPUT_FILE_OPTION)) {
-            String yamlOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
-            File yamlOutputFile = new File(yamlOutputFileName);
-            mapper.writeValue(yamlOutputFile, yamlRendering);
-            System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
-          } else {
-            mapper.writeValue(System.out, yamlRendering);
-          }
-        } else */
         if (command.hasOption(JSON_FORMAT_OPTION)) {
 
           if (command.hasOption(OUTPUT_FILE_OPTION)) {
@@ -225,13 +203,16 @@ public class ArtifactConvertor {
   }
 
   private static void renderYaml(Artifact artifact, CommandLine command) {
+    boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
+    TerminologyServerClient terminologyServerClient = createTerminologyServerClientIfPossible(command);
+
     if (command.hasOption(OUTPUT_FILE_OPTION)) {
       String yamlOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
       Path path = Path.of(yamlOutputFileName);
-      YamlRenderer.saveYAML(artifact, path);
+      YamlRenderer.saveYAML(artifact, compactYaml, terminologyServerClient, path);
       System.out.println("Successfully generated YAML file " + path.toFile().getAbsolutePath());
     } else {
-      YamlRenderer.outputYAML(artifact);
+      YamlRenderer.outputYAML(artifact, compactYaml, terminologyServerClient);
     }
   }
 
