@@ -363,7 +363,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  // TOOD Cut and paste from above. Merge
+  // TODO Cut and paste from above. Merge
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey,
     FieldSchemaArtifact fieldSchemaArtifact)
   {
@@ -406,6 +406,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
 
     addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+
+    if (fieldSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
 
     return rendering;
   }
@@ -546,7 +549,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     iri: http://purl.obolibrary.org/obo/UO_0010001
    * </pre>
    */
-  private void renderValueConstraintValuesWithValuesInlined(ValueConstraints valueConstraints,
+  private void renderValueConstraintsValuesInlined(ValueConstraints valueConstraints,
     LinkedHashMap<String, Object> rendering)
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
@@ -817,7 +820,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           childKey, fieldSchemaArtifact);
         if (!fieldConfigurationRendering.isEmpty())
           fieldSchemaRendering.put(CONFIGURATION, fieldConfigurationRendering);
-          
+
         childSchemasRendering.add(fieldSchemaRendering);
       } else if (childSchemaArtifact instanceof ElementSchemaArtifact) {
         ElementSchemaArtifact elementSchemaArtifact = (ElementSchemaArtifact)childSchemaArtifact;
