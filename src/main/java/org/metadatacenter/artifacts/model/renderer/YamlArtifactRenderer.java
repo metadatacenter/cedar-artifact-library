@@ -273,7 +273,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementKey,
     ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(elementKey, elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(elementKey, elementSchemaArtifact,
+      ELEMENT);
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
@@ -320,95 +321,48 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(fieldSchemaArtifact,
       renderFieldTypeName(fieldSchemaArtifact));
 
-    if (fieldSchemaArtifact.preferredLabel().isPresent())
-      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
-
-    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
-      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
-      rendering.put(ALT_LABEL, alternateLabelRendering);
-    }
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
-      renderValueConstraintsValues(valueConstraints, rendering);
-      renderValueConstraintsActions(valueConstraints, rendering);
-    }
-
-    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
-      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
-      rendering.put(GRANULARITY, templateUi.temporalGranularity());
-      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth()
-        && !templateUi.temporalGranularity().isDay()) {
-        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
-      }
-      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
-        rendering.put(INPUT_TIME_ZONE, true);
-    }
-
-    if (fieldSchemaArtifact.isStatic()) {
-      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
-        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
-
-        if (!content.isEmpty())
-          rendering.put(CONTENT, content);
-      }
-    }
-
-    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
-
-    if (fieldSchemaArtifact.annotations().isPresent())
-      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+    addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
   }
 
-  // TODO Cut and paste from above. Merge
+  /**
+   * Generate YAML rendering of a nested field schema artifact. Nested fields with have a key field
+   * <p>
+   * e.g.,
+   * <pre>
+   * key: disease
+   * type: controlled-term-field
+   * name: Disease
+   * values:
+   *   - type: ontology
+   *     acronym: DOID
+   *     ontologyName: Human Disease Ontology
+   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *   - type: class
+   *     label: Human
+   *     acronym: LOINC
+   *     termType: OntologyClass
+   *     termLabel: Homo Sapiens
+   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *   - type: branch
+   *     ontologyName: Diabetes Pharmacology Ontology
+   *     acronym: DPCO
+   *     termLabel: Disease
+   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: valueSet
+   *     acronym: HRAVS
+   *     valueSetName: Area unit
+   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   * </pre>
+   */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey,
     FieldSchemaArtifact fieldSchemaArtifact)
   {
     LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(fieldKey, fieldSchemaArtifact,
       renderFieldTypeName(fieldSchemaArtifact));
 
-    if (fieldSchemaArtifact.preferredLabel().isPresent())
-      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
-
-    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
-      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
-      rendering.put(ALT_LABEL, alternateLabelRendering);
-    }
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
-      renderValueConstraintsValues(valueConstraints, rendering);
-      renderValueConstraintsActions(valueConstraints, rendering);
-    }
-
-    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
-      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
-      rendering.put(GRANULARITY, templateUi.temporalGranularity());
-      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth()
-        && !templateUi.temporalGranularity().isDay()) {
-        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
-      }
-      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
-        rendering.put(INPUT_TIME_ZONE, true);
-    }
-
-    if (fieldSchemaArtifact.isStatic()) {
-      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
-        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
-
-        if (!content.isEmpty())
-          rendering.put(CONTENT, content);
-      }
-    }
-
-    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
-
-    if (fieldSchemaArtifact.annotations().isPresent())
-      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+    addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
   }
@@ -445,6 +399,79 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Need to generate YAML for children of template instance
 
     return rendering;
+  }
+
+  /**
+   * Generate YAML rendering for core fields in a field schema artifact.
+   * <p>
+   * e.g.,
+   * <pre>
+   * prefLabel: Core Diseases
+   * altLabels: [ "Patient Diseases", "Diseases" ]
+   * values:
+   *   - type: ontology
+   *     acronym: DOID
+   *     ontologyName: Human Disease Ontology
+   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *   - type: class
+   *     label: Human
+   *     acronym: LOINC
+   *     termType: OntologyClass
+   *     termLabel: Homo Sapiens
+   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *   - type: branch
+   *     ontologyName: Diabetes Pharmacology Ontology
+   *     acronym: DPCO
+   *     termLabel: Disease
+   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: valueSet
+   *     acronym: HRAVS
+   *     valueSetName: Area unit
+   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   * </pre>
+   */
+  private void addCoreFieldSchemaArtifactRendering(FieldSchemaArtifact fieldSchemaArtifact,
+    LinkedHashMap<String, Object> rendering)
+  {
+    if (fieldSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
+
+    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
+    }
+
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
+      renderValueConstraintsValues(valueConstraints, rendering);
+      renderValueConstraintsActions(valueConstraints, rendering);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
+      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
+      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth()
+        && !templateUi.temporalGranularity().isDay()) {
+        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+      }
+      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
+        rendering.put(INPUT_TIME_ZONE, true);
+    }
+
+    if (fieldSchemaArtifact.isStatic()) {
+      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
+        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
+
+        if (!content.isEmpty())
+          rendering.put(CONTENT, content);
+      }
+    }
+
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+
+    if (fieldSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
   }
 
   /**
