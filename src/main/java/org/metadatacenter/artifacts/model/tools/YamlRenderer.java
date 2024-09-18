@@ -72,8 +72,7 @@ public class YamlRenderer
 
   public static void saveYAML(Artifact artifact, boolean compactYaml, Path outputFilePath)
   {
-
-    saveYAML(artifact, compactYaml, null);
+    saveYAML(artifact, compactYaml, outputFilePath);
   }
 
   public static void saveYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient,
