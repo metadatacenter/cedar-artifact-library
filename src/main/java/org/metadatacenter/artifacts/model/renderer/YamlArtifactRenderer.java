@@ -752,9 +752,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
           // TODO Use typesafe switch when available
           if (action.type() == ValueType.ONTOLOGY_CLASS)
-            actionRendering.put(TYPE, "class");
+            actionRendering.put(TYPE, CLASS);
           else
-            actionRendering.put(TYPE, "value");
+            actionRendering.put(TYPE, VALUE);
 
           actionsRendering.add(actionRendering);
         }
