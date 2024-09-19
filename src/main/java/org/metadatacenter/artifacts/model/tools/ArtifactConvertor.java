@@ -209,10 +209,10 @@ public class ArtifactConvertor {
     if (command.hasOption(OUTPUT_FILE_OPTION)) {
       String yamlOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
       Path path = Path.of(yamlOutputFileName);
-      YamlRenderer.saveYAML(artifact, compactYaml, terminologyServerClient, path);
+      YamlSerializer.saveYAML(artifact, compactYaml, terminologyServerClient, path);
       System.out.println("Successfully generated YAML file " + path.toFile().getAbsolutePath());
     } else {
-      YamlRenderer.outputYAML(artifact, compactYaml, terminologyServerClient);
+      YamlSerializer.outputYAML(artifact, compactYaml, terminologyServerClient);
     }
   }
 

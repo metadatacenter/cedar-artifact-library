@@ -20,7 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedHashMap;
 
-public class YamlRenderer {
+public class YamlSerializer {
 
   private static ObjectMapper YAML_OBJECT_MAPPER;
 
@@ -68,12 +68,14 @@ public class YamlRenderer {
   }
 
   public static void saveYAML(Artifact artifact, boolean compactYaml, Path outputFilePath) {
-    saveYAML(artifact, compactYaml, outputFilePath);
+    saveYAML(artifact, compactYaml, null, outputFilePath);
   }
 
-  public static void saveYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient,
-                              Path outputFilePath) {
+  public static void getYAML(Artifact artifact, boolean compactYaml) {
+    getYAML(artifact, compactYaml, null);
+  }
 
+  public static String getYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient) {
     LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact, compactYaml, terminologyServerClient);
     try {
       String v = YAML_OBJECT_MAPPER.writeValueAsString(yamlSerialized);
@@ -84,14 +86,23 @@ public class YamlRenderer {
       }
       v = v.replaceAll("\\\\N", Character.toString(0x85));
       v = v.replaceAll("\\\\_", "\u00a0");
-      Files.writeString(outputFilePath, v, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+      return v;
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  public static void saveYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient, Path outputFilePath) {
+    String content = getYAML(artifact, compactYaml, terminologyServerClient);
+    try {
+      Files.writeString(outputFilePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  private static LinkedHashMap<String, Object> getSerializedYaml(Artifact artifact, boolean compactYaml,
-                                                                 TerminologyServerClient terminologyServerClient) {
+  private static LinkedHashMap<String, Object> getSerializedYaml(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient) {
     YamlArtifactRenderer yamlArtifactRenderer = terminologyServerClient == null ?
         new YamlArtifactRenderer(compactYaml) :
         new YamlArtifactRenderer(compactYaml, terminologyServerClient);
