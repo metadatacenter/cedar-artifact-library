@@ -121,8 +121,7 @@ public class YamlSerializer {
   }
 
   public static void outputYAML(Artifact artifact, boolean isCompact, TerminologyServerClient terminologyServerClient) {
-    LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact, isCompact, terminologyServerClient);
-    System.out.println(yamlSerialized);
+    String content = getYAML(artifact, isCompact, terminologyServerClient);
+    System.out.println(content);
   }
-
 }
