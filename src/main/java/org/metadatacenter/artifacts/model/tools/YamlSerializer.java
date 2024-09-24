@@ -71,8 +71,8 @@ public class YamlSerializer {
     saveYAML(artifact, compactYaml, null, outputFilePath);
   }
 
-  public static void getYAML(Artifact artifact, boolean compactYaml) {
-    getYAML(artifact, compactYaml, null);
+  public static String getYAML(Artifact artifact, boolean compactYaml) {
+    return getYAML(artifact, compactYaml, null);
   }
 
   public static String getYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient) {
