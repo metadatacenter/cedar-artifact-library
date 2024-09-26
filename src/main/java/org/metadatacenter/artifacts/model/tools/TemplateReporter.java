@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class TemplateReporter
       throw new RuntimeException("Expecting JSON object");
 
     ObjectNode templateObjectNode = (ObjectNode)jsonNode;
-    JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
+    JsonArtifactReader artifactReader = new JsonArtifactReader();
 
     try {
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);

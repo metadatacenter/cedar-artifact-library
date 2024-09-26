@@ -101,7 +101,7 @@ import static org.metadatacenter.model.ModelNodeValues.SKOS_IRI;
 import static org.metadatacenter.model.ModelNodeValues.XSD_IRI;
 import static org.metadatacenter.model.ModelNodeValues.XSD_STRING;
 
-public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
+public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
 {
   private final ObjectMapper mapper;
   private final DateTimeFormatter datetimeFormatter;
@@ -110,7 +110,7 @@ public class JsonSchemaArtifactRenderer implements ArtifactRenderer<ObjectNode>
 
   private final URI jsonSchemaSchemaUri = URI.create(JSON_SCHEMA_SCHEMA_IRI);
 
-  public JsonSchemaArtifactRenderer()
+  public JsonArtifactRenderer()
   {
     this.mapper = new ObjectMapper();
     this.mapper.registerModule(new Jdk8Module());

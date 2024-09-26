@@ -22,8 +22,8 @@ import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
 import org.metadatacenter.model.validation.CedarValidator;
 import org.metadatacenter.model.validation.ModelValidator;
 import org.metadatacenter.model.validation.report.ValidationReport;
@@ -56,17 +56,17 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_T
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
 
-public class JsonSchemaArtifactRendererTest
+public class JsonArtifactRendererTest
 {
-  private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-  private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
+  private JsonArtifactReader artifactReader = new JsonArtifactReader();
+  private JsonArtifactRenderer jsonArtifactRenderer;
   private ObjectMapper mapper;
   private ModelValidator cedarModelValidator;
 
   @Before
   public void setUp() {
-    artifactReader = new JsonSchemaArtifactReader();
-    jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
+    artifactReader = new JsonArtifactReader();
+    jsonArtifactRenderer = new JsonArtifactRenderer();
     mapper = new ObjectMapper();
     cedarModelValidator = new CedarValidator();
   }
@@ -78,7 +78,7 @@ public class JsonSchemaArtifactRendererTest
       withName("Study").
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    ObjectNode rendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -106,7 +106,7 @@ public class JsonSchemaArtifactRendererTest
             withTemporalType(temporalType).
             build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(temporalField);
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(temporalField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -171,7 +171,7 @@ public class JsonSchemaArtifactRendererTest
       withDefaultValue(defaultUri, defaultLabel).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -194,7 +194,7 @@ public class JsonSchemaArtifactRendererTest
       withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(controlledTermField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -218,7 +218,7 @@ public class JsonSchemaArtifactRendererTest
             withDecimalPlaces(decimalPlaces).
             build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(numericField);
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(numericField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -256,7 +256,7 @@ public class JsonSchemaArtifactRendererTest
       withLanguage(language).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(textField);
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -291,7 +291,7 @@ public class JsonSchemaArtifactRendererTest
       withValueRecommendationEnabled(true).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(textField);
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -316,7 +316,7 @@ public class JsonSchemaArtifactRendererTest
       withDefaultValue(defaultIri).
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(linkField);
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(linkField);
 
     assertTrue(validateJsonSchema(rendering));
 
@@ -338,7 +338,7 @@ public class JsonSchemaArtifactRendererTest
       withName("SDY232").
       build();
 
-    ObjectNode rendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+    ObjectNode rendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), "SDY232");
   }
@@ -350,7 +350,7 @@ public class JsonSchemaArtifactRendererTest
       withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
       build();
 
-    ObjectNode templateRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    ObjectNode templateRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder().
       withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/123")).
@@ -358,7 +358,7 @@ public class JsonSchemaArtifactRendererTest
       withName("SDY232").
       build();
 
-    ObjectNode instanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+    ObjectNode instanceRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
     assertTrue(validateJsonSchema(templateRendering, instanceRendering));
   }
@@ -370,7 +370,7 @@ public class JsonSchemaArtifactRendererTest
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
-    ObjectNode templateRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+    ObjectNode templateRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
     assertTrue(validateJsonSchema(templateRendering));
 
@@ -413,7 +413,7 @@ public class JsonSchemaArtifactRendererTest
       .withAttributeValueFieldGroup(attributeValueFieldGroupName, attributeValueFieldInstances)
       .build();
 
-    ObjectNode templateInstanceRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+    ObjectNode templateInstanceRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
     assertEquals(instanceName, templateInstanceRendering.get(SCHEMA_ORG_NAME).asText());
     assertEquals(instanceUri, URI.create(templateInstanceRendering.get(JSON_LD_ID).asText()));
@@ -456,7 +456,7 @@ public class JsonSchemaArtifactRendererTest
       .withAttributeValueFieldGroup(attributeValueFieldGroupName, attributeValueFieldInstances)
       .build();
 
-    ObjectNode elementInstanceRendering = jsonSchemaArtifactRenderer.renderElementInstanceArtifact(elementInstanceArtifact);
+    ObjectNode elementInstanceRendering = jsonArtifactRenderer.renderElementInstanceArtifact(elementInstanceArtifact);
 
     assertEquals(instanceName, elementInstanceRendering.get(SCHEMA_ORG_NAME).asText());
     assertEquals(instanceUri, URI.create(elementInstanceRendering.get(JSON_LD_ID).asText()));
@@ -499,7 +499,7 @@ public class JsonSchemaArtifactRendererTest
   {
     try {
       return (ObjectNode)mapper.readTree(new File(
-        JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+        JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
     }

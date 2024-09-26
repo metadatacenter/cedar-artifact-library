@@ -8,7 +8,7 @@
       </pattern>
     </extension>
     <option name="PACKAGE_NAME" value="org.metadatacenter.artifacts.model.reader" />
-    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest" />
+    <option name="MAIN_CLASS_NAME" value="org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest" />
     <option name="METHOD_NAME" value="testReadSimpleTemplateInstance" />
     <option name="TEST_OBJECT" value="method" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />

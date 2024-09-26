@@ -163,12 +163,12 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLE
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
 import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
-public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
+public class JsonArtifactReader implements ArtifactReader<ObjectNode>
 {
   private final String jsonSchemaSchemaUri = JSON_SCHEMA_SCHEMA_IRI;
   private final Version modelVersion = Version.fromString("1.6.0");
 
-  public JsonSchemaArtifactReader()
+  public JsonArtifactReader()
   {
   }
 

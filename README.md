@@ -51,7 +51,7 @@ For example, we can generate a JSON Schema serialization for a CEDAR template as
 TemplateSchemaArtifact templateSchemaArtifact = ...
 // Generate a Jackson Library ObjectNode instance containing a JSON Schema representation of the template
 ObjectNode rendering 
-  = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+  = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 ```
 
 ### Serializing to YAML

@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.cli.*;
 import org.metadatacenter.artifacts.model.core.*;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
@@ -96,8 +96,8 @@ public class ArtifactConvertor {
 
       checkCommandLine(command, options);
 
-      JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-      JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
+      JsonArtifactReader artifactReader = new JsonArtifactReader();
+      JsonArtifactRenderer jsonArtifactRenderer = new JsonArtifactRenderer();
       ObjectNode jsonRendering = null;
 
       if (command.hasOption(TEMPLATE_SCHEMA_FILE_OPTION)) {
@@ -107,7 +107,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
         }
       } else if (command.hasOption(ELEMENT_SCHEMA_FILE_OPTION)) {
         ObjectNode elementObjectNode = readArtifactJsonFromFile(command, ELEMENT_SCHEMA_FILE_OPTION);
@@ -116,7 +116,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(elementSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         }
       } else if (command.hasOption(FIELD_SCHEMA_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, FIELD_SCHEMA_FILE_OPTION);
@@ -125,7 +125,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(fieldSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         }
       } else if (command.hasOption(TEMPLATE_INSTANCE_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, TEMPLATE_INSTANCE_FILE_OPTION);
@@ -135,7 +135,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateInstanceArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
         }
       } else if (command.hasOption(TEMPLATE_SCHEMA_IRI_OPTION)) {
         ObjectNode templateObjectNode = readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION,
@@ -145,7 +145,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
         }
       } else if (command.hasOption(ELEMENT_SCHEMA_IRI_OPTION)) {
         ObjectNode elementObjectNode = readArtifactJsonFromRestApi(command, ELEMENT_SCHEMA_IRI_OPTION,
@@ -155,7 +155,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(elementSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         }
       } else if (command.hasOption(FIELD_SCHEMA_IRI_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromRestApi(command, FIELD_SCHEMA_IRI_OPTION,
@@ -165,7 +165,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(fieldSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         }
       } else if (command.hasOption(TEMPLATE_INSTANCE_IRI_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromRestApi(command, TEMPLATE_INSTANCE_IRI_OPTION,
@@ -176,7 +176,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateInstanceArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
         }
       } else {
         Usage(options, "No artifact file or artifact IRI option specified");
