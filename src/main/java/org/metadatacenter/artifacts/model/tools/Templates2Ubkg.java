@@ -12,7 +12,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.UbkgArtifactRenderer;
 import org.metadatacenter.artifacts.ubkg.UbkgRendering;
 import org.metadatacenter.artifacts.ubkg.UbkgTsvRenderer;
@@ -71,12 +71,12 @@ public class Templates2Ubkg
         templateObjectNodes.add(templateObjectNode);
       }
 
-      JsonSchemaArtifactReader jsonSchemaArtifactReader = new JsonSchemaArtifactReader();
+      JsonArtifactReader jsonArtifactReader = new JsonArtifactReader();
       UbkgRendering.Builder ubkgRenderingBuilder = UbkgRendering.builder();
       UbkgArtifactRenderer ubkgRenderer = new UbkgArtifactRenderer(ubkgRenderingBuilder);
 
       for (ObjectNode templateObjectNode : templateObjectNodes) {
-        TemplateSchemaArtifact templateSchemaArtifact = jsonSchemaArtifactReader.readTemplateSchemaArtifact(templateObjectNode);
+        TemplateSchemaArtifact templateSchemaArtifact = jsonArtifactReader.readTemplateSchemaArtifact(templateObjectNode);
         ubkgRenderingBuilder = ubkgRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
       }
 

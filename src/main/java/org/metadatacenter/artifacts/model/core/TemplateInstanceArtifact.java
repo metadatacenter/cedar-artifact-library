@@ -28,11 +28,10 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 
 public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {
-  static TemplateInstanceArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<String> name, Optional<String> description, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, URI isBasedOn,
-    List<String> childKeys,
-    LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+  static TemplateInstanceArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, Optional<String> name, Optional<String> description, Optional<URI> createdBy,
+    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, URI isBasedOn,
+    List<String> childKeys, LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
     LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
     LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
     LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
@@ -40,9 +39,8 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     Optional<Annotations> annotations)
   {
     return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn,
-      childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
-      singleInstanceElementInstances, multiInstanceElementInstances,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childKeys, singleInstanceFieldInstances,
+      multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
       attributeValueFieldInstanceGroups, annotations);
   }
 
@@ -160,9 +158,12 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       this.childKeys = new ArrayList<>(templateInstanceArtifact.childKeys());
       this.singleInstanceFieldInstances = new LinkedHashMap<>(templateInstanceArtifact.singleInstanceFieldInstances());
       this.multiInstanceFieldInstances = new LinkedHashMap<>(templateInstanceArtifact.multiInstanceFieldInstances());
-      this.singleInstanceElementInstances = new LinkedHashMap<>(templateInstanceArtifact.singleInstanceElementInstances());
-      this.multiInstanceElementInstances = new LinkedHashMap<>(templateInstanceArtifact.multiInstanceElementInstances());
-      this.attributeValueFieldInstanceGroups = new LinkedHashMap<>(templateInstanceArtifact.attributeValueFieldInstanceGroups());
+      this.singleInstanceElementInstances = new LinkedHashMap<>(
+        templateInstanceArtifact.singleInstanceElementInstances());
+      this.multiInstanceElementInstances = new LinkedHashMap<>(
+        templateInstanceArtifact.multiInstanceElementInstances());
+      this.attributeValueFieldInstanceGroups = new LinkedHashMap<>(
+        templateInstanceArtifact.attributeValueFieldInstanceGroups());
       this.annotations = templateInstanceArtifact.annotations();
     }
 
@@ -173,7 +174,8 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    public Builder withoutJsonLdContextEntry(String name){
+    public Builder withoutJsonLdContextEntry(String name)
+    {
       if (!this.jsonLdContext.containsKey(name))
         throw new IllegalArgumentException("Entry " + name + " not present in @context");
 
@@ -343,17 +345,17 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       childKeys.add(attributeValueFieldGroupName);
 
       Set<String> overlappingChildKeys = attributeValueFieldInstanceNames.stream()
-        .filter(childKey -> childKeys.contains(childKey))
-        .collect(Collectors.toSet());
+        .filter(childKey -> childKeys.contains(childKey)).collect(Collectors.toSet());
 
       if (!overlappingChildKeys.isEmpty())
-        throw new IllegalArgumentException("at least one of field instance names " +
-          overlappingChildKeys + " of attribute-value field " + attributeValueFieldGroupName +
-          " already present in parent instance");
+        throw new IllegalArgumentException(
+          "at least one of field instance names " + overlappingChildKeys + " of attribute-value field "
+            + attributeValueFieldGroupName + " already present in parent instance");
 
       childKeys.addAll(attributeValueFieldInstanceNames);
 
-      this.attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName, Map.copyOf(attributeValueFieldInstances));
+      this.attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName,
+        Map.copyOf(attributeValueFieldInstances));
 
       return this;
     }
@@ -369,27 +371,24 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     public TemplateInstanceArtifact build()
     {
       return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-        modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childKeys,
-        singleInstanceFieldInstances, multiInstanceFieldInstances,
-        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups,
-        annotations);
+        modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childKeys, singleInstanceFieldInstances,
+        multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
+        attributeValueFieldInstanceGroups, annotations);
     }
   }
 }
 
-record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                      Optional<String> name, Optional<String> description,
+record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+                                      Optional<URI> jsonLdId, Optional<String> name, Optional<String> description,
                                       Optional<URI> createdBy, Optional<URI> modifiedBy,
                                       Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                      URI isBasedOn,
-                                      List<String> childKeys,
+                                      URI isBasedOn, List<String> childKeys,
                                       LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
                                       LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
                                       LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
                                       LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
                                       LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups,
-                                      Optional<Annotations> annotations)
-  implements TemplateInstanceArtifact
+                                      Optional<Annotations> annotations) implements TemplateInstanceArtifact
 {
   public TemplateInstanceArtifactRecord
   {
@@ -411,7 +410,7 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
     validateMapFieldNotNull(this, attributeValueFieldInstanceGroups, "attributeValueFieldInstanceGroups");
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
-    // TODO check that all childKeys present in child instances maps and that there are no extra fields in maps
+    // TODO Check that all childKeys present in child instances maps and that there are no extra fields in maps
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

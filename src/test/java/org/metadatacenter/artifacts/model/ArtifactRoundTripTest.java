@@ -34,9 +34,9 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
-import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.model.validation.CedarValidator;
 import org.metadatacenter.model.validation.ModelValidator;
 import org.metadatacenter.model.validation.report.ValidationReport;
@@ -51,15 +51,15 @@ import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueCo
 
 public class ArtifactRoundTripTest
 {
-  private JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-  private JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer;
+  private JsonArtifactReader artifactReader = new JsonArtifactReader();
+  private JsonArtifactRenderer jsonArtifactRenderer;
   private ObjectMapper mapper;
   private ModelValidator cedarModelValidator;
 
   @Before public void setUp()
   {
-    artifactReader = new JsonSchemaArtifactReader();
-    jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
+    artifactReader = new JsonArtifactReader();
+    jsonArtifactRenderer = new JsonArtifactRenderer();
     mapper = new ObjectMapper();
     cedarModelValidator = new CedarValidator();
   }
@@ -766,7 +766,7 @@ public class ArtifactRoundTripTest
     TemplateSchemaArtifact originalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(
       originalRendering);
 
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(originalTemplateSchemaArtifact);
+    ObjectNode finalRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(originalTemplateSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
 
@@ -788,7 +788,7 @@ public class ArtifactRoundTripTest
     ElementSchemaArtifact originalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(
       originalRendering);
 
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
+    ObjectNode finalRendering = jsonArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
 
@@ -810,7 +810,7 @@ public class ArtifactRoundTripTest
     FieldSchemaArtifact originalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(
       originalRendering);
 
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+    ObjectNode finalRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
 
@@ -828,7 +828,7 @@ public class ArtifactRoundTripTest
     TemplateInstanceArtifact originalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
       originalRendering);
 
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(
+    ObjectNode finalRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(
       originalTemplateInstanceArtifact);
 
     TemplateInstanceArtifact finalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
@@ -846,7 +846,7 @@ public class ArtifactRoundTripTest
 
   private void testRoundTripTemplateSchemaArtifact(TemplateSchemaArtifact originalTemplateSchemaArtifact)
   {
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(
+    ObjectNode originalRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(
       originalTemplateSchemaArtifact);
 
     assertTrue(validateJsonSchema(originalRendering));
@@ -855,7 +855,7 @@ public class ArtifactRoundTripTest
 
     TemplateSchemaArtifact finalTemplateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(originalRendering);
 
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(finalTemplateSchemaArtifact);
+    ObjectNode finalRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(finalTemplateSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
 
@@ -866,7 +866,7 @@ public class ArtifactRoundTripTest
 
   private void testRoundTripElementSchemaArtifact(ElementSchemaArtifact originalElementSchemaArtifact)
   {
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
+    ObjectNode originalRendering = jsonArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
 
     assertTrue(validateJsonSchema(originalRendering));
 
@@ -874,7 +874,7 @@ public class ArtifactRoundTripTest
 
     ElementSchemaArtifact finalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(originalRendering);
 
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(finalElementSchemaArtifact);
+    ObjectNode finalRendering = jsonArtifactRenderer.renderElementSchemaArtifact(finalElementSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
 
@@ -885,7 +885,7 @@ public class ArtifactRoundTripTest
 
   private void testRoundTripFieldSchemaArtifact(FieldSchemaArtifact originalFieldSchemaArtifact)
   {
-    ObjectNode originalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
+    ObjectNode originalRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
     assertTrue(validateJsonSchema(originalRendering));
 
@@ -893,7 +893,7 @@ public class ArtifactRoundTripTest
 
     FieldSchemaArtifact finalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
 
-    ObjectNode finalRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
+    ObjectNode finalRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(finalFieldSchemaArtifact);
 
     assertTrue(validateJsonSchema(finalRendering));
 
@@ -906,7 +906,7 @@ public class ArtifactRoundTripTest
   {
     try {
       JsonNode jsonNode = mapper.readTree(
-        new File(JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+        new File(JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
 
       if (jsonNode.isObject())
         return (ObjectNode)jsonNode;

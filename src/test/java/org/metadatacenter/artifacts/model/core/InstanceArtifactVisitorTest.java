@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReaderTest;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
 import org.metadatacenter.artifacts.model.visitors.TemplateReporter;
 
 import java.io.File;
@@ -24,12 +23,12 @@ import static org.junit.Assert.assertTrue;
 
 public class InstanceArtifactVisitorTest
 {
-  private JsonSchemaArtifactReader artifactReader;
+  private JsonArtifactReader artifactReader;
   private ObjectMapper mapper;
 
   @Before
   public void setUp() {
-    artifactReader = new JsonSchemaArtifactReader();
+    artifactReader = new JsonArtifactReader();
     mapper = new ObjectMapper();
   }
 
@@ -199,7 +198,7 @@ public class InstanceArtifactVisitorTest
   {
     try {
       JsonNode jsonNode = mapper.readTree(new File(
-        JsonSchemaArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+        JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
 
       if (jsonNode.isObject())
         return (ObjectNode)jsonNode;

@@ -13,7 +13,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.ExcelArtifactRenderer;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
@@ -75,7 +75,7 @@ public class Template2Excel
       } else
         Usage(options, "Both a template file path and a template IRI cannot be specified together");
 
-      JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
+      JsonArtifactReader artifactReader = new JsonArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
       TerminologyServerClient terminologyServerClient = new TerminologyServerClient(

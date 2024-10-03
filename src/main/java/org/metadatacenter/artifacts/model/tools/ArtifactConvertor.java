@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.cli.*;
 import org.metadatacenter.artifacts.model.core.*;
-import org.metadatacenter.artifacts.model.reader.JsonSchemaArtifactReader;
-import org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactRenderer;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
@@ -96,13 +96,8 @@ public class ArtifactConvertor {
 
       checkCommandLine(command, options);
 
-      boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
-
-      JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
-      TerminologyServerClient terminologyServerClient = createTerminologyServerClientIfPossible(command);
-      // YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(compactYaml, terminologyServerClient);
-      JsonSchemaArtifactRenderer jsonSchemaArtifactRenderer = new JsonSchemaArtifactRenderer();
-      // LinkedHashMap<String, Object> yamlRendering = null;
+      JsonArtifactReader artifactReader = new JsonArtifactReader();
+      JsonArtifactRenderer jsonArtifactRenderer = new JsonArtifactRenderer();
       ObjectNode jsonRendering = null;
 
       if (command.hasOption(TEMPLATE_SCHEMA_FILE_OPTION)) {
@@ -112,7 +107,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
         }
       } else if (command.hasOption(ELEMENT_SCHEMA_FILE_OPTION)) {
         ObjectNode elementObjectNode = readArtifactJsonFromFile(command, ELEMENT_SCHEMA_FILE_OPTION);
@@ -121,7 +116,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(elementSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         }
       } else if (command.hasOption(FIELD_SCHEMA_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, FIELD_SCHEMA_FILE_OPTION);
@@ -130,7 +125,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(fieldSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         }
       } else if (command.hasOption(TEMPLATE_INSTANCE_FILE_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromFile(command, TEMPLATE_INSTANCE_FILE_OPTION);
@@ -140,7 +135,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateInstanceArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
         }
       } else if (command.hasOption(TEMPLATE_SCHEMA_IRI_OPTION)) {
         ObjectNode templateObjectNode = readArtifactJsonFromRestApi(command, TEMPLATE_SCHEMA_IRI_OPTION,
@@ -150,7 +145,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
         }
       } else if (command.hasOption(ELEMENT_SCHEMA_IRI_OPTION)) {
         ObjectNode elementObjectNode = readArtifactJsonFromRestApi(command, ELEMENT_SCHEMA_IRI_OPTION,
@@ -160,7 +155,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(elementSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
         }
       } else if (command.hasOption(FIELD_SCHEMA_IRI_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromRestApi(command, FIELD_SCHEMA_IRI_OPTION,
@@ -170,7 +165,7 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(fieldSchemaArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
+          jsonRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(fieldSchemaArtifact);
         }
       } else if (command.hasOption(TEMPLATE_INSTANCE_IRI_OPTION)) {
         ObjectNode fieldObjectNode = readArtifactJsonFromRestApi(command, TEMPLATE_INSTANCE_IRI_OPTION,
@@ -181,30 +176,13 @@ public class ArtifactConvertor {
         if (command.hasOption(YAML_FORMAT_OPTION)) {
           renderYaml(templateInstanceArtifact, command);
         } else if (command.hasOption(JSON_FORMAT_OPTION)) {
-          jsonRendering = jsonSchemaArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+          jsonRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
         }
       } else {
         Usage(options, "No artifact file or artifact IRI option specified");
       }
 
       try {
-        /* if (command.hasOption(YAML_FORMAT_OPTION)) {
-          YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-            .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
-            .disable(YAMLGenerator.Feature.SPLIT_LINES);
-          ObjectMapper mapper = new ObjectMapper(yamlFactory);
-          mapper.registerModule(new Jdk8Module());
-          mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
-
-          if (command.hasOption(OUTPUT_FILE_OPTION)) {
-            String yamlOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
-            File yamlOutputFile = new File(yamlOutputFileName);
-            mapper.writeValue(yamlOutputFile, yamlRendering);
-            System.out.println("Successfully generated YAML file " + yamlOutputFile.getAbsolutePath());
-          } else {
-            mapper.writeValue(System.out, yamlRendering);
-          }
-        } else */
         if (command.hasOption(JSON_FORMAT_OPTION)) {
 
           if (command.hasOption(OUTPUT_FILE_OPTION)) {
@@ -225,13 +203,16 @@ public class ArtifactConvertor {
   }
 
   private static void renderYaml(Artifact artifact, CommandLine command) {
+    boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
+    TerminologyServerClient terminologyServerClient = createTerminologyServerClientIfPossible(command);
+
     if (command.hasOption(OUTPUT_FILE_OPTION)) {
       String yamlOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
       Path path = Path.of(yamlOutputFileName);
-      YamlRenderer.saveYAML(artifact, path);
+      YamlSerializer.saveYAML(artifact, compactYaml, terminologyServerClient, path);
       System.out.println("Successfully generated YAML file " + path.toFile().getAbsolutePath());
     } else {
-      YamlRenderer.outputYAML(artifact);
+      YamlSerializer.outputYAML(artifact, compactYaml, terminologyServerClient);
     }
   }
 

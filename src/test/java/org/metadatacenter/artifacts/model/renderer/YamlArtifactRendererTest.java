@@ -125,13 +125,11 @@ public class YamlArtifactRendererTest {
 
     String name = "Address";
     String description = "Address element";
-    String preferredLabel = "preferred label";
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().
       withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).
       withName(name).
       withDescription(description).
-      withPreferredLabel(preferredLabel).
       build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
@@ -142,7 +140,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(PREF_LABEL, preferredLabel);
 
     assertEquals(expectedRendering, actualRendering);
   }

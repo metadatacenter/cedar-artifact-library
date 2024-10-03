@@ -163,12 +163,12 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLE
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
 import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
-public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
+public class JsonArtifactReader implements ArtifactReader<ObjectNode>
 {
   private final String jsonSchemaSchemaUri = JSON_SCHEMA_SCHEMA_IRI;
   private final Version modelVersion = Version.fromString("1.6.0");
 
-  public JsonSchemaArtifactReader()
+  public JsonArtifactReader()
   {
   }
 
@@ -370,7 +370,6 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
-    Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     Optional<String> language = readLanguage(sourceNode, path);
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
@@ -388,7 +387,7 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion,
       derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiInstance,
-      minItems, maxItems, propertyUri, preferredLabel, language, elementUi, annotations);
+      minItems, maxItems, propertyUri, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path, String childKey,
@@ -1316,13 +1315,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       if (childKey2Name.containsKey(childKey)) {
         if (originalPropertyLabels.containsKey(childKey))
           reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
-        else
-          reorderedPropertyLabels.put(childKey, childKey2Name.get(childKey));
 
         if (originalPropertyDescriptions.containsKey(childKey))
           reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
-        else
-          reorderedPropertyDescriptions.put(childKey, "");
       } else
         orderEntriesToRemove.add(childKey);
     }
@@ -1353,13 +1348,9 @@ public class JsonSchemaArtifactReader implements ArtifactReader<ObjectNode>
       if (childKey2Name.containsKey(childKey)) {
         if (originalPropertyLabels.containsKey(childKey))
           reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
-        else
-          reorderedPropertyLabels.put(childKey, childKey2Name.get(childKey));
 
         if (originalPropertyDescriptions.containsKey(childKey))
           reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
-        else
-          reorderedPropertyDescriptions.put(childKey, "");
       } else
         orderEntriesToRemove.add(childKey);
     }

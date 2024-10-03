@@ -148,21 +148,19 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.WIDTH;
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
   private final boolean isCompact;
-  private final DateTimeFormatter datetimeFormatter;
+  private final DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   private final TerminologyServerClient terminologyServerClient;
   private final Version modelVersion = Version.fromString("1.6.0");
 
   public YamlArtifactRenderer(boolean isCompact, TerminologyServerClient terminologyServerClient)
   {
     this.isCompact = isCompact;
-    this.datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
     this.terminologyServerClient = terminologyServerClient;
   }
 
   public YamlArtifactRenderer(boolean isCompact)
   {
     this.isCompact = isCompact;
-    this.datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
     this.terminologyServerClient = null;
   }
 
@@ -215,7 +213,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderTemplateSchemaArtifact(TemplateSchemaArtifact templateSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
+    LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
@@ -262,10 +260,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
-
-    if (elementSchemaArtifact.preferredLabel().isPresent())
-      rendering.put(PREF_LABEL, elementSchemaArtifact.preferredLabel().get());
+    LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
@@ -275,9 +270,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementKey, ElementSchemaArtifact elementSchemaArtifact)
+  public LinkedHashMap<String, Object> renderElementSchemaArtifact(String elementKey,
+    ElementSchemaArtifact elementSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering = renderChildSchemaArtifactBase(elementKey, elementSchemaArtifact, ELEMENT);
+    LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(elementKey, elementSchemaArtifact,
+      ELEMENT);
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
@@ -321,85 +318,51 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering
-      = renderSchemaArtifactBase(fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
+    LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(fieldSchemaArtifact,
+      renderFieldTypeName(fieldSchemaArtifact));
 
-    if (fieldSchemaArtifact.preferredLabel().isPresent())
-      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
-
-    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
-      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
-      rendering.put(ALT_LABEL, alternateLabelRendering);
-    }
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
-      renderValueConstraintsValues(valueConstraints, rendering);
-      renderValueConstraintsActions(valueConstraints, rendering);
-    }
-
-    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
-      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
-      rendering.put(GRANULARITY, templateUi.temporalGranularity());
-      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth() &&
-        !templateUi.temporalGranularity().isDay()) {
-        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
-      }
-      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
-        rendering.put(INPUT_TIME_ZONE, true);
-    }
-
-    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
-
-    if (fieldSchemaArtifact.annotations().isPresent())
-      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+    addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
   }
 
-  // TOOD Cut and paste from above. Merge
-  public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact)
+  /**
+   * Generate YAML rendering of a nested field schema artifact. Nested fields with have a key field
+   * <p>
+   * e.g.,
+   * <pre>
+   * key: disease
+   * type: controlled-term-field
+   * name: Disease
+   * values:
+   *   - type: ontology
+   *     acronym: DOID
+   *     ontologyName: Human Disease Ontology
+   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *   - type: class
+   *     label: Human
+   *     acronym: LOINC
+   *     termType: OntologyClass
+   *     termLabel: Homo Sapiens
+   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *   - type: branch
+   *     ontologyName: Diabetes Pharmacology Ontology
+   *     acronym: DPCO
+   *     termLabel: Disease
+   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: valueSet
+   *     acronym: HRAVS
+   *     valueSetName: Area unit
+   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   * </pre>
+   */
+  public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey,
+    FieldSchemaArtifact fieldSchemaArtifact)
   {
-    LinkedHashMap<String, Object> rendering
-      = renderChildSchemaArtifactBase(fieldKey, fieldSchemaArtifact, renderFieldTypeName(fieldSchemaArtifact));
+    LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(fieldKey, fieldSchemaArtifact,
+      renderFieldTypeName(fieldSchemaArtifact));
 
-    if (fieldSchemaArtifact.preferredLabel().isPresent())
-      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
-
-    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
-      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
-      rendering.put(ALT_LABEL, alternateLabelRendering);
-    }
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
-      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
-      renderValueConstraintsValues(valueConstraints, rendering);
-      renderValueConstraintsActions(valueConstraints, rendering);
-    }
-
-    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
-      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
-      rendering.put(GRANULARITY, templateUi.temporalGranularity());
-      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth() &&
-        !templateUi.temporalGranularity().isDay()) {
-        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
-      }
-      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
-        rendering.put(INPUT_TIME_ZONE, true);
-    }
-
-    if (fieldSchemaArtifact.isStatic()) {
-      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
-        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
-
-        if (!content.isEmpty())
-          rendering.put(CONTENT, content);
-      }
-    }
-
-    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+    addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
     return rendering;
   }
@@ -439,6 +402,79 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   }
 
   /**
+   * Generate YAML rendering for core fields in a field schema artifact.
+   * <p>
+   * e.g.,
+   * <pre>
+   * prefLabel: Core Diseases
+   * altLabels: [ "Patient Diseases", "Diseases" ]
+   * values:
+   *   - type: ontology
+   *     acronym: DOID
+   *     ontologyName: Human Disease Ontology
+   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *   - type: class
+   *     label: Human
+   *     acronym: LOINC
+   *     termType: OntologyClass
+   *     termLabel: Homo Sapiens
+   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *   - type: branch
+   *     ontologyName: Diabetes Pharmacology Ontology
+   *     acronym: DPCO
+   *     termLabel: Disease
+   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   - type: valueSet
+   *     acronym: HRAVS
+   *     valueSetName: Area unit
+   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   * </pre>
+   */
+  private void addCoreFieldSchemaArtifactRendering(FieldSchemaArtifact fieldSchemaArtifact,
+    LinkedHashMap<String, Object> rendering)
+  {
+    if (fieldSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, fieldSchemaArtifact.preferredLabel().get());
+
+    if (!fieldSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(fieldSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
+    }
+
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
+      renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
+      renderValueConstraintsValues(valueConstraints, rendering);
+      renderValueConstraintsActions(valueConstraints, rendering);
+    }
+
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
+      TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
+      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth()
+        && !templateUi.temporalGranularity().isDay()) {
+        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+      }
+      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
+        rendering.put(INPUT_TIME_ZONE, true);
+    }
+
+    if (fieldSchemaArtifact.isStatic()) {
+      if (fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().isPresent()) {
+        String content = fieldSchemaArtifact.fieldUi().asStaticFieldUi()._content().get();
+
+        if (!content.isEmpty())
+          rendering.put(CONTENT, content);
+      }
+    }
+
+    addArtifactProvenanceRendering(fieldSchemaArtifact, rendering);
+
+    if (fieldSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+  }
+
+  /**
    * Generate YAML rendering of a field schema artifact _valueConstraints values specification
    * <p>
    * e.g.,
@@ -474,22 +510,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
 
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
-        LinkedHashMap<String, Object> ontologyValueConstraintRendering = renderOntologyValueConstraint(ontologyValueConstraint);
+        LinkedHashMap<String, Object> ontologyValueConstraintRendering = renderOntologyValueConstraint(
+          ontologyValueConstraint);
         valuesRendering.add(ontologyValueConstraintRendering);
       }
 
       for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
-        LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+        LinkedHashMap<String, Object> classValueConstraintRendering = renderClassValueConstraint(classValueConstraint);
         valuesRendering.add(classValueConstraintRendering);
       }
 
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
-        LinkedHashMap<String, Object> branchValueConstraintRendering = renderBranchValueConstraint(branchValueConstraint);
+        LinkedHashMap<String, Object> branchValueConstraintRendering = renderBranchValueConstraint(
+          branchValueConstraint);
         valuesRendering.add(branchValueConstraintRendering);
       }
 
       for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
-        LinkedHashMap<String, Object> valueSetValueConstraintRendering = renderValueSetValueConstraint(valueSetValueConstraint);
+        LinkedHashMap<String, Object> valueSetValueConstraintRendering = renderValueSetValueConstraint(
+          valueSetValueConstraint);
         valuesRendering.add(valueSetValueConstraintRendering);
       }
 
@@ -497,7 +536,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints;
 
       for (LiteralValueConstraint literalValueConstraint : textValueConstraints.literals()) {
-        LinkedHashMap<String, Object> literalValueConstraintRendering = renderLiteralValueConstraint(literalValueConstraint);
+        LinkedHashMap<String, Object> literalValueConstraintRendering = renderLiteralValueConstraint(
+          literalValueConstraint);
         valuesRendering.add(literalValueConstraintRendering);
       }
     }
@@ -536,7 +576,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *     iri: http://purl.obolibrary.org/obo/UO_0010001
    * </pre>
    */
-  private void renderValueConstraintValuesWithValuesInlined(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
+  private void renderValueConstraintsValuesInlined(ValueConstraints valueConstraints,
+    LinkedHashMap<String, Object> rendering)
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
 
@@ -546,33 +587,39 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
       for (OntologyValueConstraint ontologyValueConstraint : controlledTermValueConstraints.ontologies()) {
 
-        List<ClassValueConstraint> classValueConstraints = ontologyValueConstraint2ClassValueConstraints(ontologyValueConstraint);
+        List<ClassValueConstraint> classValueConstraints = ontologyValueConstraint2ClassValueConstraints(
+          ontologyValueConstraint);
 
         for (ClassValueConstraint classValueConstraint : classValueConstraints) {
-          LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+          LinkedHashMap<String, Object> classValueConstraintRendering = renderClassValueConstraint(
+            classValueConstraint);
           valuesRendering.add(classValueConstraintRendering);
         }
       }
 
       for (ClassValueConstraint classValueConstraint : controlledTermValueConstraints.classes()) {
-        LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+        LinkedHashMap<String, Object> classValueConstraintRendering = renderClassValueConstraint(classValueConstraint);
         valuesRendering.add(classValueConstraintRendering);
       }
 
       for (BranchValueConstraint branchValueConstraint : controlledTermValueConstraints.branches()) {
-        List<ClassValueConstraint> classValueConstraints = branchValueConstraint2ClassValueConstraints(branchValueConstraint);
+        List<ClassValueConstraint> classValueConstraints = branchValueConstraint2ClassValueConstraints(
+          branchValueConstraint);
 
         for (ClassValueConstraint classValueConstraint : classValueConstraints) {
-          LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+          LinkedHashMap<String, Object> classValueConstraintRendering = renderClassValueConstraint(
+            classValueConstraint);
           valuesRendering.add(classValueConstraintRendering);
         }
       }
 
       for (ValueSetValueConstraint valueSetValueConstraint : controlledTermValueConstraints.valueSets()) {
-        List<ClassValueConstraint> classValueConstraints = valueSetValueConstraint2ClassValueConstraints(valueSetValueConstraint);
+        List<ClassValueConstraint> classValueConstraints = valueSetValueConstraint2ClassValueConstraints(
+          valueSetValueConstraint);
 
         for (ClassValueConstraint classValueConstraint : classValueConstraints) {
-          LinkedHashMap<String, Object> classValueConstraintRendering =  renderClassValueConstraint(classValueConstraint);
+          LinkedHashMap<String, Object> classValueConstraintRendering = renderClassValueConstraint(
+            classValueConstraint);
           valuesRendering.add(classValueConstraintRendering);
         }
       }
@@ -581,7 +628,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints;
 
       for (LiteralValueConstraint literalValueConstraint : textValueConstraints.literals()) {
-        LinkedHashMap<String, Object> literalValueConstraintRendering = renderLiteralValueConstraint(literalValueConstraint);
+        LinkedHashMap<String, Object> literalValueConstraintRendering = renderLiteralValueConstraint(
+          literalValueConstraint);
         valuesRendering.add(literalValueConstraintRendering);
       }
     }
@@ -590,17 +638,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(VALUES, valuesRendering);
   }
 
-  private List<ClassValueConstraint> ontologyValueConstraint2ClassValueConstraints(OntologyValueConstraint ontologyValueConstraint)
+  private List<ClassValueConstraint> ontologyValueConstraint2ClassValueConstraints(
+    OntologyValueConstraint ontologyValueConstraint)
   {
     if (this.terminologyServerClient == null)
       throw new RuntimeException("no terminology server configured");
 
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
-    ControlledTermValueConstraints controlledTermValueConstraints
-      = ControlledTermValueConstraints.builder().withOntologyValueConstraint(ontologyValueConstraint).build();
+    ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
+      .withOntologyValueConstraint(ontologyValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
+    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+      controlledTermValueConstraints);
 
     for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
       String preferredLabel = preferredLabel2UriEntry.getKey();
@@ -613,17 +663,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return classValueConstraints;
   }
 
-  private List<ClassValueConstraint> branchValueConstraint2ClassValueConstraints(BranchValueConstraint branchValueConstraint)
+  private List<ClassValueConstraint> branchValueConstraint2ClassValueConstraints(
+    BranchValueConstraint branchValueConstraint)
   {
     if (this.terminologyServerClient == null)
       throw new RuntimeException("no terminology server configured");
 
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
-    ControlledTermValueConstraints controlledTermValueConstraints
-      = ControlledTermValueConstraints.builder().withBranchValueConstraint(branchValueConstraint).build();
+    ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
+      .withBranchValueConstraint(branchValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
+    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+      controlledTermValueConstraints);
 
     for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
       String preferredLabel = preferredLabel2UriEntry.getKey();
@@ -636,17 +688,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return classValueConstraints;
   }
 
-  private List<ClassValueConstraint> valueSetValueConstraint2ClassValueConstraints(ValueSetValueConstraint valueSetValueConstraint)
+  private List<ClassValueConstraint> valueSetValueConstraint2ClassValueConstraints(
+    ValueSetValueConstraint valueSetValueConstraint)
   {
     if (this.terminologyServerClient == null)
       throw new RuntimeException("no terminology server configured");
 
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
-    ControlledTermValueConstraints controlledTermValueConstraints
-      = ControlledTermValueConstraints.builder().withValueSetValueConstraint(valueSetValueConstraint).build();
+    ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
+      .withValueSetValueConstraint(valueSetValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
+    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+      controlledTermValueConstraints);
 
     for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
       String preferredLabel = preferredLabel2UriEntry.getKey();
@@ -698,9 +752,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
           // TODO Use typesafe switch when available
           if (action.type() == ValueType.ONTOLOGY_CLASS)
-            actionRendering.put(TYPE, "class");
+            actionRendering.put(TYPE, CLASS);
           else
-            actionRendering.put(TYPE, "value");
+            actionRendering.put(TYPE, VALUE);
 
           actionsRendering.add(actionRendering);
         }
@@ -712,7 +766,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   }
 
   // TODO Clean this up
-  private void renderCoreValueConstraints(ValueConstraints valueConstraints, FieldUi fieldUi, LinkedHashMap<String, Object> rendering)
+  private void renderCoreValueConstraints(ValueConstraints valueConstraints, FieldUi fieldUi,
+    LinkedHashMap<String, Object> rendering)
   {
     // TODO Use typesafe switch when available
     if (valueConstraints instanceof NumericValueConstraints) {
@@ -776,7 +831,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   }
 
   private List<LinkedHashMap<String, Object>> renderChildSchemas(ParentSchemaArtifact parentSchemaArtifact,
-    LinkedHashMap<String, ChildSchemaArtifact> childSchemaArtifacts) {
+    LinkedHashMap<String, ChildSchemaArtifact> childSchemaArtifacts)
+  {
     List<LinkedHashMap<String, Object>> childSchemasRendering = new ArrayList<>();
 
     // TODO Use typesafe switch when available
@@ -787,12 +843,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
         LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childKey, fieldSchemaArtifact);
 
-        if (!(fieldSchemaArtifact.isAttributeValue() || fieldSchemaArtifact.isStatic())) {
-          LinkedHashMap<String, Object> fieldConfigurationRendering = renderFieldConfiguration(parentSchemaArtifact,
-            childKey, fieldSchemaArtifact);
-          if (!fieldConfigurationRendering.isEmpty())
-            fieldSchemaRendering.put(CONFIGURATION, fieldConfigurationRendering);
-        }
+        LinkedHashMap<String, Object> fieldConfigurationRendering = renderFieldConfiguration(parentSchemaArtifact,
+          childKey, fieldSchemaArtifact);
+        if (!fieldConfigurationRendering.isEmpty())
+          fieldSchemaRendering.put(CONFIGURATION, fieldConfigurationRendering);
 
         childSchemasRendering.add(fieldSchemaRendering);
       } else if (childSchemaArtifact instanceof ElementSchemaArtifact) {
@@ -821,13 +875,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(elementKey)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(elementKey);
-      if (!overrideLabel.isEmpty() && !overrideLabel.equals(elementSchemaArtifact.name()))
+      if (!overrideLabel.equals(elementSchemaArtifact.name()))
         rendering.put(OVERRIDE_LABEL, overrideLabel);
     }
 
     if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(elementKey)) {
       String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(elementKey);
-      if (!overrideDescription.isEmpty() && !overrideDescription.equals(elementSchemaArtifact.description()))
+      if (!overrideDescription.equals(elementSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
 
@@ -866,13 +920,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldKey)) {
       String overrideLabel = parentSchemaArtifact.getUi().propertyLabels().get(fieldKey);
-      if (!overrideLabel.isEmpty() && !overrideLabel.equals(fieldSchemaArtifact.name()))
+      if (!overrideLabel.equals(fieldSchemaArtifact.name()))
         rendering.put(OVERRIDE_LABEL, overrideLabel);
     }
 
     if (parentSchemaArtifact.getUi().propertyDescriptions().containsKey(fieldKey)) {
       String overrideDescription = parentSchemaArtifact.getUi().propertyDescriptions().get(fieldKey);
-      if (!overrideDescription.isEmpty() && !overrideDescription.equals(fieldSchemaArtifact.description()))
+      if (!overrideDescription.equals(fieldSchemaArtifact.description()))
         rendering.put(OVERRIDE_DESCRIPTION, overrideDescription);
     }
 
@@ -905,46 +959,31 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderSchemaArtifactBase(SchemaArtifact schemaArtifact, String artifactTypeName)
+  private LinkedHashMap<String, Object> renderTopLevelSchemaArtifactBase(SchemaArtifact schemaArtifact,
+    String artifactTypeName)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    rendering.put(TYPE, artifactTypeName);
-
-    if (schemaArtifact.language().isPresent())
-      rendering.put(LANGUAGE, schemaArtifact.language().get().toString());
-
-    rendering.put(NAME, schemaArtifact.name());
-
-    if (!schemaArtifact.description().isEmpty())
-      rendering.put(DESCRIPTION, schemaArtifact.description());
-
-    if (schemaArtifact.identifier().isPresent())
-      rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
-
-    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
-      rendering.put(ID, schemaArtifact.jsonLdId().get());
-
-    if (!isCompact && schemaArtifact.status().isPresent())
-      rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
-
-    if (!isCompact && schemaArtifact.version().isPresent())
-      rendering.put(VERSION, schemaArtifact.version().get().toString());
-
-    if (!isCompact)
-      rendering.put(MODEL_VERSION, modelVersion.toString());
+    addSchemaArtifactBaseRendering(schemaArtifact, artifactTypeName, rendering);
 
     return rendering;
   }
 
-  // TODO Lot of repetition of above method. This has key: [childKey] in YAML
-  private LinkedHashMap<String, Object> renderChildSchemaArtifactBase(String childKey,
-    SchemaArtifact schemaArtifact, String artifactTypeName)
+  private LinkedHashMap<String, Object> renderNestedSchemaArtifactBase(String childKey,
+    ChildSchemaArtifact childSchemaArtifact, String artifactTypeName)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
     rendering.put(KEY, childKey);
 
+    addSchemaArtifactBaseRendering(childSchemaArtifact, artifactTypeName, rendering);
+
+    return rendering;
+  }
+
+  private void addSchemaArtifactBaseRendering(SchemaArtifact schemaArtifact, String artifactTypeName,
+    LinkedHashMap<String, Object> rendering)
+  {
     rendering.put(TYPE, artifactTypeName);
 
     if (schemaArtifact.language().isPresent())
@@ -969,12 +1008,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!isCompact)
       rendering.put(MODEL_VERSION, modelVersion.toString());
-
-    // TODO Generate YAML for annotations
-
-    return rendering;
   }
-
 
   private void addArtifactProvenanceRendering(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
   {
@@ -1025,10 +1059,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Use typesafe switch when available
     switch (fieldSchemaArtifact.fieldUi().inputType()) {
     case TEXTFIELD:
-      if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get().isControlledTermValueConstraint())
+      if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
+        .isControlledTermValueConstraint())
         return CONTROLLED_TERM_FIELD;
       else
-      return TEXT_FIELD;
+        return TEXT_FIELD;
     case TEXTAREA:
       return TEXT_AREA_FIELD;
     case PHONE_NUMBER:
@@ -1069,7 +1104,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private List<LinkedHashMap<String, Object>> renderAnnotations(Annotations annotations) {
+  private List<LinkedHashMap<String, Object>> renderAnnotations(Annotations annotations)
+  {
     List<LinkedHashMap<String, Object>> annotationsRendering = new ArrayList<>();
 
     for (Map.Entry<String, AnnotationValue> annotationValueEntry : annotations.annotations().entrySet()) {
@@ -1095,7 +1131,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return annotationsRendering;
   }
 
- private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
+  private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
     return offsetDateTime.format(datetimeFormatter);
   }
@@ -1113,9 +1149,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
    * </pre>
    */
-  private LinkedHashMap<String, Object>  renderClassValueConstraint(ClassValueConstraint classValueConstraint)
+  private LinkedHashMap<String, Object> renderClassValueConstraint(ClassValueConstraint classValueConstraint)
   {
-    LinkedHashMap<String, Object> classValueConstraintRendering =  new LinkedHashMap<>();
+    LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
 
     classValueConstraintRendering.put(TYPE, CLASS);
     classValueConstraintRendering.put(LABEL, classValueConstraint.label());
@@ -1170,7 +1206,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   iri: "http://purl.org/twc/dpo/ont/Disease"
    * </pre>
    */
-  private LinkedHashMap<String, Object>  renderBranchValueConstraint(BranchValueConstraint branchValueConstraint)
+  private LinkedHashMap<String, Object> renderBranchValueConstraint(BranchValueConstraint branchValueConstraint)
   {
     LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
 
@@ -1195,7 +1231,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
    * </pre>
    */
-  private LinkedHashMap<String, Object>  renderValueSetValueConstraint(ValueSetValueConstraint valueSetValueConstraint)
+  private LinkedHashMap<String, Object> renderValueSetValueConstraint(ValueSetValueConstraint valueSetValueConstraint)
   {
     LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
 
@@ -1209,7 +1245,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return valueSetValueConstraintRendering;
   }
 
-  private static LinkedHashMap<String, Object> renderLiteralValueConstraint(LiteralValueConstraint literalValueConstraint)
+  private static LinkedHashMap<String, Object> renderLiteralValueConstraint(
+    LiteralValueConstraint literalValueConstraint)
   {
     LinkedHashMap<String, Object> literalValueConstraintRendering = new LinkedHashMap<>();
 
