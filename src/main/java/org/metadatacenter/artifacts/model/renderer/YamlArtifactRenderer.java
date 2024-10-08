@@ -444,7 +444,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
       renderCoreValueConstraints(valueConstraints, fieldSchemaArtifact.fieldUi(), rendering);
-      renderValueConstraintsValues(valueConstraints, rendering);
+
+      if (terminologyServerClient == null)
+        renderValueConstraintsValues(valueConstraints, rendering);
+      else
+        renderValueConstraintsValuesInlined(valueConstraints, rendering);
+
       renderValueConstraintsActions(valueConstraints, rendering);
     }
 
