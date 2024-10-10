@@ -371,10 +371,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
+    rendering.put(TYPE, INSTANCE);
+
     if (templateInstanceArtifact.name().isEmpty())
       throw new RuntimeException("template instance must have a name");
     else
-      rendering.put(INSTANCE, templateInstanceArtifact.name().get());
+      rendering.put(NAME, templateInstanceArtifact.name().get());
 
     if (templateInstanceArtifact.description().isPresent() && !templateInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description().get());
@@ -384,22 +386,22 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
 
-    if (!isCompact && templateInstanceArtifact.createdBy().isPresent())
-      rendering.put(CREATED_BY, templateInstanceArtifact.createdBy().get().toString());
-
-    if (!isCompact && templateInstanceArtifact.modifiedBy().isPresent())
-      rendering.put(MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
-
     if (!isCompact && templateInstanceArtifact.createdOn().isPresent())
       rendering.put(CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
+
+    if (!isCompact && templateInstanceArtifact.createdBy().isPresent())
+      rendering.put(CREATED_BY, templateInstanceArtifact.createdBy().get().toString());
 
     if (!isCompact && templateInstanceArtifact.lastUpdatedOn().isPresent())
       rendering.put(MODIFIED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
 
-    if (templateInstanceArtifact.annotations().isPresent())
-      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
+    if (!isCompact && templateInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
 
     // TODO Need to generate YAML for children of template instance
+
+    if (templateInstanceArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
 
     return rendering;
   }

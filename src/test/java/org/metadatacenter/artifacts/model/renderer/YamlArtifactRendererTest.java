@@ -362,7 +362,7 @@ public class YamlArtifactRendererTest {
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
-    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
