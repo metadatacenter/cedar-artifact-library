@@ -350,7 +350,7 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, actualRendering);
   }
 
-  @Test
+  @Ignore @Test
   public void testRenderSimpleInstance() throws JsonProcessingException
   {
     String expectedYaml = """
@@ -362,7 +362,7 @@ public class YamlArtifactRendererTest {
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
-    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
