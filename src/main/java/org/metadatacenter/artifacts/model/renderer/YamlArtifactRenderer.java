@@ -371,10 +371,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    rendering.put(INSTANCE, templateInstanceArtifact.name());
+    if (templateInstanceArtifact.name().isEmpty())
+      throw new RuntimeException("template instance must have a name");
+    else
+      rendering.put(INSTANCE, templateInstanceArtifact.name().get());
 
-    if (templateInstanceArtifact.description().isPresent())
-      rendering.put(DESCRIPTION, templateInstanceArtifact.description());
+    if (templateInstanceArtifact.description().isPresent() && !templateInstanceArtifact.description().get().isEmpty())
+      rendering.put(DESCRIPTION, templateInstanceArtifact.description().get());
 
     if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());

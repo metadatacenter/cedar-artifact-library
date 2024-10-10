@@ -536,6 +536,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     URI isBasedOn = readRequiredUri(sourceNode, path, SCHEMA_IS_BASED_ON);
+    Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     List<String> childKeys = new ArrayList<>();
@@ -550,7 +551,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
 
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childKeys, singleInstanceFieldInstances,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, derivedFrom, childKeys, singleInstanceFieldInstances,
       multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
       attributeValueFieldInstances, annotations);
   }

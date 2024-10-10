@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.apache.poi.sl.draw.geom.GuideIf;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
+import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
 import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
@@ -30,7 +33,8 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
 {
   static TemplateInstanceArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
     Optional<URI> jsonLdId, Optional<String> name, Optional<String> description, Optional<URI> createdBy,
-    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, URI isBasedOn,
+    Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    URI isBasedOn, Optional<URI> derivedFrom,
     List<String> childKeys, LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
     LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
     LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
@@ -39,12 +43,14 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     Optional<Annotations> annotations)
   {
     return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childKeys, singleInstanceFieldInstances,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, derivedFrom, childKeys, singleInstanceFieldInstances,
       multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
       attributeValueFieldInstanceGroups, annotations);
   }
 
   URI isBasedOn();
+
+  Optional<URI> derivedFrom();
 
   Optional<Annotations> annotations();
 
@@ -125,6 +131,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     private Optional<URI> jsonLdId = Optional.empty();
     private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>();
     private URI isBasedOn;
+    private Optional<URI> derivedFrom = Optional.empty();
     private Optional<String> name = Optional.empty();
     private Optional<String> description = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
@@ -149,6 +156,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       this.jsonLdId = templateInstanceArtifact.jsonLdId();
       this.jsonLdContext = new LinkedHashMap<>(templateInstanceArtifact.jsonLdContext());
       this.isBasedOn = templateInstanceArtifact.isBasedOn();
+      this.derivedFrom = templateInstanceArtifact.derivedFrom();
       this.name = templateInstanceArtifact.name();
       this.description = templateInstanceArtifact.description();
       this.createdBy = templateInstanceArtifact.createdBy();
@@ -235,6 +243,12 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     public Builder withIsBasedOn(URI isBasedOn)
     {
       this.isBasedOn = isBasedOn;
+      return this;
+    }
+
+    public Builder withDerivedFrom(URI isBasedOn)
+    {
+      this.derivedFrom = Optional.ofNullable(isBasedOn);
       return this;
     }
 
@@ -371,7 +385,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
     public TemplateInstanceArtifact build()
     {
       return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-        modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childKeys, singleInstanceFieldInstances,
+        modifiedBy, createdOn, lastUpdatedOn, isBasedOn, derivedFrom, childKeys, singleInstanceFieldInstances,
         multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
         attributeValueFieldInstanceGroups, annotations);
     }
@@ -382,7 +396,7 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
                                       Optional<URI> jsonLdId, Optional<String> name, Optional<String> description,
                                       Optional<URI> createdBy, Optional<URI> modifiedBy,
                                       Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
-                                      URI isBasedOn, List<String> childKeys,
+                                      URI isBasedOn, Optional<URI> derivedFrom, List<String> childKeys,
                                       LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
                                       LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
                                       LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
@@ -398,6 +412,7 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
     validateOptionalFieldNotNull(this, name, SCHEMA_ORG_NAME);
     validateOptionalFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
     validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
+    validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
     validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
     validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
     validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);

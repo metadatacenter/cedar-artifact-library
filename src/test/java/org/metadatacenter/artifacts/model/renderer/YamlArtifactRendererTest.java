@@ -3,23 +3,31 @@ package org.metadatacenter.artifacts.model.renderer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
@@ -47,6 +55,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 
 public class YamlArtifactRendererTest {
 
+  private JsonArtifactReader artifactReader = new JsonArtifactReader();
   private YAMLFactory yamlFactory;
   private ObjectMapper mapper;
 
@@ -339,6 +348,46 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYaml, LinkedHashMap.class);
 
     assertEquals(expectedRendering, actualRendering);
+  }
+
+  @Ignore @Test
+  public void testRenderSimpleInstance() throws JsonProcessingException
+  {
+    String expectedYaml = """
+          type: controlled-term-field
+          name: ${fieldName}
+          description: ${description}
+          datatype: iri
+          values:
+            - type: class
+              label: ${classLabel}
+              acronym: ${classSource}
+              termType: class
+              termLabel: ${classPrefLabel}
+              iri: ${classUri}
+      """;
+
+    ObjectNode objectNode = getFileContentAsObjectNode("instances/SimpleInstance.json");
+
+    TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+
+    assertEquals(expectedYaml, actualYaml);
+  }
+
+  private ObjectNode getFileContentAsObjectNode(String jsonFileName)
+  {
+    try {
+      return (ObjectNode)mapper.readTree(new File(
+        JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
+    }
   }
 
 }
