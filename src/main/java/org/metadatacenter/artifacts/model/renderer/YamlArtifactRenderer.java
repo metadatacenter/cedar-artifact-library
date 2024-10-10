@@ -393,7 +393,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && templateInstanceArtifact.createdOn().isPresent())
       rendering.put(CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
 
-    if (templateInstanceArtifact.lastUpdatedOn().isPresent())
+    if (!isCompact && templateInstanceArtifact.lastUpdatedOn().isPresent())
       rendering.put(MODIFIED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
 
     if (templateInstanceArtifact.annotations().isPresent())

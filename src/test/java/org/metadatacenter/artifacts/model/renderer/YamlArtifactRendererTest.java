@@ -350,21 +350,12 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, actualRendering);
   }
 
-  @Ignore @Test
+  @Test
   public void testRenderSimpleInstance() throws JsonProcessingException
   {
     String expectedYaml = """
-          type: controlled-term-field
-          name: ${fieldName}
-          description: ${description}
-          datatype: iri
-          values:
-            - type: class
-              label: ${classLabel}
-              acronym: ${classSource}
-              termType: class
-              termLabel: ${classPrefLabel}
-              iri: ${classUri}
+      instance: Simple instance
+      isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
       """;
 
     ObjectNode objectNode = getFileContentAsObjectNode("instances/SimpleInstance.json");
