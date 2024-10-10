@@ -350,11 +350,12 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedRendering, actualRendering);
   }
 
-  @Ignore @Test
+  @Test
   public void testRenderSimpleInstance() throws JsonProcessingException
   {
     String expectedYaml = """
-      instance: Simple instance
+      type: instance
+      name: Simple instance
       isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
       """;
 
