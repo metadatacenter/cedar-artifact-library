@@ -26,7 +26,7 @@ public class YamlSerializer {
 
   static {
     YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+        .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
         //.enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
         .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
