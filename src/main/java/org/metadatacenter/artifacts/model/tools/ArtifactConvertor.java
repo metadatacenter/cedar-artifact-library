@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -187,11 +190,13 @@ public class ArtifactConvertor {
 
           if (command.hasOption(OUTPUT_FILE_OPTION)) {
             String jsonOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
-            File jsonOutputFile = new File(jsonOutputFileName);
-            PRETTY_OBJECT_WRITER.writeValue(jsonOutputFile, jsonRendering);
-            System.out.println("Successfully generated JSON file " + jsonOutputFile.getAbsolutePath());
+            Path jsonOutputFilePath = Paths.get(jsonOutputFileName);
+            PRETTY_OBJECT_WRITER.writeValue(jsonOutputFilePath.toFile(), jsonRendering);
+            Files.write(jsonOutputFilePath, "\n".getBytes(), StandardOpenOption.APPEND);
+            System.out.println("Successfully generated JSON file at: " + jsonOutputFilePath.toAbsolutePath());
           } else {
             PRETTY_OBJECT_WRITER.writeValue(System.out, jsonRendering);
+            System.out.println();
           }
         }
       } catch (IOException e) {
