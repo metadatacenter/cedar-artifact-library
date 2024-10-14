@@ -501,25 +501,26 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
     if (templateInstanceArtifact.description().isPresent())
       rendering.put(SCHEMA_ORG_DESCRIPTION, templateInstanceArtifact.description().get());
 
+    if (templateInstanceArtifact.createdOn().isPresent())
+      rendering.put(PAV_CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
+    else
+      rendering.putNull(PAV_CREATED_ON);
+
     if (templateInstanceArtifact.createdBy().isPresent())
       rendering.put(PAV_CREATED_BY, renderUri(templateInstanceArtifact.createdBy().get()));
     else
       rendering.putNull(PAV_CREATED_BY);
+
+    if (templateInstanceArtifact.lastUpdatedOn().isPresent())
+      rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
+    else
+      rendering.putNull(PAV_LAST_UPDATED_ON);
 
     if (templateInstanceArtifact.modifiedBy().isPresent())
       rendering.put(OSLC_MODIFIED_BY, renderUri(templateInstanceArtifact.modifiedBy().get()));
     else
       rendering.putNull(OSLC_MODIFIED_BY);
 
-    if (templateInstanceArtifact.createdOn().isPresent())
-      rendering.put(PAV_CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
-    else
-      rendering.putNull(PAV_CREATED_ON);
-
-    if (templateInstanceArtifact.lastUpdatedOn().isPresent())
-      rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(templateInstanceArtifact.lastUpdatedOn().get()));
-    else
-      rendering.putNull(PAV_LAST_UPDATED_ON);
 
     return rendering;
   }
@@ -538,17 +539,17 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
       }
     }
 
-    if (elementInstanceArtifact.createdBy().isPresent())
-      rendering.put(PAV_CREATED_BY, renderUri(elementInstanceArtifact.createdBy().get()));
-
-    if (elementInstanceArtifact.modifiedBy().isPresent())
-      rendering.put(OSLC_MODIFIED_BY, renderUri(elementInstanceArtifact.modifiedBy().get()));
-
     if (elementInstanceArtifact.createdOn().isPresent())
       rendering.put(PAV_CREATED_ON, renderOffsetDateTime(elementInstanceArtifact.createdOn().get()));
 
+    if (elementInstanceArtifact.createdBy().isPresent())
+      rendering.put(PAV_CREATED_BY, renderUri(elementInstanceArtifact.createdBy().get()));
+
     if (elementInstanceArtifact.lastUpdatedOn().isPresent())
       rendering.put(PAV_LAST_UPDATED_ON, renderOffsetDateTime(elementInstanceArtifact.lastUpdatedOn().get()));
+
+    if (elementInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(OSLC_MODIFIED_BY, renderUri(elementInstanceArtifact.modifiedBy().get()));
 
     return rendering;
   }
