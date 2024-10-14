@@ -11,10 +11,7 @@ import org.metadatacenter.artifacts.util.TerminologyServerClient;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
@@ -398,13 +395,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering =
             renderElementInstanceArtifacts(parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
 
-        if (!elementInstanceArtifactsRendering.isEmpty())
-          childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactsRendering);
-
-        // TODO
-
-      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
-        List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances().get(childKey);
+        if (!elementInstanceArtifactsRendering.isEmpty()) {
+          LinkedHashMap<String, Object> childWrapper = new LinkedHashMap<>();
+          childWrapper.put(CHILDREN, elementInstanceArtifactsRendering);
+          childInstanceArtifactsRendering.put(childKey, childWrapper);
+        }
+      } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childKey)) {
+        List<FieldInstanceArtifact> fieldInstanceArtifacts = parentInstanceArtifact.multiInstanceFieldInstances().get(childKey);
 
         // TODO
       }
@@ -425,6 +422,20 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
 
     return elementInstanceArtifactsRendering;
+  }
+
+  private List<LinkedHashMap<String, Object>> renderFieldInstanceArtifacts(List<FieldInstanceArtifact> fieldInstanceArtifacts)
+  {
+    List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering = new ArrayList<>();
+
+    for (FieldInstanceArtifact fieldInstanceArtifact: fieldInstanceArtifacts) {
+
+      LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(fieldInstanceArtifact);
+      if (!fieldInstanceArtifactRendering.isEmpty())
+        fieldInstanceArtifactsRendering.add(fieldInstanceArtifactRendering);
+    }
+
+    return fieldInstanceArtifactsRendering;
   }
 
   private LinkedHashMap<String, Object> renderFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact)
