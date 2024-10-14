@@ -283,22 +283,18 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   "Contributors":
    *     iri: https://example.com/p3
    *     children:
-   *       -
-   *         "name":
+   *       - "Contributor Name":
    *           value: "Dr Bob"
-   *         "institution":
-   *            value: "Stanford"
-   *       -
-   *         "name":
+   *         "Institution":
+   *           value: "Stanford"
+   *       - "Contributor Name":
    *           value: "Dr Joe"
-   *         "institution":
+   *         "Institution":
    *           value: "Stanford"
    *   "Extra User-Supplied Attributes":
-   *     -
-   *       name: "Study ZIP"
+   *     - name: "Study ZIP"
    *       value: "94402"
-   *     -
-   *       name: "Study Duration"
+   *     - name: "Study Duration"
    *       value: "2"
    *   annotations:
    *     - name: https://datacite.com/doi
@@ -394,16 +390,41 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
           ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances().get(childKey);
           LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(elementInstanceArtifact);
+
           if (!elementInstanceArtifactRendering.isEmpty())
             childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactRendering);
-
-        } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
-        } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
         }
+      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
+        List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering =
+            renderElementInstanceArtifacts(parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
+
+        if (!elementInstanceArtifactsRendering.isEmpty())
+          childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactsRendering);
+
+        // TODO
+
+      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
+        List<ElementInstanceArtifact> elementInstanceArtifacts = parentInstanceArtifact.multiInstanceElementInstances().get(childKey);
+
+        // TODO
       }
     }
 
     return childInstanceArtifactsRendering;
+  }
+
+  private List<LinkedHashMap<String, Object>> renderElementInstanceArtifacts(List<ElementInstanceArtifact> elementInstanceArtifacts)
+  {
+    List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering = new ArrayList<>();
+
+    for (ElementInstanceArtifact elementInstanceArtifact: elementInstanceArtifacts) {
+
+      LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(elementInstanceArtifact);
+      if (!elementInstanceArtifactRendering.isEmpty())
+        elementInstanceArtifactsRendering.add(elementInstanceArtifactRendering);
+    }
+
+    return elementInstanceArtifactsRendering;
   }
 
   private LinkedHashMap<String, Object> renderFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact)
@@ -434,7 +455,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     return fieldInstanceArtifactRendering;
   }
-
 
   /**
    * Generate YAML rendering for core fields in a field schema artifact.
