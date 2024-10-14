@@ -1,35 +1,11 @@
 package org.metadatacenter.artifacts.model.renderer;
 
-import org.metadatacenter.artifacts.model.core.AnnotationValue;
-import org.metadatacenter.artifacts.model.core.Annotations;
-import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
-import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
-import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.SchemaArtifact;
-import org.metadatacenter.artifacts.model.core.Status;
-import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
-import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.*;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
@@ -43,107 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ANNOTATIONS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ATTRIBUTE_VALUE_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHECKBOX_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CLASS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTINUE_PREVIOUS_LINE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLACES;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT_VALUE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DELETE_ACTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEIGHT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_FORMAT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_ZONE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LINK_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_LENGTH;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_VALUE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MOVE_ACTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTI_SELECT_LIST_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUMERIC_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_DESCRIPTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PHONE_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PUBLISHED_STATUS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RADIO_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REGEX;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_IMAGE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_PAGE_BREAK;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_RICH_TEXT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_SECTION_BREAK;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATIC_YOUTUBE_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STRING;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_TYPE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.WIDTH;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
@@ -367,6 +243,74 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
+  /**
+   * Generate YAML rendering of a template instance artifact.
+   * <p>
+   * e.g.,
+   * <pre>
+   * type: instance
+   * name: SDY232
+   * description: "Study SDY232 instance"
+   * id: "https://repo.metadatacenter.org/template-instances/19f5261e-9259-45ec-b961-b3d17c92f27f"
+   * isBasedOn: "https://repo.metadatacenter.org/templates/ec3f500f-ddca-4ec1-9196-29932f9304fd"
+   * createdOn: "2020-07-20T14:09:01-07:00"
+   * createdBy: "https://metadatacenter.org/users/2fa8910d-96e7-4e2f-ae60-4dfa8ec9877d"
+   * modifiedOn: "2020-07-20T14:09:01-07:00"
+   * modifiedBy: "https://metadatacenter.org/users/2fa8910d-96e7-4e2f-ae60-4dfa8ec9877d"
+   * children:
+   *   "Study Id":
+   *     iri: https://example.com/p1
+   *     value: text value
+   *   "Participants":
+   *     value: "2323"
+   *     datatype: "xsd:int"
+   *   "Disease":
+   *     id: https://example.com/d2
+   *     label: label
+   *   "Protocol URL":
+   *     value: https://example.com/p2
+   *     datatype: iri
+   *   "Study Protocol":
+   *     iri: https://example.com/p2
+   *     children:
+   *       "Protocol Name":
+   *         value: Protocol 232
+   *       "Protocol ID":
+   *         value: P232
+   *       "pages":
+   *         datatype: "xsd:number"
+   *         values:
+   *           - "1"
+   *           - "23"
+   *           - "88"
+   *   "Contributors":
+   *     iri: https://example.com/p3
+   *     children:
+   *       -
+   *         "name":
+   *           value: "Dr Bob"
+   *         "institution":
+   *            value: "Stanford"
+   *       -
+   *         "name":
+   *           value: "Dr Joe"
+   *         "institution":
+   *           value: "Stanford"
+   *   "Extra User-Supplied Attributes":
+   *     -
+   *       name: "Study ZIP"
+   *       value: "94402"
+   *     -
+   *       name: "Study Duration"
+   *       value: "2"
+   *   annotations:
+   *     - name: https://datacite.com/doi
+   *       type: iri
+   *       value: "https://doi.org/10.82658/8vc1-abcd"
+   *     - name: Preferred Ontology
+   *       value: DOID
+   * </pre>
+   */
   public LinkedHashMap<String, Object> renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
@@ -400,11 +344,49 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     // TODO Need to generate YAML for children of template instance
 
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup: templateInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
+      String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
+      Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
+
+      if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
+        rendering.put(attributeValueFieldInstanceGroupKey, renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
+      }
+    }
+
     if (templateInstanceArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
 
     return rendering;
   }
+
+  private LinkedHashMap<String, Object> renderFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact)
+  {
+    LinkedHashMap<String, Object> fieldInstanceArtifactRendering = new LinkedHashMap<>();
+
+    if (!fieldInstanceArtifact.jsonLdTypes().isEmpty())
+      fieldInstanceArtifactRendering.put(TYPE, fieldInstanceArtifact.jsonLdTypes().get(1));
+
+    if (fieldInstanceArtifact.jsonLdId().isPresent())
+      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
+
+    if (fieldInstanceArtifact.jsonLdValue().isPresent())
+      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdValue().get());
+
+    if (fieldInstanceArtifact.label().isPresent())
+      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.label().get());
+
+    if (fieldInstanceArtifact.notation().isPresent())
+      fieldInstanceArtifactRendering.put(NOTATION, fieldInstanceArtifact.notation().get());
+
+    if (fieldInstanceArtifact.preferredLabel().isPresent())
+      fieldInstanceArtifactRendering.put(PREF_LABEL, fieldInstanceArtifact.preferredLabel().get());
+
+    if (fieldInstanceArtifact.language().isPresent())
+      fieldInstanceArtifactRendering.put(LANGUAGE, fieldInstanceArtifact.language().get());
+
+    return fieldInstanceArtifactRendering;
+  }
+
 
   /**
    * Generate YAML rendering for core fields in a field schema artifact.
@@ -664,7 +646,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
       String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = URI.create(preferredLabel2UriEntry.getValue());
+      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, ontologyValueConstraint.acronym(),
         preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
@@ -689,7 +671,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
       String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = URI.create(preferredLabel2UriEntry.getValue());
+      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, branchValueConstraint.acronym(),
         preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
@@ -714,7 +696,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
       String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = URI.create(preferredLabel2UriEntry.getValue());
+      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
       ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, valueSetValueConstraint.vsCollection(),
         preferredLabel, preferredLabel, ValueType.VALUE);
       classValueConstraints.add(classValueConstraint);
@@ -1114,6 +1096,23 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
+  private List<LinkedHashMap<String, Object>> renderAttributeValueFieldInstanceGroupFields(Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields)
+  {
+    List<LinkedHashMap<String, Object>> attributeValueFieldInstanceGroupFieldsRendering = new ArrayList<>();
+
+    for (Map.Entry<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupField : attributeValueFieldInstanceGroupFields.entrySet()) {
+      String attributeValueFieldInstanceFieldKey = attributeValueFieldInstanceGroupField.getKey();
+      FieldInstanceArtifact fieldInstanceArtifact = attributeValueFieldInstanceGroupField.getValue();
+      LinkedHashMap<String, Object> attributeValueFieldInstanceRendering = new LinkedHashMap<>();
+
+      attributeValueFieldInstanceRendering.put(attributeValueFieldInstanceFieldKey, renderFieldInstanceArtifact(fieldInstanceArtifact));
+
+      attributeValueFieldInstanceGroupFieldsRendering.add(attributeValueFieldInstanceRendering);
+    }
+
+    return attributeValueFieldInstanceGroupFieldsRendering;
+  }
+
   private List<LinkedHashMap<String, Object>> renderAnnotations(Annotations annotations)
   {
     List<LinkedHashMap<String, Object>> annotationsRendering = new ArrayList<>();
@@ -1128,7 +1127,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       // TODO Use typesafe switch when available
       if (annotationValue instanceof LiteralAnnotationValue) {
         LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
-        annotationRendering.put(TYPE, STRING);
         annotationRendering.put(VALUE, literalAnnotationValue.getValue());
       } else if (annotationValue instanceof IriAnnotationValue) {
         IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
