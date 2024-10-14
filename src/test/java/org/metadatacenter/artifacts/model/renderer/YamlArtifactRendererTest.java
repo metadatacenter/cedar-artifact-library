@@ -7,13 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.core.ControlledTermField;
-import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
@@ -27,31 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRendererTest {
 
@@ -80,7 +51,7 @@ public class YamlArtifactRendererTest {
     String footer = "Study footer";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
+      .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
       .withDescription(description).withHeader(header).withFooter(footer).build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
@@ -107,7 +78,7 @@ public class YamlArtifactRendererTest {
     String footer = "Study footer";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
+      .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
       .withDescription(description).withHeader(header).withFooter(footer).build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
@@ -136,7 +107,7 @@ public class YamlArtifactRendererTest {
     String description = "Address element";
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).
+      withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template_elements/123")).
       withName(name).
       withDescription(description).
       build();
@@ -161,7 +132,7 @@ public class YamlArtifactRendererTest {
     String description = "Study name field";
 
     TextField textField = TextField.builder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).
+      withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template_fields/123")).
       withName(name).
       withDescription(description).
       build();
@@ -212,22 +183,22 @@ public class YamlArtifactRendererTest {
 
     String name = "Disease";
     String description = "Disease field";
-    URI fieldId = URI.create("https://repo.metadatacenter.org/template_fields/123");
-    URI doidDiseaseBranchIri = URI.create("http://purl.obolibrary.org/obo/DOID_4");
+    URI fieldId = java.net.URI.create("https://repo.metadatacenter.org/template_fields/123");
+    URI doidDiseaseBranchIri = java.net.URI.create("http://purl.obolibrary.org/obo/DOID_4");
     String doidSource = "DOID";
     String doidSourceAcronym = "DOID";
     String doidDiseaseBranchName = "Disease";
     Integer doidDiseaseBranchDepth = 0;
-    URI pmrDiseaseBranchIri = URI.create("http://purl.bioontology.org/ontology/PMR.owl#Disease");
+    URI pmrDiseaseBranchIri = java.net.URI.create("http://purl.bioontology.org/ontology/PMR.owl#Disease");
     String pmrSource = "Physical Medicine and Rehabilitation (PMR)";
     String pmrSourceAcronym = "PMR";
     String pmrDiseaseBranchName = "Disease";
     Integer pmrDiseaseBranchDepth = 0;
     ValueConstraintsActionType actionType = ValueConstraintsActionType.MOVE;
-    URI actionTermUri = URI.create("http://purl.obolibrary.org/obo/DOID_0040022");
+    URI actionTermUri = java.net.URI.create("http://purl.obolibrary.org/obo/DOID_0040022");
     String actionSourceAcronym = "DOID";
     ValueType actionValueType = ValueType.ONTOLOGY_CLASS;
-    URI actionSourceIri = URI.create("http://purl.obolibrary.org/obo/DOID_4");
+    URI actionSourceIri = java.net.URI.create("http://purl.obolibrary.org/obo/DOID_4");
     Integer actionTo = 2;
 
     ControlledTermField controlledTermField = ControlledTermField.builder().
@@ -302,7 +273,7 @@ public class YamlArtifactRendererTest {
     String iriAnnotationValue = "https://example.com/A";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
-      withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).
+      withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).
       withName(name).
       withDescription(description).
       build();
@@ -313,7 +284,7 @@ public class YamlArtifactRendererTest {
   {
     String fieldName = "Field name";
     String description = "Field description";
-    URI classUri = URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
+    URI classUri = java.net.URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
     String classSource = "LOINC";
     String classLabel = "Human";
     String classPrefLabel = "Homo Sapiens";
@@ -357,6 +328,15 @@ public class YamlArtifactRendererTest {
       type: instance
       name: Simple instance
       isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
+      children:
+        Controlled Terms:
+          id: BrainActivity
+        Size:
+          datatype: xsd:int
+          value: 33
+        Name:
+          value: Bobby
+          language: en
       """;
 
     ObjectNode objectNode = getFileContentAsObjectNode("instances/SimpleInstance.json");

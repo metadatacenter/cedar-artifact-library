@@ -1,33 +1,12 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.apache.poi.sl.draw.geom.GuideIf;
-
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriFieldNotNull;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
-import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
-import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
-import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
-import static org.metadatacenter.model.ModelNodeNames.PAV_LAST_UPDATED_ON;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.*;
+import static org.metadatacenter.model.ModelNodeNames.*;
 
 public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, ParentInstanceArtifact
 {

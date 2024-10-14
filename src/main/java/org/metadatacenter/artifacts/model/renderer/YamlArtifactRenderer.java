@@ -1,10 +1,7 @@
 package org.metadatacenter.artifacts.model.renderer;
 
 import org.metadatacenter.artifacts.model.core.*;
-import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
+import org.metadatacenter.artifacts.model.core.fields.*;
 import org.metadatacenter.artifacts.model.core.fields.constraints.*;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
@@ -342,7 +339,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && templateInstanceArtifact.modifiedBy().isPresent())
       rendering.put(MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
 
-    // TODO Need to generate YAML for children of template instance
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(templateInstanceArtifact);
+    if (!childInstanceArtifactsRendering.isEmpty())
+      rendering.put(CHILDREN, childInstanceArtifactsRendering);
 
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup: templateInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
       String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
@@ -359,18 +358,67 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
+  private LinkedHashMap<String, Object> renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
+      rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
+
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(elementInstanceArtifact);
+    if (!childInstanceArtifactsRendering.isEmpty())
+      rendering.put(CHILDREN, childInstanceArtifactsRendering);
+
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup: elementInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
+      String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
+      Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
+
+      if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
+        rendering.put(attributeValueFieldInstanceGroupKey, renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
+      }
+    }
+
+    return rendering;
+  }
+
+  private LinkedHashMap<String, Object> renderChildInstanceArtifacts(ParentInstanceArtifact parentInstanceArtifact) {
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = new LinkedHashMap<>();
+
+    for (String childKey: parentInstanceArtifact.childKeys()) {
+      if (parentInstanceArtifact.singleInstanceFieldInstances().containsKey(childKey)) {
+        FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances().get(childKey);
+        LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(fieldInstanceArtifact);
+        if (!fieldInstanceArtifactRendering.isEmpty())
+          childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactRendering);
+      } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
+        if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
+          ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances().get(childKey);
+          LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(elementInstanceArtifact);
+          if (!elementInstanceArtifactRendering.isEmpty())
+            childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactRendering);
+
+        } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
+        } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
+        }
+      }
+    }
+
+    return childInstanceArtifactsRendering;
+  }
+
   private LinkedHashMap<String, Object> renderFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact)
   {
     LinkedHashMap<String, Object> fieldInstanceArtifactRendering = new LinkedHashMap<>();
 
     if (!fieldInstanceArtifact.jsonLdTypes().isEmpty())
-      fieldInstanceArtifactRendering.put(TYPE, fieldInstanceArtifact.jsonLdTypes().get(1));
+      fieldInstanceArtifactRendering.put(DATATYPE,
+          renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
 
     if (fieldInstanceArtifact.jsonLdId().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
     if (fieldInstanceArtifact.jsonLdValue().isPresent())
-      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdValue().get());
+      fieldInstanceArtifactRendering.put(VALUE, fieldInstanceArtifact.jsonLdValue().get());
 
     if (fieldInstanceArtifact.label().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.label().get());
@@ -827,10 +875,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     List<LinkedHashMap<String, Object>> childSchemasRendering = new ArrayList<>();
 
-    // TODO Use typesafe switch when available
     for (Map.Entry<String, ChildSchemaArtifact> childSchemaArtifactEntry : childSchemaArtifacts.entrySet()) {
       String childKey = childSchemaArtifactEntry.getKey();
       ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
+
+      // TODO Use typesafe switch when available
       if (childSchemaArtifact instanceof FieldSchemaArtifact) {
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
         LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childKey, fieldSchemaArtifact);
@@ -1271,5 +1320,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && fieldSchemaArtifact.valueConstraints().get().multipleChoice();
   }
 
+  private String renderPossiblyXsdPrefixedUri(URI uri)
+  {
+    if (XsdDatatype.isKnownXsdDatatypeUri(uri))
+      return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
+    else
+      return uri.toString();
+  }
 }
 

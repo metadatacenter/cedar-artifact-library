@@ -1959,5 +1959,4 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
     else
       return uri.toString();
   }
-
 }
