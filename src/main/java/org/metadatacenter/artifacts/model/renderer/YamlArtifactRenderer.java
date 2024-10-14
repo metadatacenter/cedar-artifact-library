@@ -421,7 +421,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       fieldInstanceArtifactRendering.put(VALUE, fieldInstanceArtifact.jsonLdValue().get());
 
     if (fieldInstanceArtifact.label().isPresent())
-      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.label().get());
+      fieldInstanceArtifactRendering.put(LABEL, fieldInstanceArtifact.label().get());
 
     if (fieldInstanceArtifact.notation().isPresent())
       fieldInstanceArtifactRendering.put(NOTATION, fieldInstanceArtifact.notation().get());

@@ -330,7 +330,8 @@ public class YamlArtifactRendererTest {
       isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
       children:
         Controlled Terms:
-          id: BrainActivity
+          id: http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity
+          label: BrainActivity
         Size:
           datatype: xsd:int
           value: 33
