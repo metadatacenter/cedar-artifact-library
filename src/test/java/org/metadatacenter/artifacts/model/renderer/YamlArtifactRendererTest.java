@@ -33,31 +33,30 @@ public class YamlArtifactRendererTest {
   @Before
   public void setUp() {
     yamlFactory = new YAMLFactory().
-      disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
-      enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
-      //enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS).
-      enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
+        disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
+        enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
+        //enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS).
+            enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
 
     mapper = new ObjectMapper(yamlFactory);
     mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
   }
 
   @Test
-  public void testRenderTemplateSchemaArtifact()
-  {
+  public void testRenderTemplateSchemaArtifact() {
     String name = "Study";
     String description = "Study template";
     String header = "Study header";
     String footer = "Study footer";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
-      .withDescription(description).withHeader(header).withFooter(footer).build();
+        .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
+        .withDescription(description).withHeader(header).withFooter(footer).build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(
-      templateSchemaArtifact);
+        templateSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(NAME, name);
@@ -70,32 +69,31 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testRenderTemplateSchemaArtifactWithMapper() throws JsonProcessingException
-  {
+  public void testRenderTemplateSchemaArtifactWithMapper() throws JsonProcessingException {
     String name = "Study";
     String description = "Study template";
     String header = "Study header";
     String footer = "Study footer";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
-      .withDescription(description).withHeader(header).withFooter(footer).build();
+        .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).withName(name)
+        .withDescription(description).withHeader(header).withFooter(footer).build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateSchemaArtifact(
-      templateSchemaArtifact);
+        templateSchemaArtifact);
 
     String actualStringRendering = mapper.writeValueAsString(actualRendering);
 
     String expectedStringRendering = """
-    type: template
-    name: ${name}
-    description: ${description}
-    header: ${header}
-    footer: ${footer}
-    """.replace("${name}", name).replace("${description}", description).
-      replace("${header}", header).replace("${footer}", footer);
+        type: template
+        name: ${name}
+        description: ${description}
+        header: ${header}
+        footer: ${footer}
+        """.replace("${name}", name).replace("${description}", description).
+        replace("${header}", header).replace("${footer}", footer);
 
     assertEquals(expectedStringRendering, actualStringRendering);
   }
@@ -107,14 +105,15 @@ public class YamlArtifactRendererTest {
     String description = "Address element";
 
     ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().
-      withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template_elements/123")).
-      withName(name).
-      withDescription(description).
-      build();
+        withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template_elements/123")).
+        withName(name).
+        withDescription(description).
+        build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderElementSchemaArtifact(elementSchemaArtifact);
 
     LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
     expectedRendering.put(NAME, name);
@@ -125,27 +124,26 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testRenderTextFieldCompact() throws JsonProcessingException
-  {
+  public void testRenderTextFieldCompact() throws JsonProcessingException {
 
     String name = "Study Name";
     String description = "Study name field";
 
     TextField textField = TextField.builder().
-      withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template_fields/123")).
-      withName(name).
-      withDescription(description).
-      build();
+        withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template_fields/123")).
+        withName(name).
+        withDescription(description).
+        build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     String expectedYamlRendering = """
-    type: text-field
-    name: ${name}
-    description: ${description}
-    """.replace("${name}", name).replace("${description}", description);
+        type: text-field
+        name: ${name}
+        description: ${description}
+        """.replace("${name}", name).replace("${description}", description);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
@@ -153,25 +151,24 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testRenderTextField() throws JsonProcessingException
-  {
+  public void testRenderTextField() throws JsonProcessingException {
     String name = "Study Name";
     String description = "Study name field";
 
     TextField textField = TextField.builder().
-      withName(name).
-      withDescription(description).
-      build();
+        withName(name).
+        withDescription(description).
+        build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
     LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(textField);
 
     String expectedYamlRendering = """
-    type: text-field
-    name: ${name}
-    description: ${description}
-    """.replace("${name}", name).replace("${description}", description);
+        type: text-field
+        name: ${name}
+        description: ${description}
+        """.replace("${name}", name).replace("${description}", description);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
@@ -202,17 +199,19 @@ public class YamlArtifactRendererTest {
     Integer actionTo = 2;
 
     ControlledTermField controlledTermField = ControlledTermField.builder().
-      withJsonLdId(fieldId).
-      withName(name).
-      withDescription(description).
-      withBranchValueConstraint(doidDiseaseBranchIri, doidSource, doidSourceAcronym, doidDiseaseBranchName, 0).
-      withBranchValueConstraint(pmrDiseaseBranchIri, pmrSource, pmrSourceAcronym, pmrDiseaseBranchName, 0).
-      withValueConstraintsAction(actionTermUri, actionSourceAcronym, actionValueType, actionType, actionSourceIri, actionTo).
-      build();
+        withJsonLdId(fieldId).
+        withName(name).
+        withDescription(description).
+        withBranchValueConstraint(doidDiseaseBranchIri, doidSource, doidSourceAcronym, doidDiseaseBranchName, 0).
+        withBranchValueConstraint(pmrDiseaseBranchIri, pmrSource, pmrSourceAcronym, pmrDiseaseBranchName, 0).
+        withValueConstraintsAction(actionTermUri, actionSourceAcronym, actionValueType, actionType, actionSourceIri,
+            actionTo).
+        build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, controlledTermField);
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+        controlledTermField);
 
     LinkedHashMap<String, Object> expectedBaseFieldRendering = new LinkedHashMap<>();
     expectedBaseFieldRendering.put(KEY, name);
@@ -223,7 +222,7 @@ public class YamlArtifactRendererTest {
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
 
-    LinkedHashMap<String, Object>  doidDiseaseBranchRendering = new LinkedHashMap<>();
+    LinkedHashMap<String, Object> doidDiseaseBranchRendering = new LinkedHashMap<>();
     doidDiseaseBranchRendering.put(TYPE, BRANCH);
     doidDiseaseBranchRendering.put(ONTOLOGY_NAME, doidSource);
     doidDiseaseBranchRendering.put(ACRONYM, doidSourceAcronym);
@@ -233,7 +232,7 @@ public class YamlArtifactRendererTest {
 
     expectedValueConstraintsRendering.add(doidDiseaseBranchRendering);
 
-    LinkedHashMap<String, Object>  pmrDiseaseBranchRendering = new LinkedHashMap<>();
+    LinkedHashMap<String, Object> pmrDiseaseBranchRendering = new LinkedHashMap<>();
     pmrDiseaseBranchRendering.put(TYPE, BRANCH);
     pmrDiseaseBranchRendering.put(ONTOLOGY_NAME, pmrSource);
     pmrDiseaseBranchRendering.put(ACRONYM, pmrSourceAcronym);
@@ -247,7 +246,7 @@ public class YamlArtifactRendererTest {
 
     List<LinkedHashMap<String, Object>> expectedActionsRendering = new ArrayList<>();
 
-    LinkedHashMap<String, Object>  actionRendering = new LinkedHashMap<>();
+    LinkedHashMap<String, Object> actionRendering = new LinkedHashMap<>();
     actionRendering.put(ACTION, actionType.toString());
     actionRendering.put(ACTION_TO, actionTo);
     actionRendering.put(TERM_IRI, actionTermUri);
@@ -273,15 +272,15 @@ public class YamlArtifactRendererTest {
     String iriAnnotationValue = "https://example.com/A";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
-      withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).
-      withName(name).
-      withDescription(description).
-      build();
+        withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).
+        withName(name).
+        withDescription(description).
+        build();
 
   }
 
-  @Test public void testCreateControlledTermFieldWithClassValueConstraint() throws JsonProcessingException
-  {
+  @Test
+  public void testCreateControlledTermFieldWithClassValueConstraint() throws JsonProcessingException {
     String fieldName = "Field name";
     String description = "Field description";
     URI classUri = java.net.URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
@@ -290,27 +289,28 @@ public class YamlArtifactRendererTest {
     String classPrefLabel = "Homo Sapiens";
     ValueType classValueType = ValueType.ONTOLOGY_CLASS;
     String expectedYaml = """
-          type: controlled-term-field
-          name: ${fieldName}
-          description: ${description}
-          datatype: iri
-          values:
-            - type: class
-              label: ${classLabel}
-              acronym: ${classSource}
-              termType: class
-              termLabel: ${classPrefLabel}
-              iri: ${classUri}
-      """.replace("${fieldName}", fieldName)
-      .replace("${description}", description)
-      .replace("${classValueType}", classValueType.toString())
-      .replace("${classLabel}", classLabel)
-      .replace("${classSource}", classSource)
-      .replace("${classPrefLabel}", classPrefLabel)
-      .replace("${classUri}", classUri.toString());
+            type: controlled-term-field
+            name: ${fieldName}
+            description: ${description}
+            datatype: iri
+            values:
+              - type: class
+                label: ${classLabel}
+                acronym: ${classSource}
+                termType: class
+                termLabel: ${classPrefLabel}
+                iri: ${classUri}
+        """.replace("${fieldName}", fieldName)
+        .replace("${description}", description)
+        .replace("${classValueType}", classValueType.toString())
+        .replace("${classLabel}", classLabel)
+        .replace("${classSource}", classSource)
+        .replace("${classPrefLabel}", classPrefLabel)
+        .replace("${classUri}", classUri.toString());
 
-    ControlledTermField controlledTermField = ControlledTermField.builder().withName(fieldName).withDescription(description)
-      .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).build();
+    ControlledTermField controlledTermField =
+        ControlledTermField.builder().withName(fieldName).withDescription(description)
+            .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
@@ -322,23 +322,22 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testRenderSimpleInstance() throws JsonProcessingException
-  {
+  public void testRenderSimpleInstance() throws JsonProcessingException {
     String expectedYaml = """
-      type: instance
-      name: Simple instance
-      isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
-      children:
-        Controlled Terms:
-          id: http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity
-          label: BrainActivity
-        Size:
-          datatype: xsd:int
-          value: 33
-        Name:
-          value: Bobby
-          language: en
-      """;
+        type: instance
+        name: Simple instance
+        isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
+        children:
+          Controlled Terms:
+            id: http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity
+            label: BrainActivity
+          Size:
+            datatype: xsd:int
+            value: 33
+          Name:
+            value: Bobby
+            language: en
+        """;
 
     ObjectNode objectNode = getFileContentAsObjectNode("instances/SimpleInstance.json");
 
@@ -346,18 +345,135 @@ public class YamlArtifactRendererTest {
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
 
-    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
 
     String actualYaml = mapper.writeValueAsString(actualRendering);
 
     assertEquals(expectedYaml, actualYaml);
   }
 
-  private ObjectNode getFileContentAsObjectNode(String jsonFileName)
-  {
+  @Test
+  public void testRenderTemplateInstanceWithChildren() throws JsonProcessingException {
+    String instanceName = "Template 1";
+    URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
+    String textField1Name = "Text Field 1";
+    String value1 = "Value 1";
+    String value2 = "Value 2";
+    String value3 = "Value 3";
+    String element1Name = "Element 1";
+    String textField2Name = "Text Field 2";
+    URI propertyIri = java.net.URI.create("https://example.com/p1");
+
+    String expectedYaml = """
+        type: instance
+        name: {instanceName}
+        id: {instanceUri}
+        isBasedOn: {isBasedOn}
+        children:
+          {textField2Name}:
+            values:
+              - value: {value2}
+              - value: {value3}
+          {element1Name}:
+            children:
+              {textField1Name}:
+                value: {value1}
+        """.replace("{isBasedOn}",
+        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
+        instanceUri.toString()).replace("{textField1Name}",
+        textField1Name).replace("{textField2Name}",
+        textField2Name).replace("{element1Name}",
+        element1Name).replace(
+        "{value1}", value1).replace(
+        "{value2}", value2).replace(
+        "{value3}", value3);
+
+    FieldInstanceArtifact textField1Instance = TextFieldInstance.builder().withValue(value1).build();
+    ElementInstanceArtifact element1Instance =
+        ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textField1Name, textField1Instance).build();
+    FieldInstanceArtifact textField2Instance1 = TextFieldInstance.builder().withValue(value2).build();
+    FieldInstanceArtifact textField2Instance2 = TextFieldInstance.builder().withValue(value3).build();
+    List<FieldInstanceArtifact> textField2Instances = new ArrayList<>();
+    textField2Instances.add(textField2Instance1);
+    textField2Instances.add(textField2Instance2);
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+        .withName(instanceName)
+        .withJsonLdContextEntry(element1Name, propertyIri)
+        .withJsonLdId(instanceUri)
+        .withIsBasedOn(isBasedOnTemplateUri)
+        .withMultiInstanceFieldInstances(textField2Name, textField2Instances)
+        .withSingleInstanceElementInstance(element1Name, element1Instance)
+        .build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+    assertEquals(expectedYaml, actualYaml);
+  }
+
+  @Test
+  public void testRenderTemplateInstanceWithAttributeValues() throws JsonProcessingException {
+    String instanceName = "Template 1";
+    URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
+    String attributeValueFieldGroupName = "Attribute-value Field A";
+    String attributeValueFieldInstanceName1 = "Attribute-value Field Instance 1";
+    String attributeValueFieldInstanceName2 = "Attribute-value Field Instance 2";
+    String attributeValueValue1 = "AV Value 1";
+    String attributeValueValue2 = "AV Value 2";
+
+    String expectedYaml = """
+        type: instance
+        name: {instanceName}
+        id: {instanceUri}
+        isBasedOn: {isBasedOn}
+        {attributeValueFieldGroupName}:
+          - {attributeValueFieldInstanceName1}:
+              value: {attributeValueValue1}
+          - {attributeValueFieldInstanceName2}:
+              value: {attributeValueValue2}
+        """.replace("{isBasedOn}",
+        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
+        instanceUri.toString()).replace("{attributeValueFieldGroupName}", attributeValueFieldGroupName).replace(
+        "{attributeValueFieldInstanceName1}", attributeValueFieldInstanceName1).replace(
+        "{attributeValueFieldInstanceName2}", attributeValueFieldInstanceName2).replace(
+        "{attributeValueValue1}", attributeValueValue1).replace(
+        "{attributeValueValue2}", attributeValueValue2);
+
+    FieldInstanceArtifact attributeValueFieldInstance1 =
+        TextFieldInstance.builder().withValue(attributeValueValue1).build();
+    FieldInstanceArtifact attributeValueFieldInstance2 =
+        TextFieldInstance.builder().withValue(attributeValueValue2).build();
+    LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances = new LinkedHashMap<>();
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName1, attributeValueFieldInstance1);
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName2, attributeValueFieldInstance2);
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+        .withName(instanceName)
+        .withJsonLdId(instanceUri)
+        .withIsBasedOn(isBasedOnTemplateUri)
+        .withAttributeValueFieldGroup(attributeValueFieldGroupName, attributeValueFieldInstances)
+        .build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+    assertEquals(expectedYaml, actualYaml);
+  }
+
+  private ObjectNode getFileContentAsObjectNode(String jsonFileName) {
     try {
-      return (ObjectNode)mapper.readTree(new File(
-        JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+      return (ObjectNode) mapper.readTree(new File(
+          JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
     }
