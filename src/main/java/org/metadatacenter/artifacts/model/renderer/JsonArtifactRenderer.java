@@ -460,7 +460,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "pav:lastUpdatedOn": { "@type": "xsd:dateTime" },
    *     "oslc:modifiedBy": { "@type": "@id" },
    *     "schema:isBasedOn": { "@type": "@id" },
-   *     "skos:notation": { "@type": "xsd:string" },
    *     "rdfs:label": { "@type": "xsd:string" }
    *   },
    *   "@id": "https://repo.metadatacenter.org/template-instances/66776767"
@@ -520,7 +519,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
       rendering.put(OSLC_MODIFIED_BY, renderUri(templateInstanceArtifact.modifiedBy().get()));
     else
       rendering.putNull(OSLC_MODIFIED_BY);
-
 
     return rendering;
   }
@@ -1115,7 +1113,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "pav:createdOn": {  "@type": "xsd:dateTime" },
    *     "pav:createdBy": { "@type": "@id" },
    *     "oslc:modifiedBy": { "@type": "@id" },
-   *     "skos:notation": { "@type": "xsd:string" },
    *     "Child Name 1": "https://myschema.org/property/p1"
    *     ...
    *     "Child Name n": "https://myschema.org/property/pn"
@@ -1150,6 +1147,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV_LAST_UPDATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(
       JSON_LD_ID));
+    // TODO This should not be here
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
 
     for (var entry : templateSchemaArtifact.getChildPropertyUris().entrySet()) {
@@ -1371,7 +1369,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "pav:createdBy": { "@type": "@id" },
    *     "pav:lastUpdatedOn": { "@type": "xsd:dateTime" },
    *     "oslc:modifiedBy": { "@type": "@id" },
-   *     "skos:notation": { "@type": "xsd:string" }
    *     "pav:isDerivedFrom": { "@type": "@id" }
    *     "schema:isBasedOn": { "@type": "@id" }
    *   }
@@ -1392,26 +1389,8 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
     rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
 
-    rendering.put(SKOS_NOTATION, renderXsdStringJsonLdSpecification());
-
     rendering.put(PAV_DERIVED_FROM, renderIriJsonLdSpecification());
     rendering.put(SCHEMA_IS_BASED_ON, renderIriJsonLdSpecification());
-
-    return rendering;
-  }
-
-  /**
-   * Generate a JSON-LD @context for a child instance artifacts
-   * <p>
-   * Defined as follows:
-   * <pre>
-   *   {
-   *   }
-   * </pre>
-   */
-  private ObjectNode renderInstanceArtifactContextJsonLdSpecification()
-  {
-    ObjectNode rendering = mapper.createObjectNode();
 
     return rendering;
   }
