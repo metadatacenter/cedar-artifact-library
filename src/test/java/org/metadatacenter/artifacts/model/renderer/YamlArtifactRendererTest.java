@@ -354,7 +354,97 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testRenderTemplateInstanceWithChildren() throws JsonProcessingException {
+  public void testRenderTemplateInstanceWithSingleInstanceTextField() throws JsonProcessingException {
+    String instanceName = "Template 1";
+    URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
+    String textField1Name = "Text Field 1";
+    String value1 = "Value 1";
+
+    String expectedYaml = """
+        type: instance
+        name: {instanceName}
+        id: {instanceUri}
+        isBasedOn: {isBasedOn}
+        children:
+          {textField1Name}:
+            value: {value1}
+        """.replace("{isBasedOn}",
+        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
+        instanceUri.toString()).replace("{textField1Name}",
+        textField1Name).replace(
+        "{value1}", value1);
+
+    FieldInstanceArtifact textField1Instance = TextFieldInstance.builder().withValue(value1).build();
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+        .withName(instanceName)
+        .withJsonLdId(instanceUri)
+        .withIsBasedOn(isBasedOnTemplateUri)
+        .withSingleInstanceFieldInstance(textField1Name, textField1Instance)
+        .build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+    assertEquals(expectedYaml, actualYaml);
+  }
+
+
+  @Test
+  public void testRenderTemplateInstanceWithMultiInstanceTextField() throws JsonProcessingException {
+    String instanceName = "Template 1";
+    URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
+    String textField1Name = "Text Field 1";
+    String value1 = "Value 1";
+    String value2 = "Value 2";
+
+    String expectedYaml = """
+        type: instance
+        name: {instanceName}
+        id: {instanceUri}
+        isBasedOn: {isBasedOn}
+        children:
+          {textField1Name}:
+            values:
+              - value: {value1}
+              - value: {value2}
+        """.replace("{isBasedOn}",
+        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
+        instanceUri.toString()).replace("{textField1Name}",
+        textField1Name).replace(
+        "{value1}", value1).replace(
+        "{value2}", value2);
+
+    FieldInstanceArtifact textField1Instance1 = TextFieldInstance.builder().withValue(value1).build();
+    FieldInstanceArtifact textField1Instance2 = TextFieldInstance.builder().withValue(value2).build();
+    List<FieldInstanceArtifact> textField1Instances = new ArrayList<>();
+    textField1Instances.add(textField1Instance1);
+    textField1Instances.add(textField1Instance2);
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+        .withName(instanceName)
+        .withJsonLdId(instanceUri)
+        .withIsBasedOn(isBasedOnTemplateUri)
+        .withMultiInstanceFieldInstances(textField1Name, textField1Instances)
+        .build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+    assertEquals(expectedYaml, actualYaml);
+  }
+
+
+  @Test
+  public void testRenderTemplateInstanceWithNestedChildren() throws JsonProcessingException {
     String instanceName = "Template 1";
     URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
     URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
