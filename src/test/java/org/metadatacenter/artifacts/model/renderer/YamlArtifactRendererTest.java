@@ -355,7 +355,7 @@ public class YamlArtifactRendererTest {
 
   @Test
   public void testRenderTemplateInstanceWithSingleInstanceTextField() throws JsonProcessingException {
-    String instanceName = "Template 1";
+    String instanceName = "Instance 1";
     URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
     URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
     String textField1Name = "Text Field 1";
@@ -393,10 +393,9 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedYaml, actualYaml);
   }
 
-
   @Test
   public void testRenderTemplateInstanceWithMultiInstanceTextField() throws JsonProcessingException {
-    String instanceName = "Template 1";
+    String instanceName = "Instance 1";
     URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
     URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
     String textField1Name = "Text Field 1";
@@ -444,8 +443,108 @@ public class YamlArtifactRendererTest {
 
 
   @Test
+  public void testRenderTemplateInstanceWithSingleInstanceControlledTermField() throws JsonProcessingException {
+    String instanceName = "Instance 1";
+    URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
+    String controledTermField1Name = "Controlled Term Field 1";
+    URI field1IriValue = java.net.URI.create("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C3224");
+    String field1LabelValue = "Melanoma";
+
+    String expectedYaml = """
+        type: instance
+        name: {instanceName}
+        id: {instanceUri}
+        isBasedOn: {isBasedOn}
+        children:
+          {controlledTermField1Name}:
+            id: {field1IriValue}
+            label: {field1LabelValue}
+        """.replace("{isBasedOn}",
+        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
+        instanceUri.toString()).replace("{controlledTermField1Name}",
+        controledTermField1Name).replace(
+        "{field1IriValue}", field1IriValue.toString()).replace(
+        "{field1LabelValue}", field1LabelValue);
+
+    FieldInstanceArtifact controlledTermField1Instance =
+        ControlledTermFieldInstance.builder().withValue(field1IriValue).withLabel(field1LabelValue).build();
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+        .withName(instanceName)
+        .withJsonLdId(instanceUri)
+        .withIsBasedOn(isBasedOnTemplateUri)
+        .withSingleInstanceFieldInstance(controledTermField1Name, controlledTermField1Instance)
+        .build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+    assertEquals(expectedYaml, actualYaml);
+  }
+
+  @Test
+  public void testRenderTemplateInstanceWithMultiInstanceControlledTermField() throws JsonProcessingException {
+    String instanceName = "Instance 1";
+    URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
+    String controledTermField1Name = "Controlled Term Field 1";
+    URI field1IriValue1 = java.net.URI.create("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C3224");
+    String field1LabelValue1 = "Melanoma";
+    URI field1IriValue2 = java.net.URI.create("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C3262");
+    String field1LabelValue2 = "Neoplasm";
+
+    String expectedYaml = """
+        type: instance
+        name: {instanceName}
+        id: {instanceUri}
+        isBasedOn: {isBasedOn}
+        children:
+          {controlledTermField1Name}:
+            values:
+              - id: {field1IriValue1}
+                label: {field1LabelValue1}
+              - id: {field1IriValue2}
+                label: {field1LabelValue2}
+        """.replace("{isBasedOn}",
+        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
+        instanceUri.toString()).replace("{controlledTermField1Name}",
+        controledTermField1Name).replace(
+        "{field1IriValue1}", field1IriValue1.toString()).replace(
+        "{field1LabelValue1}", field1LabelValue1).replace(
+        "{field1IriValue2}", field1IriValue2.toString()).replace(
+        "{field1LabelValue2}", field1LabelValue2);
+
+    FieldInstanceArtifact controlledTermField1Instance1 =
+        ControlledTermFieldInstance.builder().withValue(field1IriValue1).withLabel(field1LabelValue1).build();
+    FieldInstanceArtifact controlledTermField1Instance2 =
+        ControlledTermFieldInstance.builder().withValue(field1IriValue2).withLabel(field1LabelValue2).build();
+    List<FieldInstanceArtifact> controlledTermField1Instances = new ArrayList<>();
+    controlledTermField1Instances.add(controlledTermField1Instance1);
+    controlledTermField1Instances.add(controlledTermField1Instance2);
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+        .withName(instanceName)
+        .withJsonLdId(instanceUri)
+        .withIsBasedOn(isBasedOnTemplateUri)
+        .withMultiInstanceFieldInstances(controledTermField1Name, controlledTermField1Instances)
+        .build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+    assertEquals(expectedYaml, actualYaml);
+  }
+
+  @Test
   public void testRenderTemplateInstanceWithNestedChildren() throws JsonProcessingException {
-    String instanceName = "Template 1";
+    String instanceName = "Instance 1";
     URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
     URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
     String textField1Name = "Text Field 1";
@@ -509,7 +608,7 @@ public class YamlArtifactRendererTest {
 
   @Test
   public void testRenderTemplateInstanceWithAttributeValues() throws JsonProcessingException {
-    String instanceName = "Template 1";
+    String instanceName = "Instance 1";
     URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
     URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
     String attributeValueFieldGroupName = "Attribute-value Field A";
