@@ -396,14 +396,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
             renderElementInstanceArtifacts(parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
 
         if (!elementInstanceArtifactsRendering.isEmpty()) {
-          LinkedHashMap<String, Object> childWrapper = new LinkedHashMap<>();
-          childWrapper.put(CHILDREN, elementInstanceArtifactsRendering);
-          childInstanceArtifactsRendering.put(childKey, childWrapper);
+          LinkedHashMap<String, Object> childrenWrapper = new LinkedHashMap<>();
+          childrenWrapper.put(CHILDREN, elementInstanceArtifactsRendering);
+          childInstanceArtifactsRendering.put(childKey, childrenWrapper);
         }
       } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childKey)) {
-        List<FieldInstanceArtifact> fieldInstanceArtifacts = parentInstanceArtifact.multiInstanceFieldInstances().get(childKey);
+        List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering =
+          renderFieldInstanceArtifacts(parentInstanceArtifact.multiInstanceFieldInstances().get(childKey));
 
-        // TODO
+        if (!fieldInstanceArtifactsRendering.isEmpty()) {
+          LinkedHashMap<String, Object> valuesWrapper = new LinkedHashMap<>();
+          valuesWrapper.put(VALUES, fieldInstanceArtifactsRendering);
+          childInstanceArtifactsRendering.put(childKey, valuesWrapper);
+        }
       }
     }
 
