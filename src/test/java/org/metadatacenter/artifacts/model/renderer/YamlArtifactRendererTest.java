@@ -672,6 +672,57 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedYaml, actualYaml);
   }
 
+  @Test
+  public void testRenderTemplateInstanceWithAnnotations() throws JsonProcessingException {
+    String instanceName = "Instance 1";
+    URI instanceUri = java.net.URI.create("https://repo.metadatacenter.org/template-instances/4343");
+    URI isBasedOnTemplateUri = java.net.URI.create("https://repo.metadatacenter.org/templates/3232");
+    String annotation1AttributeName = "Literal Annotation attribute name";
+    String annotation2AttributeName = "IRI Annotation attribute name";
+    String annotation1Value = "A literal value";
+    URI annotation2Value = java.net.URI.create("https://example.com/c1");
+
+    String expectedYaml = """
+        type: instance
+        name: {instanceName}
+        id: {instanceUri}
+        isBasedOn: {isBasedOn}
+        annotations:
+          - name: {annotation1AttributeName}
+            value: {annotation1Value}
+          - name: {annotation2AttributeName}
+            type: iri
+            value: {annotation2Value}
+        """
+        .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
+        .replace("{instanceName}", instanceName)
+        .replace("{instanceUri}", instanceUri.toString())
+        .replace("{annotation1AttributeName}", annotation1AttributeName)
+        .replace("{annotation2AttributeName}", annotation2AttributeName)
+        .replace("{annotation1Value}", annotation1Value)
+        .replace("{annotation2Value}", annotation2Value.toString());
+
+    Annotations annotations = Annotations.builder()
+        .withLiteralAnnotation(annotation1AttributeName, annotation1Value)
+        .withIriAnnotation(annotation2AttributeName, annotation2Value)
+        .build();
+
+    TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder()
+        .withName(instanceName)
+        .withJsonLdId(instanceUri)
+        .withIsBasedOn(isBasedOnTemplateUri)
+        .withAnnotations(annotations)
+        .build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(false);
+
+    LinkedHashMap<String, Object> actualRendering =
+        yamlArtifactRenderer.renderTemplateInstanceArtifact(templateInstanceArtifact);
+
+    String actualYaml = mapper.writeValueAsString(actualRendering);
+    assertEquals(expectedYaml, actualYaml);
+  }
+
   private ObjectNode getFileContentAsObjectNode(String jsonFileName) {
     try {
       return (ObjectNode) mapper.readTree(new File(
