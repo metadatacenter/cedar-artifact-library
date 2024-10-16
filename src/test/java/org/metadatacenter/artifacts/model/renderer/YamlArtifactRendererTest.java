@@ -92,8 +92,11 @@ public class YamlArtifactRendererTest {
         description: ${description}
         header: ${header}
         footer: ${footer}
-        """.replace("${name}", name).replace("${description}", description).
-        replace("${header}", header).replace("${footer}", footer);
+        """
+        .replace("${name}", name)
+        .replace("${description}", description)
+        .replace("${header}", header)
+        .replace("${footer}", footer);
 
     assertEquals(expectedStringRendering, actualStringRendering);
   }
@@ -143,7 +146,9 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
-        """.replace("${name}", name).replace("${description}", description);
+        """
+        .replace("${name}", name)
+        .replace("${description}", description);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
@@ -168,7 +173,9 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
-        """.replace("${name}", name).replace("${description}", description);
+        """
+        .replace("${name}", name)
+        .replace("${description}", description);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
@@ -276,7 +283,6 @@ public class YamlArtifactRendererTest {
         withName(name).
         withDescription(description).
         build();
-
   }
 
   @Test
@@ -300,7 +306,8 @@ public class YamlArtifactRendererTest {
                 termType: class
                 termLabel: ${classPrefLabel}
                 iri: ${classUri}
-        """.replace("${fieldName}", fieldName)
+        """
+        .replace("${fieldName}", fieldName)
         .replace("${description}", description)
         .replace("${classValueType}", classValueType.toString())
         .replace("${classLabel}", classLabel)
@@ -369,11 +376,12 @@ public class YamlArtifactRendererTest {
         children:
           {textField1Name}:
             value: {value1}
-        """.replace("{isBasedOn}",
-        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
-        instanceUri.toString()).replace("{textField1Name}",
-        textField1Name).replace(
-        "{value1}", value1);
+        """
+        .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
+        .replace("{instanceName}", instanceName)
+        .replace("{instanceUri}", instanceUri.toString())
+        .replace("{textField1Name}", textField1Name)
+        .replace("{value1}", value1);
 
     FieldInstanceArtifact textField1Instance = TextFieldInstance.builder().withValue(value1).build();
 
@@ -412,12 +420,13 @@ public class YamlArtifactRendererTest {
             values:
               - value: {value1}
               - value: {value2}
-        """.replace("{isBasedOn}",
-        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
-        instanceUri.toString()).replace("{textField1Name}",
-        textField1Name).replace(
-        "{value1}", value1).replace(
-        "{value2}", value2);
+        """
+        .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
+        .replace("{instanceName}", instanceName)
+        .replace("{instanceUri}", instanceUri.toString())
+        .replace("{textField1Name}", textField1Name)
+        .replace("{value1}", value1)
+        .replace("{value2}", value2);
 
     FieldInstanceArtifact textField1Instance1 = TextFieldInstance.builder().withValue(value1).build();
     FieldInstanceArtifact textField1Instance2 = TextFieldInstance.builder().withValue(value2).build();
@@ -460,12 +469,13 @@ public class YamlArtifactRendererTest {
           {controlledTermField1Name}:
             id: {field1IriValue}
             label: {field1LabelValue}
-        """.replace("{isBasedOn}",
-        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
-        instanceUri.toString()).replace("{controlledTermField1Name}",
-        controledTermField1Name).replace(
-        "{field1IriValue}", field1IriValue.toString()).replace(
-        "{field1LabelValue}", field1LabelValue);
+        """
+        .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
+        .replace("{instanceName}", instanceName)
+        .replace("{instanceUri}", instanceUri.toString())
+        .replace("{controlledTermField1Name}", controledTermField1Name)
+        .replace("{field1IriValue}", field1IriValue.toString())
+        .replace("{field1LabelValue}", field1LabelValue);
 
     FieldInstanceArtifact controlledTermField1Instance =
         ControlledTermFieldInstance.builder().withValue(field1IriValue).withLabel(field1LabelValue).build();
@@ -509,14 +519,14 @@ public class YamlArtifactRendererTest {
                 label: {field1LabelValue1}
               - id: {field1IriValue2}
                 label: {field1LabelValue2}
-        """.replace("{isBasedOn}",
-        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
-        instanceUri.toString()).replace("{controlledTermField1Name}",
-        controledTermField1Name).replace(
-        "{field1IriValue1}", field1IriValue1.toString()).replace(
-        "{field1LabelValue1}", field1LabelValue1).replace(
-        "{field1IriValue2}", field1IriValue2.toString()).replace(
-        "{field1LabelValue2}", field1LabelValue2);
+        """
+        .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
+        .replace("{instanceName}", instanceName)
+        .replace("{instanceUri}", instanceUri.toString())
+        .replace("{controlledTermField1Name}", controledTermField1Name)
+        .replace("{field1IriValue1}", field1IriValue1.toString())
+        .replace("{field1LabelValue1}", field1LabelValue1).replace("{field1IriValue2}", field1IriValue2.toString())
+        .replace("{field1LabelValue2}", field1LabelValue2);
 
     FieldInstanceArtifact controlledTermField1Instance1 =
         ControlledTermFieldInstance.builder().withValue(field1IriValue1).withLabel(field1LabelValue1).build();
@@ -569,15 +579,16 @@ public class YamlArtifactRendererTest {
             children:
               {textField1Name}:
                 value: {value1}
-        """.replace("{isBasedOn}",
-        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
-        instanceUri.toString()).replace("{textField1Name}",
-        textField1Name).replace("{textField2Name}",
-        textField2Name).replace("{element1Name}",
-        element1Name).replace(
-        "{value1}", value1).replace(
-        "{value2}", value2).replace(
-        "{value3}", value3);
+        """
+        .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
+        .replace("{instanceName}", instanceName)
+        .replace("{instanceUri}", instanceUri.toString())
+        .replace("{textField1Name}", textField1Name)
+        .replace("{textField2Name}", textField2Name)
+        .replace("{element1Name}", element1Name)
+        .replace("{value1}", value1)
+        .replace("{value2}", value2)
+        .replace("{value3}", value3);
 
     FieldInstanceArtifact textField1Instance = TextFieldInstance.builder().withValue(value1).build();
     ElementInstanceArtifact element1Instance =
@@ -627,13 +638,15 @@ public class YamlArtifactRendererTest {
               value: {attributeValueValue1}
           - {attributeValueFieldInstanceName2}:
               value: {attributeValueValue2}
-        """.replace("{isBasedOn}",
-        isBasedOnTemplateUri.toString()).replace("{instanceName}", instanceName).replace("{instanceUri}",
-        instanceUri.toString()).replace("{attributeValueFieldGroupName}", attributeValueFieldGroupName).replace(
-        "{attributeValueFieldInstanceName1}", attributeValueFieldInstanceName1).replace(
-        "{attributeValueFieldInstanceName2}", attributeValueFieldInstanceName2).replace(
-        "{attributeValueValue1}", attributeValueValue1).replace(
-        "{attributeValueValue2}", attributeValueValue2);
+        """
+        .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
+        .replace("{instanceName}", instanceName)
+        .replace("{instanceUri}", instanceUri.toString())
+        .replace("{attributeValueFieldGroupName}", attributeValueFieldGroupName)
+        .replace("{attributeValueFieldInstanceName1}", attributeValueFieldInstanceName1)
+        .replace("{attributeValueFieldInstanceName2}", attributeValueFieldInstanceName2)
+        .replace("{attributeValueValue1}", attributeValueValue1)
+        .replace("{attributeValueValue2}", attributeValueValue2);
 
     FieldInstanceArtifact attributeValueFieldInstance1 =
         TextFieldInstance.builder().withValue(attributeValueValue1).build();
