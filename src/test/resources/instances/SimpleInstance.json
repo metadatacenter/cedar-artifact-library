@@ -52,6 +52,9 @@
     "@value": "Bobby",
     "@language": "en"
   },
+  "Height": {
+    "@value": null
+  },
   "schema:isBasedOn": "https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded",
   "schema:name": "Simple instance",
   "schema:description": "",

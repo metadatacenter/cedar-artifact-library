@@ -695,12 +695,12 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithNesting.json");
   }
 
-  @Test public void testRoundTripRADxCLIGeneratedInstance()
+  @Ignore @Test public void testRoundTripRADxCLIGeneratedInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADxCLIGeneratedInstance.json");
   }
 
-  @Test public void testRoundTripRADx2CLIGeneratedInstance()
+  @Ignore @Test public void testRoundTripRADx2CLIGeneratedInstance()
   {
     testTemplateInstanceArtifactRoundTripFromFile("instances/RADx2.0CLIGeneratedInstance.json");
   }

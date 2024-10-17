@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -199,13 +200,14 @@ public class JsonArtifactReaderTest
     String controlledTermsFieldName = "Controlled Terms";
     String sizeFieldName = "Size";
     URI brainActivityUri = URI.create("http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity");
+    String heightFieldName = "Height";
 
     ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstance.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
     assertEquals("Simple instance", templateInstanceArtifact.name().get());
-    assertEquals(3, templateInstanceArtifact.singleInstanceFieldInstances().size());
+    assertEquals(4, templateInstanceArtifact.singleInstanceFieldInstances().size());
 
     assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(nameFieldName));
     assertEquals("en", templateInstanceArtifact.singleInstanceFieldInstances().get(nameFieldName).language().get());
@@ -217,6 +219,9 @@ public class JsonArtifactReaderTest
     assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName));
     assertEquals("33", templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdValue().get());
     assertEquals(XsdDatatype.INT.toUri(), templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdTypes().get(0));
+
+    assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(heightFieldName));
+    assertEquals(null, templateInstanceArtifact.singleInstanceFieldInstances().get(heightFieldName).jsonLdValue());
   }
 
   @Test

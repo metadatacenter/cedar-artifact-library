@@ -344,6 +344,8 @@ public class YamlArtifactRendererTest {
           Name:
             value: Bobby
             language: en
+          Height:
+            value: null
         """;
 
     ObjectNode objectNode = getFileContentAsObjectNode("instances/SimpleInstance.json");
@@ -689,11 +691,9 @@ public class YamlArtifactRendererTest {
         isBasedOn: {isBasedOn}
         annotations:
           {annotation1AttributeName}:
-            datatype: string
             value: {annotation1Value}
           {annotation2AttributeName}:
-            datatype: iri
-            value: {annotation2Value}
+            id: {annotation2Value}
         """
         .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
         .replace("{instanceName}", instanceName)

@@ -468,7 +468,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldInstanceArtifact.jsonLdId().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
-    if (fieldInstanceArtifact.jsonLdValue().isPresent())
+    if (fieldInstanceArtifact.jsonLdValue() == null)
+      fieldInstanceArtifactRendering.put(VALUE, null);
+    else if (fieldInstanceArtifact.jsonLdValue().isPresent())
       fieldInstanceArtifactRendering.put(VALUE, fieldInstanceArtifact.jsonLdValue().get());
 
     if (fieldInstanceArtifact.label().isPresent())
@@ -1223,12 +1225,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       // TODO Use typesafe switch when available
       if (annotationValue instanceof LiteralAnnotationValue) {
         LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
-        annotationRendering.put(DATATYPE, STRING);
         annotationRendering.put(VALUE, literalAnnotationValue.getValue());
       } else if (annotationValue instanceof IriAnnotationValue) {
         IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
-        annotationRendering.put(DATATYPE, IRI);
-        annotationRendering.put(VALUE, iriAnnotationValue.getValue().toString());
+        annotationRendering.put(ID, iriAnnotationValue.getValue().toString());
       }
       annotationsRendering.put(annotationName, annotationRendering);
     }
