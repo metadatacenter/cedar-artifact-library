@@ -1158,7 +1158,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
       .put(PAV_LAST_UPDATED_ON, renderJsonSchemaJsonLdDatatypeSpecification("xsd:dateTime"));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
       .put(OSLC_MODIFIED_BY, renderJsonSchemaJsonLdDatatypeSpecification(JSON_LD_ID));
-    // TODO This should not be here
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
       .put(SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
 
