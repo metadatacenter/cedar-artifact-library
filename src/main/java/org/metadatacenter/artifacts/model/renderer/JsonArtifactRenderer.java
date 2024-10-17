@@ -568,14 +568,12 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
         objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
     } else { // No type given so some guessing involved
       if (fieldInstanceArtifact.jsonLdId().isPresent()) {
-        if (fieldInstanceArtifact.jsonLdId().get() != null)
-          objectNode.put(JSON_LD_ID, renderUri(fieldInstanceArtifact.jsonLdId().get()));
+        objectNode.put(JSON_LD_ID, renderUri(fieldInstanceArtifact.jsonLdId().get()));
       } else if (fieldInstanceArtifact.jsonLdValue() == null) { // @value is explicitly null
         objectNode.putNull(JSON_LD_VALUE);
       } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
         objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
-      } else // No @id or @value present; assume @value
-        objectNode.putNull(JSON_LD_VALUE);
+      } // No @id or @value present
     }
 
     if (fieldInstanceArtifact.label().isPresent() && fieldInstanceArtifact.label().get() != null)
