@@ -1395,16 +1395,16 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
     for (var entry : INSTANCE_ARTIFACT_CONTEXT_PREFIX_MAPPINGS.entrySet())
       rendering.put(entry.getKey(), entry.getValue().toString());
 
+    rendering.put(RDFS_LABEL, renderXsdStringJsonLdSpecification());
+    rendering.put(SCHEMA_IS_BASED_ON, renderIriJsonLdSpecification());
     rendering.put(SCHEMA_ORG_NAME, renderXsdStringJsonLdSpecification());
     rendering.put(SCHEMA_ORG_DESCRIPTION, renderXsdStringJsonLdSpecification());
-
+    rendering.put(PAV_DERIVED_FROM, renderIriJsonLdSpecification());
     rendering.put(PAV_CREATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(PAV_CREATED_BY, renderIriJsonLdSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderXsdDateTimeJsonLdSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderIriJsonLdSpecification());
-
-    rendering.put(PAV_DERIVED_FROM, renderIriJsonLdSpecification());
-    rendering.put(SCHEMA_IS_BASED_ON, renderIriJsonLdSpecification());
+    rendering.put(SKOS_NOTATION, renderXsdStringJsonLdSpecification());
 
     return rendering;
   }
