@@ -460,7 +460,8 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode>
    *     "pav:lastUpdatedOn": { "@type": "xsd:dateTime" },
    *     "oslc:modifiedBy": { "@type": "@id" },
    *     "schema:isBasedOn": { "@type": "@id" },
-   *     "rdfs:label": { "@type": "xsd:string" }
+   *     "rdfs:label": { "@type": "xsd:string" },
+   *     "skos:notation": { "@type": "xsd:string" }
    *   },
    *   "@id": "https://repo.metadatacenter.org/template-instances/66776767"
    *   "schema:isBasedOn": "https://repo.metadatacenter.org/templates/5454545",
