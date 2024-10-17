@@ -332,16 +332,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && templateInstanceArtifact.modifiedBy().isPresent())
       rendering.put(MODIFIED_BY, templateInstanceArtifact.modifiedBy().get().toString());
 
-    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(templateInstanceArtifact);
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
+      templateInstanceArtifact);
     if (!childInstanceArtifactsRendering.isEmpty())
       rendering.put(CHILDREN, childInstanceArtifactsRendering);
 
-    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup: templateInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : templateInstanceArtifact.attributeValueFieldInstanceGroups()
+      .entrySet()) {
       String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
       Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
 
       if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
-        rendering.put(attributeValueFieldInstanceGroupKey, renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
+        rendering.put(attributeValueFieldInstanceGroupKey,
+          renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
       }
     }
 
@@ -358,42 +361,50 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
-    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(elementInstanceArtifact);
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
+      elementInstanceArtifact);
     if (!childInstanceArtifactsRendering.isEmpty())
       rendering.put(CHILDREN, childInstanceArtifactsRendering);
 
-    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup: elementInstanceArtifact.attributeValueFieldInstanceGroups().entrySet()) {
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
+      .entrySet()) {
       String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
       Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
 
       if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
-        rendering.put(attributeValueFieldInstanceGroupKey, renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
+        rendering.put(attributeValueFieldInstanceGroupKey,
+          renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
       }
     }
 
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderChildInstanceArtifacts(ParentInstanceArtifact parentInstanceArtifact) {
+  private LinkedHashMap<String, Object> renderChildInstanceArtifacts(ParentInstanceArtifact parentInstanceArtifact)
+  {
     LinkedHashMap<String, Object> childInstanceArtifactsRendering = new LinkedHashMap<>();
 
-    for (String childKey: parentInstanceArtifact.childKeys()) {
+    for (String childKey : parentInstanceArtifact.childKeys()) {
       if (parentInstanceArtifact.singleInstanceFieldInstances().containsKey(childKey)) {
-        FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances().get(childKey);
-        LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(fieldInstanceArtifact);
+        FieldInstanceArtifact fieldInstanceArtifact = parentInstanceArtifact.singleInstanceFieldInstances()
+          .get(childKey);
+        LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(
+          fieldInstanceArtifact);
         if (!fieldInstanceArtifactRendering.isEmpty())
           childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactRendering);
       } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
         if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
-          ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances().get(childKey);
-          LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(elementInstanceArtifact);
+          ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances()
+            .get(childKey);
+          LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(
+            elementInstanceArtifact);
 
           if (!elementInstanceArtifactRendering.isEmpty())
             childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactRendering);
         }
       } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
-        List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering =
-            renderElementInstanceArtifacts(parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
+        List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering = renderElementInstanceArtifacts(
+          parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
 
         if (!elementInstanceArtifactsRendering.isEmpty()) {
           LinkedHashMap<String, Object> childrenWrapper = new LinkedHashMap<>();
@@ -401,8 +412,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           childInstanceArtifactsRendering.put(childKey, childrenWrapper);
         }
       } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childKey)) {
-        List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering =
-          renderFieldInstanceArtifacts(parentInstanceArtifact.multiInstanceFieldInstances().get(childKey));
+        List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering = renderFieldInstanceArtifacts(
+          parentInstanceArtifact.multiInstanceFieldInstances().get(childKey));
 
         if (!fieldInstanceArtifactsRendering.isEmpty()) {
           LinkedHashMap<String, Object> valuesWrapper = new LinkedHashMap<>();
@@ -415,13 +426,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return childInstanceArtifactsRendering;
   }
 
-  private List<LinkedHashMap<String, Object>> renderElementInstanceArtifacts(List<ElementInstanceArtifact> elementInstanceArtifacts)
+  private List<LinkedHashMap<String, Object>> renderElementInstanceArtifacts(
+    List<ElementInstanceArtifact> elementInstanceArtifacts)
   {
     List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering = new ArrayList<>();
 
-    for (ElementInstanceArtifact elementInstanceArtifact: elementInstanceArtifacts) {
+    for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
 
-      LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(elementInstanceArtifact);
+      LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(
+        elementInstanceArtifact);
       if (!elementInstanceArtifactRendering.isEmpty())
         elementInstanceArtifactsRendering.add(elementInstanceArtifactRendering);
     }
@@ -429,11 +442,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return elementInstanceArtifactsRendering;
   }
 
-  private List<LinkedHashMap<String, Object>> renderFieldInstanceArtifacts(List<FieldInstanceArtifact> fieldInstanceArtifacts)
+  private List<LinkedHashMap<String, Object>> renderFieldInstanceArtifacts(
+    List<FieldInstanceArtifact> fieldInstanceArtifacts)
   {
     List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering = new ArrayList<>();
 
-    for (FieldInstanceArtifact fieldInstanceArtifact: fieldInstanceArtifacts) {
+    for (FieldInstanceArtifact fieldInstanceArtifact : fieldInstanceArtifacts) {
 
       LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(fieldInstanceArtifact);
       if (!fieldInstanceArtifactRendering.isEmpty())
@@ -449,7 +463,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (!fieldInstanceArtifact.jsonLdTypes().isEmpty())
       fieldInstanceArtifactRendering.put(DATATYPE,
-          renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
+        renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
 
     if (fieldInstanceArtifact.jsonLdId().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
@@ -1181,44 +1195,42 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private List<LinkedHashMap<String, Object>> renderAttributeValueFieldInstanceGroupFields(Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields)
+  private LinkedHashMap<String, Object> renderAttributeValueFieldInstanceGroupFields(
+    Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields)
   {
-    List<LinkedHashMap<String, Object>> attributeValueFieldInstanceGroupFieldsRendering = new ArrayList<>();
+    LinkedHashMap<String, Object> attributeValueFieldInstanceGroupFieldsRendering = new LinkedHashMap<>();
 
     for (Map.Entry<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupField : attributeValueFieldInstanceGroupFields.entrySet()) {
       String attributeValueFieldInstanceFieldKey = attributeValueFieldInstanceGroupField.getKey();
       FieldInstanceArtifact fieldInstanceArtifact = attributeValueFieldInstanceGroupField.getValue();
-      LinkedHashMap<String, Object> attributeValueFieldInstanceRendering = new LinkedHashMap<>();
 
-      attributeValueFieldInstanceRendering.put(attributeValueFieldInstanceFieldKey, renderFieldInstanceArtifact(fieldInstanceArtifact));
-
-      attributeValueFieldInstanceGroupFieldsRendering.add(attributeValueFieldInstanceRendering);
+      attributeValueFieldInstanceGroupFieldsRendering.put(attributeValueFieldInstanceFieldKey,
+        renderFieldInstanceArtifact(fieldInstanceArtifact));
     }
 
     return attributeValueFieldInstanceGroupFieldsRendering;
   }
 
-  private List<LinkedHashMap<String, Object>> renderAnnotations(Annotations annotations)
+  private LinkedHashMap<String, Object> renderAnnotations(Annotations annotations)
   {
-    List<LinkedHashMap<String, Object>> annotationsRendering = new ArrayList<>();
+    LinkedHashMap<String, Object> annotationsRendering = new LinkedHashMap<>();
 
     for (Map.Entry<String, AnnotationValue> annotationValueEntry : annotations.annotations().entrySet()) {
       String annotationName = annotationValueEntry.getKey();
       AnnotationValue annotationValue = annotationValueEntry.getValue();
       LinkedHashMap<String, Object> annotationRendering = new LinkedHashMap<>();
 
-      annotationRendering.put(NAME, annotationName);
-
       // TODO Use typesafe switch when available
       if (annotationValue instanceof LiteralAnnotationValue) {
         LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
+        annotationRendering.put(DATATYPE, STRING);
         annotationRendering.put(VALUE, literalAnnotationValue.getValue());
       } else if (annotationValue instanceof IriAnnotationValue) {
         IriAnnotationValue iriAnnotationValue = (IriAnnotationValue)annotationValue;
-        annotationRendering.put(TYPE, IRI);
+        annotationRendering.put(DATATYPE, IRI);
         annotationRendering.put(VALUE, iriAnnotationValue.getValue().toString());
       }
-      annotationsRendering.add(annotationRendering);
+      annotationsRendering.put(annotationName, annotationRendering);
     }
 
     return annotationsRendering;

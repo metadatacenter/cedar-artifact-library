@@ -634,10 +634,10 @@ public class YamlArtifactRendererTest {
         id: {instanceUri}
         isBasedOn: {isBasedOn}
         {attributeValueFieldGroupName}:
-          - {attributeValueFieldInstanceName1}:
-              value: {attributeValueValue1}
-          - {attributeValueFieldInstanceName2}:
-              value: {attributeValueValue2}
+          {attributeValueFieldInstanceName1}:
+            value: {attributeValueValue1}
+          {attributeValueFieldInstanceName2}:
+            value: {attributeValueValue2}
         """
         .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
         .replace("{instanceName}", instanceName)
@@ -688,10 +688,11 @@ public class YamlArtifactRendererTest {
         id: {instanceUri}
         isBasedOn: {isBasedOn}
         annotations:
-          - name: {annotation1AttributeName}
+          {annotation1AttributeName}:
+            datatype: string
             value: {annotation1Value}
-          - name: {annotation2AttributeName}
-            type: iri
+          {annotation2AttributeName}:
+            datatype: iri
             value: {annotation2Value}
         """
         .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
