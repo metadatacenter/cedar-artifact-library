@@ -419,9 +419,8 @@ public class YamlArtifactRendererTest {
         isBasedOn: {isBasedOn}
         children:
           {textField1Name}:
-            values:
-              - value: {value1}
-              - value: {value2}
+            - value: {value1}
+            - value: {value2}
         """
         .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
         .replace("{instanceName}", instanceName)
@@ -516,11 +515,10 @@ public class YamlArtifactRendererTest {
         isBasedOn: {isBasedOn}
         children:
           {controlledTermField1Name}:
-            values:
-              - id: {field1IriValue1}
-                label: {field1LabelValue1}
-              - id: {field1IriValue2}
-                label: {field1LabelValue2}
+            - id: {field1IriValue1}
+              label: {field1LabelValue1}
+            - id: {field1IriValue2}
+              label: {field1LabelValue2}
         """
         .replace("{isBasedOn}", isBasedOnTemplateUri.toString())
         .replace("{instanceName}", instanceName)
@@ -574,9 +572,8 @@ public class YamlArtifactRendererTest {
         isBasedOn: {isBasedOn}
         children:
           {textField2Name}:
-            values:
-              - value: {value2}
-              - value: {value3}
+            - value: {value2}
+            - value: {value3}
           {element1Name}:
             children:
               {textField1Name}:

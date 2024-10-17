@@ -402,23 +402,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           if (!elementInstanceArtifactRendering.isEmpty())
             childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactRendering);
         }
-      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
-        List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering = renderElementInstanceArtifacts(
-          parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
-
-        if (!elementInstanceArtifactsRendering.isEmpty()) {
-          LinkedHashMap<String, Object> childrenWrapper = new LinkedHashMap<>();
-          childrenWrapper.put(CHILDREN, elementInstanceArtifactsRendering);
-          childInstanceArtifactsRendering.put(childKey, childrenWrapper);
-        }
       } else if (parentInstanceArtifact.multiInstanceFieldInstances().containsKey(childKey)) {
         List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering = renderFieldInstanceArtifacts(
           parentInstanceArtifact.multiInstanceFieldInstances().get(childKey));
 
         if (!fieldInstanceArtifactsRendering.isEmpty()) {
-          LinkedHashMap<String, Object> valuesWrapper = new LinkedHashMap<>();
-          valuesWrapper.put(VALUES, fieldInstanceArtifactsRendering);
-          childInstanceArtifactsRendering.put(childKey, valuesWrapper);
+          childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactsRendering);
+        }
+      } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
+        List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering = renderElementInstanceArtifacts(
+          parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
+
+        if (!elementInstanceArtifactsRendering.isEmpty()) {
+          childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactsRendering);
         }
       }
     }
