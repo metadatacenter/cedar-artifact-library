@@ -12,17 +12,12 @@ import org.metadatacenter.artifacts.model.visitors.TemplateReporter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class InstanceArtifactVisitorTest
-{
+public class InstanceArtifactVisitorTest {
   private JsonArtifactReader artifactReader;
   private ObjectMapper mapper;
 
@@ -32,8 +27,8 @@ public class InstanceArtifactVisitorTest
     mapper = new ObjectMapper();
   }
 
-  @Test public void testVisitor()
-  {
+  @Test
+  public void testVisitor() {
     String instanceName = "Template 1";
     String textFieldName1 = "Text Field 1";
     String element1Name = "Element 1";
@@ -43,16 +38,19 @@ public class InstanceArtifactVisitorTest
     URI isBasedOn = URI.create("https://repo.metadatacenter.org/templates/3232");
 
     FieldInstanceArtifact textField1 = TextFieldInstance.builder().withValue("Value 1").build();
-    ElementInstanceArtifact element1 = ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textFieldName1, textField1)
-      .build();
+    ElementInstanceArtifact element1 =
+        ElementInstanceArtifact.builder().withSingleInstanceFieldInstance(textFieldName1, textField1)
+        .build();
     FieldInstanceArtifact textField2 = TextFieldInstance.builder().withValue("Value 1").build();
     FieldInstanceArtifact attributeValueFieldInstance1 = TextFieldInstance.builder().withValue("AV Value 1")
-      .build();
+        .build();
+    LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances = new LinkedHashMap<>();
+    attributeValueFieldInstances.put(attributeValueFieldInstanceName, attributeValueFieldInstance1);
 
     TemplateInstanceArtifact templateInstanceArtifact = TemplateInstanceArtifact.builder().withName(instanceName)
-      .withIsBasedOn(isBasedOn).withSingleInstanceFieldInstance(textFieldName2, textField2)
-      .withSingleInstanceElementInstance(element1Name, element1).withAttributeValueFieldGroup(attributeValueFieldName,
-        Map.of(attributeValueFieldInstanceName, attributeValueFieldInstance1)).build();
+        .withIsBasedOn(isBasedOn).withSingleInstanceFieldInstance(textFieldName2, textField2)
+        .withSingleInstanceElementInstance(element1Name, element1).withAttributeValueFieldGroup(attributeValueFieldName,
+            attributeValueFieldInstances).build();
 
     BasicInstanceReporter instanceReporter = new BasicInstanceReporter();
 
@@ -67,8 +65,7 @@ public class InstanceArtifactVisitorTest
   }
 
   @Test
-  public void testReadInstanceWithAttributeValues()
-  {
+  public void testReadInstanceWithAttributeValues() {
     ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithAttributeValues.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
@@ -87,8 +84,7 @@ public class InstanceArtifactVisitorTest
   }
 
   @Test
-  public void testReadInstanceWithNestedAttributeValues()
-  {
+  public void testReadInstanceWithNestedAttributeValues() {
     ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithAttributeValues.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
@@ -107,8 +103,7 @@ public class InstanceArtifactVisitorTest
   }
 
   @Test
-  public void testVisitorsOnRADxMetadata()
-  {
+  public void testVisitorsOnRADxMetadata() {
     ObjectNode templateObjectNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
     ObjectNode instanceObjectNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
 
@@ -126,84 +121,79 @@ public class InstanceArtifactVisitorTest
     assertTrue(Collections.frequency(instanceReporter.getInstanceReport().values(), null) == 0);
   }
 
-  private class InstanceReporter implements InstanceArtifactVisitor
-  {
+  private class InstanceReporter implements InstanceArtifactVisitor {
     private final TemplateReporter templateReporter;
     private final Map<String, SchemaArtifact> instanceReport = new HashMap<>();
 
-    public InstanceReporter(TemplateReporter templateReporter)
-    {
+    public InstanceReporter(TemplateReporter templateReporter) {
       this.templateReporter = templateReporter;
     }
 
-    public Map<String, SchemaArtifact> getInstanceReport()
-    {
+    public Map<String, SchemaArtifact> getInstanceReport() {
       return instanceReport;
     }
 
-    @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
-    {
+    @Override
+    public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact) {
       instanceReport.put("/", templateReporter.getTemplateSchema());
     }
 
-    @Override public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path)
-    {
+    @Override
+    public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path) {
       instanceReport.put(path, templateReporter.getElementSchema(path).get());
     }
 
-    @Override public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path)
-    {
+    @Override
+    public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path) {
       instanceReport.put(path, templateReporter.getFieldSchema(path).get());
     }
 
-    @Override public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
-      String path, String specificationPath)
-    {
+    @Override
+    public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
+                                                         String path, String specificationPath) {
       instanceReport.put(path, templateReporter.getFieldSchema(specificationPath).get());
     }
   }
 
-  private class BasicInstanceReporter implements InstanceArtifactVisitor
-  {
+  private class BasicInstanceReporter implements InstanceArtifactVisitor {
     private List<String> instanceReport = new ArrayList<>();
 
-    public List<String> getInstanceReport()
-    {
+    public List<String> getInstanceReport() {
       return instanceReport;
     }
 
-    @Override public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
-    {
+    @Override
+    public void visitTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact) {
       instanceReport.add("/");
     }
 
-    @Override public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path)
-    {
+    @Override
+    public void visitElementInstanceArtifact(ElementInstanceArtifact childInstanceArtifact, String path) {
       instanceReport.add(path);
     }
 
-    @Override public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path)
-    {
+    @Override
+    public void visitFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact, String path) {
       instanceReport.add(path);
     }
 
-    @Override public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
-      String path, String specificationPath)
-    {
+    @Override
+    public void visitAttributeValueFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact,
+                                                         String path, String specificationPath) {
       instanceReport.add(path);
     }
   }
 
-  private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
-  {
+  private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName) {
     try {
       JsonNode jsonNode = mapper.readTree(new File(
-        JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+          JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
 
-      if (jsonNode.isObject())
-        return (ObjectNode)jsonNode;
-      else
+      if (jsonNode.isObject()) {
+        return (ObjectNode) jsonNode;
+      } else {
         throw new RuntimeException("Error reading JSON file " + jsonFileName + ": root node is not an ObjectNode");
+      }
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
     }

@@ -15,6 +15,7 @@ public sealed interface ParentInstanceArtifact extends ParentArtifact, JsonLdArt
   Optional<URI> jsonLdId();
 
   Optional<URI> createdBy();
+
   Optional<URI> modifiedBy();
 
   Optional<OffsetDateTime> createdOn();

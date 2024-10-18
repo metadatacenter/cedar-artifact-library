@@ -536,6 +536,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     URI isBasedOn = readRequiredUri(sourceNode, path, SCHEMA_IS_BASED_ON);
+    Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     List<String> childKeys = new ArrayList<>();
@@ -550,7 +551,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
 
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, childKeys, singleInstanceFieldInstances,
+      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, derivedFrom, childKeys, singleInstanceFieldInstances,
       multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
       attributeValueFieldInstances, annotations);
   }
@@ -585,7 +586,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
   {
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
-    Optional<String> jsonLdValue = readString(sourceNode, path, JSON_LD_VALUE);
+    Optional<String> jsonLdValue = readPossiblyNullString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
     Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
     Optional<String> notation = readString(sourceNode, path, SKOS_NOTATION);
@@ -1733,6 +1734,20 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.of(jsonNode.asText());
   }
 
+  private Optional<String> readPossiblyNullString(ObjectNode sourceNode, String path, String fieldName)
+  {
+    JsonNode jsonNode = sourceNode.get(fieldName);
+
+    if (jsonNode == null)
+      return Optional.empty();
+    else if (jsonNode.isNull())
+      return null;
+    else if (!jsonNode.isTextual())
+      throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
+    else
+      return Optional.of(jsonNode.asText());
+  }
+
   private String readString(ObjectNode sourceNode, String path, String fieldName, String defaultValue)
   {
     JsonNode jsonNode = sourceNode.get(fieldName);
@@ -1911,10 +1926,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
   {
     Version artifactModelVersion = readModelVersion(sourceNode, path);
 
-// TODO Renable eventually after patching older artifacts
-//    if (!artifactModelVersion.equals(modelVersion))
-//      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " + artifactModelVersion,
-//        SCHEMA_ORG_SCHEMA_VERSION, path);
+    // TODO Renable eventually after patching older artifacts
+    //    if (!artifactModelVersion.equals(modelVersion))
+    //      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " + artifactModelVersion,
+    //        SCHEMA_ORG_SCHEMA_VERSION, path);
   }
 
 }

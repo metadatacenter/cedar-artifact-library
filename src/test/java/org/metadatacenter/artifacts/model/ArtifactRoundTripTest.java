@@ -97,8 +97,8 @@ public class ArtifactRoundTripTest
     Number minValue = 0.0;
     Number maxValue = 100.0;
 
-    NumericField originalFieldSchemaArtifact = NumericField.builder().withName(name)
-      .withDescription(description).withNumericType(numericType).withMinValue(minValue).withMaxValue(maxValue).build();
+    NumericField originalFieldSchemaArtifact = NumericField.builder().withName(name).withDescription(description)
+      .withNumericType(numericType).withMinValue(minValue).withMaxValue(maxValue).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -112,9 +112,9 @@ public class ArtifactRoundTripTest
     InputTimeFormat inputTimeFormat = InputTimeFormat.TWENTY_FOUR_HOUR;
     boolean timeZoneEnabled = false;
 
-    TemporalField originalFieldSchemaArtifact = TemporalField.builder().withName(name)
-      .withDescription(description).withTemporalType(temporalType).withTemporalGranularity(temporalGranularity)
-      .withInputTimeFormat(inputTimeFormat).withTimeZoneEnabled(timeZoneEnabled).build();
+    TemporalField originalFieldSchemaArtifact = TemporalField.builder().withName(name).withDescription(description)
+      .withTemporalType(temporalType).withTemporalGranularity(temporalGranularity).withInputTimeFormat(inputTimeFormat)
+      .withTimeZoneEnabled(timeZoneEnabled).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -168,8 +168,8 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    RadioField originalFieldSchemaArtifact = RadioField.builder().withName(name)
-      .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
+    RadioField originalFieldSchemaArtifact = RadioField.builder().withName(name).withDescription(description)
+      .withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -179,8 +179,8 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    ListField originalFieldSchemaArtifact = ListField.builder().withName(name)
-      .withDescription(description).withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
+    ListField originalFieldSchemaArtifact = ListField.builder().withName(name).withDescription(description)
+      .withOption("Choice 1").withOption("Choice 2").withOption("Choice 3", true).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -190,9 +190,8 @@ public class ArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    CheckboxField originalFieldSchemaArtifact = CheckboxField.builder().withName(name)
-      .withDescription(description).withOption("Choice 1", false).withOption("Choice 2", false)
-      .withOption("Choice 3", true).build();
+    CheckboxField originalFieldSchemaArtifact = CheckboxField.builder().withName(name).withDescription(description)
+      .withOption("Choice 1", false).withOption("Choice 2", false).withOption("Choice 3", true).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -217,8 +216,8 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    EmailField originalFieldSchemaArtifact = EmailField.builder().withName(name)
-      .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
+    EmailField originalFieldSchemaArtifact = EmailField.builder().withName(name).withDescription(description)
+      .withMinLength(minLength).withMaxLength(maxLength).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -229,8 +228,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
 
-    LinkField originalFieldSchemaArtifact = LinkField.builder().withName(name)
-      .withDescription(description).withDefaultValue(defaultURI).build();
+    LinkField originalFieldSchemaArtifact = LinkField.builder().withName(name).withDescription(description)
+      .withDefaultValue(defaultURI).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -242,8 +241,8 @@ public class ArtifactRoundTripTest
     Integer minLength = 0;
     Integer maxLength = 10;
 
-    TextAreaField originalFieldSchemaArtifact = TextAreaField.builder().withName(name)
-      .withDescription(description).withMinLength(minLength).withMaxLength(maxLength).build();
+    TextAreaField originalFieldSchemaArtifact = TextAreaField.builder().withName(name).withDescription(description)
+      .withMinLength(minLength).withMaxLength(maxLength).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -280,8 +279,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    ImageField originalFieldSchemaArtifact = ImageField.builder().withName(name)
-      .withDescription(description).withContent(content).build();
+    ImageField originalFieldSchemaArtifact = ImageField.builder().withName(name).withDescription(description)
+      .withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -292,8 +291,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    YouTubeField originalFieldSchemaArtifact = YouTubeField.builder().withName(name)
-      .withDescription(description).withContent(content).build();
+    YouTubeField originalFieldSchemaArtifact = YouTubeField.builder().withName(name).withDescription(description)
+      .withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -304,8 +303,8 @@ public class ArtifactRoundTripTest
     String description = "Field description";
     String content = "Content";
 
-    RichTextField originalFieldSchemaArtifact = RichTextField.builder().withName(name)
-      .withDescription(description).withContent(content).build();
+    RichTextField originalFieldSchemaArtifact = RichTextField.builder().withName(name).withDescription(description)
+      .withContent(content).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
@@ -490,8 +489,8 @@ public class ArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
   }
 
-  @Test
-  public void testRADxInstanceAgainstTemplate() {
+  @Test public void testRADxInstanceAgainstTemplate()
+  {
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
@@ -499,8 +498,8 @@ public class ArtifactRoundTripTest
     assertTrue(validateJsonSchema(templateNode, instanceNode));
   }
 
-  @Test
-  public void testRADx2InstanceAgainstTemplate() {
+  @Test public void testRADx2InstanceAgainstTemplate()
+  {
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADx2.0CLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADx2.0CLIGeneratedInstance.json");
@@ -523,7 +522,6 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-002.json");
   }
 
-  @Ignore // TODO Static fields don't render _content as null if it is missing
   @Test public void testRoundTripTemplate004()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-004.json");
@@ -549,7 +547,6 @@ public class ArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-008.json");
   }
 
-  @Ignore // TODO YouTube fields not read/rendered correctly
   @Test public void testRoundTripTemplate009()
   {
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-009.json");
@@ -722,7 +719,7 @@ public class ArtifactRoundTripTest
 
   @Test public void testRoundTripElement004()
   {
-      testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
+    testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
   }
 
   @Test public void testRoundTripField001()
@@ -785,8 +782,7 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateElementSchemaArtifact(originalRendering));
 
-    ElementSchemaArtifact originalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(
-      originalRendering);
+    ElementSchemaArtifact originalElementSchemaArtifact = artifactReader.readElementSchemaArtifact(originalRendering);
 
     ObjectNode finalRendering = jsonArtifactRenderer.renderElementSchemaArtifact(originalElementSchemaArtifact);
 
@@ -807,8 +803,7 @@ public class ArtifactRoundTripTest
 
     assertTrue(validateFieldSchemaArtifact(originalRendering));
 
-    FieldSchemaArtifact originalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(
-      originalRendering);
+    FieldSchemaArtifact originalFieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(originalRendering);
 
     ObjectNode finalRendering = jsonArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact);
 
@@ -828,26 +823,28 @@ public class ArtifactRoundTripTest
     TemplateInstanceArtifact originalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
       originalRendering);
 
-    ObjectNode finalRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(
-      originalTemplateInstanceArtifact);
+    ObjectNode finalRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(originalTemplateInstanceArtifact);
 
     TemplateInstanceArtifact finalTemplateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(
       finalRendering);
 
     assertEquals(originalTemplateInstanceArtifact.jsonLdContext(), finalTemplateInstanceArtifact.jsonLdContext());
     assertEquals(originalTemplateInstanceArtifact.childKeys(), finalTemplateInstanceArtifact.childKeys());
-    assertEquals(originalTemplateInstanceArtifact.singleInstanceFieldInstances(), finalTemplateInstanceArtifact.singleInstanceFieldInstances());
-    assertEquals(originalTemplateInstanceArtifact.singleInstanceElementInstances(), finalTemplateInstanceArtifact.singleInstanceElementInstances());
-    assertEquals(originalTemplateInstanceArtifact.multiInstanceFieldInstances(), finalTemplateInstanceArtifact.multiInstanceFieldInstances());
-    assertEquals(originalTemplateInstanceArtifact.multiInstanceElementInstances(), finalTemplateInstanceArtifact.multiInstanceElementInstances());
+    assertEquals(originalTemplateInstanceArtifact.singleInstanceFieldInstances(),
+      finalTemplateInstanceArtifact.singleInstanceFieldInstances());
+    assertEquals(originalTemplateInstanceArtifact.singleInstanceElementInstances(),
+      finalTemplateInstanceArtifact.singleInstanceElementInstances());
+    assertEquals(originalTemplateInstanceArtifact.multiInstanceFieldInstances(),
+      finalTemplateInstanceArtifact.multiInstanceFieldInstances());
+    assertEquals(originalTemplateInstanceArtifact.multiInstanceElementInstances(),
+      finalTemplateInstanceArtifact.multiInstanceElementInstances());
 
     assertEquals(originalTemplateInstanceArtifact, finalTemplateInstanceArtifact);
   }
 
   private void testRoundTripTemplateSchemaArtifact(TemplateSchemaArtifact originalTemplateSchemaArtifact)
   {
-    ObjectNode originalRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(
-      originalTemplateSchemaArtifact);
+    ObjectNode originalRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(originalTemplateSchemaArtifact);
 
     assertTrue(validateJsonSchema(originalRendering));
 
