@@ -23,11 +23,17 @@ import java.util.LinkedHashMap;
 public class YamlSerializer {
 
   private static ObjectMapper YAML_OBJECT_MAPPER;
+  private static ObjectMapper YAML_OBJECT_MAPPER_FULL_QUOTES;
 
   static {
     YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-        //.enable(YAMLGenerator.Feature.USE_PLATFORM_LINE_BREAKS)
+        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // This is different
+        .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
+        .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
+        .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
+
+    YAMLFactory yamlFactoryFullQuotes = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+        .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // This is different
         .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
         .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
@@ -36,11 +42,16 @@ public class YamlSerializer {
     YAML_OBJECT_MAPPER.registerModule(new Jdk8Module());
     YAML_OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
 
+    YAML_OBJECT_MAPPER_FULL_QUOTES = new ObjectMapper(yamlFactoryFullQuotes);
+    YAML_OBJECT_MAPPER_FULL_QUOTES.registerModule(new Jdk8Module());
+    YAML_OBJECT_MAPPER_FULL_QUOTES.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, false);
+
     // Register custom serializer module
     SimpleModule module = new SimpleModule();
     module.addSerializer(Double.class, new CustomDoubleSerializer());
     module.addSerializer(Float.class, new CustomFloatSerializer());
     YAML_OBJECT_MAPPER.registerModule(module);
+    YAML_OBJECT_MAPPER_FULL_QUOTES.registerModule(module);
   }
 
   // Custom serializer for Double
@@ -67,18 +78,23 @@ public class YamlSerializer {
     }
   }
 
-  public static void saveYAML(Artifact artifact, boolean compactYaml, Path outputFilePath) {
-    saveYAML(artifact, compactYaml, null, outputFilePath);
+  public static void saveYAML(Artifact artifact, boolean compactYaml, boolean fullQuotes, Path outputFilePath) {
+    saveYAML(artifact, compactYaml, fullQuotes, null, outputFilePath);
   }
 
-  public static String getYAML(Artifact artifact, boolean compactYaml) {
-    return getYAML(artifact, compactYaml, null);
+  public static String getYAML(Artifact artifact, boolean compactYaml, boolean fullQuotes) {
+    return getYAML(artifact, compactYaml, fullQuotes, null);
   }
 
-  public static String getYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient) {
+  public static String getYAML(Artifact artifact, boolean compactYaml, boolean fullQuotes, TerminologyServerClient terminologyServerClient) {
     LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact, compactYaml, terminologyServerClient);
     try {
-      String v = YAML_OBJECT_MAPPER.writeValueAsString(yamlSerialized);
+      String v = null;
+      if (fullQuotes) {
+        v = YAML_OBJECT_MAPPER_FULL_QUOTES.writeValueAsString(yamlSerialized);
+      } else {
+        v = YAML_OBJECT_MAPPER.writeValueAsString(yamlSerialized);
+      }
       for (int i = 0x80; i <= 0x9f; i++) {
         String hexString = String.format("\\\\x%02x", i);
         String unicodeString = Character.toString(i);
@@ -93,8 +109,8 @@ public class YamlSerializer {
     }
   }
 
-  public static void saveYAML(Artifact artifact, boolean compactYaml, TerminologyServerClient terminologyServerClient, Path outputFilePath) {
-    String content = getYAML(artifact, compactYaml, terminologyServerClient);
+  public static void saveYAML(Artifact artifact, boolean compactYaml, boolean fullQuotes, TerminologyServerClient terminologyServerClient, Path outputFilePath) {
+    String content = getYAML(artifact, compactYaml, fullQuotes, terminologyServerClient);
     try {
       Files.writeString(outputFilePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
@@ -120,8 +136,8 @@ public class YamlSerializer {
     return yamlSerialized;
   }
 
-  public static void outputYAML(Artifact artifact, boolean isCompact, TerminologyServerClient terminologyServerClient) {
-    String content = getYAML(artifact, isCompact, terminologyServerClient);
+  public static void outputYAML(Artifact artifact, boolean isCompact, boolean fullQuotes, TerminologyServerClient terminologyServerClient) {
+    String content = getYAML(artifact, isCompact, fullQuotes, terminologyServerClient);
     System.out.println(content);
   }
 }
