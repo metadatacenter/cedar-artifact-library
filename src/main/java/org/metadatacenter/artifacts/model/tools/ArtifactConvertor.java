@@ -40,6 +40,7 @@ public class ArtifactConvertor {
   private static final String YAML_FORMAT_OPTION = "yf";
   private static final String JSON_FORMAT_OPTION = "jf";
   private static final String COMPACT_YAML_OPTION = "cy";
+  private static final String YAML_FULL_QUOTES = "yq";
   private static final String OUTPUT_FILE_OPTION = "f";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
   private static final String CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API = "t";
@@ -211,13 +212,15 @@ public class ArtifactConvertor {
     boolean compactYaml = command.hasOption(COMPACT_YAML_OPTION);
     TerminologyServerClient terminologyServerClient = createTerminologyServerClientIfPossible(command);
 
+    boolean yamlFullQuotes = command.hasOption(YAML_FULL_QUOTES);
+
     if (command.hasOption(OUTPUT_FILE_OPTION)) {
       String yamlOutputFileName = command.getOptionValue(OUTPUT_FILE_OPTION);
       Path path = Path.of(yamlOutputFileName);
-      YamlSerializer.saveYAML(artifact, compactYaml, terminologyServerClient, path);
+      YamlSerializer.saveYAML(artifact, compactYaml, yamlFullQuotes, terminologyServerClient, path);
       System.out.println("Successfully generated YAML file " + path.toFile().getAbsolutePath());
     } else {
-      YamlSerializer.outputYAML(artifact, compactYaml, terminologyServerClient);
+      YamlSerializer.outputYAML(artifact, compactYaml, yamlFullQuotes, terminologyServerClient);
     }
   }
 
@@ -339,6 +342,11 @@ public class ArtifactConvertor {
         .desc("Compact YAML")
         .build();
 
+    Option yamlFullquotesOption = Option.builder(YAML_FULL_QUOTES)
+        .argName("yaml-full-quotes")
+        .desc("YAML Full Quotes")
+        .build();
+
     Option resourceOption = Option.builder(CEDAR_RESOURCE_REST_API_BASE_OPTION)
         .argName("cedar-resource-rest-api-base")
         .hasArg()
@@ -378,6 +386,7 @@ public class ArtifactConvertor {
 
     options.addOption(outputFileOption);
     options.addOption(compactYamlOption);
+    options.addOption(yamlFullquotesOption);
     options.addOption(resourceOption);
     options.addOption(terminologySearchOption);
     options.addOption(keyOption);
