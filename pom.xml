@@ -177,6 +177,16 @@
             </configuration>
           </execution>
 
+          <execution>
+            <id>templates2ubkg</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+	      <mainClass>org.metadatacenter.artifacts.model.tools.Templates2Ubkg</mainClass>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
 
