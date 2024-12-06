@@ -3,14 +3,14 @@ package org.metadatacenter.artifacts.model.reader;
 public class ArtifactParseException extends RuntimeException
 {
   private final String parseErrorMessage;
-  private final String fieldName;
+  private final String fieldKey;
   private final String path;
 
-  public ArtifactParseException(String parseErrorMessage, String fieldName, String path)
+  public ArtifactParseException(String parseErrorMessage, String fieldKey, String path)
   {
-    super(parseErrorMessage + " for field " + fieldName + " at " + path);
+    super(parseErrorMessage + " for field " + fieldKey + " at " + path);
     this.parseErrorMessage = parseErrorMessage;
-    this.fieldName = fieldName;
+    this.fieldKey = fieldKey;
     this.path = path;
   }
 
@@ -19,9 +19,9 @@ public class ArtifactParseException extends RuntimeException
     return parseErrorMessage;
   }
 
-  public String getFieldName()
+  public String getFieldKey()
   {
-    return fieldName;
+    return fieldKey;
   }
 
   public String getPath()

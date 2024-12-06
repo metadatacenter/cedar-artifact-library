@@ -63,15 +63,15 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     visitor.visitTemplateSchemaArtifact(this);
 
     for (Map.Entry<String, FieldSchemaArtifact> entry : fieldSchemas().entrySet()) {
-      String fieldName = entry.getKey();
-      String childPath = path + fieldName;
+      String fieldKey = entry.getKey();
+      String childPath = path + fieldKey;
       FieldSchemaArtifact fieldSchemaArtifact = entry.getValue();
       fieldSchemaArtifact.accept(visitor, childPath);
     }
 
     for (Map.Entry<String, ElementSchemaArtifact> entry : elementSchemas().entrySet()) {
-      String fieldName = entry.getKey();
-      String childPath = path + fieldName;
+      String fieldKey = entry.getKey();
+      String childPath = path + fieldKey;
       ElementSchemaArtifact elementSchemaArtifact = entry.getValue();
       elementSchemaArtifact.accept(visitor, childPath);
     }

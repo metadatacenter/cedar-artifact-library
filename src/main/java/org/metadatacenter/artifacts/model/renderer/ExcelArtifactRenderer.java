@@ -58,8 +58,7 @@ import java.util.Optional;
 
 import static org.metadatacenter.artifacts.ss.SpreadSheetUtil.setCellComment;
 
-public class ExcelArtifactRenderer
-{
+public class ExcelArtifactRenderer {
   private final TerminologyServerClient terminologyServerClient;
   private final Workbook workbook;
   private final ObjectMapper mapper;
@@ -73,10 +72,9 @@ public class ExcelArtifactRenderer
 
   public static final String xsdDateTimeFormatterString = "uuuu-MM-dd'T'HH:mm:ssZZZZZ";
   public static final DateTimeFormatter xsdDateTimeFormatter =
-    DateTimeFormatter.ofPattern(xsdDateTimeFormatterString).withZone(ZoneId.systemDefault());
+      DateTimeFormatter.ofPattern(xsdDateTimeFormatterString).withZone(ZoneId.systemDefault());
 
-  public ExcelArtifactRenderer(TerminologyServerClient terminologyServerClient)
-  {
+  public ExcelArtifactRenderer(TerminologyServerClient terminologyServerClient) {
     this.terminologyServerClient = terminologyServerClient;
 
     this.workbook = SpreadsheetFactory.createEmptyWorkbook();
@@ -89,8 +87,8 @@ public class ExcelArtifactRenderer
     this.headerCellstyle = createHeaderCellStyle(workbook);
   }
 
-  public Workbook render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex, int headerRowNumber)
-  {
+  public Workbook render(TemplateSchemaArtifact templateSchemaArtifact, int headerStartColumnIndex,
+                         int headerRowNumber) {
     String proposedSheetName = templateSchemaArtifact.name();
     int columnIndex = headerStartColumnIndex;
 
@@ -98,8 +96,8 @@ public class ExcelArtifactRenderer
     Row headerRow = sheet.createRow(headerRowNumber);
     Row firstDataRow = sheet.createRow(headerRowNumber + 1);
 
-    for (String fieldName : templateSchemaArtifact.getFieldKeys()) {
-      FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldName);
+    for (String fieldKey : templateSchemaArtifact.getFieldKeys()) {
+      FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldKey);
 
       render(fieldSchemaArtifact, sheet, columnIndex, headerRow, firstDataRow);
 
@@ -111,32 +109,32 @@ public class ExcelArtifactRenderer
     return this.workbook;
   }
 
-  public Workbook render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet)
-  {
+  public Workbook render(ElementSchemaArtifact elementSchemaArtifact, Sheet sheet) {
     throw new RuntimeException("element rendering not implemented");
   }
 
-  private Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow, Row firstDataRow)
-  {
-    String fieldName = fieldSchemaArtifact.name();
+  private Workbook render(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, Row headerRow,
+                          Row firstDataRow) {
+    String fieldKey = fieldSchemaArtifact.name();
     String fieldDescription = fieldSchemaArtifact.description();
     CellStyle cellStyle = createCellStyle(fieldSchemaArtifact);
     int rowIndex = headerRow.getRowNum() + 1;
     Cell columnNameHeaderCell = headerRow.createCell(columnIndex);
     boolean isRequiredValue =
-      fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
-        .requiredValue();
+        fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
+            .requiredValue();
     Optional<? extends DefaultValue> defaultValue = fieldSchemaArtifact.valueConstraints().isPresent() ?
-      fieldSchemaArtifact.valueConstraints().get().defaultValue() : Optional.empty();
+        fieldSchemaArtifact.valueConstraints().get().defaultValue() : Optional.empty();
 
     //    if (fieldSchemaArtifact.getPreferredLabel().isPresent())
     //      columnNameCell.setCellValue(fieldSchemaArtifact.getPreferredLabel().get());
     //    else
-    columnNameHeaderCell.setCellValue(fieldName);
+    columnNameHeaderCell.setCellValue(fieldKey);
     columnNameHeaderCell.setCellStyle(headerCellstyle);
 
-    if (isRequiredValue)
+    if (isRequiredValue) {
       fieldDescription = "(Required) " + fieldDescription;
+    }
 
     setCellComment(columnNameHeaderCell, fieldDescription);
 
@@ -145,8 +143,9 @@ public class ExcelArtifactRenderer
 
     setColumnDataValidationConstraintIfRequired(fieldSchemaArtifact, sheet, columnIndex, rowIndex);
 
-    if (fieldSchemaArtifact.hidden() || fieldSchemaArtifact.isStatic())
+    if (fieldSchemaArtifact.hidden() || fieldSchemaArtifact.isStatic()) {
       sheet.setColumnHidden(columnIndex, true);
+    }
 
     if (defaultValue.isPresent()) {
       DefaultValue value = defaultValue.get(); // TODO Use typesafe switch when available
@@ -168,40 +167,40 @@ public class ExcelArtifactRenderer
       } else if (value.isTemporalDefaultValue()) {
         TemporalDefaultValue temporalDefaultValue = value.asTemporalDefaultValue();
         dataCell.setCellValue(temporalDefaultValue.value());
-      } else
-        throw new RuntimeException("Unknown default value type " + value.getValueType() + " for field " + fieldName);
+      } else {
+        throw new RuntimeException("Unknown default value type " + value.getValueType() + " for field " + fieldKey);
+      }
     }
     return this.workbook;
   }
 
-  private void setColumnDataValidationConstraintIfRequired(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet, int columnIndex, int firstRow)
-  {
+  private void setColumnDataValidationConstraintIfRequired(FieldSchemaArtifact fieldSchemaArtifact, Sheet sheet,
+                                                           int columnIndex, int firstRow) {
     DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
     Optional<DataValidationConstraint> constraint = createDataValidationConstraint(fieldSchemaArtifact,
-      dataValidationHelper);
+        dataValidationHelper);
 
     if (constraint.isPresent()) {
       // TODO Replace arbitrary 1000 with final row in spreadsheet
       CellRangeAddressList cellRange = new CellRangeAddressList(firstRow, 1000, columnIndex, columnIndex);
       DataValidation dataValidation = dataValidationHelper.createValidation(constraint.get(), cellRange);
 
-     dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldSchemaArtifact));
- //    dataValidation.setSuppressDropDownArrow(true);
-       dataValidation.setShowErrorBox(true);
+      dataValidation.createErrorBox("Validation Error", createDataValidationMessage(fieldSchemaArtifact));
+      //    dataValidation.setSuppressDropDownArrow(true);
+      dataValidation.setShowErrorBox(true);
       sheet.addValidationData(dataValidation);
     }
   }
 
-  private String createDataValidationMessage(FieldSchemaArtifact fieldSchemaArtifact)
-  {
-    String fieldName = fieldSchemaArtifact.name();
+  private String createDataValidationMessage(FieldSchemaArtifact fieldSchemaArtifact) {
+    String fieldKey = fieldSchemaArtifact.name();
     FieldUi fieldUi = fieldSchemaArtifact.fieldUi();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     // Only some fields have validation constraints that we can create messages for
     if (valueConstraints.isPresent()) {
       if (valueConstraints.get() instanceof TextValueConstraints) { // TODO Use typesafe switch when available
-        TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get();
+        TextValueConstraints textValueConstraints = (TextValueConstraints) valueConstraints.get();
 
         if (textValueConstraints.minLength().isPresent()) {
           Integer minLength = textValueConstraints.minLength().get();
@@ -220,7 +219,7 @@ public class ExcelArtifactRenderer
           }
         }
       } else if (valueConstraints.get() instanceof NumericValueConstraints) {
-        NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get();
+        NumericValueConstraints numericValueConstraints = (NumericValueConstraints) valueConstraints.get();
         if (numericValueConstraints.minValue().isPresent()) {
           Number minValue = numericValueConstraints.minValue().get();
           if (numericValueConstraints.maxValue().isPresent()) { // Minimum present, maximum present
@@ -238,168 +237,176 @@ public class ExcelArtifactRenderer
           }
         }
       } else if (valueConstraints.get() instanceof TemporalValueConstraints) {
-        TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
+        TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints) valueConstraints.get();
         TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi(); // TODO Temporary until we use typed switch
         XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
-        return getTemporalFormatString(fieldName, temporalType, temporalFieldUi.temporalGranularity(),
-          temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
+        return getTemporalFormatString(fieldKey, temporalType, temporalFieldUi.temporalGranularity(),
+            temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
 
-      } else
+      } else {
         return "";
-    } else
+      }
+    } else {
       return "";
+    }
   }
 
   private Optional<DataValidationConstraint> createDataValidationConstraint(
-    FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper)
-  {
-    String fieldName = fieldSchemaArtifact.name();
-
-
+      FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper) {
+    String fieldKey = fieldSchemaArtifact.name();
     int validationType = getValidationType(fieldSchemaArtifact);
 
     // Only some fields have validation constraints that we can act on
-    if (validationType == DataValidationConstraint.ValidationType.ANY)
+    if (validationType == DataValidationConstraint.ValidationType.ANY) {
       return Optional.empty();
-    else if (validationType == DataValidationConstraint.ValidationType.TEXT_LENGTH)
+    } else if (validationType == DataValidationConstraint.ValidationType.TEXT_LENGTH) {
       return createTextLengthDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
-    else if (validationType == DataValidationConstraint.ValidationType.INTEGER)
+    } else if (validationType == DataValidationConstraint.ValidationType.INTEGER) {
       return createIntegerDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
-    else if (validationType == DataValidationConstraint.ValidationType.DECIMAL)
+    } else if (validationType == DataValidationConstraint.ValidationType.DECIMAL) {
       return createDecimalDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
-    else if (validationType == DataValidationConstraint.ValidationType.DATE)
+    } else if (validationType == DataValidationConstraint.ValidationType.DATE) {
       return createDateDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
-    else if (validationType == DataValidationConstraint.ValidationType.TIME)
+    } else if (validationType == DataValidationConstraint.ValidationType.TIME) {
       return createTimeDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
-    else if (validationType == DataValidationConstraint.ValidationType.FORMULA) {
+    } else if (validationType == DataValidationConstraint.ValidationType.FORMULA) {
       return createFormulaDataValidationConstraint(fieldSchemaArtifact, dataValidationHelper);
-    } else
-      throw new RuntimeException("Do no know how to handle data validation type " + validationType + " for field " + fieldName);
+    } else {
+      throw new RuntimeException("Do no know how to handle data validation type " + validationType + " for field " + fieldKey);
+    }
   }
 
   private Optional<DataValidationConstraint> createDecimalDataValidationConstraint(
-    FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper)
-  {
+      FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper) {
     int validationType = DataValidationConstraint.ValidationType.DECIMAL;
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      NumericValueConstraints numericValueConstraints = (NumericValueConstraints)fieldSchemaArtifact.valueConstraints().get();
+      NumericValueConstraints numericValueConstraints =
+          (NumericValueConstraints) fieldSchemaArtifact.valueConstraints().get();
       if (numericValueConstraints.minValue().isPresent()) {
         Number minValue = numericValueConstraints.minValue().get();
         if (numericValueConstraints.maxValue().isPresent()) { // Minimum present, maximum present
           Number maxValue = numericValueConstraints.maxValue().get();
           return Optional.of(
-            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-              minValue.toString(), maxValue.toString()));
+              dataValidationHelper.createNumericConstraint(validationType,
+                  DataValidationConstraint.OperatorType.BETWEEN,
+                  minValue.toString(), maxValue.toString()));
         } else { // Minimum present, maximum not present
-          return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+              DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
         }
       } else {
         if (numericValueConstraints.maxValue().isPresent()) { // Maximum present, minimum not present
           Number maxValue = numericValueConstraints.maxValue().get();
-          return Optional.of(dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
+          return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
+              DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
         } else { // Maximum not present, minimum not present
           return Optional.of(
-            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-              String.valueOf(-Float.MAX_VALUE), String.valueOf(Float.MAX_VALUE)));
+              dataValidationHelper.createNumericConstraint(validationType,
+                  DataValidationConstraint.OperatorType.BETWEEN,
+                  String.valueOf(-Float.MAX_VALUE), String.valueOf(Float.MAX_VALUE)));
         }
       }
-    } else
+    } else {
       return Optional.of(
-        dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-          String.valueOf(-Float.MAX_VALUE), String.valueOf(Float.MAX_VALUE)));
+          dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+              String.valueOf(-Float.MAX_VALUE), String.valueOf(Float.MAX_VALUE)));
+    }
   }
 
   private Optional<DataValidationConstraint> createIntegerDataValidationConstraint(
-    FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper)
-  {
+      FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper) {
     int validationType = DataValidationConstraint.ValidationType.INTEGER;
 
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      NumericValueConstraints numericValueConstraints = (NumericValueConstraints)fieldSchemaArtifact.valueConstraints().get();
+      NumericValueConstraints numericValueConstraints =
+          (NumericValueConstraints) fieldSchemaArtifact.valueConstraints().get();
       if (numericValueConstraints.minValue().isPresent()) {
         Number minValue = numericValueConstraints.minValue().get();
         if (numericValueConstraints.maxValue().isPresent()) { // Minimum present, maximum present
           Number maxValue = numericValueConstraints.maxValue().get();
           return Optional.of(
-            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-              minValue.toString(), maxValue.toString()));
+              dataValidationHelper.createNumericConstraint(validationType,
+                  DataValidationConstraint.OperatorType.BETWEEN,
+                  minValue.toString(), maxValue.toString()));
         } else { // Minimum present, maximum not present
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-            DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
+              DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, minValue.toString(), ""));
         }
       } else {
         if (numericValueConstraints.maxValue().isPresent()) { // Maximum present, minimum not present
           Number maxValue = numericValueConstraints.maxValue().get();
           return Optional.of(dataValidationHelper.createNumericConstraint(validationType,
-            DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
+              DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxValue.toString(), ""));
         } else { // Maximum not present, minimum not present
           return Optional.of(
-            dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-              String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
+              dataValidationHelper.createNumericConstraint(validationType,
+                  DataValidationConstraint.OperatorType.BETWEEN,
+                  String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
         }
       }
-    } else
+    } else {
       return Optional.of(
-        dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
-          String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
+          dataValidationHelper.createNumericConstraint(validationType, DataValidationConstraint.OperatorType.BETWEEN,
+              String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE)));
+    }
   }
 
   private Optional<DataValidationConstraint> createTextLengthDataValidationConstraint(
-    FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper)
-  {
+      FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper) {
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      TextValueConstraints textValueConstraints = (TextValueConstraints)fieldSchemaArtifact.valueConstraints().get();
+      TextValueConstraints textValueConstraints = (TextValueConstraints) fieldSchemaArtifact.valueConstraints().get();
       if (textValueConstraints.minLength().isPresent()) {
         Integer minLength = textValueConstraints.minLength().get();
         if (textValueConstraints.maxLength().isPresent()) { // Minimum length present, maximum length present
           Integer maxLength = textValueConstraints.maxLength().get();
           return Optional.of(
-            dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN, minLength.toString(), maxLength.toString()));
+              dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN,
+                  minLength.toString(), maxLength.toString()));
         } else { // Minimum length present, maximum length not present
           return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN,
-            minLength.toString(), ""));
+              minLength.toString(), ""));
         }
       } else {
         if (textValueConstraints.maxLength().isPresent()) { // Minimum length not present, maximum length present
           Integer maxLength = textValueConstraints.maxLength().get();
           return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.LESS_OR_EQUAL,
-            maxLength.toString(), ""));
+              maxLength.toString(), ""));
         } else { // Minimum length not present, maximum length not present
           return Optional.empty();
         }
       }
-    } else
+    } else {
       return Optional.empty();
+    }
   }
 
   private Optional<DataValidationConstraint> createDateDataValidationConstraint(
-    FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper)
-  {
-    if (fieldSchemaArtifact.fieldUi().isTemporal())
+      FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper) {
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
       return Optional.of(
-        dataValidationHelper.createDateConstraint(DataValidationConstraint.OperatorType.BETWEEN, "Date(1, 1, 1)",
-          "Date(9999,12,31)", "dd/mm/yyyy"));
-    else
+          dataValidationHelper.createDateConstraint(DataValidationConstraint.OperatorType.BETWEEN, "Date(1, 1, 1)",
+              "Date(9999,12,31)", "dd/mm/yyyy"));
+    } else {
       return Optional.empty();
+    }
   }
 
   private Optional<DataValidationConstraint> createTimeDataValidationConstraint(
-    FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper)
-  {
-    if (fieldSchemaArtifact.fieldUi().isTemporal())
+      FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper) {
+    if (fieldSchemaArtifact.fieldUi().isTemporal()) {
       return Optional.of(
-        dataValidationHelper.createTimeConstraint(DataValidationConstraint.OperatorType.BETWEEN, "=TIME(0,0,0)",
-          "=TIME(23,59,59)"));
-    else
+          dataValidationHelper.createTimeConstraint(DataValidationConstraint.OperatorType.BETWEEN, "=TIME(0,0,0)",
+              "=TIME(23,59,59)"));
+    } else {
       return Optional.empty();
+    }
   }
 
   // See: https://stackoverflow.com/questions/27630507/is-there-a-max-number-items-while-generating-drop-down-list-in-excel-using-apach/27639609#27639609
 
   private Optional<DataValidationConstraint> createFormulaDataValidationConstraint(
-    FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper)
-  {
+      FieldSchemaArtifact fieldSchemaArtifact, DataValidationHelper dataValidationHelper) {
     Map<String, String> values = getPossibleValues(fieldSchemaArtifact.valueConstraints());
 
     if (!values.isEmpty()) {
@@ -427,121 +434,137 @@ public class ExcelArtifactRenderer
 
       DataValidationConstraint dataValidationConstraint = dataValidationHelper.createFormulaListConstraint(formula);
       return Optional.of(dataValidationConstraint);
-    } else
+    } else {
       return Optional.empty();
+    }
   }
 
-  private LinkedHashMap<String, String> getPossibleValues(Optional<ValueConstraints> valueConstraints)
-  {
+  private LinkedHashMap<String, String> getPossibleValues(Optional<ValueConstraints> valueConstraints) {
     if (valueConstraints.isPresent()) {
       LinkedHashMap<String, String> possibleValues = new LinkedHashMap<>();
 
       if (valueConstraints.get() instanceof TextValueConstraints) {
-        TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
+        TextValueConstraints textValueConstraints = (TextValueConstraints) valueConstraints.get(); // TODO Use
+        // typesafe switch
 
         List<String> labels = textValueConstraints.literals().stream().map(LiteralValueConstraint::label).toList();
 
-        for (String label : labels)
+        for (String label : labels) {
           possibleValues.put(label, "");
+        }
       }
 
       if (valueConstraints.get() instanceof ControlledTermValueConstraints) {
-        ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints.get();
+        ControlledTermValueConstraints controlledTermValueConstraints =
+            (ControlledTermValueConstraints) valueConstraints.get();
 
         if (controlledTermValueConstraints.hasExplicitConstraints()) {
-          Map<String, String> ontologyBasedValues = terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
+          Map<String, String> ontologyBasedValues =
+              terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
           possibleValues.putAll(ontologyBasedValues);
         }
       }
 
       return possibleValues;
-    } else
+    } else {
       return new LinkedHashMap<>();
+    }
   }
 
 
   // Returns DataValidationConstraint.ValidationType (ANY, FORMULA, LIST, DATE, TIME, DECIMAL, INTEGER, TEXT_LENGTH)
-  private int getValidationType(FieldSchemaArtifact fieldSchemaArtifact)
-  {
-    String fieldName = fieldSchemaArtifact.name();
+  private int getValidationType(FieldSchemaArtifact fieldSchemaArtifact) {
+    String fieldKey = fieldSchemaArtifact.name();
     FieldUi fieldUi = fieldSchemaArtifact.fieldUi();
     FieldInputType fieldInputType = fieldUi.inputType();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
-      || fieldInputType == FieldInputType.RICHTEXT || fieldInputType == FieldInputType.EMAIL
-      || fieldInputType == FieldInputType.IMAGE || fieldInputType == FieldInputType.LINK
-      || fieldInputType == FieldInputType.YOUTUBE || fieldInputType == FieldInputType.TEXTAREA) {
+        || fieldInputType == FieldInputType.RICHTEXT || fieldInputType == FieldInputType.EMAIL
+        || fieldInputType == FieldInputType.IMAGE || fieldInputType == FieldInputType.LINK
+        || fieldInputType == FieldInputType.YOUTUBE || fieldInputType == FieldInputType.TEXTAREA) {
       return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO || fieldInputType == FieldInputType.CHECKBOX) {
       return DataValidationConstraint.ValidationType.FORMULA;
     } else if (fieldInputType == FieldInputType.TEXTFIELD) {
 
       if (valueConstraints.isPresent() && (valueConstraints.get() instanceof TextValueConstraints)) {
-        TextValueConstraints textValueConstraints = (TextValueConstraints)valueConstraints.get(); // TODO Use typesafe switch
-        if (!textValueConstraints.literals().isEmpty())
+        TextValueConstraints textValueConstraints = (TextValueConstraints) valueConstraints.get(); // TODO Use
+        // typesafe switch
+        if (!textValueConstraints.literals().isEmpty()) {
           return DataValidationConstraint.ValidationType.FORMULA;
-        else if (textValueConstraints.minLength().isPresent() || textValueConstraints.maxLength().isPresent())
+        } else if (textValueConstraints.minLength().isPresent() || textValueConstraints.maxLength().isPresent()) {
           return DataValidationConstraint.ValidationType.TEXT_LENGTH;
-        else
+        } else {
           return DataValidationConstraint.ValidationType.ANY;
+        }
       } else if (valueConstraints.isPresent() && (valueConstraints.get() instanceof ControlledTermValueConstraints)) {
         return DataValidationConstraint.ValidationType.FORMULA;
-      } else
+      } else {
         return DataValidationConstraint.ValidationType.ANY;
+      }
 
     } else if (fieldInputType == FieldInputType.NUMERIC) {
-      if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) { // TODO Use typesafe switch
-        NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints.get();
+      if (valueConstraints.isPresent() && (valueConstraints.get() instanceof NumericValueConstraints)) { // TODO Use
+        // typesafe switch
+        NumericValueConstraints numericValueConstraints = (NumericValueConstraints) valueConstraints.get();
         XsdNumericDatatype numericType = numericValueConstraints.numberType();
 
         if (numericType == XsdNumericDatatype.DECIMAL || numericType == XsdNumericDatatype.DOUBLE || numericType == XsdNumericDatatype.FLOAT) {
           return DataValidationConstraint.ValidationType.DECIMAL;
         } else if (numericType == XsdNumericDatatype.LONG || numericType == XsdNumericDatatype.INTEGER || numericType == XsdNumericDatatype.INT
-          || numericType == XsdNumericDatatype.SHORT || numericType == XsdNumericDatatype.BYTE) {
+            || numericType == XsdNumericDatatype.SHORT || numericType == XsdNumericDatatype.BYTE) {
           return DataValidationConstraint.ValidationType.INTEGER;
-        } else
-          throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldName);
-      } else
-        throw new RuntimeException("Missing number type for numeric field " + fieldName);
+        } else {
+          throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldKey);
+        }
+      } else {
+        throw new RuntimeException("Missing number type for numeric field " + fieldKey);
+      }
     } else if (fieldInputType == FieldInputType.TEMPORAL) {
       if (valueConstraints.isPresent() && valueConstraints.get() instanceof TemporalValueConstraints) {
-        TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints.get();
+        TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints) valueConstraints.get();
         XsdTemporalDatatype temporalType = temporalValueConstraints.temporalType();
 
-        if (temporalType == XsdTemporalDatatype.DATE || temporalType == XsdTemporalDatatype.DATETIME)
+        if (temporalType == XsdTemporalDatatype.DATE || temporalType == XsdTemporalDatatype.DATETIME) {
           return DataValidationConstraint.ValidationType.DATE;
-        else if (temporalType == XsdTemporalDatatype.TIME)
+        } else if (temporalType == XsdTemporalDatatype.TIME) {
           return DataValidationConstraint.ValidationType.TIME;
-        else
-          throw new RuntimeException("Invalid temporal type " + temporalType + " for temporal field " + fieldName);
-      } else
-        throw new RuntimeException("Missing temporal type for temporal field " + fieldName);
-    } else
-      throw new RuntimeException("Invalid field input type " + fieldInputType + " for field " + fieldName);
+        } else {
+          throw new RuntimeException("Invalid temporal type " + temporalType + " for temporal field " + fieldKey);
+        }
+      } else {
+        throw new RuntimeException("Missing temporal type for temporal field " + fieldKey);
+      }
+    } else {
+      throw new RuntimeException("Invalid field input type " + fieldInputType + " for field " + fieldKey);
+    }
   }
 
-  private String getNumericFormatString(String fieldName, XsdNumericDatatype numericType,
-    Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure)
-  {
+  private String getNumericFormatString(String fieldKey, XsdNumericDatatype numericType,
+                                        Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure) {
     String numericFormatString = "";
 
-      if (numericType == XsdNumericDatatype.DECIMAL) {
-        if (decimalPlaces.isPresent())
-          numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      } else if (numericType == XsdNumericDatatype.DOUBLE) {
-        if (decimalPlaces.isPresent())
-          numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      } else if (numericType == XsdNumericDatatype.FLOAT) {
-        if (decimalPlaces.isPresent())
-          numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      } else if (numericType == XsdNumericDatatype.LONG) {
-      } else if (numericType == XsdNumericDatatype.INTEGER) {
-      } else if (numericType == XsdNumericDatatype.INT) {
-      } else if (numericType == XsdNumericDatatype.SHORT) {
-      } else if (numericType == XsdNumericDatatype.BYTE) {
-      } else
-        throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldName);
+    if (numericType == XsdNumericDatatype.DECIMAL) {
+      if (decimalPlaces.isPresent()) {
+        numericFormatString += ""; // TODO Handle decimal places in Excel rendering
+      }
+    } else if (numericType == XsdNumericDatatype.DOUBLE) {
+      if (decimalPlaces.isPresent()) {
+        numericFormatString += ""; // TODO Handle decimal places in Excel rendering
+      }
+    } else if (numericType == XsdNumericDatatype.FLOAT) {
+      if (decimalPlaces.isPresent()) {
+        numericFormatString += ""; // TODO Handle decimal places in Excel rendering
+      }
+    } else if (numericType == XsdNumericDatatype.LONG) {
+    } else if (numericType == XsdNumericDatatype.INTEGER) {
+    } else if (numericType == XsdNumericDatatype.INT) {
+    } else if (numericType == XsdNumericDatatype.SHORT) {
+    } else if (numericType == XsdNumericDatatype.BYTE) {
+    } else {
+      throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldKey);
+    }
 
     if (unitOfMeasure.isPresent()) {
       // TODO Handle unit representation in Excel if possible
@@ -550,64 +573,67 @@ public class ExcelArtifactRenderer
     return numericFormatString;
   }
 
-  private String getTemporalFormatString(String fieldName, XsdTemporalDatatype temporalType,
-    TemporalGranularity temporalGranularity,
-    Optional<InputTimeFormat> inputTimeFormat, Optional<Boolean> timeZoneEnabled)
-  {
+  private String getTemporalFormatString(String fieldKey, XsdTemporalDatatype temporalType,
+                                         TemporalGranularity temporalGranularity,
+                                         Optional<InputTimeFormat> inputTimeFormat, Optional<Boolean> timeZoneEnabled) {
     String temporalFormatString = "";
 
     if (temporalType == XsdTemporalDatatype.DATETIME) {
-      if (temporalGranularity == TemporalGranularity.YEAR)
+      if (temporalGranularity == TemporalGranularity.YEAR) {
         temporalFormatString += "yyyy";
-      else if (temporalGranularity == TemporalGranularity.MONTH)
+      } else if (temporalGranularity == TemporalGranularity.MONTH) {
         temporalFormatString += "yyyy/m";
-      else if (temporalGranularity == TemporalGranularity.DAY)
+      } else if (temporalGranularity == TemporalGranularity.DAY) {
         temporalFormatString += "yyyy/m/d";
-      else if (temporalGranularity == TemporalGranularity.HOUR)
+      } else if (temporalGranularity == TemporalGranularity.HOUR) {
         temporalFormatString += "yyyy/m/d hh";
-      else if (temporalGranularity == TemporalGranularity.MINUTE)
+      } else if (temporalGranularity == TemporalGranularity.MINUTE) {
         temporalFormatString += "yyyy/m/d hh:mm";
-      else if (temporalGranularity == TemporalGranularity.SECOND)
+      } else if (temporalGranularity == TemporalGranularity.SECOND) {
         temporalFormatString += "yyyy/m/d hh:mm:ss";
-      else if (temporalGranularity == TemporalGranularity.DECIMAL_SECOND)
+      } else if (temporalGranularity == TemporalGranularity.DECIMAL_SECOND) {
         temporalFormatString += "yyyy/m/d hh:mm:ss.000";
-      else
+      } else {
         throw new RuntimeException(
-          "Unknown temporal granularity " + temporalGranularity + " specified for temporal field " + fieldName);
+            "Unknown temporal granularity " + temporalGranularity + " specified for temporal field " + fieldKey);
+      }
     } else if (temporalType == XsdTemporalDatatype.DATE) {
-      if (temporalGranularity == TemporalGranularity.YEAR)
+      if (temporalGranularity == TemporalGranularity.YEAR) {
         temporalFormatString += "yyyy";
-      else if (temporalGranularity == TemporalGranularity.MONTH)
+      } else if (temporalGranularity == TemporalGranularity.MONTH) {
         temporalFormatString += "yyyy/m";
-      else if (temporalGranularity == TemporalGranularity.DAY)
+      } else if (temporalGranularity == TemporalGranularity.DAY) {
         temporalFormatString += "yyyy/m/d";
-      else
+      } else {
         throw new RuntimeException(
-          "Invalid temporal granularity " + temporalGranularity + " specified for date temporal field " + fieldName);
+            "Invalid temporal granularity " + temporalGranularity + " specified for date temporal field " + fieldKey);
+      }
     } else if (temporalType == XsdTemporalDatatype.TIME) {
-      if (temporalGranularity == TemporalGranularity.HOUR)
+      if (temporalGranularity == TemporalGranularity.HOUR) {
         temporalFormatString += "hh";
-      else if (temporalGranularity == TemporalGranularity.MINUTE)
+      } else if (temporalGranularity == TemporalGranularity.MINUTE) {
         temporalFormatString += "hh:mm";
-      else if (temporalGranularity == TemporalGranularity.SECOND)
+      } else if (temporalGranularity == TemporalGranularity.SECOND) {
         temporalFormatString += "hh:mm:ss";
-      else if (temporalGranularity == TemporalGranularity.DECIMAL_SECOND)
+      } else if (temporalGranularity == TemporalGranularity.DECIMAL_SECOND) {
         temporalFormatString += "hh:mm:ss.000";
-      else
+      } else {
         throw new RuntimeException(
-          "Invalid temporal granularity " + temporalGranularity + " specified for time temporal field " + fieldName);
-    } else
-      throw new RuntimeException("Unknown temporal type " + temporalType + " specified for temporal field " + fieldName);
+            "Invalid temporal granularity " + temporalGranularity + " specified for time temporal field " + fieldKey);
+      }
+    } else {
+      throw new RuntimeException("Unknown temporal type " + temporalType + " specified for temporal field " + fieldKey);
+    }
 
-    if (inputTimeFormat.isPresent() && inputTimeFormat.get().isTwelveHour())
+    if (inputTimeFormat.isPresent() && inputTimeFormat.get().isTwelveHour()) {
       temporalFormatString += " AM/PM";
+    }
 
     return temporalFormatString;
   }
 
-  private CellStyle createCellStyle(FieldSchemaArtifact fieldSchemaArtifact)
-  {
-    String fieldName = fieldSchemaArtifact.name();
+  private CellStyle createCellStyle(FieldSchemaArtifact fieldSchemaArtifact) {
+    String fieldKey = fieldSchemaArtifact.name();
     FieldUi fieldUi = fieldSchemaArtifact.fieldUi();
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
     DataFormat dataFormat = workbook.createDataFormat();
@@ -616,39 +642,40 @@ public class ExcelArtifactRenderer
     if (fieldUi.isNumeric()) {
       if (valueConstraints.isPresent()) {
         NumericValueConstraints numericValueConstraints = valueConstraints.get().asNumericValueConstraints();
-        String formatString = getNumericFormatString(fieldName, numericValueConstraints.numberType(),
-          numericValueConstraints.decimalPlace(), numericValueConstraints.unitOfMeasure());
+        String formatString = getNumericFormatString(fieldKey, numericValueConstraints.numberType(),
+            numericValueConstraints.decimalPlace(), numericValueConstraints.unitOfMeasure());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       } else {
-        String formatString = getNumericFormatString(fieldName, XsdNumericDatatype.DOUBLE, Optional.empty(), Optional.empty());
+        String formatString = getNumericFormatString(fieldKey, XsdNumericDatatype.DOUBLE, Optional.empty(),
+            Optional.empty());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     } else if (fieldUi.isTemporal()) {
       TemporalFieldUi temporalFieldUi = fieldUi.asTemporalFieldUi();
       if (valueConstraints.isPresent()) {
         TemporalValueConstraints temporalValueConstraints = valueConstraints.get().asTemporalValueConstraints();
-        String formatString = getTemporalFormatString(fieldName, temporalValueConstraints.temporalType(),
-          temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(), temporalFieldUi.timezoneEnabled());
+        String formatString = getTemporalFormatString(fieldKey, temporalValueConstraints.temporalType(),
+            temporalFieldUi.temporalGranularity(), temporalFieldUi.inputTimeFormat(),
+            temporalFieldUi.timezoneEnabled());
         cellStyle.setDataFormat(dataFormat.getFormat(formatString));
       }
     }
     return cellStyle;
   }
 
-  private CellStyle createHeaderCellStyle(Workbook workbook)
-    {
-      CellStyle headerCellStyle = workbook.createCellStyle();
-      headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
-      headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-      headerCellStyle.setFillForegroundColor(LIGHT_CORNFLOUR_BLUE);
-      headerCellStyle.setFillBackgroundColor(LIGHT_CORNFLOUR_BLUE);
+  private CellStyle createHeaderCellStyle(Workbook workbook) {
+    CellStyle headerCellStyle = workbook.createCellStyle();
+    headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+    headerCellStyle.setFillForegroundColor(LIGHT_CORNFLOUR_BLUE);
+    headerCellStyle.setFillBackgroundColor(LIGHT_CORNFLOUR_BLUE);
 
-      return headerCellStyle;
-    }
+    return headerCellStyle;
+  }
 
   private Map<String, Object> integratedSearch(Map<String, Object> valueConstraints,
-    Integer page, Integer pageSize, String integratedSearchEndpoint, String apiKey) throws IOException, RuntimeException
-  {
+                                               Integer page, Integer pageSize, String integratedSearchEndpoint,
+                                               String apiKey) throws IOException, RuntimeException {
     HttpURLConnection connection = null;
     Map<String, Object> resultsMap;
     try {
@@ -679,10 +706,10 @@ public class ExcelArtifactRenderer
     return resultsMap;
   }
 
-  private void addMetadataSheet(TemplateSchemaArtifact templateSchemaArtifact)
-  {
-    if (workbook.getSheetIndex(metadataSheetName) != -1)
+  private void addMetadataSheet(TemplateSchemaArtifact templateSchemaArtifact) {
+    if (workbook.getSheetIndex(metadataSheetName) != -1) {
       throw new RuntimeException("duplicate sheet called " + metadataSheetName + " in spreadsheet");
+    }
 
     Sheet metadataSheet = workbook.createSheet(metadataSheetName);
     Row headerRow = metadataSheet.createRow(0);
@@ -699,21 +726,23 @@ public class ExcelArtifactRenderer
       pavVersionHeaderCell.setCellValue(ModelNodeNames.PAV_VERSION);
       Cell pavVersionDataCell = dataRow.createCell(1);
       pavVersionDataCell.setCellValue(templateSchemaArtifact.version().get().toString());
-    } else
+    } else {
       throw new RuntimeException("template " + templateSchemaArtifact.name() + " has no field " + ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION);
+    }
 
     Cell pavCreatedOnHeaderCell = headerRow.createCell(2);
     pavCreatedOnHeaderCell.setCellValue(ModelNodeNames.PAV_CREATED_ON);
     Cell pavCreatedOnDataCell = dataRow.createCell(2);
-    pavCreatedOnDataCell.setCellValue(ZonedDateTime.now( ZoneId.systemDefault()).format(xsdDateTimeFormatter));
+    pavCreatedOnDataCell.setCellValue(ZonedDateTime.now(ZoneId.systemDefault()).format(xsdDateTimeFormatter));
 
     if (templateSchemaArtifact.jsonLdId().isPresent()) {
       Cell derivedFromHeaderCell = headerRow.createCell(3);
       derivedFromHeaderCell.setCellValue(ModelNodeNames.PAV_DERIVED_FROM);
       Cell derivedFromDataCell = dataRow.createCell(3);
       derivedFromDataCell.setCellValue(templateSchemaArtifact.jsonLdId().get().toString());
-    } else
+    } else {
       throw new RuntimeException("template " + templateSchemaArtifact.name() + " has no field " + ModelNodeNames.JSON_LD_ID);
+    }
 
     metadataSheet.autoSizeColumn(0);
     metadataSheet.autoSizeColumn(1);
@@ -721,8 +750,7 @@ public class ExcelArtifactRenderer
     metadataSheet.autoSizeColumn(3);
   }
 
-  private Sheet createSheet(Workbook workbook, String proposedSheetName)
-  {
+  private Sheet createSheet(Workbook workbook, String proposedSheetName) {
     String safeSheetName = WorkbookUtil.createSafeSheetName(proposedSheetName);
     int sheetIndex = workbook.getSheetIndex(safeSheetName);
 
@@ -731,12 +759,14 @@ public class ExcelArtifactRenderer
       // Iterate until we find an unused sheet name
       while (workbook.getSheetIndex(replacementSheetName) != -1) {
         sheetIndex++;
-        if (sheetIndex == Integer.MAX_VALUE)
+        if (sheetIndex == Integer.MAX_VALUE) {
           throw new RuntimeException("could not create sheet " + proposedSheetName);
+        }
         replacementSheetName = "Sheet" + sheetIndex;
       }
       return workbook.createSheet(replacementSheetName);
-    } else
+    } else {
       return workbook.createSheet(safeSheetName);
+    }
   }
 }

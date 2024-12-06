@@ -82,11 +82,11 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
         throw new IllegalArgumentException("Field " + fieldSchemaArtifact.name() + " has no JSON-LD identifier");
 
       URI fieldUri = fieldSchemaArtifact.jsonLdId().get();
-      String fieldName = fieldSchemaArtifact.name();
+      String fieldKey = fieldSchemaArtifact.name();
 
       // We used the predicate 'used_for_dataset_type' to associate a template with a dataset type in the UBKG edges file.
       // We get this value from the default value for a dataset_type field present in a template.
-      if (fieldName.equals(DATASET_TYPE_TEMPLATE_FIELD_NAME)) {
+      if (fieldKey.equals(DATASET_TYPE_TEMPLATE_FIELD_NAME)) {
         if (fieldSchemaArtifact.valueConstraints().isPresent() &&
           fieldSchemaArtifact.valueConstraints().get().defaultValue().isPresent() &&
           fieldSchemaArtifact.valueConstraints().get().defaultValue().get().isControlledTermDefaultValue()) {
@@ -103,12 +103,12 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     return ubkgRenderingBuilder;
   }
 
-  public UbkgRendering.Builder renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact)
+  public UbkgRendering.Builder renderFieldSchemaArtifact(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact)
   {
     URI fieldUri = fieldSchemaArtifact.jsonLdId().get();
     String fieldDescription = fieldSchemaArtifact.description();
 
-    ubkgRenderingBuilder.withNode(fieldUri, fieldName, fieldDescription);
+    ubkgRenderingBuilder.withNode(fieldUri, fieldKey, fieldDescription);
 
     ubkgRenderingBuilder.withEdge(fieldUri, RDFS_TYPE, FIELD_SCHEMA_ARTIFACT_TYPE_URI);
 

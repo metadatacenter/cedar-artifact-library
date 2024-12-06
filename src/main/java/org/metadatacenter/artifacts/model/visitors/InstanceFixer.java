@@ -49,7 +49,7 @@ public class InstanceFixer implements InstanceArtifactVisitor
         "no field schema specification for at path " + path + " when processing template" + templateName());
 
     FieldSchemaArtifact fieldSchemaArtifact = templateReporter.getFieldSchema(path).get();
-    String fieldName = fieldSchemaArtifact.name();
+    String fieldKey = fieldSchemaArtifact.name();
 
     if (templateReporter.getValueConstraints(path).isPresent()) {
       ValueConstraints valueConstraints = templateReporter.getValueConstraints(path).get();
@@ -67,7 +67,7 @@ public class InstanceFixer implements InstanceArtifactVisitor
       } else
         throw new RuntimeException(
           "Unknown value constraint type " + valueConstraints.getClass().getName() + " when processing field "
-            + fieldName + " in template " + templateName() + " at path " + path);
+            + fieldKey + " in template " + templateName() + " at path " + path);
     }
   }
 
