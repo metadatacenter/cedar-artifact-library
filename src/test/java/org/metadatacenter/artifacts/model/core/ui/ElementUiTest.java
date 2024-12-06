@@ -7,7 +7,6 @@ import static org.junit.Assert.assertFalse;
 
 public class ElementUiTest
 {
-
   @Test
   public void testGetUIType() {
     ElementUi elementUi = ElementUi.builder()
