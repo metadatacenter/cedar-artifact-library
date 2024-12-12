@@ -133,23 +133,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *   identifier: SFY343
    *   version: 1.0.0
    *   status: published
-   *
    *   children:
-   *
    *   - key: study-name
    *     type: text-field
    *     name: Study Name
    *     description: Study name field
    *     configuration:
    *       required: true
-   *
    *   - type: text-field
    *     name: Study ID
    *     description: Study ID field
    *     minLength: 2
    *     configuration:
    *       required: true
-   *
    *   - key: address
    *     type: element
    *     name: Address
@@ -158,7 +154,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *       isMultiple: true
    *       minItems: 0
    *       maxItems: 4
-   *
    *     children:
    *       - key: address-1
    *         type: text-field
@@ -196,7 +191,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *       isMultiple: true
    *       minItems: 0
    *       maxItems: 4
-   *
    *     children:
    *       - key: address-1
    *         type: text-field
@@ -350,7 +344,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
-    Optional<XsdDatatype> datatype = readXsdDatatype(sourceNode, path, DATATYPE);
     FieldUi fieldUi = readFieldUi(sourceNode, path);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUES, fieldUi.inputType());
     Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL);
