@@ -62,15 +62,15 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     visitor.visitElementSchemaArtifact(this, path);
 
     for (Map.Entry<String, FieldSchemaArtifact> entry : fieldSchemas().entrySet()) {
-      String fieldName = entry.getKey();
-      String childPath = path + "/" + fieldName;
+      String fieldKey = entry.getKey();
+      String childPath = path + "/" + fieldKey;
       FieldSchemaArtifact fieldSchemaArtifact = entry.getValue();
       fieldSchemaArtifact.accept(visitor, childPath);
     }
 
     for (Map.Entry<String, ElementSchemaArtifact> entry : elementSchemas().entrySet()) {
-      String fieldName = entry.getKey();
-      String childPath = path + "/" + fieldName;
+      String fieldKey = entry.getKey();
+      String childPath = path + "/" + fieldKey;
       ElementSchemaArtifact elementSchemaArtifact = entry.getValue();
       elementSchemaArtifact.accept(visitor, childPath);
     }
@@ -275,6 +275,17 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact);
     }
 
+    public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel)
+    {
+      if (this.fieldSchemas.containsKey(fieldKey) || this.elementSchemas.containsKey(fieldKey))
+        throw new IllegalArgumentException("Element already has a child " + fieldKey);
+
+      this.fieldSchemas.put(fieldKey, fieldSchemaArtifact);
+      this.elementUiBuilder.withOrder(fieldKey);
+      this.elementUiBuilder.withPropertyLabel(fieldKey, propertyLabel);
+      return this;
+    }
+
     public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel,
       String propertyDescription)
     {
@@ -286,6 +297,11 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       this.elementUiBuilder.withPropertyLabel(fieldKey, propertyLabel);
       this.elementUiBuilder.withPropertyDescription(fieldKey, propertyDescription);
       return this;
+    }
+
+    public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel)
+    {
+      return withFieldSchema(fieldSchemaArtifact.name(), fieldSchemaArtifact, propertyLabel);
     }
 
     public Builder withFieldSchema(FieldSchemaArtifact fieldSchemaArtifact, String propertyLabel,
@@ -312,13 +328,27 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     }
 
     public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact,
-      String propertyLabel, String propertyDescription)
+      String propertyLabel)
+    {
+      this.elementSchemas.put(elementKey, elementSchemaArtifact);
+      this.elementUiBuilder.withOrder(elementKey);
+      this.elementUiBuilder.withPropertyLabel(elementKey, propertyLabel);
+      return this;
+    }
+
+    public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact,
+                                     String propertyLabel, String propertyDescription)
     {
       this.elementSchemas.put(elementKey, elementSchemaArtifact);
       this.elementUiBuilder.withOrder(elementKey);
       this.elementUiBuilder.withPropertyLabel(elementKey, propertyLabel);
       this.elementUiBuilder.withPropertyDescription(elementKey, propertyDescription);
       return this;
+    }
+
+    public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel)
+    {
+      return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact, propertyLabel);
     }
 
     public Builder withElementSchema(ElementSchemaArtifact elementSchemaArtifact, String propertyLabel,

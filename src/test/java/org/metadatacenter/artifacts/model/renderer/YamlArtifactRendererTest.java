@@ -287,7 +287,7 @@ public class YamlArtifactRendererTest {
 
   @Test
   public void testCreateControlledTermFieldWithClassValueConstraint() throws JsonProcessingException {
-    String fieldName = "Field name";
+    String fieldKey = "Field key";
     String description = "Field description";
     URI classUri = java.net.URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3");
     String classSource = "LOINC";
@@ -307,7 +307,7 @@ public class YamlArtifactRendererTest {
                 termLabel: ${classPrefLabel}
                 iri: ${classUri}
         """
-        .replace("${fieldName}", fieldName)
+        .replace("${fieldName}", fieldKey)
         .replace("${description}", description)
         .replace("${classValueType}", classValueType.toString())
         .replace("${classLabel}", classLabel)
@@ -316,7 +316,7 @@ public class YamlArtifactRendererTest {
         .replace("${classUri}", classUri.toString());
 
     ControlledTermField controlledTermField =
-        ControlledTermField.builder().withName(fieldName).withDescription(description)
+        ControlledTermField.builder().withName(fieldKey).withDescription(description)
             .withClassValueConstraint(classUri, classSource, classLabel, classPrefLabel, classValueType).build();
 
     YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
