@@ -39,28 +39,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <p>
    * e.g.,
    * <pre>
-   * template: Study
-   * description: Study template
-   * identifier: SFY343
-   * version: 1.0.0
-   * status: published
-   *
-   * children:
-   *
+   *   type: template
+   *   name: Study
+   *   description: Study template
+   *   identifier: SFY343
+   *   version: 1.0.0
+   *   status: published
+   *   children:
    *   - key: study-name
    *     type: text-field
    *     name: Study Name
    *     description: Study name field
    *     configuration:
    *       required: true
-   *
    *   - type: text-field
    *     name: Study ID
    *     description: Study ID field
    *     minLength: 2
    *     configuration:
    *       required: true
-   *
    *   - key: address
    *     type: element
    *     name: Address
@@ -69,7 +66,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *       isMultiple: true
    *       minItems: 0
    *       maxItems: 4
-   *
    *     children:
    *       - key: address-1
    *         type: text-field
@@ -115,7 +111,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *       isMultiple: true
    *       minItems: 0
    *       maxItems: 4
-   *
    *     children:
    *       - key: address-1
    *         type: text-field
@@ -125,7 +120,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *         name: field: ZIP
    *         minLength: 5
    *         maxLength: 5
-   *
    * </pre>
    */
   public LinkedHashMap<String, Object> renderElementSchemaArtifact(ElementSchemaArtifact elementSchemaArtifact)
@@ -245,12 +239,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * type: instance
    * name: SDY232
    * description: "Study SDY232 instance"
-   * id: "https://repo.metadatacenter.org/template-instances/19f5261e-9259-45ec-b961-b3d17c92f27f"
-   * isBasedOn: "https://repo.metadatacenter.org/templates/ec3f500f-ddca-4ec1-9196-29932f9304fd"
-   * createdOn: "2020-07-20T14:09:01-07:00"
-   * createdBy: "https://metadatacenter.org/users/2fa8910d-96e7-4e2f-ae60-4dfa8ec9877d"
-   * modifiedOn: "2020-07-20T14:09:01-07:00"
-   * modifiedBy: "https://metadatacenter.org/users/2fa8910d-96e7-4e2f-ae60-4dfa8ec9877d"
+   * id: https://repo.metadatacenter.org/template-instances/19f5261e-9259-45ec-b961-b3d17c92f27f
+   * isBasedOn: https://repo.metadatacenter.org/templates/ec3f500f-ddca-4ec1-9196-29932f9304fd
+   * createdOn: 2020-07-20T14:09:01-07:00
+   * createdBy: https://metadatacenter.org/users/2fa8910d-96e7-4e2f-ae60-4dfa8ec9877d
+   * modifiedOn: 2020-07-20T14:09:01-07:00
+   * modifiedBy: https://metadatacenter.org/users/2fa8910d-96e7-4e2f-ae60-4dfa8ec9877d
    * children:
    *   "Study Id":
    *     iri: https://example.com/p1
@@ -296,7 +290,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   annotations:
    *     - name: https://datacite.com/doi
    *       type: iri
-   *       value: "https://doi.org/10.82658/8vc1-abcd"
+   *       value: https://doi.org/10.82658/8vc1-abcd
    *     - name: Preferred Ontology
    *       value: DOID
    * </pre>

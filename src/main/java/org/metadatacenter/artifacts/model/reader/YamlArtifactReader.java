@@ -64,6 +64,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_FORMAT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INPUT_TIME_ZONE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
@@ -121,56 +122,63 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   /**
    * Read a YAML specification of a template schema artifact
-   * <p></p>
+   * <p>
    * e.g.,
-   * template: Study
-   * description: Study template
-   * identifier: SFY343
-   * version: 1.0.0
-   * status: published
-   * <p>
-   * children:
-   * <p>
-   * - key: study-name
-   * type: text-field
-   * name: Study Name
-   * description: Study name field
-   * configuration:
-   * required: true
-   * <p>
-   * - type: text-field
-   * name: Study ID
-   * description: Study ID field
-   * minLength: 2
-   * configuration:
-   * required: true
-   * <p>
-   * - key: address
-   * type: element
-   * name: Address
-   * description: Address element
-   * configuration:
-   * isMultiple: true
-   * minItems: 0
-   * maxItems: 4
-   * <p>
-   * children:
-   * - key: address-1
-   * type: text-field
-   * name: field: Address 1
-   * - key: zip
-   * type: text-field
-   * name: field: ZIP
-   * minLength: 5
-   * maxLength: 5
+   * <pre>
+   *   type: template
+   *   name: Study
+   *   description: Study template
+   *   identifier: SFY343
+   *   version: 1.0.0
+   *   status: published
+   *
+   *   children:
+   *
+   *   - key: study-name
+   *     type: text-field
+   *     name: Study Name
+   *     description: Study name field
+   *     configuration:
+   *       required: true
+   *
+   *   - type: text-field
+   *     name: Study ID
+   *     description: Study ID field
+   *     minLength: 2
+   *     configuration:
+   *       required: true
+   *
+   *   - key: address
+   *     type: element
+   *     name: Address
+   *     description: Address element
+   *     configuration:
+   *       isMultiple: true
+   *       minItems: 0
+   *       maxItems: 4
+   *
+   *     children:
+   *       - key: address-1
+   *         type: text-field
+   *         name: field: Address 1
+   *       - key: zip
+   *         type: text-field
+   *         name: ZIP
+   *         minLength: 5
+   *         maxLength: 5
    * </pre>
    */
   @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String name = readRequiredString(sourceNode, path, TEMPLATE, false);
+    String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
-    return readTemplateSchemaArtifact(sourceNode, path, name);
+    if (!artifactType.equals(TEMPLATE))
+      throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + TEMPLATE, TYPE, path);
+
+    String templateName = readRequiredString(sourceNode, path, NAME, false);
+
+    return readTemplateSchemaArtifact(sourceNode, path, templateName);
   }
 
   /**
@@ -194,9 +202,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *       - key: zip
    *         type: text-field
    *         name: field: ZIP
-   *         minLength: 5
-   *         maxLength: 5
-   *
+   *         configuration:
+   *           minLength: 5
+   *           maxLength: 5
    * </pre>
    */
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
@@ -226,23 +234,26 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *     source: DOID
    *     name: Human Disease Ontology
    *     acronym: DOID
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     iri: https://data.bioontology.org/ontologies/DOID
    *   - class: Translated Title
    *     source: DATACITE-VOCAB
-   *     termUri: "http://purl.org/datacite/v4.4/TranslatedTitle"
+   *     termUri: http://purl.org/datacite/v4.4/TranslatedTitle
    *     type: OntologyClass
    * </pre>
    */
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String name = readRequiredString(sourceNode, path, NAME, false);
+    String fieldType = readRequiredString(sourceNode, path, TYPE, false);
+    String fieldKey = readRequiredString(sourceNode, path, KEY, false);
+    String fieldName = readRequiredString(sourceNode, path, NAME, false);
+
     boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
     Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
     Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
     Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_IRI);
 
-    return readFieldSchemaArtifact(sourceNode, path, name, isMultiple, minItems, maxItems, propertyUri);
+    return readFieldSchemaArtifact(sourceNode, path, fieldKey, fieldName, isMultiple, minItems, maxItems, propertyUri);
   }
 
   @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
@@ -251,10 +262,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
-    String name)
+    String templateName)
   {
-    String internalName = name + " template";
-    String internalDescription = name + " template generated from YAML";
+    String internalName = templateName + " template";
+    String internalDescription = templateName + " template generated from YAML";
 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
@@ -278,9 +289,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     checkSchemaArtifactModelVersion(sourceNode, path);
 
-    return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description,
-      identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
+    return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, templateName,
+      description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUi, annotations, internalName,
+      internalDescription);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
@@ -317,10 +329,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
-    String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+    String fieldKey, String fieldName, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+    Optional<URI> propertyUri)
   {
-    String internalName = name + " field";
-    String internalDescription = name + " field generated from YAML";
+    String internalName = fieldName + " field";
+    String internalDescription = fieldName + " field generated from YAML";
 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
@@ -345,8 +358,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     checkSchemaArtifactModelVersion(sourceNode, path);
 
-    return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
-      description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
+    return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
+      fieldName, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
       propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
       valueConstraints, annotations);
   }
@@ -381,7 +394,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     FieldInputType fieldInputType = readFieldInputType(sourceNode, path, TYPE);
     boolean valueRecommendationEnabled = readBoolean(sourceNode, path, VALUE_RECOMMENDATION, false);
     boolean hidden = readBoolean(sourceNode, path, HIDDEN, false);
-    boolean recommendedValue = readBoolean(sourceNode, path, RECOMMENDED, false);
     boolean continuePreviousLine = readBoolean(sourceNode, path, CONTINUE_PREVIOUS_LINE, false);
     Optional<Integer> width = readInteger(sourceNode, path, WIDTH);
     Optional<Integer> height = readInteger(sourceNode, path, HEIGHT);
@@ -403,10 +415,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName, FieldInputType fieldInputType)
+    String fieldKey, FieldInputType fieldInputType)
   {
-    String vcPath = path + "/" + fieldName;
-    LinkedHashMap<String, Object> vcNode = readChildNode(sourceNode, path, fieldName);
+    String vcPath = path + "/" + fieldKey;
+    LinkedHashMap<String, Object> vcNode = readChildNode(sourceNode, path, fieldKey);
 
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
@@ -467,32 +479,31 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.empty();
   }
 
-  private String readRequiredString(LinkedHashMap<String, Object> sourceNode, String path, String fieldName,
+  private String readRequiredString(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey,
     boolean allowEmpty)
   {
-    if (!sourceNode.containsKey(fieldName))
-      throw new ArtifactParseException("No field present", fieldName, path);
+    if (!sourceNode.containsKey(fieldKey))
+      throw new ArtifactParseException("No field present", fieldKey, path);
 
-    Object rawValue = sourceNode.get(fieldName);
+    Object rawValue = sourceNode.get(fieldKey);
 
     if (rawValue == null)
-      throw new ArtifactParseException("No value", fieldName, path);
+      throw new ArtifactParseException("No value", fieldKey, path);
 
     if (!(rawValue instanceof String))
-      throw new ArtifactParseException("Expecting string value, got " + rawValue.getClass(), fieldName, path);
+      throw new ArtifactParseException("Expecting string value, got " + rawValue.getClass(), fieldKey, path);
 
     String value = (String)rawValue;
 
     if (value.isEmpty() && !allowEmpty)
-      throw new ArtifactParseException("Expecting non-empty string value", fieldName, path);
+      throw new ArtifactParseException("Expecting non-empty string value", fieldKey, path);
 
     return value;
   }
 
-  private String readString(LinkedHashMap<String, Object> sourceNode, String path, String fieldName,
-    String defaultValue)
+  private String readString(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey, String defaultValue)
   {
-    Optional<String> optionalString = readString(sourceNode, path, fieldName, true);
+    Optional<String> optionalString = readString(sourceNode, path, fieldKey, true);
 
     return optionalString.orElse(defaultValue);
   }
@@ -502,19 +513,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return readString(sourceNode, path, fieldName, true);
   }
 
-  private Optional<String> readString(LinkedHashMap<String, Object> sourceNode, String path, String fieldName,
+  private Optional<String> readString(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey,
     boolean allowEmpty)
   {
-    if (!sourceNode.containsKey(fieldName))
+    if (!sourceNode.containsKey(fieldKey))
       return Optional.empty();
 
-    Object rawValue = sourceNode.get(fieldName);
+    Object rawValue = sourceNode.get(fieldKey);
 
     if (rawValue == null)
       return Optional.empty();
 
     if (!(rawValue instanceof String))
-      throw new ArtifactParseException("Expecting string value, got " + rawValue.getClass(), fieldName, path);
+      throw new ArtifactParseException("Expecting string value, got " + rawValue.getClass(), fieldKey, path);
 
     String value = (String)rawValue;
 
@@ -524,68 +535,68 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of(value);
   }
 
-  private Optional<Integer> readInteger(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Optional<Integer> readInteger(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    Object rawValue = sourceNode.get(fieldName);
+    Object rawValue = sourceNode.get(fieldKey);
 
     if (rawValue == null)
       return Optional.empty();
 
     if (!(rawValue instanceof Integer))
-      throw new ArtifactParseException("Value must be an integer", fieldName, path);
+      throw new ArtifactParseException("Value must be an integer", fieldKey, path);
 
     return Optional.of((Integer)rawValue);
   }
 
-  private Optional<Number> readNumber(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Optional<Number> readNumber(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    Object rawValue = sourceNode.get(fieldName);
+    Object rawValue = sourceNode.get(fieldKey);
 
     if (rawValue == null)
       return Optional.empty();
 
     if (!(rawValue instanceof Number))
-      throw new ArtifactParseException("Value must be a number", fieldName, path);
+      throw new ArtifactParseException("Value must be a number", fieldKey, path);
 
     return Optional.of((Number)rawValue);
   }
 
-  private boolean readBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldName,
+  private boolean readBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey,
     boolean defaultValue)
   {
-    if (!sourceNode.containsKey(fieldName))
+    if (!sourceNode.containsKey(fieldKey))
       return defaultValue;
 
-    Object rawValue = sourceNode.get(fieldName);
+    Object rawValue = sourceNode.get(fieldKey);
 
     if (rawValue == null)
       return defaultValue;
 
     if (!(rawValue instanceof Boolean))
-      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldName, path);
+      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldKey, path);
 
     return (Boolean)rawValue;
   }
 
-  private Optional<Boolean> readBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Optional<Boolean> readBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    if (!sourceNode.containsKey(fieldName))
+    if (!sourceNode.containsKey(fieldKey))
       return Optional.empty();
 
-    Object rawValue = sourceNode.get(fieldName);
+    Object rawValue = sourceNode.get(fieldKey);
 
     if (rawValue == null)
       return Optional.empty();
 
     if (!(rawValue instanceof Boolean))
-      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldName, path);
+      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldKey, path);
 
     return Optional.of((Boolean)rawValue);
   }
 
-  private List<String> readStringArray(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private List<String> readStringArray(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    Object rawValue = sourceNode.get(fieldName);
+    Object rawValue = sourceNode.get(fieldKey);
     List<String> stringValues = new ArrayList<>();
 
     if (rawValue != null) {
@@ -600,7 +611,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
             if (!stringValue.isEmpty())
               stringValues.add(stringValue);
           } else
-            throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldName,
+            throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldKey,
               path);
           arrayIndex++;
         }
@@ -610,43 +621,45 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   private TemporalGranularity readTemporalGranularity(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
-    String granularityString = readRequiredString(sourceNode, path, fieldName, false);
+    String granularityString = readRequiredString(sourceNode, path, fieldKey, false);
 
     if (!TEMPORAL_GRANULARITIES.contains(granularityString))
-      throw new ArtifactParseException("Invalid granularity" + granularityString, TYPE, path);
+      throw new ArtifactParseException("Invalid granularity" + granularityString + " in field " + fieldKey, TYPE, path);
 
     return TemporalGranularity.fromString(granularityString);
   }
 
   private Optional<InputTimeFormat> readInputTimeFormat(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
-    Optional<String> inputTimeFormatString = readString(sourceNode, path, fieldName);
+    Optional<String> inputTimeFormatString = readString(sourceNode, path, fieldKey);
 
     if (inputTimeFormatString.isEmpty())
       return Optional.empty();
 
     if (!TIME_FORMATS.contains(inputTimeFormatString.get()))
-      throw new ArtifactParseException("Invalid input time format" + inputTimeFormatString.get(), TYPE, path);
+      throw new ArtifactParseException(
+        "Invalid input time format" + inputTimeFormatString.get() + " in field" + fieldKey, TYPE, path);
 
     return Optional.of(InputTimeFormat.fromString(inputTimeFormatString.get()));
   }
 
-  private FieldInputType readFieldInputType(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private FieldInputType readFieldInputType(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    String inputTypeString = readRequiredString(sourceNode, path, fieldName, false);
+    String inputTypeString = readRequiredString(sourceNode, path, fieldKey, false);
 
     if (!INPUT_TYPES.contains(inputTypeString))
-      throw new ArtifactParseException("Invalid field input type" + inputTypeString, TYPE, path);
+      throw new ArtifactParseException("Invalid field input type" + inputTypeString + " in field " + fieldKey, TYPE,
+        path);
 
     return FieldInputType.fromString(inputTypeString);
   }
 
-  private Optional<Version> readVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Optional<Version> readVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    Optional<String> versionString = readString(sourceNode, path, fieldName, false);
+    Optional<String> versionString = readString(sourceNode, path, fieldKey, false);
 
     if (versionString.isEmpty())
       return Optional.empty();
@@ -654,23 +667,24 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (Version.isValidVersion(versionString.get()))
       return Optional.of(Version.fromString(versionString.get()));
     else
-      throw new ArtifactParseException("Invalid version " + versionString.get(), fieldName, path);
+      throw new ArtifactParseException("Invalid version " + versionString.get() + " in field " + fieldKey, fieldKey,
+        path);
   }
 
-  private Version readRequiredVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Version readRequiredVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    String versionString = readRequiredString(sourceNode, path, fieldName, false);
+    String versionString = readRequiredString(sourceNode, path, fieldKey, false);
 
     if (Version.isValidVersion(versionString))
       return Version.fromString(versionString);
     else
-      throw new ArtifactParseException("Invalid version " + versionString, fieldName, path);
+      throw new ArtifactParseException("Invalid version " + versionString, fieldKey, path);
   }
 
   private Optional<XsdNumericDatatype> readNumberType(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
-    Optional<String> numberTypeValue = readString(sourceNode, path, fieldName);
+    Optional<String> numberTypeValue = readString(sourceNode, path, fieldKey);
 
     if (numberTypeValue.isPresent())
       return Optional.of(XsdNumericDatatype.fromString(numberTypeValue.get()));
@@ -679,9 +693,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   private Optional<XsdTemporalDatatype> readTemporalType(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
-    Optional<String> temporalTypeValue = readString(sourceNode, path, fieldName);
+    Optional<String> temporalTypeValue = readString(sourceNode, path, fieldKey);
 
     if (temporalTypeValue.isPresent())
       return Optional.of(XsdTemporalDatatype.fromString(temporalTypeValue.get()));
@@ -689,19 +703,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.empty();
   }
 
-  private Status readRequiredStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Status readRequiredStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    String statusString = readRequiredString(sourceNode, path, fieldName, false);
+    String statusString = readRequiredString(sourceNode, path, fieldKey, false);
 
     if (Status.isValidStatus(statusString))
       return Status.fromString(statusString);
     else
-      throw new ArtifactParseException("Invalid status " + statusString, fieldName, path);
+      throw new ArtifactParseException("Invalid status " + statusString, fieldKey, path);
   }
 
-  private Optional<Status> readStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Optional<Status> readStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    Optional<String> statusString = readString(sourceNode, path, fieldName, false);
+    Optional<String> statusString = readString(sourceNode, path, fieldKey, false);
 
     if (statusString.isEmpty())
       return Optional.empty();
@@ -709,12 +723,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (Status.isValidStatus(statusString.get()))
       return Optional.of(Status.fromString(statusString.get()));
     else
-      throw new ArtifactParseException("Invalid status " + statusString.get(), fieldName, path);
+      throw new ArtifactParseException("Invalid status " + statusString.get(), fieldKey, path);
   }
 
-  private Optional<XsdDatatype> readXsdDatatype(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Optional<XsdDatatype> readXsdDatatype(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    Optional<String> xsdDatatypeString = readString(sourceNode, path, fieldName, false);
+    Optional<String> xsdDatatypeString = readString(sourceNode, path, fieldKey, false);
 
     if (xsdDatatypeString.isEmpty())
       return Optional.empty();
@@ -722,23 +736,23 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (XsdDatatype.isKnownXsdDatatype(xsdDatatypeString.get()))
       return Optional.of(XsdDatatype.fromString(xsdDatatypeString.get()));
     else
-      throw new ArtifactParseException("Invalid status " + xsdDatatypeString.get(), fieldName, path);
+      throw new ArtifactParseException("Invalid status " + xsdDatatypeString.get(), fieldKey, path);
   }
 
-  private URI readRequiredUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private URI readRequiredUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    String uriString = readRequiredString(sourceNode, path, fieldName, false);
+    String uriString = readRequiredString(sourceNode, path, fieldKey, false);
 
     try {
       return new URI(uriString);
     } catch (Exception e) {
-      throw new ArtifactParseException("Invalid URI " + uriString, fieldName, path);
+      throw new ArtifactParseException("Invalid URI " + uriString, fieldKey, path);
     }
   }
 
-  private Optional<URI> readUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+  private Optional<URI> readUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    Optional<String> uriString = readString(sourceNode, path, fieldName, false);
+    Optional<String> uriString = readString(sourceNode, path, fieldKey, false);
 
     if (uriString.isEmpty())
       return Optional.empty();
@@ -746,14 +760,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     try {
       return Optional.of(new URI(uriString.get()));
     } catch (Exception e) {
-      throw new ArtifactParseException("Invalid URI " + uriString.get(), fieldName, path);
+      throw new ArtifactParseException("Invalid URI " + uriString.get(), fieldKey, path);
     }
   }
 
   private Optional<OffsetDateTime> readOffsetDatetime(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
-    Optional<String> dateTimeValue = readString(sourceNode, path, fieldName, false);
+    Optional<String> dateTimeValue = readString(sourceNode, path, fieldKey, false);
 
     try {
       if (dateTimeValue.isPresent())
@@ -762,60 +776,60 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         return Optional.empty();
     } catch (DateTimeParseException e) {
       throw new ArtifactParseException("Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(),
-        fieldName, path);
+        fieldKey, path);
     }
   }
 
   private Optional<DefaultValue> readDefaultValue(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
     return Optional.empty(); // TODO Implement read default value
   }
 
   private List<OntologyValueConstraint> readOntologyValueConstraints(LinkedHashMap<String, Object> sourceNode,
-    String path, String fieldName)
+    String path, String fieldKey)
   {
     return Collections.emptyList(); // TODO Implement read ontology value constraints
   }
 
   private List<ClassValueConstraint> readClassValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
     return Collections.emptyList(); // TODO Implement read class value constraints
   }
 
   private List<ValueSetValueConstraint> readValueSetValueConstraints(LinkedHashMap<String, Object> sourceNode,
-    String path, String fieldName)
+    String path, String fieldKey)
   {
     return Collections.emptyList(); // TODO Implement read value set value constraints
   }
 
   private List<BranchValueConstraint> readBranchValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
     return Collections.emptyList(); // TODO Implement read branch value constraints
   }
 
   private List<LiteralValueConstraint> readLiteralValueConstraints(LinkedHashMap<String, Object> sourceNode,
-    String path, String fieldName)
+    String path, String fieldKey)
   {
     return Collections.emptyList(); // TODO Implement read literal value constraints
   }
 
   private List<ControlledTermValueConstraintsAction> readValueConstraintsActions(
-    LinkedHashMap<String, Object> sourceNode, String path, String fieldName)
+    LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
     return Collections.emptyList(); // TODO Implement read actions value constraints
   }
 
   private LinkedHashMap<String, String> readString2StringMap(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldName)
+    String fieldKey)
   {
     return new LinkedHashMap<>(); // TODO Implement readString2StringMap
   }
 
   private LinkedHashMap<String, Object> readChildNode(LinkedHashMap<String, Object> parentNode, String path,
-    String fieldName)
+    String fieldKey)
   {
     return new LinkedHashMap<>(); // TODO Implement read child node
   }

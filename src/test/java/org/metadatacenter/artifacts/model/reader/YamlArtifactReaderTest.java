@@ -24,6 +24,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
@@ -52,7 +53,7 @@ public class YamlArtifactReaderTest
 
   @Test public void readTemplateSchemaArtifactTest()
   {
-    String name = "Study";
+    String templateName = "Study";
     String description = "My study";
     String identifier = "ID1";
     URI id = URI.create("https://repo.metadatacenter.org/templates/66");
@@ -68,7 +69,8 @@ public class YamlArtifactReaderTest
     String language = "en";
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
-    yamlSource.put(TEMPLATE, name);
+    yamlSource.put(TYPE, TEMPLATE);
+    yamlSource.put(NAME, templateName);
     yamlSource.put(DESCRIPTION, description);
     yamlSource.put(IDENTIFIER, identifier);
     yamlSource.put(ID, id.toString());
@@ -85,7 +87,7 @@ public class YamlArtifactReaderTest
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(yamlSource);
 
-    assertEquals(name, templateSchemaArtifact.name());
+    assertEquals(templateName, templateSchemaArtifact.name());
     assertEquals(description, templateSchemaArtifact.description());
     assertEquals(identifier, templateSchemaArtifact.identifier().get());
     assertEquals(id, templateSchemaArtifact.jsonLdId().get());
@@ -161,7 +163,9 @@ public class YamlArtifactReaderTest
 
   @Test public void readFieldSchemaArtifactTest()
   {
-    String name = "Study Name";
+    String fieldKey = "study_name";
+    String fieldName = "Study Name";
+    String fieldType = FieldInputType.TEXTFIELD.toString();
     String description = "Please enter a study name";
     String identifier = "ID4";
     Version version = Version.fromString("1.2.3");
@@ -185,7 +189,9 @@ public class YamlArtifactReaderTest
     String language = "en";
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
-    yamlSource.put(NAME, name);
+    yamlSource.put(KEY, fieldKey);
+    yamlSource.put(TYPE, fieldType);
+    yamlSource.put(NAME, fieldName);
     yamlSource.put(DESCRIPTION, description);
     yamlSource.put(IDENTIFIER, identifier);
     yamlSource.put(MODEL_VERSION, modelVersion.toString());
@@ -199,7 +205,6 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
     yamlSource.put(PREF_LABEL, preferredLabel);
     yamlSource.put(ALT_LABEL, altLabels);
-    yamlSource.put(TYPE, FieldInputType.TEXTFIELD.toString());
     yamlSource.put(REQUIRED, requiredValue);
     yamlSource.put(VALUE_RECOMMENDATION, valueRecommendation);
     yamlSource.put(HIDDEN, hidden);
@@ -210,7 +215,7 @@ public class YamlArtifactReaderTest
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 
-    assertEquals(name, fieldSchemaArtifact.name());
+    assertEquals(fieldName, fieldSchemaArtifact.name());
     assertEquals(description, fieldSchemaArtifact.description());
     assertEquals(identifier, fieldSchemaArtifact.identifier().get());
     assertEquals(version, fieldSchemaArtifact.version().get());
