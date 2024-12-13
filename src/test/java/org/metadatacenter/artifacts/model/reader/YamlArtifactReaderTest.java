@@ -104,7 +104,7 @@ public class YamlArtifactReaderTest
 
   @Test public void readElementSchemaArtifactTest()
   {
-    String name = "Address";
+    String elementName = "Address";
     String description = "My address";
     String identifier = "ID3";
     URI id = URI.create("https://repo.metadatacenter.org/template-elements/2323");
@@ -123,7 +123,8 @@ public class YamlArtifactReaderTest
     String language = "en";
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
-    yamlSource.put(ELEMENT, name);
+    yamlSource.put(TYPE, ELEMENT);
+    yamlSource.put(NAME, elementName);
     yamlSource.put(DESCRIPTION, description);
     yamlSource.put(IDENTIFIER, identifier);
     yamlSource.put(ID, id.toString());
@@ -143,7 +144,7 @@ public class YamlArtifactReaderTest
 
     ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(yamlSource);
 
-    assertEquals(name, elementSchemaArtifact.name());
+    assertEquals(elementName, elementSchemaArtifact.name());
     assertEquals(description, elementSchemaArtifact.description());
     assertEquals(identifier, elementSchemaArtifact.identifier().get());
     assertEquals(id, elementSchemaArtifact.jsonLdId().get());

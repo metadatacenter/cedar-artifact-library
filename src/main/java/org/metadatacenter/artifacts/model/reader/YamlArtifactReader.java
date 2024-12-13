@@ -173,9 +173,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (!artifactType.equals(TEMPLATE))
       throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + TEMPLATE, TYPE, path);
 
-    String templateName = readRequiredString(sourceNode, path, NAME, false);
 
-    return readTemplateSchemaArtifact(sourceNode, path, templateName);
+    return readTemplateSchemaArtifact(sourceNode, path);
   }
 
   /**
@@ -206,13 +205,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String name = readRequiredString(sourceNode, path, ELEMENT, false);
-    boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
-    Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
-    Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
-    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_IRI);
 
-    return readElementSchemaArtifact(sourceNode, path, name, isMultiple, minItems, maxItems, propertyUri);
+    return readElementSchemaArtifact(sourceNode, path);
   }
 
   /**
@@ -225,7 +219,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * values:
    *   - branch: Disease
    *     acronym: DPCO
-   *     termUri: "http://purl.org/twc/dpo/ont/Disease"
+   *     termUri: http://purl.org/twc/dpo/ont/Disease
    *   - type: ontology
    *     source: DOID
    *     name: Human Disease Ontology
@@ -240,16 +234,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    String fieldType = readRequiredString(sourceNode, path, TYPE, false);
-    String fieldKey = readRequiredString(sourceNode, path, KEY, false);
-    String fieldName = readRequiredString(sourceNode, path, NAME, false);
 
-    boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
-    Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
-    Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
-    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_IRI);
-
-    return readFieldSchemaArtifact(sourceNode, path, fieldKey, fieldName, isMultiple, minItems, maxItems, propertyUri);
+    return readFieldSchemaArtifact(sourceNode, path);
   }
 
   @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
@@ -257,12 +243,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return null; // TODO Read template instance artifacts
   }
 
-  private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
-    String templateName)
+  private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
+    String templateName = readRequiredString(sourceNode, path, NAME, false);
+
     String internalName = templateName + " template";
     String internalDescription = templateName + " template generated from YAML";
-
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
@@ -291,11 +277,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       internalDescription);
   }
 
-  private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
-    String name, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
+  private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    String internalName = name + " element";
-    String internalDescription = name + " element generated from YAML";
+    String elementName = readRequiredString(sourceNode, path, NAME, false);
+    String internalName = elementName + " element";
+    String internalDescription = elementName + " element generated from YAML";
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
@@ -318,19 +304,23 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     checkSchemaArtifactModelVersion(sourceNode, path);
 
+    // TODO These are in CONFIGURATIONS
+    boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
+    Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
+    Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
+    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_IRI);
+
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
-      instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
+      instanceJsonLdType, elementName, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri,
       language, elementUi, annotations);
   }
 
-  private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldKey, String fieldName, boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
-    Optional<URI> propertyUri)
+  private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
+    String fieldName = readRequiredString(sourceNode, path, NAME, false);
     String internalName = fieldName + " field";
     String internalDescription = fieldName + " field generated from YAML";
-
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
@@ -350,6 +340,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     List<String> alternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
+
+    // TODO These are in CONFIGURATIONS
+    boolean isMultiple = readBoolean(sourceNode, path, MULTIPLE, false);
+    Optional<Integer> minItems = readInteger(sourceNode, path, MIN_ITEMS);
+    Optional<Integer> maxItems = readInteger(sourceNode, path, MAX_ITEMS);
+    Optional<URI> propertyUri = readUri(sourceNode, path, PROPERTY_IRI);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
 

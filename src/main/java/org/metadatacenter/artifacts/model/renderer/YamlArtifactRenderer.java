@@ -202,22 +202,22 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   - type: ontology
    *     acronym: DOID
    *     ontologyName: Human Disease Ontology
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     iri: https://data.bioontology.org/ontologies/DOID
    *   - type: class
    *     label: Human
    *     acronym: LOINC
    *     termType: OntologyClass
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     iri: http://purl.bioontology.org/ontology/LNC/LA19711-3
    *   - type: branch
    *     ontologyName: Diabetes Pharmacology Ontology
    *     acronym: DPCO
    *     termLabel: Disease
-   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *     iri: http://purl.org/twc/dpo/ont/Disease
    *   - type: valueSet
    *     acronym: HRAVS
    *     valueSetName: Area unit
-   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey,
