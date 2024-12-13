@@ -741,9 +741,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     Optional<String> xsdDatatypeString = readString(sourceNode, path, fieldKey, false);
 
-    if (xsdDatatypeString.isEmpty()) {
+    if (xsdDatatypeString.isEmpty())
       return Optional.empty();
-    }
 
     if (XsdDatatype.isKnownXsdDatatype(xsdDatatypeString.get()))
       return Optional.of(XsdDatatype.fromString(xsdDatatypeString.get()));
@@ -753,13 +752,24 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private URI readRequiredUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
-    String uriString = readRequiredString(sourceNode, path, fieldKey, false);
+    if (!sourceNode.containsKey(fieldKey))
+      throw new ArtifactParseException("Expecting URI field", fieldKey, path);
 
-    try {
-      return new URI(uriString);
-    } catch (Exception e) {
-      throw new ArtifactParseException("Invalid URI " + uriString, fieldKey, path);
-    }
+    Object rawValue = sourceNode.get(fieldKey);
+
+    if (rawValue == null)
+      throw new ArtifactParseException("Expecting URI field", fieldKey, path);
+
+    if (rawValue instanceof URI)
+      return (URI)rawValue;
+    else if (rawValue instanceof String) {
+      try {
+        return new URI((String)rawValue);
+      } catch (Exception e) {
+        throw new ArtifactParseException("Invalid URI " + rawValue, fieldKey, path);
+      }
+    } else
+      throw new ArtifactParseException("Expecting URI or string value, got " + rawValue.getClass(), fieldKey, path);
   }
 
   private Optional<URI> readUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
