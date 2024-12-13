@@ -1084,7 +1084,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(ID, schemaArtifact.jsonLdId().get());
 
     if (!isCompact && schemaArtifact.status().isPresent())
-      rendering.put(STATUS, renderStatusName(schemaArtifact.status().get()));
+      rendering.put(STATUS, renderStatus(schemaArtifact.status().get()));
 
     if (!isCompact && schemaArtifact.version().isPresent())
       rendering.put(VERSION, schemaArtifact.version().get().toString());
@@ -1111,7 +1111,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private String renderStatusName(Status status)
+  private String renderStatus(Status status)
   {
     // TODO Use typesafe switch when available
     switch (status) {

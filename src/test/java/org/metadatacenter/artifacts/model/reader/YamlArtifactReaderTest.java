@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
@@ -9,6 +11,8 @@ import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
@@ -20,6 +24,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
@@ -45,10 +50,12 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
 public class YamlArtifactReaderTest
 {
   private YamlArtifactReader artifactReader;
+  private ObjectMapper objectMapper;
 
-  @Before
-  public void setup() {
+  @Before public void setup()
+  {
     artifactReader = new YamlArtifactReader();
+    objectMapper = new ObjectMapper(new YAMLFactory());
   }
 
   @Test public void readTemplateSchemaArtifactTest()
@@ -76,7 +83,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(ID, id.toString());
     yamlSource.put(MODEL_VERSION, modelVersion.toString());
     yamlSource.put(VERSION, version.toString());
-    yamlSource.put(STATUS, status.toString());
+    yamlSource.put(STATUS, DRAFT_STATUS);
     yamlSource.put(DERIVED_FROM, derivedFrom.toString());
     yamlSource.put(PREVIOUS_VERSION, previousVersion.toString());
     yamlSource.put(CREATED_BY, createdBy.toString());
@@ -130,7 +137,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(ID, id.toString());
     yamlSource.put(MODEL_VERSION, modelVersion.toString());
     yamlSource.put(VERSION, version.toString());
-    yamlSource.put(STATUS, status.toString());
+    yamlSource.put(STATUS, DRAFT_STATUS);
     yamlSource.put(DERIVED_FROM, derivedFrom.toString());
     yamlSource.put(PREVIOUS_VERSION, previousVersion.toString());
     yamlSource.put(CREATED_BY, createdBy.toString());
@@ -197,7 +204,7 @@ public class YamlArtifactReaderTest
     yamlSource.put(IDENTIFIER, identifier);
     yamlSource.put(MODEL_VERSION, modelVersion.toString());
     yamlSource.put(VERSION, version.toString());
-    yamlSource.put(STATUS, status.toString());
+    yamlSource.put(STATUS, DRAFT_STATUS);
     yamlSource.put(DERIVED_FROM, derivedFrom.toString());
     yamlSource.put(PREVIOUS_VERSION, previousVersion.toString());
     yamlSource.put(CREATED_BY, createdBy.toString());
@@ -239,4 +246,12 @@ public class YamlArtifactReaderTest
     assertEquals(language, fieldSchemaArtifact.language().get());
   }
 
+  private LinkedHashMap<String, Object> readYamlAsMap(String yamlFilePath)
+  {
+    try {
+      return objectMapper.readValue(new File(yamlFilePath), LinkedHashMap.class);
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading YAML file: " + yamlFilePath, e);
+    }
+  }
 }
