@@ -1765,7 +1765,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     if (jsonNode == null) {
       return Optional.empty();
     } else if (jsonNode.isNull()) {
-      return null;
+      return Optional.empty();
     } else if (!jsonNode.isTextual()) {
       throw new ArtifactParseException("Value of text field must be textual", fieldKey, path);
     } else {

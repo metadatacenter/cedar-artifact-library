@@ -6,26 +6,19 @@ import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_LANGUAGE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
-import static org.metadatacenter.model.ModelNodeNames.RDFS_LABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
+import static org.metadatacenter.model.ModelNodeNames.*;
 
 public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact permits TextFieldInstance,
-  TextAreaFieldInstance, TemporalFieldInstance, NumericFieldInstance,
-  EmailFieldInstance, CheckboxFieldInstance, ListFieldInstance, PhoneNumberFieldInstance, RadioFieldInstance,
-  ControlledTermFieldInstance, LinkFieldInstance,
-  FieldInstanceArtifactRecord
-{
+    TextAreaFieldInstance, TemporalFieldInstance, NumericFieldInstance,
+    EmailFieldInstance, CheckboxFieldInstance, ListFieldInstance, PhoneNumberFieldInstance, RadioFieldInstance,
+    ControlledTermFieldInstance, LinkFieldInstance,
+    FieldInstanceArtifactRecord {
   static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-    Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
-    Optional<String> language)
-  {
+                                      Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation
+      , Optional<String> preferredLabel,
+                                      Optional<String> language) {
     return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
-      preferredLabel, language);
+        preferredLabel, language);
   }
 
   List<URI> jsonLdTypes();
@@ -42,13 +35,13 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
 
   Optional<String> language();
 
-  @Override default void accept(InstanceArtifactVisitor visitor, String path)
-  {
+  @Override
+  default void accept(InstanceArtifactVisitor visitor, String path) {
     visitor.visitFieldInstanceArtifact(this, path);
   }
 
-  @Override default void accept(InstanceArtifactVisitor visitor, String path, String specificationPath)
-  {
+  @Override
+  default void accept(InstanceArtifactVisitor visitor, String path, String specificationPath) {
     visitor.visitAttributeValueFieldInstanceArtifact(this, path, specificationPath);
   }
 }
@@ -56,12 +49,10 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
 record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                    Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
                                    Optional<String> language)
-  implements FieldInstanceArtifact
-{
-  public FieldInstanceArtifactRecord
-  {
+    implements FieldInstanceArtifact {
+  public FieldInstanceArtifactRecord {
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
-    // JSON_LD_VALUE can be null
+    validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);

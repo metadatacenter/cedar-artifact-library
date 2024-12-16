@@ -211,7 +211,6 @@ public class JsonArtifactReaderTest
       templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdTypes().get(0));
 
     assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(heightFieldName));
-    assertEquals(null, templateInstanceArtifact.singleInstanceFieldInstances().get(heightFieldName).jsonLdValue());
   }
 
   @Test public void testReadSimpleTemplateInstanceWithNesting()

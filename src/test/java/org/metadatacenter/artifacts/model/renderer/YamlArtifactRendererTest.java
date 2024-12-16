@@ -344,8 +344,6 @@ public class YamlArtifactRendererTest {
           Name:
             value: Bobby
             language: en
-          Height:
-            value: null
         """;
 
     ObjectNode objectNode = getFileContentAsObjectNode("instances/SimpleInstance.json");

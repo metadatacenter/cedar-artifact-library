@@ -30,7 +30,8 @@ public sealed interface TextFieldInstance extends FieldInstanceArtifact, Literal
 
   final class TextFieldInstanceBuilder extends FieldInstanceArtifactBuilder {
 
-    public TextFieldInstanceBuilder() {}
+    public TextFieldInstanceBuilder() {
+    }
 
     public TextFieldInstanceBuilder(TextFieldInstance textFieldInstance) {
       super(textFieldInstance);
