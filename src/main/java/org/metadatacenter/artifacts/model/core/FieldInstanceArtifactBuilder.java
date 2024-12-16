@@ -44,14 +44,13 @@ public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInsta
 
   protected FieldInstanceArtifactBuilder withJsonLdId(URI jsonLdId)
   {
-    // Null a valid API value; serializer should ensure that no @id: null is generated in JSON-LD
-    this.jsonLdId = Optional.of(jsonLdId);
+    this.jsonLdId = Optional.ofNullable(jsonLdId);
     return this;
   }
 
   protected FieldInstanceArtifactBuilder withJsonLdValue(String jsonLdValue)
   {
-    this.jsonLdValue = Optional.of(jsonLdValue); // Null a valid value
+    this.jsonLdValue = Optional.ofNullable(jsonLdValue);
     return this;
   }
 
