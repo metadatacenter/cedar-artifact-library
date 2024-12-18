@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.reader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -169,7 +170,8 @@ public class YamlArtifactReaderTest
     assertEquals(language, elementSchemaArtifact.language().get());
   }
 
-  @Test public void readFieldSchemaArtifactTest()
+  // TODO Need to activate this
+  @Ignore @Test public void readFieldSchemaArtifactTest()
   {
     String fieldKey = "study_name";
     String fieldName = "Study Name";

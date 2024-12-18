@@ -45,10 +45,13 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHECKBOX_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTINUE_PREVIOUS_LINE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
@@ -56,6 +59,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DRAFT_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD_TYPES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FOOTER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.GRANULARITY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
@@ -73,7 +77,9 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSIO
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTI_SELECT_LIST_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUMERIC_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ORDER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
@@ -81,9 +87,14 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_DES
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_LABELS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PUBLISHED_STATUS;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RADIO_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPORAL_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_AREA_FIELD;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
@@ -656,9 +667,33 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     String inputTypeString = readRequiredString(sourceNode, path, fieldKey, false);
 
-    if (!INPUT_TYPES.contains(inputTypeString))
-      throw new ArtifactParseException("Invalid field input type" + inputTypeString + " in field " + fieldKey, TYPE,
+    if (!FIELD_TYPES.contains(inputTypeString))
+      throw new ArtifactParseException("Invalid field input type " + inputTypeString + " in field " + fieldKey, TYPE,
         path);
+
+//    public static final Set<String> FIELD_TYPES = Set.of(TEXT_FIELD, CONTROLLED_TERM_FIELD, TEXT_AREA_FIELD,
+//      NUMERIC_FIELD, TEMPORAL_FIELD, RADIO_FIELD, CHECKBOX_FIELD, SINGLE_SELECT_LIST_FIELD, MULTI_SELECT_LIST_FIELD,
+//      PHONE_FIELD, EMAIL_FIELD, LINK_FIELD, ATTRIBUTE_VALUE_FIELD, STATIC_PAGE_BREAK, STATIC_SECTION_BREAK, STATIC_IMAGE,
+//      STATIC_RICH_TEXT, STATIC_YOUTUBE_FIELD);
+
+    if (inputTypeString.equals(TEXT_FIELD))
+      return FieldInputType.TEXTFIELD;
+    else if (inputTypeString.equals(CONTROLLED_TERM_FIELD))
+      return FieldInputType.TEXTFIELD;
+    else if (inputTypeString.equals(TEXT_AREA_FIELD))
+      return FieldInputType.TEXTAREA;
+    else if (inputTypeString.equals(NUMERIC_FIELD))
+      return FieldInputType.NUMERIC;
+    else if (inputTypeString.equals(TEMPORAL_FIELD))
+      return FieldInputType.TEMPORAL;
+    else if (inputTypeString.equals(RADIO_FIELD))
+      return FieldInputType.RADIO;
+    else if (inputTypeString.equals(CHECKBOX_FIELD))
+      return FieldInputType.CHECKBOX;
+    else if (inputTypeString.equals(SINGLE_SELECT_LIST_FIELD))
+      return FieldInputType.CHECKBOX;
+    else if (inputTypeString.equals(MULTI_SELECT_LIST_FIELD))
+      return FieldInputType.CHECKBOX;
 
     return FieldInputType.fromString(inputTypeString);
   }

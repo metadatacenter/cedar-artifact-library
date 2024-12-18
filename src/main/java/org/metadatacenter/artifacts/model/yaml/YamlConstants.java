@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.yaml;
 
+import java.util.Set;
+
 public class YamlConstants
 {
   public static final String TEMPLATE = "template";
@@ -22,6 +24,11 @@ public class YamlConstants
   public static final String STATIC_IMAGE = "static-image";
   public static final String STATIC_RICH_TEXT = "static-rich-text";
   public static final String STATIC_YOUTUBE_FIELD = "static-youtube-video";
+
+  public static final Set<String> FIELD_TYPES = Set.of(TEXT_FIELD, CONTROLLED_TERM_FIELD, TEXT_AREA_FIELD,
+    NUMERIC_FIELD, TEMPORAL_FIELD, RADIO_FIELD, CHECKBOX_FIELD, SINGLE_SELECT_LIST_FIELD, MULTI_SELECT_LIST_FIELD,
+    PHONE_FIELD, EMAIL_FIELD, LINK_FIELD, ATTRIBUTE_VALUE_FIELD, STATIC_PAGE_BREAK, STATIC_SECTION_BREAK, STATIC_IMAGE,
+    STATIC_RICH_TEXT, STATIC_YOUTUBE_FIELD);
 
   public static final String KEY = "key";
   public static final String NAME = "name";
@@ -96,7 +103,6 @@ public class YamlConstants
   public static final String FOOTER = "footer";
   public static final String ORDER = "order";
   public static final String ANNOTATIONS = "annotations";
-  public static final String STRING = "string";
   public static final String VALUE = "value";
 
   public static final String CONFIGURATION = "configuration";
