@@ -2,23 +2,7 @@ package org.metadatacenter.artifacts.model.core.builders;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.core.AttributeValueField;
-import org.metadatacenter.artifacts.model.core.CheckboxField;
-import org.metadatacenter.artifacts.model.core.ControlledTermField;
-import org.metadatacenter.artifacts.model.core.EmailField;
-import org.metadatacenter.artifacts.model.core.ImageField;
-import org.metadatacenter.artifacts.model.core.LinkField;
-import org.metadatacenter.artifacts.model.core.ListField;
-import org.metadatacenter.artifacts.model.core.NumericField;
-import org.metadatacenter.artifacts.model.core.PageBreakField;
-import org.metadatacenter.artifacts.model.core.PhoneNumberField;
-import org.metadatacenter.artifacts.model.core.RadioField;
-import org.metadatacenter.artifacts.model.core.RichTextField;
-import org.metadatacenter.artifacts.model.core.SectionBreakField;
-import org.metadatacenter.artifacts.model.core.TemporalField;
-import org.metadatacenter.artifacts.model.core.TextAreaField;
-import org.metadatacenter.artifacts.model.core.TextField;
-import org.metadatacenter.artifacts.model.core.YouTubeField;
+import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -652,7 +636,6 @@ public class FieldSchemaArtifactBuilderTest
     String name = "Field name";
     String description = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
-    String defaultLabel = "Study";
 
     LinkField initialLinkField = LinkField.builder().
       withName(name).
@@ -666,6 +649,47 @@ public class FieldSchemaArtifactBuilderTest
     Assert.assertEquals(name, clonedLinkField.name());
     Assert.assertEquals(description, clonedLinkField.description());
     Assert.assertEquals(defaultURI, clonedLinkField.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+  }
+
+  @Test public void testCreateRorFieldWithCopyBuilder()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://ror.org/3434");
+    String defaultLabel = "Study";
+
+    RorField initialRorField = RorField.builder().
+            withName(name).
+            withDescription(description).
+            withDefaultValue(defaultURI).
+            build();
+
+    RorField clonedRorField = new RorField.RorFieldBuilder(initialRorField).build();
+
+    Assert.assertEquals(FieldInputType.ROR, clonedRorField.fieldUi().inputType());
+    Assert.assertEquals(name, clonedRorField.name());
+    Assert.assertEquals(description, clonedRorField.description());
+    Assert.assertEquals(defaultURI, clonedRorField.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+  }
+
+  @Test public void testCreateOrcidFieldWithCopyBuilder()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://orcid.org/0000-0002-1825-0097");
+
+    OrcidField initialOrcidField = OrcidField.builder().
+            withName(name).
+            withDescription(description).
+            withDefaultValue(defaultURI).
+            build();
+
+    OrcidField clonedOrcidField = new OrcidField.OrcidFieldBuilder(initialOrcidField).build();
+
+    Assert.assertEquals(FieldInputType.ORCID, clonedOrcidField.fieldUi().inputType());
+    Assert.assertEquals(name, clonedOrcidField.name());
+    Assert.assertEquals(description, clonedOrcidField.description());
+    Assert.assertEquals(defaultURI, clonedOrcidField.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
   }
 
   @Test public void testCreateTextAreaFieldWithBuilder()

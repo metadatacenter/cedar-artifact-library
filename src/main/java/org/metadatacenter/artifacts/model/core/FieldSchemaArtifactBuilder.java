@@ -15,10 +15,11 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   TextAreaField.TextAreaFieldBuilder, TemporalField.TemporalFieldBuilder,
   RadioField.RadioFieldBuilder, PhoneNumberField.PhoneNumberFieldBuilder,
   NumericField.NumericFieldBuilder, ListField.ListFieldBuilder,
-  LinkField.LinkFieldBuilder, EmailField.EmailFieldBuilder, ControlledTermField.ControlledTermFieldBuilder,
+  EmailField.EmailFieldBuilder,
   CheckboxField.CheckboxFieldBuilder, AttributeValueField.AttributeValueFieldBuilder,
   PageBreakField.PageBreakFieldBuilder, SectionBreakField.SectionBreakFieldBuilder, ImageField.ImageFieldBuilder,
-  YouTubeField.YouTubeFieldBuilder, RichTextField.RichTextFieldBuilder
+  YouTubeField.YouTubeFieldBuilder, RichTextField.RichTextFieldBuilder, ControlledTermField.ControlledTermFieldBuilder,
+        LinkField.LinkFieldBuilder, RorField.RorFieldBuilder, OrcidField.OrcidFieldBuilder
 {
   protected LinkedHashMap<String, URI> jsonLdContext;
   protected List<URI> jsonLdTypes = new ArrayList<>();

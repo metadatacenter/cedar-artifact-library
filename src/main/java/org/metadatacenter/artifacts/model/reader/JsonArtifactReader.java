@@ -420,8 +420,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
         schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion, derivedFrom,
         isMultiInstance, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel,
-        alternateLabels, language, fieldUi, valueConstraints, annotations);
+        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
   private Map<String, String> readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,

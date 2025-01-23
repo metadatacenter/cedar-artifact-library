@@ -269,6 +269,87 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
+  public void testRenderLinkField() {
+
+    String name = "Disease";
+    String description = "Disease field";
+    URI fieldId = java.net.URI.create("https://repo.metadatacenter.org/template_fields/123");
+
+    LinkField linkField = LinkField.builder().
+            withJsonLdId(fieldId).
+            withName(name).
+            withDescription(description).
+            build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+            linkField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, LINK_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
+  public void testRenderRorField() {
+
+    String name = "ROR";
+    String description = "ROR field";
+    URI fieldId = java.net.URI.create("https://repo.metadatacenter.org/template_fields/123");
+
+    RorField rorField = RorField.builder().
+            withJsonLdId(fieldId).
+            withName(name).
+            withDescription(description).
+            build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+            rorField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, ROR_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
+  public void testRenderOrcidField() {
+
+    String name = "ORCID";
+    String description = "ORCID field";
+    URI fieldId = java.net.URI.create("https://repo.metadatacenter.org/template_fields/123");
+
+    OrcidField orcidField = OrcidField.builder().
+            withJsonLdId(fieldId).
+            withName(name).
+            withDescription(description).
+            build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+            orcidField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, ORCID_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
   public void testRenderAnnotations() {
 
     String name = "Study";

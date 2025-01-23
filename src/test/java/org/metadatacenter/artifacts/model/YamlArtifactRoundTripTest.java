@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -20,13 +19,11 @@ public class YamlArtifactRoundTripTest
 {
   private YamlArtifactReader yamlArtifactReader = new YamlArtifactReader();
   private YamlArtifactRenderer yamlArtifactRenderer;
-  private ObjectMapper mapper;
 
   @Before public void setUp()
   {
     yamlArtifactReader = new YamlArtifactReader();
     yamlArtifactRenderer = new YamlArtifactRenderer(false);
-    mapper = new ObjectMapper();
   }
 
   @Test public void testRoundTripSimpleTemplate()

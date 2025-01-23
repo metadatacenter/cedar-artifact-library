@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
-  permits TextField, TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField, LinkField,
-  EmailField, ControlledTermField, CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField,
-  YouTubeField, RichTextField
+  permits TextField, TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField,
+  EmailField, CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField,
+  YouTubeField, RichTextField, ControlledTermField, LinkField, RorField, OrcidField
 {
   FieldUi fieldUi();
 
@@ -277,6 +277,16 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
         internalDescription);
+    else if (fieldUi.inputType() == FieldInputType.ROR)
+      return RorField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+              previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+              lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+              internalDescription);
+    else if (fieldUi.inputType() == FieldInputType.ORCID)
+      return OrcidField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+              previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+              lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+              internalDescription);
     else if (fieldUi.inputType() == FieldInputType.NUMERIC)
       return NumericField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,

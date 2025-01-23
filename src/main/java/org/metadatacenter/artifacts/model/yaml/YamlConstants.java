@@ -18,6 +18,8 @@ public class YamlConstants
   public static final String PHONE_FIELD = "phone-number-field";
   public static final String EMAIL_FIELD = "email-field";
   public static final String LINK_FIELD = "link-field";
+  public static final String ROR_FIELD = "ror-field";
+  public static final String ORCID_FIELD = "orcid-field";
   public static final String ATTRIBUTE_VALUE_FIELD = "attribute-value-field";
   public static final String STATIC_PAGE_BREAK = "static-page-break";
   public static final String STATIC_SECTION_BREAK = "static-section-break";
@@ -27,8 +29,8 @@ public class YamlConstants
 
   public static final Set<String> FIELD_TYPES = Set.of(TEXT_FIELD, CONTROLLED_TERM_FIELD, TEXT_AREA_FIELD,
     NUMERIC_FIELD, TEMPORAL_FIELD, RADIO_FIELD, CHECKBOX_FIELD, SINGLE_SELECT_LIST_FIELD, MULTI_SELECT_LIST_FIELD,
-    PHONE_FIELD, EMAIL_FIELD, LINK_FIELD, ATTRIBUTE_VALUE_FIELD, STATIC_PAGE_BREAK, STATIC_SECTION_BREAK, STATIC_IMAGE,
-    STATIC_RICH_TEXT, STATIC_YOUTUBE_FIELD);
+    PHONE_FIELD, EMAIL_FIELD, ATTRIBUTE_VALUE_FIELD, STATIC_PAGE_BREAK, STATIC_SECTION_BREAK, STATIC_IMAGE,
+    STATIC_RICH_TEXT, STATIC_YOUTUBE_FIELD, LINK_FIELD, ROR_FIELD, ORCID_FIELD);
 
   public static final String KEY = "key";
   public static final String NAME = "name";

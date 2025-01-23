@@ -1163,8 +1163,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         return MULTI_SELECT_LIST_FIELD;
       else
         return SINGLE_SELECT_LIST_FIELD;
-    case LINK:
-      return LINK_FIELD;
+      case LINK:
+        return LINK_FIELD;
+      case ROR:
+        return ROR_FIELD;
+      case ORCID:
+        return ORCID_FIELD;
     case NUMERIC:
       return NUMERIC_FIELD;
     case TEMPORAL:
