@@ -354,10 +354,6 @@ public class YamlArtifactRendererTest {
 
     String name = "Study";
     String description = "Study template";
-    String literalAnnotationName = "foo";
-    String literalAnnotationValue = "bar";
-    String iriAnnotationName = "A";
-    String iriAnnotationValue = "https://example.com/A";
 
     TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder().
         withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/123")).
