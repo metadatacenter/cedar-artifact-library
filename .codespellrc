@@ -1,6 +1,6 @@
 [codespell]
 # Ref: https://github.com/codespell-project/codespell#using-a-config-file
-skip = .git*,.codespellrc
+skip = .git*,.codespellrc,templates
 check-hidden = true
-# ignore-regex = 
+ignore-regex = \b(Convertor|CACL)\b
 # ignore-words-list =
