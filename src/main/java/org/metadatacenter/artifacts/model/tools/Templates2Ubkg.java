@@ -33,7 +33,7 @@ public class Templates2Ubkg
   private static final String TEMPLATE_FILE_OPTION = "f";
   private static final String TEMPLATE_IRI_OPTION = "i";
   private static final String UBKG_NODE_FILE_OPTION = "un";
-  private static final String UBKG_EDGE_FILE_OPTION = "ue";
+  private static final String UBKG_EDGE_FILE_OPTION = "ue";  # codespell:ignore
   private static final String CEDAR_RESOURCE_BASE_OPTION = "r";
   private static final String CEDAR_APIKEY_OPTION = "k";
   private static final String JSON_FILE_EXTENSION = ".json";

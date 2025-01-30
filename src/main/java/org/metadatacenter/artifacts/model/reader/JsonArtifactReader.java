@@ -959,7 +959,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
           Optional.of(defaultValue.get().asNumericDefaultValue()) :
           Optional.empty();
         if (!numberType.isPresent())
-          numberType = Optional.of(XsdNumericDatatype.DECIMAL); // Default to xsd:decimal if unspecifed
+          numberType = Optional.of(XsdNumericDatatype.DECIMAL); // Default to xsd:decimal if unspecified
         return Optional.of(
           NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
             numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
@@ -1926,7 +1926,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
   {
     Version artifactModelVersion = readModelVersion(sourceNode, path);
 
-    // TODO Renable eventually after patching older artifacts
+    // TODO Re-enable eventually after patching older artifacts
     //    if (!artifactModelVersion.equals(modelVersion))
     //      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " + artifactModelVersion,
     //        SCHEMA_ORG_SCHEMA_VERSION, path);
