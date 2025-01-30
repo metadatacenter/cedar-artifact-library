@@ -181,7 +181,7 @@ Currently, CEDAR provides the following types of fields: text, temporal, numeric
 
 A class called `FieldSchemaArtifact` represents all of these field types.
 
-Since each field has specific characteristics, a custom builder is provided to contruct each field type.
+Since each field has specific characteristics, a custom builder is provided to construct each field type.
 
 ### Creating Text Fields
 
@@ -231,7 +231,7 @@ An example numeric field representing the percentage of a treatment completed an
 
 A builder supplied by a class called `TemporalField` can be used to create a CEDAR temporal fields.
 
-In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can be opitionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
+In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can be optionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
 
 An example temporal field representing the time of a patient visit recorded with the accuracy of minutes and presented in 24-hour format with time zone information displayed could be created as follows:
 
