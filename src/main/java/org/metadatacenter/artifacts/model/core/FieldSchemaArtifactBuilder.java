@@ -85,11 +85,14 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
       return new YouTubeField.YouTubeFieldBuilder(fieldSchemaArtifact.asYouTubeField());
     else if (fieldSchemaArtifact instanceof RichTextField)
       return new RichTextField.RichTextFieldBuilder(fieldSchemaArtifact.asRichTextField());
+    else if (fieldSchemaArtifact instanceof RorField)
+      return new RorField.RorFieldBuilder(fieldSchemaArtifact.asRorField());
+    else if (fieldSchemaArtifact instanceof OrcidField)
+      return new OrcidField.OrcidFieldBuilder(fieldSchemaArtifact.asOrcidField());
     else
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
   }
-
-
+  
   public abstract FieldSchemaArtifact build();
 
   protected FieldSchemaArtifactBuilder(String jsonSchemaType, URI artifactTypeIri)

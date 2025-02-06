@@ -221,6 +221,24 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         "Cannot convert " + this.getClass().getName() + " to " + RichTextField.class.getName());
   }
 
+  default RorField asRorField()
+  {
+    if (this instanceof RorField)
+      return (RorField)this;
+    else
+      throw new ClassCastException(
+              "Cannot convert " + this.getClass().getName() + " to " + RorField.class.getName());
+  }
+
+  default OrcidField asOrcidField()
+  {
+    if (this instanceof OrcidField)
+      return (OrcidField)this;
+    else
+      throw new ClassCastException(
+              "Cannot convert " + this.getClass().getName() + " to " + OrcidField.class.getName());
+  }
+
   static FieldSchemaArtifact create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId, String name,
     String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
