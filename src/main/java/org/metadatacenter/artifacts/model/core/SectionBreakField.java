@@ -83,33 +83,6 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
-    {
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
-    }
 
     @Override public SectionBreakFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
@@ -144,6 +117,40 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     @Override public SectionBreakFieldBuilder withIdentifier(String identifier)
     {
       super.withIdentifier(identifier);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withPreferredLabel(String preferredLabel)
+    {
+      super.withPreferredLabel(preferredLabel);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public SectionBreakFieldBuilder withRequiredValue(boolean requiredValue)
+    {
       return this;
     }
 

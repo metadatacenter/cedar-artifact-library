@@ -82,34 +82,6 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PageBreakFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
-    {
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
-    }
-
     @Override public PageBreakFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
       super.withJsonLdContext(jsonLdContext);
@@ -146,6 +118,12 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public PageBreakFieldBuilder withPreferredLabel(String preferredLabel)
+    {
+      super.withName(preferredLabel);
+      return this;
+    }
+
     @Override public PageBreakFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -157,6 +135,35 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       super.withStatus(status);
       return this;
     }
+
+    @Override public PageBreakFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public PageBreakFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      return this;
+    }
+
 
     @Override public PageBreakFieldBuilder withCreatedBy(URI createdBy)
     {

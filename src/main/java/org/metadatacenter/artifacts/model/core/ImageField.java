@@ -74,40 +74,6 @@ public sealed interface ImageField extends FieldSchemaArtifact
       this.fieldUiBuilder = StaticFieldUi.imageFieldUiBuilder(imageField.fieldUi().asStaticFieldUi());
     }
 
-    public ImageFieldBuilder withContent(String content)
-    {
-      fieldUiBuilder.withContent(content);
-      return this;
-    }
-
-    @Override public ImageFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
-      return this;
-    }
-
-    @Override public ImageFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public ImageFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
-    @Override public ImageFieldBuilder withRecommendedValue(boolean recommendedValue)
-    {
-      return this;
-    }
-
-    @Override public ImageFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
-    }
-
     @Override public ImageFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
       super.withJsonLdContext(jsonLdContext);
@@ -144,6 +110,12 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public ImageFieldBuilder withPreferredLabel(String preferredLabel)
+    {
+      super.withName(preferredLabel);
+      return this;
+    }
+
     @Override public ImageFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -155,6 +127,41 @@ public sealed interface ImageField extends FieldSchemaArtifact
       super.withStatus(status);
       return this;
     }
+
+    public ImageFieldBuilder withContent(String content)
+    {
+      fieldUiBuilder.withContent(content);
+      return this;
+    }
+
+    @Override public ImageFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public ImageFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public ImageFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public ImageFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public ImageFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      return this;
+    }
+
 
     @Override public ImageFieldBuilder withCreatedBy(URI createdBy)
     {

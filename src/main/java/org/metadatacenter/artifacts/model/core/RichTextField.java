@@ -73,40 +73,6 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       this.fieldUiBuilder = StaticFieldUi.richTextFieldUiBuilder(richTextField.fieldUi().asStaticFieldUi());
     }
 
-    public RichTextFieldBuilder withContent(String content)
-    {
-      fieldUiBuilder.withContent(content);
-      return this;
-    }
-
-    @Override public RichTextFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
-      return this;
-    }
-
-    @Override public RichTextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public RichTextFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
-    @Override public RichTextFieldBuilder withRecommendedValue(boolean recommendedValue)
-    {
-      return this;
-    }
-
-    @Override public RichTextFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
-    }
-
     @Override public RichTextFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
       super.withJsonLdContext(jsonLdContext);
@@ -143,6 +109,12 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public RichTextFieldBuilder withPreferredLabel(String preferredLabel)
+    {
+      super.withName(preferredLabel);
+      return this;
+    }
+
     @Override public RichTextFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -154,6 +126,41 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       super.withStatus(status);
       return this;
     }
+
+    public RichTextFieldBuilder withContent(String content)
+    {
+      fieldUiBuilder.withContent(content);
+      return this;
+    }
+
+    @Override public RichTextFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public RichTextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public RichTextFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public RichTextFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public RichTextFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      return this;
+    }
+
 
     @Override public RichTextFieldBuilder withCreatedBy(URI createdBy)
     {

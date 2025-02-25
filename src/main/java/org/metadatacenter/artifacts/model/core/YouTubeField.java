@@ -72,40 +72,6 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       this.fieldUiBuilder = StaticFieldUi.youTubeFieldUiBuilder(youTubeField.fieldUi().asStaticFieldUi());
     }
 
-    public YouTubeFieldBuilder withContent(String content)
-    {
-      fieldUiBuilder.withContent(content);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withRecommendedValue(boolean recommendedValue)
-    {
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
-    }
-
     @Override public YouTubeFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
     {
       super.withJsonLdContext(jsonLdContext);
@@ -142,6 +108,12 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public YouTubeFieldBuilder withPreferredLabel(String preferredLabel)
+    {
+      super.withName(preferredLabel);
+      return this;
+    }
+
     @Override public YouTubeFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -153,6 +125,41 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       super.withStatus(status);
       return this;
     }
+
+    public YouTubeFieldBuilder withContent(String content)
+    {
+      fieldUiBuilder.withContent(content);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      return this;
+    }
+
 
     @Override public YouTubeFieldBuilder withCreatedBy(URI createdBy)
     {
