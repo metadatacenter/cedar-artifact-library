@@ -230,7 +230,7 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
+        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, language,
         fieldUi, annotations, internalName, internalDescription);
     }
   }

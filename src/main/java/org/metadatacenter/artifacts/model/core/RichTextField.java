@@ -111,7 +111,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
 
     @Override public RichTextFieldBuilder withPreferredLabel(String preferredLabel)
     {
-      super.withName(preferredLabel);
+      super.withPreferredLabel(preferredLabel);
       return this;
     }
 

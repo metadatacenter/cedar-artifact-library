@@ -112,7 +112,7 @@ public sealed interface ImageField extends FieldSchemaArtifact
 
     @Override public ImageFieldBuilder withPreferredLabel(String preferredLabel)
     {
-      super.withName(preferredLabel);
+      super.withPreferredLabel(preferredLabel);
       return this;
     }
 

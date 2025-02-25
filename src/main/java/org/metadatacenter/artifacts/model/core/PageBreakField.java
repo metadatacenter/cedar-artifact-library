@@ -120,7 +120,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
 
     @Override public PageBreakFieldBuilder withPreferredLabel(String preferredLabel)
     {
-      super.withName(preferredLabel);
+      super.withPreferredLabel(preferredLabel);
       return this;
     }
 
