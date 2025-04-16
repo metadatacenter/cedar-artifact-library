@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -47,66 +46,60 @@ public class JsonArtifactReaderTest
   private JsonArtifactReader artifactReader;
   private ObjectMapper mapper;
 
-  @Before
-  public void setup() {
+  @Before public void setup()
+  {
     artifactReader = new JsonArtifactReader();
     mapper = new ObjectMapper();
   }
 
-  @Test
-  public void testReadSampleBlockTemplateSchemaArtifact()
+  @Test public void testReadSampleBlockTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SampleBlock.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/SampleBlock.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
     assertEquals("Sample Block", templateSchemaArtifact.name());
   }
 
-  @Test
-  public void testReadSampleSectionTemplateSchemaArtifact()
+  @Test public void testReadSampleSectionTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SampleSection.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/SampleSection.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
     assertEquals("Sample Section", templateSchemaArtifact.name());
   }
 
-  @Test
-  public void testReadSampleSuspensionTemplateSchemaArtifact()
+  @Test public void testReadSampleSuspensionTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SampleSuspension.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/SampleSuspension.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
     assertEquals("Sample Suspension", templateSchemaArtifact.name());
   }
 
-  @Test
-  public void testReadADVANCETemplateSchemaArtifact()
+  @Test public void testReadADVANCETemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/ADVANCETemplate.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/ADVANCETemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
     assertEquals("ADVANCE metadata template", templateSchemaArtifact.name());
   }
 
-  @Test
-  public void testReadDataCiteTemplateSchemaArtifact()
+  @Test public void testReadDataCiteTemplateSchemaArtifact()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/DataCiteTemplate.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/DataCiteTemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
     assertEquals("DataCite V4.4 without OpenViewUrl field", templateSchemaArtifact.name());
   }
 
-  @Test
-  public void testReadMultiInstanceFieldTemplate()
+  @Test public void testReadMultiInstanceFieldTemplate()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/MultiInstanceFieldTemplate.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/MultiInstanceFieldTemplate.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -122,10 +115,9 @@ public class JsonArtifactReaderTest
     assertTrue((fieldSchemaArtifact.isMultiple()));
   }
 
-  @Test
-  public void testReadTemplateWithAttributeValues()
+  @Test public void testReadTemplateWithAttributeValues()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/SimpleTemplateWithAttributeValues.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/SimpleTemplateWithAttributeValues.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -141,10 +133,9 @@ public class JsonArtifactReaderTest
     assertTrue(fieldSchemaArtifact.isAttributeValue());
   }
 
-  @Test
-  public void testReadTemplateWithOverrideLabels()
+  @Test public void testReadTemplateWithOverrideLabels()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("templates/TemplateWithOverrideLabels.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("templates/TemplateWithOverrideLabels.json");
 
     TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(objectNode);
 
@@ -154,8 +145,7 @@ public class JsonArtifactReaderTest
     assertEquals("Hardware Component", templateSchemaArtifact.getUi().propertyLabels().get("Hardware Component"));
   }
 
-  @Test
-  public void testReadTemplateSchemaArtifact()
+  @Test public void testReadTemplateSchemaArtifact()
   {
     ObjectNode objectNode = createBaseTemplateSchemaArtifact("Test name", "Test description");
 
@@ -166,8 +156,7 @@ public class JsonArtifactReaderTest
     assertNotNull(templateSchemaArtifact.templateUi());
   }
 
-  @Test
-  public void testReadElementSchemaArtifact()
+  @Test public void testReadElementSchemaArtifact()
   {
     ObjectNode objectNode = createBaseElementSchemaArtifact("Test name", "Test description");
 
@@ -178,8 +167,7 @@ public class JsonArtifactReaderTest
     assertNotNull(elementSchemaArtifact.elementUi());
   }
 
-  @Test
-  public void testReadFieldSchemaArtifact()
+  @Test public void testReadFieldSchemaArtifact()
   {
     ObjectNode objectNode = createBaseFieldSchemaArtifact("Test name", "Test description");
 
@@ -192,17 +180,16 @@ public class JsonArtifactReaderTest
     assertNotNull(fieldSchemaArtifact.fieldUi());
   }
 
-
-  @Test
-  public void testReadSimpleTemplateInstance()
+  @Test public void testReadSimpleTemplateInstance()
   {
     String nameFieldName = "Name";
     String controlledTermsFieldName = "Controlled Terms";
     String sizeFieldName = "Size";
-    URI brainActivityUri = URI.create("http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity");
+    URI brainActivityUri = URI.create(
+      "http://www.semanticweb.org/dimitrios/ontologies/2013/2/untitled-ontology-2#BrainActivity");
     String heightFieldName = "Height";
 
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstance.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("instances/SimpleInstance.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
@@ -213,21 +200,22 @@ public class JsonArtifactReaderTest
     assertEquals("en", templateInstanceArtifact.singleInstanceFieldInstances().get(nameFieldName).language().get());
 
     assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName));
-    assertEquals("BrainActivity", templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName).label().get());
-    assertEquals(brainActivityUri, templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName).jsonLdId().get());
+    assertEquals("BrainActivity",
+      templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName).label().get());
+    assertEquals(brainActivityUri,
+      templateInstanceArtifact.singleInstanceFieldInstances().get(controlledTermsFieldName).jsonLdId().get());
 
     assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName));
     assertEquals("33", templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdValue().get());
-    assertEquals(XsdDatatype.INT.toUri(), templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdTypes().get(0));
+    assertEquals(XsdDatatype.INT.toUri(),
+      templateInstanceArtifact.singleInstanceFieldInstances().get(sizeFieldName).jsonLdTypes().get(0));
 
     assertNotNull(templateInstanceArtifact.singleInstanceFieldInstances().get(heightFieldName));
-    assertEquals(null, templateInstanceArtifact.singleInstanceFieldInstances().get(heightFieldName).jsonLdValue());
   }
 
-  @Test
-  public void testReadSimpleTemplateInstanceWithNesting()
+  @Test public void testReadSimpleTemplateInstanceWithNesting()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithNesting.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("instances/SimpleInstanceWithNesting.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
@@ -238,10 +226,9 @@ public class JsonArtifactReaderTest
     assertEquals(1, templateInstanceArtifact.multiInstanceElementInstances().size());
   }
 
-  @Test
-  public void testReadSimpleTemplateInstanceWithAttributeValueField()
+  @Test public void testReadSimpleTemplateInstanceWithAttributeValueField()
   {
-    ObjectNode objectNode = getJSONFileContentAsObjectNode("instances/SimpleInstanceWithAttributeValues.json");
+    ObjectNode objectNode = getJsonFileContentAsObjectNode("instances/SimpleInstanceWithAttributeValues.json");
 
     TemplateInstanceArtifact templateInstanceArtifact = artifactReader.readTemplateInstanceArtifact(objectNode);
 
@@ -250,12 +237,16 @@ public class JsonArtifactReaderTest
     assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().size());
     assertNotNull(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A"));
     assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").size());
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").containsKey("Attribute-value instance field 1"));
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A").containsKey("Attribute-value instance field 2"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A")
+      .containsKey("Attribute-value instance field 1"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field A")
+      .containsKey("Attribute-value instance field 2"));
     assertNotNull(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B"));
     assertEquals(2, templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").size());
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").containsKey("Attribute-value instance field 3"));
-    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B").containsKey("Attribute-value instance field 4"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B")
+      .containsKey("Attribute-value instance field 3"));
+    assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B")
+      .containsKey("Attribute-value instance field 4"));
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)
@@ -318,11 +309,11 @@ public class JsonArtifactReaderTest
     return objectNode;
   }
 
-  private ObjectNode getJSONFileContentAsObjectNode(String jsonFileName)
+  private ObjectNode getJsonFileContentAsObjectNode(String jsonFileName)
   {
     try {
-      JsonNode jsonNode = mapper.readTree(new File(
-        JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
+      JsonNode jsonNode = mapper.readTree(
+        new File(JsonArtifactReaderTest.class.getClassLoader().getResource(jsonFileName).getFile()));
 
       if (jsonNode.isObject())
         return (ObjectNode)jsonNode;

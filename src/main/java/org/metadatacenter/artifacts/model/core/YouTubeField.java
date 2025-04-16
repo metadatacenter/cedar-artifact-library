@@ -6,51 +6,33 @@ import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.*;
+import static org.metadatacenter.model.ModelNodeNames.*;
 
 public sealed interface YouTubeField extends FieldSchemaArtifact
 {
   static YouTubeField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy,
-    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> language,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
     FieldUi fieldUi, Optional<Annotations> annotations, String internalName, String internalDescription)
   {
     return new YouTubeFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-      previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, Optional.empty(),
-      Collections.emptyList(), language, fieldUi, Optional.empty(), annotations, internalName, internalDescription);
+      previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+      Collections.emptyList(), Optional.empty(), fieldUi, Optional.empty(), annotations, internalName, internalDescription);
   }
 
-  default boolean isMultiple() {return false;}
+  default boolean isMultiple() { return false; }
 
-  default Optional<Integer> minItems() {return Optional.empty();}
+  default Optional<Integer> minItems() { return Optional.empty(); }
 
-  default Optional<Integer> maxItems() {return Optional.empty();}
+  default Optional<Integer> maxItems() { return Optional.empty(); }
 
-  default Optional<URI> propertyUri() {return Optional.empty();}
+  default Optional<URI> propertyUri() { return Optional.empty(); }
 
-  static YouTubeFieldBuilder builder() {return new YouTubeFieldBuilder();}
+  static YouTubeFieldBuilder builder() { return new YouTubeFieldBuilder(); }
 
   static YouTubeFieldBuilder builder(YouTubeField youTubeField) {return new YouTubeFieldBuilder(youTubeField);}
 
@@ -70,40 +52,6 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       super(youTubeField);
 
       this.fieldUiBuilder = StaticFieldUi.youTubeFieldUiBuilder(youTubeField.fieldUi().asStaticFieldUi());
-    }
-
-    public YouTubeFieldBuilder withContent(String content)
-    {
-      fieldUiBuilder.withContent(content);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withRecommendedValue(boolean recommendedValue)
-    {
-      return this;
-    }
-
-    @Override public YouTubeFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
     }
 
     @Override public YouTubeFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
@@ -142,6 +90,12 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
+    @Override public YouTubeFieldBuilder withPreferredLabel(String preferredLabel)
+    {
+      super.withPreferredLabel(preferredLabel);
+      return this;
+    }
+
     @Override public YouTubeFieldBuilder withVersion(Version version)
     {
       super.withVersion(version);
@@ -153,6 +107,41 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       super.withStatus(status);
       return this;
     }
+
+    public YouTubeFieldBuilder withContent(String content)
+    {
+      fieldUiBuilder.withContent(content);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      return this;
+    }
+
+    @Override public YouTubeFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      return this;
+    }
+
 
     @Override public YouTubeFieldBuilder withCreatedBy(URI createdBy)
     {
@@ -219,7 +208,7 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       withFieldUi(fieldUiBuilder.build());
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
         identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        language, fieldUi, annotations, internalName, internalDescription);
+        preferredLabel, fieldUi, annotations, internalName, internalDescription);
     }
   }
 }

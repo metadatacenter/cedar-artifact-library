@@ -17,7 +17,7 @@ public interface ArtifactRenderer<T>
     return renderElementSchemaArtifact(elementSchemaArtifact.name(), elementSchemaArtifact);
   }
 
-  T renderFieldSchemaArtifact(String fieldName, FieldSchemaArtifact fieldSchemaArtifact);
+  T renderFieldSchemaArtifact(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact);
 
   default T renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {

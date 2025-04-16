@@ -42,9 +42,9 @@ public class TemplateSchemaArtifact2REDCapConvertor
     createHeader(sheet);
 
     int currentRowNumber = REDCapConstants.HEADER_ROW_NUMBER + 1;
-    for (String fieldName : templateSchemaArtifact.templateUi().order()) {
-      if (templateSchemaArtifact.fieldSchemas().containsKey(fieldName)) {
-        FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.fieldSchemas().get(fieldName);
+    for (String fieldKey : templateSchemaArtifact.templateUi().order()) {
+      if (templateSchemaArtifact.fieldSchemas().containsKey(fieldKey)) {
+        FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.fieldSchemas().get(fieldKey);
 
         processFieldSchemaArtifact(fieldSchemaArtifact, sheet, currentRowNumber, templateName, templateDescription);
       } else {
@@ -60,11 +60,11 @@ public class TemplateSchemaArtifact2REDCapConvertor
   {
 
     Row row = sheet.createRow(rowNumber);
-    String fieldName = fieldSchemaArtifact.name();
+    String fieldKey = fieldSchemaArtifact.name();
 
     Cell variableNameCell = row.createCell(REDCapConstants.VARIABLE_NAME_COLUMN_INDEX);
-    // TODO fieldName will have to be processed to allow only valid REDCap variable names
-    variableNameCell.setCellValue(fieldName);
+    // TODO fieldKey will have to be processed to allow only valid REDCap variable names
+    variableNameCell.setCellValue(fieldKey);
 
     Cell formNameCell = row.createCell(REDCapConstants.FORM_NAME_COLUMN_INDEX);
     formNameCell.setCellValue(templateName);
@@ -79,7 +79,7 @@ public class TemplateSchemaArtifact2REDCapConvertor
     fieldTypeCell.setCellValue(fieldType);
 
     Cell fieldLabelHeaderCell = row.createCell(REDCapConstants.FIELD_LABEL_COLUMN_INDEX);
-    fieldLabelHeaderCell.setCellValue(fieldName);
+    fieldLabelHeaderCell.setCellValue(fieldKey);
 
     Cell choicesCalculationsORSliderLabelsHeaderCell = row.createCell(REDCapConstants.CHOICES_CALCULATIONS_OR_SLIDER_LABELS_COLUMN_INDEX);
     // TODO

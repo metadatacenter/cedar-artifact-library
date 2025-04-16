@@ -163,13 +163,11 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLE
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
 import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
-public class JsonArtifactReader implements ArtifactReader<ObjectNode>
-{
+public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private final String jsonSchemaSchemaUri = JSON_SCHEMA_SCHEMA_IRI;
   private final Version modelVersion = Version.fromString("1.6.0");
 
-  public JsonArtifactReader()
-  {
+  public JsonArtifactReader() {
   }
 
   /**
@@ -200,8 +198,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
    *  }
    * </pre>
    */
-  public TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode sourceNode)
-  {
+  public TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode sourceNode) {
     return readTemplateSchemaArtifact(sourceNode, "");
   }
 
@@ -231,8 +228,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
    *  }
    * </pre>
    */
-  public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode)
-  {
+  public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode) {
     String name = readRequiredString(sourceNode, "/", SCHEMA_ORG_NAME);
     return readElementSchemaArtifact(sourceNode, "", name, false, Optional.empty(), Optional.empty(), Optional.empty());
   }
@@ -265,11 +261,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
    *  }
    * </pre>
    */
-  public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode)
-  {
+  public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode) {
     String name = readRequiredString(sourceNode, "/", SCHEMA_ORG_NAME);
     return readFieldSchemaArtifact(sourceNode, "", name, false, true, Optional.empty(), Optional.empty(),
-      Optional.empty());
+        Optional.empty());
   }
 
   /**
@@ -305,13 +300,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
    * }
    * </pre>
    */
-  public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode)
-  {
+  public TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode) {
     return readTemplateInstanceArtifact(sourceNode, "");
   }
 
-  private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode sourceNode, String path)
-  {
+  private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
@@ -335,7 +328,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> language = readLanguage(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
     Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas,
-      elementSchemas, childPropertyUris);
+        elementSchemas, childPropertyUris);
     TemplateUi templateUi = readTemplateUi(sourceNode, path, UI, childSchemaOrgNames);
 
     checkArtifactJsonSchemaSchemaUri(sourceNode, path);
@@ -344,13 +337,13 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     checkSchemaArtifactModelVersion(sourceNode, path);
 
     return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description,
-      identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-      fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
+        identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode, String path, String childKey,
-    boolean isMultiInstance, Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri)
-  {
+                                                          boolean isMultiInstance, Optional<Integer> minItems,
+                                                          Optional<Integer> maxItems, Optional<URI> propertyUri) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
@@ -380,20 +373,20 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     checkSchemaArtifactModelVersion(sourceNode, path);
 
     Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas,
-      elementSchemas, childPropertyUris);
+        elementSchemas, childPropertyUris);
 
     ElementUi elementUi = readElementUi(sourceNode, path, UI, childSchemaOrgNames);
 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
-      instanceJsonLdType, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion,
-      derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiInstance,
-      minItems, maxItems, propertyUri, language, elementUi, annotations);
+        instanceJsonLdType, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion,
+        derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiInstance,
+        minItems, maxItems, propertyUri, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path, String childKey,
-    boolean isMultiInstance, boolean isStandalone, Optional<Integer> minItems, Optional<Integer> maxItems,
-    Optional<URI> propertyUri)
-  {
+                                                      boolean isMultiInstance, boolean isStandalone,
+                                                      Optional<Integer> minItems, Optional<Integer> maxItems,
+                                                      Optional<URI> propertyUri) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
@@ -415,7 +408,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> language = readLanguage(sourceNode, path);
     FieldUi fieldUi = readFieldUi(sourceNode, path, UI);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, VALUE_CONSTRAINTS,
-      fieldUi.inputType(), isMultiInstance, isStandalone);
+        fieldUi.inputType(), isMultiInstance, isStandalone);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     checkArtifactJsonSchemaSchemaUri(sourceNode, path);
@@ -425,20 +418,21 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     // TODO: Update isMultiInstance, minItems, maxItems
 
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
-      schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion, derivedFrom,
-      isMultiInstance, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
-      alternateLabels, language, fieldUi, valueConstraints, annotations);
+        schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion, derivedFrom,
+        isMultiInstance, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
   }
 
   private Map<String, String> readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,
-    Map<String, FieldSchemaArtifact> fieldSchemas, Map<String, ElementSchemaArtifact> elementSchemas,
-    Map<String, URI> childPropertyUris)
-  {
+                                                                       Map<String, FieldSchemaArtifact> fieldSchemas,
+                                                                       Map<String, ElementSchemaArtifact> elementSchemas,
+                                                                       Map<String, URI> childPropertyUris) {
     JsonNode propertiesNode = parentNode.get(JSON_SCHEMA_PROPERTIES);
     Map<String, String> childSchemaOrgNames = new HashMap<>();
 
-    if (propertiesNode == null || !propertiesNode.isObject())
+    if (propertiesNode == null || !propertiesNode.isObject()) {
       throw new ArtifactParseException("Invalid JSON Schema properties node", JSON_SCHEMA_PROPERTIES, path);
+    }
 
     Iterator<String> jsonChildKeys = propertiesNode.fieldNames();
 
@@ -449,85 +443,88 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       Optional<Integer> maxItems = Optional.empty();
 
       // The /properties field for each schema artifact contains entries constraining fields in instances
-      if (!TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey))
+      if (!TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)) {
         if (!FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey) && !ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(
-          childKey)) {
+            childKey)) {
           JsonNode jsonFieldOrElementSchemaArtifactNode = propertiesNode.get(childKey);
           String fieldOrElementPath = path + "/properties/" + childKey;
 
           if (jsonFieldOrElementSchemaArtifactNode.isObject()) {
 
-            String jsonSchemaType = readRequiredString((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
-              fieldOrElementPath, JSON_SCHEMA_TYPE);
+            String jsonSchemaType = readRequiredString((ObjectNode) jsonFieldOrElementSchemaArtifactNode,
+                fieldOrElementPath, JSON_SCHEMA_TYPE);
 
             if (jsonSchemaType.equals(JSON_SCHEMA_ARRAY)) {
 
               isMultiInstance = true;
 
-              minItems = readInteger((ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath,
-                JSON_SCHEMA_MIN_ITEMS);
+              minItems = readInteger((ObjectNode) jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath,
+                  JSON_SCHEMA_MIN_ITEMS);
 
-              maxItems = readInteger((ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath,
-                JSON_SCHEMA_MAX_ITEMS);
+              maxItems = readInteger((ObjectNode) jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath,
+                  JSON_SCHEMA_MAX_ITEMS);
 
               jsonFieldOrElementSchemaArtifactNode = jsonFieldOrElementSchemaArtifactNode.get(JSON_SCHEMA_ITEMS);
 
-              if (jsonFieldOrElementSchemaArtifactNode == null)
+              if (jsonFieldOrElementSchemaArtifactNode == null) {
                 throw new ArtifactParseException("No items field in array", JSON_SCHEMA_ITEMS, fieldOrElementPath);
+              }
 
               fieldOrElementPath += "/items";
 
-              if (!jsonFieldOrElementSchemaArtifactNode.isObject())
+              if (!jsonFieldOrElementSchemaArtifactNode.isObject()) {
                 throw new ArtifactParseException("Non-object items content in array", JSON_SCHEMA_ITEMS,
-                  fieldOrElementPath);
+                    fieldOrElementPath);
+              }
             } else if (!jsonSchemaType.equals(JSON_SCHEMA_OBJECT)) {
               throw new ArtifactParseException("Expecting array or object, got " + jsonSchemaType, JSON_SCHEMA_ITEMS,
-                fieldOrElementPath);
+                  fieldOrElementPath);
             }
 
-            List<URI> subSchemaArtifactJsonLdTypes = readUriArray((ObjectNode)jsonFieldOrElementSchemaArtifactNode,
-              fieldOrElementPath, JSON_LD_TYPE);
+            List<URI> subSchemaArtifactJsonLdTypes = readUriArray((ObjectNode) jsonFieldOrElementSchemaArtifactNode,
+                fieldOrElementPath, JSON_LD_TYPE);
 
             checkSchemaArtifactJsonLdType(subSchemaArtifactJsonLdTypes, fieldOrElementPath);
 
             URI subSchemaArtifactJsonLdType = subSchemaArtifactJsonLdTypes.get(0);
             Optional<URI> propertyUri = childPropertyUris.containsKey(childKey) ?
-              Optional.of(childPropertyUris.get(childKey)) :
-              Optional.empty();
+                Optional.of(childPropertyUris.get(childKey)) :
+                Optional.empty();
 
             switch (subSchemaArtifactJsonLdType.toString()) {
-            case TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI ->
-              throw new ArtifactParseException("Invalid nesting of template schema artifact", childKey,
-                fieldOrElementPath);
-            case ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI -> {
-              ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
-                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childKey, isMultiInstance,
-                minItems, maxItems, propertyUri);
-              elementSchemas.put(childKey, elementSchemaArtifact);
-              childSchemaOrgNames.put(childKey, elementSchemaArtifact.name());
-            }
-            case FIELD_SCHEMA_ARTIFACT_TYPE_IRI, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
-              FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
-                (ObjectNode)jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childKey, isMultiInstance, false,
-                minItems, maxItems, propertyUri);
-              fieldSchemas.put(childKey, fieldSchemaArtifact);
-              childSchemaOrgNames.put(childKey, fieldSchemaArtifact.name());
-            }
-            default ->
-              throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType, childKey,
-                fieldOrElementPath);
+              case TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI ->
+                  throw new ArtifactParseException("Invalid nesting of template schema artifact", childKey,
+                      fieldOrElementPath);
+              case ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI -> {
+                ElementSchemaArtifact elementSchemaArtifact = readElementSchemaArtifact(
+                    (ObjectNode) jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childKey, isMultiInstance,
+                    minItems, maxItems, propertyUri);
+                elementSchemas.put(childKey, elementSchemaArtifact);
+                childSchemaOrgNames.put(childKey, elementSchemaArtifact.name());
+              }
+              case FIELD_SCHEMA_ARTIFACT_TYPE_IRI, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI -> {
+                FieldSchemaArtifact fieldSchemaArtifact = readFieldSchemaArtifact(
+                    (ObjectNode) jsonFieldOrElementSchemaArtifactNode, fieldOrElementPath, childKey, isMultiInstance,
+                    false,
+                    minItems, maxItems, propertyUri);
+                fieldSchemas.put(childKey, fieldSchemaArtifact);
+                childSchemaOrgNames.put(childKey, fieldSchemaArtifact.name());
+              }
+              default ->
+                  throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType, childKey,
+                      fieldOrElementPath);
             }
 
           } else {
             throw new ArtifactParseException("Unknown non-object schema artifact", childKey, fieldOrElementPath);
           }
         }
+      }
     }
     return childSchemaOrgNames;
   }
 
-  private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode, String path)
-  {
+  private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
@@ -548,16 +545,15 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
     readNestedInstanceArtifacts(sourceNode, path, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
-      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
+        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
 
     return TemplateInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, isBasedOn, derivedFrom, childKeys, singleInstanceFieldInstances,
-      multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
-      attributeValueFieldInstances, annotations);
+        modifiedBy, createdOn, lastUpdatedOn, isBasedOn, derivedFrom, childKeys, singleInstanceFieldInstances,
+        multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
+        attributeValueFieldInstances, annotations);
   }
 
-  private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path)
-  {
+  private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
@@ -575,15 +571,14 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstances = new LinkedHashMap<>();
 
     readNestedInstanceArtifacts(sourceNode, path, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
-      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
+        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
 
     return ElementInstanceArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
-      modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
-      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
+        modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
+        singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
   }
 
-  private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path)
-  {
+  private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
     Optional<String> jsonLdValue = readPossiblyNullString(sourceNode, path, JSON_LD_VALUE);
@@ -593,16 +588,15 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
 
     return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, rdfsLabel, notation, preferredLabel,
-      language);
+        language);
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path, List<String> childKeys,
-    LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
-    LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
-    LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
-    LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
-    LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
-  {
+                                           LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+                                           LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+                                           LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances,
+                                           LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances,
+                                           LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups) {
     LinkedHashMap<String, List<String>> attributeValueFieldGroupInstanceNames = new LinkedHashMap<>();
     Iterator<String> instanceArtifactFieldKeys = parentNode.fieldNames();
 
@@ -614,17 +608,18 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
         String nestedInstanceArtifactPath = path + "/" + instanceArtifactFieldKey;
 
         if (nestedNode.isObject()) {
-          ObjectNode nestedInstanceArtifactNode = (ObjectNode)nestedNode;
+          ObjectNode nestedInstanceArtifactNode = (ObjectNode) nestedNode;
 
           readNestedSingleInstanceArtifact(instanceArtifactFieldKey, nestedInstanceArtifactPath,
-            nestedInstanceArtifactNode, childKeys, singleInstanceFieldInstances, singleInstanceElementInstances);
+              nestedInstanceArtifactNode, childKeys, singleInstanceFieldInstances, singleInstanceElementInstances);
 
         } else if (nestedNode.isArray()) {
           Iterator<JsonNode> nodeIterator = nestedNode.iterator();
 
-          if (childKeys.contains(instanceArtifactFieldKey))
+          if (childKeys.contains(instanceArtifactFieldKey)) {
             throw new ArtifactParseException("Duplicate field " + instanceArtifactFieldKey, instanceArtifactFieldKey,
-              instanceArtifactFieldKey);
+                instanceArtifactFieldKey);
+          }
           childKeys.add(instanceArtifactFieldKey);
 
           if (!nodeIterator.hasNext()) { // Array is empty
@@ -638,32 +633,34 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
               JsonNode instanceNode = nodeIterator.next();
               if (instanceNode == null || instanceNode.isNull()) {
                 throw new ArtifactParseException(
-                  "Expecting field or element instance or attribute-value field name in array, got null",
-                  instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
+                    "Expecting field or element instance or attribute-value field name in array, got null",
+                    instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
               } else {
                 if (instanceNode.isObject()) {
-                  ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode)instanceNode;
+                  ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode) instanceNode;
                   readNestedMultiInstanceArtifact(instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath,
-                    arrayEnclosedInstanceArtifactNode, childKeys, multiInstanceFieldInstances,
-                    multiInstanceElementInstances);
+                      arrayEnclosedInstanceArtifactNode, childKeys, multiInstanceFieldInstances,
+                      multiInstanceElementInstances);
                 } else if (instanceNode.isTextual()) { // A list of attribute-value field names
                   String attributeValueFieldName = instanceNode.asText();
-                  if (attributeValueFieldName.isEmpty())
+                  if (attributeValueFieldName.isEmpty()) {
                     throw new ArtifactParseException("Empty attribute-value field name in array",
-                      instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
+                        instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
+                  }
 
-                  if (attributeValueFieldGroupInstanceNames.containsKey(instanceArtifactFieldKey))
+                  if (attributeValueFieldGroupInstanceNames.containsKey(instanceArtifactFieldKey)) {
                     attributeValueFieldGroupInstanceNames.get(instanceArtifactFieldKey).add(attributeValueFieldName);
-                  else {
+                  } else {
                     List<String> attributeValueFieldInstanceNames = new ArrayList<>();
                     attributeValueFieldInstanceNames.add(attributeValueFieldName);
                     attributeValueFieldGroupInstanceNames.put(instanceArtifactFieldKey,
-                      attributeValueFieldInstanceNames);
+                        attributeValueFieldInstanceNames);
                   }
-                } else
+                } else {
                   throw new ArtifactParseException(
-                    "Expecting field or element instance or attribute-value field name in array",
-                    instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
+                      "Expecting field or element instance or attribute-value field name in array",
+                      instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
+                }
               }
               arrayIndex++;
             }
@@ -672,7 +669,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       }
     }
     processAttributeValueFields(path, singleInstanceFieldInstances, attributeValueFieldGroupInstanceNames,
-      attributeValueFieldInstanceGroups);
+        attributeValueFieldInstanceGroups);
   }
 
   /**
@@ -693,140 +690,144 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
    * specialized attributeValueFieldInstances map.
    */
   private void processAttributeValueFields(String path, Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
-    Map<String, List<String>> attributeValueFieldGroupInstanceNames,
-    Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups)
-  {
+                                           Map<String, List<String>> attributeValueFieldGroupInstanceNames,
+                                           Map<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups) {
     for (var attributeValueFieldGroupsEntry : attributeValueFieldGroupInstanceNames.entrySet()) {
       String attributeValueFieldGroupName = attributeValueFieldGroupsEntry.getKey();
       List<String> attributeValueFieldInstanceNames = attributeValueFieldGroupsEntry.getValue();
 
       for (String attributeValueFieldInstanceName : attributeValueFieldInstanceNames) {
 
-        if (!singleInstanceFieldInstances.containsKey(attributeValueFieldInstanceName))
+        if (!singleInstanceFieldInstances.containsKey(attributeValueFieldInstanceName)) {
           throw new ArtifactParseException(
-            "Attribute-value field group " + attributeValueFieldGroupName + " specifies an instance field "
-              + attributeValueFieldInstanceName + " that is not present in the template or element instance",
-            attributeValueFieldGroupName, path);
+              "Attribute-value field group " + attributeValueFieldGroupName + " specifies an instance field "
+                  + attributeValueFieldInstanceName + " that is not present in the template or element instance",
+              attributeValueFieldGroupName, path);
+        }
 
         FieldInstanceArtifact perAttributeFieldInstance = singleInstanceFieldInstances.get(
-          attributeValueFieldInstanceName);
+            attributeValueFieldInstanceName);
 
         if (attributeValueFieldInstanceGroups.containsKey(attributeValueFieldGroupName)) {
           attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName)
-            .put(attributeValueFieldInstanceName, perAttributeFieldInstance);
+              .put(attributeValueFieldInstanceName, perAttributeFieldInstance);
         } else {
           attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName, new LinkedHashMap<>());
           attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName)
-            .put(attributeValueFieldInstanceName, perAttributeFieldInstance);
+              .put(attributeValueFieldInstanceName, perAttributeFieldInstance);
         }
         singleInstanceFieldInstances.remove(
-          attributeValueFieldInstanceName); // Remove it from the single-instance fields
+            attributeValueFieldInstanceName); // Remove it from the single-instance fields
       }
     }
   }
 
   private void readNestedSingleInstanceArtifact(String instanceArtifactFieldKey, String instanceArtifactPath,
-    ObjectNode instanceArtifactNode, List<String> childKeys,
-    Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
-    Map<String, ElementInstanceArtifact> singleInstanceElementInstances)
-  {
-    if (childKeys.contains(instanceArtifactFieldKey))
+                                                ObjectNode instanceArtifactNode, List<String> childKeys,
+                                                Map<String, FieldInstanceArtifact> singleInstanceFieldInstances,
+                                                Map<String, ElementInstanceArtifact> singleInstanceElementInstances) {
+    if (childKeys.contains(instanceArtifactFieldKey)) {
       throw new ArtifactParseException("duplicate field " + instanceArtifactFieldKey, instanceArtifactFieldKey,
-        instanceArtifactPath);
+          instanceArtifactPath);
+    }
 
     childKeys.add(instanceArtifactFieldKey);
 
     if (hasJsonLdContextField(instanceArtifactNode)) { // Element instance artifacts have @context fields
       ObjectNode elementInstanceArtifactNode = instanceArtifactNode;
       ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
-        instanceArtifactPath);
+          instanceArtifactPath);
       singleInstanceElementInstances.put(instanceArtifactFieldKey, elementInstanceArtifact);
     } else { // Field instance artifacts do not
       FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(instanceArtifactNode,
-        instanceArtifactPath);
+          instanceArtifactPath);
       singleInstanceFieldInstances.put(instanceArtifactFieldKey, fieldInstanceArtifact);
     }
   }
 
   private void readNestedMultiInstanceArtifact(String instanceArtifactFieldKey, String instanceArtifactPath,
-    ObjectNode instanceArtifactArrayNode, List<String> childKeys,
-    LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
-    LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances)
-  {
+                                               ObjectNode instanceArtifactArrayNode, List<String> childKeys,
+                                               LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
+                                               LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances) {
 
-    if (instanceArtifactArrayNode == null || instanceArtifactArrayNode.isNull())
+    if (instanceArtifactArrayNode == null || instanceArtifactArrayNode.isNull()) {
       throw new ArtifactParseException("Value in instance array must not be null", instanceArtifactFieldKey,
-        instanceArtifactPath);
+          instanceArtifactPath);
+    }
 
     if (hasJsonLdContextField(instanceArtifactArrayNode)) { // Element instance artifacts have @context fields
       ObjectNode elementInstanceArtifactNode = instanceArtifactArrayNode;
       ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
-        instanceArtifactPath);
+          instanceArtifactPath);
 
-      if (!multiInstanceElementInstances.containsKey(instanceArtifactFieldKey))
+      if (!multiInstanceElementInstances.containsKey(instanceArtifactFieldKey)) {
         multiInstanceElementInstances.put(instanceArtifactFieldKey, new ArrayList<>());
+      }
 
       multiInstanceElementInstances.get(instanceArtifactFieldKey).add(elementInstanceArtifact);
     } else { // Field instance artifacts do not
       FieldInstanceArtifact fieldInstanceArtifact = readFieldInstanceArtifact(instanceArtifactArrayNode,
-        instanceArtifactPath);
+          instanceArtifactPath);
 
-      if (!multiInstanceFieldInstances.containsKey(instanceArtifactFieldKey))
+      if (!multiInstanceFieldInstances.containsKey(instanceArtifactFieldKey)) {
         multiInstanceFieldInstances.put(instanceArtifactFieldKey, new ArrayList<>());
+      }
 
       multiInstanceFieldInstances.get(instanceArtifactFieldKey).add(fieldInstanceArtifact);
     }
   }
 
-  private void checkSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path)
-  {
-    if (schemaArtifactJsonLdTypes.isEmpty())
+  private void checkSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path) {
+    if (schemaArtifactJsonLdTypes.isEmpty()) {
       throw new ArtifactParseException("Unknown object - must be a JSON-LD type or array of types", JSON_LD_TYPE, path);
+    }
 
-    if (schemaArtifactJsonLdTypes.size() != 1)
+    if (schemaArtifactJsonLdTypes.size() != 1) {
       throw new ArtifactParseException(
-        "Expecting single JSON-LD @type field for schema artifact, got " + schemaArtifactJsonLdTypes.size(),
-        JSON_LD_TYPE, path);
+          "Expecting single JSON-LD @type field for schema artifact, got " + schemaArtifactJsonLdTypes.size(),
+          JSON_LD_TYPE, path);
+    }
 
     URI schemaArtifactJsonLdType = schemaArtifactJsonLdTypes.get(0);
 
-    if (!SCHEMA_ARTIFACT_TYPE_IRIS.contains(schemaArtifactJsonLdType.toString()))
+    if (!SCHEMA_ARTIFACT_TYPE_IRIS.contains(schemaArtifactJsonLdType.toString())) {
       throw new ArtifactParseException("Unexpected schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
-        JSON_LD_TYPE, path);
+          JSON_LD_TYPE, path);
+    }
   }
 
-  private void checkTemplateSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path)
-  {
+  private void checkTemplateSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path) {
     checkSchemaArtifactJsonLdType(schemaArtifactJsonLdTypes, path);
 
     URI schemaArtifactJsonLdType = schemaArtifactJsonLdTypes.get(0);
 
-    if (!schemaArtifactJsonLdType.toString().equals(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLdType.toString().equals(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)) {
       throw new ArtifactParseException("Unexpected template schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
-        JSON_LD_TYPE, path);
+          JSON_LD_TYPE, path);
+    }
   }
 
-  private void checkElementSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path)
-  {
+  private void checkElementSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path) {
     checkSchemaArtifactJsonLdType(schemaArtifactJsonLdTypes, path);
 
     URI schemaArtifactJsonLdType = schemaArtifactJsonLdTypes.get(0);
 
-    if (!schemaArtifactJsonLdType.toString().equals(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI))
+    if (!schemaArtifactJsonLdType.toString().equals(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)) {
       throw new ArtifactParseException("Unexpected element schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
-        JSON_LD_TYPE, path);
+          JSON_LD_TYPE, path);
+    }
   }
 
-  private void checkFieldSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path)
-  {
+  private void checkFieldSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path) {
     checkSchemaArtifactJsonLdType(schemaArtifactJsonLdTypes, path);
 
     URI schemaArtifactJsonLdType = schemaArtifactJsonLdTypes.get(0);
 
     if (!schemaArtifactJsonLdType.toString().equals(FIELD_SCHEMA_ARTIFACT_TYPE_IRI)
-      && !schemaArtifactJsonLdType.toString().equals(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI))
+        && !schemaArtifactJsonLdType.toString().equals(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)) {
       throw new ArtifactParseException("Unexpected field schema artifact JSON-LD @type " + schemaArtifactJsonLdType,
-        JSON_LD_TYPE, path);
+          JSON_LD_TYPE, path);
+    }
   }
 
   // A parent schema artifact's JSON Schema 'properties' object contains a specification for a JSON-LD @context for
@@ -843,14 +844,13 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
   //          "Disease": { "enum": [ "http://semantic-dicom.org/dcm#Disease" ]
   //      }
   //    }
-  private LinkedHashMap<String, URI> getChildPropertyUris(ObjectNode sourceNode, String path)
-  {
+  private LinkedHashMap<String, URI> getChildPropertyUris(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> childKey2URI = new LinkedHashMap<>();
     String contextPath = "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_CONTEXT + "/" + JSON_SCHEMA_PROPERTIES;
     JsonNode contextNode = sourceNode.at(contextPath);
 
     if (contextNode != null && contextNode.isObject()) {
-      ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode)contextNode;
+      ObjectNode jsonSchemaContextSpecificationNode = (ObjectNode) contextNode;
       Iterator<String> childKeys = jsonSchemaContextSpecificationNode.fieldNames();
 
       while (childKeys.hasNext()) {
@@ -859,34 +859,38 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
           JsonNode enumNode = jsonSchemaContextSpecificationNode.get(childKey);
 
           if (enumNode != null) { // A property URI specification for a child is optional
-            if (!enumNode.isObject())
+            if (!enumNode.isObject()) {
               throw new ArtifactParseException("Expecting object node with property URI enum specification", childKey,
-                path + contextPath);
+                  path + contextPath);
+            }
 
             JsonNode enumArray = enumNode.get(JSON_SCHEMA_ENUM);
 
-            if (enumArray == null || !enumArray.isArray())
+            if (enumArray == null || !enumArray.isArray()) {
               throw new ArtifactParseException("Expecting array for property URI enum specification", JSON_SCHEMA_ENUM,
-                path + contextPath + childKey);
+                  path + contextPath + childKey);
+            }
 
-            if (enumArray.size() != 1)
+            if (enumArray.size() != 1) {
               throw new ArtifactParseException(
-                "Expecting exactly one value for property URI enum specification, got " + enumArray.size(),
-                JSON_SCHEMA_ENUM, path + contextPath + childKey);
+                  "Expecting exactly one value for property URI enum specification, got " + enumArray.size(),
+                  JSON_SCHEMA_ENUM, path + contextPath + childKey);
+            }
 
             JsonNode elementNode = enumArray.get(0);
 
-            if (!elementNode.isTextual())
+            if (!elementNode.isTextual()) {
               throw new ArtifactParseException(
-                "Expecting text node for property URI enum entry, got " + elementNode.getNodeType(), JSON_SCHEMA_ENUM,
-                path + contextPath + childKey);
+                  "Expecting text node for property URI enum entry, got " + elementNode.getNodeType(), JSON_SCHEMA_ENUM,
+                  path + contextPath + childKey);
+            }
 
             try {
               URI propertyUri = new URI(elementNode.asText());
               childKey2URI.put(childKey, propertyUri);
             } catch (URISyntaxException e) {
               throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
-                JSON_SCHEMA_ENUM, path + contextPath + childKey);
+                  JSON_SCHEMA_ENUM, path + contextPath + childKey);
             }
           }
         }
@@ -909,30 +913,30 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
    *   }
    * </pre>
    */
-  private Optional<URI> readInstanceJsonLdType(ObjectNode sourceNode, String path)
-  {
+  private Optional<URI> readInstanceJsonLdType(ObjectNode sourceNode, String path) {
     String uriPath =
-      "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_TYPE + "/" + JSON_SCHEMA_ONE_OF + "/0/" + JSON_SCHEMA_ENUM + "/0";
+        "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_TYPE + "/" + JSON_SCHEMA_ONE_OF + "/0/" + JSON_SCHEMA_ENUM + "/0";
     JsonNode uriNode = sourceNode.at(uriPath);
 
     if (uriNode != null && uriNode.isTextual()) {
       return Optional.of(URI.create(uriNode.asText()));
-    } else
+    } else {
       return Optional.empty();
+    }
   }
 
-  private Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path, String fieldName,
-    FieldInputType fieldInputType, boolean isMultiInstance, boolean isStandalone)
-  {
-    String vcPath = path + "/" + fieldName;
-    ObjectNode vcNode = readValueConstraintsNode(sourceNode, path, fieldName);
+  private Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path, String fieldKey,
+                                                          FieldInputType fieldInputType, boolean isMultiInstance,
+                                                          boolean isStandalone) {
+    String vcPath = path + "/" + fieldKey;
+    ObjectNode vcNode = readValueConstraintsNode(sourceNode, path, fieldKey);
 
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
       boolean multipleChoice = isStandalone ?
-        readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false) :
-        isMultiInstance;
+          readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false) :
+          isMultiInstance;
       Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
       Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
       Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);
@@ -943,75 +947,78 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       Optional<Integer> maxLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
       Optional<String> regex = readString(vcNode, vcPath, "regex"); // TODO Add 'regex' to ModelNodeNames
       List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath,
-        VALUE_CONSTRAINTS_ONTOLOGIES);
+          VALUE_CONSTRAINTS_ONTOLOGIES);
       List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(vcNode, vcPath,
-        VALUE_CONSTRAINTS_VALUE_SETS);
+          VALUE_CONSTRAINTS_VALUE_SETS);
       List<ClassValueConstraint> classes = readClassValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_CLASSES);
       List<BranchValueConstraint> branches = readBranchValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_BRANCHES);
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_LITERALS);
       List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath,
-        VALUE_CONSTRAINTS_ACTIONS);
+          VALUE_CONSTRAINTS_ACTIONS);
       Optional<? extends DefaultValue> defaultValue = readDefaultValue(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE,
-        fieldInputType);
+          fieldInputType);
 
       if (fieldInputType == FieldInputType.NUMERIC) {
         Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ?
-          Optional.of(defaultValue.get().asNumericDefaultValue()) :
-          Optional.empty();
-        if (!numberType.isPresent())
+            Optional.of(defaultValue.get().asNumericDefaultValue()) :
+            Optional.empty();
+        if (!numberType.isPresent()) {
           numberType = Optional.of(XsdNumericDatatype.DECIMAL); // Default to xsd:decimal if unspecifed
+        }
         return Optional.of(
-          NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
-            numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
+            NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
+                numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
-        if (!temporalType.isPresent())
-          throw new ArtifactParseException("a temporal type must be present for a temporal field", fieldName, path);
+        if (!temporalType.isPresent()) {
+          throw new ArtifactParseException("a temporal type must be present for a temporal field", fieldKey, path);
+        }
         Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
-          Optional.of(defaultValue.get().asTemporalDefaultValue()) :
-          Optional.empty();
+            Optional.of(defaultValue.get().asTemporalDefaultValue()) :
+            Optional.empty();
         return Optional.of(
-          TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, recommendedValue,
-            multipleChoice));
+            TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, recommendedValue,
+                multipleChoice));
 
       } else if (fieldInputType == FieldInputType.LINK) {
         Optional<LinkDefaultValue> linkDefaultValue = defaultValue.isPresent() ?
-          Optional.of(defaultValue.get().asLinkDefaultValue()) :
-          Optional.empty();
+            Optional.of(defaultValue.get().asLinkDefaultValue()) :
+            Optional.empty();
         return Optional.of(
-          LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));
+            LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.ATTRIBUTE_VALUE) {
         return Optional.empty();
       } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty()
-        || !classes.isEmpty() || !branches.isEmpty())) {
+          || !classes.isEmpty() || !branches.isEmpty())) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue =
-          defaultValue.isPresent() && defaultValue.get().asControlledTermDefaultValue() != null ?
-            Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
-            Optional.empty();
+            defaultValue.isPresent() && defaultValue.get().asControlledTermDefaultValue() != null ?
+                Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
+                Optional.empty();
         return Optional.of(
-          ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
-            actions, requiredValue, recommendedValue, multipleChoice));
+            ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
+                actions, requiredValue, recommendedValue, multipleChoice));
       } else {
         Optional<TextDefaultValue> textDefaultValue = defaultValue.isPresent() ?
-          Optional.of(defaultValue.get().asTextDefaultValue()) :
-          Optional.empty();
+            Optional.of(defaultValue.get().asTextDefaultValue()) :
+            Optional.empty();
         return Optional.of(
-          TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue, recommendedValue,
-            multipleChoice, regex));
+            TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue,
+                recommendedValue,
+                multipleChoice, regex));
       }
-    } else
+    } else {
       return Optional.empty();
+    }
   }
 
-  private Optional<DefaultValue> readDefaultValue(ObjectNode sourceNode, String path, String fieldName,
-    FieldInputType fieldInputType)
-  {
-    JsonNode childNode = sourceNode.get(fieldName);
+  private Optional<DefaultValue> readDefaultValue(ObjectNode sourceNode, String path, String fieldKey,
+                                                  FieldInputType fieldInputType) {
+    JsonNode childNode = sourceNode.get(fieldKey);
 
-    if (childNode == null || childNode.isNull())
+    if (childNode == null || childNode.isNull()) {
       return Optional.empty();
-    else if (childNode.isObject()) {
-      String nestedPath = path + "/" + fieldName;
-      ObjectNode defaultValueNode = (ObjectNode)childNode;
+    } else if (childNode.isObject()) {
+      String nestedPath = path + "/" + fieldKey;
+      ObjectNode defaultValueNode = (ObjectNode) childNode;
       URI termUri = readRequiredUri(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       Optional<String> rdfsLabel = readString(defaultValueNode, nestedPath, RDFS_LABEL);
       return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel.orElse("")));
@@ -1019,37 +1026,40 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       return Optional.of(new NumericDefaultValue(childNode.asDouble()));
     } else if (childNode.isTextual()) {
       String textValue = childNode.asText();
-      if (textValue.isEmpty())
+      if (textValue.isEmpty()) {
         return Optional.empty();
-      else {
-        if (fieldInputType == FieldInputType.LINK)
+      } else {
+        if (fieldInputType == FieldInputType.LINK) {
           return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        else if (fieldInputType == FieldInputType.TEMPORAL)
+        } else if (fieldInputType == FieldInputType.TEMPORAL) {
           return Optional.of(new TemporalDefaultValue(childNode.asText()));
-        else
+        } else {
           return Optional.of(new TextDefaultValue(childNode.asText()));
+        }
       }
-    } else
+    } else {
       throw new ArtifactParseException(
-        "default value must be a string, a number, or an object containing URI/string pair", fieldName, path);
+          "default value must be a string, a number, or an object containing URI/string pair", fieldKey, path);
+    }
   }
 
   private List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode sourceNode, String path,
-    String fieldName)
-  {
+                                                                     String fieldKey) {
     List<OntologyValueConstraint> ontologyValueConstraints = new ArrayList<>();
 
-    JsonNode ontologyValueConstraintArrayNode = sourceNode.get(fieldName);
+    JsonNode ontologyValueConstraintArrayNode = sourceNode.get(fieldKey);
 
     if (ontologyValueConstraintArrayNode != null && !ontologyValueConstraintArrayNode.isNull()
-      && ontologyValueConstraintArrayNode.isArray()) {
+        && ontologyValueConstraintArrayNode.isArray()) {
 
       for (JsonNode valueConstraintNode : ontologyValueConstraintArrayNode) {
         if (valueConstraintNode != null) {
-          if (!valueConstraintNode.isObject())
-            throw new ArtifactParseException("Value in array must be an object", fieldName, path);
-          OntologyValueConstraint ontologyValueConstraint = readOntologyValueConstraint((ObjectNode)valueConstraintNode,
-            path + "/" + fieldName);
+          if (!valueConstraintNode.isObject()) {
+            throw new ArtifactParseException("Value in array must be an object", fieldKey, path);
+          }
+          OntologyValueConstraint ontologyValueConstraint =
+              readOntologyValueConstraint((ObjectNode) valueConstraintNode,
+                  path + "/" + fieldKey);
           ontologyValueConstraints.add(ontologyValueConstraint);
         }
       }
@@ -1057,21 +1067,21 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return ontologyValueConstraints;
   }
 
-  private List<ClassValueConstraint> readClassValueConstraints(ObjectNode sourceNode, String path, String fieldName)
-  {
+  private List<ClassValueConstraint> readClassValueConstraints(ObjectNode sourceNode, String path, String fieldKey) {
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
-    JsonNode classValueConstraintArrayNode = sourceNode.get(fieldName);
+    JsonNode classValueConstraintArrayNode = sourceNode.get(fieldKey);
 
     if (classValueConstraintArrayNode != null && !classValueConstraintArrayNode.isNull()
-      && classValueConstraintArrayNode.isArray()) {
+        && classValueConstraintArrayNode.isArray()) {
 
       for (JsonNode valueConstraintNode : classValueConstraintArrayNode) {
         if (valueConstraintNode != null) {
-          if (!valueConstraintNode.isObject())
-            throw new ArtifactParseException("Value in array must be an object", fieldName, path);
-          ClassValueConstraint classValueConstraint = readClassValueConstraint((ObjectNode)valueConstraintNode,
-            path + "/" + fieldName);
+          if (!valueConstraintNode.isObject()) {
+            throw new ArtifactParseException("Value in array must be an object", fieldKey, path);
+          }
+          ClassValueConstraint classValueConstraint = readClassValueConstraint((ObjectNode) valueConstraintNode,
+              path + "/" + fieldKey);
           classValueConstraints.add(classValueConstraint);
         }
       }
@@ -1080,20 +1090,21 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private List<ValueSetValueConstraint> readValueSetValueConstraints(ObjectNode sourceNode, String path,
-    String fieldName)
-  {
+                                                                     String fieldKey) {
     List<ValueSetValueConstraint> valueSetValueConstraints = new ArrayList<>();
 
-    JsonNode valueSetValueConstraintArrayNode = sourceNode.get(fieldName);
+    JsonNode valueSetValueConstraintArrayNode = sourceNode.get(fieldKey);
 
     if (valueSetValueConstraintArrayNode != null && valueSetValueConstraintArrayNode.isArray()) {
 
       for (JsonNode valueConstraintNode : valueSetValueConstraintArrayNode) {
         if (valueConstraintNode != null) {
-          if (!valueConstraintNode.isObject())
-            throw new ArtifactParseException("Value in array must be an object", fieldName, path);
-          ValueSetValueConstraint valueSetValueConstraint = readValueSetValueConstraint((ObjectNode)valueConstraintNode,
-            path + "/" + fieldName);
+          if (!valueConstraintNode.isObject()) {
+            throw new ArtifactParseException("Value in array must be an object", fieldKey, path);
+          }
+          ValueSetValueConstraint valueSetValueConstraint =
+              readValueSetValueConstraint((ObjectNode) valueConstraintNode,
+                  path + "/" + fieldKey);
           valueSetValueConstraints.add(valueSetValueConstraint);
         }
       }
@@ -1101,20 +1112,20 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return valueSetValueConstraints;
   }
 
-  private List<BranchValueConstraint> readBranchValueConstraints(ObjectNode sourceNode, String path, String fieldName)
-  {
+  private List<BranchValueConstraint> readBranchValueConstraints(ObjectNode sourceNode, String path, String fieldKey) {
     List<BranchValueConstraint> branchValueConstraints = new ArrayList<>();
 
-    JsonNode branchValueConstraintArrayNode = sourceNode.get(fieldName);
+    JsonNode branchValueConstraintArrayNode = sourceNode.get(fieldKey);
 
     if (branchValueConstraintArrayNode != null && branchValueConstraintArrayNode.isArray()) {
 
       for (JsonNode valueConstraintNode : branchValueConstraintArrayNode) {
         if (valueConstraintNode != null) {
-          if (!valueConstraintNode.isObject())
-            throw new ArtifactParseException("Value in array must be an object", fieldName, path);
-          BranchValueConstraint branchValueConstraint = readBranchValueConstraint((ObjectNode)valueConstraintNode,
-            path + "/" + fieldName);
+          if (!valueConstraintNode.isObject()) {
+            throw new ArtifactParseException("Value in array must be an object", fieldKey, path);
+          }
+          BranchValueConstraint branchValueConstraint = readBranchValueConstraint((ObjectNode) valueConstraintNode,
+              path + "/" + fieldKey);
           branchValueConstraints.add(branchValueConstraint);
         }
       }
@@ -1123,21 +1134,22 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return branchValueConstraints;
   }
 
-  private List<LiteralValueConstraint> readLiteralValueConstraints(ObjectNode sourceNode, String path, String fieldName)
-  {
+  private List<LiteralValueConstraint> readLiteralValueConstraints(ObjectNode sourceNode, String path,
+                                                                   String fieldKey) {
     List<LiteralValueConstraint> literalValueConstraints = new ArrayList<>();
 
-    JsonNode literValueConstraintArrayNode = sourceNode.get(fieldName);
-    String literalsPath = path + "/" + fieldName;
+    JsonNode literValueConstraintArrayNode = sourceNode.get(fieldKey);
+    String literalsPath = path + "/" + fieldKey;
 
     if (literValueConstraintArrayNode != null && literValueConstraintArrayNode.isArray()) {
 
       for (JsonNode valueConstraintsNode : literValueConstraintArrayNode) {
         if (valueConstraintsNode != null) {
-          if (!valueConstraintsNode.isObject())
-            throw new ArtifactParseException("Value in array must be an object", fieldName, literalsPath);
-          LiteralValueConstraint literalValueConstraint = readLiteralValueConstraint((ObjectNode)valueConstraintsNode,
-            literalsPath);
+          if (!valueConstraintsNode.isObject()) {
+            throw new ArtifactParseException("Value in array must be an object", fieldKey, literalsPath);
+          }
+          LiteralValueConstraint literalValueConstraint = readLiteralValueConstraint((ObjectNode) valueConstraintsNode,
+              literalsPath);
           literalValueConstraints.add(literalValueConstraint);
         }
       }
@@ -1146,21 +1158,21 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
   }
 
   private List<ControlledTermValueConstraintsAction> readValueConstraintsActions(ObjectNode sourceNode, String path,
-    String fieldName)
-  {
+                                                                                 String fieldKey) {
     List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
 
-    JsonNode controlledTermValueConstraintsActionArrayNode = sourceNode.get(fieldName);
+    JsonNode controlledTermValueConstraintsActionArrayNode = sourceNode.get(fieldKey);
 
     if (controlledTermValueConstraintsActionArrayNode != null
-      && controlledTermValueConstraintsActionArrayNode.isArray()) {
+        && controlledTermValueConstraintsActionArrayNode.isArray()) {
 
       for (JsonNode actionNode : controlledTermValueConstraintsActionArrayNode) {
         if (actionNode != null) {
-          if (!actionNode.isObject())
-            throw new ArtifactParseException("Value in array must be an object", fieldName, path);
-          ControlledTermValueConstraintsAction action = readValueConstraintsAction((ObjectNode)actionNode,
-            path + "/" + fieldName);
+          if (!actionNode.isObject()) {
+            throw new ArtifactParseException("Value in array must be an object", fieldKey, path);
+          }
+          ControlledTermValueConstraintsAction action = readValueConstraintsAction((ObjectNode) actionNode,
+              path + "/" + fieldKey);
           actions.add(action);
         }
       }
@@ -1168,8 +1180,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return actions;
   }
 
-  private ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode sourceNode, String path)
-  {
+  private ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode sourceNode, String path) {
     URI termUri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_TERM_URI);
     Optional<String> source = readString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
     ValueConstraintsActionType actionType = readValueConstraintsActionType(sourceNode, path, VALUE_CONSTRAINTS_ACTION);
@@ -1180,43 +1191,40 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return new ControlledTermValueConstraintsAction(termUri, source.orElse(""), valueType, actionType, sourceUri, to);
   }
 
-  private Optional<XsdTemporalDatatype> readTemporalType(ObjectNode sourceNode, String path, String fieldName)
-  {
-    Optional<String> temporalTypeValue = readString(sourceNode, path, fieldName);
+  private Optional<XsdTemporalDatatype> readTemporalType(ObjectNode sourceNode, String path, String fieldKey) {
+    Optional<String> temporalTypeValue = readString(sourceNode, path, fieldKey);
 
-    if (temporalTypeValue.isPresent())
+    if (temporalTypeValue.isPresent()) {
       return Optional.of(XsdTemporalDatatype.fromString(temporalTypeValue.get()));
-    else
+    } else {
       return Optional.empty();
+    }
   }
 
-  private Optional<XsdNumericDatatype> readNumberType(ObjectNode sourceNode, String path, String fieldName)
-  {
-    Optional<String> numberTypeValue = readString(sourceNode, path, fieldName);
+  private Optional<XsdNumericDatatype> readNumberType(ObjectNode sourceNode, String path, String fieldKey) {
+    Optional<String> numberTypeValue = readString(sourceNode, path, fieldKey);
 
-    if (numberTypeValue.isPresent())
+    if (numberTypeValue.isPresent()) {
       return Optional.of(XsdNumericDatatype.fromString(numberTypeValue.get()));
-    else
+    } else {
       return Optional.empty();
+    }
   }
 
   private ValueConstraintsActionType readValueConstraintsActionType(ObjectNode sourceNode, String path,
-    String fieldName)
-  {
-    String actionType = readRequiredString(sourceNode, path, fieldName);
+                                                                    String fieldKey) {
+    String actionType = readRequiredString(sourceNode, path, fieldKey);
 
     return ValueConstraintsActionType.fromString(actionType);
   }
 
-  private ValueType readValueType(ObjectNode sourceNode, String path, String fieldName)
-  {
-    String valueType = readRequiredString(sourceNode, path, fieldName);
+  private ValueType readValueType(ObjectNode sourceNode, String path, String fieldKey) {
+    String valueType = readRequiredString(sourceNode, path, fieldKey);
 
     return ValueType.fromString(valueType);
   }
 
-  private OntologyValueConstraint readOntologyValueConstraint(ObjectNode sourceNode, String path)
-  {
+  private OntologyValueConstraint readOntologyValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String acronym = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_ACRONYM);
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
@@ -1225,8 +1233,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return new OntologyValueConstraint(uri, acronym, name, numTerms);
   }
 
-  private ClassValueConstraint readClassValueConstraint(ObjectNode sourceNode, String path)
-  {
+  private ClassValueConstraint readClassValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String preferredLabel = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_PREFLABEL);
     ValueType valueType = readValueType(sourceNode, path, VALUE_CONSTRAINTS_TYPE);
@@ -1236,8 +1243,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return new ClassValueConstraint(uri, source, label, preferredLabel, valueType);
   }
 
-  private ValueSetValueConstraint readValueSetValueConstraint(ObjectNode sourceNode, String path)
-  {
+  private ValueSetValueConstraint readValueSetValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
     String vsCollection = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_VS_COLLECTION);
@@ -1246,8 +1252,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return new ValueSetValueConstraint(uri, vsCollection, name, numTerms);
   }
 
-  private BranchValueConstraint readBranchValueConstraint(ObjectNode sourceNode, String path)
-  {
+  private BranchValueConstraint readBranchValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String source = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
     String acronym = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_ACRONYM);
@@ -1257,18 +1262,16 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return new BranchValueConstraint(uri, source, acronym, name, maxDepth);
   }
 
-  private LiteralValueConstraint readLiteralValueConstraint(ObjectNode sourceNode, String path)
-  {
+  private LiteralValueConstraint readLiteralValueConstraint(ObjectNode sourceNode, String path) {
     String label = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_LABEL);
     boolean selectedByDefault = readBoolean(sourceNode, path, VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT, false);
 
     return new LiteralValueConstraint(label, selectedByDefault);
   }
 
-  private FieldUi readFieldUi(ObjectNode sourceNode, String path, String fieldName)
-  {
-    ObjectNode uiNode = readChildNode(sourceNode, path, fieldName);
-    String uiPath = path + "/" + fieldName;
+  private FieldUi readFieldUi(ObjectNode sourceNode, String path, String fieldKey) {
+    ObjectNode uiNode = readChildNode(sourceNode, path, fieldKey);
+    String uiPath = path + "/" + fieldKey;
 
     FieldInputType fieldInputType = readFieldInputType(uiNode, uiPath, UI_FIELD_INPUT_TYPE);
     boolean valueRecommendationEnabled = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
@@ -1283,26 +1286,26 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       Optional<Boolean> timeZoneEnabled = readOptionalBoolean(uiNode, uiPath, UI_TIMEZONE_ENABLED);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden,
-        continuePreviousLine);
+          continuePreviousLine);
     } else if (fieldInputType.isNumeric()) {
       return NumericFieldUi.create(hidden, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       Optional<String> content = readString(uiNode, uiPath, UI_CONTENT);
       return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine, width, height);
-    } else
+    } else {
       return FieldUi.create(fieldInputType, hidden, continuePreviousLine, valueRecommendationEnabled);
+    }
   }
 
-  private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldName,
-    Map<String, String> childKey2Name)
-  {
-    ObjectNode uiNode = readChildNode(sourceNode, path, fieldName);
-    String uiPath = path + "/" + fieldName;
+  private TemplateUi readTemplateUi(ObjectNode sourceNode, String path, String fieldKey,
+                                    Map<String, String> childKey2Name) {
+    ObjectNode uiNode = readChildNode(sourceNode, path, fieldKey);
+    String uiPath = path + "/" + fieldKey;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
     LinkedHashMap<String, String> originalPropertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
     LinkedHashMap<String, String> originalPropertyDescriptions = readString2StringMap(uiNode, uiPath,
-      UI_PROPERTY_DESCRIPTIONS);
+        UI_PROPERTY_DESCRIPTIONS);
     Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
     Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
@@ -1314,13 +1317,16 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     // Reorder to follow the order list
     for (String childKey : order) {
       if (childKey2Name.containsKey(childKey)) {
-        if (originalPropertyLabels.containsKey(childKey))
+        if (originalPropertyLabels.containsKey(childKey)) {
           reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
+        }
 
-        if (originalPropertyDescriptions.containsKey(childKey))
+        if (originalPropertyDescriptions.containsKey(childKey)) {
           reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
-      } else
+        }
+      } else {
         orderEntriesToRemove.add(childKey);
+      }
     }
 
     order.removeAll(orderEntriesToRemove); // Silently remove order entries with no corresponding children
@@ -1328,16 +1334,15 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return TemplateUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
   }
 
-  private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldName,
-    Map<String, String> childKey2Name)
-  {
-    ObjectNode uiNode = readChildNode(sourceNode, path, fieldName);
-    String uiPath = path + "/" + fieldName;
+  private ElementUi readElementUi(ObjectNode sourceNode, String path, String fieldKey,
+                                  Map<String, String> childKey2Name) {
+    ObjectNode uiNode = readChildNode(sourceNode, path, fieldKey);
+    String uiPath = path + "/" + fieldKey;
 
     List<String> order = readStringArray(uiNode, uiPath, UI_ORDER);
     LinkedHashMap<String, String> originalPropertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
     LinkedHashMap<String, String> originalPropertyDescriptions = readString2StringMap(uiNode, uiPath,
-      UI_PROPERTY_DESCRIPTIONS);
+        UI_PROPERTY_DESCRIPTIONS);
 
     LinkedHashMap<String, String> reorderedPropertyLabels = new LinkedHashMap<>();
     LinkedHashMap<String, String> reorderedPropertyDescriptions = new LinkedHashMap<>();
@@ -1347,13 +1352,16 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     // Reorder to follow the order list
     for (String childKey : order) {
       if (childKey2Name.containsKey(childKey)) {
-        if (originalPropertyLabels.containsKey(childKey))
+        if (originalPropertyLabels.containsKey(childKey)) {
           reorderedPropertyLabels.put(childKey, originalPropertyLabels.get(childKey));
+        }
 
-        if (originalPropertyDescriptions.containsKey(childKey))
+        if (originalPropertyDescriptions.containsKey(childKey)) {
           reorderedPropertyDescriptions.put(childKey, originalPropertyDescriptions.get(childKey));
-      } else
+        }
+      } else {
         orderEntriesToRemove.add(childKey);
+      }
     }
 
     order.removeAll(orderEntriesToRemove); // Silently remove order entries with no corresponding children
@@ -1361,15 +1369,15 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
     return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions);
   }
 
-  private Optional<Annotations> readAnnotations(ObjectNode sourceNode, String path, String fieldName)
-  {
+  private Optional<Annotations> readAnnotations(ObjectNode sourceNode, String path, String fieldKey) {
     LinkedHashMap<String, AnnotationValue> annotations = new LinkedHashMap<>();
-    ObjectNode annotationNode = readAnnotationsNode(sourceNode, path, fieldName);
+    ObjectNode annotationNode = readAnnotationsNode(sourceNode, path, fieldKey);
 
-    if (annotationNode == null)
+    if (annotationNode == null) {
       return Optional.empty();
+    }
 
-    String annotationPath = path + "/" + fieldName;
+    String annotationPath = path + "/" + fieldKey;
 
     Iterator<Map.Entry<String, JsonNode>> fieldEntries = annotationNode.fields();
 
@@ -1377,13 +1385,14 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       var fieldEntry = fieldEntries.next();
       String annotationName = fieldEntry.getKey();
 
-      if (annotations.containsKey(annotationName))
+      if (annotations.containsKey(annotationName)) {
         throw new ArtifactParseException("Duplicate value for annotation", annotationName, annotationPath);
+      }
 
       JsonNode valueNode = fieldEntry.getValue();
 
       if (valueNode.isObject()) {
-        ObjectNode annotationValueNode = (ObjectNode)valueNode;
+        ObjectNode annotationValueNode = (ObjectNode) valueNode;
 
         if (annotationValueNode.get(JSON_LD_VALUE) != null) {
           String annnotationValue = readRequiredString(annotationValueNode, annotationPath, JSON_LD_VALUE);
@@ -1391,187 +1400,167 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
         } else if (annotationValueNode.get(JSON_LD_ID) != null) {
           URI annnotationValue = readRequiredUri(annotationValueNode, annotationPath, JSON_LD_ID);
           annotations.put(annotationName, new IriAnnotationValue(annnotationValue));
-        } else
+        } else {
           throw new ArtifactParseException("Value of annotation must contain an @id or @value", annotationName,
-            annotationPath);
-      } else
+              annotationPath);
+        }
+      } else {
         throw new ArtifactParseException("Value of annotation must be an object", annotationName, annotationPath);
+      }
     }
-    if (!annotations.isEmpty())
+    if (!annotations.isEmpty()) {
       return Optional.of(new Annotations(annotations));
-    else
+    } else {
       return Optional.empty();
+    }
   }
 
-  private Optional<Integer> readInteger(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private Optional<Integer> readInteger(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null || jsonNode.isNull())
+    if (jsonNode == null || jsonNode.isNull()) {
       return Optional.empty();
+    }
 
-    if (!jsonNode.isInt())
-      throw new ArtifactParseException("Value must be an integer", fieldName, path);
+    if (!jsonNode.isInt()) {
+      throw new ArtifactParseException("Value must be an integer", fieldKey, path);
+    }
 
     return Optional.of(jsonNode.asInt());
   }
 
-  private Optional<Number> readNumber(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private Optional<Number> readNumber(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null || jsonNode.isNull())
+    if (jsonNode == null || jsonNode.isNull()) {
       return Optional.empty();
+    }
 
-    if (!jsonNode.isNumber())
-      throw new ArtifactParseException("Value must be a number", fieldName, path);
+    if (!jsonNode.isNumber()) {
+      throw new ArtifactParseException("Value must be a number", fieldKey, path);
+    }
 
-    if (jsonNode.isIntegralNumber())
+    if (jsonNode.isIntegralNumber()) {
       return Optional.of(jsonNode.asLong());
-    else
+    } else {
       return Optional.of(jsonNode.asDouble());
+    }
   }
 
-  private boolean readBoolean(ObjectNode sourceNode, String path, String fieldName, boolean defaultValue)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private boolean readBoolean(ObjectNode sourceNode, String path, String fieldKey, boolean defaultValue) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null || jsonNode.isNull())
+    if (jsonNode == null || jsonNode.isNull()) {
       return defaultValue;
+    }
 
-    if (!jsonNode.isBoolean())
-      throw new ArtifactParseException("Value must be boolean", fieldName, path);
+    if (!jsonNode.isBoolean()) {
+      throw new ArtifactParseException("Value must be boolean", fieldKey, path);
+    }
 
     return jsonNode.asBoolean();
   }
 
-  private Optional<Boolean> readOptionalBoolean(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private Optional<Boolean> readOptionalBoolean(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null || jsonNode.isNull())
+    if (jsonNode == null || jsonNode.isNull()) {
       return Optional.empty();
+    }
 
-    if (!jsonNode.isBoolean())
-      throw new ArtifactParseException("Value must be boolean", fieldName, path);
+    if (!jsonNode.isBoolean()) {
+      throw new ArtifactParseException("Value must be boolean", fieldKey, path);
+    }
 
     return Optional.of(jsonNode.asBoolean());
   }
 
-  private FieldInputType readFieldInputType(ObjectNode sourceNode, String path, String fieldName)
-  {
-    String inputType = readRequiredString(sourceNode, path, fieldName);
+  private FieldInputType readFieldInputType(ObjectNode sourceNode, String path, String fieldKey) {
+    String inputType = readRequiredString(sourceNode, path, fieldKey);
 
-    if (!INPUT_TYPES.contains(inputType))
-      throw new ArtifactParseException("Invalid field input type " + inputType, fieldName, path);
+    if (!INPUT_TYPES.contains(inputType)) {
+      throw new ArtifactParseException("Invalid field input type " + inputType, fieldKey, path);
+    }
 
     return FieldInputType.fromString(inputType);
   }
 
-  private TemporalGranularity readTemporalGranularity(ObjectNode sourceNode, String path, String fieldName)
-  {
-    String granularityString = readRequiredString(sourceNode, path, fieldName);
+  private TemporalGranularity readTemporalGranularity(ObjectNode sourceNode, String path, String fieldKey) {
+    String granularityString = readRequiredString(sourceNode, path, fieldKey);
 
-    if (!TEMPORAL_GRANULARITIES.contains(granularityString))
-      throw new ArtifactParseException("Invalid granularity " + granularityString, fieldName, path);
+    if (!TEMPORAL_GRANULARITIES.contains(granularityString)) {
+      throw new ArtifactParseException("Invalid granularity " + granularityString, fieldKey, path);
+    }
 
     return TemporalGranularity.fromString(granularityString);
   }
 
-  private Optional<InputTimeFormat> readInputTimeFormat(ObjectNode sourceNode, String path, String fieldName)
-  {
-    Optional<String> timeFormatString = readString(sourceNode, path, fieldName);
+  private Optional<InputTimeFormat> readInputTimeFormat(ObjectNode sourceNode, String path, String fieldKey) {
+    Optional<String> timeFormatString = readString(sourceNode, path, fieldKey);
 
-    if (timeFormatString.isEmpty())
+    if (timeFormatString.isEmpty()) {
       return Optional.empty();
+    }
 
-    if (!TIME_FORMATS.contains(timeFormatString.get()))
+    if (!TIME_FORMATS.contains(timeFormatString.get())) {
       throw new ArtifactParseException("Invalid time format " + timeFormatString.get(), UI_INPUT_TIME_FORMAT, path);
+    }
 
     return Optional.of(InputTimeFormat.fromString(timeFormatString.get()));
   }
 
-  private ObjectNode readChildNode(ObjectNode parentNode, String path, String fieldName)
-  {
-    JsonNode childNode = parentNode.get(fieldName);
+  private ObjectNode readChildNode(ObjectNode parentNode, String path, String fieldKey) {
+    JsonNode childNode = parentNode.get(fieldKey);
 
-    if (childNode == null)
-      throw new ArtifactParseException("No " + fieldName + " field", fieldName, path);
-    else if (childNode.isNull())
-      throw new ArtifactParseException("Null " + fieldName + " field", fieldName, path);
-    else if (!childNode.isObject())
-      throw new ArtifactParseException("Value must be an object", fieldName, path);
-
-    return (ObjectNode)childNode;
-  }
-
-  private ObjectNode readValueConstraintsNode(ObjectNode parentNode, String path, String fieldName)
-  {
-    JsonNode childNode = parentNode.get(fieldName);
-
-    if (childNode == null)
-      return null;
-    else if (childNode.isNull())
-      return null;
-    else if (!childNode.isObject())
-      throw new ArtifactParseException("Value must be an object", fieldName, path);
-
-    return (ObjectNode)childNode;
-  }
-
-  private ObjectNode readAnnotationsNode(ObjectNode parentNode, String path, String fieldName)
-  {
-    JsonNode childNode = parentNode.get(fieldName);
-
-    if (childNode == null)
-      return null;
-    else if (childNode.isNull())
-      return null;
-    else if (!childNode.isObject())
-      throw new ArtifactParseException("Value must be an object", fieldName, path);
-
-    return (ObjectNode)childNode;
-  }
-
-  private LinkedHashMap<String, String> readString2StringMap(ObjectNode parentNode, String path, String fieldName)
-  {
-    LinkedHashMap<String, String> string2StringMap = new LinkedHashMap<>();
-
-    JsonNode childNode = parentNode.get(fieldName);
-
-    if (childNode != null && !childNode.isNull()) {
-
-      if (!childNode.isObject())
-        throw new ArtifactParseException("Value of field must be an object", fieldName, path);
-
-      Iterator<Map.Entry<String, JsonNode>> fieldEntries = childNode.fields();
-
-      while (fieldEntries.hasNext()) {
-        var fieldEntry = fieldEntries.next();
-
-        if (fieldEntry.getValue().isTextual()) {
-          String currentFieldName = fieldEntry.getKey();
-          String currentFieldValue = fieldEntry.getValue().textValue();
-
-          if (currentFieldValue != null)
-            string2StringMap.put(currentFieldName, currentFieldValue);
-        } else
-          throw new ArtifactParseException("Object in field must contain string values", fieldName, path);
-      }
+    if (childNode == null) {
+      throw new ArtifactParseException("No " + fieldKey + " field", fieldKey, path);
+    } else if (childNode.isNull()) {
+      throw new ArtifactParseException("Null " + fieldKey + " field", fieldKey, path);
+    } else if (!childNode.isObject()) {
+      throw new ArtifactParseException("Value must be an object", fieldKey, path);
     }
-    return string2StringMap;
+
+    return (ObjectNode) childNode;
   }
 
-  private LinkedHashMap<String, String> readSimpleContextEntries(ObjectNode parentNode, String path)
-  {
+  private ObjectNode readValueConstraintsNode(ObjectNode parentNode, String path, String fieldKey) {
+    JsonNode childNode = parentNode.get(fieldKey);
+
+    if (childNode == null) {
+      return null;
+    } else if (childNode.isNull()) {
+      return null;
+    } else if (!childNode.isObject()) {
+      throw new ArtifactParseException("Value must be an object", fieldKey, path);
+    }
+
+    return (ObjectNode) childNode;
+  }
+
+  private ObjectNode readAnnotationsNode(ObjectNode parentNode, String path, String fieldKey) {
+    JsonNode childNode = parentNode.get(fieldKey);
+
+    if (childNode == null) {
+      return null;
+    } else if (childNode.isNull()) {
+      return null;
+    } else if (!childNode.isObject()) {
+      throw new ArtifactParseException("Value must be an object", fieldKey, path);
+    }
+
+    return (ObjectNode) childNode;
+  }
+
+  private LinkedHashMap<String, String> readString2StringMap(ObjectNode parentNode, String path, String fieldKey) {
     LinkedHashMap<String, String> string2StringMap = new LinkedHashMap<>();
 
-    JsonNode childNode = parentNode.get(JSON_LD_CONTEXT);
+    JsonNode childNode = parentNode.get(fieldKey);
 
     if (childNode != null && !childNode.isNull()) {
 
-      if (!childNode.isObject())
-        throw new ArtifactParseException("Value of field must be an object", JSON_LD_CONTEXT, path);
+      if (!childNode.isObject()) {
+        throw new ArtifactParseException("Value of field must be an object", fieldKey, path);
+      }
 
       Iterator<Map.Entry<String, JsonNode>> fieldEntries = childNode.fields();
 
@@ -1579,27 +1568,59 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
         var fieldEntry = fieldEntries.next();
 
         if (fieldEntry.getValue().isTextual()) {
-          String currentFieldName = fieldEntry.getKey();
+          String currentFieldKey = fieldEntry.getKey();
           String currentFieldValue = fieldEntry.getValue().textValue();
 
-          if (currentFieldValue != null)
-            string2StringMap.put(currentFieldName, currentFieldValue);
+          if (currentFieldValue != null) {
+            string2StringMap.put(currentFieldKey, currentFieldValue);
+          }
+        } else {
+          throw new ArtifactParseException("Object in field must contain string values", fieldKey, path);
         }
       }
     }
     return string2StringMap;
   }
 
-  private LinkedHashMap<String, URI> readString2UriMap(ObjectNode parentNode, String path, String fieldName)
-  {
+  private LinkedHashMap<String, String> readSimpleContextEntries(ObjectNode parentNode, String path) {
+    LinkedHashMap<String, String> string2StringMap = new LinkedHashMap<>();
+
+    JsonNode childNode = parentNode.get(JSON_LD_CONTEXT);
+
+    if (childNode != null && !childNode.isNull()) {
+
+      if (!childNode.isObject()) {
+        throw new ArtifactParseException("Value of field must be an object", JSON_LD_CONTEXT, path);
+      }
+
+      Iterator<Map.Entry<String, JsonNode>> fieldEntries = childNode.fields();
+
+      while (fieldEntries.hasNext()) {
+        var fieldEntry = fieldEntries.next();
+
+        if (fieldEntry.getValue().isTextual()) {
+          String currentFieldKey = fieldEntry.getKey();
+          String currentFieldValue = fieldEntry.getValue().textValue();
+
+          if (currentFieldValue != null) {
+            string2StringMap.put(currentFieldKey, currentFieldValue);
+          }
+        }
+      }
+    }
+    return string2StringMap;
+  }
+
+  private LinkedHashMap<String, URI> readString2UriMap(ObjectNode parentNode, String path, String fieldKey) {
     LinkedHashMap<String, URI> string2UriMap = new LinkedHashMap<>();
 
-    JsonNode childNode = parentNode.get(fieldName);
+    JsonNode childNode = parentNode.get(fieldKey);
 
     if (childNode != null) {
 
-      if (!childNode.isObject())
-        throw new ArtifactParseException("Value of field must be an object", fieldName, path);
+      if (!childNode.isObject()) {
+        throw new ArtifactParseException("Value of field must be an object", fieldKey, path);
+      }
 
       Iterator<Map.Entry<String, JsonNode>> fieldEntries = childNode.fields();
 
@@ -1607,14 +1628,14 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
         var fieldEntry = fieldEntries.next();
 
         if (fieldEntry.getValue().isTextual()) { // We only record simple term->term URI entries
-          String currentFieldName = fieldEntry.getKey();
+          String currentFieldKey = fieldEntry.getKey();
           String currentFieldValue = fieldEntry.getValue().textValue();
 
           try {
             URI currentFieldUriValue = new URI(currentFieldValue);
-            string2UriMap.put(currentFieldName, currentFieldUriValue);
+            string2UriMap.put(currentFieldKey, currentFieldUriValue);
           } catch (Exception e) {
-            throw new ArtifactParseException("Object in field must contain URI values", fieldName, path);
+            throw new ArtifactParseException("Object in field must contain URI values", fieldKey, path);
           }
         }
       }
@@ -1625,48 +1646,50 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
   /**
    * Attribute-value fields are defined inside the first element of an "items" array
    */
-  private ObjectNode getFieldNode(ObjectNode sourceNode, String path)
-  {
+  private ObjectNode getFieldNode(ObjectNode sourceNode, String path) {
     if (sourceNode.isArray()) {
       JsonNode itemsNode = sourceNode.get(JSON_SCHEMA_ITEMS);
-      if (itemsNode == null || !itemsNode.isArray() || !itemsNode.iterator().hasNext())
+      if (itemsNode == null || !itemsNode.isArray() || !itemsNode.iterator().hasNext()) {
         throw new ArtifactParseException("Expecting array", JSON_SCHEMA_ITEMS, path);
+      }
 
       JsonNode itemNode = itemsNode.iterator().next();
-      if (!itemNode.isObject())
+      if (!itemNode.isObject()) {
         throw new ArtifactParseException("Expecting object as first element", JSON_SCHEMA_ITEMS, path);
-      return (ObjectNode)itemNode;
-    } else
+      }
+      return (ObjectNode) itemNode;
+    } else {
       return sourceNode;
-  }
-
-  private Optional<Version> readVersion(ObjectNode sourceNode, String path, String fieldName)
-  {
-    Optional<String> version = readString(sourceNode, path, fieldName);
-
-    if (version.isEmpty())
-      return Optional.empty();
-    else {
-      if (Version.isValidVersion(version.get()))
-        return Optional.of(Version.fromString(version.get()));
-      else // TODO Revisit this silent version fix
-        return Optional.of(Version.fromString("0.0.1"));
     }
   }
 
-  private Optional<Status> readStatus(ObjectNode sourceNode, String path, String fieldName)
-  {
-    Optional<String> status = readString(sourceNode, path, fieldName);
+  private Optional<Version> readVersion(ObjectNode sourceNode, String path, String fieldKey) {
+    Optional<String> version = readString(sourceNode, path, fieldKey);
 
-    if (status.isPresent())
-      return Optional.of(Status.fromString(status.get()));
-    else
+    if (version.isEmpty()) {
       return Optional.empty();
+    } else {
+      if (Version.isValidVersion(version.get())) {
+        return Optional.of(Version.fromString(version.get()));
+      } else // TODO Revisit this silent version fix
+      {
+        return Optional.of(Version.fromString("0.0.1"));
+      }
+    }
   }
 
-  private Optional<OffsetDateTime> readOffsetDateTime(ObjectNode sourceNode, String path, String fieldName)
-  {
-    Optional<String> dateTimeValue = readString(sourceNode, path, fieldName);
+  private Optional<Status> readStatus(ObjectNode sourceNode, String path, String fieldKey) {
+    Optional<String> status = readString(sourceNode, path, fieldKey);
+
+    if (status.isPresent()) {
+      return Optional.of(Status.fromString(status.get()));
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  private Optional<OffsetDateTime> readOffsetDateTime(ObjectNode sourceNode, String path, String fieldKey) {
+    Optional<String> dateTimeValue = readString(sourceNode, path, fieldKey);
     try {
       if (dateTimeValue.isPresent()) {
         // Preprocess non-standard `+0100` timezone offset
@@ -1680,36 +1703,37 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       }
     } catch (DateTimeParseException e) {
       throw new ArtifactParseException("Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(),
-        fieldName, path);
+          fieldKey, path);
     }
   }
 
-  private OffsetDateTime readRequiredOffsetDateTime(ObjectNode sourceNode, String path, String fieldName)
-  {
-    String dateTimeValue = readRequiredString(sourceNode, path, fieldName);
+  private OffsetDateTime readRequiredOffsetDateTime(ObjectNode sourceNode, String path, String fieldKey) {
+    String dateTimeValue = readRequiredString(sourceNode, path, fieldKey);
 
     try {
       return OffsetDateTime.parse(dateTimeValue);
     } catch (DateTimeParseException e) {
       throw new ArtifactParseException("Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(),
-        fieldName, path);
+          fieldKey, path);
     }
   }
 
-  private Optional<URI> readUri(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private Optional<URI> readUri(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null || jsonNode.isNull())
+    if (jsonNode == null || jsonNode.isNull()) {
       return Optional.empty();
+    }
 
-    if (!jsonNode.isTextual())
-      throw new ArtifactParseException("Value of URI field must be textual", fieldName, path);
+    if (!jsonNode.isTextual()) {
+      throw new ArtifactParseException("Value of URI field must be textual", fieldKey, path);
+    }
 
     String uriValue = jsonNode.asText();
 
-    if (uriValue.isEmpty())
+    if (uriValue.isEmpty()) {
       return Optional.empty();
+    }
 
     if (XsdDatatype.isKnownXsdDatatype(uriValue)) {
       return Optional.of(XsdDatatype.fromString(uriValue).toUri());
@@ -1717,104 +1741,103 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
       try {
         return Optional.of(new URI(uriValue));
       } catch (Exception e) {
-        throw new ArtifactParseException("Value " + uriValue + " in URI field must be a valid URI", fieldName, path);
+        throw new ArtifactParseException("Value " + uriValue + " in URI field must be a valid URI", fieldKey, path);
       }
     }
   }
 
-  private Optional<String> readString(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private Optional<String> readString(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null || jsonNode.isNull())
+    if (jsonNode == null || jsonNode.isNull()) {
       return Optional.empty();
-    else if (!jsonNode.isTextual())
-      throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
-    else
+    } else if (!jsonNode.isTextual()) {
+      throw new ArtifactParseException("Value of text field must be textual", fieldKey, path);
+    } else {
       return Optional.of(jsonNode.asText());
+    }
   }
 
-  private Optional<String> readPossiblyNullString(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private Optional<String> readPossiblyNullString(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null)
+    if (jsonNode == null) {
       return Optional.empty();
-    else if (jsonNode.isNull())
-      return null;
-    else if (!jsonNode.isTextual())
-      throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
-    else
+    } else if (jsonNode.isNull()) {
+      return Optional.empty();
+    } else if (!jsonNode.isTextual()) {
+      throw new ArtifactParseException("Value of text field must be textual", fieldKey, path);
+    } else {
       return Optional.of(jsonNode.asText());
+    }
   }
 
-  private String readString(ObjectNode sourceNode, String path, String fieldName, String defaultValue)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private String readString(ObjectNode sourceNode, String path, String fieldKey, String defaultValue) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null || jsonNode.isNull())
+    if (jsonNode == null || jsonNode.isNull()) {
       return defaultValue;
-    else if (!jsonNode.isTextual())
-      throw new ArtifactParseException("Value of text field must be textual", fieldName, path);
-    else
+    } else if (!jsonNode.isTextual()) {
+      throw new ArtifactParseException("Value of text field must be textual", fieldKey, path);
+    } else {
       return jsonNode.asText();
+    }
   }
 
-  private String readRequiredString(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private String readRequiredString(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null)
-      throw new ArtifactParseException("No text value present", fieldName, path);
-    else if (jsonNode.isNull())
-      throw new ArtifactParseException("Null value present", fieldName, path);
-    else {
-      if (!jsonNode.isTextual())
-        throw new ArtifactParseException("Value must be textual", fieldName, path);
+    if (jsonNode == null) {
+      throw new ArtifactParseException("No text value present", fieldKey, path);
+    } else if (jsonNode.isNull()) {
+      throw new ArtifactParseException("Null value present", fieldKey, path);
+    } else {
+      if (!jsonNode.isTextual()) {
+        throw new ArtifactParseException("Value must be textual", fieldKey, path);
+      }
 
       return jsonNode.asText();
     }
   }
 
-  private int readRequiredInt(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private int readRequiredInt(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null)
-      throw new ArtifactParseException("No int value present", fieldName, path);
-    else if (jsonNode.isNull())
-      throw new ArtifactParseException("Null value present", fieldName, path);
-    else {
-      if (!jsonNode.isInt())
-        throw new ArtifactParseException("Value must be an int", fieldName, path);
+    if (jsonNode == null) {
+      throw new ArtifactParseException("No int value present", fieldKey, path);
+    } else if (jsonNode.isNull()) {
+      throw new ArtifactParseException("Null value present", fieldKey, path);
+    } else {
+      if (!jsonNode.isInt()) {
+        throw new ArtifactParseException("Value must be an int", fieldKey, path);
+      }
 
       return jsonNode.asInt();
     }
   }
 
-  private URI readRequiredUri(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private URI readRequiredUri(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
 
-    if (jsonNode == null)
-      throw new ArtifactParseException("No URI value present", fieldName, path);
-    else if (jsonNode.isNull())
-      throw new ArtifactParseException("Null value present", fieldName, path);
-    else {
-      if (!jsonNode.isTextual())
-        throw new ArtifactParseException("Value must be a URI", fieldName, path);
+    if (jsonNode == null) {
+      throw new ArtifactParseException("No URI value present", fieldKey, path);
+    } else if (jsonNode.isNull()) {
+      throw new ArtifactParseException("Null value present", fieldKey, path);
+    } else {
+      if (!jsonNode.isTextual()) {
+        throw new ArtifactParseException("Value must be a URI", fieldKey, path);
+      }
 
       try {
         return new URI(jsonNode.asText());
       } catch (Exception e) {
-        throw new ArtifactParseException("Value must be a valid URI", fieldName, path);
+        throw new ArtifactParseException("Value must be a valid URI", fieldKey, path);
       }
     }
   }
 
-  private List<String> readStringArray(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private List<String> readStringArray(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
     List<String> stringValues = new ArrayList<>();
 
     if (jsonNode != null && !jsonNode.isNull()) {
@@ -1825,27 +1848,29 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
         while (nodeIterator.hasNext()) {
           JsonNode jsonValueNode = nodeIterator.next();
           if (jsonValueNode != null) {
-            if (!jsonValueNode.isTextual())
-              throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldName,
-                path);
+            if (!jsonValueNode.isTextual()) {
+              throw new ArtifactParseException("Value in array at index " + arrayIndex + " must be a string", fieldKey,
+                  path);
+            }
             String stringValue = jsonValueNode.asText();
-            if (!stringValue.isEmpty())
+            if (!stringValue.isEmpty()) {
               stringValues.add(stringValue);
+            }
           }
           arrayIndex++;
         }
       } else {
-        String textValue = readString(sourceNode, path, fieldName, "");
-        if (textValue != null && !textValue.isEmpty())
+        String textValue = readString(sourceNode, path, fieldKey, "");
+        if (textValue != null && !textValue.isEmpty()) {
           stringValues.add(textValue);
+        }
       }
     }
     return stringValues;
   }
 
-  private List<URI> readUriArray(ObjectNode sourceNode, String path, String fieldName)
-  {
-    JsonNode jsonNode = sourceNode.get(fieldName);
+  private List<URI> readUriArray(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
     List<URI> uriValues = new ArrayList<>();
 
     if (jsonNode != null && !jsonNode.isNull()) {
@@ -1856,79 +1881,80 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode>
         while (nodeIterator.hasNext()) {
           JsonNode itemNode = nodeIterator.next();
           if (itemNode != null) {
-            if (!itemNode.isTextual())
+            if (!itemNode.isTextual()) {
               throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must be textual",
-                fieldName, path);
+                  fieldKey, path);
+            }
             try {
               URI uriValue = new URI(itemNode.asText());
               uriValues.add(uriValue);
             } catch (Exception e) {
               throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must a valid URI",
-                fieldName, path);
+                  fieldKey, path);
             }
           }
           arrayIndex++;
         }
       } else {
-        Optional<URI> uriValue = readUri(sourceNode, path, fieldName);
-        if (uriValue.isPresent())
+        Optional<URI> uriValue = readUri(sourceNode, path, fieldKey);
+        if (uriValue.isPresent()) {
           uriValues.add(uriValue.get());
+        }
       }
     }
     return uriValues;
   }
 
-  private Version readModelVersion(ObjectNode sourceNode, String path)
-  {
+  private Version readModelVersion(ObjectNode sourceNode, String path) {
     Optional<String> versionString = readString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION);
 
-    if (versionString.isPresent())
+    if (versionString.isPresent()) {
       return Version.fromString(versionString.get());
-    else
+    } else {
       return Version.fromString("1.6.0"); // TODO Temporarily supply version
+    }
   }
 
-  private Optional<String> readLanguage(ObjectNode sourceNode, String path)
-  {
+  private Optional<String> readLanguage(ObjectNode sourceNode, String path) {
     Map<String, String> contextEntries = readSimpleContextEntries(sourceNode, path);
 
-    if (contextEntries.containsKey(JSON_LD_LANGUAGE))
+    if (contextEntries.containsKey(JSON_LD_LANGUAGE)) {
       return Optional.of(contextEntries.get(JSON_LD_LANGUAGE));
-    else
+    } else {
       return Optional.empty();
+    }
   }
 
-  private boolean hasJsonLdContextField(ObjectNode sourceNode)
-  {
+  private boolean hasJsonLdContextField(ObjectNode sourceNode) {
     return sourceNode.get(JSON_LD_CONTEXT) != null;
   }
 
-  private void checkArtifactJsonSchemaSchemaUri(ObjectNode sourceNode, String path)
-  {
+  private void checkArtifactJsonSchemaSchemaUri(ObjectNode sourceNode, String path) {
     String artifactJsonSchemaSchemaUri = readRequiredString(sourceNode, path, JSON_SCHEMA_SCHEMA);
 
-    if (!artifactJsonSchemaSchemaUri.equals(jsonSchemaSchemaUri))
+    if (!artifactJsonSchemaSchemaUri.equals(jsonSchemaSchemaUri)) {
       throw new ArtifactParseException("Expecting " + jsonSchemaSchemaUri + ", got " + artifactJsonSchemaSchemaUri,
-        JSON_SCHEMA_SCHEMA, path);
+          JSON_SCHEMA_SCHEMA, path);
+    }
   }
 
-  private void checkArtifactJsonSchemaType(ObjectNode sourceNode, String path, String expectedJsonSchemaType)
-  {
+  private void checkArtifactJsonSchemaType(ObjectNode sourceNode, String path, String expectedJsonSchemaType) {
     String jsonSchemaType = readRequiredString(sourceNode, path, JSON_SCHEMA_TYPE);
 
-    if (!jsonSchemaType.equals(expectedJsonSchemaType))
+    if (!jsonSchemaType.equals(expectedJsonSchemaType)) {
       throw new ArtifactParseException(
-        "Expecting artifact JSON Schema type " + expectedJsonSchemaType + ", got " + jsonSchemaType, JSON_SCHEMA_TYPE,
-        path);
+          "Expecting artifact JSON Schema type " + expectedJsonSchemaType + ", got " + jsonSchemaType, JSON_SCHEMA_TYPE,
+          path);
+    }
   }
 
-  private void checkSchemaArtifactModelVersion(ObjectNode sourceNode, String path)
-  {
+  private void checkSchemaArtifactModelVersion(ObjectNode sourceNode, String path) {
     Version artifactModelVersion = readModelVersion(sourceNode, path);
 
     // TODO Renable eventually after patching older artifacts
     //    if (!artifactModelVersion.equals(modelVersion))
-    //      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " + artifactModelVersion,
+    //      throw new ArtifactParseException("Expecting model version " + modelVersion + ", got " +
+    //      artifactModelVersion,
     //        SCHEMA_ORG_SCHEMA_VERSION, path);
   }
 

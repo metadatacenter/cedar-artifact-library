@@ -49,7 +49,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
-public class ArtifactRoundTripTest
+public class JsonArtifactRoundTripTest
 {
   private JsonArtifactReader artifactReader = new JsonArtifactReader();
   private JsonArtifactRenderer jsonArtifactRenderer;

@@ -58,44 +58,44 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
       this.footer = templateUi.footer();
     }
 
-    public Builder withOrder(String fieldName) {
+    public Builder withOrder(String fieldKey) {
 
-      if (fieldName == null)
-        throw new IllegalArgumentException("Null order field name passed to " + this.getClass().getName());
+      if (fieldKey == null)
+        throw new IllegalArgumentException("Null order field key passed to " + this.getClass().getName());
 
-      if (order.contains(fieldName))
-        throw new IllegalArgumentException("Duplicate order field name " + fieldName + " passed to " + this.getClass().getName());
+      if (order.contains(fieldKey))
+        throw new IllegalArgumentException("Duplicate order field key " + fieldKey + " passed to " + this.getClass().getName());
 
-      this.order.add(fieldName);
+      this.order.add(fieldKey);
       return this;
     }
 
-    public Builder withPropertyLabel(String fieldName, String propertyLabel) {
-      if (fieldName == null)
-        throw new IllegalArgumentException("Null property label field name passed to " + this.getClass().getName());
+    public Builder withPropertyLabel(String fieldKey, String propertyLabel) {
+      if (fieldKey == null)
+        throw new IllegalArgumentException("Null property label field key passed to " + this.getClass().getName());
 
       if (propertyLabel == null)
-        throw new IllegalArgumentException("Null property label for field " + fieldName + " passed to " + this.getClass().getName());
+        throw new IllegalArgumentException("Null property label for field " + fieldKey + " passed to " + this.getClass().getName());
 
-      if (this.propertyLabels.containsKey(fieldName))
-        throw new IllegalArgumentException("Duplicate property label field name " + fieldName + " passed to " + this.getClass().getName());
+      if (this.propertyLabels.containsKey(fieldKey))
+        throw new IllegalArgumentException("Duplicate property label field " + fieldKey + " passed to " + this.getClass().getName());
 
-      this.propertyLabels.put(fieldName, propertyLabel);
+      this.propertyLabels.put(fieldKey, propertyLabel);
       return this;
     }
 
-    public Builder withPropertyDescription(String fieldName, String propertyDescription) {
+    public Builder withPropertyDescription(String fieldKey, String propertyDescription) {
 
-      if (fieldName == null)
-        throw new IllegalArgumentException("Null property description field name passed to " + this.getClass().getName());
+      if (fieldKey == null)
+        throw new IllegalArgumentException("Null property description field key passed to " + this.getClass().getName());
 
       if (propertyDescription == null)
-        throw new IllegalArgumentException("Null property description for field " + fieldName + " passed to " + this.getClass().getName());
+        throw new IllegalArgumentException("Null property description for field " + fieldKey + " passed to " + this.getClass().getName());
 
-      if (this.propertyDescriptions.containsKey(fieldName))
-        throw new IllegalArgumentException("Duplicate property description field name " + fieldName + " passed to " + this.getClass().getName());
+      if (this.propertyDescriptions.containsKey(fieldKey))
+        throw new IllegalArgumentException("Duplicate property description field " + fieldKey + " passed to " + this.getClass().getName());
 
-      this.propertyDescriptions.put(fieldName, propertyDescription);
+      this.propertyDescriptions.put(fieldKey, propertyDescription);
       return this;
     }
 
