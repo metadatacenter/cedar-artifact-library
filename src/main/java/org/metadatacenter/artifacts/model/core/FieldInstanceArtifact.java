@@ -11,7 +11,7 @@ import static org.metadatacenter.model.ModelNodeNames.*;
 public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact permits TextFieldInstance,
     TextAreaFieldInstance, TemporalFieldInstance, NumericFieldInstance,
     EmailFieldInstance, CheckboxFieldInstance, ListFieldInstance, PhoneNumberFieldInstance, RadioFieldInstance,
-    ControlledTermFieldInstance, LinkFieldInstance,
+    ControlledTermFieldInstance, LinkFieldInstance, RorFieldInstance, OrcidFieldInstance,
     FieldInstanceArtifactRecord {
   static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
                                       Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation
