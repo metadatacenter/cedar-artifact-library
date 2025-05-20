@@ -668,7 +668,6 @@ public class FieldSchemaArtifactBuilderTest {
     String name = "Field name";
     String description = "Field description";
     URI defaultURI = URI.create("https://example.com/Study");
-    String defaultLabel = "Study";
 
     LinkField linkField = LinkField.builder().
         withName(name).

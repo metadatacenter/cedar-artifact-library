@@ -148,13 +148,46 @@ public class FieldInstanceArtifactTest
   @Test
   public void linkFieldInstanceTest()
   {
-    URI aUriValue = URI.create("https://example.com/values/v1");
+    String aLabel = "v1";
+    URI aUri = URI.create("https://example.com/values/v1");
 
     LinkFieldInstance fieldInstance = LinkFieldInstance.builder().
-      withValue(aUriValue).
+      withLabel(aLabel).
+      withValue(aUri).
       build();
 
-    assertEquals(aUriValue, fieldInstance.jsonLdId().get());
+    assertEquals(aLabel, fieldInstance.label().get());
+    assertEquals(aUri, fieldInstance.jsonLdId().get());
+  }
+
+  @Test
+  public void rorFieldInstanceTest()
+  {
+    String aRorLabel = "University of Chicago";
+    URI aRorUri = URI.create("https://ror.org/024mw5h28");
+
+    RorFieldInstance fieldInstance = RorFieldInstance.builder().
+        withLabel(aRorLabel).
+        withValue(aRorUri).
+        build();
+
+    assertEquals(aRorLabel, fieldInstance.label().get());
+    assertEquals(aRorUri, fieldInstance.jsonLdId().get());
+  }
+
+  @Test
+  public void orcidFieldInstanceTest()
+  {
+    String anOrcidLabel = "Billy Bob";
+    URI anOrcidUri = URI.create("http://orcid.org/0000-0001-5109-3700");
+
+    OrcidFieldInstance fieldInstance = OrcidFieldInstance.builder().
+        withLabel(anOrcidLabel).
+        withValue(anOrcidUri).
+        build();
+
+    assertEquals(anOrcidLabel, fieldInstance.label().get());
+    assertEquals(anOrcidUri, fieldInstance.jsonLdId().get());
   }
 
   @Test

@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
-  permits TextField, TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField,
-  EmailField, CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField,
-  YouTubeField, RichTextField, ControlledTermField, LinkField, RorField, OrcidField
+  permits TextField, TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField, EmailField,
+  CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField, YouTubeField, RichTextField,
+  ControlledTermField, LinkField, RorField, OrcidField
 {
   FieldUi fieldUi();
 
@@ -37,9 +37,9 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
   @JsonIgnore default boolean isAttributeValue() {return fieldUi().isAttributeValue();}
 
   default boolean hasIRIValue()
-  {
+  { // TODO This is very brittle code
     return (fieldUi().isTextField() && (valueConstraints().isPresent() && valueConstraints().get()
-      .isControlledTermValueConstraint())) || fieldUi().isLink();
+      .isControlledTermValueConstraint())) || fieldUi().isLink() || fieldUi().isRor() || fieldUi().isOrcid();
   }
 
   default Optional<Integer> minLength()
@@ -226,8 +226,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
     if (this instanceof RorField)
       return (RorField)this;
     else
-      throw new ClassCastException(
-              "Cannot convert " + this.getClass().getName() + " to " + RorField.class.getName());
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + RorField.class.getName());
   }
 
   default OrcidField asOrcidField()
@@ -235,8 +234,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
     if (this instanceof OrcidField)
       return (OrcidField)this;
     else
-      throw new ClassCastException(
-              "Cannot convert " + this.getClass().getName() + " to " + OrcidField.class.getName());
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + OrcidField.class.getName());
   }
 
   static FieldSchemaArtifact create(String internalName, String internalDescription,
@@ -297,14 +295,14 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         internalDescription);
     else if (fieldUi.inputType() == FieldInputType.ROR)
       return RorField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-              previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-              lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-              internalDescription);
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+        internalDescription);
     else if (fieldUi.inputType() == FieldInputType.ORCID)
       return OrcidField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-              previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-              lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-              internalDescription);
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+        internalDescription);
     else if (fieldUi.inputType() == FieldInputType.NUMERIC)
       return NumericField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
