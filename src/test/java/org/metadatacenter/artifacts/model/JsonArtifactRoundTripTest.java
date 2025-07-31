@@ -9,26 +9,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.metadatacenter.artifacts.model.core.AttributeValueField;
-import org.metadatacenter.artifacts.model.core.CheckboxField;
-import org.metadatacenter.artifacts.model.core.ControlledTermField;
-import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.EmailField;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.ImageField;
-import org.metadatacenter.artifacts.model.core.LinkField;
-import org.metadatacenter.artifacts.model.core.ListField;
-import org.metadatacenter.artifacts.model.core.NumericField;
-import org.metadatacenter.artifacts.model.core.PhoneNumberField;
-import org.metadatacenter.artifacts.model.core.RadioField;
-import org.metadatacenter.artifacts.model.core.RichTextField;
-import org.metadatacenter.artifacts.model.core.SectionBreakField;
-import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
-import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.TemporalField;
-import org.metadatacenter.artifacts.model.core.TextAreaField;
-import org.metadatacenter.artifacts.model.core.TextField;
-import org.metadatacenter.artifacts.model.core.YouTubeField;
+import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
@@ -230,6 +211,42 @@ public class JsonArtifactRoundTripTest
 
     LinkField originalFieldSchemaArtifact = LinkField.builder().withName(name).withDescription(description)
       .withDefaultValue(defaultURI).build();
+
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripOrcidField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://orcid.org/0000-0002-2256-2421");
+
+    OrcidField originalFieldSchemaArtifact = OrcidField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripRorField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://ror.org/02twcfp32");
+
+    RorField originalFieldSchemaArtifact = RorField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripPfasField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID7020182");
+
+    PfasField originalFieldSchemaArtifact = PfasField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }

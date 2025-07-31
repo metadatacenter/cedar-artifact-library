@@ -1032,6 +1032,12 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       } else {
         if (fieldInputType == FieldInputType.LINK) {
           return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
+        } else if (fieldInputType == FieldInputType.ORCID) {
+          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
+        } else if (fieldInputType == FieldInputType.ROR) {
+          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
+        } else if (fieldInputType == FieldInputType.PFAS) {
+          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
         } else if (fieldInputType == FieldInputType.TEMPORAL) {
           return Optional.of(new TemporalDefaultValue(childNode.asText()));
         } else {

@@ -39,7 +39,8 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
   default boolean hasIRIValue()
   { // TODO This is very brittle code
     return (fieldUi().isTextField() && (valueConstraints().isPresent() && valueConstraints().get()
-      .isControlledTermValueConstraint())) || fieldUi().isLink() || fieldUi().isRor() || fieldUi().isOrcid();
+      .isControlledTermValueConstraint())) || fieldUi().isLink() || fieldUi().isRor() ||
+        fieldUi().isOrcid() || fieldUi().isPfas();
   }
 
   default Optional<Integer> minLength()
