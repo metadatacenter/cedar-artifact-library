@@ -9,7 +9,8 @@ public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInsta
   TextAreaFieldInstance.TextAreaFieldInstanceBuilder, TemporalFieldInstance.TemporalFieldInstanceBuilder,
   NumericFieldInstance.NumericFieldInstanceBuilder, ControlledTermFieldInstance.ControlledTermFieldInstanceBuilder,
   LinkFieldInstance.LinkFieldInstanceBuilder, RorFieldInstance.RorFieldInstanceBuilder,
-    OrcidFieldInstance.OrcidFieldInstanceBuilder, EmailFieldInstance.EmailFieldInstanceBuilder,
+    OrcidFieldInstance.OrcidFieldInstanceBuilder, PfasFieldInstance.PfasFieldInstanceBuilder,
+    EmailFieldInstance.EmailFieldInstanceBuilder,
   CheckboxFieldInstance.CheckboxFieldInstanceBuilder, ListFieldInstance.ListFieldInstanceBuilder,
   PhoneNumberFieldInstance.PhoneNumberFieldInstanceBuilder, RadioFieldInstance.RadioFieldInstanceBuilder
 {

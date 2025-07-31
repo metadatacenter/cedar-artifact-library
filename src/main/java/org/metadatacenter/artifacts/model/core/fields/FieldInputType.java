@@ -23,7 +23,8 @@ public enum FieldInputType
   YOUTUBE(FIELD_INPUT_TYPE_YOUTUBE),
   LINK(FIELD_INPUT_TYPE_LINK),
   ROR(FIELD_INPUT_TYPE_EXT_ROR),
-  ORCID(FIELD_INPUT_TYPE_EXT_ORCID);
+  ORCID(FIELD_INPUT_TYPE_EXT_ORCID),
+  PFAS(FIELD_INPUT_TYPE_EXT_PFAS);
 
   private final String text;
 
@@ -59,6 +60,8 @@ public enum FieldInputType
   public boolean isRor() { return this == ROR; }
 
   public boolean isOrcid() { return this == ORCID; }
+
+  public boolean isPfas() { return this == PFAS; }
 
   public boolean isAttributeValue() { return this == ATTRIBUTE_VALUE; }
 

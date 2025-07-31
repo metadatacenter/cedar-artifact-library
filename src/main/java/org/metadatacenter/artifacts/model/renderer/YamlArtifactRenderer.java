@@ -1169,6 +1169,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         return ROR_FIELD;
       case ORCID:
         return ORCID_FIELD;
+      case PFAS:
+        return PFAS_FIELD;
     case NUMERIC:
       return NUMERIC_FIELD;
     case TEMPORAL:

@@ -20,7 +20,8 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     PageBreakField.PageBreakFieldBuilder, SectionBreakField.SectionBreakFieldBuilder, ImageField.ImageFieldBuilder,
     YouTubeField.YouTubeFieldBuilder, RichTextField.RichTextFieldBuilder,
     ControlledTermField.ControlledTermFieldBuilder,
-    LinkField.LinkFieldBuilder, RorField.RorFieldBuilder, OrcidField.OrcidFieldBuilder {
+    LinkField.LinkFieldBuilder, RorField.RorFieldBuilder, OrcidField.OrcidFieldBuilder,
+    PfasField.PfasFieldBuilder {
   protected LinkedHashMap<String, URI> jsonLdContext;
   protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();

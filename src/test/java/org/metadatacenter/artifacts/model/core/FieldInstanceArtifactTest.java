@@ -191,6 +191,21 @@ public class FieldInstanceArtifactTest
   }
 
   @Test
+  public void pfasFieldInstanceTest()
+  {
+    String aPfasLabel = "Bisphenol A";
+    URI aPfasUri = URI.create("https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID7020182");
+
+    PfasFieldInstance fieldInstance = PfasFieldInstance.builder().
+        withLabel(aPfasLabel).
+        withValue(aPfasUri).
+        build();
+
+    assertEquals(aPfasLabel, fieldInstance.label().get());
+    assertEquals(aPfasUri, fieldInstance.jsonLdId().get());
+  }
+
+  @Test
   public void controlledTermFieldInstanceWithLabelNotationAndPrefLabelTest()
   {
     URI aUriValue = URI.create("https://example.com/values/v1");
