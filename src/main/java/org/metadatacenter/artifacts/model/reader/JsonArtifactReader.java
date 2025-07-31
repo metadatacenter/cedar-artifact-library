@@ -979,7 +979,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
             TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, recommendedValue,
                 multipleChoice));
 
-      } else if (fieldInputType == FieldInputType.LINK) {
+      } else if (fieldInputType == FieldInputType.LINK || fieldInputType == FieldInputType.ROR ||
+                 fieldInputType == FieldInputType.ORCID || fieldInputType == FieldInputType.PFAS) {
         Optional<LinkDefaultValue> linkDefaultValue = defaultValue.isPresent() ?
             Optional.of(defaultValue.get().asLinkDefaultValue()) :
             Optional.empty();
