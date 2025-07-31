@@ -18,9 +18,9 @@ public class YamlConstants
   public static final String PHONE_FIELD = "phone-number-field";
   public static final String EMAIL_FIELD = "email-field";
   public static final String LINK_FIELD = "link-field";
-  public static final String ROR_FIELD = "ror-field";
-  public static final String ORCID_FIELD = "orcid-field";
-  public static final String PFAS_FIELD = "pfas-field";
+  public static final String ROR_FIELD = "ext-ror-field";
+  public static final String ORCID_FIELD = "ext-orcid-field";
+  public static final String PFAS_FIELD = "ext-pfas-field";
   public static final String ATTRIBUTE_VALUE_FIELD = "attribute-value-field";
   public static final String STATIC_PAGE_BREAK = "static-page-break";
   public static final String STATIC_SECTION_BREAK = "static-section-break";

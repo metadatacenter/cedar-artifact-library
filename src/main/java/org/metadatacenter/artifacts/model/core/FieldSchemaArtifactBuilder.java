@@ -89,6 +89,8 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
       return new RorField.RorFieldBuilder(fieldSchemaArtifact.asRorField());
     } else if (fieldSchemaArtifact instanceof OrcidField) {
       return new OrcidField.OrcidFieldBuilder(fieldSchemaArtifact.asOrcidField());
+    } else if (fieldSchemaArtifact instanceof PfasField) {
+      return new PfasField.PfasFieldBuilder(fieldSchemaArtifact.asPfasField());
     } else {
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
     }
