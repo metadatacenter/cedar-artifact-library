@@ -251,6 +251,30 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  @Test public void testRoundTripRridField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://identifiers.org/RRID:SCR_008563");
+
+    RridField originalFieldSchemaArtifact = RridField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripPubMedField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://pubmed.ncbi.nlm.nih.gov/40212885");
+
+    PubMedField originalFieldSchemaArtifact = PubMedField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
   @Test public void testRoundTripTextAreaField()
   {
     String name = "Field name";

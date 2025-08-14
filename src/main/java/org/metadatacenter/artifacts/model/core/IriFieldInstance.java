@@ -1,5 +1,5 @@
 package org.metadatacenter.artifacts.model.core;
 
 public sealed interface IriFieldInstance permits ControlledTermFieldInstance, LinkFieldInstance, OrcidFieldInstance,
-    RorFieldInstance, PfasFieldInstance
+    RorFieldInstance, PfasFieldInstance, RridFieldInstance, PubMedFieldInstance
 {}

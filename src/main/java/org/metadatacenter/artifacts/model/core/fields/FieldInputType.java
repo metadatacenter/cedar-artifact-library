@@ -2,6 +2,8 @@ package org.metadatacenter.artifacts.model.core.fields;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.Set;
+
 import static org.metadatacenter.model.ModelNodeNames.*;
 
 public enum FieldInputType
@@ -24,7 +26,9 @@ public enum FieldInputType
   LINK(FIELD_INPUT_TYPE_LINK),
   ROR(FIELD_INPUT_TYPE_EXT_ROR),
   ORCID(FIELD_INPUT_TYPE_EXT_ORCID),
-  PFAS(FIELD_INPUT_TYPE_EXT_PFAS);
+  PFAS(FIELD_INPUT_TYPE_EXT_PFAS),
+  RRID(FIELD_INPUT_TYPE_EXT_RRID),
+  PUBMED(FIELD_INPUT_TYPE_EXT_PUBMED);
 
   private final String text;
 
@@ -55,17 +59,13 @@ public enum FieldInputType
 
   public boolean isList() { return this == LIST; }
 
-  public boolean isLink() { return this == LINK; }
-
-  public boolean isRor() { return this == ROR; }
-
-  public boolean isOrcid() { return this == ORCID; }
-
-  public boolean isPfas() { return this == PFAS; }
-
   public boolean isAttributeValue() { return this == ATTRIBUTE_VALUE; }
 
   public boolean isStatic() { return this == PAGE_BREAK || this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }
+
+  public boolean isIri() { return IRI_TYPES.contains(this); }
+
+  private static final Set<FieldInputType> IRI_TYPES = Set.of(LINK, ROR, ORCID, PFAS, RRID, PUBMED);
 
   public static FieldInputType fromString(String text) {
     for (FieldInputType f : FieldInputType.values()) {

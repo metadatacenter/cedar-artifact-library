@@ -1137,32 +1137,31 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
-  private String renderFieldTypeName(FieldSchemaArtifact fieldSchemaArtifact)
-  {
+  private String renderFieldTypeName(FieldSchemaArtifact fieldSchemaArtifact) {
     // TODO Use typesafe switch when available
     switch (fieldSchemaArtifact.fieldUi().inputType()) {
-    case TEXTFIELD:
-      if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
-        .isControlledTermValueConstraint())
-        return CONTROLLED_TERM_FIELD;
-      else
-        return TEXT_FIELD;
-    case TEXTAREA:
-      return TEXT_AREA_FIELD;
-    case PHONE_NUMBER:
-      return PHONE_FIELD;
-    case EMAIL:
-      return EMAIL_FIELD;
-    case RADIO:
-      return RADIO_FIELD;
-    case CHECKBOX:
-      return CHECKBOX_FIELD;
-    case LIST:
-      if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
-        .multipleChoice())
-        return MULTI_SELECT_LIST_FIELD;
-      else
-        return SINGLE_SELECT_LIST_FIELD;
+      case TEXTFIELD:
+        if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
+            .isControlledTermValueConstraint())
+          return CONTROLLED_TERM_FIELD;
+        else
+          return TEXT_FIELD;
+      case TEXTAREA:
+        return TEXT_AREA_FIELD;
+      case PHONE_NUMBER:
+        return PHONE_FIELD;
+      case EMAIL:
+        return EMAIL_FIELD;
+      case RADIO:
+        return RADIO_FIELD;
+      case CHECKBOX:
+        return CHECKBOX_FIELD;
+      case LIST:
+        if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
+            .multipleChoice())
+          return MULTI_SELECT_LIST_FIELD;
+        else
+          return SINGLE_SELECT_LIST_FIELD;
       case LINK:
         return LINK_FIELD;
       case ROR:
@@ -1171,25 +1170,29 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         return ORCID_FIELD;
       case PFAS:
         return PFAS_FIELD;
-    case NUMERIC:
-      return NUMERIC_FIELD;
-    case TEMPORAL:
-      return TEMPORAL_FIELD;
-    case ATTRIBUTE_VALUE:
-      return ATTRIBUTE_VALUE_FIELD;
-    case PAGE_BREAK:
-      return STATIC_PAGE_BREAK;
-    case SECTION_BREAK:
-      return STATIC_SECTION_BREAK;
-    case RICHTEXT:
-      return STATIC_RICH_TEXT;
-    case IMAGE:
-      return STATIC_IMAGE;
-    case YOUTUBE:
-      return STATIC_YOUTUBE_FIELD;
-    default:
-      throw new RuntimeException("Unknown field input type " + fieldSchemaArtifact.fieldUi().inputType() + " for field "
-        + fieldSchemaArtifact.name());
+      case RRID:
+        return RRID_FIELD;
+      case PUBMED:
+        return PUBMED_FIELD;
+      case NUMERIC:
+        return NUMERIC_FIELD;
+      case TEMPORAL:
+        return TEMPORAL_FIELD;
+      case ATTRIBUTE_VALUE:
+        return ATTRIBUTE_VALUE_FIELD;
+      case PAGE_BREAK:
+        return STATIC_PAGE_BREAK;
+      case SECTION_BREAK:
+        return STATIC_SECTION_BREAK;
+      case RICHTEXT:
+        return STATIC_RICH_TEXT;
+      case IMAGE:
+        return STATIC_IMAGE;
+      case YOUTUBE:
+        return STATIC_YOUTUBE_FIELD;
+      default:
+        throw new RuntimeException("Unknown field input type " + fieldSchemaArtifact.fieldUi().inputType() + " for field "
+            + fieldSchemaArtifact.name());
     }
   }
 

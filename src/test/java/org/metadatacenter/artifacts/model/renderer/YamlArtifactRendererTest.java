@@ -377,6 +377,60 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
+  public void testRenderRridField() {
+
+    String name = "RRID";
+    String description = "RRID field";
+    URI fieldId = java.net.URI.create("https://repo.metadatacenter.org/template_fields/123");
+
+    RridField rridField = RridField.builder().
+        withJsonLdId(fieldId).
+        withName(name).
+        withDescription(description).
+        build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+        rridField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, RRID_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
+  public void testRenderPubMedField() {
+
+    String name = "PubMed";
+    String description = "PubMed field";
+    URI fieldId = java.net.URI.create("https://repo.metadatacenter.org/template_fields/123");
+
+    PubMedField pubMedField = PubMedField.builder().
+        withJsonLdId(fieldId).
+        withName(name).
+        withDescription(description).
+        build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+        pubMedField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, PUBMED_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
   public void testRenderAnnotations() {
 
     String name = "Study";

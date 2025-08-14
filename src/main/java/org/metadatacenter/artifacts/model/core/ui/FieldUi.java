@@ -62,13 +62,7 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
   @JsonIgnore default boolean isPhoneNumber() { return inputType() == FieldInputType.PHONE_NUMBER; }
 
-  @JsonIgnore default boolean isLink() { return inputType() == FieldInputType.LINK; }
-
-  @JsonIgnore default boolean isOrcid() { return inputType() == FieldInputType.ORCID; }
-
-  @JsonIgnore default boolean isRor() { return inputType() == FieldInputType.ROR; }
-
-  @JsonIgnore default boolean isPfas() { return inputType() == FieldInputType.PFAS; }
+  @JsonIgnore default boolean isIri() { return inputType().isIri(); }
 
   @JsonIgnore default boolean isAttributeValue() { return inputType() == FieldInputType.ATTRIBUTE_VALUE; }
 

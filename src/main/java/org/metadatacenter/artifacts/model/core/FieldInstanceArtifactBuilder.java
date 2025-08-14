@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInstance.TextFieldInstanceBuilder,
-  TextAreaFieldInstance.TextAreaFieldInstanceBuilder, TemporalFieldInstance.TemporalFieldInstanceBuilder,
-  NumericFieldInstance.NumericFieldInstanceBuilder, ControlledTermFieldInstance.ControlledTermFieldInstanceBuilder,
-  LinkFieldInstance.LinkFieldInstanceBuilder, RorFieldInstance.RorFieldInstanceBuilder,
+    TextAreaFieldInstance.TextAreaFieldInstanceBuilder, TemporalFieldInstance.TemporalFieldInstanceBuilder,
+    NumericFieldInstance.NumericFieldInstanceBuilder, ControlledTermFieldInstance.ControlledTermFieldInstanceBuilder,
+    LinkFieldInstance.LinkFieldInstanceBuilder, RorFieldInstance.RorFieldInstanceBuilder,
     OrcidFieldInstance.OrcidFieldInstanceBuilder, PfasFieldInstance.PfasFieldInstanceBuilder,
-    EmailFieldInstance.EmailFieldInstanceBuilder,
-  CheckboxFieldInstance.CheckboxFieldInstanceBuilder, ListFieldInstance.ListFieldInstanceBuilder,
-  PhoneNumberFieldInstance.PhoneNumberFieldInstanceBuilder, RadioFieldInstance.RadioFieldInstanceBuilder
+    RridFieldInstance.RridFieldInstanceBuilder, PubMedFieldInstance.PubMedFieldInstanceBuilder,
+    EmailFieldInstance.EmailFieldInstanceBuilder, CheckboxFieldInstance.CheckboxFieldInstanceBuilder,
+    ListFieldInstance.ListFieldInstanceBuilder, PhoneNumberFieldInstance.PhoneNumberFieldInstanceBuilder,
+    RadioFieldInstance.RadioFieldInstanceBuilder
 {
   protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();

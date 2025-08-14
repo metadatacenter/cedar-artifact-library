@@ -21,7 +21,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     YouTubeField.YouTubeFieldBuilder, RichTextField.RichTextFieldBuilder,
     ControlledTermField.ControlledTermFieldBuilder,
     LinkField.LinkFieldBuilder, RorField.RorFieldBuilder, OrcidField.OrcidFieldBuilder,
-    PfasField.PfasFieldBuilder {
+    PfasField.PfasFieldBuilder, RridField.RridFieldBuilder, PubMedField.PubMedFieldBuilder {
   protected LinkedHashMap<String, URI> jsonLdContext;
   protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();
@@ -91,6 +91,10 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
       return new OrcidField.OrcidFieldBuilder(fieldSchemaArtifact.asOrcidField());
     } else if (fieldSchemaArtifact instanceof PfasField) {
       return new PfasField.PfasFieldBuilder(fieldSchemaArtifact.asPfasField());
+    } else if (fieldSchemaArtifact instanceof RridField) {
+      return new RridField.RridFieldBuilder(fieldSchemaArtifact.asRridField());
+    } else if (fieldSchemaArtifact instanceof PubMedField) {
+      return new PubMedField.PubMedFieldBuilder(fieldSchemaArtifact.asPubMedField());
     } else {
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
     }

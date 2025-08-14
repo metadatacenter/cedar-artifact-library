@@ -15,7 +15,7 @@ import java.util.Optional;
 public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
   permits TextField, TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField, EmailField,
   CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField, YouTubeField, RichTextField,
-  ControlledTermField, LinkField, RorField, OrcidField, PfasField
+  ControlledTermField, LinkField, RorField, OrcidField, PfasField, RridField, PubMedField
 {
   FieldUi fieldUi();
 
@@ -37,10 +37,9 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
   @JsonIgnore default boolean isAttributeValue() {return fieldUi().isAttributeValue();}
 
   default boolean hasIRIValue()
-  { // TODO This is very brittle code
+  {
     return (fieldUi().isTextField() && (valueConstraints().isPresent() && valueConstraints().get()
-      .isControlledTermValueConstraint())) || fieldUi().isLink() || fieldUi().isRor() ||
-        fieldUi().isOrcid() || fieldUi().isPfas();
+      .isControlledTermValueConstraint())) || fieldUi().isIri();
   }
 
   default Optional<Integer> minLength()
@@ -246,6 +245,22 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PfasField.class.getName());
   }
 
+  default RridField asRridField()
+  {
+    if (this instanceof RridField)
+      return (RridField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + RridField.class.getName());
+  }
+
+  default PubMedField asPubMedField()
+  {
+    if (this instanceof PubMedField)
+      return (PubMedField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PubMedField.class.getName());
+  }
+
   static FieldSchemaArtifact create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId, String name,
     String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
@@ -314,6 +329,16 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         internalDescription);
     else if (fieldUi.inputType() == FieldInputType.PFAS)
       return PfasField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+          internalDescription);
+    else if (fieldUi.inputType() == FieldInputType.RRID)
+      return RridField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+          internalDescription);
+    else if (fieldUi.inputType() == FieldInputType.PUBMED)
+      return PubMedField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
           previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
           lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
           internalDescription);

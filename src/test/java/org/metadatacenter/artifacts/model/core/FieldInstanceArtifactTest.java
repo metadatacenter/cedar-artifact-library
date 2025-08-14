@@ -206,6 +206,36 @@ public class FieldInstanceArtifactTest
   }
 
   @Test
+  public void rridFieldInstanceTest()
+  {
+    String aRridLabel = "Research Randomizer";
+    URI aRridUri = URI.create("https://identifiers.org/RRID:SCR_008563");
+
+    RridFieldInstance rridInstance = RridFieldInstance.builder().
+        withLabel(aRridLabel).
+        withValue(aRridUri).
+        build();
+
+    assertEquals(aRridLabel, rridInstance.label().get());
+    assertEquals(aRridUri, rridInstance.jsonLdId().get());
+  }
+
+  @Test
+  public void pubMedFieldInstanceTest()
+  {
+    String aPubMedLabel = "HuBMAPR: an R client for the HuBMAP data portal.";
+    URI aPubMedUri = URI.create("https://pubmed.ncbi.nlm.nih.gov/40212885");
+
+    PubMedFieldInstance pubMedInstance = PubMedFieldInstance.builder().
+        withLabel(aPubMedLabel).
+        withValue(aPubMedUri).
+        build();
+
+    assertEquals(aPubMedLabel, pubMedInstance.label().get());
+    assertEquals(aPubMedUri, pubMedInstance.jsonLdId().get());
+  }
+
+  @Test
   public void controlledTermFieldInstanceWithLabelNotationAndPrefLabelTest()
   {
     URI aUriValue = URI.create("https://example.com/values/v1");
