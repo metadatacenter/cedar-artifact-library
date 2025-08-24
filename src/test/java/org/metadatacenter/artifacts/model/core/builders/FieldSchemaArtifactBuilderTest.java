@@ -747,6 +747,27 @@ public class FieldSchemaArtifactBuilderTest {
   }
 
   @Test
+  public void testCreatePfasFieldWithCopyBuilder() {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID7020182");
+
+    PfasField initialPfasField = PfasField.builder().
+        withName(name).
+        withDescription(description).
+        withDefaultValue(defaultURI).
+        build();
+
+    PfasField clonedPfasField = new PfasField.PfasFieldBuilder(initialPfasField).build();
+
+    Assert.assertEquals(FieldInputType.PFAS, clonedPfasField.fieldUi().inputType());
+    Assert.assertEquals(name, clonedPfasField.name());
+    Assert.assertEquals(description, clonedPfasField.description());
+    Assert.assertEquals(defaultURI,
+        clonedPfasField.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+  }
+
+  @Test
   public void testCreateTextAreaFieldWithBuilder() {
     String name = "Field name";
     String description = "Field description";

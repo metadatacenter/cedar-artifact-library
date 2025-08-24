@@ -430,7 +430,6 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
     validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
     validateUiFieldNotNull(this, elementUi, UI);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri");
-    validateOptionalFieldNotNull(this, language, "prefLabel");
     validateOptionalFieldNotNull(this, language, "language");
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);

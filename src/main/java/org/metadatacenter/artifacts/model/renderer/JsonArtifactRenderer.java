@@ -591,6 +591,8 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     } else if (fieldInstanceArtifact instanceof LiteralFieldInstance) {
       if (fieldInstanceArtifact.jsonLdValue().isEmpty()) {
         objectNode.putNull(JSON_LD_VALUE);
+      } else if (fieldInstanceArtifact.jsonLdValue() == null) { // @value is explicitly null
+        objectNode.putNull(JSON_LD_VALUE);
       } else {
         objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
       }
