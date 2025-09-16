@@ -1029,22 +1029,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       if (textValue.isEmpty()) {
         return Optional.empty();
       } else {
-        if (fieldInputType == FieldInputType.LINK) {
+        if (fieldInputType.isIri()) {
           return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        } else if (fieldInputType == FieldInputType.ORCID) {
-          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        } else if (fieldInputType == FieldInputType.ROR) {
-          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        } else if (fieldInputType == FieldInputType.PFAS) {
-          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        } else if (fieldInputType == FieldInputType.RRID) {
-          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        } else if (fieldInputType == FieldInputType.PUBMED) {
-          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        } else if (fieldInputType == FieldInputType.DOI) {
-          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
-        } else if (fieldInputType == FieldInputType.TEMPORAL) {
-          return Optional.of(new TemporalDefaultValue(childNode.asText()));
         } else {
           return Optional.of(new TextDefaultValue(childNode.asText()));
         }
