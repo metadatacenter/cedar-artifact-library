@@ -13,7 +13,7 @@ public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInsta
     RridFieldInstance.RridFieldInstanceBuilder, PubMedFieldInstance.PubMedFieldInstanceBuilder,
     EmailFieldInstance.EmailFieldInstanceBuilder, CheckboxFieldInstance.CheckboxFieldInstanceBuilder,
     ListFieldInstance.ListFieldInstanceBuilder, PhoneNumberFieldInstance.PhoneNumberFieldInstanceBuilder,
-    RadioFieldInstance.RadioFieldInstanceBuilder
+    RadioFieldInstance.RadioFieldInstanceBuilder, DoiFieldInstance.DoiFieldInstanceBuilder
 {
   protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();

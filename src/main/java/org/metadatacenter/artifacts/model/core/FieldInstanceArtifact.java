@@ -12,11 +12,10 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
     TextAreaFieldInstance, TemporalFieldInstance, NumericFieldInstance,
     EmailFieldInstance, CheckboxFieldInstance, ListFieldInstance, PhoneNumberFieldInstance, RadioFieldInstance,
     ControlledTermFieldInstance, LinkFieldInstance, RorFieldInstance, OrcidFieldInstance, PfasFieldInstance,
-    RridFieldInstance, PubMedFieldInstance, FieldInstanceArtifactRecord {
+    RridFieldInstance, PubMedFieldInstance, DoiFieldInstance, FieldInstanceArtifactRecord {
   static FieldInstanceArtifact create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
-                                      Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation
-      , Optional<String> preferredLabel,
-                                      Optional<String> language) {
+                                      Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation,
+                                      Optional<String> preferredLabel, Optional<String> language) {
     return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
         preferredLabel, language);
   }

@@ -1,7 +1,7 @@
 CEDAR Artifact Library
 ======================
 
-This library various tools to work with CEDAR model artifacts (templates, elements, fields, and template instances).
+This library provides various tools to work with CEDAR model artifacts (templates, elements, fields, and template instances).
 
 Primarily, the library provides a Java API to work with CEDAR artifacts.
 

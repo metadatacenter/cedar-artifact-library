@@ -23,6 +23,7 @@ public class YamlConstants
   public static final String PFAS_FIELD = "ext-pfas-field";
   public static final String RRID_FIELD = "ext-rrid-field";
   public static final String PUBMED_FIELD = "ext-pubmed-field";
+  public static final String DOI_FIELD = "ext-doi-field";
   public static final String ATTRIBUTE_VALUE_FIELD = "attribute-value-field";
   public static final String STATIC_PAGE_BREAK = "static-page-break";
   public static final String STATIC_SECTION_BREAK = "static-section-break";
@@ -33,7 +34,7 @@ public class YamlConstants
   public static final Set<String> FIELD_TYPES = Set.of(TEXT_FIELD, CONTROLLED_TERM_FIELD, TEXT_AREA_FIELD,
     NUMERIC_FIELD, TEMPORAL_FIELD, RADIO_FIELD, CHECKBOX_FIELD, SINGLE_SELECT_LIST_FIELD, MULTI_SELECT_LIST_FIELD,
     PHONE_FIELD, EMAIL_FIELD, ATTRIBUTE_VALUE_FIELD, STATIC_PAGE_BREAK, STATIC_SECTION_BREAK, STATIC_IMAGE,
-    STATIC_RICH_TEXT, STATIC_YOUTUBE_FIELD, LINK_FIELD, ROR_FIELD, ORCID_FIELD, PFAS_FIELD, RRID_FIELD, PUBMED_FIELD);
+    STATIC_RICH_TEXT, STATIC_YOUTUBE_FIELD, LINK_FIELD, ROR_FIELD, ORCID_FIELD, PFAS_FIELD, RRID_FIELD, PUBMED_FIELD, DOI_FIELD);
 
   public static final String KEY = "key";
   public static final String NAME = "name";

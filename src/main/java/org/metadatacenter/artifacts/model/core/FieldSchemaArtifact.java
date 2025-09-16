@@ -15,7 +15,7 @@ import java.util.Optional;
 public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
   permits TextField, TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField, EmailField,
   CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField, YouTubeField, RichTextField,
-  ControlledTermField, LinkField, RorField, OrcidField, PfasField, RridField, PubMedField
+  ControlledTermField, LinkField, RorField, OrcidField, PfasField, RridField, PubMedField, DoiField
 {
   FieldUi fieldUi();
 
@@ -261,6 +261,14 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PubMedField.class.getName());
   }
 
+  default DoiField asDoiField()
+  {
+    if (this instanceof DoiField)
+      return (DoiField)this;
+    else
+      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + DoiField.class.getName());
+  }
+
   static FieldSchemaArtifact create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId, String name,
     String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
@@ -339,6 +347,11 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
           internalDescription);
     else if (fieldUi.inputType() == FieldInputType.PUBMED)
       return PubMedField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+          internalDescription);
+    else if (fieldUi.inputType() == FieldInputType.DOI)
+      return DoiField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
           previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
           lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
           internalDescription);
