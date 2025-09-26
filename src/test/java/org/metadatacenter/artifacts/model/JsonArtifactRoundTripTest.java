@@ -275,6 +275,18 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  @Test public void testRoundTripDoiField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://doi.org/10.5281/zenodo.1000");
+
+    DoiField originalFieldSchemaArtifact = DoiField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
   @Test public void testRoundTripTextAreaField()
   {
     String name = "Field name";

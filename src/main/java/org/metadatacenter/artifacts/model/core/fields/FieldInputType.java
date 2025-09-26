@@ -28,7 +28,8 @@ public enum FieldInputType
   ORCID(FIELD_INPUT_TYPE_EXT_ORCID),
   PFAS(FIELD_INPUT_TYPE_EXT_PFAS),
   RRID(FIELD_INPUT_TYPE_EXT_RRID),
-  PUBMED(FIELD_INPUT_TYPE_EXT_PUBMED);
+  PUBMED(FIELD_INPUT_TYPE_EXT_PUBMED),
+  DOI(FIELD_INPUT_TYPE_EXT_DOI);
 
   private final String text;
 
@@ -65,7 +66,7 @@ public enum FieldInputType
 
   public boolean isIri() { return IRI_TYPES.contains(this); }
 
-  private static final Set<FieldInputType> IRI_TYPES = Set.of(LINK, ROR, ORCID, PFAS, RRID, PUBMED);
+  private static final Set<FieldInputType> IRI_TYPES = Set.of(LINK, ROR, ORCID, PFAS, RRID, PUBMED, DOI);
 
   public static FieldInputType fromString(String text) {
     for (FieldInputType f : FieldInputType.values()) {

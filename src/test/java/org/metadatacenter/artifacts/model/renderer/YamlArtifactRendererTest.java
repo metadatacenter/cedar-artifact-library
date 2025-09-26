@@ -431,6 +431,33 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
+  public void testRenderDoiField() {
+
+    String name = "DOI";
+    String description = "DOI field";
+    URI fieldId = java.net.URI.create("https://doi.org/10.5281/zenodo.1000");
+
+    DoiField rridField = DoiField.builder().
+        withJsonLdId(fieldId).
+        withName(name).
+        withDescription(description).
+        build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+        rridField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, DOI_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
   public void testRenderAnnotations() {
 
     String name = "Study";
