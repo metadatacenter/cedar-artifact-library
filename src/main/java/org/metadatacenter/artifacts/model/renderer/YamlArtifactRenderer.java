@@ -1174,6 +1174,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         return RRID_FIELD;
       case PUBMED:
         return PUBMED_FIELD;
+      case NIH_GRANT_ID:
+        return NIH_GRANT_ID_FIELD;
       case DOI:
         return DOI_FIELD;
       case NUMERIC:

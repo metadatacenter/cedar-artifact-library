@@ -404,6 +404,33 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
+  public void testRenderNihGrantIdField() {
+
+    String name = "NIH Grant ID";
+    String description = "NIH Grant ID field";
+    URI fieldId = java.net.URI.create("https://repo.metadatacenter.org/template_fields/123");
+
+    NihGrantIdField nihGrantIdField = NihGrantIdField.builder().
+        withJsonLdId(fieldId).
+        withName(name).
+        withDescription(description).
+        build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name,
+        nihGrantIdField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, NIH_GRANT_ID_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+  }
+
+  @Test
   public void testRenderPubMedField() {
 
     String name = "PubMed";
