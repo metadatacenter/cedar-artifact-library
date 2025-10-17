@@ -11,6 +11,7 @@ public abstract sealed class FieldInstanceArtifactBuilder permits TextFieldInsta
     LinkFieldInstance.LinkFieldInstanceBuilder, RorFieldInstance.RorFieldInstanceBuilder,
     OrcidFieldInstance.OrcidFieldInstanceBuilder, PfasFieldInstance.PfasFieldInstanceBuilder,
     RridFieldInstance.RridFieldInstanceBuilder, PubMedFieldInstance.PubMedFieldInstanceBuilder,
+    NihGrantIdFieldInstance.NihGrantIdFieldInstanceBuilder,
     EmailFieldInstance.EmailFieldInstanceBuilder, CheckboxFieldInstance.CheckboxFieldInstanceBuilder,
     ListFieldInstance.ListFieldInstanceBuilder, PhoneNumberFieldInstance.PhoneNumberFieldInstanceBuilder,
     RadioFieldInstance.RadioFieldInstanceBuilder, DoiFieldInstance.DoiFieldInstanceBuilder

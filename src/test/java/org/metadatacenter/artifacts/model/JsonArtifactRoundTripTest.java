@@ -275,6 +275,18 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  @Test public void testRoundTripNihGrantIdField()
+  {
+    String name = "Field name";
+    String description = "Field description";
+    URI defaultURI = URI.create("https://reporter.nih.gov/project-details/R01-LM013498");
+
+    NihGrantIdField originalFieldSchemaArtifact = NihGrantIdField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
   @Test public void testRoundTripDoiField()
   {
     String name = "Field name";
