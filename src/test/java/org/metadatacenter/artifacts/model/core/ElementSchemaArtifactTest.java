@@ -1,7 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ui.ElementUi;
 
 import java.net.URI;
@@ -11,8 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 
@@ -49,25 +49,25 @@ public class ElementSchemaArtifactTest
       Optional.of(createdOn), Optional.of(lastUpdatedOn), new LinkedHashMap<>(), new LinkedHashMap<>(), false, minItems,
       maxItems, propertyUri, language, ElementUi.builder().build(), Optional.empty());
 
-    Assert.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
-    Assert.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
-    Assert.assertEquals(instanceJsonLdType, elementSchemaArtifact.instanceJsonLdType().get());
-    Assert.assertEquals(jsonLdContext, elementSchemaArtifact.jsonLdContext());
-    Assert.assertEquals(createdBy, elementSchemaArtifact.createdBy().get());
-    Assert.assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());
-    Assert.assertEquals(createdOn, elementSchemaArtifact.createdOn().get());
-    Assert.assertEquals(lastUpdatedOn, elementSchemaArtifact.lastUpdatedOn().get());
-    Assert.assertEquals(internalName, elementSchemaArtifact.internalName());
-    Assert.assertEquals(internalDescription, elementSchemaArtifact.internalDescription());
-    Assert.assertEquals(name, elementSchemaArtifact.name());
-    Assert.assertEquals(description, elementSchemaArtifact.description());
-    Assert.assertEquals(identifier, elementSchemaArtifact.identifier());
-    Assert.assertEquals(version, elementSchemaArtifact.version());
-    Assert.assertEquals(status, elementSchemaArtifact.status());
-    Assert.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());
-    Assert.assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom());
-    Assert.assertEquals(propertyUri, elementSchemaArtifact.propertyUri());
-    Assert.assertEquals(language, elementSchemaArtifact.language());
+    Assertions.assertEquals(jsonLdTypes, elementSchemaArtifact.jsonLdTypes());
+    Assertions.assertEquals(jsonLdId, elementSchemaArtifact.jsonLdId().get());
+    Assertions.assertEquals(instanceJsonLdType, elementSchemaArtifact.instanceJsonLdType().get());
+    Assertions.assertEquals(jsonLdContext, elementSchemaArtifact.jsonLdContext());
+    Assertions.assertEquals(createdBy, elementSchemaArtifact.createdBy().get());
+    Assertions.assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());
+    Assertions.assertEquals(createdOn, elementSchemaArtifact.createdOn().get());
+    Assertions.assertEquals(lastUpdatedOn, elementSchemaArtifact.lastUpdatedOn().get());
+    Assertions.assertEquals(internalName, elementSchemaArtifact.internalName());
+    Assertions.assertEquals(internalDescription, elementSchemaArtifact.internalDescription());
+    Assertions.assertEquals(name, elementSchemaArtifact.name());
+    Assertions.assertEquals(description, elementSchemaArtifact.description());
+    Assertions.assertEquals(identifier, elementSchemaArtifact.identifier());
+    Assertions.assertEquals(version, elementSchemaArtifact.version());
+    Assertions.assertEquals(status, elementSchemaArtifact.status());
+    Assertions.assertEquals(previousVersion, elementSchemaArtifact.previousVersion());
+    Assertions.assertEquals(derivedFrom, elementSchemaArtifact.derivedFrom());
+    Assertions.assertEquals(propertyUri, elementSchemaArtifact.propertyUri());
+    Assertions.assertEquals(language, elementSchemaArtifact.language());
   }
 
   @Test public void testCreateElementSchemaArtifactWithChildren()
@@ -97,9 +97,9 @@ public class ElementSchemaArtifactTest
     assertEquals(elementSchemaArtifact.elementUi().propertyDescriptions().get(textFieldName2), textField2Description);
   }
 
-  @Test(expected = IllegalStateException.class) public void testMissingName()
+  @Test public void testMissingName()
   {
-    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().build();
+    Assertions.assertThrows(IllegalStateException.class, () -> ElementSchemaArtifact.builder().build());
   }
 
 }
