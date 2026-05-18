@@ -56,55 +56,55 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
   protected Optional<Annotations> annotations = Optional.empty();
 
   static public FieldSchemaArtifactBuilder builder(FieldSchemaArtifact fieldSchemaArtifact) {
-    // TODO Use typesafe switch when available
-    if (fieldSchemaArtifact instanceof TextField) {
-      return new TextField.TextFieldBuilder(fieldSchemaArtifact.asTextField());
-    } else if (fieldSchemaArtifact instanceof TextAreaField) {
-      return new TextAreaField.TextAreaFieldBuilder(fieldSchemaArtifact.asTextAreaField());
-    } else if (fieldSchemaArtifact instanceof TemporalField) {
-      return new TemporalField.TemporalFieldBuilder(fieldSchemaArtifact.asTemporalField());
-    } else if (fieldSchemaArtifact instanceof RadioField) {
-      return new RadioField.RadioFieldBuilder(fieldSchemaArtifact.asRadioField());
-    } else if (fieldSchemaArtifact instanceof PhoneNumberField) {
-      return new PhoneNumberField.PhoneNumberFieldBuilder(fieldSchemaArtifact.asPhoneNumberField());
-    } else if (fieldSchemaArtifact instanceof NumericField) {
-      return new NumericField.NumericFieldBuilder(fieldSchemaArtifact.asNumericField());
-    } else if (fieldSchemaArtifact instanceof ListField) {
-      return new ListField.ListFieldBuilder(fieldSchemaArtifact.asListField());
-    } else if (fieldSchemaArtifact instanceof LinkField) {
-      return new LinkField.LinkFieldBuilder(fieldSchemaArtifact.asLinkField());
-    } else if (fieldSchemaArtifact instanceof EmailField) {
-      return new EmailField.EmailFieldBuilder(fieldSchemaArtifact.asEmailField());
-    } else if (fieldSchemaArtifact instanceof ControlledTermField) {
-      return new ControlledTermField.ControlledTermFieldBuilder(fieldSchemaArtifact.asControlledTermField());
-    } else if (fieldSchemaArtifact instanceof CheckboxField) {
-      return new CheckboxField.CheckboxFieldBuilder(fieldSchemaArtifact.asCheckboxField());
-    } else if (fieldSchemaArtifact instanceof AttributeValueField) {
-      return new AttributeValueField.AttributeValueFieldBuilder(fieldSchemaArtifact.asAttributeValueField());
-    } else if (fieldSchemaArtifact instanceof PageBreakField) {
-      return new PageBreakField.PageBreakFieldBuilder(fieldSchemaArtifact.asPageBreakField());
-    } else if (fieldSchemaArtifact instanceof SectionBreakField) {
-      return new SectionBreakField.SectionBreakFieldBuilder(fieldSchemaArtifact.asSectionBreakField());
-    } else if (fieldSchemaArtifact instanceof ImageField) {
-      return new ImageField.ImageFieldBuilder(fieldSchemaArtifact.asImageField());
-    } else if (fieldSchemaArtifact instanceof YouTubeField) {
-      return new YouTubeField.YouTubeFieldBuilder(fieldSchemaArtifact.asYouTubeField());
-    } else if (fieldSchemaArtifact instanceof RichTextField) {
-      return new RichTextField.RichTextFieldBuilder(fieldSchemaArtifact.asRichTextField());
-    } else if (fieldSchemaArtifact instanceof RorField) {
-      return new RorField.RorFieldBuilder(fieldSchemaArtifact.asRorField());
-    } else if (fieldSchemaArtifact instanceof OrcidField) {
-      return new OrcidField.OrcidFieldBuilder(fieldSchemaArtifact.asOrcidField());
-    } else if (fieldSchemaArtifact instanceof PfasField) {
-      return new PfasField.PfasFieldBuilder(fieldSchemaArtifact.asPfasField());
-    } else if (fieldSchemaArtifact instanceof RridField) {
-      return new RridField.RridFieldBuilder(fieldSchemaArtifact.asRridField());
-    } else if (fieldSchemaArtifact instanceof PubMedField) {
-      return new PubMedField.PubMedFieldBuilder(fieldSchemaArtifact.asPubMedField());
-    } else if (fieldSchemaArtifact instanceof NihGrantIdField) {
-      return new NihGrantIdField.NihGrantIdFieldBuilder(fieldSchemaArtifact.asNihGrantIdField());
-    } else if (fieldSchemaArtifact instanceof DoiField) {
-      return new DoiField.DoiFieldBuilder(fieldSchemaArtifact.asDoiField());
+    // TODO Use sealed pattern switch when adopted (Java 21+)
+    if (fieldSchemaArtifact instanceof TextField tf) {
+      return new TextField.TextFieldBuilder(tf);
+    } else if (fieldSchemaArtifact instanceof TextAreaField tf) {
+      return new TextAreaField.TextAreaFieldBuilder(tf);
+    } else if (fieldSchemaArtifact instanceof TemporalField tf) {
+      return new TemporalField.TemporalFieldBuilder(tf);
+    } else if (fieldSchemaArtifact instanceof RadioField rf) {
+      return new RadioField.RadioFieldBuilder(rf);
+    } else if (fieldSchemaArtifact instanceof PhoneNumberField pf) {
+      return new PhoneNumberField.PhoneNumberFieldBuilder(pf);
+    } else if (fieldSchemaArtifact instanceof NumericField nf) {
+      return new NumericField.NumericFieldBuilder(nf);
+    } else if (fieldSchemaArtifact instanceof ListField lf) {
+      return new ListField.ListFieldBuilder(lf);
+    } else if (fieldSchemaArtifact instanceof LinkField lf) {
+      return new LinkField.LinkFieldBuilder(lf);
+    } else if (fieldSchemaArtifact instanceof EmailField ef) {
+      return new EmailField.EmailFieldBuilder(ef);
+    } else if (fieldSchemaArtifact instanceof ControlledTermField ctf) {
+      return new ControlledTermField.ControlledTermFieldBuilder(ctf);
+    } else if (fieldSchemaArtifact instanceof CheckboxField cf) {
+      return new CheckboxField.CheckboxFieldBuilder(cf);
+    } else if (fieldSchemaArtifact instanceof AttributeValueField avf) {
+      return new AttributeValueField.AttributeValueFieldBuilder(avf);
+    } else if (fieldSchemaArtifact instanceof PageBreakField pf) {
+      return new PageBreakField.PageBreakFieldBuilder(pf);
+    } else if (fieldSchemaArtifact instanceof SectionBreakField sf) {
+      return new SectionBreakField.SectionBreakFieldBuilder(sf);
+    } else if (fieldSchemaArtifact instanceof ImageField imgf) {
+      return new ImageField.ImageFieldBuilder(imgf);
+    } else if (fieldSchemaArtifact instanceof YouTubeField yf) {
+      return new YouTubeField.YouTubeFieldBuilder(yf);
+    } else if (fieldSchemaArtifact instanceof RichTextField rtf) {
+      return new RichTextField.RichTextFieldBuilder(rtf);
+    } else if (fieldSchemaArtifact instanceof RorField rf) {
+      return new RorField.RorFieldBuilder(rf);
+    } else if (fieldSchemaArtifact instanceof OrcidField of) {
+      return new OrcidField.OrcidFieldBuilder(of);
+    } else if (fieldSchemaArtifact instanceof PfasField pf) {
+      return new PfasField.PfasFieldBuilder(pf);
+    } else if (fieldSchemaArtifact instanceof RridField rf) {
+      return new RridField.RridFieldBuilder(rf);
+    } else if (fieldSchemaArtifact instanceof PubMedField pmf) {
+      return new PubMedField.PubMedFieldBuilder(pmf);
+    } else if (fieldSchemaArtifact instanceof NihGrantIdField ngf) {
+      return new NihGrantIdField.NihGrantIdFieldBuilder(ngf);
+    } else if (fieldSchemaArtifact instanceof DoiField df) {
+      return new DoiField.DoiFieldBuilder(df);
     } else {
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
     }
