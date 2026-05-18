@@ -6,34 +6,16 @@ import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toSet;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContains;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
-import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact, ParentSchemaArtifact
 {
@@ -418,44 +400,15 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
 {
   public ElementSchemaArtifactRecord
   {
-    validateStringFieldNotNull(this, internalName, JSON_SCHEMA_TITLE);
-    validateStringFieldNotNull(this, internalDescription, JSON_SCHEMA_DESCRIPTION);
-    validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
-    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
-    validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    validateUriListFieldContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
-    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
-    validateOptionalFieldNotNull(this, instanceJsonLdType, "instanceJsonLdType");
-    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
-    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateUiFieldNotNull(this, elementUi, UI);
+    ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
+      jsonLdContext, jsonLdTypes, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdType,
+      version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, elementUi, annotations);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri");
-    validateOptionalFieldNotNull(this, language, "language");
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
-    validateOptionalFieldNotNull(this, annotations, "annotations");
 
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name());
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name());
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be less than maxItems in element schema artifact " + name());
-
-    Set<String> order = new HashSet<>(elementUi.order());
-    Set<String> childKeys = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream())
-      .collect(toSet());
-
-    if (!order.containsAll(childKeys)) {
-      childKeys.removeAll(order); // Generate the names of children not in the order map
-      order.removeAll(childKeys); // Silently remove these extra children from the order
-      for (String childToRemove : childKeys) { // And from the
-        fieldSchemas.remove(childToRemove);
-        elementSchemas.remove(childToRemove);
-      }
-    }
+    ParentSchemaArtifactInvariants.validateItemBounds(this, name(), minItems, maxItems);
+    ParentSchemaArtifactInvariants.pruneChildrenNotInOrder(fieldSchemas, elementSchemas, elementUi.order());
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = new ArrayList<>(jsonLdTypes);
