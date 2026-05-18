@@ -173,7 +173,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
         fieldUi, annotations, internalName, internalDescription);
       case YOUTUBE -> YouTubeField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
-        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, fieldUi,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, fieldUi,
         annotations, internalName, internalDescription);
     };
   }

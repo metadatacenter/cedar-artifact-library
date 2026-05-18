@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
+import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public class FieldSchemaArtifactTest
 {
@@ -71,6 +74,28 @@ public class FieldSchemaArtifactTest
     Assertions.assertEquals(propertyUri, fieldSchemaArtifact.propertyUri());
     Assertions.assertEquals(language, fieldSchemaArtifact.language());
     Assertions.assertEquals(minItems, fieldSchemaArtifact.minItems());
+  }
+
+  @Test public void testCreateYouTubeFieldPreservesPreferredLabel()
+  {
+    // Regression test for a positional-argument bug in FieldSchemaArtifact.create's YOUTUBE arm:
+    // the outer `language` variable was being passed into YouTubeField.create's preferredLabel slot,
+    // silently discarding the outer preferredLabel for YouTube fields.
+    LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
+    List<URI> jsonLdTypes = Collections.singletonList(URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI));
+
+    Optional<String> preferredLabel = Optional.of("Pref");
+    Optional<String> language = Optional.of("en");
+
+    FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.create("yt internal name", "yt internal description",
+      jsonLdContext, jsonLdTypes, Optional.empty(), "yt name", "yt description", Optional.empty(), Optional.empty(),
+      Optional.empty(), Optional.empty(), Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.empty(),
+      Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), preferredLabel, Collections.emptyList(),
+      language, StaticFieldUi.youTubeFieldUiBuilder().build(), Optional.empty(), Optional.empty());
+
+    Assertions.assertInstanceOf(YouTubeField.class, fieldSchemaArtifact);
+    Assertions.assertEquals(preferredLabel, fieldSchemaArtifact.preferredLabel(),
+      "outer preferredLabel must be preserved on YouTube field");
   }
 
   @Test public void testCreateTextFieldWithBuilder()
