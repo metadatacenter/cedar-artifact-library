@@ -5,6 +5,7 @@ import org.metadatacenter.artifacts.model.core.Version;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.reader.JsonArtifactShapeChecks.*;
 import static org.metadatacenter.artifacts.model.reader.JsonNodeReaders.*;
@@ -96,10 +97,10 @@ final class JsonArtifactShapeChecks {
 
 
   public static void checkSchemaArtifactModelVersion(ObjectNode sourceNode, String path) {
-    Version artifactModelVersion = readModelVersion(sourceNode, path);
+    Optional<Version> artifactModelVersion = readModelVersion(sourceNode, path);
 
     // TODO Renable eventually after patching older artifacts
-    //    if (!artifactModelVersion.equals(MODEL_VERSION))
+    //    if (artifactModelVersion.isEmpty() || !artifactModelVersion.get().equals(MODEL_VERSION))
     //      throw new ArtifactParseException("Expecting model version " + MODEL_VERSION + ", got " +
     //      artifactModelVersion,
     //        SCHEMA_ORG_SCHEMA_VERSION, path);
