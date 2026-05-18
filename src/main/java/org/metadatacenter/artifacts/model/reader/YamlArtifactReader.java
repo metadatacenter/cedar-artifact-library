@@ -1,7 +1,9 @@
 package org.metadatacenter.artifacts.model.reader;
 
 import org.metadatacenter.artifacts.model.core.Annotations;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -56,6 +58,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ANNOTATIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ATTRIBUTE_VALUE_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DOI_FIELD;
@@ -119,6 +122,9 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEIGHT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DEFAULT;
@@ -298,7 +304,191 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
   {
-    return null; // TODO Read template instance artifacts
+    String path = "/";
+    String artifactType = readRequiredString(sourceNode, path, TYPE, false);
+
+    if (!artifactType.equals(INSTANCE))
+      throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + INSTANCE, TYPE, path);
+
+    TemplateInstanceArtifact.Builder builder = TemplateInstanceArtifact.builder();
+    builder.withName(readRequiredString(sourceNode, path, NAME, false));
+    readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
+    readUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    builder.withIsBasedOn(readRequiredUri(sourceNode, path, IS_BASED_ON));
+    readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
+    readUri(sourceNode, path, MODIFIED_BY).ifPresent(builder::withModifiedBy);
+    readOffsetDatetime(sourceNode, path, CREATED_ON).ifPresent(builder::withCreatedOn);
+    readOffsetDatetime(sourceNode, path, MODIFIED_ON).ifPresent(builder::withLastUpdatedOn);
+
+    readChildInstanceArtifacts(sourceNode, path).accept(new InstanceChildVisitor() {
+      @Override public void visitSingleField(String key, FieldInstanceArtifact f) {
+        builder.withSingleInstanceFieldInstance(key, f);
+      }
+
+      @Override public void visitSingleElement(String key, ElementInstanceArtifact e) {
+        builder.withSingleInstanceElementInstance(key, e);
+      }
+
+      @Override public void visitMultiField(String key, List<FieldInstanceArtifact> fs) {
+        builder.withMultiInstanceFieldInstances(key, fs);
+      }
+
+      @Override public void visitMultiElement(String key, List<ElementInstanceArtifact> es) {
+        builder.withMultiInstanceElementInstances(key, es);
+      }
+    });
+
+    readAnnotations(sourceNode, path).ifPresent(builder::withAnnotations);
+
+    return builder.build();
+  }
+
+  /**
+   * Walk the {@code children:} map of a template/element instance. Distinguishes single
+   * vs. multi-instance by whether the value is a Map or a List; distinguishes field vs.
+   * element instances by presence of a {@code children:} key (element) or absence (field).
+   * Calls the visitor for each bucket.
+   */
+  @SuppressWarnings("unchecked")
+  private ChildInstancesAccumulator readChildInstanceArtifacts(LinkedHashMap<String, Object> sourceNode, String path)
+  {
+    ChildInstancesAccumulator acc = new ChildInstancesAccumulator();
+    LinkedHashMap<String, Object> childrenNode = readChildNode(sourceNode, path, CHILDREN);
+    if (childrenNode == null)
+      return acc;
+
+    for (Map.Entry<String, Object> entry : childrenNode.entrySet()) {
+      String childKey = entry.getKey();
+      Object rawValue = entry.getValue();
+      String childPath = path + "/" + childKey;
+
+      if (rawValue instanceof List<?>) {
+        // Multi-instance: every element should be a map; if it carries `children:` it's an
+        // element instance, otherwise it's a field instance. We assume the list is homogeneous.
+        List<?> list = (List<?>) rawValue;
+        if (list.isEmpty()) continue;
+        Object first = list.get(0);
+        if (!(first instanceof LinkedHashMap<?, ?>))
+          throw new ArtifactParseException("Expected map entries in multi-instance list", childKey, path);
+        boolean isElement = ((LinkedHashMap<String, Object>) first).containsKey(CHILDREN);
+        if (isElement) {
+          List<ElementInstanceArtifact> elements = new ArrayList<>();
+          for (Object e : list)
+            elements.add(readElementInstanceArtifact((LinkedHashMap<String, Object>) e, childPath));
+          acc.multiElement(childKey, elements);
+        } else {
+          List<FieldInstanceArtifact> fields = new ArrayList<>();
+          for (Object f : list)
+            fields.add(readFieldInstanceArtifact((LinkedHashMap<String, Object>) f, childPath));
+          acc.multiField(childKey, fields);
+        }
+      } else if (rawValue instanceof LinkedHashMap<?, ?>) {
+        LinkedHashMap<String, Object> mapValue = (LinkedHashMap<String, Object>) rawValue;
+        if (mapValue.containsKey(CHILDREN)) {
+          acc.singleElement(childKey, readElementInstanceArtifact(mapValue, childPath));
+        } else {
+          acc.singleField(childKey, readFieldInstanceArtifact(mapValue, childPath));
+        }
+      } else if (rawValue == null) {
+        // Treat a null child as an empty field instance.
+        acc.singleField(childKey, FieldInstanceArtifact.create(
+          Collections.emptyList(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+          Optional.empty(), Optional.empty()));
+      } else {
+        throw new ArtifactParseException(
+          "Expected map or list value for child instance, got " + rawValue.getClass(), childKey, path);
+      }
+    }
+    return acc;
+  }
+
+  private ElementInstanceArtifact readElementInstanceArtifact(LinkedHashMap<String, Object> sourceNode, String path)
+  {
+    ElementInstanceArtifact.Builder builder = ElementInstanceArtifact.builder();
+    readUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+
+    readChildInstanceArtifacts(sourceNode, path).accept(new InstanceChildVisitor() {
+      @Override public void visitSingleField(String key, FieldInstanceArtifact f) {
+        builder.withSingleInstanceFieldInstance(key, f);
+      }
+
+      @Override public void visitSingleElement(String key, ElementInstanceArtifact e) {
+        builder.withSingleInstanceElementInstance(key, e);
+      }
+
+      @Override public void visitMultiField(String key, List<FieldInstanceArtifact> fs) {
+        builder.withMultiInstanceFieldInstances(key, fs);
+      }
+
+      @Override public void visitMultiElement(String key, List<ElementInstanceArtifact> es) {
+        builder.withMultiInstanceElementInstances(key, es);
+      }
+    });
+
+    return builder.build();
+  }
+
+  /**
+   * Read a single field-instance YAML map. The renderer writes:
+   * {@code datatype:} (optional, an XSD-prefixed URI), {@code id:} (optional URI),
+   * {@code value:} (optional, may be explicit {@code null}), plus optional
+   * {@code label:}, {@code notation:}, {@code prefLabel:}, {@code language:}.
+   */
+  private FieldInstanceArtifact readFieldInstanceArtifact(LinkedHashMap<String, Object> sourceNode, String path)
+  {
+    List<URI> jsonLdTypes = new ArrayList<>();
+    Optional<String> datatype = readEnumOrString(sourceNode, path, DATATYPE);
+    if (datatype.isPresent())
+      jsonLdTypes.add(URI.create(datatype.get()));
+    Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
+    Optional<String> jsonLdValue = readString(sourceNode, path, VALUE, true);
+    Optional<String> label = readString(sourceNode, path, "label", true);
+    Optional<String> notation = readString(sourceNode, path, "notation", true);
+    Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL, true);
+    Optional<String> language = readString(sourceNode, path, LANGUAGE);
+
+    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation, preferredLabel, language);
+  }
+
+  /**
+   * Small visitor used to bucket child instances back into the builder without duplicating the
+   * four-way dispatch (single field / single element / multi field / multi element) per caller.
+   */
+  private interface InstanceChildVisitor
+  {
+    void visitSingleField(String key, FieldInstanceArtifact f);
+    void visitSingleElement(String key, ElementInstanceArtifact e);
+    void visitMultiField(String key, List<FieldInstanceArtifact> fs);
+    void visitMultiElement(String key, List<ElementInstanceArtifact> es);
+  }
+
+  private static final class ChildInstancesAccumulator
+  {
+    private final List<Runnable> dispatches = new ArrayList<>();
+
+    void singleField(String key, FieldInstanceArtifact f) {
+      dispatches.add(() -> currentVisitor.visitSingleField(key, f));
+    }
+
+    void singleElement(String key, ElementInstanceArtifact e) {
+      dispatches.add(() -> currentVisitor.visitSingleElement(key, e));
+    }
+
+    void multiField(String key, List<FieldInstanceArtifact> fs) {
+      dispatches.add(() -> currentVisitor.visitMultiField(key, fs));
+    }
+
+    void multiElement(String key, List<ElementInstanceArtifact> es) {
+      dispatches.add(() -> currentVisitor.visitMultiElement(key, es));
+    }
+
+    private InstanceChildVisitor currentVisitor;
+
+    void accept(InstanceChildVisitor visitor) {
+      currentVisitor = visitor;
+      for (Runnable r : dispatches) r.run();
+      currentVisitor = null;
+    }
   }
 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
@@ -455,9 +645,37 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return ElementUi.create(order, propertyLabels, propertyDescriptions);
   }
 
+  /**
+   * Read the optional {@code annotations:} sub-map. Each entry is keyed by annotation name and
+   * its value is a one-key map: {@code {value: <literal>}} for a literal annotation, or
+   * {@code {id: <iri>}} for an IRI annotation. Mirrors the renderer at
+   * {@link org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer#renderAnnotations}.
+   */
+  @SuppressWarnings("unchecked")
   private Optional<Annotations> readAnnotations(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    return Optional.empty(); // TODO Implement readAnnotations in YAML reader
+    LinkedHashMap<String, Object> annotationsNode = readChildNode(sourceNode, path, ANNOTATIONS);
+    if (annotationsNode == null)
+      return Optional.empty();
+
+    Annotations.Builder builder = Annotations.builder();
+    for (Map.Entry<String, Object> entry : annotationsNode.entrySet()) {
+      String annotationName = entry.getKey();
+      Object rawValue = entry.getValue();
+      String annotationPath = path + "/annotations/" + annotationName;
+      if (!(rawValue instanceof LinkedHashMap<?, ?>))
+        throw new ArtifactParseException("Expected map value for annotation " + annotationName,
+          ANNOTATIONS, path);
+      LinkedHashMap<String, Object> valueNode = (LinkedHashMap<String, Object>) rawValue;
+      if (valueNode.containsKey(VALUE))
+        builder.withLiteralAnnotation(annotationName, readRequiredString(valueNode, annotationPath, VALUE, true));
+      else if (valueNode.containsKey(ID))
+        builder.withIriAnnotation(annotationName, readRequiredUri(valueNode, annotationPath, ID));
+      else
+        throw new ArtifactParseException("Annotation " + annotationName + " must have either a `value:` or `id:` key",
+          ANNOTATIONS, path);
+    }
+    return Optional.of(builder.build());
   }
 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path, FieldInputType fieldInputType)

@@ -2,16 +2,19 @@ package org.metadatacenter.artifacts.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.CheckboxField;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.EmailField;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.LinkField;
 import org.metadatacenter.artifacts.model.core.ListField;
 import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.PhoneNumberField;
 import org.metadatacenter.artifacts.model.core.RadioField;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.TextAreaField;
@@ -188,7 +191,73 @@ public class YamlArtifactRoundTripTest
     roundTripTemplate(original);
   }
 
+  // -------- Annotations --------
+
+  @Test public void testRoundTripTemplateWithAnnotations()
+  {
+    Annotations annotations = Annotations.builder()
+      .withLiteralAnnotation("Preferred Ontology", "DOID")
+      .withIriAnnotation("https://datacite.com/doi", URI.create("https://doi.org/10.82658/8vc1-abcd"))
+      .build();
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder().withName("Study")
+      .withAnnotations(annotations).build();
+    roundTripTemplate(original);
+  }
+
+  @Test public void testRoundTripFieldWithAnnotations()
+  {
+    Annotations annotations = Annotations.builder().withLiteralAnnotation("source", "manual").build();
+    TextField original = TextField.builder().withName("Study ID").withAnnotations(annotations).build();
+    roundTripField(original);
+  }
+
+  // -------- Template instance artifacts --------
+
+  @Test public void testRoundTripSimpleTemplateInstance()
+  {
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/ec3f500f-ddca-4ec1-9196-29932f9304fd"))
+      .build();
+    roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripTemplateInstanceWithFieldInstances()
+  {
+    FieldInstanceArtifact studyId = FieldInstanceArtifact.create(
+      java.util.Collections.emptyList(), java.util.Optional.empty(),
+      java.util.Optional.of("STD-12345"), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty());
+    FieldInstanceArtifact pi = FieldInstanceArtifact.create(
+      java.util.Collections.emptyList(), java.util.Optional.empty(),
+      java.util.Optional.of("Dr. P.I."), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty());
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withSingleInstanceFieldInstance("Study ID", studyId)
+      .withSingleInstanceFieldInstance("PI", pi)
+      .build();
+    roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripTemplateInstanceWithAnnotations()
+  {
+    Annotations annotations = Annotations.builder().withLiteralAnnotation("source", "import").build();
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withAnnotations(annotations).build();
+    roundTripTemplateInstance(original);
+  }
+
   // -------- Round-trip helpers --------
+
+  private void roundTripTemplateInstance(TemplateInstanceArtifact original)
+  {
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(original);
+    TemplateInstanceArtifact roundTripped = yamlArtifactReader.readTemplateInstanceArtifact(rendering);
+    assertEquals(original, roundTripped);
+  }
+
 
   private void roundTripTemplate(TemplateSchemaArtifact original)
   {
