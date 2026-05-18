@@ -9,24 +9,10 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface PageBreakField extends FieldSchemaArtifact
 {
@@ -58,7 +44,7 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
     return new PageBreakFieldBuilder(pageBreakField);
   }
 
-  final class PageBreakFieldBuilder extends FieldSchemaArtifactBuilder
+  final class PageBreakFieldBuilder extends FieldSchemaArtifactBuilder<PageBreakField.PageBreakFieldBuilder>
   {
     private final StaticFieldUi.PageBreakFieldUiBuilder fieldUiBuilder;
 
@@ -72,67 +58,16 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
     public PageBreakFieldBuilder(PageBreakField pageBreakField)
     {
       super(pageBreakField);
-
       this.fieldUiBuilder = StaticFieldUi.pageBreakFieldUiBuilder(pageBreakField.fieldUi().asStaticFieldUi());
     }
 
-    public PageBreakFieldBuilder withContent(String content)
+    @Override public PageBreakFieldBuilder withRequiredValue(boolean requiredValue)
     {
-      fieldUiBuilder.withContent(content);
       return this;
     }
 
-    @Override public PageBreakFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
+    @Override public PageBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
     {
-      super.withJsonLdContext(jsonLdContext);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withJsonLdType(URI jsonLdType)
-    {
-      super.withJsonLdType(jsonLdType);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withJsonLdId(URI jsonLdId)
-    {
-      super.withJsonLdId(jsonLdId);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withName(String name)
-    {
-      super.withName(name);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withDescription(String description)
-    {
-      super.withDescription(description);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withIdentifier(String identifier)
-    {
-      super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withPreferredLabel(String preferredLabel)
-    {
-      super.withPreferredLabel(preferredLabel);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withVersion(Version version)
-    {
-      super.withVersion(version);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withStatus(Status status)
-    {
-      super.withStatus(status);
       return this;
     }
 
@@ -154,74 +89,9 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PageBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
+    public PageBreakFieldBuilder withContent(String content)
     {
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
-    }
-
-
-    @Override public PageBreakFieldBuilder withCreatedBy(URI createdBy)
-    {
-      super.withCreatedBy(createdBy);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withModifiedBy(URI modifiedBy)
-    {
-      super.withModifiedBy(modifiedBy);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withCreatedOn(OffsetDateTime createdOn)
-    {
-      super.withCreatedOn(createdOn);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-    {
-      super.withLastUpdatedOn(lastUpdatedOn);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withPreviousVersion(URI previousVersion)
-    {
-      super.withPreviousVersion(previousVersion);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withDerivedFrom(URI derivedFrom)
-    {
-      super.withDerivedFrom(derivedFrom);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withLanguage(String language)
-    {
-      super.withLanguage(language);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withInternalName(String internalName)
-    {
-      super.withInternalName(internalName);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withInternalDescription(String internalDescription)
-    {
-      super.withInternalDescription(internalDescription);
-      return this;
-    }
-
-    @Override public PageBreakFieldBuilder withAnnotations(Annotations annotations)
-    {
-      super.withAnnotations(annotations);
+      fieldUiBuilder.withContent(content);
       return this;
     }
 
@@ -246,18 +116,9 @@ record PageBreakFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> 
 {
   public PageBreakFieldRecord
   {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
-      Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
-    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
-    validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, language, "language");
-    validateUiFieldNotNull(this, fieldUi, UI);
-    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(this, annotations, "annotations");
-
-    jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-
+    FieldSchemaArtifactInvariants.validateStatic(this, jsonLdContext, jsonLdTypes,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    jsonLdContext = FieldSchemaArtifactInvariants.staticContext();
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

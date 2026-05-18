@@ -10,24 +10,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_URI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface SectionBreakField extends FieldSchemaArtifact
 {
@@ -59,7 +45,7 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     return new SectionBreakFieldBuilder(sectionBreakField);
   }
 
-  final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder
+  final class SectionBreakFieldBuilder extends FieldSchemaArtifactBuilder<SectionBreakField.SectionBreakFieldBuilder>
   {
     private final StaticFieldUi.SectionBreakFieldUiBuilder fieldUiBuilder;
 
@@ -73,56 +59,16 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
     public SectionBreakFieldBuilder(SectionBreakField sectionBreakField)
     {
       super(sectionBreakField);
-
       this.fieldUiBuilder = StaticFieldUi.sectionBreakFieldUiBuilder(sectionBreakField.fieldUi().asStaticFieldUi());
     }
 
-    public SectionBreakFieldBuilder withContent(String content)
+    @Override public SectionBreakFieldBuilder withRequiredValue(boolean requiredValue)
     {
-      fieldUiBuilder.withContent(content);
       return this;
     }
 
-
-    @Override public SectionBreakFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
+    @Override public SectionBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
     {
-      super.withJsonLdContext(jsonLdContext);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withJsonLdType(URI jsonLdType)
-    {
-      super.withJsonLdType(jsonLdType);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withJsonLdId(URI jsonLdId)
-    {
-      super.withJsonLdId(jsonLdId);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withName(String name)
-    {
-      super.withName(name);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withDescription(String description)
-    {
-      super.withDescription(description);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withIdentifier(String identifier)
-    {
-      super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withPreferredLabel(String preferredLabel)
-    {
-      super.withPreferredLabel(preferredLabel);
       return this;
     }
 
@@ -144,85 +90,9 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withRecommendedValue(boolean recommendedValue)
+    public SectionBreakFieldBuilder withContent(String content)
     {
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withVersion(Version version)
-    {
-      super.withVersion(version);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withStatus(Status status)
-    {
-      super.withStatus(status);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withCreatedBy(URI createdBy)
-    {
-      super.withCreatedBy(createdBy);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withModifiedBy(URI modifiedBy)
-    {
-      super.withModifiedBy(modifiedBy);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withCreatedOn(OffsetDateTime createdOn)
-    {
-      super.withCreatedOn(createdOn);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-    {
-      super.withLastUpdatedOn(lastUpdatedOn);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withPreviousVersion(URI previousVersion)
-    {
-      super.withPreviousVersion(previousVersion);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withDerivedFrom(URI derivedFrom)
-    {
-      super.withDerivedFrom(derivedFrom);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withLanguage(String language)
-    {
-      super.withLanguage(language);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withInternalName(String internalName)
-    {
-      super.withInternalName(internalName);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withInternalDescription(String internalDescription)
-    {
-      super.withInternalDescription(internalDescription);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withAnnotations(Annotations annotations)
-    {
-      super.withAnnotations(annotations);
+      fieldUiBuilder.withContent(content);
       return this;
     }
 
@@ -247,18 +117,9 @@ record SectionBreakFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<UR
 {
   public SectionBreakFieldRecord
   {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
-      Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
-    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
-    validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, language, "language");
-    validateUiFieldNotNull(this, fieldUi, UI);
-    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(this, annotations, "annotations");
-
-    jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-
+    FieldSchemaArtifactInvariants.validateStatic(this, jsonLdContext, jsonLdTypes,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+    jsonLdContext = FieldSchemaArtifactInvariants.staticContext();
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }
