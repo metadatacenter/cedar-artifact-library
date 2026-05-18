@@ -368,23 +368,11 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
                                       LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups,
                                       Optional<Annotations> annotations) implements TemplateInstanceArtifact {
   public TemplateInstanceArtifactRecord {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
-    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
-    validateOptionalFieldNotNull(this, name, SCHEMA_ORG_NAME);
-    validateOptionalFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
-    validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
+    InstanceArtifactInvariants.validate(this, jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
     validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
-    validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
-    validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
-    validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
     validateUriFieldNotNull(this, isBasedOn, SCHEMA_IS_BASED_ON);
-    validateListFieldNotNull(this, childKeys, "childKeys");
-    validateMapFieldNotNull(this, singleInstanceFieldInstances, "singleInstanceFieldInstances");
-    validateMapFieldNotNull(this, multiInstanceFieldInstances, "multiInstanceFieldInstances");
-    validateMapFieldNotNull(this, singleInstanceElementInstances, "singleInstanceElementInstances");
-    validateMapFieldNotNull(this, multiInstanceElementInstances, "multiInstanceElementInstances");
-    validateMapFieldNotNull(this, attributeValueFieldInstanceGroups, "attributeValueFieldInstanceGroups");
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
     // TODO Check that all childKeys present in child instances maps and that there are no extra fields in maps
