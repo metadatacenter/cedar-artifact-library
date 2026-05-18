@@ -250,16 +250,13 @@ final class JsonNodeReaders {
   public static Optional<Version> readVersion(ObjectNode sourceNode, String path, String fieldKey) {
     Optional<String> version = readString(sourceNode, path, fieldKey);
 
-    if (version.isEmpty()) {
+    if (version.isEmpty())
       return Optional.empty();
-    } else {
-      if (Version.isValidVersion(version.get())) {
-        return Optional.of(Version.fromString(version.get()));
-      } else // TODO Revisit this silent version fix
-      {
-        return Optional.of(Version.fromString("0.0.1"));
-      }
-    }
+
+    if (!Version.isValidVersion(version.get()))
+      throw new ArtifactParseException("Invalid version " + version.get(), fieldKey, path);
+
+    return Optional.of(Version.fromString(version.get()));
   }
 
 
@@ -502,14 +499,17 @@ final class JsonNodeReaders {
   }
 
 
-  public static Version readModelVersion(ObjectNode sourceNode, String path) {
+  public static Optional<Version> readModelVersion(ObjectNode sourceNode, String path) {
     Optional<String> versionString = readString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION);
 
-    if (versionString.isPresent()) {
-      return Version.fromString(versionString.get());
-    } else {
-      return Version.fromString("1.6.0"); // TODO Temporarily supply version
-    }
+    if (versionString.isEmpty())
+      return Optional.empty();
+
+    if (!Version.isValidVersion(versionString.get()))
+      throw new ArtifactParseException("Invalid model version " + versionString.get(),
+        SCHEMA_ORG_SCHEMA_VERSION, path);
+
+    return Optional.of(Version.fromString(versionString.get()));
   }
 
 
