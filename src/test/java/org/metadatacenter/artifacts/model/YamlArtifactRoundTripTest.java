@@ -1,8 +1,8 @@
 package org.metadatacenter.artifacts.model;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -13,14 +13,14 @@ import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import java.net.URI;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class YamlArtifactRoundTripTest
 {
   private YamlArtifactReader yamlArtifactReader = new YamlArtifactReader();
   private YamlArtifactRenderer yamlArtifactRenderer;
 
-  @Before public void setUp()
+  @BeforeEach public void setUp()
   {
     yamlArtifactReader = new YamlArtifactReader();
     yamlArtifactRenderer = new YamlArtifactRenderer(false);
@@ -43,7 +43,7 @@ public class YamlArtifactRoundTripTest
   }
 
   // TODO Need to activate this
-  @Ignore @Test public void testRoundTripTextField()
+  @Disabled @Test public void testRoundTripTextField()
   {
     TextField originalFieldSchemaArtifact = TextField.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Study")

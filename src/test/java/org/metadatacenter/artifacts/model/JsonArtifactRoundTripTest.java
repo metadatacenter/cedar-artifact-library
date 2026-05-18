@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -26,8 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class JsonArtifactRoundTripTest
@@ -37,7 +37,7 @@ public class JsonArtifactRoundTripTest
   private ObjectMapper mapper;
   private ModelValidator cedarModelValidator;
 
-  @Before public void setUp()
+  @BeforeEach public void setUp()
   {
     artifactReader = new JsonArtifactReader();
     jsonArtifactRenderer = new JsonArtifactRenderer();
@@ -314,7 +314,7 @@ public class JsonArtifactRoundTripTest
 
   // Can add attribute-value to literalFieldUIContent.json in meta model but then it complains about missing
   // valueConstraints
-  @Ignore // Fix standalone attribute-value field
+  @Disabled // Fix standalone attribute-value field
   @Test public void testRoundTripAttributeValueField()
   {
     String name = "Field name";

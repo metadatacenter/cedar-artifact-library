@@ -1,9 +1,9 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE_ONTOLOGY_CLASS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE_VALUE;
 
@@ -21,8 +21,8 @@ public class ValueTypeTest {
     assertEquals(ValueType.VALUE, ValueType.fromString(VALUE_CONSTRAINTS_TYPE_VALUE));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testInvalidValueTypeFromString() {
-    ValueType.fromString("InvalidValueType");
+    assertThrows(IllegalArgumentException.class, () -> ValueType.fromString("InvalidValueType"));
   }
 }
