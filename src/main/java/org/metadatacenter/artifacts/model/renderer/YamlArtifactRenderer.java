@@ -1379,4 +1379,3 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       return uri.toString();
   }
 }
-

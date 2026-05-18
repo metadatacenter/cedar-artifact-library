@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.core.ui;
 import org.junit.Test;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
-import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 
 import static org.junit.Assert.*;

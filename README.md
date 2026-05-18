@@ -109,7 +109,7 @@ Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
 
 A utility class is provided that can take the above Excel rendering and generate a TSV from it.
 
-For example, to generate a TSV from the first sheeet of the above workbook:
+For example, to generate a TSV from the first sheet of the above workbook:
 
 ```java
 StringBuffer tsvBuffer = SpreadSheetUtil.convertSheetToTsv(workbook.getSheetAt(0));
@@ -129,7 +129,7 @@ This string buffer can be written to a file as follows:
 
 Again, a utility class is provided that can take the above Excel rendering and generate a CSV from it.
 
-For example, to generate a CSV from the first sheeet of the above workbook:
+For example, to generate a CSV from the first sheet of the above workbook:
 
 ```java
 StringBuffer csvBuffer = SpreadSheetUtil.convertSheetToCsv(workbook.getSheetAt(0));
@@ -192,7 +192,7 @@ With this class we can create a text field representing a study name with a mini
 ```java
 TextField textField = TextField.builder().
       withName("Study ID").
-      withDescription("Field representing the ID of a study).
+      withDescription("Field representing the ID of a study").
       withMinLength(2).
       withMaxLength(10).
       build();
@@ -231,7 +231,7 @@ An example numeric field representing the percentage of a treatment completed an
 
 A builder supplied by a class called `TemporalField` can be used to create a CEDAR temporal fields.
 
-In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can be opitionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
+In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can optionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
 
 An example temporal field representing the time of a patient visit recorded with the accuracy of minutes and presented in 24-hour format with time zone information displayed could be created as follows:
 
@@ -329,7 +329,7 @@ A builder supplied by a class called `CheckboxField` can be used to create a CED
 
 When creating a checkbox field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
 
-For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know salected by default as follows:
+For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know selected by default as follows:
 
 ```java
     CheckboxField checkboxField = CheckboxField.builder().
@@ -387,12 +387,12 @@ Using this class, we can create an email field as follows:
 
 A builder supplied by a class called `TextAreaField` can be used to create a CEDAR text area fields.
 
-For example, to create a text area field representing a study description with a minimum lengtth of 20 and a maximum length of 10000 we can do the following:
+For example, to create a text area field representing a study description with a minimum length of 20 and a maximum length of 10000 we can do the following:
 
 ```java
 TextAreaField textAreaField = TextAreaField.builder().
       withName("Study Description").
-      withDescription("Field representing the description of a study).
+      withDescription("Field representing the description of a study").
       withMinLength(20).
       withMaxLength(1000).
       build();
@@ -402,7 +402,7 @@ TextAreaField textAreaField = TextAreaField.builder().
 
 A builder supplied by a class called `AttributeValueTextBuilder` can be used to create a CEDAR attribute-value fields.
 
-Using this class, we can create an atribute-value field as follows:
+Using this class, we can create an attribute-value field as follows:
 
 ```java
 FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().

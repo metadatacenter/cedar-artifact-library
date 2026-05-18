@@ -59,4 +59,3 @@ record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId
     validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
   }
 }
-
