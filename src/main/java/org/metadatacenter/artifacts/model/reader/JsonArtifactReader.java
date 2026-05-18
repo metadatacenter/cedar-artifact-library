@@ -1632,7 +1632,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
           try {
             URI currentFieldUriValue = new URI(currentFieldValue);
             string2UriMap.put(currentFieldKey, currentFieldUriValue);
-          } catch (Exception e) {
+          } catch (URISyntaxException e) {
             throw new ArtifactParseException("Object in field must contain URI values", fieldKey, path);
           }
         }
@@ -1738,7 +1738,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     } else {
       try {
         return Optional.of(new URI(uriValue));
-      } catch (Exception e) {
+      } catch (URISyntaxException e) {
         throw new ArtifactParseException("Value " + uriValue + " in URI field must be a valid URI", fieldKey, path);
       }
     }
@@ -1828,7 +1828,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
       try {
         return new URI(jsonNode.asText());
-      } catch (Exception e) {
+      } catch (URISyntaxException e) {
         throw new ArtifactParseException("Value must be a valid URI", fieldKey, path);
       }
     }
@@ -1886,7 +1886,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
             try {
               URI uriValue = new URI(itemNode.asText());
               uriValues.add(uriValue);
-            } catch (Exception e) {
+            } catch (URISyntaxException e) {
               throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must a valid URI",
                   fieldKey, path);
             }
