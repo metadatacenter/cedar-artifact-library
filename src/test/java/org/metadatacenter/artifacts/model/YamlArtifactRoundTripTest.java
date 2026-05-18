@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.CheckboxField;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.EmailField;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -249,7 +250,93 @@ public class YamlArtifactRoundTripTest
     roundTripTemplateInstance(original);
   }
 
+  @Test public void testRoundTripTemplateInstanceWithMultiInstanceFields()
+  {
+    FieldInstanceArtifact keyword1 = simpleLiteralField("immunology");
+    FieldInstanceArtifact keyword2 = simpleLiteralField("oncology");
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withMultiInstanceFieldInstances("keywords", java.util.List.of(keyword1, keyword2))
+      .build();
+    roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripTemplateInstanceWithNestedElement()
+  {
+    FieldInstanceArtifact street = simpleLiteralField("123 Main St");
+    FieldInstanceArtifact city = simpleLiteralField("Palo Alto");
+    ElementInstanceArtifact address = ElementInstanceArtifact.builder()
+      .withSingleInstanceFieldInstance("Street", street)
+      .withSingleInstanceFieldInstance("City", city)
+      .build();
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withSingleInstanceElementInstance("Address", address)
+      .build();
+    roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripTemplateInstanceWithMultiInstanceElements()
+  {
+    FieldInstanceArtifact street1 = simpleLiteralField("123 Main St");
+    ElementInstanceArtifact address1 = ElementInstanceArtifact.builder()
+      .withSingleInstanceFieldInstance("Street", street1).build();
+    FieldInstanceArtifact street2 = simpleLiteralField("742 Evergreen Tce");
+    ElementInstanceArtifact address2 = ElementInstanceArtifact.builder()
+      .withSingleInstanceFieldInstance("Street", street2).build();
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withMultiInstanceElementInstances("Addresses", java.util.List.of(address1, address2))
+      .build();
+    roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripTemplateInstanceWithAttributeValueFieldGroup()
+  {
+    FieldInstanceArtifact attr1 = simpleLiteralField("foo");
+    FieldInstanceArtifact attr2 = simpleLiteralField("bar");
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("attr1", attr1);
+    group.put("attr2", attr2);
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withAttributeValueFieldGroup("custom-attrs", group)
+      .build();
+    roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripElementInstanceWithAttributeValueFieldGroup()
+  {
+    FieldInstanceArtifact attr = simpleLiteralField("foo");
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("attr1", attr);
+
+    ElementInstanceArtifact address = ElementInstanceArtifact.builder()
+      .withSingleInstanceFieldInstance("Street", simpleLiteralField("Main"))
+      .withAttributeValueFieldGroup("ext-attrs", group)
+      .build();
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withSingleInstanceElementInstance("Address", address)
+      .build();
+    roundTripTemplateInstance(original);
+  }
+
   // -------- Round-trip helpers --------
+
+  private static FieldInstanceArtifact simpleLiteralField(String value)
+  {
+    return FieldInstanceArtifact.create(
+      java.util.Collections.emptyList(), java.util.Optional.empty(),
+      java.util.Optional.of(value), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty());
+  }
+
 
   private void roundTripTemplateInstance(TemplateInstanceArtifact original)
   {

@@ -52,6 +52,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
@@ -90,6 +91,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NOTATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
@@ -338,6 +340,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       }
     });
 
+    readAttributeValueFieldInstanceGroups(sourceNode, path, TEMPLATE_INSTANCE_RESERVED_KEYS,
+      builder::withAttributeValueFieldGroup);
+
     readAnnotations(sourceNode, path).ifPresent(builder::withAnnotations);
 
     return builder.build();
@@ -425,7 +430,58 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       }
     });
 
+    readAttributeValueFieldInstanceGroups(sourceNode, path, ELEMENT_INSTANCE_RESERVED_KEYS,
+      builder::withAttributeValueFieldGroup);
+
     return builder.build();
+  }
+
+  /**
+   * Top-level YAML keys reserved by the template-instance renderer. Any other top-level key is
+   * treated as an attribute-value field instance group whose value is a map of attribute names
+   * to field instances.
+   */
+  private static final Set<String> TEMPLATE_INSTANCE_RESERVED_KEYS = Set.of(
+    TYPE, NAME, DESCRIPTION, ID, IS_BASED_ON,
+    CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON,
+    CHILDREN, ANNOTATIONS);
+
+  /**
+   * Top-level YAML keys reserved by the element-instance renderer. Element instances are nested
+   * (they appear as values in a parent's {@code children:} map) and only ever carry {@code id}
+   * and {@code children} as reserved keys.
+   */
+  private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(ID, CHILDREN);
+
+  /**
+   * Walk top-level keys of an instance YAML map looking for attribute-value field groups. Each
+   * non-reserved key whose value is a map is treated as a group; each entry in that map is
+   * read as a {@link FieldInstanceArtifact} (so the inner shape is the same one written by
+   * {@code renderAttributeValueFieldInstanceGroupFields}).
+   */
+  @SuppressWarnings("unchecked")
+  private void readAttributeValueFieldInstanceGroups(LinkedHashMap<String, Object> sourceNode, String path,
+    Set<String> reservedKeys, java.util.function.BiConsumer<String, LinkedHashMap<String, FieldInstanceArtifact>> sink)
+  {
+    for (Map.Entry<String, Object> entry : sourceNode.entrySet()) {
+      String key = entry.getKey();
+      if (reservedKeys.contains(key))
+        continue;
+      Object rawValue = entry.getValue();
+      if (!(rawValue instanceof LinkedHashMap<?, ?>))
+        continue;
+      LinkedHashMap<String, Object> groupNode = (LinkedHashMap<String, Object>) rawValue;
+      LinkedHashMap<String, FieldInstanceArtifact> groupFields = new LinkedHashMap<>();
+      for (Map.Entry<String, Object> fieldEntry : groupNode.entrySet()) {
+        String fieldName = fieldEntry.getKey();
+        Object fieldRaw = fieldEntry.getValue();
+        if (!(fieldRaw instanceof LinkedHashMap<?, ?>))
+          throw new ArtifactParseException("Expected map value for attribute-value field " + fieldName, key, path);
+        groupFields.put(fieldName,
+          readFieldInstanceArtifact((LinkedHashMap<String, Object>) fieldRaw, path + "/" + key + "/" + fieldName));
+      }
+      sink.accept(key, groupFields);
+    }
   }
 
   /**
@@ -442,8 +498,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       jsonLdTypes.add(URI.create(datatype.get()));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
     Optional<String> jsonLdValue = readString(sourceNode, path, VALUE, true);
-    Optional<String> label = readString(sourceNode, path, "label", true);
-    Optional<String> notation = readString(sourceNode, path, "notation", true);
+    Optional<String> label = readString(sourceNode, path, LABEL, true);
+    Optional<String> notation = readString(sourceNode, path, NOTATION, true);
     Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL, true);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
 
