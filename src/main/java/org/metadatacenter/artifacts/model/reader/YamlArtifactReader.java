@@ -37,6 +37,7 @@ import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -795,7 +796,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     else if (rawValue instanceof String) {
       try {
         return new URI((String)rawValue);
-      } catch (Exception e) {
+      } catch (URISyntaxException e) {
         throw new ArtifactParseException("Invalid URI " + rawValue, fieldKey, path);
       }
     } else
@@ -817,7 +818,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     else if (rawValue instanceof String) {
       try {
         return Optional.of(new URI((String)rawValue));
-      } catch (Exception e) {
+      } catch (URISyntaxException e) {
         throw new ArtifactParseException("Invalid URI " + rawValue, fieldKey, path);
       }
     } else
