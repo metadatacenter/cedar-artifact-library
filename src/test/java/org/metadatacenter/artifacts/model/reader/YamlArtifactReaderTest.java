@@ -2,9 +2,9 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
@@ -19,7 +19,7 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
@@ -53,7 +53,7 @@ public class YamlArtifactReaderTest
   private YamlArtifactReader artifactReader;
   private ObjectMapper objectMapper;
 
-  @Before public void setup()
+  @BeforeEach public void setup()
   {
     artifactReader = new YamlArtifactReader();
     objectMapper = new ObjectMapper(new YAMLFactory());
@@ -171,7 +171,7 @@ public class YamlArtifactReaderTest
   }
 
   // TODO Need to activate this
-  @Ignore @Test public void readFieldSchemaArtifactTest()
+  @Disabled @Test public void readFieldSchemaArtifactTest()
   {
     String fieldKey = "study_name";
     String fieldName = "Study Name";

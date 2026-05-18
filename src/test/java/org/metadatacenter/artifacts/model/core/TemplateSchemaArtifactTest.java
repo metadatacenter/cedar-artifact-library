@@ -1,9 +1,10 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TemplateSchemaArtifactTest
 {
@@ -71,10 +72,9 @@ public class TemplateSchemaArtifactTest
     assertEquals(templateSchemaArtifact.templateUi().propertyDescriptions().get(textFieldName2), textField2Description);
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testMissingName()
   {
-    TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
-      .build();
+    Assertions.assertThrows(IllegalStateException.class, () -> TemplateSchemaArtifact.builder().build());
   }
 }

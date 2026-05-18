@@ -1,6 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
@@ -8,7 +8,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import java.net.URI;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ControlledTermValueConstraintsActionTest
 {
