@@ -10,27 +10,10 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface EmailField extends FieldSchemaArtifact
 {
@@ -53,7 +36,7 @@ public sealed interface EmailField extends FieldSchemaArtifact
 
   static EmailFieldBuilder builder(EmailField emailField) {return new EmailFieldBuilder(emailField);}
 
-  final class EmailFieldBuilder extends FieldSchemaArtifactBuilder
+  final class EmailFieldBuilder extends FieldSchemaArtifactBuilder<EmailField.EmailFieldBuilder>
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
@@ -69,13 +52,10 @@ public sealed interface EmailField extends FieldSchemaArtifact
     public EmailFieldBuilder(EmailField emailField)
     {
       super(emailField);
-
       this.fieldUiBuilder = FieldUi.builder(emailField.fieldUi());
-      if (emailField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(
-          emailField.valueConstraints().get().asTextValueConstraints());
-      else
-        this.valueConstraintsBuilder = TextValueConstraints.builder();
+      this.valueConstraintsBuilder = emailField.valueConstraints()
+        .map(vc -> TextValueConstraints.builder(vc.asTextValueConstraints()))
+        .orElseGet(TextValueConstraints::builder);
     }
 
     @Override public EmailFieldBuilder withRequiredValue(boolean requiredValue)
@@ -84,21 +64,9 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    public EmailFieldBuilder withDefaultValue(String defaultValue)
+    @Override public EmailFieldBuilder withRecommendedValue(boolean recommendedValue)
     {
-      valueConstraintsBuilder.withDefaultValue(defaultValue);
-      return this;
-    }
-
-    public EmailFieldBuilder withMinLength(Integer minLength)
-    {
-      valueConstraintsBuilder.withMinLength(minLength);
-      return this;
-    }
-
-    public EmailFieldBuilder withMaxLength(Integer maxLength)
-    {
-      valueConstraintsBuilder.withMaxLength(maxLength);
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -120,153 +88,21 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public EmailFieldBuilder withRecommendedValue(boolean recommendedValue)
+    public EmailFieldBuilder withDefaultValue(String defaultValue)
     {
-      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      valueConstraintsBuilder.withDefaultValue(defaultValue);
       return this;
     }
 
-    @Override public EmailFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
+    public EmailFieldBuilder withMinLength(Integer minLength)
     {
-      super.withJsonLdContext(jsonLdContext);
+      valueConstraintsBuilder.withMinLength(minLength);
       return this;
     }
 
-    @Override public EmailFieldBuilder withJsonLdType(URI jsonLdType)
+    public EmailFieldBuilder withMaxLength(Integer maxLength)
     {
-      super.withJsonLdType(jsonLdType);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withJsonLdId(URI jsonLdId)
-    {
-      super.withJsonLdId(jsonLdId);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withName(String name)
-    {
-      super.withName(name);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withDescription(String description)
-    {
-      super.withDescription(description);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withIdentifier(String identifier)
-    {
-      super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withVersion(Version version)
-    {
-      super.withVersion(version);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withStatus(Status status)
-    {
-      super.withStatus(status);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withCreatedBy(URI createdBy)
-    {
-      super.withCreatedBy(createdBy);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withModifiedBy(URI modifiedBy)
-    {
-      super.withModifiedBy(modifiedBy);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withCreatedOn(OffsetDateTime createdOn)
-    {
-      super.withCreatedOn(createdOn);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-    {
-      super.withLastUpdatedOn(lastUpdatedOn);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withPreviousVersion(URI previousVersion)
-    {
-      super.withPreviousVersion(previousVersion);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withDerivedFrom(URI derivedFrom)
-    {
-      super.withDerivedFrom(derivedFrom);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withPreferredLabel(String preferredLabel)
-    {
-      super.withPreferredLabel(preferredLabel);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withAlternateLabels(List<String> alternateLabels)
-    {
-      super.withAlternateLabels(alternateLabels);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withIsMultiple(boolean isMultiple)
-    {
-      super.withIsMultiple(isMultiple);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withMinItems(Integer minItems)
-    {
-      super.withMinItems(minItems);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withMaxItems(Integer maxItems)
-    {
-      super.withMaxItems(maxItems);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withPropertyUri(URI propertyUri)
-    {
-      super.withPropertyUri(propertyUri);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withLanguage(String language)
-    {
-      super.withLanguage(language);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withInternalName(String internalName)
-    {
-      super.withInternalName(internalName);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withInternalDescription(String internalDescription)
-    {
-      super.withInternalDescription(internalDescription);
-      return this;
-    }
-
-    @Override public EmailFieldBuilder withAnnotations(Annotations annotations)
-    {
-      super.withAnnotations(annotations);
+      valueConstraintsBuilder.withMaxLength(maxLength);
       return this;
     }
 
@@ -294,33 +130,10 @@ record EmailFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> json
 {
   public EmailFieldRecord
   {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
-      Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
-    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
-    validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
-    validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
-    validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language, "language");
-    validateUiFieldNotNull(this, fieldUi, UI);
-    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(this, annotations, "annotations");
-
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
-
-    if (fieldUi.isStatic())
-      jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    else
-      jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-
+    FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
+      preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
+      fieldUi, valueConstraints, annotations);
+    jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

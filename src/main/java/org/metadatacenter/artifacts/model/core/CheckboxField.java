@@ -10,27 +10,10 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface CheckboxField extends FieldSchemaArtifact
 {
@@ -54,7 +37,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 
   static CheckboxFieldBuilder builder(CheckboxField checkboxField) {return new CheckboxFieldBuilder(checkboxField);}
 
-  final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder
+  final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder<CheckboxField.CheckboxFieldBuilder>
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
@@ -70,36 +53,21 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
     public CheckboxFieldBuilder(CheckboxField checkboxField)
     {
       super(checkboxField);
-
       this.fieldUiBuilder = FieldUi.builder(checkboxField.fieldUi());
-      if (checkboxField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = TextValueConstraints.builder(
-          checkboxField.valueConstraints().get().asTextValueConstraints());
-      else
-        this.valueConstraintsBuilder = TextValueConstraints.builder();
-    }
-
-    public CheckboxFieldBuilder withDefaultValue(String defaultValue)
-    {
-      valueConstraintsBuilder.withDefaultValue(defaultValue);
-      return this;
-    }
-
-    public CheckboxFieldBuilder withOption(String choice, boolean selectedByDefault)
-    {
-      valueConstraintsBuilder.withChoice(choice, selectedByDefault);
-      return this;
-    }
-
-    public CheckboxFieldBuilder withOption(String choice)
-    {
-      valueConstraintsBuilder.withChoice(choice, false);
-      return this;
+      this.valueConstraintsBuilder = checkboxField.valueConstraints()
+        .map(vc -> TextValueConstraints.builder(vc.asTextValueConstraints()))
+        .orElseGet(TextValueConstraints::builder);
     }
 
     @Override public CheckboxFieldBuilder withRequiredValue(boolean requiredValue)
     {
       valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public CheckboxFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
       return this;
     }
 
@@ -121,147 +89,21 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withRecommendedValue(boolean recommendedValue)
+    public CheckboxFieldBuilder withDefaultValue(String defaultValue)
     {
-      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      valueConstraintsBuilder.withDefaultValue(defaultValue);
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
+    public CheckboxFieldBuilder withOption(String choice, boolean selectedByDefault)
     {
-      super.withJsonLdContext(jsonLdContext);
+      valueConstraintsBuilder.withChoice(choice, selectedByDefault);
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withJsonLdType(URI jsonLdType)
+    public CheckboxFieldBuilder withOption(String choice)
     {
-      super.withJsonLdType(jsonLdType);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withJsonLdId(URI jsonLdId)
-    {
-      super.withJsonLdId(jsonLdId);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withName(String name)
-    {
-      super.withName(name);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withDescription(String description)
-    {
-      super.withDescription(description);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withIdentifier(String identifier)
-    {
-      super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withVersion(Version version)
-    {
-      super.withVersion(version);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withStatus(Status status)
-    {
-      super.withStatus(status);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withCreatedBy(URI createdBy)
-    {
-      super.withCreatedBy(createdBy);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withModifiedBy(URI modifiedBy)
-    {
-      super.withModifiedBy(modifiedBy);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withCreatedOn(OffsetDateTime createdOn)
-    {
-      super.withCreatedOn(createdOn);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-    {
-      super.withLastUpdatedOn(lastUpdatedOn);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withPreviousVersion(URI previousVersion)
-    {
-      super.withPreviousVersion(previousVersion);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withDerivedFrom(URI derivedFrom)
-    {
-      super.withDerivedFrom(derivedFrom);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withPreferredLabel(String preferredLabel)
-    {
-      super.withPreferredLabel(preferredLabel);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withAlternateLabels(List<String> alternateLabels)
-    {
-      super.withAlternateLabels(alternateLabels);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withMinItems(Integer minItems)
-    {
-      super.withMinItems(minItems);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withMaxItems(Integer maxItems)
-    {
-      super.withMaxItems(maxItems);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withPropertyUri(URI propertyUri)
-    {
-      super.withPropertyUri(propertyUri);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withLanguage(String language)
-    {
-      super.withLanguage(language);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withInternalName(String internalName)
-    {
-      super.withInternalName(internalName);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withInternalDescription(String internalDescription)
-    {
-      super.withInternalDescription(internalDescription);
-      return this;
-    }
-
-    @Override public CheckboxFieldBuilder withAnnotations(Annotations annotations)
-    {
-      super.withAnnotations(annotations);
+      valueConstraintsBuilder.withChoice(choice, false);
       return this;
     }
 
@@ -269,7 +111,6 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
     {
       withFieldUi(fieldUiBuilder.build());
       withValueConstraints(valueConstraintsBuilder.build());
-
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
         previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
@@ -290,33 +131,10 @@ record CheckboxFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> j
 {
   public CheckboxFieldRecord
   {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
-      Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
-    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
-    validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
-    validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
-    validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language, "language");
-    validateUiFieldNotNull(this, fieldUi, UI);
-    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(this, annotations, "annotations");
-
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be lass than maxItems in element schema artifact " + name);
-
-    if (fieldUi.isStatic())
-      jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    else
-      jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-
+    FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
+      preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
+      fieldUi, valueConstraints, annotations);
+    jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }
