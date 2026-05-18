@@ -1,7 +1,6 @@
 package org.metadatacenter.artifacts.model.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
@@ -83,124 +82,99 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
     List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
     Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations)
   {
-    // TODO Use typesafe switch when available
-    if (fieldUi.inputType() == FieldInputType.TEXTFIELD) {
-      if (valueConstraints.isPresent() && valueConstraints.get().isControlledTermValueConstraint())
-        return ControlledTermField.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
-          description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
-          propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
-          fieldUi, valueConstraints, annotations);
-      else
-        return TextField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
-          internalName, internalDescription);
-    } else if (fieldUi.inputType() == FieldInputType.TEXTAREA)
-      return TextAreaField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.PHONE_NUMBER)
-      return PhoneNumberField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+    return switch (fieldUi.inputType()) {
+      case TEXTFIELD -> (valueConstraints.isPresent() && valueConstraints.get().isControlledTermValueConstraint())
+        ? ControlledTermField.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, name,
+            description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
+            propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
+            fieldUi, valueConstraints, annotations)
+        : TextField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+            previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+            lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+            internalName, internalDescription);
+      case TEXTAREA -> TextAreaField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
+        version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints,
+        annotations, internalName, internalDescription);
+      case PHONE_NUMBER -> PhoneNumberField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
+        version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints,
+        annotations, internalName, internalDescription);
+      case EMAIL -> EmailField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
         status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
         createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
         internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.EMAIL)
-      return EmailField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      case RADIO -> RadioField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
         internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.RADIO)
-      return RadioField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.CHECKBOX)
-      return CheckboxField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.LIST)
-      return ListField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.LINK)
-      return LinkField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.ROR)
-      return RorField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.ORCID)
-      return OrcidField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.PFAS)
-      return PfasField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-          internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.RRID)
-      return RridField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-          internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.PUBMED)
-      return PubMedField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-          internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.NIH_GRANT_ID)
-      return NihGrantIdField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-          internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.DOI)
-      return DoiField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-          previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-          lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-          internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.NUMERIC)
-      return NumericField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asNumericFieldUi(), valueConstraints,
-        annotations, internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.TEMPORAL)
-      return TemporalField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(), valueConstraints,
-        annotations, internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.ATTRIBUTE_VALUE)
-      return AttributeValueField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      case CHECKBOX -> CheckboxField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
+        version, status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
+      case LIST -> ListField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
         status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
         createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
         internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.PAGE_BREAK)
-      return PageBreakField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels,
-        language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.SECTION_BREAK)
-      return SectionBreakField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
-        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, language,
-        fieldUi, annotations, internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.RICHTEXT)
-      return RichTextField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
-        fieldUi.asStaticFieldUi(), annotations, internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.IMAGE)
-      return ImageField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
-        fieldUi, annotations, internalName, internalDescription);
-    else if (fieldUi.inputType() == FieldInputType.YOUTUBE)
-      return YouTubeField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, fieldUi, annotations,
+      case LINK -> LinkField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
         internalName, internalDescription);
-    else
-      throw new IllegalArgumentException("unknown input type " + fieldUi.inputType() + " for field " + name);
+      case ROR -> RorField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+        internalDescription);
+      case ORCID -> OrcidField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
+      case PFAS -> PfasField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
+      case RRID -> RridField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
+      case PUBMED -> PubMedField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+        internalName, internalDescription);
+      case NIH_GRANT_ID -> NihGrantIdField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
+        version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints,
+        annotations, internalName, internalDescription);
+      case DOI -> DoiField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
+        previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+        internalDescription);
+      case NUMERIC -> NumericField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+        createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asNumericFieldUi(),
+        valueConstraints, annotations, internalName, internalDescription);
+      case TEMPORAL -> TemporalField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
+        version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy,
+        modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(),
+        valueConstraints, annotations, internalName, internalDescription);
+      case ATTRIBUTE_VALUE -> AttributeValueField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
+        identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
+        createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
+        valueConstraints, annotations, internalName, internalDescription);
+      case PAGE_BREAK -> PageBreakField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
+        version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
+      case SECTION_BREAK -> SectionBreakField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
+        identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        preferredLabel, language, fieldUi, annotations, internalName, internalDescription);
+      case RICHTEXT -> RichTextField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
+        version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language,
+        preferredLabel, fieldUi.asStaticFieldUi(), annotations, internalName, internalDescription);
+      case IMAGE -> ImageField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
+        fieldUi, annotations, internalName, internalDescription);
+      case YOUTUBE -> YouTubeField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, fieldUi,
+        annotations, internalName, internalDescription);
+    };
   }
 }
