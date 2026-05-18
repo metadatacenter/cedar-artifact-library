@@ -381,4 +381,3 @@ record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, L
     attributeValueFieldInstanceGroups = new LinkedHashMap<>(attributeValueFieldInstanceGroups);
   }
 }
-

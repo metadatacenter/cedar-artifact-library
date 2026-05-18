@@ -108,4 +108,3 @@ record ElementUiRecord(List<String> order,
     propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
   }
 }
-

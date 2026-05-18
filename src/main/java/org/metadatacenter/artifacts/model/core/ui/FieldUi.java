@@ -157,4 +157,3 @@ record FieldUiRecord(FieldInputType inputType, boolean hidden, boolean continueP
         "The " + TemporalFieldUi.class.getName() + " class should be used for temporal field UIs");
   }
 }
-

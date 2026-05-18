@@ -190,4 +190,3 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
   }
 
 }
-

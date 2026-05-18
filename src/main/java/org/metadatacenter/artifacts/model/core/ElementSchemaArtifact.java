@@ -416,4 +416,3 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
     elementSchemas = new LinkedHashMap<>(elementSchemas);
   }
 }
-
