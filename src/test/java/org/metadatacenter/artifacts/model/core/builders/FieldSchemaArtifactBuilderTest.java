@@ -1055,4 +1055,114 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(content, clonedRichTextField.fieldUi().asStaticFieldUi()._content().get());
   }
 
+  // ---------------- Group A: previously-untested linked-style field schemas ----------------
+
+  @Test
+  public void testCreateDoiField() {
+    String name = "DOI";
+    String description = "Document DOI";
+    URI defaultURI = URI.create("https://doi.org/10.82658/8vc1-abcd");
+
+    DoiField doiField = DoiField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    Assertions.assertEquals(FieldInputType.DOI, doiField.fieldUi().inputType());
+    Assertions.assertEquals(name, doiField.name());
+    Assertions.assertEquals(description, doiField.description());
+    Assertions.assertEquals(defaultURI,
+        doiField.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+  }
+
+  @Test
+  public void testCreateDoiFieldWithCopyBuilder() {
+    URI defaultURI = URI.create("https://doi.org/10.82658/8vc1-abcd");
+    DoiField initial = DoiField.builder().withName("DOI").withDescription("desc")
+        .withDefaultValue(defaultURI).build();
+
+    DoiField cloned = new DoiField.DoiFieldBuilder(initial).build();
+
+    Assertions.assertEquals(initial, cloned);
+  }
+
+  @Test
+  public void testCreateNihGrantIdField() {
+    String name = "Grant";
+    String description = "NIH grant identifier";
+    URI defaultURI = URI.create("https://reporter.nih.gov/grant/R01CA000000");
+
+    NihGrantIdField field = NihGrantIdField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    Assertions.assertEquals(FieldInputType.NIH_GRANT_ID, field.fieldUi().inputType());
+    Assertions.assertEquals(name, field.name());
+    Assertions.assertEquals(description, field.description());
+    Assertions.assertEquals(defaultURI,
+        field.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+  }
+
+  @Test
+  public void testCreateNihGrantIdFieldWithCopyBuilder() {
+    URI defaultURI = URI.create("https://reporter.nih.gov/grant/R01CA000000");
+    NihGrantIdField initial = NihGrantIdField.builder().withName("Grant").withDescription("desc")
+        .withDefaultValue(defaultURI).build();
+
+    NihGrantIdField cloned = new NihGrantIdField.NihGrantIdFieldBuilder(initial).build();
+
+    Assertions.assertEquals(initial, cloned);
+  }
+
+  @Test
+  public void testCreatePubMedField() {
+    String name = "PMID";
+    String description = "PubMed identifier";
+    URI defaultURI = URI.create("https://pubmed.ncbi.nlm.nih.gov/12345");
+
+    PubMedField field = PubMedField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    Assertions.assertEquals(FieldInputType.PUBMED, field.fieldUi().inputType());
+    Assertions.assertEquals(name, field.name());
+    Assertions.assertEquals(description, field.description());
+    Assertions.assertEquals(defaultURI,
+        field.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+  }
+
+  @Test
+  public void testCreatePubMedFieldWithCopyBuilder() {
+    URI defaultURI = URI.create("https://pubmed.ncbi.nlm.nih.gov/12345");
+    PubMedField initial = PubMedField.builder().withName("PMID").withDescription("desc")
+        .withDefaultValue(defaultURI).build();
+
+    PubMedField cloned = new PubMedField.PubMedFieldBuilder(initial).build();
+
+    Assertions.assertEquals(initial, cloned);
+  }
+
+  @Test
+  public void testCreateRridField() {
+    String name = "RRID";
+    String description = "Research resource identifier";
+    URI defaultURI = URI.create("https://scicrunch.org/resolver/RRID:AB_123");
+
+    RridField field = RridField.builder().withName(name).withDescription(description)
+        .withDefaultValue(defaultURI).build();
+
+    Assertions.assertEquals(FieldInputType.RRID, field.fieldUi().inputType());
+    Assertions.assertEquals(name, field.name());
+    Assertions.assertEquals(description, field.description());
+    Assertions.assertEquals(defaultURI,
+        field.valueConstraints().get().asLinkValueConstraints().defaultValue().get().termUri());
+  }
+
+  @Test
+  public void testCreateRridFieldWithCopyBuilder() {
+    URI defaultURI = URI.create("https://scicrunch.org/resolver/RRID:AB_123");
+    RridField initial = RridField.builder().withName("RRID").withDescription("desc")
+        .withDefaultValue(defaultURI).build();
+
+    RridField cloned = new RridField.RridFieldBuilder(initial).build();
+
+    Assertions.assertEquals(initial, cloned);
+  }
+
 }

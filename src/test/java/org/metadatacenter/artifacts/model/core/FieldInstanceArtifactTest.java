@@ -254,4 +254,48 @@ public class FieldInstanceArtifactTest
     assertEquals(notation, fieldInstance.notation().get());
     assertEquals(preferredLabel, fieldInstance.preferredLabel().get());
   }
+
+  // ---------------- Group B: previously-untested instance builders & sealed classifiers ----
+
+  @Test
+  public void doiFieldInstanceTest()
+  {
+    String label = "Resolvable DOI";
+    URI uri = URI.create("https://doi.org/10.82658/8vc1-abcd");
+
+    DoiFieldInstance instance = DoiFieldInstance.builder().withLabel(label).withValue(uri).build();
+
+    assertEquals(label, instance.label().get());
+    assertEquals(uri, instance.jsonLdId().get());
+  }
+
+  @Test
+  public void nihGrantIdFieldInstanceTest()
+  {
+    String label = "NIH grant";
+    URI uri = URI.create("https://reporter.nih.gov/grant/R01CA000000");
+
+    NihGrantIdFieldInstance instance = NihGrantIdFieldInstance.builder().withLabel(label).withValue(uri).build();
+
+    assertEquals(label, instance.label().get());
+    assertEquals(uri, instance.jsonLdId().get());
+  }
+
+  @Test
+  public void textFieldInstanceIsLiteralFieldInstance()
+  {
+    // Sealed-hierarchy guard: literal-style instances must implement LiteralFieldInstance so that
+    // exhaustive switch / pattern-match expressions covering the sealed interface remain correct.
+    TextFieldInstance instance = TextFieldInstance.builder().withValue("hello").build();
+    assertTrue(instance instanceof LiteralFieldInstance);
+  }
+
+  @Test
+  public void rorFieldInstanceIsIriFieldInstance()
+  {
+    // Sealed-hierarchy guard: IRI-style instances must implement IriFieldInstance.
+    RorFieldInstance instance = RorFieldInstance.builder()
+        .withLabel("University of Chicago").withValue(URI.create("https://ror.org/024mw5h28")).build();
+    assertTrue(instance instanceof IriFieldInstance);
+  }
 }
