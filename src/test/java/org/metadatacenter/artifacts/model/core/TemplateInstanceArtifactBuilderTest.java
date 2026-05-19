@@ -61,4 +61,29 @@ public class TemplateInstanceArtifactBuilderTest
     assertThrows(IllegalArgumentException.class,
       () -> builder.withAttributeValueFieldGroup("attrs", group));
   }
+
+  @Test public void testWithoutAttributeValueFieldGroupAllowsReadditionUnderSameName()
+  {
+    LinkedHashMap<String, FieldInstanceArtifact> first = new LinkedHashMap<>();
+    first.put("attr1", literal("a"));
+    LinkedHashMap<String, FieldInstanceArtifact> second = new LinkedHashMap<>();
+    second.put("attr1", literal("b"));
+
+    // Remove must clear childKeys cleanly enough that re-adding under the same name works.
+    TemplateInstanceArtifact instance = minimalBuilder()
+      .withAttributeValueFieldGroup("custom", first)
+      .withoutAttributeValueFieldGroup("custom")
+      .withAttributeValueFieldGroup("custom", second)
+      .build();
+
+    assertEquals("b", instance.attributeValueFieldInstanceGroups().get("custom").get("attr1").jsonLdValue().get());
+  }
+
+  @Test public void testWithoutAttributeValueFieldGroupRejectsAbsentName()
+  {
+    TemplateInstanceArtifact.Builder builder = minimalBuilder();
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+      () -> builder.withoutAttributeValueFieldGroup("never-added"));
+    assertTrue(ex.getMessage().contains("not present"));
+  }
 }
