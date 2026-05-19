@@ -108,9 +108,10 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     }
 
     public ControlledTermFieldBuilder withOntologyValueConstraint(URI uri, String acronym, String name,
-      Optional<Integer> numTerms)
+      Integer numTerms)
     {
-      valueConstraintsBuilder.withOntologyValueConstraint(new OntologyValueConstraint(uri, acronym, name, numTerms));
+      valueConstraintsBuilder.withOntologyValueConstraint(
+        new OntologyValueConstraint(uri, acronym, name, Optional.of(numTerms)));
       return this;
     }
 
