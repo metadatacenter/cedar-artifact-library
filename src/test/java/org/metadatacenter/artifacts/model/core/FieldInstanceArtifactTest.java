@@ -255,8 +255,6 @@ public class FieldInstanceArtifactTest
     assertEquals(preferredLabel, fieldInstance.preferredLabel().get());
   }
 
-  // ---------------- Group B: previously-untested instance builders & sealed classifiers ----
-
   @Test
   public void doiFieldInstanceTest()
   {

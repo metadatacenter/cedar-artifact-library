@@ -10,10 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Group E (element instance) — exercises the multi-child / attribute-value / removal paths and
- * their duplicate / missing validation guards.
- */
 public class ElementInstanceArtifactBuilderTest
 {
   private static FieldInstanceArtifact literal(String value)

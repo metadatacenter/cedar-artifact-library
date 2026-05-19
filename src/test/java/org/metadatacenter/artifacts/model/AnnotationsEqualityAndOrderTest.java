@@ -13,11 +13,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * Group K — Annotations equality and JSON round-trip ordering. Annotations is a record
- * around a LinkedHashMap; the equality semantics and the JSON renderer's ordering both
- * deserve explicit pinning.
- */
 public class AnnotationsEqualityAndOrderTest
 {
   private JsonArtifactReader reader;
@@ -31,10 +26,8 @@ public class AnnotationsEqualityAndOrderTest
 
   @Test public void testAnnotationsEqualityIgnoresInsertionOrder()
   {
-    // Annotations is a record wrapping a LinkedHashMap; LinkedHashMap.equals checks
-    // entry-by-entry without regard to insertion order. Pin this contract — if someone
-    // refactors equality to be order-sensitive, downstream callers that compare annotations
-    // built in different orders would silently break.
+    // Annotations wraps a LinkedHashMap; LinkedHashMap.equals is entry-by-entry without
+    // regard to insertion order.
     Annotations a = Annotations.builder()
       .withLiteralAnnotation("x", "1")
       .withLiteralAnnotation("y", "2")
@@ -50,9 +43,7 @@ public class AnnotationsEqualityAndOrderTest
 
   @Test public void testJsonRoundTripPreservesAnnotationInsertionOrder()
   {
-    // Even though equality is order-insensitive, the renderer's *output* should be ordered
-    // (so YAML/JSON files have stable diffs). Verify the round-tripped Annotations preserves
-    // the original insertion order.
+    // Renderer output is ordered so YAML/JSON files have stable diffs.
     Annotations annotations = Annotations.builder()
       .withLiteralAnnotation("z", "1")
       .withLiteralAnnotation("a", "2")

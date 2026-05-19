@@ -31,10 +31,8 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_T
 import static org.metadatacenter.model.ModelNodeNames.UI;
 
 /**
- * Group A — JsonArtifactReader negative paths. The existing JsonArtifactReaderTest is all
- * happy-path fixture loads; these tests cover the 25 throw sites in the reader to ensure
- * malformed input fails fast with useful exceptions instead of producing silently-wrong
- * artifacts.
+ * Negative-path tests for JsonArtifactReader: malformed input must fail fast with a useful
+ * exception rather than producing a silently-wrong artifact.
  */
 public class JsonArtifactReaderNegativePathsTest
 {
@@ -59,8 +57,7 @@ public class JsonArtifactReaderNegativePathsTest
 
   @Test public void testReadTemplateThrowsOnWrongJsonLdType()
   {
-    // A template document tagged with the element IRI should be rejected — silently accepting
-    // would let consumers cast Element→Template downstream and explode.
+    // A template document tagged with the element IRI must be rejected, not silently coerced.
     ObjectNode node = baseTemplate("T", "d");
     node.put(JSON_LD_TYPE, ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI);
 
@@ -79,7 +76,6 @@ public class JsonArtifactReaderNegativePathsTest
 
   @Test public void testReadFieldThrowsOnMalformedVersion()
   {
-    // Parallels JsonNodeReaders.readVersion contract (PR #43) — through the public API.
     ObjectNode node = baseField("Test", "d");
     node.put(PAV_VERSION, "not-a-version");
     node.with(UI).put("inputType", "textfield");
@@ -91,8 +87,7 @@ public class JsonArtifactReaderNegativePathsTest
 
   @Test public void testReadTemplateInstanceThrowsOnMissingIsBasedOn()
   {
-    // A template-instance with no isBasedOn is unparseable — we'd have nothing to validate
-    // the instance against.
+    // Without `isBasedOn` there's no template to validate the instance against.
     ObjectNode node = mapper.createObjectNode();
     node.put(JSON_LD_TYPE, mapper.createArrayNode());
     node.put(SCHEMA_ORG_NAME, "Inst");
@@ -148,12 +143,11 @@ public class JsonArtifactReaderNegativePathsTest
     assertThrows(Exception.class, () -> JsonNodeReaders.readOffsetDateTime(node, "/", "ts"));
   }
 
-  // ---- Group I: JSON shape robustness ----
+  // ---- JSON shape robustness ----
 
   @Test public void testReadTemplateThrowsOnArrayProperties()
   {
-    // The JSON Schema `properties` value must be an object. An array (or any non-object)
-    // is malformed.
+    // JSON Schema `properties` must be an object; an array (or other non-object) is malformed.
     ObjectNode node = baseTemplate("T", "d");
     node.set(JSON_SCHEMA_PROPERTIES, mapper.createArrayNode());
 
@@ -174,7 +168,6 @@ public class JsonArtifactReaderNegativePathsTest
 
   @Test public void testReadFieldThrowsOnMissingUi()
   {
-    // The `_ui` block is required on every field schema; its absence is malformed.
     ObjectNode node = baseField("Test", "d");
     node.remove(UI);
 
@@ -183,8 +176,7 @@ public class JsonArtifactReaderNegativePathsTest
 
   @Test public void testReadTemplateThrowsOnWrongJsonSchemaType()
   {
-    // The top-level `type` JSON-Schema key must be `object`; rejecting `array` keeps the
-    // reader from accepting documents that look superficially right.
+    // Top-level JSON Schema `type` must be `object`.
     ObjectNode node = baseTemplate("T", "d");
     node.put(JSON_SCHEMA_TYPE, "array");
 

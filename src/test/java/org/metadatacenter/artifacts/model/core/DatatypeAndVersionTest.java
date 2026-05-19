@@ -13,11 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Group H — enum / datatype round-trips.
+ * Round-trips for enum / datatype {@code fromString} parsers, plus {@link Version#fromString}.
  *
- * <p>The {@link XsdNumericDatatype#fromString} round-trip notably collides on
- * {@code "xsd:int"} (mapped by both {@code INT} and {@code INTEGER}), so the test
- * asserts the observed first-wins behavior rather than a per-constant identity.
+ * <p>Note: {@link XsdNumericDatatype#fromString} collides on {@code "xsd:int"} (both
+ * {@code INT} and {@code INTEGER} carry that text), so the round-trip is checked on text
+ * equality rather than enum identity. See {@code CoreContractPinningTest} for the explicit
+ * first-wins pinning.
  */
 public class DatatypeAndVersionTest
 {
@@ -68,7 +69,7 @@ public class DatatypeAndVersionTest
 
   @Test public void testVersionFromStringRejectsMalformed()
   {
-    // Sanity for the JsonNodeReaders.readVersion / readModelVersion guard added in PR #43.
+    // JsonNodeReaders.readVersion / readModelVersion rely on this contract — keep them aligned.
     assertThrows(IllegalArgumentException.class, () -> Version.fromString("not-a-version"));
     assertThrows(IllegalArgumentException.class, () -> Version.fromString("1.2"));
     assertThrows(IllegalArgumentException.class, () -> Version.fromString("v1.0.0"));

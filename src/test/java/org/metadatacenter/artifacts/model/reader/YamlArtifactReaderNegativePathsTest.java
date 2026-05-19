@@ -11,9 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Group D — YAML reader negative paths. The reader has well-defined throws at boundaries
- * (children must be a list, child entries must be maps, types must be known) that no test
- * exercised. Hand-authored YAML is common so these messages have to surface useful errors.
+ * Negative-path tests for YamlArtifactReader: hand-authored YAML is common, so malformed
+ * documents must surface useful error messages rather than producing wrong artifacts.
  */
 public class YamlArtifactReaderNegativePathsTest
 {
@@ -87,8 +86,7 @@ public class YamlArtifactReaderNegativePathsTest
 
   @Test public void testReadVersionRejectsInvalidString()
   {
-    // Mirrors the JSON readVersion contract (PR #43) on the YAML side. A field with an
-    // invalid `version:` must surface a parse error, not silently coerce.
+    // An invalid `version:` must surface a parse error, not silently coerce.
     LinkedHashMap<String, Object> field = new LinkedHashMap<>();
     field.put("type", "text-field");
     field.put("name", "X");

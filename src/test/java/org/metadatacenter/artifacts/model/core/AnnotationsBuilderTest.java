@@ -11,11 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Group F — Annotations.Builder coverage. The annotations map is order-preserving, so the
- * order assertion is a real invariant (YAML and JSON renderers both emit entries in builder
- * order).
- */
 public class AnnotationsBuilderTest
 {
   @Test public void testLiteralAndIriAnnotationsMixed()
