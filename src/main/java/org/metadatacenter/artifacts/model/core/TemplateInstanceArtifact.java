@@ -345,7 +345,23 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    // TODO Add withoutAttributeValueFieldGroup
+    public Builder withoutAttributeValueFieldGroup(String attributeValueFieldGroupName) {
+      if (!childKeys.contains(attributeValueFieldGroupName)
+          || !attributeValueFieldInstanceGroups.containsKey(attributeValueFieldGroupName)) {
+        throw new IllegalArgumentException(
+            "attribute-value field group " + attributeValueFieldGroupName + " not present in instance");
+      }
+
+      // Remove both the group name itself and each inner field-instance name from childKeys.
+      Map<String, FieldInstanceArtifact> groupEntries =
+          attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName);
+      childKeys.removeAll(groupEntries.keySet());
+      childKeys.remove(attributeValueFieldGroupName);
+
+      attributeValueFieldInstanceGroups.remove(attributeValueFieldGroupName);
+
+      return this;
+    }
 
     public TemplateInstanceArtifact build() {
       return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,

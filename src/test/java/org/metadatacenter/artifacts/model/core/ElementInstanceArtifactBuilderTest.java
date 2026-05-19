@@ -64,6 +64,31 @@ public class ElementInstanceArtifactBuilderTest
     assertTrue(ex.getMessage().contains("not present"));
   }
 
+  @Test public void testWithoutAttributeValueFieldGroupRemovesGroupAndInnerKeys()
+  {
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("attr1", literal("a"));
+    group.put("attr2", literal("b"));
+
+    ElementInstanceArtifact element = ElementInstanceArtifact.builder()
+      .withAttributeValueFieldGroup("custom-attrs", group)
+      .withoutAttributeValueFieldGroup("custom-attrs")
+      .build();
+
+    assertTrue(element.attributeValueFieldInstanceGroups().isEmpty());
+    // Both the group name and the inner attribute names must come back out of childKeys,
+    // otherwise re-adding either would fail the duplicate-child check.
+    assertTrue(element.childKeys().isEmpty());
+  }
+
+  @Test public void testWithoutAttributeValueFieldGroupRejectsAbsentName()
+  {
+    ElementInstanceArtifact.Builder builder = ElementInstanceArtifact.builder();
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+      () -> builder.withoutAttributeValueFieldGroup("never-added"));
+    assertTrue(ex.getMessage().contains("not present"));
+  }
+
   @Test public void testWithAttributeValueFieldGroupRejectsOverlappingKey()
   {
     // Group field-instance names must not collide with already-registered child keys.
