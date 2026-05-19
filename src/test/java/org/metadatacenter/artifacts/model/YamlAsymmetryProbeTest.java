@@ -22,9 +22,8 @@ import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Group E — round-trip *probes* targeted at fields the Explore survey flagged as potentially
- * being silently dropped by the YAML renderer / reader pair. If these tests pass, we confirm
- * symmetry; if they ever fail, we found a real silent-data-loss bug.
+ * Round-trip probes for individual field settings that the YAML renderer / reader pair has
+ * historically dropped. A failure here means a silent-data-loss bug in the YAML pipeline.
  */
 public class YamlAsymmetryProbeTest
 {
@@ -37,10 +36,9 @@ public class YamlAsymmetryProbeTest
     renderer = new YamlArtifactRenderer(false);
   }
 
-  // Captured as part of this PR: the renderer emits width/height but the reader doesn't
-  // wire them through for static fields. Disabled until the asymmetry is fixed; re-enable
-  // when YamlArtifactReader.readFieldUi handles static-field width/height.
-  @Disabled("Round-trip silently drops width/height on YouTube/Image fields — separate fix")
+  // Known bug: YamlArtifactReader.readFieldUi doesn't wire width/height through when
+  // constructing a StaticFieldUi, so the round-trip silently drops them.
+  @Disabled("YAML round-trip drops width/height on YouTube/Image fields")
   @Test public void testRoundTripPreservesYouTubeWidthHeight()
   {
     // Width/height live on YouTubeFieldUiBuilder; the field builder itself doesn't expose them.
@@ -55,14 +53,12 @@ public class YamlAsymmetryProbeTest
     assertEquals(480, roundTripped.fieldUi().asStaticFieldUi().height().get());
   }
 
-  // Captured as part of this PR: the renderer emits `valueRecommendation:` when the field UI
-  // flag is true, but the round-tripped artifact comes back with the flag false. The reader's
-  // readFieldUi reads VALUE_RECOMMENDATION at the field level, but the renderer emits it under
-  // the controlled-term values block (or vice versa). Disabled until the location agrees.
-  @Disabled("Round-trip silently drops valueRecommendation flag — separate fix")
+  // Known bug: the renderer and reader disagree on where `valueRecommendation:` lives
+  // (field-level vs. under the controlled-term values block), so the flag silently
+  // round-trips to false.
+  @Disabled("YAML round-trip drops valueRecommendation flag")
   @Test public void testRoundTripPreservesValueRecommendationOnControlledTerm()
   {
-    // The renderer emits `valueRecommendation:` only when true; this is a real round-trip probe.
     ControlledTermField original = ControlledTermField.builder()
       .withName("Disease").withValueRecommendationEnabled(true).build();
 

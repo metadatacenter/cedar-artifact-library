@@ -12,9 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Group G — Visitor pattern depth. Existing tests cover the single-template happy path; this
- * batch pins the contract for deeply nested templates and multi-instance children, which are
- * the harder paths consumers actually rely on (e.g., REDCap export, terminology lookups).
+ * Visitor coverage for deeply nested templates and multi-instance children — the paths
+ * consumers like REDCap export and terminology lookups exercise.
  */
 public class VisitorDepthTest
 {

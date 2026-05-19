@@ -10,12 +10,13 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Group G — cross-cutting copy-builder behavior. The YouTube positional-argument bug
- * (PR #37: outer `language` clobbered `preferredLabel` in the YOUTUBE arm of
- * `FieldSchemaArtifact.create`) was a copy/round-trip regression. These tests guard
- * against the same kind of slot mix-up across every concrete field type, plus the
- * annotations + value-constraints round-trip, and the nested-children paths on
- * template / element schemas.
+ * Cross-cutting copy-builder behavior across all field types, plus annotations and
+ * value-constraints preservation and nested-children copy on template / element schemas.
+ *
+ * <p>The parametrized {@code testCopyPreservesPreferredLabel} guards against positional-
+ * argument slot mix-ups in the {@code FieldSchemaArtifact.create} switch expression — the
+ * kind of bug where an outer variable silently fills the wrong slot for a particular field
+ * arm and the data round-trips to the wrong field.
  */
 public class FieldSchemaArtifactCopyTest
 {
@@ -47,8 +48,8 @@ public class FieldSchemaArtifactCopyTest
 
   @Test public void testCopyPreservesPreferredLabel()
   {
-    // Regression for PR #37: copy via FieldSchemaArtifact.create must preserve preferredLabel
-    // across every field arm of the switch expression.
+    // FieldSchemaArtifact.create must preserve preferredLabel across every field arm of the
+    // switch expression.
     for (FieldSchemaArtifact original : everyFieldVariant()) {
       FieldSchemaArtifact copy = FieldSchemaArtifact.create(
         original.internalName(), original.internalDescription(),

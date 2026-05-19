@@ -19,11 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Group J — focused JSON round-trip tests for attribute-value field groups. Existing
- * JsonArtifactRoundTripTest covers attribute-value via fixture files but asserts on the
- * whole artifact's equality — these tests pin the specific contract on
- * {@code attributeValueFieldInstanceGroups()} so a regression in the JSON shape (the
- * "array of names + sibling single instances" form) doesn't slip past.
+ * Focused JSON round-trip tests for attribute-value field groups. Pins the
+ * {@link TemplateInstanceArtifact#attributeValueFieldInstanceGroups()} contract against
+ * regressions in the JSON shape (array of names + sibling single instances).
  */
 public class JsonAttributeValueRoundTripTest
 {
@@ -66,8 +64,7 @@ public class JsonAttributeValueRoundTripTest
 
   @Test public void testJsonRoundTripPreservesAttributeValueEntryOrder()
   {
-    // The renderer serializes via an array of names + sibling single instances; entry order
-    // must survive the round-trip (UI consumers display fields in this order).
+    // UI consumers display attribute-value fields in builder order.
     LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
     group.put("z-attr", literal("3"));
     group.put("a-attr", literal("1"));
@@ -87,9 +84,8 @@ public class JsonAttributeValueRoundTripTest
 
   @Test public void testJsonRoundTripWithEmptyAttributeValueGroupRendersWithoutError()
   {
-    // Empty group is a degenerate case — the renderer's behavior here defines whether such
-    // a group survives at all. We don't assert it's preserved; we just pin that the round-trip
-    // doesn't throw, so consumers can pass through these instances safely.
+    // The empty-group case isn't required to survive (renderer may drop it), but the
+    // round-trip must not throw.
     TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("Inst")
       .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
       .withAttributeValueFieldGroup("empty", new LinkedHashMap<>())
@@ -98,8 +94,6 @@ public class JsonAttributeValueRoundTripTest
     ObjectNode json = renderer.renderTemplateInstanceArtifact(original);
     TemplateInstanceArtifact roundTripped = reader.readTemplateInstanceArtifact(json);
 
-    // Either the group survives (empty) or it gets dropped — both are acceptable; we just
-    // want the round-trip itself not to throw.
     assertEquals("Inst", roundTripped.name().get());
   }
 }

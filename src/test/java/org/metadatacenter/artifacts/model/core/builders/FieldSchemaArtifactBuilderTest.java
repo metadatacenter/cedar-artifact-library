@@ -1055,8 +1055,6 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(content, clonedRichTextField.fieldUi().asStaticFieldUi()._content().get());
   }
 
-  // ---------------- Group A: previously-untested linked-style field schemas ----------------
-
   @Test
   public void testCreateDoiField() {
     String name = "DOI";

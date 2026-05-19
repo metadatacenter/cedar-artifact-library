@@ -9,14 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Group D — null/invalid-arg validation paths in the field-schema and constraint builders.
- * The bug we caught in PR #37 (YouTubeField positional-argument slot) was exactly this kind
- * of latent issue: a constructor / setter that silently accepted the wrong value. These tests
- * lock in the visible invariants so future refactors don't loosen them.
+ * Null/invalid-arg validation paths in the field-schema and constraint builders. Pins the
+ * visible invariants so future refactors don't silently loosen them.
  */
 public class BuilderValidationTest
 {
-  // ------------------ FieldSchemaArtifactBuilder null guards (via TextField builder) ------
+  // ---- FieldSchemaArtifactBuilder null guards (via TextField builder) ----
 
   @Test public void testBuildRejectsNullName()
   {
@@ -70,7 +68,7 @@ public class BuilderValidationTest
       () -> TextField.builder().withVersion(null));
   }
 
-  // ------------------ TextValueConstraints negative paths -----------------------------
+  // ---- TextValueConstraints negative paths ----
 
   @Test public void testTextValueConstraintsBuilderRejectsEmptyDefaultValue()
   {

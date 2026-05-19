@@ -10,10 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Group E (template instance) — exercises duplicate / remove-then-re-add / attribute-value
- * conflict paths on the template-instance builder.
- */
 public class TemplateInstanceArtifactBuilderTest
 {
   private static FieldInstanceArtifact literal(String value)

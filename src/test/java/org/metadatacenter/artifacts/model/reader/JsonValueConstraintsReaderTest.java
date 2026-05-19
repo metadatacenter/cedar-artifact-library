@@ -19,16 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Group C — JsonValueConstraintsReader has 401 LOC and zero direct tests. Value constraints
- * control field validation, so silent bugs here mean fields validate the wrong things.
- */
 public class JsonValueConstraintsReaderTest
 {
   private final ObjectMapper mapper = new ObjectMapper();
-
-  // VALUE_CONSTRAINTS_* keys are all literal strings under JSON Schema; using literals here
-  // keeps the test focused on shape rather than constants.
 
   @Test public void testReadOntologyValueConstraint()
   {
@@ -61,7 +54,7 @@ public class JsonValueConstraintsReaderTest
     assertEquals(1, results.size());
     assertEquals("ONT1", results.get(0).acronym());
 
-    // Non-array value: returns empty (silently — documenting the contract).
+    // Non-array value silently returns empty rather than throwing.
     ObjectNode notArray = mapper.createObjectNode();
     notArray.put("ontologies", "not an array");
     assertTrue(
@@ -116,7 +109,6 @@ public class JsonValueConstraintsReaderTest
 
   @Test public void testReadValueConstraintsActionFullShape()
   {
-    // The action shape carries all fields; absence of the array node returns empty.
     ObjectNode action = mapper.createObjectNode();
     action.put("termUri", "https://purl.org/datacite/v4.4/TranslatedTitle");
     action.put("sourceUri", "https://purl.org/datacite/v4.4/TitleType");
@@ -132,7 +124,7 @@ public class JsonValueConstraintsReaderTest
     assertEquals(ValueConstraintsActionType.DELETE, result.action());
     assertEquals(5, result.to().get());
 
-    // And the array-reading helper bubbles up an exception on non-object entries.
+    // Array-reading helper throws on non-object entries.
     ObjectNode parent = mapper.createObjectNode();
     ArrayNode arr = parent.putArray("actions");
     arr.add("not-an-object");

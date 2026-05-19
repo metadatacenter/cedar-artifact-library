@@ -5,10 +5,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Group B — ArtifactParseException carries fieldKey + path that consumers parse for error
- * display. These tests pin the contract so refactors don't quietly drop the context.
- */
 public class ArtifactParseExceptionTest
 {
   @Test public void testPreservesFieldKey()
