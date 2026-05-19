@@ -25,4 +25,30 @@ public class NumericFieldUiTest
     assertEquals(continuePreviousLine, numericFieldUi.continuePreviousLine());
   }
 
+  @Test
+  public void testHiddenAndContinuePreviousLineSetters()
+  {
+    NumericFieldUi ui = NumericFieldUi.builder()
+      .withHidden(true)
+      .withContinuePreviousLine(true)
+      .build();
+
+    assertTrue(ui.hidden());
+    assertTrue(ui.continuePreviousLine());
+  }
+
+  @Test
+  public void testCopyBuilderPreservesSettings()
+  {
+    NumericFieldUi original = NumericFieldUi.builder()
+      .withHidden(true)
+      .withContinuePreviousLine(true)
+      .build();
+
+    NumericFieldUi copy = NumericFieldUi.builder(original).build();
+
+    assertEquals(original.hidden(), copy.hidden());
+    assertEquals(original.continuePreviousLine(), copy.continuePreviousLine());
+    assertEquals(original.inputType(), copy.inputType());
+  }
 }
