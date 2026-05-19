@@ -192,6 +192,24 @@ public class YamlArtifactRoundTripTest
     roundTripTemplate(original);
   }
 
+  // -------- Instance JSON-LD type --------
+
+  @Test public void testRoundTripTemplateWithInstanceJsonLdType()
+  {
+    URI instanceType = URI.create("https://schema.metadatacenter.org/types/Study");
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder().withName("Study")
+      .withInstanceJsonLdType(instanceType).build();
+    roundTripTemplate(original);
+  }
+
+  @Test public void testRoundTripElementWithInstanceJsonLdType()
+  {
+    URI instanceType = URI.create("https://schema.metadatacenter.org/types/Address");
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder().withName("Address")
+      .withInstanceJsonLdType(instanceType).build();
+    roundTripElement(original);
+  }
+
   // -------- Annotations --------
 
   @Test public void testRoundTripTemplateWithAnnotations()
