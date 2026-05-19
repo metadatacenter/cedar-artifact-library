@@ -125,6 +125,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CHILDREN;
@@ -555,7 +556,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
-    Optional<URI> instanceJsonLdType = Optional.empty(); // TODO Read instance JSON-LD type
+    Optional<URI> instanceJsonLdType = readUri(sourceNode, path, INSTANCE_TYPE);
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     Optional<Version> version = readVersion(sourceNode, path, VERSION);
@@ -590,7 +591,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
-    Optional<URI> instanceJsonLdType = Optional.empty(); // TODO Read instance JSON-LD type
+    Optional<URI> instanceJsonLdType = readUri(sourceNode, path, INSTANCE_TYPE);
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     Optional<Version> version = readVersion(sourceNode, path, VERSION);

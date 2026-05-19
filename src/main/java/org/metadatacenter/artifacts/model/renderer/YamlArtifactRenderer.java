@@ -81,6 +81,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
+    if (templateSchemaArtifact.instanceJsonLdType().isPresent())
+      rendering.put(INSTANCE_TYPE, templateSchemaArtifact.instanceJsonLdType().get().toString());
+
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
 
@@ -126,6 +129,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
+    if (elementSchemaArtifact.instanceJsonLdType().isPresent())
+      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
+
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (elementSchemaArtifact.hasChildren())
@@ -139,6 +145,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(elementKey, elementSchemaArtifact,
       ELEMENT);
+
+    if (elementSchemaArtifact.instanceJsonLdType().isPresent())
+      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
