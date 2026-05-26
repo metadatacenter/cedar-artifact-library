@@ -9,16 +9,12 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * One-shot regeneration utility for the golden YAML fixtures under
@@ -37,21 +33,13 @@ import java.util.Map;
  *     -> SnakeYAML dump (with non-YAML-native scalars stringified first)
  * }</pre>
  *
- * <p>Two libraryasymmetries are accommodated here, not by the consuming tool:
- * <ol>
- *   <li>{@link YamlArtifactRenderer} suppresses {@code modelVersion} / {@code version}
- *       / {@code status} in compact mode (its default); the YAML reader requires
- *       them. Non-compact mode is selected here.</li>
- *   <li>{@link YamlArtifactRenderer} leaves {@link URI}, {@link OffsetDateTime}, and
- *       field-datatype enums as live Java objects in the output map. SnakeYAML's
- *       default representer emits those with Java type tags
- *       ({@code !!java.net.URI {}}) that the YAML reader cannot ingest. This
- *       utility walks the map and stringifies any non-YAML-native scalar before
- *       handing it to SnakeYAML.</li>
- * </ol>
- *
- * <p>Both deserve a separate fix in the renderer; this utility unblocks downstream
- * consumers in the meantime.
+ * <p>One library asymmetry is accommodated here: {@link YamlArtifactRenderer}
+ * suppresses {@code modelVersion} / {@code version} / {@code status} in compact
+ * mode (its default), but the YAML reader requires them. Non-compact mode is
+ * selected here. (Earlier versions of this generator also stringified raw URI /
+ * OffsetDateTime / enum scalars left in the rendered map by the renderer — that
+ * has since been fixed at the renderer; the map now contains only YAML-native
+ * scalars.)
  *
  * <p>Not a unit test (no {@code @Test} methods). Run with:
  *
@@ -99,7 +87,6 @@ public final class GoldenYamlGenerator
           ObjectNode node = (ObjectNode) jackson.readTree(Files.newBufferedReader(jsonFile));
           TemplateSchemaArtifact template = reader.readTemplateSchemaArtifact(node);
           LinkedHashMap<String, Object> yamlMap = renderer.renderTemplateSchemaArtifact(template);
-          stringifyJavaScalars(yamlMap);
           String yamlText = new Yaml(opts).dump(yamlMap);
           Files.writeString(outFile, yamlText, StandardCharsets.UTF_8);
           System.out.println("ok  " + stem);
@@ -113,32 +100,5 @@ public final class GoldenYamlGenerator
     System.out.println();
     System.out.println("Generated " + ok + " golden YAML files; " + fail + " failures.");
     if (fail > 0) System.exit(2);
-  }
-
-  /**
-   * Walks a YAML-shaped Object tree and replaces any non-YAML-native scalar with
-   * its {@code toString()} form. YAML-native means {@code null}, {@code String},
-   * {@code Number}, {@code Boolean}, plus the recursable {@code Map} / {@code List}
-   * containers. Everything else (URI, OffsetDateTime, library enums, …) gets
-   * stringified.
-   */
-  @SuppressWarnings("unchecked")
-  private static Object stringifyJavaScalars(Object node)
-  {
-    if (node == null) return null;
-    if (node instanceof Map<?, ?>) {
-      Map<String, Object> map = (Map<String, Object>) node;
-      for (Map.Entry<String, Object> entry : map.entrySet())
-        entry.setValue(stringifyJavaScalars(entry.getValue()));
-      return map;
-    }
-    if (node instanceof List<?>) {
-      List<Object> list = (List<Object>) node;
-      for (int i = 0; i < list.size(); i++) list.set(i, stringifyJavaScalars(list.get(i)));
-      return list;
-    }
-    if (node instanceof String || node instanceof Number || node instanceof Boolean)
-      return node;
-    return node.toString();
   }
 }

@@ -541,10 +541,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldSchemaArtifact.fieldUi().isTemporal()) {
       TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
-      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      rendering.put(GRANULARITY, templateUi.temporalGranularity().toString());
       if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth()
-        && !templateUi.temporalGranularity().isDay()) {
-        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+        && !templateUi.temporalGranularity().isDay() && templateUi.inputTimeFormat().isPresent()) {
+        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat().get().toString());
       }
       if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
         rendering.put(INPUT_TIME_ZONE, true);
@@ -836,9 +836,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           actionRendering.put(ACTION, renderActionName(action.action()));
           if (action.to().isPresent())
             actionRendering.put(ACTION_TO, action.to().get());
-          actionRendering.put(TERM_IRI, action.termUri());
+          actionRendering.put(TERM_IRI, action.termUri().toString());
           if (action.sourceUri().isPresent())
-            actionRendering.put(SOURCE_IRI, action.sourceUri().get());
+            actionRendering.put(SOURCE_IRI, action.sourceUri().get().toString());
           actionRendering.put(SOURCE_ACRONYM, action.source());
 
           // TODO Use typesafe switch when available
@@ -863,11 +863,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Use typesafe switch when available
     if (valueConstraints instanceof NumericValueConstraints) {
       NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
-      rendering.put(DATATYPE, numericValueConstraints.numberType());
+      rendering.put(DATATYPE, numericValueConstraints.numberType().toString());
     } else if (valueConstraints instanceof TemporalValueConstraints) {
       TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
-      rendering.put(DATATYPE, temporalValueConstraints.temporalType());
-      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity());
+      rendering.put(DATATYPE, temporalValueConstraints.temporalType().toString());
+      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity().toString());
     } else if (valueConstraints instanceof ControlledTermValueConstraints)
       rendering.put(DATATYPE, IRI);
 
@@ -883,7 +883,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       } else if (defaultValue.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = defaultValue.asControlledTermDefaultValue();
         LinkedHashMap<String, Object> defaultRendering = new LinkedHashMap<>();
-        defaultRendering.put(DEFAULT_VALUE, controlledTermDefaultValue.value().getLeft());
+        defaultRendering.put(DEFAULT_VALUE, controlledTermDefaultValue.value().getLeft().toString());
         defaultRendering.put(DEFAULT_LABEL, controlledTermDefaultValue.value().getRight());
 
         rendering.put(DEFAULT, defaultRendering);
@@ -1090,7 +1090,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
     if (!isCompact && schemaArtifact.jsonLdId().isPresent())
-      rendering.put(ID, schemaArtifact.jsonLdId().get());
+      rendering.put(ID, schemaArtifact.jsonLdId().get().toString());
 
     if (!isCompact && schemaArtifact.status().isPresent())
       rendering.put(STATUS, renderStatus(schemaArtifact.status().get()));
