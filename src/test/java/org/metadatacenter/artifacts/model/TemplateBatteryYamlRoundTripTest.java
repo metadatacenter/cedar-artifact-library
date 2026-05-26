@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Full-circle stress test: for every {@code *.yaml} fixture under
- * {@code src/test/resources/hubmap-golden/}, runs the round trip
+ * {@code src/test/resources/templates-yaml/}, runs the round trip
  *
  * <pre>{@code
  *   originalYamlMap
@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  * <p>Sister tests:
  * <ul>
- *   <li>{@link HubmapTemplatesRoundTripTest} — YAML &rarr; JSON Schema +
+ *   <li>{@link TemplateBatteryYamlToJsonTest} — YAML &rarr; JSON Schema +
  *       {@code CedarValidator}. Catches reader / renderer / validator
  *       regressions on the YAML &rarr; JSON Schema half of the pipeline.</li>
  *   <li><b>This test</b> — adds the JSON Schema &rarr; YAML half, closing the
@@ -69,9 +69,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * field; the test name identifies the template.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class HubmapTemplatesFullRoundTripTest
+public class TemplateBatteryYamlRoundTripTest
 {
-  private static final String FIXTURES_RESOURCE = "hubmap-golden";
+  private static final String FIXTURES_RESOURCE = "templates-yaml";
 
   private YamlArtifactReader yamlReader;
   private JsonArtifactRenderer jsonRenderer;
@@ -95,7 +95,7 @@ public class HubmapTemplatesFullRoundTripTest
   @BeforeAll
   public void announceBattery()
   {
-    System.out.println("[HubmapTemplatesFullRoundTripTest] running against "
+    System.out.println("[TemplateBatteryYamlRoundTripTest] running against "
       + "src/test/resources/" + FIXTURES_RESOURCE + "/");
   }
 
@@ -103,10 +103,10 @@ public class HubmapTemplatesFullRoundTripTest
   public void printSummary()
   {
     int total = passes.size() + failures.size();
-    System.out.println("[HubmapTemplatesFullRoundTripTest] summary: "
+    System.out.println("[TemplateBatteryYamlRoundTripTest] summary: "
       + passes.size() + "/" + total + " templates round-tripped structurally");
     if (!failures.isEmpty()) {
-      System.out.println("[HubmapTemplatesFullRoundTripTest] failures:");
+      System.out.println("[TemplateBatteryYamlRoundTripTest] failures:");
       for (String f : failures)
         System.out.println("  - " + f);
     }

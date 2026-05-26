@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Full-circle stress test from the JSON Schema side: for every {@code *.json}
- * fixture under {@code src/test/resources/hubmap-golden-json/}, runs the round trip
+ * fixture under {@code src/test/resources/templates-json/}, runs the round trip
  *
  * <pre>{@code
  *   originalJsonSchema
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * }</pre>
  *
  * and asserts that {@code originalJsonSchema} and {@code regeneratedJsonSchema} are
- * structurally equal. This is the mirror of {@link HubmapTemplatesFullRoundTripTest},
+ * structurally equal. This is the mirror of {@link TemplateBatteryYamlRoundTripTest},
  * which starts from YAML; this one starts from JSON.
  *
  * <p>The fixtures are <em>not</em> the original HuBMAP JSON Schemas — those were
@@ -62,9 +62,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * name identifies the template.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class HubmapTemplatesJsonRoundTripTest
+public class TemplateBatteryJsonRoundTripTest
 {
-  private static final String FIXTURES_RESOURCE = "hubmap-golden-json";
+  private static final String FIXTURES_RESOURCE = "templates-json";
 
   private JsonArtifactReader jsonReader;
   private YamlArtifactRenderer yamlRenderer;
@@ -88,7 +88,7 @@ public class HubmapTemplatesJsonRoundTripTest
   @BeforeAll
   public void announceBattery()
   {
-    System.out.println("[HubmapTemplatesJsonRoundTripTest] running against "
+    System.out.println("[TemplateBatteryJsonRoundTripTest] running against "
       + "src/test/resources/" + FIXTURES_RESOURCE + "/");
   }
 
@@ -96,10 +96,10 @@ public class HubmapTemplatesJsonRoundTripTest
   public void printSummary()
   {
     int total = passes.size() + failures.size();
-    System.out.println("[HubmapTemplatesJsonRoundTripTest] summary: "
+    System.out.println("[TemplateBatteryJsonRoundTripTest] summary: "
       + passes.size() + "/" + total + " templates round-tripped structurally");
     if (!failures.isEmpty()) {
-      System.out.println("[HubmapTemplatesJsonRoundTripTest] failures:");
+      System.out.println("[TemplateBatteryJsonRoundTripTest] failures:");
       for (String f : failures)
         System.out.println("  - " + f);
     }
@@ -172,7 +172,7 @@ public class HubmapTemplatesJsonRoundTripTest
   }
 
   // -----------------------------------------------------------------------
-  // diff helper — same shape as HubmapTemplatesFullRoundTripTest. Number subtypes
+  // diff helper — same shape as TemplateBatteryYamlRoundTripTest. Number subtypes
   // compare by numeric value.
   // -----------------------------------------------------------------------
 

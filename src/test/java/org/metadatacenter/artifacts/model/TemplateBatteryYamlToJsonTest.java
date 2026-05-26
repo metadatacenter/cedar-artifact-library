@@ -35,15 +35,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Real-world battery: parses every {@code *.yaml} fixture under
- * {@code src/test/resources/hubmap-golden/} via {@link YamlArtifactReader}, renders
+ * {@code src/test/resources/templates-yaml/} via {@link YamlArtifactReader}, renders
  * the result back to JSON via {@link JsonArtifactRenderer}, and confirms the
  * rendered JSON Schema is accepted by {@link CedarValidator}.
  *
- * <p>The fixtures are golden YAML derived from the HuBMAP template library by
+ * <p>The fixtures are canonical YAML derived from real-world CEDAR templates by
  * round-tripping the paired authoritative JSON Schemas through this library's own
- * reader and renderer (see {@link GoldenYamlGenerator}). They cover 44 real-world
- * templates spanning every common assay type (10X Multiome, ATAC-seq, RNA-seq,
- * Visium, Xenium, MERFISH, CODEX, CyTOF, LC-MS, MIBI, ...) and exercise:
+ * reader and renderer (see {@link GoldenYamlGenerator}). The current fixture set
+ * is sourced from the HuBMAP template library (44 templates spanning 10X Multiome,
+ * ATAC-seq, RNA-seq, Visium, Xenium, MERFISH, CODEX, CyTOF, LC-MS, MIBI, ...) and
+ * exercises:
  *
  * <ul>
  *   <li>All commonly-used field types: text, numeric, temporal, controlled-term,
@@ -54,15 +55,16 @@ import static org.junit.jupiter.api.Assertions.fail;
  *       multi-line description blocks.</li>
  * </ul>
  *
- * <p>Failures are reported per template name, so a regression in one template is
- * identifiable without re-running the rest.
+ * <p>Templates from other sources can be added to the same fixtures directory; the
+ * battery picks them up automatically. Failures are reported per template name, so
+ * a regression in one template is identifiable without re-running the rest.
  *
  * @see GoldenYamlGenerator
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class HubmapTemplatesRoundTripTest
+public class TemplateBatteryYamlToJsonTest
 {
-  private static final String FIXTURES_RESOURCE = "hubmap-golden";
+  private static final String FIXTURES_RESOURCE = "templates-yaml";
 
   private YamlArtifactReader yamlReader;
   private JsonArtifactRenderer jsonRenderer;
@@ -82,17 +84,17 @@ public class HubmapTemplatesRoundTripTest
 
   @BeforeAll public void announceBattery()
   {
-    System.out.println("[HubmapTemplatesRoundTripTest] running against "
+    System.out.println("[TemplateBatteryYamlToJsonTest] running against "
       + "src/test/resources/" + FIXTURES_RESOURCE + "/");
   }
 
   @AfterAll public void printSummary()
   {
     int total = passes.size() + failures.size();
-    System.out.println("[HubmapTemplatesRoundTripTest] summary: "
+    System.out.println("[TemplateBatteryYamlToJsonTest] summary: "
       + passes.size() + "/" + total + " templates compiled and validated");
     if (!failures.isEmpty()) {
-      System.out.println("[HubmapTemplatesRoundTripTest] failures:");
+      System.out.println("[TemplateBatteryYamlToJsonTest] failures:");
       for (String f : failures) System.out.println("  - " + f);
     }
   }

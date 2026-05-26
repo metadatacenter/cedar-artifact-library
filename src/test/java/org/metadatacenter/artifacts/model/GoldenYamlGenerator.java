@@ -18,19 +18,19 @@ import java.util.LinkedHashMap;
 
 /**
  * One-shot regeneration utility for the golden YAML fixtures under
- * {@code src/test/resources/hubmap-golden/}.
+ * {@code src/test/resources/templates-yaml/}.
  *
- * <p>The HuBMAP YAML files (as originally shipped) are non-canonical against the
- * current artifact library — they omit required metadata ({@code modelVersion},
- * {@code version}, {@code status}) and contain bare-integer values where the
- * reader expects strings. Rather than make consumers lenient, this utility
- * generates canonical YAML by round-tripping the paired authoritative JSON
- * Schemas through:
+ * <p>Real-world CEDAR JSON Schemas shipped by older toolchains are typically
+ * non-canonical against the current artifact library — they omit required metadata
+ * ({@code modelVersion}, {@code version}, {@code status}) or contain bare-integer
+ * values where the reader expects strings. Rather than make consumers lenient,
+ * this utility generates canonical YAML by round-tripping a directory of
+ * authoritative JSON Schemas through:
  *
  * <pre>{@code
  *   JsonArtifactReader.readTemplateSchemaArtifact
  *     -> YamlArtifactRenderer.renderTemplateSchemaArtifact  (non-compact)
- *     -> SnakeYAML dump (with non-YAML-native scalars stringified first)
+ *     -> SnakeYAML dump
  * }</pre>
  *
  * <p>One library asymmetry is accommodated here: {@link YamlArtifactRenderer}
@@ -47,7 +47,7 @@ import java.util.LinkedHashMap;
  *   mvn test-compile exec:java \
  *       -Dexec.classpathScope=test \
  *       -Dexec.mainClass=org.metadatacenter.artifacts.model.GoldenYamlGenerator \
- *       -Dexec.args="/path/to/source-json-dir src/test/resources/hubmap-golden"
+ *       -Dexec.args="/path/to/source-json-dir src/test/resources/templates-yaml"
  * }</pre>
  */
 public final class GoldenYamlGenerator
