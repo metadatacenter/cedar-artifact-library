@@ -1,0 +1,482 @@
+type: template
+name: Thick Section Multiphoton MxIF
+description: The Thick Section Multiphoton MxIF dataset metadata specification provides a framework for organizing and documenting key information related to assay analysis, enabling efficient and standardized data interpretation in Single-cycle Fluorescence Microscopy studies.
+id: https://repo.metadatacenter.org/templates/80320147-a111-45da-9611-0eab83f594b3
+status: draft
+version: 2.1.0
+modelVersion: 1.6.0
+previousVersion: https://repo.metadatacenter.org/templates/6428da14-afb3-4b69-a602-0a7be707d464
+derivedFrom: https://repo.metadatacenter.org/templates/a7f2b6ae-5a0c-4b2f-acf0-80a0878d2bbf
+createdOn: '2023-10-03T14:53:27-07:00'
+createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+modifiedOn: '2025-04-24T10:28:50-07:00'
+modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+children:
+- key: parent_sample_id
+  type: text-field
+  name: parent_sample_id
+  description: 'Unique HuBMAP or SenNet identifier of the sample (i.e., block, section or suspension) used to perform this assay. For example, for a RNAseq assay, the parent would be the suspension, whereas, for one of the imaging assays, the parent would be the tissue section. If an assay comes from multiple parent samples then this should be a comma separated list. Example: HBM386.ZGKG.235, HBM672.MKPK.442 or SNT232.UBHJ.322, SNT329.ALSK.102'
+  id: https://repo.metadatacenter.org/template-fields/3cd0be1e-4770-4fa1-8976-12eb3934916d
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Parent sample ID
+  regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}(?:,\s*(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3})*$
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/89b265a0-e115-4898-bb65-b6dacd6a9eb6
+- key: lab_id
+  type: text-field
+  name: lab_id
+  description: An internal field labs can use it to add whatever ID(s) they want or need for dataset validation and tracking. This could be a single ID (e.g., "Visium_9OLC_A4_S1") or a delimited list of IDs (e.g., “9OL; 9OLC.A2; Visium_9OLC_A4_S1”). This field will not be accessible to anyone outside of the consortium and no effort will be made to check if IDs provided by one data provider are also used by another.
+  id: https://repo.metadatacenter.org/template-fields/bbc141a6-0e81-4cba-8651-8b61a623bd6c
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Lab ID
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/d7cfde4e-d38a-47ad-94d5-db0fd441d256
+- key: preparation_protocol_doi
+  type: link-field
+  name: preparation_protocol_doi
+  description: 'DOI for the protocols.io page that describes the assay or sample procurement and preparation. For example for an imaging assay, the protocol might begin with staining of a section and finalize with the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1.'
+  id: https://repo.metadatacenter.org/template-fields/6c14b186-47e0-4e2c-a5f6-d8ac3cca10f2
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preparation protocol DOI
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/f3e396c9-0ced-422c-b160-05f2521ad83d
+- key: dataset_type
+  type: controlled-term-field
+  name: dataset_type
+  description: The specific type of dataset being produced.
+  id: https://repo.metadatacenter.org/template-fields/8bae5f1d-2fe0-400c-b62f-fffd83292e9a
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Dataset type
+  datatype: iri
+  default:
+    value: https://purl.humanatlas.io/vocab/hravs#HRAVS_0000207
+    label: Thick section Multiphoton MxIF
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Dataset type
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
+    maxDepth: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/4e968d1b-600c-4a07-9e29-b4c50c679b59
+- key: analyte_class
+  type: controlled-term-field
+  name: analyte_class
+  description: Analytes are the target molecules being measured with the assay.
+  id: https://repo.metadatacenter.org/template-fields/26f2544c-1fae-4f88-be56-ece49c5a99e8
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Analyte class
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Analyte class
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000371
+    maxDepth: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/de061e06-db17-452b-b80b-5cee1ffb5d8e
+- key: is_targeted
+  type: radio-field
+  name: is_targeted
+  description: Specifies whether or not a specific molecule(s) is/are targeted for detection/measurement by the assay ("Yes" or "No"). The CODEX analyte is protein.
+  id: https://repo.metadatacenter.org/template-fields/7293e4b1-0094-470d-8e20-cb0bb0a5b002
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Is targeted?
+  values:
+  - label: 'Yes'
+    selected: true
+  - label: 'No'
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/f73b747c-bc17-4207-8db4-dabe0ca52638
+- key: acquisition_instrument_vendor
+  type: controlled-term-field
+  name: acquisition_instrument_vendor
+  description: An acquisition instrument is the device that contains the signal detection hardware and signal processing software. Assays generate signals such as light of various intensities or color or signals representing the molecular mass.
+  id: https://repo.metadatacenter.org/template-fields/06a8f3dc-bd11-419b-99ec-c5cc75d807e0
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Acquisition instrument vendor
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Acquisition instrument vendor
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000391
+    maxDepth: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/ea900b61-5aa3-4904-b22a-afc4aa7534b5
+- key: acquisition_instrument_model
+  type: controlled-term-field
+  name: acquisition_instrument_model
+  description: Manufacturers of an acquisition instrument may offer various versions (models) of that instrument with different features or sensitivities. Differences in features or sensitivities may be relevant to processing or interpretation of the data.
+  id: https://repo.metadatacenter.org/template-fields/9f654d25-4de7-4eda-899b-417f05e5d5c3
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Acquisition instrument model
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Acquisition instrument model
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000401
+    maxDepth: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/e36a1887-5929-4295-965c-95a6fdb29793
+- key: source_storage_duration_value
+  type: numeric-field
+  name: source_storage_duration_value
+  description: How long was the source material (parent) stored, prior to this sample being processed.
+  id: https://repo.metadatacenter.org/template-fields/34ea7885-e2b2-4e52-bf92-48327f30ffe9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source storage duration value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/22cf3203-4c58-4230-aca3-afc0a36ea059
+- key: source_storage_duration_unit
+  type: controlled-term-field
+  name: source_storage_duration_unit
+  description: The time duration unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/d666d473-cf11-4025-bea0-2a4d77110044
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source storage duration unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Source storage duration unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
+    maxDepth: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/7c46539f-3dc1-4a79-9388-2d9db7339d0d
+- key: time_since_acquisition_instrument_calibration_value
+  type: numeric-field
+  name: time_since_acquisition_instrument_calibration_value
+  description: The amount of time since the acquisition instrument was last serviced or calibrated. This provides a metric for assessing drift in data capture.
+  id: https://repo.metadatacenter.org/template-fields/2eaf9c86-f543-4b9a-a4d3-85f3cf7f125c
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Time since acquisition instrument calibration value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/290c923c-3c6e-4add-b94f-53b05188588a
+- key: time_since_acquisition_instrument_calibration_unit
+  type: controlled-term-field
+  name: time_since_acquisition_instrument_calibration_unit
+  description: The time unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/90c01c70-b953-44b8-a4cc-70bd3f251fa6
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Time since acquisition instrument calibration unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Time since acquisition instrument calibration unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000421
+    maxDepth: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/4449424f-6a3a-4c6d-8aef-4f4441a3f59e
+- key: contributors_path
+  type: text-field
+  name: contributors_path
+  description: The path to the file with the ORCID IDs for all contributors of this dataset (e.g., "extras/contributors.tsv" or "./contributors.tsv"). This is an internal metadata field that is just used for ingest.
+  id: https://repo.metadatacenter.org/template-fields/d8afa6c7-ed80-457f-9441-a7f12c06835d
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Contributors path
+  regex: ^(?:\.\/.*|\w.*)\.tsv$
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/368c2a46-3869-4e10-96de-0114d7488e86
+- key: data_path
+  type: text-field
+  name: data_path
+  description: The top level directory containing the raw and/or processed data. For a single dataset upload this might be "." where as for a data upload containing multiple datasets, this would be the directory name for the respective dataset. For instance, if the data is within a directory called "TEST001-RK" use syntax "/TEST001-RK/" for this field. If there are multiple directory levels, use the format "/TEST001-RK/Run1/Pass2" in which "Pass2" is the subdirectory where the single dataset's data is stored. This is an internal metadata field that is just used for ingest.
+  id: https://repo.metadatacenter.org/template-fields/d9b742e5-9fa3-44e5-9e8f-2863efc08be7
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Data path
+  regex: ^(?:\.|\.\/.+|\w.*)$
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/61ca18dd-5e5d-49a1-995d-9aaa6fdfe952
+- key: antibodies_path
+  type: text-field
+  name: antibodies_path
+  description: This is the location of the antibodies.tsv file relative to the root of the top level of the upload directory structure. This path should begin with "." and would likely be something like "./extras/antibodies.tsv".
+  id: https://repo.metadatacenter.org/template-fields/3a4c745e-feb3-4d33-b569-eaca952896c2
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Antibodies path
+  regex: ^(?:\.\/.*|\w.*)\.tsv$
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/3ff7c609-4a87-4112-9e74-87c657b15fe3
+- key: is_image_preprocessing_required
+  type: radio-field
+  name: is_image_preprocessing_required
+  description: Depending on if the acquisition instrument was a microscope, slide scanner, etc. will indicate whether or not any level of preprocessing was required to assemble the image (e.g., fusing image tiles) .
+  id: https://repo.metadatacenter.org/template-fields/63ecf8ff-c7f3-4669-bd84-f5c535a11cf9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Is image preprocessing required?
+  values:
+  - label: 'Yes'
+  - label: 'No'
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/11e38214-3e05-4f28-bda9-5f61da57fc69
+- key: slide_id
+  type: text-field
+  name: slide_id
+  description: A unique ID denoting the slide used. This allows users the ability to determine which tissue sections were processed together on the same slide. It is recommended that data providers prefix the ID with the center name, to prevent values overlapping across centers.
+  id: https://repo.metadatacenter.org/template-fields/bd94d65d-c13e-4ae5-8ea2-fcea0ccbf5a6
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Slide ID
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/ef7f1f43-fde5-4f25-902e-ca20ffdaa04b
+- key: tile_configuration
+  type: controlled-term-field
+  name: tile_configuration
+  description: This is how the tiles are configured for stitching.
+  id: https://repo.metadatacenter.org/template-fields/12e3cdb1-a31f-481d-b01e-2f22ec1f5653
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Tile configuration
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Tile configuration
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000531
+    maxDepth: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/a817987c-2ef6-4fbb-b4c8-e409fbfdad67
+- key: scan_direction
+  type: controlled-term-field
+  name: scan_direction
+  description: This is the direction of imaging, which is required for stitching.
+  id: https://repo.metadatacenter.org/template-fields/777cc4b9-aa0f-423f-8653-060ced1bc946
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Scan direction
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Scan direction
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000541
+    maxDepth: 0
+  actions:
+  - action: delete
+    termIri: https://purl.humanatlas.io/HRAVS_0000133
+    sourceIri: https://purl.humanatlas.io/HRAVS_0000005
+    sourceAcronym: HRAVS
+    type: class
+  - action: delete
+    termIri: https://purl.humanatlas.io/HRAVS_0000138
+    sourceIri: https://purl.humanatlas.io/HRAVS_0000005
+    sourceAcronym: HRAVS
+    type: class
+  - action: delete
+    termIri: https://purl.humanatlas.io/HRAVS_0000110
+    sourceIri: https://purl.humanatlas.io/HRAVS_0000005
+    sourceAcronym: HRAVS
+    type: class
+  - action: delete
+    termIri: https://purl.humanatlas.io/HRAVS_0000122
+    sourceIri: https://purl.humanatlas.io/HRAVS_0000005
+    sourceAcronym: HRAVS
+    type: class
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/8222e9e5-b807-436c-a0bb-08a13769d2ff
+- key: tiled_image_columns
+  type: numeric-field
+  name: tiled_image_columns
+  description: This is how many columns used in stitching. This is sometimes referred to as the grid size x.
+  id: https://repo.metadatacenter.org/template-fields/8e600de0-2915-4f28-8e19-c8bbb6d3adde
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Tiled image columns
+  datatype: xsd:int
+  minValue: 1
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/ec9996ac-b52e-42d3-b7eb-064717410cdd
+- key: tiled_image_count
+  type: numeric-field
+  name: tiled_image_count
+  description: This is the total number of raw (tiled) images captured, that are to be stitched together.
+  id: https://repo.metadatacenter.org/template-fields/93574932-f41e-43a6-816c-ed6de283cd72
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Tiled image count
+  datatype: xsd:int
+  minValue: 1
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/266b0db2-92f5-4721-85ec-e20e78d93b63
+- key: intended_tile_overlap_percentage
+  type: numeric-field
+  name: intended_tile_overlap_percentage
+  description: The amount of overlap between tiled images. This is the set point, where as during image acquisition there will be slight variations due to stage registration.
+  id: https://repo.metadatacenter.org/template-fields/dd880ee4-d39d-46df-9d4e-1134fee978d4
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Intended tile overlap percentage
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/b069687c-c38c-43f4-b20d-b9264a84ba2a
+- key: metadata_schema_id
+  type: text-field
+  name: metadata_schema_id
+  description: 'The string that serves as the definitive identifier for the metadata schema version and is readily interpretable by computers for data validation and processing. Example: 22bc762a-5020-419d-b170-24253ed9e8d9'
+  id: https://repo.metadatacenter.org/template-fields/adb527d4-1dae-4e2a-9bdd-28a1a87af3ba
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Metadata schema ID
+  default: 80320147-a111-45da-9611-0eab83f594b3
+  createdOn: '2025-04-24T10:28:50-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:28:50-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/a534d6fc-d4dc-42ef-8760-f477afc35300

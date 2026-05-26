@@ -1,0 +1,445 @@
+type: template
+name: Sample Block
+description: The sample block metadata specification outlines the standardized format for recording essential information about biological samples, such as origin, preparation, and storage conditions, ensuring accurate documentation and facilitating data sharing and analysis.
+id: https://repo.metadatacenter.org/templates/3e98cee6-d3fb-467b-8d4e-9ba7ee49eeff
+status: draft
+version: 2.1.0
+modelVersion: 1.6.0
+previousVersion: https://repo.metadatacenter.org/templates/22bc762a-5020-419d-b170-24253ed9e8d9
+createdOn: '2023-09-20T15:19:06-07:00'
+createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+modifiedOn: '2025-04-24T10:32:20-07:00'
+modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+children:
+- key: source_id
+  type: text-field
+  name: source_id
+  description: 'Unique HuBMAP or SenNet identifier for the source (parent) from which the sample was taken. Example: HBM122.EFGH.789 or SNT234.RTYU.119'
+  id: https://repo.metadatacenter.org/template-fields/29b215b9-5c25-4a7f-b608-41011f8aea62
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source ID
+  regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}$
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/f7dead44-3ddd-4c00-9eba-14a6a8d03c31
+- key: sample_id
+  type: text-field
+  name: sample_id
+  description: 'Unique HuBMAP or SenNet identifier for the sample assigned by the ingest portal. Example: HBM743.CKJW.876 or SNT923.UYTE.122'
+  id: https://repo.metadatacenter.org/template-fields/60776979-a126-46dd-ba8a-9f10afef0b51
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Sample ID
+  regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}$
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/ba77c589-6ae8-4b97-b8ef-8c18fcb174ec
+- key: lab_id
+  type: text-field
+  name: lab_id
+  description: An internal field labs can use it to add whatever ID(s) they want or need for dataset validation and tracking. This could be a single ID (e.g., "Visium_9OLC_A4_S1") or a delimited list of IDs (e.g., “9OL; 9OLC.A2; Visium_9OLC_A4_S1”). This field will not be accessible to anyone outside of the consortium and no effort will be made to check if IDs provided by one data provider are also used by another.
+  id: https://repo.metadatacenter.org/template-fields/bbc141a6-0e81-4cba-8651-8b61a623bd6c
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Lab ID
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000300
+- key: preparation_protocol_doi
+  type: link-field
+  name: preparation_protocol_doi
+  description: 'DOI for the protocols.io page that describes the assay or sample procurement and preparation. For example for an imaging assay, the protocol might begin with staining of a section and finalize with the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1.'
+  id: https://repo.metadatacenter.org/template-fields/6c14b186-47e0-4e2c-a5f6-d8ac3cca10f2
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preparation protocol DOI
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000830
+- key: source_storage_duration_value
+  type: numeric-field
+  name: source_storage_duration_value
+  description: How long was the source material (parent) stored, prior to this sample being processed.
+  id: https://repo.metadatacenter.org/template-fields/34ea7885-e2b2-4e52-bf92-48327f30ffe9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source storage duration value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000020
+- key: source_storage_duration_unit
+  type: controlled-term-field
+  name: source_storage_duration_unit
+  description: The time duration unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/d666d473-cf11-4025-bea0-2a4d77110044
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source storage duration unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Source storage duration unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000030
+- key: tissue_weight_value
+  type: numeric-field
+  name: tissue_weight_value
+  description: The weight of a tissue block or the piece of tissue used in a suspension. Knowing the weight of the parent block and tissue used in a suspension, allows us to compute what percentage of the block was used for the suspension.
+  id: https://repo.metadatacenter.org/template-fields/4624227f-928f-4adc-8119-05d5069f2ca9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Tissue weight value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000210
+- key: tissue_weight_unit
+  type: controlled-term-field
+  name: tissue_weight_unit
+  description: The tissue weight unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/4fabd371-2220-4bbc-a556-e58dc34412bd
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Tissue weight unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Tissue weight unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000221
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000220
+- key: volume_value
+  type: numeric-field
+  name: volume_value
+  description: The volume of the sample block
+  id: https://repo.metadatacenter.org/template-fields/9db4c8f1-c5d1-4558-a226-c539cb78796f
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Volume value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000190
+- key: volume_unit
+  type: controlled-term-field
+  name: volume_unit
+  description: The volume unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/36b4632d-72be-4d9a-bcd4-d9028612eda2
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Volume unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Volume unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000201
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000200
+- key: pathology_distance_value
+  type: numeric-field
+  name: pathology_distance_value
+  description: If a surgical sample, how far from the pathology was the sample obtained.
+  id: https://repo.metadatacenter.org/template-fields/076b3e2f-51d4-4a91-b112-b532ae52d9a2
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Pathology distance value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000230
+- key: pathology_distance_unit
+  type: controlled-term-field
+  name: pathology_distance_unit
+  description: The distance unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/e87259ad-76ec-4404-b62d-d86100e96204
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Pathology distance unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Pathology distance unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000241
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000240
+- key: preparation_medium
+  type: controlled-term-field
+  name: preparation_medium
+  description: The medium used during the sample preparation
+  id: https://repo.metadatacenter.org/template-fields/5eb04109-9e15-4889-bd11-ef93d7cb5f95
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preparation medium
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Preparation medium
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000041
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000040
+- key: preparation_condition
+  type: controlled-term-field
+  name: preparation_condition
+  description: The condition by which the preparation occurred, such as was the sample placed in dry ice during the preparation.
+  id: https://repo.metadatacenter.org/template-fields/8711a6de-b6af-40e6-9e74-b2320bb18a71
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preparation condition
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Preparation condition
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000051
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000050
+- key: processing_time_value
+  type: numeric-field
+  name: processing_time_value
+  description: How long the tissue was being handled before the initial preservation
+  id: https://repo.metadatacenter.org/template-fields/c2f4c0ce-5150-44e9-a4a0-3bd95b388d34
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Processing time value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000060
+- key: processing_time_unit
+  type: controlled-term-field
+  name: processing_time_unit
+  description: The time unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/e78b2f98-e783-4bce-b251-0dae403c6b7b
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Processing time unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Processing time unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000071
+    maxDepth: 0
+  actions:
+  - action: move
+    to: 0
+    termIri: http://purl.obolibrary.org/obo/UO_0000031
+    sourceIri: template
+    sourceAcronym: HRAVS
+    type: class
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000070
+- key: storage_medium
+  type: controlled-term-field
+  name: storage_medium
+  description: What was the sample preserved in.
+  id: https://repo.metadatacenter.org/template-fields/5533c854-9d23-4919-a895-4a3d4d6442a8
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Storage medium
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Storage medium
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000081
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000080
+- key: storage_method
+  type: controlled-term-field
+  name: storage_method
+  description: The method by which the sample was stored, after preparation and before the assay was performed.
+  id: https://repo.metadatacenter.org/template-fields/3ad380a4-13ce-4c85-8c49-8c26e1409ba5
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Storage method
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Storage method
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000091
+    maxDepth: 0
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000090
+- key: quality_criteria
+  type: text-field
+  name: quality_criteria
+  description: 'For example, RIN: 8.7. For suspensions, measured by visual inspection prior to cell lysis or defined by known parameters such as wells with several cells or no cells. This can be captured at a high level. "OK" or "not OK", or with more specificity such as "debris", "clump", "low clump".'
+  id: https://repo.metadatacenter.org/template-fields/5ba7b675-6c2e-4567-a36a-771b7a210de0
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Quality criteria
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000100
+- key: histological_report
+  type: text-field
+  name: histological_report
+  description: Histopathological reporting of key variables that are important for the tissue (absence of necrosis, comment on composition, significant pathology description, high level inflammation/fibrosis assessment, etc.)
+  id: https://repo.metadatacenter.org/template-fields/bf9c49d6-4a25-4862-bfd0-068fe70eb6e7
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Histological report
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000110
+- key: notes
+  type: text-field
+  name: notes
+  description: Miscellaneous details about the sample, not captured in the existing metadata fields.
+  id: https://repo.metadatacenter.org/template-fields/2709b10f-bd05-4985-a3f2-50e2a2358008
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Notes
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000170
+- key: metadata_schema_id
+  type: text-field
+  name: metadata_schema_id
+  description: The string that serves as the definitive identifier for the metadata schema version and is readily interpretable by computers for data validation and processing.
+  id: https://repo.metadatacenter.org/template-fields/adb527d4-1dae-4e2a-9bdd-28a1a87af3ba
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Metadata schema ID
+  default: 3e98cee6-d3fb-467b-8d4e-9ba7ee49eeff
+  createdOn: '2025-04-24T10:32:20-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:32:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000180
