@@ -181,9 +181,23 @@ import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, Object>>
 {
   private final Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
+  private final boolean isCompact;
 
   public YamlArtifactReader()
   {
+    this(false);
+  }
+
+  /**
+   * @param isCompact when {@code true}, accept compact-form YAML as authored against the
+   *   matching {@link org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer}
+   *   compact output. Currently this means: tolerate an absent {@code modelVersion} key
+   *   and default it to {@link ModelNodeNames#MODEL_VERSION}. A present-but-wrong value
+   *   is still rejected.
+   */
+  public YamlArtifactReader(boolean isCompact)
+  {
+    this.isCompact = isCompact;
   }
 
   /**
@@ -1489,6 +1503,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private void checkSchemaArtifactModelVersion(LinkedHashMap<String, Object> sourceNode, String path)
   {
+    if (isCompact && !sourceNode.containsKey(MODEL_VERSION))
+      return;
+
     Version artifactModelVersion = readRequiredVersion(sourceNode, path, MODEL_VERSION);
 
     if (!artifactModelVersion.equals(modelVersion)) {

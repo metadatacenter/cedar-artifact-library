@@ -98,4 +98,50 @@ public class YamlArtifactReaderNegativePathsTest
       () -> reader.readFieldSchemaArtifact(field));
     assertTrue(ex.getMessage().contains("garbage"));
   }
+
+  @Test public void testCompactReaderDefaultsAbsentModelVersion()
+  {
+    // The compact-mode reader fills in modelVersion when the input omits it — that's the
+    // round-trip story for YamlArtifactRenderer's compact output, which drops modelVersion.
+    YamlArtifactReader compactReader = new YamlArtifactReader(true);
+
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "template");
+    node.put("name", "T");
+    // intentionally no modelVersion
+
+    // Should not throw.
+    compactReader.readTemplateSchemaArtifact(node);
+  }
+
+  @Test public void testCompactReaderStillRejectsWrongModelVersion()
+  {
+    // Defaulting is only for absent keys; a present-but-wrong modelVersion is still a
+    // hard error, otherwise the LLM could silently feed stale-version YAML and have it
+    // accepted against the wrong schema.
+    YamlArtifactReader compactReader = new YamlArtifactReader(true);
+
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "template");
+    node.put("name", "T");
+    node.put("modelVersion", "0.0.1");
+
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> compactReader.readTemplateSchemaArtifact(node));
+    assertTrue(ex.getMessage().toLowerCase().contains("model version"),
+      "expected message to mention model version; got: " + ex.getMessage());
+  }
+
+  @Test public void testStrictReaderStillRequiresModelVersion()
+  {
+    // Default reader (isCompact=false) must keep the strict contract: missing modelVersion
+    // throws. This is the behavior the artifact-library has shipped with; the compact flag
+    // is opt-in.
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "template");
+    node.put("name", "T");
+
+    assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateSchemaArtifact(node));
+  }
 }
