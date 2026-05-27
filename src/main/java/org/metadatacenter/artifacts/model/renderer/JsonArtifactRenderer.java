@@ -573,6 +573,14 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         objectNode.putNull(JSON_LD_VALUE);
       } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
         objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
+      } else {
+        // jsonLdValue() is Optional.empty() — the generic FieldInstanceArtifact path the
+        // JsonArtifactReader uses when reading an instance without per-field schema context.
+        // CEDAR's contract on a literal-valued field instance requires @value to be present
+        // (possibly null) — dropping it produces {} which the template's sub-schema rejects
+        // ('required: [@value]'). Match the LiteralFieldInstance branch above and emit
+        // @value: null.
+        objectNode.putNull(JSON_LD_VALUE);
       } // No @id or @value present
     }
 
