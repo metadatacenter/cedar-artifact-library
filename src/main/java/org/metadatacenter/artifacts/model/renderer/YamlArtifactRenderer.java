@@ -880,7 +880,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           rendering.put(DEFAULT, textDefaultValue.value());
       } else if (defaultValue.isNumericDefaultValue()) {
         NumericDefaultValue numericDefaultValue = defaultValue.asNumericDefaultValue();
-        rendering.put(DEFAULT, numericDefaultValue.value());
+        // Emit as a string so the YAML carries a stable representation regardless of
+        // YAML's auto-typing rules. A bare YAML number can be reparsed as Integer,
+        // Long, or Double depending on form, but there is no guarantee the auto-typed
+        // value matches the field's declared XSD datatype (e.g. xsd:long when the
+        // YAML parser produced an Integer, or xsd:int for a value the parser widened
+        // to Long). Stringifying defers the type decision to the model, where the
+        // datatype declaration is authoritative. SnakeYAML will quote the scalar
+        // because it looks like a number, preserving its string-ness on the next read.
+        rendering.put(DEFAULT, numericDefaultValue.value().toString());
       } else if (defaultValue.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = defaultValue.asControlledTermDefaultValue();
         LinkedHashMap<String, Object> defaultRendering = new LinkedHashMap<>();

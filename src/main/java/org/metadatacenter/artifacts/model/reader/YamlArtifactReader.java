@@ -1381,8 +1381,36 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private Optional<NumericDefaultValue> readNumericDefaultValue(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    Optional<Number> raw = readNumber(sourceNode, path, DEFAULT);
-    return raw.map(NumericDefaultValue::new);
+    // The canonical YAML form for a numeric default is a quoted string — see the
+    // renderer comment for why. Accept either a string (canonical) or a number
+    // (legacy YAML files where the value was written bare). Parse the string into
+    // a Long if it has no fractional part, Double otherwise; the model compares
+    // NumericDefaultValue by canonical string form so the choice of Number subtype
+    // doesn't affect equality.
+    Object raw = sourceNode.get(DEFAULT);
+    if (raw == null) return Optional.empty();
+    if (raw instanceof Number) return Optional.of(new NumericDefaultValue((Number) raw));
+    if (raw instanceof String) {
+      String text = ((String) raw).trim();
+      if (text.isEmpty()) return Optional.empty();
+      // A ternary returning Double-or-Long would trigger binary numeric promotion
+      // (unbox to primitives, promote to double, re-box) — silently widening every
+      // integer to Double. The if/else keeps the Number subtype distinct.
+      Number parsed;
+      try {
+        if (text.contains(".") || text.contains("e") || text.contains("E"))
+          parsed = Double.valueOf(text);
+        else
+          parsed = Long.valueOf(text);
+      } catch (NumberFormatException e) {
+        throw new ArtifactParseException(
+          "default for numeric field is not a valid number: '" + text + "'", DEFAULT, path);
+      }
+      return Optional.of(new NumericDefaultValue(parsed));
+    }
+    throw new ArtifactParseException(
+      "default for numeric field must be a number or numeric string, got " + raw.getClass().getSimpleName(),
+      DEFAULT, path);
   }
 
   private Optional<LinkDefaultValue> readLinkDefaultValue(LinkedHashMap<String, Object> sourceNode, String path)
