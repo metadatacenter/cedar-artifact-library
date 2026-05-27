@@ -1103,8 +1103,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!isCompact && schemaArtifact.version().isPresent())
       rendering.put(VERSION, schemaArtifact.version().get().toString());
 
-    if (!isCompact)
-      rendering.put(MODEL_VERSION, modelVersion.toString());
+    rendering.put(MODEL_VERSION, modelVersion.toString());
   }
 
   private void addArtifactProvenanceRendering(SchemaArtifact schemaArtifact, LinkedHashMap<String, Object> rendering)
