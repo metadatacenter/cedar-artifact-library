@@ -51,7 +51,7 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
 
     private Builder(TemplateUi templateUi)
     {
-      this.order = List.copyOf(templateUi.order());
+      this.order = new ArrayList<>(templateUi.order());
       this.propertyLabels = new LinkedHashMap<>(templateUi.propertyLabels());
       this.propertyDescriptions = new LinkedHashMap<>(templateUi.propertyDescriptions());
       this.header = templateUi.header();

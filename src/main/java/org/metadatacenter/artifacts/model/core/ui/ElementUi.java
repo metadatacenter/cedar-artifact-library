@@ -40,7 +40,7 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
     }
 
     private Builder(ElementUi elementUi) {
-      this.order = List.copyOf(elementUi.order());
+      this.order = new ArrayList<>(elementUi.order());
       this.propertyLabels = new LinkedHashMap<>(elementUi.propertyLabels());
       this.propertyDescriptions = new LinkedHashMap<>(elementUi.propertyDescriptions());
     }
