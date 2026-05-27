@@ -83,6 +83,30 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  @Test public void testRoundTripNumericFieldWithDoubleDefault()
+  {
+    // Exercises the string-encoded numeric defaultValue path through both the renderer
+    // (which must produce a string for the CEDAR validator) and the reader (which must
+    // re-hydrate a NumericDefaultValue when the enclosing field input type is NUMERIC).
+    NumericField original = NumericField.builder().withName("Percent")
+      .withNumericType(XsdNumericDatatype.DOUBLE)
+      .withMinValue(0.0).withMaxValue(100.0)
+      .withDefaultValue(42.5).build();
+
+    testRoundTripFieldSchemaArtifact(original);
+  }
+
+  @Test public void testRoundTripNumericFieldWithIntegerDefault()
+  {
+    // Use LONG: XsdNumericDatatype.INT and INTEGER both serialize as "xsd:int" so
+    // fromString cannot distinguish them on read-back; LONG has a unique text.
+    NumericField original = NumericField.builder().withName("Count")
+      .withNumericType(XsdNumericDatatype.LONG)
+      .withDefaultValue(7).build();
+
+    testRoundTripFieldSchemaArtifact(original);
+  }
+
   @Test public void testRoundTripTemporalField()
   {
     String name = "Field name";

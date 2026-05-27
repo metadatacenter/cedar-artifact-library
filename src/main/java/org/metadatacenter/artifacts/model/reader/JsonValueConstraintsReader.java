@@ -150,21 +150,48 @@ final class JsonValueConstraintsReader {
       Optional<String> rdfsLabel = readString(defaultValueNode, nestedPath, RDFS_LABEL);
       return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel.orElse("")));
     } else if (childNode.isNumber()) {
-      return Optional.of(new NumericDefaultValue(childNode.asDouble()));
+      // Legacy bare-number defaults are tolerated on read for backward compatibility,
+      // even though the canonical CEDAR encoding renders numeric defaults as strings.
+      return Optional.of(new NumericDefaultValue(childNode.numberValue()));
     } else if (childNode.isTextual()) {
       String textValue = childNode.asText();
       if (textValue.isEmpty()) {
         return Optional.empty();
       } else {
         if (fieldInputType.isIri()) {
-          return Optional.of(new LinkDefaultValue(URI.create(childNode.asText())));
+          return Optional.of(new LinkDefaultValue(URI.create(textValue)));
+        } else if (fieldInputType.isNumeric()) {
+          return Optional.of(new NumericDefaultValue(parseNumericDefault(textValue, path, fieldKey)));
+        } else if (fieldInputType.isTemporal()) {
+          return Optional.of(new TemporalDefaultValue(textValue));
         } else {
-          return Optional.of(new TextDefaultValue(childNode.asText()));
+          return Optional.of(new TextDefaultValue(textValue));
         }
       }
     } else {
       throw new ArtifactParseException(
           "default value must be a string, a number, or an object containing URI/string pair", fieldKey, path);
+    }
+  }
+
+  // Parse the string-encoded numeric default emitted by the renderer. We try
+  // increasingly permissive numeric types so that integer-shaped values stay integers
+  // (Long when in range) and decimals stay decimals (Double). Anything unparseable is
+  // an authoring error and surfaces as a parse exception.
+  private static Number parseNumericDefault(String textValue, String path, String fieldKey)
+  {
+    try {
+      if (textValue.indexOf('.') < 0 && textValue.indexOf('e') < 0 && textValue.indexOf('E') < 0) {
+        try {
+          return Long.parseLong(textValue);
+        } catch (NumberFormatException ignored) {
+          // Fall through to double parsing for out-of-range integers.
+        }
+      }
+      return Double.parseDouble(textValue);
+    } catch (NumberFormatException e) {
+      throw new ArtifactParseException(
+          "numeric default value '" + textValue + "' is not a valid number", fieldKey, path);
     }
   }
 

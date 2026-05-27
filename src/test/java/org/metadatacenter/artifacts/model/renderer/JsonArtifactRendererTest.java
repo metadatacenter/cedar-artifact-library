@@ -201,7 +201,6 @@ public class JsonArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
-  // TODO Add defaultValue
   @Test public void testRenderNumericField()
   {
     String fieldName = "Field name";
@@ -209,6 +208,7 @@ public class JsonArtifactRendererTest
     boolean requiredValue = false;
     XsdNumericDatatype numericType = XsdNumericDatatype.DECIMAL;
     int decimalPlaces = 3;
+    Number defaultValue = 1.5;
 
     NumericField numericField = NumericField.builder().
             withName(fieldName).
@@ -216,6 +216,7 @@ public class JsonArtifactRendererTest
             withRequiredValue(requiredValue).
             withNumericType(numericType).
             withDecimalPlaces(decimalPlaces).
+            withDefaultValue(defaultValue).
             build();
 
     ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(numericField);
@@ -227,7 +228,6 @@ public class JsonArtifactRendererTest
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
     assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
-    //assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue(), defaultURI.toString());
     // CEDAR requires the follow keys to be present, even if the values are null
     assertTrue(rendering.has(PAV_CREATED_BY));
     assertTrue(rendering.has(PAV_CREATED_ON));
@@ -238,7 +238,31 @@ public class JsonArtifactRendererTest
     assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
     assertEquals(rendering.get("_valueConstraints").get("numberType").textValue(), numericType.getText());
     assertEquals(rendering.get("_valueConstraints").get("decimalPlace").asInt(), decimalPlaces);
+    // CEDAR's _valueConstraints.defaultValue schema permits only string or URI/label
+    // object — never a bare JSON number. Encode numeric defaults as their string form.
+    assertTrue(rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).isTextual(),
+        "numeric defaultValue must serialize as a JSON string, not a number");
+    assertEquals(defaultValue.toString(),
+        rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue());
 
+    assertTrue(validateFieldSchemaArtifact(rendering));
+  }
+
+  @Test public void testRenderNumericFieldWithIntegerDefault()
+  {
+    // Integer-typed default must also serialize as a string for the validator to accept
+    // it. The previous bare-number encoding produced "instance type (integer) does not
+    // match any allowed primitive type" against the CEDAR meta-schema.
+    NumericField numericField = NumericField.builder().
+        withName("Count").
+        withNumericType(XsdNumericDatatype.INT).
+        withDefaultValue(42).
+        build();
+
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(numericField);
+
+    assertTrue(rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).isTextual());
+    assertEquals("42", rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue());
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
