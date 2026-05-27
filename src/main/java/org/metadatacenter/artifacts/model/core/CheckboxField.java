@@ -38,6 +38,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
   static CheckboxFieldBuilder builder(CheckboxField checkboxField) {return new CheckboxFieldBuilder(checkboxField);}
 
   final class CheckboxFieldBuilder extends FieldSchemaArtifactBuilder<CheckboxField.CheckboxFieldBuilder>
+      implements LiteralStringDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;

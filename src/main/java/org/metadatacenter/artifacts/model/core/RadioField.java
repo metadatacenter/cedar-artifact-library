@@ -38,6 +38,7 @@ public sealed interface RadioField extends FieldSchemaArtifact
   static RadioFieldBuilder builder(RadioField radioField) {return new RadioFieldBuilder(radioField);}
 
   final class RadioFieldBuilder extends FieldSchemaArtifactBuilder<RadioField.RadioFieldBuilder>
+      implements LiteralStringDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;

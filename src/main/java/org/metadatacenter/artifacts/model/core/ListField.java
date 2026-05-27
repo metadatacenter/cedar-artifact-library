@@ -37,6 +37,7 @@ public sealed interface ListField extends FieldSchemaArtifact
   static ListFieldBuilder builder(ListField listField) {return new ListFieldBuilder(listField);}
 
   final class ListFieldBuilder extends FieldSchemaArtifactBuilder<ListField.ListFieldBuilder>
+      implements LiteralStringDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;

@@ -37,6 +37,7 @@ public sealed interface EmailField extends FieldSchemaArtifact
   static EmailFieldBuilder builder(EmailField emailField) {return new EmailFieldBuilder(emailField);}
 
   final class EmailFieldBuilder extends FieldSchemaArtifactBuilder<EmailField.EmailFieldBuilder>
+      implements LiteralStringDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
