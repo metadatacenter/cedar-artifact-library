@@ -49,6 +49,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
   }
 
   final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder<ControlledTermField.ControlledTermFieldBuilder>
+      implements ControlledTermDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final ControlledTermValueConstraints.ControlledTermValueConstraintsBuilder valueConstraintsBuilder;

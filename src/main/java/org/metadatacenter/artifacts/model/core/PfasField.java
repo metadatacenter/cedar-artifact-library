@@ -37,6 +37,7 @@ public sealed interface PfasField extends FieldSchemaArtifact
   static PfasFieldBuilder builder(PfasField pfasField) {return new PfasFieldBuilder(pfasField);}
 
   final class PfasFieldBuilder extends FieldSchemaArtifactBuilder<PfasField.PfasFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;

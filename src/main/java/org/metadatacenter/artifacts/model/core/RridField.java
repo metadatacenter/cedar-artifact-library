@@ -37,6 +37,7 @@ public sealed interface RridField extends FieldSchemaArtifact
   static RridFieldBuilder builder(RridField rridField) {return new RridFieldBuilder(rridField);}
 
   final class RridFieldBuilder extends FieldSchemaArtifactBuilder<RridField.RridFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;

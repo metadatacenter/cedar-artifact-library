@@ -37,6 +37,7 @@ public sealed interface RorField extends FieldSchemaArtifact
   static RorFieldBuilder builder(RorField rorField) {return new RorFieldBuilder(rorField);}
 
   final class RorFieldBuilder extends FieldSchemaArtifactBuilder<RorField.RorFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;

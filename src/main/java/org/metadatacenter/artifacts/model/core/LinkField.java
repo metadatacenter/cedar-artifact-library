@@ -37,6 +37,7 @@ public sealed interface LinkField extends FieldSchemaArtifact
   static LinkFieldBuilder builder(LinkField linkField) {return new LinkFieldBuilder(linkField);}
 
   final class LinkFieldBuilder extends FieldSchemaArtifactBuilder<LinkField.LinkFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;

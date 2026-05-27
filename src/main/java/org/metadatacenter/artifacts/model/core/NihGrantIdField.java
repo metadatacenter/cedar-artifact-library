@@ -37,6 +37,7 @@ public sealed interface NihGrantIdField extends FieldSchemaArtifact
   static NihGrantIdFieldBuilder builder(NihGrantIdField nihGrantIdField) {return new NihGrantIdFieldBuilder(nihGrantIdField);}
 
   final class NihGrantIdFieldBuilder extends FieldSchemaArtifactBuilder<NihGrantIdField.NihGrantIdFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;

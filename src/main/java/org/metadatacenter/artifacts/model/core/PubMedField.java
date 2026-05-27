@@ -37,6 +37,7 @@ public sealed interface PubMedField extends FieldSchemaArtifact
   static PubMedFieldBuilder builder(PubMedField pubMedField) {return new PubMedFieldBuilder(pubMedField);}
 
   final class PubMedFieldBuilder extends FieldSchemaArtifactBuilder<PubMedField.PubMedFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;

@@ -37,6 +37,7 @@ public sealed interface DoiField extends FieldSchemaArtifact
   static DoiFieldBuilder builder(DoiField doiField) {return new DoiFieldBuilder(doiField);}
 
   final class DoiFieldBuilder extends FieldSchemaArtifactBuilder<DoiField.DoiFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;

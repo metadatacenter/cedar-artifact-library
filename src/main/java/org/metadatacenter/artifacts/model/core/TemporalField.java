@@ -39,6 +39,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
   static TemporalFieldBuilder builder(TemporalField temporalField) {return new TemporalFieldBuilder(temporalField);}
 
   final class TemporalFieldBuilder extends FieldSchemaArtifactBuilder<TemporalField.TemporalFieldBuilder>
+      implements TemporalDefaultableFieldBuilder
   {
     private final TemporalFieldUi.TemporalFieldUiBuilder fieldUiBuilder;
     private final TemporalValueConstraints.TemporalValueConstraintsBuilder valueConstraintsBuilder;

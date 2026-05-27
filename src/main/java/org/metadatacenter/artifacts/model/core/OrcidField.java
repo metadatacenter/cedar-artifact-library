@@ -37,6 +37,7 @@ public sealed interface OrcidField extends FieldSchemaArtifact
   static OrcidFieldBuilder builder(OrcidField orcidField) {return new OrcidFieldBuilder(orcidField);}
 
   final class OrcidFieldBuilder extends FieldSchemaArtifactBuilder<OrcidField.OrcidFieldBuilder>
+      implements IriDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final LinkValueConstraints.LinkValueConstraintsBuilder valueConstraintsBuilder;
