@@ -88,6 +88,12 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
+    public TextAreaFieldBuilder withDefaultValue(String defaultValue)
+    {
+      valueConstraintsBuilder.withDefaultValue(defaultValue);
+      return this;
+    }
+
     public TextAreaFieldBuilder withMinLength(Integer minLength)
     {
       valueConstraintsBuilder.withMinLength(minLength);
