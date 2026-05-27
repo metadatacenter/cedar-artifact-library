@@ -2,11 +2,17 @@ package org.metadatacenter.artifacts.model.reader;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.Version;
 
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.MODEL_VERSION;
@@ -143,5 +149,82 @@ public class YamlArtifactReaderNegativePathsTest
 
     assertThrows(ArtifactParseException.class,
       () -> reader.readTemplateSchemaArtifact(node));
+  }
+
+  @Test public void testCompactReaderUsesPresentCorrectModelVersion()
+  {
+    // Defaulting is only for absence; a present-and-correct modelVersion goes through the
+    // same parsing path as the strict reader. This pins the spec so a future "be lenient
+    // about wrong values too" regression would fail loudly.
+    YamlArtifactReader compactReader = new YamlArtifactReader(true);
+
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "template");
+    node.put("name", "T");
+    node.put("modelVersion", MODEL_VERSION);
+
+    // No throw; the artifact builds.
+    TemplateSchemaArtifact template = compactReader.readTemplateSchemaArtifact(node);
+    assertEquals("T", template.name());
+  }
+
+  @Test public void testCompactReaderReadsPresentNonCompactFields()
+  {
+    // The compact flag is about tolerance for *absence* of compact-form-omitted fields,
+    // not about ignoring them when present. When standard-form YAML is fed to the
+    // compact reader, every populated field still flows through to the artifact.
+    YamlArtifactReader compactReader = new YamlArtifactReader(true);
+
+    URI jsonLdId = URI.create("https://repo.metadatacenter.org/templates/77");
+    URI createdBy = URI.create("https://repo.metadatacenter.org/users/1");
+    URI modifiedBy = URI.create("https://repo.metadatacenter.org/users/2");
+    OffsetDateTime createdOn = OffsetDateTime.parse("2026-01-01T00:00:00Z");
+    OffsetDateTime lastUpdatedOn = OffsetDateTime.parse("2026-02-01T00:00:00Z");
+
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "template");
+    node.put("name", "Full");
+    node.put("id", jsonLdId.toString());
+    node.put("modelVersion", MODEL_VERSION);
+    node.put("version", "1.2.3");
+    node.put("status", "draft");
+    node.put("createdBy", createdBy.toString());
+    node.put("modifiedBy", modifiedBy.toString());
+    node.put("createdOn", createdOn.toString());
+    node.put("modifiedOn", lastUpdatedOn.toString());
+
+    TemplateSchemaArtifact template = compactReader.readTemplateSchemaArtifact(node);
+
+    assertEquals(jsonLdId, template.jsonLdId().get());
+    assertEquals(Version.fromString("1.2.3"), template.version().get());
+    assertEquals(Status.DRAFT, template.status().get());
+    assertEquals(createdBy, template.createdBy().get());
+    assertEquals(modifiedBy, template.modifiedBy().get());
+    assertEquals(createdOn, template.createdOn().get());
+    assertEquals(lastUpdatedOn, template.lastUpdatedOn().get());
+  }
+
+  @Test public void testCompactReaderAcceptsAllNonCompactFieldsAbsent()
+  {
+    // Companion to the previous test: when *every* compact-form-omitted field is missing,
+    // the compact reader still happily produces the artifact, with the omitted fields
+    // mapping to empty Optionals on the builder.
+    YamlArtifactReader compactReader = new YamlArtifactReader(true);
+
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "template");
+    node.put("name", "Bare");
+    // No modelVersion, version, status, @id, or provenance.
+
+    TemplateSchemaArtifact template = compactReader.readTemplateSchemaArtifact(node);
+
+    assertEquals("Bare", template.name());
+    assertTrue(template.jsonLdId().isEmpty());
+    assertTrue(template.version().isEmpty());
+    assertTrue(template.status().isEmpty());
+    assertTrue(template.createdBy().isEmpty());
+    assertTrue(template.modifiedBy().isEmpty());
+    assertTrue(template.createdOn().isEmpty());
+    assertTrue(template.lastUpdatedOn().isEmpty());
   }
 }
