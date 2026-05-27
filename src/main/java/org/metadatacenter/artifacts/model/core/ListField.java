@@ -106,6 +106,12 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
+    public ListFieldBuilder withMultipleChoice(boolean multipleChoice)
+    {
+      valueConstraintsBuilder.withMultipleChoice(multipleChoice);
+      return this;
+    }
+
     public ListField build()
     {
       withFieldUi(fieldUiBuilder.build());
