@@ -470,8 +470,17 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldInstanceArtifact.jsonLdValue() == null)
       fieldInstanceArtifactRendering.put(VALUE, null);
-    else if (fieldInstanceArtifact.jsonLdValue().isPresent())
-      fieldInstanceArtifactRendering.put(VALUE, fieldInstanceArtifact.jsonLdValue().get());
+    else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
+      // Same compact-YAML rule as numeric defaults: when the field's declared @type is
+      // an XSD numeric datatype and the stringified value parses cleanly as a number,
+      // emit a bare number for readable output. Pathological forms (leading zeros,
+      // exponential, etc.) stay String-typed so the YAML serializer keeps them quoted.
+      String raw = fieldInstanceArtifact.jsonLdValue().get();
+      Object rendered = isNumericInstance(fieldInstanceArtifact)
+        ? renderNumericLiteralForYaml(raw)
+        : raw;
+      fieldInstanceArtifactRendering.put(VALUE, rendered);
+    }
 
     if (fieldInstanceArtifact.label().isPresent())
       fieldInstanceArtifactRendering.put(LABEL, fieldInstanceArtifact.label().get());
@@ -880,15 +889,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           rendering.put(DEFAULT, textDefaultValue.value());
       } else if (defaultValue.isNumericDefaultValue()) {
         NumericDefaultValue numericDefaultValue = defaultValue.asNumericDefaultValue();
-        // Emit as a string so the YAML carries a stable representation regardless of
-        // YAML's auto-typing rules. A bare YAML number can be reparsed as Integer,
-        // Long, or Double depending on form, but there is no guarantee the auto-typed
-        // value matches the field's declared XSD datatype (e.g. xsd:long when the
-        // YAML parser produced an Integer, or xsd:int for a value the parser widened
-        // to Long). Stringifying defers the type decision to the model, where the
-        // datatype declaration is authoritative. SnakeYAML will quote the scalar
-        // because it looks like a number, preserving its string-ness on the next read.
-        rendering.put(DEFAULT, numericDefaultValue.value().toString());
+        // Compact YAML aesthetic: render plain numeric defaults unquoted (e.g.
+        // `default: 42`) and reserve quotes for values whose YAML auto-typing would
+        // change them on a subsequent read (leading-zero forms like '010', exponential
+        // notation like '1e3', etc.). The library's reader accepts either form and
+        // normalises to canonical string at the model boundary, so the round trip is
+        // safe in both directions; this only affects display.
+        rendering.put(DEFAULT, renderNumericLiteralForYaml(numericDefaultValue.value().toString()));
       } else if (defaultValue.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = defaultValue.asControlledTermDefaultValue();
         LinkedHashMap<String, Object> defaultRendering = new LinkedHashMap<>();
@@ -1265,6 +1272,57 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
     return offsetDateTime.format(datetimeFormatter);
+  }
+
+  /** Set of XSD URIs that count as numeric for unquoting purposes in instance values. */
+  private static final Set<URI> XSD_NUMERIC_URIS;
+  static {
+    Set<URI> uris = new HashSet<>();
+    for (XsdNumericDatatype t : XsdNumericDatatype.values()) uris.add(t.toUri());
+    XSD_NUMERIC_URIS = Collections.unmodifiableSet(uris);
+  }
+
+  /** True when the instance's declared @type is an XSD numeric datatype. */
+  private static boolean isNumericInstance(FieldInstanceArtifact fieldInstanceArtifact)
+  {
+    for (URI t : fieldInstanceArtifact.jsonLdTypes())
+      if (XSD_NUMERIC_URIS.contains(t)) return true;
+    return false;
+  }
+
+  /**
+   * Decide how to emit a numeric literal in YAML output.
+   *
+   * <p>Returns the parsed {@link Number} (Long or Double) when the canonical string
+   * representation is round-trip-safe under SnakeYAML's auto-typing — i.e. a bare
+   * integer or a plain decimal with no leading zeros, no exponential notation, no
+   * trailing-dot weirdness. The YAML serializer then emits a bare number, which is
+   * the readable form a human would write.
+   *
+   * <p>Returns the input {@link String} unchanged for everything else. The library's
+   * YAML serializer has {@code ALWAYS_QUOTE_NUMBERS_AS_STRINGS} enabled, so a
+   * String that looks numeric stays quoted in the output — preserving its
+   * string-ness across a subsequent read (which is what the pathological forms
+   * need: a Java String "010" must not round-trip as octal Integer 8).
+   *
+   * <p>The library's reader normalises to a canonical String at the model boundary
+   * either way, so the round trip is correct in both directions.
+   */
+  private static Object renderNumericLiteralForYaml(String canonical)
+  {
+    if (canonical == null) return null;
+    // Plain integer: optional sign, no leading zeros except just "0".
+    if (canonical.matches("-?(0|[1-9]\\d*)")) {
+      try { return Long.parseLong(canonical); }
+      catch (NumberFormatException e) { /* fall through — out of long range */ }
+    }
+    // Plain decimal: digits, dot, digits; no leading zeros on the integer part.
+    if (canonical.matches("-?(0|[1-9]\\d*)\\.\\d+")) {
+      try { return Double.parseDouble(canonical); }
+      catch (NumberFormatException e) { /* fall through */ }
+    }
+    // Anything else stays String-typed and the YAML serializer will quote it.
+    return canonical;
   }
 
   /**

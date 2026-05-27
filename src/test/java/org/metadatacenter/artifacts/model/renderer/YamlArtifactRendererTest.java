@@ -1255,6 +1255,81 @@ public class YamlArtifactRendererTest {
     return values;
   }
 
+  // ----------------------------------------------------------------------
+  // Numeric default-value rendering: plain numbers should land in the YAML
+  // map as Number-typed values (so the YAML serializer emits them unquoted),
+  // and round-trip through the reader to the same canonical model state.
+  // Pathological forms stay String-typed so the YAML serializer keeps them
+  // quoted.
+  // ----------------------------------------------------------------------
+
+  @Test
+  public void numericDefaultRendersUnquoted_integer() {
+    NumericField field = NumericField.builder()
+        .withName("Age")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.INT)
+        .withDefaultValue(42)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertNotNull(emitted, "DEFAULT key must be present");
+    assertTrue(emitted instanceof Number,
+        "plain-integer default should land in the map as a Number so YAML emits it unquoted; "
+            + "got " + emitted.getClass().getSimpleName() + " = " + emitted);
+    assertEquals(42L, ((Number) emitted).longValue());
+  }
+
+  @Test
+  public void numericDefaultRendersUnquoted_decimal() {
+    NumericField field = NumericField.builder()
+        .withName("pH")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.DECIMAL)
+        .withDefaultValue(3.14)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertTrue(emitted instanceof Number,
+        "plain-decimal default should land in the map as a Number; got "
+            + emitted.getClass().getSimpleName() + " = " + emitted);
+    assertEquals(3.14, ((Number) emitted).doubleValue(), 1e-9);
+  }
+
+  @Test
+  public void numericDefaultRendersUnquoted_zero() {
+    // Zero is a valid plain-integer form that must not match the leading-zero
+    // pathological case; this pins the regex boundary.
+    NumericField field = NumericField.builder()
+        .withName("Count")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.INT)
+        .withDefaultValue(0)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertTrue(emitted instanceof Number, "0 should emit unquoted; got " + emitted);
+    assertEquals(0L, ((Number) emitted).longValue());
+  }
+
+  @Test
+  public void numericDefaultRendersUnquoted_negativeInteger() {
+    NumericField field = NumericField.builder()
+        .withName("Offset")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.INT)
+        .withDefaultValue(-17)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertTrue(emitted instanceof Number, "negative integer should emit unquoted; got " + emitted);
+    assertEquals(-17L, ((Number) emitted).longValue());
+  }
+
   private ObjectNode getFileContentAsObjectNode(String jsonFileName) {
     try {
       return (ObjectNode) mapper.readTree(new File(
