@@ -318,6 +318,28 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact, propertyLabel, propertyDescription);
     }
 
+    public Builder withoutFieldSchema(String fieldKey) {
+      if (!this.fieldSchemas.containsKey(fieldKey)) {
+        throw new IllegalArgumentException("Template has no field child " + fieldKey);
+      }
+      this.fieldSchemas.remove(fieldKey);
+      this.templateUiBuilder.withoutOrder(fieldKey);
+      this.templateUiBuilder.withoutPropertyLabel(fieldKey);
+      this.templateUiBuilder.withoutPropertyDescription(fieldKey);
+      return this;
+    }
+
+    public Builder withoutElementSchema(String elementKey) {
+      if (!this.elementSchemas.containsKey(elementKey)) {
+        throw new IllegalArgumentException("Template has no element child " + elementKey);
+      }
+      this.elementSchemas.remove(elementKey);
+      this.templateUiBuilder.withoutOrder(elementKey);
+      this.templateUiBuilder.withoutPropertyLabel(elementKey);
+      this.templateUiBuilder.withoutPropertyDescription(elementKey);
+      return this;
+    }
+
     public Builder withHeader(String header) {
       this.templateUiBuilder.withHeader(header);
       return this;

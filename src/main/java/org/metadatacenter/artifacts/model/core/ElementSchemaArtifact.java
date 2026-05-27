@@ -339,6 +339,30 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact, propertyLabel, propertyDescription);
     }
 
+    public Builder withoutFieldSchema(String fieldKey)
+    {
+      if (!this.fieldSchemas.containsKey(fieldKey)) {
+        throw new IllegalArgumentException("Element has no field child " + fieldKey);
+      }
+      this.fieldSchemas.remove(fieldKey);
+      this.elementUiBuilder.withoutOrder(fieldKey);
+      this.elementUiBuilder.withoutPropertyLabel(fieldKey);
+      this.elementUiBuilder.withoutPropertyDescription(fieldKey);
+      return this;
+    }
+
+    public Builder withoutElementSchema(String elementKey)
+    {
+      if (!this.elementSchemas.containsKey(elementKey)) {
+        throw new IllegalArgumentException("Element has no element child " + elementKey);
+      }
+      this.elementSchemas.remove(elementKey);
+      this.elementUiBuilder.withoutOrder(elementKey);
+      this.elementUiBuilder.withoutPropertyLabel(elementKey);
+      this.elementUiBuilder.withoutPropertyDescription(elementKey);
+      return this;
+    }
+
     public Builder withIsMultiple(boolean isMultiple)
     {
       this.isMultiple = isMultiple;

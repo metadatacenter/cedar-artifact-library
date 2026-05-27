@@ -86,6 +86,21 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
       return this;
     }
 
+    public Builder withoutOrder(String fieldKey) {
+      this.order.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyLabel(String fieldKey) {
+      this.propertyLabels.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyDescription(String fieldKey) {
+      this.propertyDescriptions.remove(fieldKey);
+      return this;
+    }
+
     public ElementUi build()
     {
       return new ElementUiRecord(order, propertyLabels, propertyDescriptions);

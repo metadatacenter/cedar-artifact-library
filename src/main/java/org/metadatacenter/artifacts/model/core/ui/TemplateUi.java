@@ -99,6 +99,21 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
       return this;
     }
 
+    public Builder withoutOrder(String fieldKey) {
+      this.order.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyLabel(String fieldKey) {
+      this.propertyLabels.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyDescription(String fieldKey) {
+      this.propertyDescriptions.remove(fieldKey);
+      return this;
+    }
+
     public Builder withHeader(String header) {
       this.header = Optional.ofNullable(header);
       return this;
