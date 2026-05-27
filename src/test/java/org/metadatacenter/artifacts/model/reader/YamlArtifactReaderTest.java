@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.reader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -21,6 +20,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
@@ -44,6 +44,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VER
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
@@ -171,11 +172,13 @@ public class YamlArtifactReaderTest
   }
 
   // TODO Need to activate this
-  @Disabled @Test public void readFieldSchemaArtifactTest()
+  @Test public void readFieldSchemaArtifactTest()
   {
     String fieldKey = "study_name";
     String fieldName = "Study Name";
-    String fieldType = FieldInputType.TEXTFIELD.toString();
+    // The YAML `type:` discriminator is the kebab-case wire name (text-field),
+    // not the Java enum's default toString (TEXTFIELD). Use the constant.
+    String fieldType = TEXT_FIELD;
     String description = "Please enter a study name";
     String identifier = "ID4";
     Version version = Version.fromString("1.2.3");
@@ -215,13 +218,18 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
     yamlSource.put(PREF_LABEL, preferredLabel);
     yamlSource.put(ALT_LABEL, altLabels);
-    yamlSource.put(REQUIRED, requiredValue);
     yamlSource.put(VALUE_RECOMMENDATION, valueRecommendation);
     yamlSource.put(HIDDEN, hidden);
-    yamlSource.put(MULTIPLE, isMultiple);
-    yamlSource.put(MIN_ITEMS, minItems);
-    yamlSource.put(MAX_ITEMS, maxItems);
     yamlSource.put(LANGUAGE, language);
+    // The canonical YAML form (matching what YamlArtifactRenderer emits for nested
+    // fields) puts required / multiple / minItems / maxItems inside a configuration:
+    // sub-block. The reader looks there for these flags.
+    LinkedHashMap<String, Object> configuration = new LinkedHashMap<>();
+    configuration.put(REQUIRED, requiredValue);
+    configuration.put(MULTIPLE, isMultiple);
+    configuration.put(MIN_ITEMS, minItems);
+    configuration.put(MAX_ITEMS, maxItems);
+    yamlSource.put(CONFIGURATION, configuration);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 

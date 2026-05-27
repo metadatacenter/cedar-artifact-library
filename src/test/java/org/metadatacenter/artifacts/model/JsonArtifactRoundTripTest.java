@@ -7,7 +7,6 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
@@ -314,8 +313,7 @@ public class JsonArtifactRoundTripTest
 
   // Can add attribute-value to literalFieldUIContent.json in meta model but then it complains about missing
   // valueConstraints
-  @Disabled // Fix standalone attribute-value field
-  @Test public void testRoundTripAttributeValueField()
+    @Test public void testRoundTripAttributeValueField()
   {
     String name = "Field name";
     String description = "Field description";

@@ -85,6 +85,7 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_T
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.UI_CONTENT;
 import static org.metadatacenter.model.ModelNodeNames.UI_CONTINUE_PREVIOUS_LINE;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_ATTRIBUTE_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.UI_FIELD_INPUT_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
 import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
@@ -203,8 +204,35 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    * </pre>
    */
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode) {
-    String name = readRequiredString(sourceNode, "/", SCHEMA_ORG_NAME);
-    return readFieldSchemaArtifact(sourceNode, "", name, false, true, Optional.empty(), Optional.empty(),
+    // Standalone JSON rendering of an attribute-value field wraps the actual field
+    // node in a {type: array, minItems: 0, items: {field}} envelope. Multi-instance
+    // (non-AV) fields are rendered the same way only when the model marks them
+    // multi-instance. Unwrap the envelope so schema:name etc. can be located, and
+    // derive isMultiInstance only for non-AV kinds (for AV the wrapper is structural,
+    // not a multi-instance marker).
+    ObjectNode fieldNode = sourceNode;
+    boolean isMultiInstance = false;
+    Optional<Integer> minItems = Optional.empty();
+    Optional<Integer> maxItems = Optional.empty();
+    JsonNode jsonSchemaTypeNode = sourceNode.get(JSON_SCHEMA_TYPE);
+    if (jsonSchemaTypeNode != null && jsonSchemaTypeNode.isTextual()
+        && JSON_SCHEMA_ARRAY.equals(jsonSchemaTypeNode.asText())) {
+      JsonNode items = sourceNode.get(JSON_SCHEMA_ITEMS);
+      if (items == null || !items.isObject())
+        throw new ArtifactParseException("Array wrapper missing items object", JSON_SCHEMA_ITEMS, "/");
+      fieldNode = (ObjectNode) items;
+      JsonNode innerUi = fieldNode.get(UI);
+      boolean isAttributeValue = innerUi != null && innerUi.isObject() && innerUi.has(UI_FIELD_INPUT_TYPE)
+          && FIELD_INPUT_TYPE_ATTRIBUTE_VALUE.equals(innerUi.get(UI_FIELD_INPUT_TYPE).asText());
+      if (!isAttributeValue) {
+        isMultiInstance = true;
+        minItems = readInteger(sourceNode, "/", JSON_SCHEMA_MIN_ITEMS);
+        maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
+      }
+    }
+
+    String name = readRequiredString(fieldNode, "/", SCHEMA_ORG_NAME);
+    return readFieldSchemaArtifact(fieldNode, "", name, isMultiInstance, true, minItems, maxItems,
         Optional.empty());
   }
 
