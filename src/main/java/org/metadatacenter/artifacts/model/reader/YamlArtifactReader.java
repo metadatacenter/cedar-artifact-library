@@ -40,6 +40,7 @@ import org.metadatacenter.artifacts.model.core.ui.NumericFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -179,7 +180,7 @@ import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
 public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, Object>>
 {
-  private final Version modelVersion = Version.fromString("1.6.0");
+  private final Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
 
   public YamlArtifactReader()
   {

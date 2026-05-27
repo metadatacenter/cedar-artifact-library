@@ -22,6 +22,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.MODEL_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
@@ -212,7 +213,7 @@ public class JsonArtifactReaderNegativePathsTest
   private ObjectNode baseSchema(String name, String description)
   {
     ObjectNode node = mapper.createObjectNode();
-    node.put(SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
+    node.put(SCHEMA_ORG_SCHEMA_VERSION, MODEL_VERSION);
     node.put(SCHEMA_ORG_NAME, name);
     node.put(SCHEMA_ORG_DESCRIPTION, description);
     node.put(JSON_SCHEMA_SCHEMA, JSON_SCHEMA_SCHEMA_IRI);

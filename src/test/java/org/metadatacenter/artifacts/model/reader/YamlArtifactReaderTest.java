@@ -10,6 +10,7 @@ import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class YamlArtifactReaderTest
     String description = "My study";
     String identifier = "ID1";
     URI id = URI.create("https://repo.metadatacenter.org/templates/66");
-    Version modelVersion = Version.fromString("1.6.0");
+    Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
     Version version = Version.fromString("1.2.3");
     Status status = Status.DRAFT;
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/templates/4553");
@@ -118,7 +119,7 @@ public class YamlArtifactReaderTest
     String identifier = "ID3";
     URI id = URI.create("https://repo.metadatacenter.org/template-elements/2323");
     Version version = Version.fromString("1.2.3");
-    Version modelVersion = Version.fromString("1.6.0");
+    Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
     Status status = Status.DRAFT;
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/template-elements/4553");
     URI previousVersion = URI.create("https://repo.metadatacenter.org/template-elements/5465");
@@ -182,7 +183,7 @@ public class YamlArtifactReaderTest
     String description = "Please enter a study name";
     String identifier = "ID4";
     Version version = Version.fromString("1.2.3");
-    Version modelVersion = Version.fromString("1.6.0");
+    Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
     Status status = Status.DRAFT;
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/template-fields/4553");
     URI previousVersion = URI.create("https://repo.metadatacenter.org/template-fields/5465");

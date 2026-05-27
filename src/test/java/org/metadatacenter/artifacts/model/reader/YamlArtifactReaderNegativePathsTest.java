@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.MODEL_VERSION;
 
 /**
  * Negative-path tests for YamlArtifactReader: hand-authored YAML is common, so malformed
@@ -28,8 +29,8 @@ public class YamlArtifactReaderNegativePathsTest
     LinkedHashMap<String, Object> node = new LinkedHashMap<>();
     node.put("type", "template");
     node.put("name", "T");
-    // YamlArtifactReader requires `modelVersion: 1.6.0` to pass its top-level shape check.
-    node.put("modelVersion", "1.6.0");
+    // YamlArtifactReader requires modelVersion to pass its top-level shape check.
+    node.put("modelVersion", MODEL_VERSION);
     return node;
   }
 
@@ -77,7 +78,7 @@ public class YamlArtifactReaderNegativePathsTest
     LinkedHashMap<String, Object> node = new LinkedHashMap<>();
     node.put("type", "element");
     node.put("name", "X");
-    node.put("modelVersion", "1.6.0");
+    node.put("modelVersion", MODEL_VERSION);
 
     ArtifactParseException ex = assertThrows(ArtifactParseException.class,
       () -> reader.readTemplateSchemaArtifact(node));
@@ -90,7 +91,7 @@ public class YamlArtifactReaderNegativePathsTest
     LinkedHashMap<String, Object> field = new LinkedHashMap<>();
     field.put("type", "text-field");
     field.put("name", "X");
-    field.put("modelVersion", "1.6.0");
+    field.put("modelVersion", MODEL_VERSION);
     field.put("version", "garbage");
 
     ArtifactParseException ex = assertThrows(ArtifactParseException.class,

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INPUT_TYPE_TEXTFIELD;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.MODEL_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
@@ -283,7 +284,7 @@ public class JsonArtifactReaderTest
   {
     ObjectNode objectNode = mapper.createObjectNode();
 
-    objectNode.put(SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
+    objectNode.put(SCHEMA_ORG_SCHEMA_VERSION, MODEL_VERSION);
     objectNode.put(SCHEMA_ORG_NAME, name);
     objectNode.put(SCHEMA_ORG_DESCRIPTION, description);
 

@@ -23,6 +23,7 @@ import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.format.DateTimeFormatter;
@@ -79,7 +80,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
   static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
   static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
-  static final Version MODEL_VERSION = Version.fromString("1.6.0");
+  static final Version MODEL_VERSION = Version.fromString(ModelNodeNames.MODEL_VERSION);
   static final URI JSON_SCHEMA_SCHEMA_URI = URI.create(JSON_SCHEMA_SCHEMA_IRI);
 
   public JsonArtifactRenderer() {

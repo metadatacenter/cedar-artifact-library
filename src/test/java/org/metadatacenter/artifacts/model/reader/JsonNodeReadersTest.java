@@ -10,6 +10,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.MODEL_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 
@@ -53,18 +54,18 @@ public class JsonNodeReadersTest
   @Test public void readModelVersionReturnsParsedVersionWhenPresent()
   {
     ObjectNode node = mapper.createObjectNode();
-    node.put(SCHEMA_ORG_SCHEMA_VERSION, "1.6.0");
+    node.put(SCHEMA_ORG_SCHEMA_VERSION, MODEL_VERSION);
 
     Optional<Version> result = JsonNodeReaders.readModelVersion(node, "/");
 
     assertTrue(result.isPresent());
-    assertEquals(Version.fromString("1.6.0"), result.get());
+    assertEquals(Version.fromString(MODEL_VERSION), result.get());
   }
 
   @Test public void readModelVersionReturnsEmptyWhenAbsent()
   {
-    // Regression test: previously this silently defaulted to "1.6.0", masking documents that
-    // never declared a model version.
+    // Regression test: previously this silently defaulted to the model version, masking
+    // documents that never declared one.
     ObjectNode node = mapper.createObjectNode();
 
     Optional<Version> result = JsonNodeReaders.readModelVersion(node, "/");

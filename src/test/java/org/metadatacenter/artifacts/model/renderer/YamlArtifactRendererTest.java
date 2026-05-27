@@ -13,6 +13,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstrain
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +68,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
     expectedRendering.put(HEADER, header);
     expectedRendering.put(FOOTER, footer);
 
@@ -96,12 +97,13 @@ public class YamlArtifactRendererTest {
         type: template
         name: ${name}
         description: ${description}
-        modelVersion: 1.6.0
+        modelVersion: ${modelVersion}
         header: ${header}
         footer: ${footer}
         """
         .replace("${name}", name)
         .replace("${description}", description)
+        .replace("${modelVersion}", ModelNodeNames.MODEL_VERSION)
         .replace("${header}", header)
         .replace("${footer}", footer);
 
@@ -129,7 +131,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -154,10 +156,11 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
-        modelVersion: 1.6.0
+        modelVersion: ${modelVersion}
         """
         .replace("${name}", name)
-        .replace("${description}", description);
+        .replace("${description}", description)
+        .replace("${modelVersion}", ModelNodeNames.MODEL_VERSION);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
@@ -182,10 +185,11 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
-        modelVersion: 1.6.0
+        modelVersion: ${modelVersion}
         """
         .replace("${name}", name)
-        .replace("${description}", description);
+        .replace("${description}", description)
+        .replace("${modelVersion}", ModelNodeNames.MODEL_VERSION);
 
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
@@ -235,7 +239,7 @@ public class YamlArtifactRendererTest {
     expectedBaseFieldRendering.put(TYPE, CONTROLLED_TERM_FIELD);
     expectedBaseFieldRendering.put(NAME, name);
     expectedBaseFieldRendering.put(DESCRIPTION, description);
-    expectedBaseFieldRendering.put(MODEL_VERSION, "1.6.0");
+    expectedBaseFieldRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
     expectedBaseFieldRendering.put(DATATYPE, IRI);
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
@@ -302,7 +306,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, LINK_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -330,7 +334,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ROR_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -358,7 +362,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ORCID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -386,7 +390,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PFAS_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -414,7 +418,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, RRID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -442,7 +446,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, NIH_GRANT_ID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -470,7 +474,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PUBMED_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -498,7 +502,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, DOI_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(MODEL_VERSION, "1.6.0");
+    expectedRendering.put(MODEL_VERSION, ModelNodeNames.MODEL_VERSION);
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -529,7 +533,7 @@ public class YamlArtifactRendererTest {
             type: controlled-term-field
             name: ${fieldName}
             description: ${description}
-            modelVersion: 1.6.0
+            modelVersion: ${modelVersion}
             datatype: iri
             values:
               - type: class
@@ -541,6 +545,7 @@ public class YamlArtifactRendererTest {
         """
         .replace("${fieldName}", fieldKey)
         .replace("${description}", description)
+        .replace("${modelVersion}", ModelNodeNames.MODEL_VERSION)
         .replace("${classValueType}", classValueType.toString())
         .replace("${classLabel}", classLabel)
         .replace("${classSource}", classSource)

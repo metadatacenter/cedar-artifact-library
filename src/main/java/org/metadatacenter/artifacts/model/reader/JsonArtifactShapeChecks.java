@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.util.List;
@@ -15,7 +16,7 @@ import static org.metadatacenter.model.ModelNodeNames.*;
 final class JsonArtifactShapeChecks {
   private JsonArtifactShapeChecks() {}
 
-  private static final Version MODEL_VERSION = Version.fromString("1.6.0");
+  private static final Version MODEL_VERSION = Version.fromString(ModelNodeNames.MODEL_VERSION);
   private static final String JSON_SCHEMA_SCHEMA_URI = JSON_SCHEMA_SCHEMA_IRI;
 
   public static void checkSchemaArtifactJsonLdType(List<URI> schemaArtifactJsonLdTypes, String path) {

@@ -7,6 +7,7 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -20,7 +21,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private final boolean isCompact;
   private final DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   private final TerminologyServerClient terminologyServerClient;
-  private final Version modelVersion = Version.fromString("1.6.0");
+  private final Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
 
   public YamlArtifactRenderer(boolean isCompact, TerminologyServerClient terminologyServerClient)
   {
