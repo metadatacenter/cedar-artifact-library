@@ -27,7 +27,11 @@ public class YamlSerializer {
 
   static {
     YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // This is different
+        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // omit quotes when unambiguous
+        // ... but still quote Java Strings whose content looks like a number, otherwise
+        // they'd round-trip as numbers and lose the String type (and the field's XSD
+        // datatype declaration would no longer be authoritative for numeric defaults).
+        .enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
         .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
         .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
