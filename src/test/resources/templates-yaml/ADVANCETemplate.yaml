@@ -1,0 +1,1962 @@
+type: template
+name: ADVANCE metadata template
+id: https://repo.metadatacenter.org/templates/101bbdbb-ae63-4fab-8f94-01a1d5c15d83
+status: draft
+version: 0.0.1
+modelVersion: 1.6.0
+createdOn: '2022-10-06T15:48:20-07:00'
+createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+modifiedOn: '2022-10-06T15:48:20-07:00'
+modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+children:
+- key: Monitoring Scheme Identification
+  type: element
+  name: Monitoring Scheme Identification
+  id: https://repo.metadatacenter.org/template-elements/be89d739-f71f-46cc-a9cd-988a9ff6b390
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Monitoring scheme nameRT
+    type: static-rich-text
+    name: Monitoring scheme nameRT
+    id: https://repo.metadatacenter.org/template-fields/3ab48873-2282-4975-a039-eb4aba4602c0
+    modelVersion: 1.6.0
+    content: |
+      <p>Please, provide the name by which the monitoring scheme is known</p>
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Monitoring scheme name
+    type: text-field
+    name: Monitoring scheme name
+    id: https://repo.metadatacenter.org/template-fields/8f3b10fe-bc93-4436-a376-fb6cb69f7341
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: http://loki.cae.drexel.edu/~wbs/ontology/2004/09/iso-19115#title
+  - key: Program nameRT
+    type: static-rich-text
+    name: Program nameRT
+    id: https://repo.metadatacenter.org/template-fields/78378ef1-3dc0-4693-a5da-2f3de8650e95
+    modelVersion: 1.6.0
+    content: |
+      <p>If your monitoring scheme is part of a larger program, please provide program name (program is a set of monitoring schemes organised within the same institution)</p>
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Program name
+    type: text-field
+    name: Program name
+    id: https://repo.metadatacenter.org/template-fields/79eb5561-7d9f-4445-bdbe-be69970c7b47
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: http://bioontology.org/ontologies/biositemap.owl#research_program
+  - key: Online locatorRT
+    type: static-rich-text
+    name: Online locatorRT
+    id: https://repo.metadatacenter.org/template-fields/ad847660-4f17-45a9-9476-bbd5ca81a7cb
+    modelVersion: 1.6.0
+    content: |
+      <p><span style="background-color: rgb(255, 255, 255);">If data are published, please provide Digital Object Identifier.&nbsp;</span>Otherwise,&nbsp;provide the link to the data, or to additional information about monitoring scheme data</p>
+
+      <p>&nbsp;</p>
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Online locator
+    type: link-field
+    name: Online locator
+    id: https://repo.metadatacenter.org/template-fields/296ce7e7-0861-4858-b373-301faf3adf58
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: http://loki.cae.drexel.edu/~wbs/ontology/2004/09/iso-19115#onlineResource
+  - key: KeywordsRT
+    type: static-rich-text
+    name: KeywordsRT
+    id: https://repo.metadatacenter.org/template-fields/f6241121-29bf-4cf9-9b28-9fb264c9d39c
+    modelVersion: 1.6.0
+    content: |
+      <p>Please, select at least 3 keywords</p>
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: keyword
+    type: controlled-term-field
+    name: keyword
+    id: https://repo.metadatacenter.org/template-fields/019b6830-e696-478a-b47e-fb2887bac4c6
+    modelVersion: 1.6.0
+    prefLabel: Keywords
+    datatype: iri
+    values:
+    - type: ontology
+      acronym: ENVTHES
+      ontologyName: Thesaurus for long-term ecological research, monitoring, experiments
+      iri: https://data.bioontology.org/ontologies/ENVTHES
+      numTerms: 2
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: http://www.w3.org/ns/dcat#keyword
+      multiple: true
+      minItems: 3
+  - key: DescriptionRT
+    type: static-rich-text
+    name: DescriptionRT
+    id: https://repo.metadatacenter.org/template-fields/92c03ad4-7ac2-4588-9074-9ff8a1cb4ee4
+    modelVersion: 1.6.0
+    content: |
+      <p>Please, provide a brief summary with the most important details summarising the data</p>
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Description
+    type: text-field
+    name: Description
+    id: https://repo.metadatacenter.org/template-fields/43b18eff-cab9-4d65-934e-138982c47bc9
+    modelVersion: 1.6.0
+    maxLength: 2500
+    createdOn: '2022-10-05T05:11:11-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:11:11-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: http://loki.cae.drexel.edu/~wbs/ontology/2004/09/iso-19115#onlineResourceDescription
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/e70b743a-0444-4348-bc51-9f873dded7dd
+- key: Contact Information
+  type: element
+  name: Contact Information
+  id: https://repo.metadatacenter.org/template-elements/98f77555-2065-428d-8441-52bd1e79cd3a
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Responsible organizationRT
+    type: static-rich-text
+    name: Responsible organizationRT
+    id: https://repo.metadatacenter.org/template-fields/8145c793-775b-4f32-9534-1c1d2fb7b2c3
+    modelVersion: 1.6.0
+    content: |
+      <p>Please, provide the link to your organization registry. Search for it here:<a href="http://ror.org"> https://ror.org/</a></p>
+
+      <p>If not found, provide the link to your organization website instead.</p>
+    createdOn: '2022-10-05T05:10:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:10:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Responsible organization
+    type: link-field
+    name: Responsible organization
+    id: https://repo.metadatacenter.org/template-fields/99b14057-c8c1-4fcd-9dd9-ca776c614a35
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:10:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:10:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: https://schema.metadatacenter.org/properties/9169e8c8-544b-46d5-b89d-57d7473f0929
+  - key: Organization type
+    type: element
+    name: Organization type
+    id: https://repo.metadatacenter.org/template-elements/c6f39a8e-2f28-4d70-a2a2-ef2f82f14996
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:10:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:10:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Organization type
+      type: controlled-term-field
+      name: Organization type
+      id: https://repo.metadatacenter.org/template-fields/a132aeac-1f85-4711-a708-670d8848872c
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: class
+        label: other
+        acronym: ELTER_CL
+        termType: class
+        termLabel: other
+        iri: http://vocabs.lter-europe.net/elter_cl/10195
+      - type: branch
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: institution type
+        iri: http://vocabs.lter-europe.net/elter_cl/10461
+        maxDepth: 0
+      actions:
+      - action: move
+        to: 4
+        termIri: http://vocabs.lter-europe.net/elter_cl/10195
+        sourceIri: template
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:53:59-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:53:59-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/9ffd234e-5291-4699-977a-612bb2437b3d
+        multiple: true
+        minItems: 1
+    - key: Please, provide organization type if not found in the drop-down list
+      type: text-field
+      name: Please, provide organization type if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/6823b62d-930c-4623-bf80-b1eeaa54925c
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:53:59-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:53:59-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/d61134ac-a2ac-4e95-b452-5972d2d46d5d
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/e3ce460b-1b05-4ac5-9ffb-3046f4fc3ab3
+  - key: citedResponsibleParty
+    type: text-field
+    name: citedResponsibleParty
+    id: https://repo.metadatacenter.org/template-fields/aa018cb1-4cdf-49a8-b9aa-442779fc0624
+    modelVersion: 1.6.0
+    prefLabel: Contact person
+    createdOn: '2022-10-05T05:10:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:10:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: http://loki.cae.drexel.edu/~wbs/ontology/2004/09/iso-19115#citedResponsibleParty
+  - key: Responsible Person Role
+    type: controlled-term-field
+    name: Responsible Person Role
+    id: https://repo.metadatacenter.org/template-fields/e3e96b6c-3248-42af-b3c5-9a4f26935c19
+    modelVersion: 1.6.0
+    prefLabel: Role
+    datatype: iri
+    values:
+    - type: ontology
+      acronym: ISO19115ROLES
+      ontologyName: ISO 19115 Role Codes
+      iri: https://data.bioontology.org/ontologies/ISO19115ROLES
+      numTerms: 2
+    actions:
+    - action: move
+      to: 7
+      termIri: http://def.isotc211.org/iso19115/-1/2014/CitationAndResponsiblePartyInformation/code/CI_RoleCode/owner
+      sourceIri: https://data.bioontology.org/ontologies/ISO19115ROLES
+      sourceAcronym: ISO19115ROLES
+      type: class
+    - action: move
+      to: 0
+      termIri: http://def.isotc211.org/iso19115/-1/2014/CitationAndResponsiblePartyInformation/code/CI_RoleCode/owner
+      sourceIri: https://data.bioontology.org/ontologies/ISO19115ROLES
+      sourceAcronym: ISO19115ROLES
+      type: class
+    createdOn: '2022-10-05T05:10:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:10:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: http://semantic-dicom.org/dcm#ResponsiblePersonRole
+  - key: electronicMailAddress
+    type: email-field
+    name: electronicMailAddress
+    id: https://repo.metadatacenter.org/template-fields/a594f99c-291c-4732-98bf-f66ad893e068
+    modelVersion: 1.6.0
+    prefLabel: E-mail address
+    createdOn: '2022-10-05T05:10:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:10:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: http://loki.cae.drexel.edu/~wbs/ontology/2004/09/iso-19115#electronicMailAddress
+  - key: orcid
+    type: link-field
+    name: orcid
+    id: https://repo.metadatacenter.org/template-fields/a0745dd4-0f78-4ec0-a97c-dba78b73099f
+    modelVersion: 1.6.0
+    prefLabel: ORCID ID
+    createdOn: '2022-10-05T05:10:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:10:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: http://gbol.life/0.1/orcid
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/450ee8da-8616-480f-bfce-5899920f6bd4
+- key: Funding
+  type: element
+  name: Funding
+  id: https://repo.metadatacenter.org/template-elements/97c4a766-cf1d-419d-9ff9-843849d0009c
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Funding source
+    type: element
+    name: Funding source
+    id: https://repo.metadatacenter.org/template-elements/b707e5cf-9cfa-4c91-a17b-1d26999c0fd9
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    derivedFrom: https://repo.metadatacenter.org/template-elements/97c4a766-cf1d-419d-9ff9-843849d0009c
+    createdOn: '2022-10-05T05:07:51-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:51-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Funding source
+      type: controlled-term-field
+      name: Funding source
+      id: https://repo.metadatacenter.org/template-fields/7ad97368-2ac1-4d15-9514-de0f275d3ea0
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: funding source
+        iri: http://vocabs.lter-europe.net/elter_cl/10563
+        maxDepth: 0
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
+      actions:
+      - action: delete
+        termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C45252
+        sourceIri: template
+        sourceAcronym: NCIT
+        type: class
+      - action: delete
+        termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C61423
+        sourceIri: template
+        sourceAcronym: NCIT
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10195
+        sourceIri: template
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17649
+        sourceIri: template
+        sourceAcronym: NCIT
+        type: class
+      - action: delete
+        termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25643
+        sourceIri: template
+        sourceAcronym: NCIT
+        type: class
+      - action: move
+        to: 2
+        termIri: http://vocabs.lter-europe.net/elter_cl/10566
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10563
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 3
+        termIri: http://vocabs.lter-europe.net/elter_cl/10568
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10563
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 3
+        termIri: http://vocabs.lter-europe.net/elter_cl/10567
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10563
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10595
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10193
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10194
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10227
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10469
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10594
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10196
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10197
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 1
+        termIri: http://vocabs.lter-europe.net/elter_cl/10565
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10563
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:54:59-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:54:59-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/cb667174-8739-4843-9c74-a3111e1b2935
+    - key: Please, provide funding source if not found in the drop-down list
+      type: text-field
+      name: Please, provide funding source if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/45f514a2-2c11-402a-b5f5-ee698d605b63
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:54:59-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:54:59-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/6267f588-2c20-40e0-957c-d6f482c37098
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/b1b51507-86d9-4948-ac32-1908e306de98
+  - key: Funding agencyRT
+    type: static-rich-text
+    name: Funding agencyRT
+    id: https://repo.metadatacenter.org/template-fields/5b43fbed-5ece-414f-ad10-e49afb20804b
+    modelVersion: 1.6.0
+    content: |
+      <p><span style="background-color: rgb(255, 255, 255);">Please, provide the link to your organization registry. It can be found here:</span><a href="http://ror.org" style="background-color: rgb(255, 255, 255);">&nbsp;https://ror.org/</a></p>
+    createdOn: '2022-10-05T05:07:51-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:51-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Funding agency
+    type: link-field
+    name: Funding agency
+    id: https://repo.metadatacenter.org/template-fields/db65ea81-dec0-4593-975a-814199f523b0
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:51-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:51-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/bc2c2953-f5d4-427f-ae77-2fb5cd2a0484
+  - key: Funding
+    type: element
+    name: Funding
+    id: https://repo.metadatacenter.org/template-elements/97c4a766-cf1d-419d-9ff9-843849d0009c
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:51-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:51-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/cb81b0d7-c143-4918-ae2e-752aae4cca20
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/835569bc-de8c-4b79-be99-9fc6d6bca199
+- key: Intellectual Rights
+  type: element
+  name: Intellectual Rights
+  id: https://repo.metadatacenter.org/template-elements/a1a0b690-c42f-43dc-8dd7-e9925dbb2bc6
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Data availability
+    type: controlled-term-field
+    name: Data availability
+    id: https://repo.metadatacenter.org/template-fields/aa5ee3fe-b811-4626-b30e-989a1502fd1f
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: eLTER Controlled Lists (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: data availability
+      iri: http://vocabs.lter-europe.net/elter_cl/10466
+      maxDepth: 0
+    actions:
+    - action: move
+      to: 3
+      termIri: http://vocabs.lter-europe.net/elter_cl/10469
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10466
+      sourceAcronym: ELTER_CL
+      type: class
+    createdOn: '2022-10-05T05:09:54-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:09:54-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      required: true
+      propertyIri: https://schema.metadatacenter.org/properties/dc11b930-cd40-40b8-92f3-ca6cd9d82380
+  - key: License
+    type: element
+    name: License
+    id: https://repo.metadatacenter.org/template-elements/8f62fbd1-1b28-4cbe-a887-f86e54d65348
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:09:54-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:09:54-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: License
+      type: controlled-term-field
+      name: License
+      id: https://repo.metadatacenter.org/template-fields/4a93d3fa-680c-4d8d-9ff1-50f7febc0cc8
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: license
+        iri: http://vocabs.lter-europe.net/elter_cl/10611
+        maxDepth: 0
+      - type: branch
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
+      actions:
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10595
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10193
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10194
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10227
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10469
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10594
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10196
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10197
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:48:45-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:48:45-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/a4c601a7-a094-48a6-b273-b19faaa66f26
+    - key: Please, provide the license if not found in the drop-down list
+      type: text-field
+      name: Please, provide the license if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/bad9e3dc-8dd8-4aff-b1af-9205af86f1ce
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:48:45-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:48:45-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/7245988d-e14e-483f-80f6-44ba397918ea
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/ad06f2ed-93cd-4547-bd27-69c978552044
+  - key: Willingness to share data
+    type: controlled-term-field
+    name: Willingness to share data
+    id: https://repo.metadatacenter.org/template-fields/35abdf34-6766-4118-8d38-1561db5bc05e
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: willingness to share data
+      iri: http://vocabs.lter-europe.net/elter_cl/10471
+      maxDepth: 0
+    actions:
+    - action: move
+      to: 3
+      termIri: http://vocabs.lter-europe.net/elter_cl/10475
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10471
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: move
+      to: 0
+      termIri: http://vocabs.lter-europe.net/elter_cl/10474
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10471
+      sourceAcronym: ELTER_CL
+      type: class
+    createdOn: '2022-10-05T05:09:54-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:09:54-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/ffc0d6a3-cd90-4e64-89c7-ead57d6636dd
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/8536f829-7377-4cf8-9657-34e314cfb11d
+- key: Monitoring Scheme Information
+  type: element
+  name: Monitoring Scheme Information
+  id: https://repo.metadatacenter.org/template-elements/672aac6c-84cb-4a10-9ea8-3caa7fcac055
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Motivation to launch monitoring scheme
+    type: element
+    name: Motivation to launch monitoring scheme
+    id: https://repo.metadatacenter.org/template-elements/f0aeabc9-1974-4699-a01f-e980a7d0e823
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Motivation to launch monitoring scheme
+      type: controlled-term-field
+      name: Motivation to launch monitoring scheme
+      id: https://repo.metadatacenter.org/template-fields/468ace30-019c-4038-8c84-ea9468ffbf8b
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: motivation to launch monitoring scheme
+        iri: http://vocabs.lter-europe.net/elter_cl/10569
+        maxDepth: 0
+      actions:
+      - action: move
+        to: 1
+        termIri: http://vocabs.lter-europe.net/elter_cl/10571
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10569
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 2
+        termIri: http://vocabs.lter-europe.net/elter_cl/10572
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10569
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 3
+        termIri: http://vocabs.lter-europe.net/elter_cl/10573
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10569
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:46:37-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:46:37-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/fce3b181-0f33-40b7-8e05-64e40925c8b7
+        multiple: true
+        minItems: 1
+    - key: Please, provide your motivation if not found in the drop-down list
+      type: text-field
+      name: Please, provide your motivation if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/da9e1bd1-f649-4a35-8f5e-7c7bd4fe48e7
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:46:37-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:46:37-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/c887ee4f-5f47-480c-9879-2db9bf7f786a
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/30270eff-c032-468e-b113-1c160868e389
+  - key: Scope of monitoring
+    type: element
+    name: Scope of monitoring
+    id: https://repo.metadatacenter.org/template-elements/af4725e5-fb7e-45c2-8b03-ab3dc25bec40
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Scope of monitoring
+      type: controlled-term-field
+      name: Scope of monitoring
+      id: https://repo.metadatacenter.org/template-fields/af08a2e6-6efb-4919-bedc-0dcdbad4fa86
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: scope of monitoring
+        iri: http://vocabs.lter-europe.net/elter_cl/10575
+        maxDepth: 0
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
+      actions:
+      - action: move
+        to: 0
+        termIri: http://vocabs.lter-europe.net/elter_cl/10576
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10575
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 1
+        termIri: http://vocabs.lter-europe.net/elter_cl/10577
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10575
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 2
+        termIri: http://vocabs.lter-europe.net/elter_cl/10578
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10575
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 3
+        termIri: http://vocabs.lter-europe.net/EnvThes/30299
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10575
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 5
+        termIri: http://vocabs.lter-europe.net/EnvThes/21478
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10575
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10197
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10196
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10193
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10194
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10227
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10469
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10594
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 8
+        termIri: http://vocabs.lter-europe.net/elter_cl/10579
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10575
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10595
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:46:14-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:46:14-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/a63353a5-5609-4fc4-b941-fd30421f6444
+    - key: Please, provide the scope of monitoring if not found in the drop-down list
+      type: text-field
+      name: Please, provide the scope of monitoring if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/fef3e7c7-af10-4a16-bce4-e2d911d4aef8
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:46:14-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:46:14-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/29075b48-1232-4690-8133-3c4186a64094
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/24d6b953-471a-45eb-b051-f1bf1faee211
+  - key: Type of data collected
+    type: element
+    name: Type of data collected
+    id: https://repo.metadatacenter.org/template-elements/9e1e3568-bbae-4a2f-a54d-7e76a76da702
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Type of data collected
+      type: controlled-term-field
+      name: Type of data collected
+      id: https://repo.metadatacenter.org/template-fields/edfde1c4-20f2-4bd5-a545-fb7885d484e9
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: type of data collected
+        iri: http://vocabs.lter-europe.net/elter_cl/10584
+        maxDepth: 0
+      actions:
+      - action: move
+        to: 0
+        termIri: http://vocabs.lter-europe.net/elter_cl/10585
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 1
+        termIri: http://vocabs.lter-europe.net/EnvThes/21548
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 2
+        termIri: http://vocabs.lter-europe.net/EnvThes/21541
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 3
+        termIri: http://vocabs.lter-europe.net/EnvThes/21539
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 4
+        termIri: http://vocabs.lter-europe.net/elter_cl/10586
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 5
+        termIri: http://vocabs.lter-europe.net/elter_cl/10587
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 6
+        termIri: http://vocabs.lter-europe.net/EnvThes/20986
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 7
+        termIri: http://vocabs.lter-europe.net/elter_cl/10588
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 8
+        termIri: http://vocabs.lter-europe.net/elter_cl/10589
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 9
+        termIri: http://vocabs.lter-europe.net/EnvThes/21647
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10584
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:42:55-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:42:55-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/29e22041-34c0-4520-a504-cfe82025ab31
+    - key: Please, provide type of data collected if not found in the drop-down list
+      type: text-field
+      name: Please, provide type of data collected if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/1ab86d4e-0963-4c24-b323-f0cc1fec0b99
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:42:55-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:42:55-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/e2a17a16-0992-45dc-a7f7-a666e0f07b87
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/00a2a521-17ec-4397-9fd9-55b4c36e63f1
+  - key: Biodiversity threats and pressures addressed1
+    type: element
+    name: Biodiversity threats and pressures addressed
+    id: https://repo.metadatacenter.org/template-elements/86685af7-21aa-41c0-be4d-08b4aa2eeedf
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Biodiversity threats and pressures addressed
+      type: controlled-term-field
+      name: Biodiversity threats and pressures addressed
+      id: https://repo.metadatacenter.org/template-fields/de294380-cf39-48df-b414-c7c625738249
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: biodiversity threats and pressures addressed
+        iri: http://vocabs.lter-europe.net/elter_cl/10580
+        maxDepth: 0
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
+      actions:
+      - action: move
+        to: 0
+        termIri: http://vocabs.lter-europe.net/EnvThes/20387
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 0
+        termIri: http://vocabs.lter-europe.net/EnvThes/22143
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 1
+        termIri: http://vocabs.lter-europe.net/EnvThes/30300
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 3
+        termIri: http://vocabs.lter-europe.net/EnvThes/20728
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 3
+        termIri: http://vocabs.lter-europe.net/elter_cl/10581
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 4
+        termIri: http://vocabs.lter-europe.net/elter_cl/10582
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 2
+        termIri: http://vocabs.lter-europe.net/elter_cl/10581
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 4
+        termIri: http://vocabs.lter-europe.net/EnvThes/20728
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 6
+        termIri: http://vocabs.lter-europe.net/EnvThes/20383
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 6
+        termIri: http://vocabs.lter-europe.net/EnvThes/21126
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10580
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10595
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10193
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10194
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10227
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10469
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10594
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10196
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10197
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:44:46-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:44:46-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/f5bccb8f-5451-4c8d-92fe-c54c055b737e
+        multiple: true
+        minItems: 1
+    - key: Please, provide threat or pressure addressed if not found in the drop-down list
+      type: text-field
+      name: Please, provide threat or pressure addressed if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/22c68d75-c4f1-4805-a7c4-548834567899
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:44:46-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:44:46-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/493fe612-9b4a-4c3b-aa17-e3abe34e64cd
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/271f558d-62ba-4f04-a014-1db15187f333
+  - key: Traning / expert knowledge required to take part in data collection
+    type: controlled-term-field
+    name: Traning / expert knowledge required to take part in data collection
+    id: https://repo.metadatacenter.org/template-fields/4a6000ab-ef12-4dfa-8f45-f54a3089c05d
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: eLTER Controlled Lists (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: generic answer option
+      iri: http://vocabs.lter-europe.net/elter_cl/10192
+      maxDepth: 0
+    actions:
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10595
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10194
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10227
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10469
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10195
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10594
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10196
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: move
+      to: 0
+      termIri: http://vocabs.lter-europe.net/elter_cl/10197
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/6edf94b9-4b8f-4e92-986f-b0b020732856
+  - key: Number of professionals involvedRT
+    type: static-rich-text
+    name: Number of professionals involvedRT
+    id: https://repo.metadatacenter.org/template-fields/2d582b64-8710-4392-8c2b-f3e80410d713
+    modelVersion: 1.6.0
+    content: |
+      <p>Individuals who have a professional, job-related interest in the monitoring and who get their main salary from monitoring and related activities; professionals will generally have special training or monitoring expertise in their professional capacity</p>
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Number of professionals involved
+    type: numeric-field
+    name: Number of professionals involved
+    id: https://repo.metadatacenter.org/template-fields/00be6d53-a1f1-4ccc-aae9-b4bc3b2cdb11
+    modelVersion: 1.6.0
+    datatype: xsd:decimal
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/4768158f-dbad-4b15-8308-ffc7997d658e
+  - key: Number of volunteers involved RT
+    type: static-rich-text
+    name: Number of volunteers involved RT
+    id: https://repo.metadatacenter.org/template-fields/33de4c68-1094-4f9a-8797-b1d87682788c
+    modelVersion: 1.6.0
+    content: |
+      <p>Individuals who participate in monitoring in their spare time, not having monitoring as their main income, but who may receive some economic compensation for participating; volunteers may have considerable expertise in monitoring-related fields but generally not related to their profession</p>
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Number of volunteers involved
+    type: numeric-field
+    name: Number of volunteers involved
+    id: https://repo.metadatacenter.org/template-fields/adc9ebfc-0910-4b54-9c70-30916f539a0a
+    modelVersion: 1.6.0
+    datatype: xsd:decimal
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/905c847d-8077-47b1-990e-bfbf22aa0868
+  - key: Workforce per yearRT
+    type: static-rich-text
+    name: Workforce per yearRT
+    id: https://repo.metadatacenter.org/template-fields/c47c8af2-87c6-41b5-bbd3-7bac952e3049
+    modelVersion: 1.6.0
+    content: |
+      <p>In person per day; including data collection, coordination, analysis</p>
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Workforce per year
+    type: text-field
+    name: Workforce per year
+    id: https://repo.metadatacenter.org/template-fields/c44e6de8-92b8-476e-a8c8-930a23c9b1bc
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/4eac60f0-4f47-4e38-91fc-728051ade6ee
+  - key: Annual running costsRT
+    type: static-rich-text
+    name: Annual running costsRT
+    id: https://repo.metadatacenter.org/template-fields/1d2d863c-7f22-4ab8-b7f0-66bd2e1941a3
+    modelVersion: 1.6.0
+    content: |
+      <p>All costs (in &euro;) to run the monitoring scheme, except of salaries</p>
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Annual running costs
+    type: text-field
+    name: Annual running costs
+    id: https://repo.metadatacenter.org/template-fields/73c8ad79-b37e-469a-9eeb-49ea9d3ece0e
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:07:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:07:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/8b4e22b7-db71-4c2c-8cdd-52c9f6edd064
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/20671845-57bb-4dbc-a9e8-af6ec110bd28
+- key: Spatial Coverage
+  type: element
+  name: Spatial Coverage
+  id: https://repo.metadatacenter.org/template-elements/423d50d6-b0cd-40e7-8fad-7f115b44197b
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Geographical scopeRT
+    type: static-rich-text
+    name: Geographical scopeRT
+    id: https://repo.metadatacenter.org/template-fields/0af17317-5c24-4999-b93c-e66b9e2f5a15
+    modelVersion: 1.6.0
+    content: |
+      <p>The geographical entity to which the monitoring results or conclusions can be applied</p>
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Geographical scope
+    type: controlled-term-field
+    name: Geographical scope
+    id: https://repo.metadatacenter.org/template-fields/ed441103-0f98-4c45-b2d0-ca7fc11b2164
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: class
+      label: geographical scope
+      acronym: ELTER_CL
+      termType: class
+      termLabel: geographical scope
+      iri: http://vocabs.lter-europe.net/elter_cl/10591
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/00e7f279-a808-4eeb-8d40-ceac03e511ea
+      multiple: true
+      minItems: 1
+  - key: Country
+    type: controlled-term-field
+    name: Country
+    id: https://repo.metadatacenter.org/template-fields/460e30ff-e7d2-4f7f-b95c-faea5fe765e1
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: class
+      label: Country Code
+      acronym: NCIT
+      termType: class
+      termLabel: Country Code
+      iri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20108
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/113a54b8-343e-48de-b120-2ecb556f27b1
+  - key: Biogeographic region
+    type: controlled-term-field
+    name: Biogeographic region
+    id: https://repo.metadatacenter.org/template-fields/66358cab-eeaf-40da-8776-14d118c1c8e2
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: Bio-geographical Region
+      iri: http://vocabs.lter-europe.net/elter_cl/10546
+      maxDepth: 0
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/7661be72-1e93-4efb-997b-73b31de7eb86
+  - key: AltitudeRT
+    type: static-rich-text
+    name: AltitudeRT
+    id: https://repo.metadatacenter.org/template-fields/d95594f4-03e0-4f6e-8123-bdd782f7f4e2
+    modelVersion: 1.6.0
+    content: |
+      <p>Please, provide the elevation (meters) above sea level of the study site</p>
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Altitude
+    type: numeric-field
+    name: Altitude
+    id: https://repo.metadatacenter.org/template-fields/6ba86aa5-45c6-4709-ae7d-fac6d6852cd4
+    modelVersion: 1.6.0
+    datatype: xsd:decimal
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/0bd7cd46-7fcf-4e74-a5c7-9b25a9e0de37
+  - key: Sampling sites located in protected areas
+    type: controlled-term-field
+    name: Sampling sites located in protected areas
+    id: https://repo.metadatacenter.org/template-fields/782f6d27-d3dc-4fe5-a57e-712b4a7e6aed
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: eLTER Controlled Lists (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: generic answer option
+      iri: http://vocabs.lter-europe.net/elter_cl/10192
+      maxDepth: 0
+    actions:
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10194
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10227
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10469
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10195
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10196
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10197
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: move
+      to: 0
+      termIri: http://vocabs.lter-europe.net/elter_cl/10594
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/181ced70-f583-488f-a1bd-287aca95fe76
+  - key: Total areaRT
+    type: static-rich-text
+    name: Total areaRT
+    id: https://repo.metadatacenter.org/template-fields/9aee2671-267f-433f-a3c3-1861c2eec6ce
+    modelVersion: 1.6.0
+    content: |
+      <p>Area (in km2) to which results can be extrapolated, e.g.: inhabited area of a population, park area for monitoring restricted to a park, country area for national monitoring</p>
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Total area
+    type: text-field
+    name: Total area
+    id: https://repo.metadatacenter.org/template-fields/072da799-647e-4e4f-8132-1a8705b83a29
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/459ca049-5482-48c9-9ac4-6fe9838ce573
+  - key: Habitat type
+    type: text-field
+    name: Habitat type
+    id: https://repo.metadatacenter.org/template-fields/f984a927-b519-4ecc-bc68-c9f7c542b12c
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/dff513a2-7632-4eed-8884-fc235b62af48
+  - key: Habitat classification authority
+    type: controlled-term-field
+    name: Habitat classification authority
+    id: https://repo.metadatacenter.org/template-fields/5807f69c-3703-4864-b524-57d2e10c2783
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: habitat classification authority
+      iri: http://vocabs.lter-europe.net/elter_cl/10596
+      maxDepth: 0
+    actions:
+    - action: move
+      to: 0
+      termIri: http://vocabs.lter-europe.net/elter_cl/10599
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10596
+      sourceAcronym: ELTER_CL
+      type: class
+    createdOn: '2022-10-05T05:05:21-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:05:21-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/1d0fb2d3-922d-403d-a443-f5e7cf889dcd
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/76e6d24c-b1e1-437d-b059-4128be7dd55a
+- key: Temporal Coverage
+  type: element
+  name: Temporal Coverage
+  id: https://repo.metadatacenter.org/template-elements/78ae558d-4119-4d15-b8bb-c86e4992145b
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Start year
+    type: numeric-field
+    name: Start year
+    id: https://repo.metadatacenter.org/template-fields/d9053c85-91fc-4ee1-b101-91c17036d816
+    modelVersion: 1.6.0
+    datatype: xsd:decimal
+    createdOn: '2022-09-28T05:56:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-09-28T05:56:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/4ee7b752-3625-4966-971c-f5259069e835
+  - key: End yearRT
+    type: static-rich-text
+    name: End yearRT
+    id: https://repo.metadatacenter.org/template-fields/01ed0e0b-72c2-4f8a-99ad-49911ee160c4
+    modelVersion: 1.6.0
+    content: |
+      <p>Fill in only if the scheme has already finished or if ending year is planned</p>
+    createdOn: '2022-09-28T05:56:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-09-28T05:56:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: End year
+    type: numeric-field
+    name: End year
+    id: https://repo.metadatacenter.org/template-fields/b1653be7-226e-48bf-b545-ada3baf3516f
+    modelVersion: 1.6.0
+    datatype: xsd:decimal
+    createdOn: '2022-09-28T05:56:30-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-09-28T05:56:30-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/abbd5f20-3874-469a-9c0f-fa0f7c49adda
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/a54620dd-7cac-4d94-ad6d-b493424f17df
+- key: Taxonomic Coverage
+  type: element
+  name: Taxonomic Coverage
+  id: https://repo.metadatacenter.org/template-elements/76cf430e-ddc3-4bdc-b669-db51a0fd90b9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Taxonomic group
+    type: text-field
+    name: Taxonomic group
+    id: https://repo.metadatacenter.org/template-fields/638da43b-1cda-43d8-81d4-fc095397fb81
+    modelVersion: 1.6.0
+    createdOn: '2022-09-26T06:13:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-09-26T06:13:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/e1cdc933-e700-4e4b-a749-f3d2b5c5b5d1
+  - key: Species of community interest
+    type: text-field
+    name: Species of community interest
+    id: https://repo.metadatacenter.org/template-fields/ebe07583-76a5-4a1a-af0e-13342814cf15
+    modelVersion: 1.6.0
+    createdOn: '2022-09-26T06:13:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-09-26T06:13:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/e8c442b6-7d5f-4fd5-b33e-a27e868bebc1
+  - key: Indicator-keystone-umbrella-typical species
+    type: text-field
+    name: Indicator-keystone-umbrella-typical species
+    id: https://repo.metadatacenter.org/template-fields/137c9cff-ec1e-4e37-ac41-20bab0eb7e02
+    modelVersion: 1.6.0
+    createdOn: '2022-09-26T06:13:31-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-09-26T06:13:31-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/c0d4f891-7809-4209-8246-b1d4741c1d3a
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/3128dcaa-a9d8-4789-a0af-ea4d374803d1
+- key: Methods & Sampling Information
+  type: element
+  name: Methods & Sampling Information
+  id: https://repo.metadatacenter.org/template-elements/7df2c33f-5eca-4bb5-a438-60d8ada34756
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2022-10-06T15:48:20-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2022-10-06T15:48:20-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  children:
+  - key: Experimental design
+    type: controlled-term-field
+    name: Experimental design
+    id: https://repo.metadatacenter.org/template-fields/f84e7814-50c0-4979-ba88-027dbdb8c0ab
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: experimental design
+      iri: http://vocabs.lter-europe.net/elter_cl/10601
+      maxDepth: 0
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/9d8ebf52-77d0-46c3-a055-50a87e92f63e
+  - key: Site selection1
+    type: element
+    name: Site selection
+    id: https://repo.metadatacenter.org/template-elements/524f05a7-1385-4771-a97f-1f1362016b4f
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Site selection
+      type: controlled-term-field
+      name: Site selection
+      id: https://repo.metadatacenter.org/template-fields/90ec20d1-6e82-4a59-8d7c-27b5d19a5179
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: site selection
+        iri: http://vocabs.lter-europe.net/elter_cl/10605
+        maxDepth: 0
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
+      actions:
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10595
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10193
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10194
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10227
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10469
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10196
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10197
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: move
+        to: 6
+        termIri: http://vocabs.lter-europe.net/elter_cl/10195
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10594
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:42:10-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:42:10-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/06700792-0926-4dfd-b6fe-8bc1833c9378
+    - key: Please, describe how sites are selected if not found in the drop-down list
+      type: text-field
+      name: Please, describe how sites are selected if not found in the drop-down list
+      id: https://repo.metadatacenter.org/template-fields/9a82deec-6c02-47be-b73d-a44134dcabac
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:42:10-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:42:10-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/c7e105fc-baf0-444d-b3b6-dc49b81d13d5
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/83684753-93f1-4bcd-b3a5-50df1bdb1e93
+  - key: Number of sampling sites
+    type: numeric-field
+    name: Number of sampling sites
+    id: https://repo.metadatacenter.org/template-fields/a9d81a67-07fa-462d-a1e2-c6d7104cef26
+    modelVersion: 1.6.0
+    datatype: xsd:decimal
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/55be9baf-2a93-47b4-b8ff-5a1b8ff482de
+  - key: Sample size
+    type: numeric-field
+    name: Sample size
+    id: https://repo.metadatacenter.org/template-fields/398088d5-b3a5-41ce-97c3-1d161dc126b4
+    modelVersion: 1.6.0
+    datatype: xsd:decimal
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/2e3177e6-6c67-41fd-84ad-36e72ce8d67c
+  - key: Detection probabilityRT
+    type: static-rich-text
+    name: Detection probabilityRT
+    id: https://repo.metadatacenter.org/template-fields/2256be2b-8f59-45d7-9838-1118f2cddf04
+    modelVersion: 1.6.0
+    content: |
+      <p>Detection probability is the probability of detecting occurence when the object monitored is present</p>
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Detection probability
+    type: controlled-term-field
+    name: Detection probability
+    id: https://repo.metadatacenter.org/template-fields/e5d0eff4-5ed8-4a3e-8f37-5dcf32c6e881
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: generic answer option
+      iri: http://vocabs.lter-europe.net/elter_cl/10192
+      maxDepth: 0
+    actions:
+    - action: delete
+      termIri: http://purl.org/zonmw/generic/10100
+      sourceIri: template
+      sourceAcronym: ZONMW-GENERIC
+      type: class
+    - action: delete
+      termIri: http://purl.org/zonmw/generic/10101
+      sourceIri: template
+      sourceAcronym: ZONMW-GENERIC
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10595
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10194
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10227
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10469
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10195
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: delete
+      termIri: http://vocabs.lter-europe.net/elter_cl/10594
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    - action: move
+      to: 0
+      termIri: http://vocabs.lter-europe.net/elter_cl/10197
+      sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+      sourceAcronym: ELTER_CL
+      type: class
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/532db6bf-ea47-4a03-abfe-22ff615d2521
+  - key: Sampling duration1
+    type: static-rich-text
+    name: Sampling duration
+    id: https://repo.metadatacenter.org/template-fields/8ebe946a-5e2f-4b1d-ac25-dae7f952c7c5
+    modelVersion: 1.6.0
+    content: |
+      <p>Time spent per sampling site during a single visit</p>
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+  - key: Sampling duration
+    type: text-field
+    name: Sampling duration
+    id: https://repo.metadatacenter.org/template-fields/ac2053b0-38f7-4268-befe-00c8aa6b64db
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/2d6435aa-1dfd-4ce6-a4f8-efbfe5b4b539
+  - key: Frequency of monitoring
+    type: text-field
+    name: Frequency of monitoring
+    id: https://repo.metadatacenter.org/template-fields/7ed6bf1b-0c0d-48cb-8ab6-406da15dd98d
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/c4ea3c42-376d-41fd-b338-cefc8d718ac6
+  - key: Changes in monitoring procedure during monitoring scheme lifetime1
+    type: element
+    name: Changes in monitoring procedure during monitoring scheme lifetime
+    id: https://repo.metadatacenter.org/template-elements/3c8c7e77-9128-4a35-b441-a04433f82791
+    status: draft
+    version: 0.0.1
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    children:
+    - key: Changes in monitoring procedure during monitoring scheme lifetime
+      type: controlled-term-field
+      name: Changes in monitoring procedure during monitoring scheme lifetime
+      id: https://repo.metadatacenter.org/template-fields/9535414d-d968-46e1-8980-207d373c86e7
+      modelVersion: 1.6.0
+      datatype: iri
+      values:
+      - type: branch
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
+      actions:
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10595
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10194
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10227
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10469
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10195
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10594
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      - action: delete
+        termIri: http://vocabs.lter-europe.net/elter_cl/10196
+        sourceIri: http://vocabs.lter-europe.net/elter_cl/10192
+        sourceAcronym: ELTER_CL
+        type: class
+      createdOn: '2022-10-05T04:59:48-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:59:48-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/66ea3310-4847-4055-954a-340f9fdc80ec
+    - key: If yes, please describe changes
+      type: text-field
+      name: If yes, please describe changes
+      id: https://repo.metadatacenter.org/template-fields/a0d0e9a5-61ce-47a3-beda-8cfc3c405a7b
+      modelVersion: 1.6.0
+      createdOn: '2022-10-05T04:59:48-07:00'
+      createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      modifiedOn: '2022-10-05T04:59:48-07:00'
+      modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+      configuration:
+        propertyIri: https://schema.metadatacenter.org/properties/d108f29e-204f-455e-883f-75666eb59f8b
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/17918f68-267d-4f88-9fe7-db1714144347
+  - key: Field methods
+    type: text-field
+    name: Field methods
+    id: https://repo.metadatacenter.org/template-fields/5f71b581-db46-4b52-9247-9ff32750314a
+    modelVersion: 1.6.0
+    createdOn: '2022-10-05T05:00:25-07:00'
+    createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    modifiedOn: '2022-10-05T05:00:25-07:00'
+    modifiedBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/caa0654d-7ee8-4a7f-8b19-01b954b5a9f8
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/ce6d6355-9e9d-4e8f-a9ef-a3b36eb1fe2f

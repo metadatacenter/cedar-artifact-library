@@ -657,8 +657,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
-    FieldUi fieldUi = readFieldUi(sourceNode, path, fieldInputType);
     LinkedHashMap<String, Object> configNode = readChildNode(sourceNode, path, CONFIGURATION);
+    FieldUi fieldUi = readFieldUi(sourceNode, path, fieldInputType, configNode);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, fieldInputType, configNode);
     Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL);
     List<String> alternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
@@ -745,11 +745,29 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of(builder.build());
   }
 
-  private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path, FieldInputType fieldInputType)
+  /**
+   * Reads a boolean that may live either under a field's {@code configuration:} sub-block
+   * (where the renderer puts it) or at the field level (where older or hand-authored YAML
+   * sometimes does). Returns {@code false} if absent from both locations.
+   */
+  private boolean readBooleanFromConfigOrField(LinkedHashMap<String, Object> configNode,
+    LinkedHashMap<String, Object> sourceNode, String path, String key)
   {
-    boolean valueRecommendationEnabled = readBoolean(sourceNode, path, VALUE_RECOMMENDATION, false);
-    boolean hidden = readBoolean(sourceNode, path, HIDDEN, false);
-    boolean continuePreviousLine = readBoolean(sourceNode, path, CONTINUE_PREVIOUS_LINE, false);
+    if (configNode != null && configNode.containsKey(key))
+      return readBoolean(configNode, path, key, false);
+    return readBoolean(sourceNode, path, key, false);
+  }
+
+  private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path, FieldInputType fieldInputType,
+    LinkedHashMap<String, Object> configNode)
+  {
+    // The renderer emits hidden / valueRecommendation / continuePreviousLine under the
+    // `configuration:` sub-block for nested fields. Older YAML or hand-authored YAML may
+    // place them at the field level. Accept either, preferring configuration when present.
+    boolean valueRecommendationEnabled = readBooleanFromConfigOrField(configNode, sourceNode, path,
+      VALUE_RECOMMENDATION);
+    boolean hidden = readBooleanFromConfigOrField(configNode, sourceNode, path, HIDDEN);
+    boolean continuePreviousLine = readBooleanFromConfigOrField(configNode, sourceNode, path, CONTINUE_PREVIOUS_LINE);
     Optional<Integer> width = readInteger(sourceNode, path, WIDTH);
     Optional<Integer> height = readInteger(sourceNode, path, HEIGHT);
 
@@ -784,10 +802,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     boolean requiredValue = configNode != null && readBoolean(configNode, path, REQUIRED, false);
     boolean recommendedValue = configNode != null && readBoolean(configNode, path, RECOMMENDED, false);
-    // Checkbox is inherently multi-select; the renderer also encodes multi-select list by the
-    // multi-select-list-field discriminator (which we map to FieldInputType.LIST). We don't have
-    // the original discriminator here, so we conservatively flag multi for checkbox only.
-    boolean multipleChoice = fieldInputType == FieldInputType.CHECKBOX;
+    // Checkbox is inherently multi-select. Lists can be either single or multi; the YAML
+    // serialization encodes that via the multi-select-list-field vs single-select-list-field
+    // discriminator. Both map to FieldInputType.LIST upstream, so we peek at the original
+    // type string here to recover the multi-select bit.
+    boolean isMultiSelectList =
+      MULTI_SELECT_LIST_FIELD.equals(readString(sourceNode, path, TYPE).orElse(null));
+    boolean multipleChoice = fieldInputType == FieldInputType.CHECKBOX || isMultiSelectList;
 
     Optional<String> unitOfMeasure = readString(sourceNode, path, UNIT);
     Optional<Number> minValue = readNumber(sourceNode, path, MIN_VALUE);

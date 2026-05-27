@@ -1,0 +1,37 @@
+type: template
+name: Template With Actions
+id: https://repo.metadatacenter.org/templates/cb510781-65b6-4a7f-b2ed-68f0e5681057
+status: draft
+version: 0.0.1
+modelVersion: 1.6.0
+createdOn: '2023-07-05T16:23:52-07:00'
+createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+modifiedOn: '2023-07-05T16:23:52-07:00'
+modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+children:
+- key: Title Type
+  type: controlled-term-field
+  name: Title Type
+  description: Help Text
+  id: https://repo.metadatacenter.org/template-fields/7f06f16e-8155-4e62-8cee-5eb479cddf1c
+  modelVersion: 1.6.0
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: DATACITE V4.4 (DATACITE-VOCAB)
+    acronym: DATACITE-VOCAB
+    termLabel: Title Type
+    iri: http://purl.org/datacite/v4.4/TitleType
+    maxDepth: 0
+  actions:
+  - action: delete
+    termIri: http://purl.org/datacite/v4.4/OtherTitle
+    sourceIri: http://purl.org/datacite/v4.4/TitleType
+    sourceAcronym: DATACITE-VOCAB
+    type: class
+  createdOn: '2023-07-05T16:23:52-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2023-07-05T16:23:52-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/bb75bef2-61a2-48eb-827d-23e3f9fc6706

@@ -1007,7 +1007,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(RECOMMENDED, true);
     }
 
-    if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent())
+    // Attribute-value and static fields don't get a propertyUri mapping in the JSON
+    // @context (see ParentSchemaArtifact.getChildPropertyUris which skips them), so a
+    // propertyUri carried in their YAML configuration would be lost on the JSON round
+    // trip. Emit only for field kinds where the JSON serialization actually preserves it.
+    if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent()
+      && !fieldSchemaArtifact.isAttributeValue() && !fieldSchemaArtifact.isStatic())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldKey)) {

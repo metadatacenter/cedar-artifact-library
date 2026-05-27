@@ -48,9 +48,21 @@ final class JsonValueConstraintsReader {
     if (vcNode != null) {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
-      boolean multipleChoice = isStandalone ?
-          readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false) :
-          isMultiInstance;
+      // multipleChoice carries semantic meaning for LIST-typed fields (where it
+      // discriminates single-select vs multi-select) — read it directly from JSON for
+      // those. For other field input types, multipleChoice in JSON is not authoritative
+      // (the renderer strips it from non-LIST output, and historical files contain
+      // residual noise values), so fall back to the isMultiInstance approximation when
+      // standalone reads are not in play. Standalone reads still honor the JSON value
+      // for backwards compatibility with consumers that build constraints directly.
+      boolean multipleChoice;
+      if (fieldInputType == FieldInputType.LIST && vcNode.has(VALUE_CONSTRAINTS_MULTIPLE_CHOICE)) {
+        multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+      } else if (isStandalone) {
+        multipleChoice = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_MULTIPLE_CHOICE, false);
+      } else {
+        multipleChoice = isMultiInstance;
+      }
       Optional<XsdNumericDatatype> numberType = readNumberType(vcNode, vcPath, VALUE_CONSTRAINTS_NUMBER_TYPE);
       Optional<XsdTemporalDatatype> temporalType = readTemporalType(vcNode, vcPath, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
       Optional<String> unitOfMeasure = readString(vcNode, vcPath, VALUE_CONSTRAINTS_UNIT_OF_MEASURE);

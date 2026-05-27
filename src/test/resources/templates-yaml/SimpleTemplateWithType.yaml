@@ -1,0 +1,25 @@
+type: template
+name: Template1
+id: https://repo.metadatacenter.org/templates/3b2af8ae-4d0c-4fd3-88bd-ba4daa36015d
+status: draft
+version: 0.0.1
+modelVersion: 1.6.0
+instanceType: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C15206
+createdOn: '2024-03-27T13:57:17-07:00'
+createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+modifiedOn: '2024-06-14T11:42:47-07:00'
+modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+children:
+- key: F1
+  type: text-field
+  name: F1
+  description: Help Text
+  id: https://repo.metadatacenter.org/template-fields/551c34dd-69e6-433b-bf9b-3a0c1c9a7201
+  modelVersion: 1.6.0
+  prefLabel: my f1 preflabel
+  createdOn: '2024-06-14T11:42:47-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2024-06-14T11:42:47-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/c4035cdd-a88b-43b2-8ad8-dccfd51cb9f6
