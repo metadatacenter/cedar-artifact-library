@@ -40,7 +40,7 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
   }
 
   final class PhoneNumberFieldBuilder extends FieldSchemaArtifactBuilder<PhoneNumberField.PhoneNumberFieldBuilder>
-      implements LiteralStringDefaultableFieldBuilder
+      implements LiteralDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;

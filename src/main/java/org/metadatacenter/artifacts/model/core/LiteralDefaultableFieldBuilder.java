@@ -20,7 +20,7 @@ package org.metadatacenter.artifacts.model.core;
  * builder types; concrete implementations narrow it to their own {@code SELF} via
  * Java's covariant return rules.
  */
-public sealed interface LiteralStringDefaultableFieldBuilder
+public sealed interface LiteralDefaultableFieldBuilder
     permits TextField.TextFieldBuilder,
             TextAreaField.TextAreaFieldBuilder,
             PhoneNumberField.PhoneNumberFieldBuilder,

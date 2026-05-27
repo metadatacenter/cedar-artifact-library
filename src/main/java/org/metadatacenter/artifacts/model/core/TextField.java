@@ -37,7 +37,7 @@ public sealed interface TextField extends FieldSchemaArtifact
   static TextFieldBuilder builder(TextField textField) {return new TextFieldBuilder(textField);}
 
   final class TextFieldBuilder extends FieldSchemaArtifactBuilder<TextField.TextFieldBuilder>
-      implements LiteralStringDefaultableFieldBuilder
+      implements LiteralDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final TextValueConstraints.TextValueConstraintsBuilder valueConstraintsBuilder;
