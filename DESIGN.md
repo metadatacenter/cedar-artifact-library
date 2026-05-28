@@ -1,8 +1,7 @@
 # Design
 
 The architectural principles behind `cedar-artifact-library`. Read these before making
-significant changes — they're the answers to questions that aren't obvious from the code,
-and they encode decisions that have been validated by ~10 years of consumers.
+significant changes — they're the answers to questions that aren't obvious from the code.
 
 ## Principle 1: The model is the product
 
