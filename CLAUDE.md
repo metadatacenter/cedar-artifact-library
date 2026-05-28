@@ -5,7 +5,8 @@ Start here:
 1. **[DESIGN.md](./DESIGN.md)** — the architectural principles. Read this before adding
    a field type, a value-constraint kind, a new reader/renderer, or any change to a
    builder API. It captures decisions that aren't obvious from the code.
-2. **README.md** (in the project root if present) for end-user information.
+2. **[ROADMAP.md](./ROADMAP.md)** — what's open, what's known-broken, what's out of scope.
+3. **README.md** (in the project root if present) for end-user information.
 
 ## Conventions you must respect
 
