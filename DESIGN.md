@@ -65,9 +65,11 @@ When you add a field type or value constraint, the compiler will tell you what e
 updating — because sealed dispatch sites won't compile until you handle the new member.
 Honor that constraint; don't shortcut it with `default:` arms that silently swallow.
 
-## Principle 4: Validate at the setter, not at build()
+## Principle 4: Validate at the setter when you can; at build() when you must
 
-Builder setters throw immediately on invalid input:
+Single-field invariants — non-null arguments, in-range values, well-formed
+URIs — are checked at the setter, so the stack trace points at the offending
+call site rather than at a downstream assembly step:
 
 ```java
 public SELF withName(String name) {
@@ -77,13 +79,20 @@ public SELF withName(String name) {
 }
 ```
 
-By the time `build()` is called, the builder state is trusted. The reasoning: fail at the
-point of error so the stack trace points at the offending call site, not at a downstream
-assembly step.
+Invariants that can only be evaluated against the whole builder state — a
+required field that was never set, `minValue > maxValue`, a value constraint
+that doesn't match the field's input type, an `isMultiple: true` builder
+that wasn't given `minItems` / `maxItems` — fall through to `build()`. The
+guideline is: catch what you can at the call site, but don't pretend the
+builder is fully self-consistent before `build()` has run. Don't reach into
+the builder's internals from elsewhere expecting an already-validated
+artifact.
 
-Per-tool client-side validation (the kind we use in MCP servers) is the equivalent of this
-principle at the I/O layer. Both flow from the same instinct: invariants belong at the
-boundary they protect.
+Per-tool client-side validation (the kind we use in MCP servers) is the
+equivalent of this principle at the I/O layer. Both flow from the same
+instinct: invariants belong at the boundary they protect — and some
+invariants are inherently boundary-spanning, so they sit at the build step
+rather than the setter.
 
 ## Principle 5: Per-format reader / renderer pairs
 
