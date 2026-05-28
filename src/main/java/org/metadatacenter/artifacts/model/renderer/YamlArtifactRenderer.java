@@ -461,6 +461,23 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> fieldInstanceArtifactRendering = new LinkedHashMap<>();
 
+    // A field instance whose only content is a datatype seed (no @value, no @id, no
+    // label/notation/prefLabel) carries no human-useful information — the datatype
+    // is recoverable from the schema. Returning an empty map here causes the parent
+    // renderer to elide the entire child entry in the YAML children block, matching
+    // the behavior for text-style fields that have no value set. The skeleton
+    // instances produced by CreateInstance / EmptyFieldInstances seed @type on
+    // numeric and temporal fields so the JSON instance carries it for validation;
+    // that seed should not leak into the compact YAML view.
+    boolean hasValue = fieldInstanceArtifact.jsonLdValue() == null
+      || fieldInstanceArtifact.jsonLdValue().isPresent();
+    boolean hasId = fieldInstanceArtifact.jsonLdId().isPresent();
+    boolean hasLabel = fieldInstanceArtifact.label().isPresent()
+      || fieldInstanceArtifact.preferredLabel().isPresent()
+      || fieldInstanceArtifact.notation().isPresent();
+    if (!hasValue && !hasId && !hasLabel)
+      return fieldInstanceArtifactRendering;
+
     if (!fieldInstanceArtifact.jsonLdTypes().isEmpty())
       fieldInstanceArtifactRendering.put(DATATYPE,
         renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));

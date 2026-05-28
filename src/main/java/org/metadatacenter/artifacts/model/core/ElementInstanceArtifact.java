@@ -314,6 +314,53 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       return this;
     }
 
+    // The replace* methods swap the value at an existing key without disturbing its
+    // position in childKeys. A without/with pair achieves the same data outcome but
+    // moves the key to the end of the LinkedHashMap, which leaks into YAML/JSON
+    // rendering as a visible reordering after every set_field_value call. Use these
+    // when updating an existing child; use the with*/without* pair when adding or
+    // removing.
+
+    public Builder replaceSingleInstanceFieldInstance(String childKey, FieldInstanceArtifact fieldInstance)
+    {
+      if (!childKeys.contains(childKey) || !singleInstanceFieldInstances.containsKey(childKey))
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+
+      singleInstanceFieldInstances.put(childKey, fieldInstance);
+
+      return this;
+    }
+
+    public Builder replaceSingleInstanceElementInstance(String childKey, ElementInstanceArtifact elementInstance)
+    {
+      if (!childKeys.contains(childKey) || !singleInstanceElementInstances.containsKey(childKey))
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+
+      singleInstanceElementInstances.put(childKey, elementInstance);
+
+      return this;
+    }
+
+    public Builder replaceMultiInstanceFieldInstances(String childKey, List<FieldInstanceArtifact> fieldInstances)
+    {
+      if (!childKeys.contains(childKey) || !multiInstanceFieldInstances.containsKey(childKey))
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+
+      this.multiInstanceFieldInstances.put(childKey, List.copyOf(fieldInstances));
+
+      return this;
+    }
+
+    public Builder replaceMultiInstanceElementInstances(String childKey, List<ElementInstanceArtifact> elementInstances)
+    {
+      if (!childKeys.contains(childKey) || !multiInstanceElementInstances.containsKey(childKey))
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+
+      this.multiInstanceElementInstances.put(childKey, List.copyOf(elementInstances));
+
+      return this;
+    }
+
     public Builder withAttributeValueFieldGroup(String attributeValueFieldGroupName,
       LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances)
     {
