@@ -92,6 +92,18 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
+    public YouTubeFieldBuilder withWidth(Integer width)
+    {
+      fieldUiBuilder.withWidth(width);
+      return this;
+    }
+
+    public YouTubeFieldBuilder withHeight(Integer height)
+    {
+      fieldUiBuilder.withHeight(height);
+      return this;
+    }
+
     public YouTubeField build()
     {
       withFieldUi(fieldUiBuilder.build());

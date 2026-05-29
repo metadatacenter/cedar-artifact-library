@@ -1,19 +1,18 @@
 package org.metadatacenter.artifacts.model;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.TemporalField;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.YouTubeField;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
-import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
@@ -36,16 +35,10 @@ public class YamlAsymmetryProbeTest
     renderer = new YamlArtifactRenderer(false);
   }
 
-  // Known bug: YamlArtifactReader.readFieldUi doesn't wire width/height through when
-  // constructing a StaticFieldUi, so the round-trip silently drops them.
-  @Disabled("YAML round-trip drops width/height on YouTube/Image fields")
   @Test public void testRoundTripPreservesYouTubeWidthHeight()
   {
-    // Width/height live on YouTubeFieldUiBuilder; the field builder itself doesn't expose them.
-    StaticFieldUi ytUi = StaticFieldUi.youTubeFieldUiBuilder()
-      .withContent("dQw4w9WgXcQ").withWidth(640).withHeight(480).build();
     YouTubeField original = YouTubeField.builder()
-      .withName("Demo Video").withFieldUi(ytUi).build();
+      .withName("Demo Video").withContent("dQw4w9WgXcQ").withWidth(640).withHeight(480).build();
 
     FieldSchemaArtifact roundTripped = roundTripField(original);
 
@@ -53,10 +46,6 @@ public class YamlAsymmetryProbeTest
     assertEquals(480, roundTripped.fieldUi().asStaticFieldUi().height().get());
   }
 
-  // Known bug: the renderer and reader disagree on where `valueRecommendation:` lives
-  // (field-level vs. under the controlled-term values block), so the flag silently
-  // round-trips to false.
-  @Disabled("YAML round-trip drops valueRecommendation flag")
   @Test public void testRoundTripPreservesValueRecommendationOnControlledTerm()
   {
     ControlledTermField original = ControlledTermField.builder()
@@ -65,6 +54,26 @@ public class YamlAsymmetryProbeTest
     FieldSchemaArtifact roundTripped = roundTripField(original);
 
     assertEquals(true, roundTripped.fieldUi().valueRecommendationEnabled());
+  }
+
+  // A standalone (top-level) field has no `configuration:` block, so its field-level UI
+  // flags must be emitted at the field level or they round-trip to their defaults.
+  @Test public void testRoundTripPreservesHiddenOnStandaloneField()
+  {
+    TextField original = TextField.builder().withName("Secret").withHidden(true).build();
+
+    FieldSchemaArtifact roundTripped = roundTripField(original);
+
+    assertEquals(true, roundTripped.fieldUi().hidden());
+  }
+
+  @Test public void testRoundTripPreservesContinuePreviousLineOnStandaloneField()
+  {
+    TextField original = TextField.builder().withName("Inline").withContinuePreviousLine(true).build();
+
+    FieldSchemaArtifact roundTripped = roundTripField(original);
+
+    assertEquals(true, roundTripped.fieldUi().continuePreviousLine());
   }
 
   @Test public void testRoundTripPreservesNumericDecimalPlaces()

@@ -197,6 +197,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
+    // A standalone field has no parent and therefore no `configuration:` block, which is
+    // where a nested child carries its field-level UI flags. Emit them here so a top-level
+    // field round-trips losslessly through the YAML reader/renderer pair.
+    addStandaloneFieldUiRendering(fieldSchemaArtifact, rendering);
+
     return rendering;
   }
 
@@ -592,6 +597,37 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+  }
+
+  /**
+   * Emit the field-level UI flags that a nested child carries in its {@code configuration:}
+   * block but that a top-level (standalone) field would otherwise drop on a YAML round trip:
+   * {@code hidden}, {@code continuePreviousLine}, {@code valueRecommendation}, and the
+   * static-field {@code width} / {@code height}. The reader accepts all of these at the field
+   * level (see {@code YamlArtifactReader.readFieldUi}). Parent-relative settings (required,
+   * recommended, multiple, min/maxItems, override labels, propertyIri) are intentionally
+   * excluded — they are only meaningful for a field embedded in a parent.
+   */
+  private void addStandaloneFieldUiRendering(FieldSchemaArtifact fieldSchemaArtifact,
+    LinkedHashMap<String, Object> rendering)
+  {
+    if (fieldSchemaArtifact.fieldUi().hidden())
+      rendering.put(HIDDEN, true);
+
+    if (fieldSchemaArtifact.fieldUi().continuePreviousLine())
+      rendering.put(CONTINUE_PREVIOUS_LINE, true);
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
+
+    if (fieldSchemaArtifact.fieldUi().isStatic()) {
+      StaticFieldUi staticFieldUi = fieldSchemaArtifact.fieldUi().asStaticFieldUi();
+      if (staticFieldUi.width().isPresent())
+        rendering.put(WIDTH, staticFieldUi.width().get());
+
+      if (staticFieldUi.height().isPresent())
+        rendering.put(HEIGHT, staticFieldUi.height().get());
+    }
   }
 
   /**

@@ -25,13 +25,13 @@ conventions see [CLAUDE.md](./CLAUDE.md).
 
 ## Known limitations
 
-These are real round-trip bugs with disabled regression tests in
-`YamlAsymmetryProbeTest`. Re-enable when fixed.
-
-- **YAML round-trip drops `width` / `height` on YouTube and Image fields**
-  (`YamlAsymmetryProbeTest.java:41`, `@Disabled`).
-- **YAML round-trip drops the `valueRecommendation` flag**
-  (`YamlAsymmetryProbeTest.java:59`, `@Disabled`).
+- **`ImageFieldUiBuilder` can't set `width` / `height`** — the YAML reader/renderer pair
+  now preserves `width`/`height` on static fields end-to-end (a model that carries them —
+  e.g. read from JSON — survives a YAML round trip), and `YouTubeField.Builder` exposes
+  `withWidth` / `withHeight`. But `ImageField`'s UI builder still hardcodes both to
+  `Optional.empty()`, so an image field's dimensions can't be set through the Java builder
+  API. Add `withWidth` / `withHeight` to `StaticFieldUi.ImageFieldUiBuilder` (and the
+  `ImageField.Builder` passthroughs) to close the gap.
 
 ## Out of scope
 

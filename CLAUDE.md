@@ -20,9 +20,9 @@ These have bitten contributors before:
   are the right place for that.
 - **Spotless must pass.** Run `mvn spotless:apply` before committing if your editor
   doesn't auto-format.
-- **Tests must pass and not skip silently.** `mvn test` must end clean. The two known
-  exceptions are documented in `YamlAsymmetryProbeTest` (`@Disabled` regressions for
-  the two YAML round-trip bugs); those are the only acceptable skips.
+- **Tests must pass and not skip silently.** `mvn test` must end clean with zero skips.
+  (`YamlAsymmetryProbeTest` previously carried two `@Disabled` YAML round-trip regressions;
+  both are now fixed and the tests are enabled. There are no expected skips.)
 
 ## Patterns to mirror
 
