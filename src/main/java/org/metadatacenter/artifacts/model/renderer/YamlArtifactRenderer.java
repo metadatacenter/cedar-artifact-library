@@ -319,7 +319,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateInstanceArtifact.description().isPresent() && !templateInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description().get());
 
-    if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
+    // The id is emitted in both compact and full forms so the instance round-trips.
+    if (templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
@@ -362,7 +363,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
+    // The id is emitted in both compact and full forms so the instance round-trips.
+    if (elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
     LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
@@ -1127,7 +1129,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
+    // The id is emitted whenever the artifact has one — top-level artifacts and nested
+    // children alike, in both compact and full forms. It identifies the artifact itself, so
+    // unlike the provenance/version fields below the compact form keeps it. A nested child is
+    // not required to have an id (the reader never demands one), but when it does the renderer
+    // preserves it so a JSON template carrying child ids survives a YAML round trip.
+    if (schemaArtifact.jsonLdId().isPresent())
       rendering.put(ID, schemaArtifact.jsonLdId().get().toString());
 
     if (!isCompact && schemaArtifact.status().isPresent())
