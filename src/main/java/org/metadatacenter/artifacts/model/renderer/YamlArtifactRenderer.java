@@ -401,7 +401,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           .get(childKey);
         LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(
           fieldInstanceArtifact);
-        if (!fieldInstanceArtifactRendering.isEmpty())
+        // Expanded mode keeps a value-less single field as an empty mapping ({}) so the
+        // structural slot survives the round trip (the reader rebuilds a value-less field from
+        // an empty map or null); compact mode elides it (the schema knows the field exists).
+        if (!isCompact || !fieldInstanceArtifactRendering.isEmpty())
           childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactRendering);
       } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
         if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
@@ -483,8 +486,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     //
     // EXPANDED mode is the lossless exchange form: a value-less field instance is a real
     // structural slot (the skeleton produced by CreateInstance / EmptyFieldInstances), so
-    // it must survive a render -> read round trip. We therefore keep the slot — emitting an
-    // explicit value: null below for the literal case — rather than eliding it.
+    // it must survive a render -> read round trip. We keep the slot as an empty mapping ({})
+    // rather than eliding it; no `value: null` placeholder is emitted (the reader rebuilds a
+    // value-less field instance from an empty map or a null child).
     boolean hasValue = fieldInstanceArtifact.jsonLdValue() == null
       || fieldInstanceArtifact.jsonLdValue().isPresent();
     boolean hasId = fieldInstanceArtifact.jsonLdId().isPresent();
@@ -501,15 +505,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldInstanceArtifact.jsonLdId().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
-    if (fieldInstanceArtifact.jsonLdValue() == null)
-      fieldInstanceArtifactRendering.put(VALUE, null);
-    else if (!isCompact && fieldInstanceArtifact.jsonLdValue().isEmpty()
-      && !hasId && !hasLabel && fieldInstanceArtifact.jsonLdTypes().isEmpty())
-      // Expanded, lossless form: a value-less literal field instance still needs an explicit
-      // slot so it round-trips (otherwise the parent renderer elides it). Numeric/temporal
-      // skeletons already carry a datatype seed above, so this only fires for plain literals.
-      fieldInstanceArtifactRendering.put(VALUE, null);
-    else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
+    // A value-less literal/controlled-term slot emits no `value:` line — an empty skeleton
+    // slot renders as an empty mapping ({}) rather than `value: null`. The slot still survives
+    // a round trip: renderChildInstanceArtifacts keeps the empty mapping in expanded mode, and
+    // the reader reconstructs a value-less field instance from an empty map (or a null child).
+    // Numeric/temporal skeletons keep their datatype seed (emitted above), so they round-trip
+    // without needing a value placeholder.
+    if (fieldInstanceArtifact.jsonLdValue() != null && fieldInstanceArtifact.jsonLdValue().isPresent()) {
       // Same compact-YAML rule as numeric defaults: when the field's declared @type is
       // an XSD numeric datatype and the stringified value parses cleanly as a number,
       // emit a bare number for readable output. Pathological forms (leading zeros,

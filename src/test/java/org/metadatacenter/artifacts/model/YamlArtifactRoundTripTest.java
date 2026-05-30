@@ -29,8 +29,10 @@ import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YamlArtifactRoundTripTest
 {
@@ -257,6 +259,36 @@ public class YamlArtifactRoundTripTest
       .withSingleInstanceFieldInstance("PI", pi)
       .build();
     roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripTemplateInstanceWithValuelessFieldSlot()
+  {
+    // A skeleton instance carries value-less field slots. Expanded YAML must keep the slot (so
+    // it round-trips and set_field_value has a target) but must NOT emit a `value: null`
+    // placeholder — the empty slot renders as an empty mapping ({}).
+    FieldInstanceArtifact empty = FieldInstanceArtifact.create(
+      java.util.Collections.emptyList(), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty());
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withSingleInstanceFieldInstance("Patient Name", empty)
+      .build();
+
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(original);
+
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> children = (LinkedHashMap<String, Object>) rendering.get("children");
+    assertTrue(children.containsKey("Patient Name"),
+      "expanded skeleton must keep the value-less slot, not elide it");
+    Object slot = children.get("Patient Name");
+    assertTrue(slot instanceof Map, "value-less slot should render as a mapping, got: " + slot);
+    assertTrue(((Map<?, ?>) slot).isEmpty(),
+      "value-less slot must be an empty mapping with no value: null placeholder, got: " + slot);
+
+    TemplateInstanceArtifact roundTripped = yamlArtifactReader.readTemplateInstanceArtifact(rendering);
+    assertEquals(original, roundTripped);
   }
 
   @Test public void testRoundTripTemplateInstanceWithAnnotations()
