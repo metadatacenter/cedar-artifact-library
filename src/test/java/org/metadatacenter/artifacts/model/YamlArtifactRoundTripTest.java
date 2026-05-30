@@ -24,6 +24,7 @@ import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
@@ -32,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YamlArtifactRoundTripTest
@@ -289,6 +291,41 @@ public class YamlArtifactRoundTripTest
 
     TemplateInstanceArtifact roundTripped = yamlArtifactReader.readTemplateInstanceArtifact(rendering);
     assertEquals(original, roundTripped);
+  }
+
+  @Test public void testReaderRejectsExplicitNullValue()
+  {
+    // YAML contract: null is never a valid value. A `value: null` (or any null, anywhere) is
+    // rejected on read — an unknown value must be omitted, not nulled.
+    LinkedHashMap<String, Object> child = new LinkedHashMap<>();
+    child.put("value", null);
+    LinkedHashMap<String, Object> children = new LinkedHashMap<>();
+    children.put("Patient Name", child);
+    LinkedHashMap<String, Object> instance = new LinkedHashMap<>();
+    instance.put("type", "instance");
+    instance.put("name", "SDY232");
+    instance.put("isBasedOn", "https://repo.metadatacenter.org/templates/abc");
+    instance.put("children", children);
+
+    assertThrows(ArtifactParseException.class,
+      () -> yamlArtifactReader.readTemplateInstanceArtifact(instance));
+  }
+
+  @Test public void testReaderRejectsNullListElement()
+  {
+    // The rule extends to list elements, not just map values.
+    java.util.List<Object> keywords = new java.util.ArrayList<>();
+    keywords.add(null);
+    LinkedHashMap<String, Object> children = new LinkedHashMap<>();
+    children.put("keywords", keywords);
+    LinkedHashMap<String, Object> instance = new LinkedHashMap<>();
+    instance.put("type", "instance");
+    instance.put("name", "SDY232");
+    instance.put("isBasedOn", "https://repo.metadatacenter.org/templates/abc");
+    instance.put("children", children);
+
+    assertThrows(ArtifactParseException.class,
+      () -> yamlArtifactReader.readTemplateInstanceArtifact(instance));
   }
 
   @Test public void testRoundTripTemplateInstanceWithAnnotations()

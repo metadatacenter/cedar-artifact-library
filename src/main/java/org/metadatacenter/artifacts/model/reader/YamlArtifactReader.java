@@ -247,6 +247,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
+    rejectNullValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(TEMPLATE))
@@ -284,6 +285,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
+    rejectNullValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(ELEMENT))
@@ -318,6 +320,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
+    rejectNullValues(sourceNode, path);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
     return readFieldSchemaArtifact(sourceNode, path);
@@ -326,6 +329,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
+    rejectNullValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(INSTANCE))
@@ -365,6 +369,34 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     readAnnotations(sourceNode, path).ifPresent(builder::withAnnotations);
 
     return builder.build();
+  }
+
+  /**
+   * Enforce the YAML contract that {@code null} is never a valid value. A key whose value is
+   * the null literal ({@code key: null}, {@code key:}, {@code key: ~}) or a null list element
+   * is rejected anywhere in the document. The serialization rule is "if something is unknown,
+   * omit it"; an explicit null is always an error on read, mirroring the renderer which never
+   * emits one. Run once at each public entry point, so the per-field read helpers never have to
+   * tolerate a null.
+   */
+  private static void rejectNullValues(Object node, String path)
+  {
+    if (node instanceof Map<?, ?> map) {
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
+        String key = String.valueOf(entry.getKey());
+        if (entry.getValue() == null)
+          throw new ArtifactParseException(
+            "null is not a valid value; omit the key if the value is unknown", key, path);
+        rejectNullValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key);
+      }
+    } else if (node instanceof List<?> list) {
+      for (int i = 0; i < list.size(); i++) {
+        if (list.get(i) == null)
+          throw new ArtifactParseException(
+            "null is not a valid list element; omit it if the value is unknown", "[" + i + "]", path);
+        rejectNullValues(list.get(i), path + "[" + i + "]");
+      }
+    }
   }
 
   /**
@@ -421,10 +453,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
           acc.singleField(childKey, readFieldInstanceArtifact(mapValue, childPath));
         }
       } else if (rawValue == null) {
-        // Treat a null child as an empty field instance.
-        acc.singleField(childKey, FieldInstanceArtifact.create(
-          Collections.emptyList(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-          Optional.empty(), Optional.empty()));
+        // null is never a valid value (rejectNullValues already rejects it at the entry point;
+        // this is the defensive local statement of the same rule). A value-less field slot is
+        // an empty mapping ({}), not null.
+        throw new ArtifactParseException(
+          "null is not a valid child instance; an empty field slot is an empty mapping ({})",
+          childKey, path);
       } else {
         throw new ArtifactParseException(
           "Expected map or list value for child instance, got " + rawValue.getClass(), childKey, path);
