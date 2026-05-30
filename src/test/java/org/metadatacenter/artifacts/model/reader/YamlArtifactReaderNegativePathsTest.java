@@ -45,7 +45,9 @@ public class YamlArtifactReaderNegativePathsTest
     // `children:` must be a LIST of child maps; a top-level Map under `children:` is illegal.
     LinkedHashMap<String, Object> node = minimalTemplate();
     LinkedHashMap<String, Object> kids = new LinkedHashMap<>();
-    kids.put("foo", new LinkedHashMap<>());
+    LinkedHashMap<String, Object> foo = new LinkedHashMap<>();
+    foo.put("type", "text-field");  // non-empty: an empty {} would trip the empty-mapping reject first
+    kids.put("foo", foo);
     node.put("children", kids);
 
     ArtifactParseException ex = assertThrows(ArtifactParseException.class,

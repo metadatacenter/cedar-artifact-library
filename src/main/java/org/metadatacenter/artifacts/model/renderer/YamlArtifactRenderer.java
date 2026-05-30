@@ -368,25 +368,34 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
+      elementInstanceArtifact);
+
+    LinkedHashMap<String, Object> attributeValueGroups = new LinkedHashMap<>();
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
+      .entrySet()) {
+      Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
+      if (!fields.isEmpty())
+        attributeValueGroups.put(attributeValueFieldInstanceGroup.getKey(),
+          renderAttributeValueFieldInstanceGroupFields(fields));
+    }
+
+    // An element with no set descendant field and no attribute-value groups is an unset slot:
+    // omit it entirely (not even a bare `id:`), exactly as an unset field is omitted. Emitting
+    // only an `id:` would both reintroduce noise and be ambiguous with a field on read (a field
+    // is a map with no `children:` key). The element's presence — and a fresh @id — are
+    // reconstructable from the template at the JSON boundary.
+    if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty())
+      return rendering;
+
     // The id is emitted in both compact and full forms so the instance round-trips.
     if (elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
-    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
-      elementInstanceArtifact);
     if (!childInstanceArtifactsRendering.isEmpty())
       rendering.put(CHILDREN, childInstanceArtifactsRendering);
 
-    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
-      .entrySet()) {
-      String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
-      Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
-
-      if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
-        rendering.put(attributeValueFieldInstanceGroupKey,
-          renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
-      }
-    }
+    rendering.putAll(attributeValueGroups);
 
     return rendering;
   }
@@ -401,10 +410,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           .get(childKey);
         LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(
           fieldInstanceArtifact);
-        // Expanded mode keeps a value-less single field as an empty mapping ({}) so the
-        // structural slot survives the round trip (the reader rebuilds a value-less field from
-        // an empty map or null); compact mode elides it (the schema knows the field exists).
-        if (!isCompact || !fieldInstanceArtifactRendering.isEmpty())
+        // An unset single field renders empty and is omitted from YAML entirely (no `{}`); its
+        // presence is reconstructable from the template at the JSON boundary. Only fields that
+        // carry a value/id/label are emitted.
+        if (!fieldInstanceArtifactRendering.isEmpty())
           childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactRendering);
       } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
         if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
@@ -477,25 +486,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> fieldInstanceArtifactRendering = new LinkedHashMap<>();
 
-    // A field instance whose only content is a datatype seed (no @value, no @id, no
-    // label/notation/prefLabel) carries no human-useful information — the datatype
-    // is recoverable from the schema. In COMPACT mode, returning an empty map here
-    // causes the parent renderer to elide the entire child entry in the YAML children
-    // block, matching the behavior for text-style fields that have no value set, and
-    // keeping the seed @type out of the lean view.
-    //
-    // EXPANDED mode is the lossless exchange form: a value-less field instance is a real
-    // structural slot (the skeleton produced by CreateInstance / EmptyFieldInstances), so
-    // it must survive a render -> read round trip. We keep the slot as an empty mapping ({})
-    // rather than eliding it; no `value: null` placeholder is emitted (the reader rebuilds a
-    // value-less field instance from an empty map or a null child).
-    boolean hasValue = fieldInstanceArtifact.jsonLdValue() == null
-      || fieldInstanceArtifact.jsonLdValue().isPresent();
+    // An unset field instance — no @value, no @id, no label/notation/prefLabel — is omitted
+    // from YAML entirely: it renders to an empty map here and the parent renderer elides the
+    // child. No `{}`, no `value: null`, and not even a bare datatype seed (the datatype is
+    // recoverable from the schema). The field's presence in the instance is reconstructable
+    // from the template at the JSON boundary, so the YAML carries only fields that hold a
+    // value. This applies to both compact and expanded output.
+    boolean hasValue = fieldInstanceArtifact.jsonLdValue() != null
+      && fieldInstanceArtifact.jsonLdValue().isPresent();
     boolean hasId = fieldInstanceArtifact.jsonLdId().isPresent();
     boolean hasLabel = fieldInstanceArtifact.label().isPresent()
       || fieldInstanceArtifact.preferredLabel().isPresent()
       || fieldInstanceArtifact.notation().isPresent();
-    if (isCompact && !hasValue && !hasId && !hasLabel)
+    if (!hasValue && !hasId && !hasLabel)
       return fieldInstanceArtifactRendering;
 
     if (!fieldInstanceArtifact.jsonLdTypes().isEmpty())
@@ -505,13 +508,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldInstanceArtifact.jsonLdId().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
-    // A value-less literal/controlled-term slot emits no `value:` line — an empty skeleton
-    // slot renders as an empty mapping ({}) rather than `value: null`. The slot still survives
-    // a round trip: renderChildInstanceArtifacts keeps the empty mapping in expanded mode, and
-    // the reader reconstructs a value-less field instance from an empty map (or a null child).
-    // Numeric/temporal skeletons keep their datatype seed (emitted above), so they round-trip
-    // without needing a value placeholder.
-    if (fieldInstanceArtifact.jsonLdValue() != null && fieldInstanceArtifact.jsonLdValue().isPresent()) {
+    // The value is emitted only when present (an unset slot returned early above, so this is
+    // never a `value: null`).
+    if (hasValue) {
       // Same compact-YAML rule as numeric defaults: when the field's declared @type is
       // an XSD numeric datatype and the stringified value parses cleanly as a number,
       // emit a bare number for readable output. Pathological forms (leading zeros,

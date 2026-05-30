@@ -30,7 +30,6 @@ import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -263,11 +262,12 @@ public class YamlArtifactRoundTripTest
     roundTripTemplateInstance(original);
   }
 
-  @Test public void testRoundTripTemplateInstanceWithValuelessFieldSlot()
+  @Test public void testValuelessFieldSlotIsOmittedFromYaml()
   {
-    // A skeleton instance carries value-less field slots. Expanded YAML must keep the slot (so
-    // it round-trips and set_field_value has a target) but must NOT emit a `value: null`
-    // placeholder — the empty slot renders as an empty mapping ({}).
+    // An unset field slot is omitted from YAML entirely — no `value: null`, no `{}`. The
+    // instance carries only fields that hold a value; the unset slot's presence is
+    // reconstructable from the template at the JSON boundary. A field that *does* carry a
+    // value is still rendered, so the two are distinguishable.
     FieldInstanceArtifact empty = FieldInstanceArtifact.create(
       java.util.Collections.emptyList(), java.util.Optional.empty(), java.util.Optional.empty(),
       java.util.Optional.empty(), java.util.Optional.empty(), java.util.Optional.empty(),
@@ -276,21 +276,17 @@ public class YamlArtifactRoundTripTest
     TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
       .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
       .withSingleInstanceFieldInstance("Patient Name", empty)
+      .withSingleInstanceFieldInstance("Age", simpleLiteralField("42"))
       .build();
 
     LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(original);
 
     @SuppressWarnings("unchecked")
     LinkedHashMap<String, Object> children = (LinkedHashMap<String, Object>) rendering.get("children");
-    assertTrue(children.containsKey("Patient Name"),
-      "expanded skeleton must keep the value-less slot, not elide it");
-    Object slot = children.get("Patient Name");
-    assertTrue(slot instanceof Map, "value-less slot should render as a mapping, got: " + slot);
-    assertTrue(((Map<?, ?>) slot).isEmpty(),
-      "value-less slot must be an empty mapping with no value: null placeholder, got: " + slot);
-
-    TemplateInstanceArtifact roundTripped = yamlArtifactReader.readTemplateInstanceArtifact(rendering);
-    assertEquals(original, roundTripped);
+    assertTrue(children == null || !children.containsKey("Patient Name"),
+      "an unset slot must be omitted entirely (no `{}`, no `value: null`), got: " + children);
+    assertTrue(children != null && children.containsKey("Age"),
+      "a field that carries a value must still be rendered, got: " + children);
   }
 
   @Test public void testReaderRejectsExplicitNullValue()
@@ -299,6 +295,23 @@ public class YamlArtifactRoundTripTest
     // rejected on read — an unknown value must be omitted, not nulled.
     LinkedHashMap<String, Object> child = new LinkedHashMap<>();
     child.put("value", null);
+    LinkedHashMap<String, Object> children = new LinkedHashMap<>();
+    children.put("Patient Name", child);
+    LinkedHashMap<String, Object> instance = new LinkedHashMap<>();
+    instance.put("type", "instance");
+    instance.put("name", "SDY232");
+    instance.put("isBasedOn", "https://repo.metadatacenter.org/templates/abc");
+    instance.put("children", children);
+
+    assertThrows(ArtifactParseException.class,
+      () -> yamlArtifactReader.readTemplateInstanceArtifact(instance));
+  }
+
+  @Test public void testReaderRejectsEmptyMapValue()
+  {
+    // YAML contract: an empty mapping ({}) is never a valid value, just like null — an unset
+    // value must be omitted, not represented as an empty placeholder.
+    LinkedHashMap<String, Object> child = new LinkedHashMap<>();  // {}
     LinkedHashMap<String, Object> children = new LinkedHashMap<>();
     children.put("Patient Name", child);
     LinkedHashMap<String, Object> instance = new LinkedHashMap<>();
