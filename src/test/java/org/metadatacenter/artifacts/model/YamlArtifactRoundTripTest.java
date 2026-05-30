@@ -324,6 +324,22 @@ public class YamlArtifactRoundTripTest
       () -> yamlArtifactReader.readTemplateInstanceArtifact(instance));
   }
 
+  @Test public void testReaderRejectsEmptyListValue()
+  {
+    // YAML contract: an empty list ([]) is never a valid value, like null and {} — an unset
+    // multi-instance slot must be omitted, not represented as an empty placeholder.
+    LinkedHashMap<String, Object> children = new LinkedHashMap<>();
+    children.put("tags", new java.util.ArrayList<>());  // []
+    LinkedHashMap<String, Object> instance = new LinkedHashMap<>();
+    instance.put("type", "instance");
+    instance.put("name", "SDY232");
+    instance.put("isBasedOn", "https://repo.metadatacenter.org/templates/abc");
+    instance.put("children", children);
+
+    assertThrows(ArtifactParseException.class,
+      () -> yamlArtifactReader.readTemplateInstanceArtifact(instance));
+  }
+
   @Test public void testReaderRejectsNullListElement()
   {
     // The rule extends to list elements, not just map values.

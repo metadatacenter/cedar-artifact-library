@@ -429,9 +429,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering = renderFieldInstanceArtifacts(
           parentInstanceArtifact.multiInstanceFieldInstances().get(childKey));
 
-        // Expanded (lossless) mode keeps an empty multi-instance array so the structural slot
-        // survives a round trip; compact mode elides it (the schema knows the field is multi).
-        if (!isCompact || !fieldInstanceArtifactsRendering.isEmpty()) {
+        // An empty multi-instance field is an unset slot: omit it entirely (no `[]`), in both
+        // modes, exactly as an unset single field is omitted. Its presence is reconstructable
+        // from the template at the JSON boundary.
+        if (!fieldInstanceArtifactsRendering.isEmpty()) {
           childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactsRendering);
         }
       } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {

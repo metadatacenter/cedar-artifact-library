@@ -247,7 +247,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyMapValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(TEMPLATE))
@@ -285,7 +285,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyMapValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(ELEMENT))
@@ -320,7 +320,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyMapValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
     return readFieldSchemaArtifact(sourceNode, path);
@@ -329,7 +329,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyMapValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(INSTANCE))
@@ -372,34 +372,32 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   /**
-   * Enforce the YAML contract that neither {@code null} nor an empty mapping ({@code {}}) is a
-   * valid value. A key whose value is the null literal ({@code key: null}, {@code key:},
-   * {@code key: ~}) or an empty mapping ({@code key: {}}), and any null or empty-mapping list
-   * element, is rejected anywhere in the document. The serialization rule is "if something is
-   * unknown, omit it"; an explicit null or empty placeholder is always an error on read,
-   * mirroring the renderer which never emits one. Run once at each public entry point, so the
-   * per-field read helpers never have to tolerate either.
-   *
-   * <p>Empty lists ({@code []}) are <em>not</em> rejected: an empty multi-instance array is a
-   * legitimate, distinct slot the renderer round-trips.
+   * Enforce the YAML contract that none of {@code null}, an empty mapping ({@code {}}), or an
+   * empty list ({@code []}) is a valid value. A key whose value is the null literal
+   * ({@code key: null}, {@code key:}, {@code key: ~}), an empty mapping ({@code key: {}}), or an
+   * empty list ({@code key: []}), and any such list element, is rejected anywhere in the
+   * document. The serialization rule is "if something is unknown, omit it"; an explicit null or
+   * empty placeholder is always an error on read, mirroring the renderer which never emits one.
+   * Run once at each public entry point, so the per-field read helpers never have to tolerate any
+   * of them.
    */
-  private static void rejectNullAndEmptyMapValues(Object node, String path)
+  private static void rejectNullAndEmptyValues(Object node, String path)
   {
     if (node instanceof Map<?, ?> map) {
       for (Map.Entry<?, ?> entry : map.entrySet()) {
         String key = String.valueOf(entry.getKey());
-        rejectNullOrEmptyMap(entry.getValue(), key, path);
-        rejectNullAndEmptyMapValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key);
+        rejectNullOrEmpty(entry.getValue(), key, path);
+        rejectNullAndEmptyValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key);
       }
     } else if (node instanceof List<?> list) {
       for (int i = 0; i < list.size(); i++) {
-        rejectNullOrEmptyMap(list.get(i), "[" + i + "]", path);
-        rejectNullAndEmptyMapValues(list.get(i), path + "[" + i + "]");
+        rejectNullOrEmpty(list.get(i), "[" + i + "]", path);
+        rejectNullAndEmptyValues(list.get(i), path + "[" + i + "]");
       }
     }
   }
 
-  private static void rejectNullOrEmptyMap(Object value, String key, String path)
+  private static void rejectNullOrEmpty(Object value, String key, String path)
   {
     if (value == null)
       throw new ArtifactParseException(
@@ -407,6 +405,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (value instanceof Map<?, ?> m && m.isEmpty())
       throw new ArtifactParseException(
         "an empty mapping ({}) is not a valid value; omit the key if the value is unknown", key, path);
+    if (value instanceof List<?> l && l.isEmpty())
+      throw new ArtifactParseException(
+        "an empty list ([]) is not a valid value; omit the key if the value is unknown", key, path);
   }
 
   /**
