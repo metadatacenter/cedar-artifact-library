@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.NumericField;
+import org.metadatacenter.artifacts.model.core.RorField;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
 import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.YouTubeField;
@@ -19,6 +21,7 @@ import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Round-trip probes for individual field settings that the YAML renderer / reader pair has
@@ -74,6 +77,21 @@ public class YamlAsymmetryProbeTest
     FieldSchemaArtifact roundTripped = roundTripField(original);
 
     assertEquals(true, roundTripped.fieldUi().continuePreviousLine());
+  }
+
+  // The ext-* identifier fields (ROR/ORCID/PFAS/RRID/PubMed/NIH-grant/DOI) are IRI-valued
+  // and carry LinkValueConstraints. The YAML reader must reconstruct those constraints (keyed
+  // on isIri(), not == LINK) or the *Field builders throw ClassCastException on read-back.
+  @Test public void testRoundTripPreservesRorFieldLinkConstraints()
+  {
+    RorField original = RorField.builder().withName("Affiliation ROR").build();
+
+    FieldSchemaArtifact roundTripped = roundTripField(original);
+
+    assertTrue(roundTripped instanceof RorField,
+      "ext-ror-field must read back as a RorField, got " + roundTripped.getClass().getSimpleName());
+    assertTrue(roundTripped.valueConstraints().get() instanceof LinkValueConstraints,
+      "ext-ror-field must round-trip with LinkValueConstraints");
   }
 
   @Test public void testRoundTripPreservesNumericDecimalPlaces()

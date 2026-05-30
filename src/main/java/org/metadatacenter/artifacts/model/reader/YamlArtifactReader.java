@@ -171,6 +171,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
+import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -389,7 +390,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         // Multi-instance: every element should be a map; if it carries `children:` it's an
         // element instance, otherwise it's a field instance. We assume the list is homogeneous.
         List<?> list = (List<?>) rawValue;
-        if (list.isEmpty()) continue;
+        if (list.isEmpty()) {
+          // An empty multi-instance array is the expanded-mode skeleton slot for a
+          // multi-instance field (the renderer elides empty multi-element arrays, so an empty
+          // list here is always a field). Preserve it as an empty multi-field so the slot
+          // survives the round trip (e.g. so set_field_value can append to it).
+          acc.multiField(childKey, new ArrayList<>());
+          continue;
+        }
         Object first = list.get(0);
         if (!(first instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map entries in multi-instance list", childKey, path);
@@ -512,16 +520,45 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     List<URI> jsonLdTypes = new ArrayList<>();
     Optional<String> datatype = readEnumOrString(sourceNode, path, DATATYPE);
-    if (datatype.isPresent())
-      jsonLdTypes.add(URI.create(datatype.get()));
+    if (datatype.isPresent()) {
+      // The renderer writes the instance @type as an xsd:-prefixed name (e.g. "xsd:int").
+      // The in-memory model and the JSON renderer expect the fully-qualified XSD URI, so
+      // expand the prefix here — otherwise rendering the instance to JSON throws when it
+      // tries to re-prefix a value that is already prefixed.
+      String dt = datatype.get();
+      jsonLdTypes.add(dt.startsWith("xsd:")
+        ? URI.create(XSD_IRI + dt.substring("xsd:".length()))
+        : URI.create(dt));
+    }
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
-    Optional<String> jsonLdValue = readString(sourceNode, path, VALUE, true);
+    Optional<String> jsonLdValue = readScalarAsString(sourceNode, path, VALUE);
     Optional<String> label = readString(sourceNode, path, LABEL, true);
     Optional<String> notation = readString(sourceNode, path, NOTATION, true);
     Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL, true);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
 
     return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation, preferredLabel, language);
+  }
+
+  /**
+   * Read a field-instance {@code value:} as a string. Unlike {@link #readString}, this coerces a
+   * scalar number or boolean to its string form: the renderer emits numeric instance values as
+   * bare YAML numbers (e.g. {@code value: 33}) for readability, but the model stores @value as a
+   * string. An absent key or an explicit {@code null} reads as empty.
+   */
+  private Optional<String> readScalarAsString(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
+  {
+    if (!sourceNode.containsKey(fieldKey))
+      return Optional.empty();
+    Object raw = sourceNode.get(fieldKey);
+    if (raw == null)
+      return Optional.empty();
+    if (raw instanceof String s)
+      return Optional.of(s);
+    if (raw instanceof Number || raw instanceof Boolean)
+      return Optional.of(raw.toString());
+    throw new ArtifactParseException("Expecting a scalar value (string, number, or boolean), got "
+      + raw.getClass(), fieldKey, path);
   }
 
   /**
@@ -850,7 +887,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       Optional<TemporalDefaultValue> temporalDefaultValue = readTemporalDefaultValue(sourceNode, path);
       return Optional.of(TemporalValueConstraints.create(temporalType.orElse(XsdTemporalDatatype.DATETIME),
         temporalDefaultValue, requiredValue, recommendedValue, multipleChoice));
-    } else if (fieldInputType == FieldInputType.LINK) {
+    } else if (fieldInputType.isIri()) {
+      // LINK and the ext-* identifier fields (ROR, ORCID, PFAS, RRID, PubMed, NIH grant id,
+      // DOI) are all IRI-valued and carry LinkValueConstraints. Keying on isIri() rather than
+      // == LINK ensures the ext-* fields round-trip: FieldSchemaArtifact.create dispatches them
+      // to RorField/OrcidField/etc., whose builders require LinkValueConstraints (a plain
+      // TextValueConstraints here throws a ClassCastException).
       Optional<LinkDefaultValue> linkDefaultValue = readLinkDefaultValue(sourceNode, path);
       return Optional.of(
         LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));

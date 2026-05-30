@@ -417,13 +417,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering = renderFieldInstanceArtifacts(
           parentInstanceArtifact.multiInstanceFieldInstances().get(childKey));
 
-        if (!fieldInstanceArtifactsRendering.isEmpty()) {
+        // Expanded (lossless) mode keeps an empty multi-instance array so the structural slot
+        // survives a round trip; compact mode elides it (the schema knows the field is multi).
+        if (!isCompact || !fieldInstanceArtifactsRendering.isEmpty()) {
           childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactsRendering);
         }
       } else if (parentInstanceArtifact.multiInstanceElementInstances().containsKey(childKey)) {
         List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering = renderElementInstanceArtifacts(
           parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
 
+        // An empty multi-element array stays elided: an empty YAML list is field/element
+        // ambiguous on read, so we only round-trip empty multi-instance *field* arrays (above),
+        // which the reader can default to a field. Empty multi-element slots are reconstructable
+        // from the schema.
         if (!elementInstanceArtifactsRendering.isEmpty()) {
           childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactsRendering);
         }
@@ -470,19 +476,22 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     // A field instance whose only content is a datatype seed (no @value, no @id, no
     // label/notation/prefLabel) carries no human-useful information — the datatype
-    // is recoverable from the schema. Returning an empty map here causes the parent
-    // renderer to elide the entire child entry in the YAML children block, matching
-    // the behavior for text-style fields that have no value set. The skeleton
-    // instances produced by CreateInstance / EmptyFieldInstances seed @type on
-    // numeric and temporal fields so the JSON instance carries it for validation;
-    // that seed should not leak into the compact YAML view.
+    // is recoverable from the schema. In COMPACT mode, returning an empty map here
+    // causes the parent renderer to elide the entire child entry in the YAML children
+    // block, matching the behavior for text-style fields that have no value set, and
+    // keeping the seed @type out of the lean view.
+    //
+    // EXPANDED mode is the lossless exchange form: a value-less field instance is a real
+    // structural slot (the skeleton produced by CreateInstance / EmptyFieldInstances), so
+    // it must survive a render -> read round trip. We therefore keep the slot — emitting an
+    // explicit value: null below for the literal case — rather than eliding it.
     boolean hasValue = fieldInstanceArtifact.jsonLdValue() == null
       || fieldInstanceArtifact.jsonLdValue().isPresent();
     boolean hasId = fieldInstanceArtifact.jsonLdId().isPresent();
     boolean hasLabel = fieldInstanceArtifact.label().isPresent()
       || fieldInstanceArtifact.preferredLabel().isPresent()
       || fieldInstanceArtifact.notation().isPresent();
-    if (!hasValue && !hasId && !hasLabel)
+    if (isCompact && !hasValue && !hasId && !hasLabel)
       return fieldInstanceArtifactRendering;
 
     if (!fieldInstanceArtifact.jsonLdTypes().isEmpty())
@@ -493,6 +502,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
     if (fieldInstanceArtifact.jsonLdValue() == null)
+      fieldInstanceArtifactRendering.put(VALUE, null);
+    else if (!isCompact && fieldInstanceArtifact.jsonLdValue().isEmpty()
+      && !hasId && !hasLabel && fieldInstanceArtifact.jsonLdTypes().isEmpty())
+      // Expanded, lossless form: a value-less literal field instance still needs an explicit
+      // slot so it round-trips (otherwise the parent renderer elides it). Numeric/temporal
+      // skeletons already carry a datatype seed above, so this only fires for plain literals.
       fieldInstanceArtifactRendering.put(VALUE, null);
     else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
       // Same compact-YAML rule as numeric defaults: when the field's declared @type is
@@ -958,6 +973,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         defaultRendering.put(DEFAULT_LABEL, controlledTermDefaultValue.value().getRight());
 
         rendering.put(DEFAULT, defaultRendering);
+      } else if (defaultValue.isLinkDefaultValue()) {
+        // Link / ext-* identifier default: a bare URI under `default:` (the reader reads it
+        // back via readLinkDefaultValue).
+        rendering.put(DEFAULT, defaultValue.asLinkDefaultValue().value().toString());
+      } else if (defaultValue.isTemporalDefaultValue()) {
+        rendering.put(DEFAULT, defaultValue.asTemporalDefaultValue().value());
       }
     }
 
