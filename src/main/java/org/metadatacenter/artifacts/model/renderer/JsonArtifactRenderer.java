@@ -45,6 +45,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_REQUIRED;
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_JSON_SCHEMA_REQUIRED;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_JSON_SCHEMA_REQUIRED;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_STRING;
@@ -126,17 +128,10 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     rendering.put(JSON_SCHEMA_PROPERTIES,
         renderTemplateSchemaArtifactPropertiesJsonSchemaSpecification(templateSchemaArtifact));
 
-    // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, MAPPER.createArrayNode());
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_CONTEXT);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_ID);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_IS_BASED_ON);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_NAME);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(SCHEMA_ORG_DESCRIPTION);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_ON);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_CREATED_BY);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(PAV_LAST_UPDATED_ON);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(OSLC_MODIFIED_BY);
+    for (String requiredKey : TEMPLATE_SCHEMA_ARTIFACT_JSON_SCHEMA_REQUIRED) {
+      rendering.withArray(JSON_SCHEMA_REQUIRED).add(requiredKey);
+    }
 
     for (String childKey : templateSchemaArtifact.getNonStaticNonAttributeValueChildKeys()) {
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childKey);
@@ -238,10 +233,10 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     rendering.put(JSON_SCHEMA_PROPERTIES,
         renderElementSchemaArtifactPropertiesJsonSchemaSpecification(elementSchemaArtifact));
 
-    // TODO Put this list in ModelNodeNames
     rendering.put(JSON_SCHEMA_REQUIRED, MAPPER.createArrayNode());
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_CONTEXT);
-    rendering.withArray(JSON_SCHEMA_REQUIRED).add(JSON_LD_ID);
+    for (String requiredKey : ELEMENT_SCHEMA_ARTIFACT_JSON_SCHEMA_REQUIRED) {
+      rendering.withArray(JSON_SCHEMA_REQUIRED).add(requiredKey);
+    }
 
     for (String childKey : elementSchemaArtifact.getNonStaticNonAttributeValueChildKeys()) {
       rendering.withArray(JSON_SCHEMA_REQUIRED).add(childKey);

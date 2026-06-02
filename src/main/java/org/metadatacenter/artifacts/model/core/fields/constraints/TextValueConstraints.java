@@ -13,6 +13,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LITERALS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MAX_STRING_LENGTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MIN_STRING_LENGTH;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_REGEX;
 
 public non-sealed interface TextValueConstraints extends ValueConstraints
 {
@@ -143,6 +144,6 @@ record TextValueConstraintsRecord(Optional<Integer> minLength, Optional<Integer>
     validateOptionalFieldNotNull(this, maxLength, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
     validateOptionalFieldNotNull(this, defaultValue, VALUE_CONSTRAINTS_DEFAULT_VALUE);
     validateListFieldNotNull(this, literals, VALUE_CONSTRAINTS_LITERALS);
-    validateOptionalFieldNotNull(this, regex, "regex"); // TODO Add 'regex' to ModelNodeNames
+    validateOptionalFieldNotNull(this, regex, VALUE_CONSTRAINTS_REGEX);
   }
 }

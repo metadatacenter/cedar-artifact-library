@@ -82,7 +82,7 @@ final class JsonValueConstraintsReader {
       Optional<Integer> decimalPlaces = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_DECIMAL_PLACE);
       Optional<Integer> minLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MIN_STRING_LENGTH);
       Optional<Integer> maxLength = readInteger(vcNode, vcPath, VALUE_CONSTRAINTS_MAX_STRING_LENGTH);
-      Optional<String> regex = readString(vcNode, vcPath, "regex"); // TODO Add 'regex' to ModelNodeNames
+      Optional<String> regex = readString(vcNode, vcPath, VALUE_CONSTRAINTS_REGEX);
       List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(vcNode, vcPath,
           VALUE_CONSTRAINTS_ONTOLOGIES);
       List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(vcNode, vcPath,
