@@ -381,11 +381,9 @@ record TemplateSchemaArtifactRecord(
       jsonLdContext, jsonLdTypes, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdType,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, templateUi, annotations);
 
-    ParentSchemaArtifactInvariants.pruneChildrenNotInOrder(fieldSchemas, elementSchemas, templateUi.order());
-
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
-    fieldSchemas = new LinkedHashMap<>(fieldSchemas);
-    elementSchemas = new LinkedHashMap<>(elementSchemas);
+    fieldSchemas = ParentSchemaArtifactInvariants.prunedToOrder(fieldSchemas, templateUi.order());
+    elementSchemas = ParentSchemaArtifactInvariants.prunedToOrder(elementSchemas, templateUi.order());
   }
 }

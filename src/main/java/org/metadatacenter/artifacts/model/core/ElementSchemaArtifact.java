@@ -432,11 +432,10 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
 
     ParentSchemaArtifactInvariants.validateItemBounds(this, name(), minItems, maxItems);
-    ParentSchemaArtifactInvariants.pruneChildrenNotInOrder(fieldSchemas, elementSchemas, elementUi.order());
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = new ArrayList<>(jsonLdTypes);
-    fieldSchemas = new LinkedHashMap<>(fieldSchemas);
-    elementSchemas = new LinkedHashMap<>(elementSchemas);
+    fieldSchemas = ParentSchemaArtifactInvariants.prunedToOrder(fieldSchemas, elementUi.order());
+    elementSchemas = ParentSchemaArtifactInvariants.prunedToOrder(elementSchemas, elementUi.order());
   }
 }

@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toSet;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
@@ -109,28 +107,19 @@ final class ParentSchemaArtifactInvariants
   }
 
   /**
-   * Drop any children whose key is not present in the UI {@code order} list, and likewise
-   * trim the order itself of stale entries. Mutates the passed-in maps.
+   * Return a copy of {@code children} with any entry whose key is absent from the UI {@code order}
+   * list removed. The input map is not modified.
    * <p>
-   * This is a silent cleanup — the original behavior in both records. We're not flagging
-   * order/child drift as an error because callers (readers, builders) may legitimately
-   * produce intermediate states where they diverge.
+   * This is a silent cleanup — the original behavior in both records. Order/child drift is not
+   * flagged as an error because callers (readers, builders) may legitimately produce intermediate
+   * states where they diverge.
    */
-  static void pruneChildrenNotInOrder(LinkedHashMap<String, ? extends SchemaArtifact> fieldSchemas,
-                                      LinkedHashMap<String, ? extends SchemaArtifact> elementSchemas,
-                                      List<String> uiOrder)
+  static <T extends SchemaArtifact> LinkedHashMap<String, T> prunedToOrder(LinkedHashMap<String, T> children,
+                                                                           List<String> uiOrder)
   {
     Set<String> order = new HashSet<>(uiOrder);
-    Set<String> childKeys = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream())
-      .collect(toSet());
-
-    if (!order.containsAll(childKeys)) {
-      childKeys.removeAll(order);
-      order.removeAll(childKeys);
-      for (String childToRemove : childKeys) {
-        fieldSchemas.remove(childToRemove);
-        elementSchemas.remove(childToRemove);
-      }
-    }
+    LinkedHashMap<String, T> pruned = new LinkedHashMap<>(children);
+    pruned.keySet().removeIf(childKey -> !order.contains(childKey));
+    return pruned;
   }
 }
