@@ -443,8 +443,21 @@ public class JsonArtifactRendererTest
     assertEquals(instanceUri, URI.create(templateInstanceRendering.get(JSON_LD_ID).asText()));
     assertEquals(isBasedOnTemplateUri, URI.create(templateInstanceRendering.get(SCHEMA_IS_BASED_ON).asText()));
 
-    // TODO Need more comprehensive testing here
-}
+    // A multi-instance field renders as an array of @value objects, in order.
+    assertTrue(templateInstanceRendering.get(textField2Name).isArray());
+    assertEquals(2, templateInstanceRendering.get(textField2Name).size());
+    assertEquals("Value 2", templateInstanceRendering.get(textField2Name).get(0).get("@value").asText());
+    assertEquals("Value 3", templateInstanceRendering.get(textField2Name).get(1).get("@value").asText());
+
+    // A single-instance element renders as a nested object carrying its own field instance.
+    ObjectNode element1Rendering = (ObjectNode) templateInstanceRendering.get(element1Name);
+    assertEquals("Value 1", element1Rendering.get(textField1Name).get("@value").asText());
+
+    // The @context carries the entry added for the nested element.
+    assertTrue(templateInstanceRendering.get("@context").has(element1Name));
+
+    // Attribute-value group rendering is covered comprehensively by JsonAttributeValueRoundTripTest.
+  }
 
   @Test
   public void testRenderBasicElementInstance()
@@ -485,12 +498,20 @@ public class JsonArtifactRendererTest
     assertEquals(instanceName, elementInstanceRendering.get(SCHEMA_ORG_NAME).asText());
     assertEquals(instanceUri, URI.create(elementInstanceRendering.get(JSON_LD_ID).asText()));
 
-    // TODO Need more comprehensive testing here
-  }
+    // A multi-instance field renders as an array of @value objects, in order.
+    assertTrue(elementInstanceRendering.get(textField2Name).isArray());
+    assertEquals(2, elementInstanceRendering.get(textField2Name).size());
+    assertEquals("Value 2", elementInstanceRendering.get(textField2Name).get(0).get("@value").asText());
+    assertEquals("Value 3", elementInstanceRendering.get(textField2Name).get(1).get("@value").asText());
 
-  @Test
-  public void testRenderElementSchemaArtifact() {
-    // Similar test for renderElementSchemaArtifact() if needed
+    // A nested single-instance element renders as an object carrying its own field instance.
+    ObjectNode nestedElementRendering = (ObjectNode) elementInstanceRendering.get(element1Name);
+    assertEquals("Value 1", nestedElementRendering.get(textField1Name).get("@value").asText());
+
+    // The @context carries the entry added for the nested element.
+    assertTrue(elementInstanceRendering.get("@context").has(element1Name));
+
+    // Attribute-value group rendering is covered comprehensively by JsonAttributeValueRoundTripTest.
   }
 
   @Test
