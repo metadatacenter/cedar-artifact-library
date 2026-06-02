@@ -124,7 +124,7 @@ final class JsonValueConstraintsReader {
       } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty()
           || !classes.isEmpty() || !branches.isEmpty())) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue =
-            defaultValue.isPresent() && defaultValue.get().asControlledTermDefaultValue() != null ?
+            defaultValue.isPresent() && defaultValue.get().isControlledTermDefaultValue() ?
                 Optional.of(defaultValue.get().asControlledTermDefaultValue()) :
                 Optional.empty();
         return Optional.of(

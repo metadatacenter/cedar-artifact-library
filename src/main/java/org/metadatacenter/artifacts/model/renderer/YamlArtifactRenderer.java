@@ -317,7 +317,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     rendering.put(TYPE, INSTANCE);
 
     if (templateInstanceArtifact.name().isEmpty())
-      throw new RuntimeException("template instance must have a name");
+      throw new ArtifactRenderException("template instance must have a name");
     else
       rendering.put(NAME, templateInstanceArtifact.name().get());
 
@@ -1233,7 +1233,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     case PUBLISHED:
       return PUBLISHED_STATUS;
     default:
-      throw new RuntimeException("Unknown status " + status);
+      throw new ArtifactRenderException("Unknown status " + status);
     }
   }
 
@@ -1246,7 +1246,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     case DELETE:
       return DELETE_ACTION;
     default:
-      throw new RuntimeException("Unknown action type " + actionType);
+      throw new ArtifactRenderException("Unknown action type " + actionType);
     }
   }
 
@@ -1308,8 +1308,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       case YOUTUBE:
         return STATIC_YOUTUBE_FIELD;
       default:
-        throw new RuntimeException("Unknown field input type " + fieldSchemaArtifact.fieldUi().inputType() + " for field "
-            + fieldSchemaArtifact.name());
+        throw new ArtifactRenderException(
+            "Unknown field input type " + fieldSchemaArtifact.fieldUi().inputType() + " for field "
+                + fieldSchemaArtifact.name());
     }
   }
 

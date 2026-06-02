@@ -62,7 +62,8 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
       if (getValueType() == DefaultValueType.CONTROLLED_TERM)
          return (ControlledTermDefaultValue)this;
       else
-         return null;
+         throw new ClassCastException(
+           "Cannot convert " + this.getClass().getName() + " to " + ControlledTermDefaultValue.class.getName());
    }
 
    default TemporalDefaultValue asTemporalDefaultValue()

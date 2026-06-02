@@ -275,12 +275,7 @@ final class JsonNodeReaders {
     Optional<String> dateTimeValue = readString(sourceNode, path, fieldKey);
     try {
       if (dateTimeValue.isPresent()) {
-        // Preprocess non-standard `+0100` timezone offset
-        String dateTimeString = dateTimeValue.get();
-        // Regex to find and correct timezone offset without colon
-        dateTimeString = dateTimeString.replaceAll("([+-]\\d{2})(\\d{2})$", "$1:$2");
-
-        return Optional.of(OffsetDateTime.parse(dateTimeString));
+        return Optional.of(OffsetDateTimes.parse(dateTimeValue.get()));
       } else {
         return Optional.empty();
       }
@@ -295,7 +290,7 @@ final class JsonNodeReaders {
     String dateTimeValue = readRequiredString(sourceNode, path, fieldKey);
 
     try {
-      return OffsetDateTime.parse(dateTimeValue);
+      return OffsetDateTimes.parse(dateTimeValue);
     } catch (DateTimeParseException e) {
       throw new ArtifactParseException("Invalid offset datetime value " + dateTimeValue + ": " + e.getMessage(),
           fieldKey, path);

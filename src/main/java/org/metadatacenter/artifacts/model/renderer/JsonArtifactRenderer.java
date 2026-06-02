@@ -722,7 +722,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
           }
         }
       } else {
-        throw new RuntimeException("unknown child " + childKey + " in parent instance artifact");
+        throw new ArtifactRenderException("unknown child " + childKey + " in parent instance artifact");
       }
     }
 

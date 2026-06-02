@@ -1338,7 +1338,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     try {
       if (dateTimeValue.isPresent()) {
-        return Optional.of(OffsetDateTime.parse(dateTimeValue.get()));
+        return Optional.of(OffsetDateTimes.parse(dateTimeValue.get()));
       } else {
         return Optional.empty();
       }
