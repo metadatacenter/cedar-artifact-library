@@ -7,6 +7,9 @@ public record Version(int major, int minor, int patch)
 {
   private static final String VERSION_REGEX = "(\\d+)\\.(\\d+)\\.(\\d+)";
 
+  /** The default version assigned to a freshly created artifact: {@code 0.0.1}. */
+  public static final Version DEFAULT = new Version(0, 0, 1);
+
   public Version
   {
     if (major < 0)

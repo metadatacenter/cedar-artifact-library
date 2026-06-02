@@ -42,7 +42,7 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
   protected Optional<String> identifier = Optional.empty();
   protected Optional<String> preferredLabel = Optional.empty();
   protected List<String> alternateLabels = Collections.emptyList();
-  protected Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
+  protected Optional<Version> version = Optional.of(Version.DEFAULT);
   protected Optional<Status> status = Optional.of(Status.DRAFT);
   protected Optional<URI> previousVersion = Optional.empty();
   protected Optional<URI> derivedFrom = Optional.empty();

@@ -9,19 +9,13 @@ conventions see [CLAUDE.md](./CLAUDE.md).
 
 ## Next
 
-- **Reader vs. builder defaulting for `version` / `status`** — The Java
-  builder path defaults a freshly-built template/element/field to
-  `version: 0.0.1` and `status: draft` (see
-  `TemplateSchemaArtifact.java:83-84`, already flagged with a `// TODO`).
-  The YAML reader path does not: a compact YAML document with no `version:`
-  and no `status:` parses to a model whose `version()` and `status()`
-  accessors return `Optional.empty()`. So a model built via
-  `TemplateSchemaArtifact.builder().withName(...).build()` and a model read
-  via `YamlArtifactReader.readTemplateSchemaArtifact(...)` are not
-  equivalent for the same logical input. Resolve in either direction:
-  default in the reader to match the builder, or strip the builder defaults
-  to match the reader. Same resolution should propagate to
-  `ElementSchemaArtifact` and `FieldSchemaArtifact`.
+- **Reader vs. builder defaulting for `version` / `status`** — *resolved.* The readers now
+  default a **top-level** artifact's `version`/`status` to `0.0.1` / `draft` when absent, matching
+  the builder, so a built model and a read model agree for the same logical input. The shared
+  default is `Version.DEFAULT` (and `Status.DRAFT`), used by the template/element/field builders
+  and by `YamlArtifactReader` / `JsonArtifactReader`. Nested children that omit `version`/`status`
+  are left untouched (no defaulting), preserving lossless round-tripping of real templates whose
+  child fields carry neither.
 
 - **The library should generate empty JSON instance placeholders.** A canonical CEDAR
   *JSON* instance must carry an entry for every field its template defines, even unset

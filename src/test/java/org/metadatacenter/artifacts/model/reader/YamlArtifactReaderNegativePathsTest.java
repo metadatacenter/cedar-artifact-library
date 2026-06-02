@@ -209,8 +209,9 @@ public class YamlArtifactReaderNegativePathsTest
   @Test public void testCompactReaderAcceptsAllNonCompactFieldsAbsent()
   {
     // Companion to the previous test: when *every* compact-form-omitted field is missing,
-    // the compact reader still happily produces the artifact, with the omitted fields
-    // mapping to empty Optionals on the builder.
+    // the compact reader still happily produces the artifact. Provenance fields map to empty
+    // Optionals — except version and status, which default to 0.0.1 / draft (matching the
+    // builder), so a reader-built and a builder-built artifact agree.
     YamlArtifactReader compactReader = new YamlArtifactReader(true);
 
     LinkedHashMap<String, Object> node = new LinkedHashMap<>();
@@ -222,8 +223,10 @@ public class YamlArtifactReaderNegativePathsTest
 
     assertEquals("Bare", template.name());
     assertTrue(template.jsonLdId().isEmpty());
-    assertTrue(template.version().isEmpty());
-    assertTrue(template.status().isEmpty());
+    assertEquals(Version.DEFAULT, template.version().orElseThrow(),
+        "version defaults to 0.0.1 when absent, matching the builder");
+    assertEquals(Status.DRAFT, template.status().orElseThrow(),
+        "status defaults to draft when absent, matching the builder");
     assertTrue(template.createdBy().isEmpty());
     assertTrue(template.modifiedBy().isEmpty());
     assertTrue(template.createdOn().isEmpty());

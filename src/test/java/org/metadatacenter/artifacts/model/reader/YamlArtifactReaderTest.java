@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
@@ -255,6 +256,36 @@ public class YamlArtifactReaderTest
     assertEquals(minItems, fieldSchemaArtifact.minItems().get());
     assertEquals(maxItems, fieldSchemaArtifact.maxItems().get());
     assertEquals(language, fieldSchemaArtifact.language().get());
+  }
+
+  @Test public void readDefaultsTopLevelVersionAndStatusButNotNestedChildren()
+  {
+    // version/status default to 0.0.1 / draft on the top-level artifact (matching the builder),
+    // but a nested child that omits them is left untouched — so real templates with version-less
+    // child fields still round-trip unchanged.
+    LinkedHashMap<String, Object> childField = new LinkedHashMap<>();
+    childField.put("key", "patient_name");
+    childField.put("type", "text-field");
+    childField.put("name", "Patient name");
+
+    LinkedHashMap<String, Object> template = new LinkedHashMap<>();
+    template.put("type", "template");
+    template.put("name", "Patient");
+    template.put("modelVersion", "1.6.0");
+    template.put("children", List.of(childField));
+
+    TemplateSchemaArtifact read = artifactReader.readTemplateSchemaArtifact(template);
+
+    assertEquals(Version.DEFAULT, read.version().orElseThrow(),
+        "top-level version defaults to 0.0.1");
+    assertEquals(Status.DRAFT, read.status().orElseThrow(),
+        "top-level status defaults to draft");
+
+    FieldSchemaArtifact child = read.getFieldSchemaArtifact("patient_name");
+    assertTrue(child.version().isEmpty(),
+        "a nested child that omitted version must not be defaulted");
+    assertTrue(child.status().isEmpty(),
+        "a nested child that omitted status must not be defaulted");
   }
 
   private LinkedHashMap<String, Object> readYamlAsMap(String yamlFilePath)

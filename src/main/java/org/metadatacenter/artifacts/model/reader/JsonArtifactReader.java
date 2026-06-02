@@ -144,6 +144,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     return readTemplateSchemaArtifact(sourceNode, "");
   }
 
+  /** True for the top-level artifact's path; recursive child reads use a deeper path. */
+  private static boolean isRootPath(String path) {
+    return path.isEmpty() || "/".equals(path);
+  }
+
   /**
    * Read a JSON Schema specification for an element schema artifact
    * <p></p>
@@ -289,6 +294,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
     Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
+    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
+      version = version.or(() -> Optional.of(Version.DEFAULT));
+      status = status.or(() -> Optional.of(Status.DRAFT));
+    }
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
@@ -328,6 +337,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
     Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
+    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
+      version = version.or(() -> Optional.of(Version.DEFAULT));
+      status = status.or(() -> Optional.of(Status.DRAFT));
+    }
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
@@ -370,6 +383,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
     Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
+    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
+      version = version.or(() -> Optional.of(Version.DEFAULT));
+      status = status.or(() -> Optional.of(Status.DRAFT));
+    }
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);

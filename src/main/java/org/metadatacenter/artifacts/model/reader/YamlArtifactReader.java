@@ -660,6 +660,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     Optional<Version> version = readVersion(sourceNode, path, VERSION);
     Optional<Status> status = readStatus(sourceNode, path, STATUS);
+    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
+      version = version.or(() -> Optional.of(Version.DEFAULT));
+      status = status.or(() -> Optional.of(Status.DRAFT));
+    }
     Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
@@ -695,6 +699,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     Optional<Version> version = readVersion(sourceNode, path, VERSION);
     Optional<Status> status = readStatus(sourceNode, path, STATUS);
+    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
+      version = version.or(() -> Optional.of(Version.DEFAULT));
+      status = status.or(() -> Optional.of(Status.DRAFT));
+    }
     Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
@@ -748,6 +756,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     Optional<Version> version = readVersion(sourceNode, path, VERSION);
     Optional<Status> status = readStatus(sourceNode, path, STATUS);
+    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
+      version = version.or(() -> Optional.of(Version.DEFAULT));
+      status = status.or(() -> Optional.of(Status.DRAFT));
+    }
     Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
@@ -1172,6 +1184,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (inputTypeString.equals(STATIC_YOUTUBE_FIELD)) return FieldInputType.YOUTUBE;
 
     return FieldInputType.fromString(inputTypeString);
+  }
+
+  /** True for the top-level artifact's path; recursive child reads use a deeper path. */
+  private static boolean isRootPath(String path)
+  {
+    return path.isEmpty() || "/".equals(path);
   }
 
   private Optional<Version> readVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)

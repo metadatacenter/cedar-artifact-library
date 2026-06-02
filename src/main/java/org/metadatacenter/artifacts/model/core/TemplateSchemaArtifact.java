@@ -80,7 +80,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private String name;
     private String description = "";
     private Optional<String> identifier = Optional.empty();
-    private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO
+    private Optional<Version> version = Optional.of(Version.DEFAULT);
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
