@@ -401,8 +401,6 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
 
-    // TODO: Update isMultiInstance, minItems, maxItems
-
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
         schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion, derivedFrom,
         isMultiInstance, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
