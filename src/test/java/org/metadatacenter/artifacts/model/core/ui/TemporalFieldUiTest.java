@@ -74,4 +74,39 @@ public class TemporalFieldUiTest
     assertTrue(ui.timezoneEnabled().isPresent());
     assertTrue(ui.timezoneEnabled().get());
   }
+
+  @Test
+  public void testDateOnlyGranularitiesClearTimeSettings()
+  {
+    // inputTimeFormat and timezoneEnabled are meaningless at a date-only granularity and are
+    // normalized away, even if a caller (or a read artifact) supplies them.
+    for (TemporalGranularity g : new TemporalGranularity[] {
+      TemporalGranularity.DAY, TemporalGranularity.MONTH, TemporalGranularity.YEAR }) {
+      TemporalFieldUi ui = TemporalFieldUi.builder()
+        .withTemporalGranularity(g)
+        .withInputTimeFormat(InputTimeFormat.TWELVE_HOUR)
+        .withTimezoneEnabled(true)
+        .build();
+
+      assertTrue(ui.inputTimeFormat().isEmpty(), "inputTimeFormat should be cleared for " + g);
+      assertTrue(ui.timezoneEnabled().isEmpty(), "timezoneEnabled should be cleared for " + g);
+    }
+  }
+
+  @Test
+  public void testTimeBearingGranularitiesPreserveTimeSettings()
+  {
+    for (TemporalGranularity g : new TemporalGranularity[] {
+      TemporalGranularity.HOUR, TemporalGranularity.MINUTE, TemporalGranularity.SECOND,
+      TemporalGranularity.DECIMAL_SECOND }) {
+      TemporalFieldUi ui = TemporalFieldUi.builder()
+        .withTemporalGranularity(g)
+        .withInputTimeFormat(InputTimeFormat.TWELVE_HOUR)
+        .withTimezoneEnabled(true)
+        .build();
+
+      assertEquals(InputTimeFormat.TWELVE_HOUR, ui.inputTimeFormat().get(), "inputTimeFormat should survive for " + g);
+      assertTrue(ui.timezoneEnabled().get(), "timezoneEnabled should survive for " + g);
+    }
+  }
 }

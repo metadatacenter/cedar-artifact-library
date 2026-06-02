@@ -115,20 +115,12 @@ record TemporalFieldUiRecord(FieldInputType inputType, TemporalGranularity tempo
     if (temporalGranularity == null)
       throw new IllegalStateException("Field " + UI_TEMPORAL_GRANULARITY + " must set for temporal fields in " + this);
 
-    // TODO We could possibly throw an error here rather than silently fix
+    // Time format and timezone apply only to time-bearing granularities; at a date-only
+    // granularity (day, month, year) they are meaningless and are normalized away.
     if (temporalGranularity == TemporalGranularity.DAY || temporalGranularity == TemporalGranularity.MONTH ||
       temporalGranularity == TemporalGranularity.YEAR) {
       inputTimeFormat = Optional.empty();
       timezoneEnabled = Optional.empty();
     }
-
-
-    // TODO Test that inputTimeFormat and timeZoneEnables are empty for granularity of day, month, year.
-
-    // TODO Disable for moment until verify with Matthew that he is adding this to temporal fields
-    //      if (inputTimeFormat == null)
-    //        throw new IllegalStateException(
-    //          "Field " + UI_INPUT_TIME_FORMAT + " must be set for temporal fields in " + this);
-
   }
 }
