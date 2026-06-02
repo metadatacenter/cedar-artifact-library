@@ -40,7 +40,7 @@ import static org.metadatacenter.model.ModelNodeNames.*;
 final class JsonValueConstraintsReader {
   private JsonValueConstraintsReader() {}
 
-  public static Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path, String fieldKey,
+  static Optional<ValueConstraints> readValueConstraints(ObjectNode sourceNode, String path, String fieldKey,
                                                           FieldInputType fieldInputType, boolean isMultiInstance,
                                                           boolean isStandalone) {
     String vcPath = path + "/" + fieldKey;
@@ -143,7 +143,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static Optional<DefaultValue> readDefaultValue(ObjectNode sourceNode, String path, String fieldKey,
+  static Optional<DefaultValue> readDefaultValue(ObjectNode sourceNode, String path, String fieldKey,
                                                   FieldInputType fieldInputType) {
     JsonNode childNode = sourceNode.get(fieldKey);
 
@@ -202,7 +202,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode sourceNode, String path,
+  static List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode sourceNode, String path,
                                                                      String fieldKey) {
     List<OntologyValueConstraint> ontologyValueConstraints = new ArrayList<>();
 
@@ -227,7 +227,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static List<ClassValueConstraint> readClassValueConstraints(ObjectNode sourceNode, String path, String fieldKey) {
+  static List<ClassValueConstraint> readClassValueConstraints(ObjectNode sourceNode, String path, String fieldKey) {
     List<ClassValueConstraint> classValueConstraints = new ArrayList<>();
 
     JsonNode classValueConstraintArrayNode = sourceNode.get(fieldKey);
@@ -250,7 +250,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static List<ValueSetValueConstraint> readValueSetValueConstraints(ObjectNode sourceNode, String path,
+  static List<ValueSetValueConstraint> readValueSetValueConstraints(ObjectNode sourceNode, String path,
                                                                      String fieldKey) {
     List<ValueSetValueConstraint> valueSetValueConstraints = new ArrayList<>();
 
@@ -274,7 +274,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static List<BranchValueConstraint> readBranchValueConstraints(ObjectNode sourceNode, String path, String fieldKey) {
+  static List<BranchValueConstraint> readBranchValueConstraints(ObjectNode sourceNode, String path, String fieldKey) {
     List<BranchValueConstraint> branchValueConstraints = new ArrayList<>();
 
     JsonNode branchValueConstraintArrayNode = sourceNode.get(fieldKey);
@@ -297,7 +297,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static List<LiteralValueConstraint> readLiteralValueConstraints(ObjectNode sourceNode, String path,
+  static List<LiteralValueConstraint> readLiteralValueConstraints(ObjectNode sourceNode, String path,
                                                                    String fieldKey) {
     List<LiteralValueConstraint> literalValueConstraints = new ArrayList<>();
 
@@ -321,7 +321,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static List<ControlledTermValueConstraintsAction> readValueConstraintsActions(ObjectNode sourceNode, String path,
+  static List<ControlledTermValueConstraintsAction> readValueConstraintsActions(ObjectNode sourceNode, String path,
                                                                                  String fieldKey) {
     List<ControlledTermValueConstraintsAction> actions = new ArrayList<>();
 
@@ -345,7 +345,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode sourceNode, String path) {
+  static ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode sourceNode, String path) {
     URI termUri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_TERM_URI);
     Optional<String> source = readString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
     ValueConstraintsActionType actionType = readValueConstraintsActionType(sourceNode, path, VALUE_CONSTRAINTS_ACTION);
@@ -357,7 +357,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static Optional<XsdTemporalDatatype> readTemporalType(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<XsdTemporalDatatype> readTemporalType(ObjectNode sourceNode, String path, String fieldKey) {
     Optional<String> temporalTypeValue = readString(sourceNode, path, fieldKey);
 
     if (temporalTypeValue.isPresent()) {
@@ -368,7 +368,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static Optional<XsdNumericDatatype> readNumberType(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<XsdNumericDatatype> readNumberType(ObjectNode sourceNode, String path, String fieldKey) {
     Optional<String> numberTypeValue = readString(sourceNode, path, fieldKey);
 
     if (numberTypeValue.isPresent()) {
@@ -379,7 +379,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static ValueConstraintsActionType readValueConstraintsActionType(ObjectNode sourceNode, String path,
+  static ValueConstraintsActionType readValueConstraintsActionType(ObjectNode sourceNode, String path,
                                                                     String fieldKey) {
     String actionType = readRequiredString(sourceNode, path, fieldKey);
 
@@ -387,14 +387,14 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static ValueType readValueType(ObjectNode sourceNode, String path, String fieldKey) {
+  static ValueType readValueType(ObjectNode sourceNode, String path, String fieldKey) {
     String valueType = readRequiredString(sourceNode, path, fieldKey);
 
     return ValueType.fromString(valueType);
   }
 
 
-  public static OntologyValueConstraint readOntologyValueConstraint(ObjectNode sourceNode, String path) {
+  static OntologyValueConstraint readOntologyValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String acronym = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_ACRONYM);
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
@@ -404,7 +404,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static ClassValueConstraint readClassValueConstraint(ObjectNode sourceNode, String path) {
+  static ClassValueConstraint readClassValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String preferredLabel = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_PREFLABEL);
     ValueType valueType = readValueType(sourceNode, path, VALUE_CONSTRAINTS_TYPE);
@@ -415,7 +415,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static ValueSetValueConstraint readValueSetValueConstraint(ObjectNode sourceNode, String path) {
+  static ValueSetValueConstraint readValueSetValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
     String vsCollection = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_VS_COLLECTION);
@@ -425,7 +425,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static BranchValueConstraint readBranchValueConstraint(ObjectNode sourceNode, String path) {
+  static BranchValueConstraint readBranchValueConstraint(ObjectNode sourceNode, String path) {
     URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String source = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
     String acronym = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_ACRONYM);
@@ -436,7 +436,7 @@ final class JsonValueConstraintsReader {
   }
 
 
-  public static LiteralValueConstraint readLiteralValueConstraint(ObjectNode sourceNode, String path) {
+  static LiteralValueConstraint readLiteralValueConstraint(ObjectNode sourceNode, String path) {
     String label = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_LABEL);
     boolean selectedByDefault = readBoolean(sourceNode, path, VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT, false);
 

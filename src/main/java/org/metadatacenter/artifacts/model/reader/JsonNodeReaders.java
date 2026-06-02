@@ -25,7 +25,7 @@ import static org.metadatacenter.model.ModelNodeNames.*;
 final class JsonNodeReaders {
   private JsonNodeReaders() {}
 
-  public static Optional<Integer> readInteger(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<Integer> readInteger(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null || jsonNode.isNull()) {
@@ -40,7 +40,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<Number> readNumber(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<Number> readNumber(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null || jsonNode.isNull()) {
@@ -59,7 +59,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static boolean readBoolean(ObjectNode sourceNode, String path, String fieldKey, boolean defaultValue) {
+  static boolean readBoolean(ObjectNode sourceNode, String path, String fieldKey, boolean defaultValue) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null || jsonNode.isNull()) {
@@ -74,7 +74,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<Boolean> readOptionalBoolean(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<Boolean> readOptionalBoolean(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null || jsonNode.isNull()) {
@@ -89,7 +89,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static ObjectNode readChildNode(ObjectNode parentNode, String path, String fieldKey) {
+  static ObjectNode readChildNode(ObjectNode parentNode, String path, String fieldKey) {
     JsonNode childNode = parentNode.get(fieldKey);
 
     if (childNode == null) {
@@ -104,7 +104,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static ObjectNode readValueConstraintsNode(ObjectNode parentNode, String path, String fieldKey) {
+  static ObjectNode readValueConstraintsNode(ObjectNode parentNode, String path, String fieldKey) {
     JsonNode childNode = parentNode.get(fieldKey);
 
     if (childNode == null) {
@@ -119,7 +119,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static ObjectNode readAnnotationsNode(ObjectNode parentNode, String path, String fieldKey) {
+  static ObjectNode readAnnotationsNode(ObjectNode parentNode, String path, String fieldKey) {
     JsonNode childNode = parentNode.get(fieldKey);
 
     if (childNode == null) {
@@ -134,7 +134,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static LinkedHashMap<String, String> readString2StringMap(ObjectNode parentNode, String path, String fieldKey) {
+  static LinkedHashMap<String, String> readString2StringMap(ObjectNode parentNode, String path, String fieldKey) {
     LinkedHashMap<String, String> string2StringMap = new LinkedHashMap<>();
 
     JsonNode childNode = parentNode.get(fieldKey);
@@ -166,7 +166,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static LinkedHashMap<String, String> readSimpleContextEntries(ObjectNode parentNode, String path) {
+  static LinkedHashMap<String, String> readSimpleContextEntries(ObjectNode parentNode, String path) {
     LinkedHashMap<String, String> string2StringMap = new LinkedHashMap<>();
 
     JsonNode childNode = parentNode.get(JSON_LD_CONTEXT);
@@ -196,7 +196,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static LinkedHashMap<String, URI> readString2UriMap(ObjectNode parentNode, String path, String fieldKey) {
+  static LinkedHashMap<String, URI> readString2UriMap(ObjectNode parentNode, String path, String fieldKey) {
     LinkedHashMap<String, URI> string2UriMap = new LinkedHashMap<>();
 
     JsonNode childNode = parentNode.get(fieldKey);
@@ -229,7 +229,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static ObjectNode getFieldNode(ObjectNode sourceNode, String path) {
+  static ObjectNode getFieldNode(ObjectNode sourceNode, String path) {
     if (sourceNode.isArray()) {
       JsonNode itemsNode = sourceNode.get(JSON_SCHEMA_ITEMS);
       if (itemsNode == null || !itemsNode.isArray() || !itemsNode.iterator().hasNext()) {
@@ -247,7 +247,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<Version> readVersion(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<Version> readVersion(ObjectNode sourceNode, String path, String fieldKey) {
     Optional<String> version = readString(sourceNode, path, fieldKey);
 
     if (version.isEmpty())
@@ -260,7 +260,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<Status> readStatus(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<Status> readStatus(ObjectNode sourceNode, String path, String fieldKey) {
     Optional<String> status = readString(sourceNode, path, fieldKey);
 
     if (status.isPresent()) {
@@ -271,7 +271,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<OffsetDateTime> readOffsetDateTime(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<OffsetDateTime> readOffsetDateTime(ObjectNode sourceNode, String path, String fieldKey) {
     Optional<String> dateTimeValue = readString(sourceNode, path, fieldKey);
     try {
       if (dateTimeValue.isPresent()) {
@@ -291,7 +291,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static OffsetDateTime readRequiredOffsetDateTime(ObjectNode sourceNode, String path, String fieldKey) {
+  static OffsetDateTime readRequiredOffsetDateTime(ObjectNode sourceNode, String path, String fieldKey) {
     String dateTimeValue = readRequiredString(sourceNode, path, fieldKey);
 
     try {
@@ -303,7 +303,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<URI> readUri(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<URI> readUri(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null || jsonNode.isNull()) {
@@ -332,7 +332,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<String> readString(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<String> readString(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null || jsonNode.isNull()) {
@@ -345,7 +345,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<String> readPossiblyNullString(ObjectNode sourceNode, String path, String fieldKey) {
+  static Optional<String> readPossiblyNullString(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null) {
@@ -360,7 +360,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static String readString(ObjectNode sourceNode, String path, String fieldKey, String defaultValue) {
+  static String readString(ObjectNode sourceNode, String path, String fieldKey, String defaultValue) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null || jsonNode.isNull()) {
@@ -373,7 +373,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static String readRequiredString(ObjectNode sourceNode, String path, String fieldKey) {
+  static String readRequiredString(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null) {
@@ -390,7 +390,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static int readRequiredInt(ObjectNode sourceNode, String path, String fieldKey) {
+  static int readRequiredInt(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null) {
@@ -407,7 +407,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static URI readRequiredUri(ObjectNode sourceNode, String path, String fieldKey) {
+  static URI readRequiredUri(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
     if (jsonNode == null) {
@@ -428,7 +428,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static List<String> readStringArray(ObjectNode sourceNode, String path, String fieldKey) {
+  static List<String> readStringArray(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
     List<String> stringValues = new ArrayList<>();
 
@@ -462,7 +462,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static List<URI> readUriArray(ObjectNode sourceNode, String path, String fieldKey) {
+  static List<URI> readUriArray(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
     List<URI> uriValues = new ArrayList<>();
 
@@ -499,7 +499,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<Version> readModelVersion(ObjectNode sourceNode, String path) {
+  static Optional<Version> readModelVersion(ObjectNode sourceNode, String path) {
     Optional<String> versionString = readString(sourceNode, path, SCHEMA_ORG_SCHEMA_VERSION);
 
     if (versionString.isEmpty())
@@ -513,7 +513,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static Optional<String> readLanguage(ObjectNode sourceNode, String path) {
+  static Optional<String> readLanguage(ObjectNode sourceNode, String path) {
     Map<String, String> contextEntries = readSimpleContextEntries(sourceNode, path);
 
     if (contextEntries.containsKey(JSON_LD_LANGUAGE)) {
@@ -524,7 +524,7 @@ final class JsonNodeReaders {
   }
 
 
-  public static boolean hasJsonLdContextField(ObjectNode sourceNode) {
+  static boolean hasJsonLdContextField(ObjectNode sourceNode) {
     return sourceNode.get(JSON_LD_CONTEXT) != null;
   }
 
