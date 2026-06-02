@@ -432,7 +432,9 @@ record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, L
       modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
 
-    // TODO Check that all childKeys present in child instances maps and that there are no extra fields in maps
+    InstanceArtifactInvariants.validateChildKeyConsistency(this, childKeys, singleInstanceFieldInstances,
+      multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
+      attributeValueFieldInstanceGroups);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

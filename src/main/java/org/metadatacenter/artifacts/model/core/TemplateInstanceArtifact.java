@@ -438,7 +438,9 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
     validateUriFieldNotNull(this, isBasedOn, SCHEMA_IS_BASED_ON);
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
-    // TODO Check that all childKeys present in child instances maps and that there are no extra fields in maps
+    InstanceArtifactInvariants.validateChildKeyConsistency(this, childKeys, singleInstanceFieldInstances,
+      multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
+      attributeValueFieldInstanceGroups);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
