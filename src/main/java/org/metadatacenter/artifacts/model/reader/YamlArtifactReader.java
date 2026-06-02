@@ -658,12 +658,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> instanceJsonLdType = readUri(sourceNode, path, INSTANCE_TYPE);
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
-    Optional<Version> version = readVersion(sourceNode, path, VERSION);
-    Optional<Status> status = readStatus(sourceNode, path, STATUS);
-    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
-      version = version.or(() -> Optional.of(Version.DEFAULT));
-      status = status.or(() -> Optional.of(Status.DRAFT));
-    }
+    // Default version/status on the top-level artifact only; preserve absence on nested children.
+    ArtifactDefaults.Policy defaultingPolicy =
+      isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
+    Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, VERSION), defaultingPolicy);
+    Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
@@ -697,12 +696,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> instanceJsonLdType = readUri(sourceNode, path, INSTANCE_TYPE);
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
-    Optional<Version> version = readVersion(sourceNode, path, VERSION);
-    Optional<Status> status = readStatus(sourceNode, path, STATUS);
-    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
-      version = version.or(() -> Optional.of(Version.DEFAULT));
-      status = status.or(() -> Optional.of(Status.DRAFT));
-    }
+    // Default version/status on the top-level artifact only; preserve absence on nested children.
+    ArtifactDefaults.Policy defaultingPolicy =
+      isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
+    Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, VERSION), defaultingPolicy);
+    Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);
@@ -754,12 +752,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
-    Optional<Version> version = readVersion(sourceNode, path, VERSION);
-    Optional<Status> status = readStatus(sourceNode, path, STATUS);
-    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
-      version = version.or(() -> Optional.of(Version.DEFAULT));
-      status = status.or(() -> Optional.of(Status.DRAFT));
-    }
+    // Default version/status on the top-level artifact only; preserve absence on nested children.
+    ArtifactDefaults.Policy defaultingPolicy =
+      isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
+    Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, VERSION), defaultingPolicy);
+    Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, DERIVED_FROM);
     Optional<URI> createdBy = readUri(sourceNode, path, CREATED_BY);

@@ -292,12 +292,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
-    Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
-    Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
-    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
-      version = version.or(() -> Optional.of(Version.DEFAULT));
-      status = status.or(() -> Optional.of(Status.DRAFT));
-    }
+    // Default version/status on the top-level artifact only; preserve absence on nested children.
+    ArtifactDefaults.Policy defaultingPolicy =
+      isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
+    Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
+    Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
@@ -335,12 +334,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
-    Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
-    Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
-    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
-      version = version.or(() -> Optional.of(Version.DEFAULT));
-      status = status.or(() -> Optional.of(Status.DRAFT));
-    }
+    // Default version/status on the top-level artifact only; preserve absence on nested children.
+    ArtifactDefaults.Policy defaultingPolicy =
+      isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
+    Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
+    Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
@@ -381,12 +379,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
-    Optional<Version> version = readVersion(sourceNode, path, PAV_VERSION);
-    Optional<Status> status = readStatus(sourceNode, path, BIBO_STATUS);
-    if (isRootPath(path)) { // default version/status on the top-level artifact only (not nested children)
-      version = version.or(() -> Optional.of(Version.DEFAULT));
-      status = status.or(() -> Optional.of(Status.DRAFT));
-    }
+    // Default version/status on the top-level artifact only; preserve absence on nested children.
+    ArtifactDefaults.Policy defaultingPolicy =
+      isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
+    Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
+    Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
