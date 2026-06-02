@@ -4,6 +4,7 @@ import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateXsdTemporalDatatypeFieldNotNull;
@@ -85,9 +86,32 @@ record TemporalValueConstraintsRecord(XsdTemporalDatatype temporalType, Optional
                                       boolean requiredValue, boolean recommendedValue, boolean multipleChoice)
   implements TemporalValueConstraints
 {
+  // Lenient per-datatype temporal syntax. The granularity (year / month / day / hour / minute /
+  // second) lives in TemporalFieldUi, not here, so a date may legitimately be year- or month-only
+  // and a time may stop at any component; these patterns accept every granularity variant for the
+  // datatype plus an optional trailing zone/offset. They exist to reject a value of the wrong
+  // temporal kind (e.g. a time supplied for an xsd:date field), not to pin an exact granularity.
+  private static final Pattern DATE_PATTERN = Pattern.compile("\\d{4}(-\\d{2}(-\\d{2})?)?");
+  private static final Pattern TIME_PATTERN =
+    Pattern.compile("\\d{2}(:\\d{2}(:\\d{2}(\\.\\d+)?)?)?(Z|[+-]\\d{2}:\\d{2})?");
+  private static final Pattern DATE_TIME_PATTERN =
+    Pattern.compile("\\d{4}-\\d{2}-\\d{2}(T\\d{2}(:\\d{2}(:\\d{2}(\\.\\d+)?)?)?(Z|[+-]\\d{2}:\\d{2})?)?");
+
   public TemporalValueConstraintsRecord
   {
     validateXsdTemporalDatatypeFieldNotNull(this, temporalType, VALUE_CONSTRAINTS_TEMPORAL_TYPE);
     validateOptionalFieldNotNull(this, defaultValue, VALUE_CONSTRAINTS_DEFAULT_VALUE);
+
+    if (defaultValue.isPresent()) {
+      String value = defaultValue.get().value();
+      Pattern pattern = switch (temporalType) {
+        case DATE -> DATE_PATTERN;
+        case TIME -> TIME_PATTERN;
+        case DATETIME -> DATE_TIME_PATTERN;
+      };
+      if (!pattern.matcher(value).matches())
+        throw new IllegalStateException(
+          "default value " + value + " is not a valid " + temporalType.getText() + " value in " + this);
+    }
   }
 }
