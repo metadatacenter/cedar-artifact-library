@@ -37,6 +37,29 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   the library and have the instance JSON renderer / YAML→JSON path use it. Painful but
   necessary while the all-fields-present JSON rule stands.
 
+- **The public reader/renderer API leaks the parse-library tree type** *(major-version change)*.
+  `JsonArtifactReader` / `JsonArtifactRenderer` take and return Jackson's `ObjectNode`, and
+  `YamlArtifactReader` / `YamlArtifactRenderer` take and return SnakeYAML's
+  `LinkedHashMap<String, Object>` — so the underlying parse library is part of the public contract
+  (it even leaks into the shared `ArtifactReader<N>` type parameter). This couples clients to
+  Jackson/SnakeYAML and forces them to obtain or build those tree types just to call the library.
+  The fix is to move the public boundary to the **wire format itself — `String`**:
+  `readTemplate(String)` / `renderTemplate(artifact) → String` (and the element/field/instance
+  counterparts), parsing/serializing internally. This hides both libraries, unifies JSON and YAML
+  behind one symmetric `read(String) → Artifact` / `render(Artifact) → String` contract, and matches
+  what callers actually hold (text from a file or HTTP body). The internals are unchanged — the
+  String methods just prepend a parse and append a serialize. A bespoke `JsonNode`-style abstraction
+  interface is **not** the answer: it trades one library coupling for a hand-rolled tree API plus
+  adapters that callers must still populate. Migrate additively to avoid a hard break: add the
+  String methods, mark the node-typed ones `@Deprecated(forRemoval = true)` delegating to them, and
+  remove them at the next major version. Two clean-ups fall out: the keyed/tree-returning render
+  overloads (e.g. `renderElementSchemaArtifact(key, artifact)`) are internal child-composition
+  helpers and can become package-private, and the `ArtifactReader<N>` type parameter disappears.
+  Caveat: a caller that wants the rendered artifact as a *tree* (to embed in a larger document or
+  validate without re-parsing) would lose direct access; if that need is real, keep a single,
+  explicitly parse-library-typed, opt-in "advanced" method so the coupling exists only where it is
+  consciously chosen.
+
 ## Known limitations
 
 - **`ImageFieldUiBuilder` can't set `width` / `height`** — the YAML reader/renderer pair
