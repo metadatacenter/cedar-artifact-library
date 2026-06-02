@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
@@ -45,7 +46,17 @@ final class JsonValueConstraintsReader {
     String vcPath = path + "/" + fieldKey;
     ObjectNode vcNode = readValueConstraintsNode(sourceNode, path, fieldKey);
 
-    if (vcNode != null) {
+    if (vcNode == null) {
+      // No _valueConstraints in the JSON. Static and attribute-value fields carry none, so leave
+      // them empty. For value-bearing fields, synthesize the type-appropriate empty constraints —
+      // an empty node makes every read below yield its default — so a JSON-read field matches a
+      // builder-built and a YAML-read one (which both always carry value constraints).
+      if (fieldInputType.isStatic() || fieldInputType == FieldInputType.ATTRIBUTE_VALUE)
+        return Optional.empty();
+      vcNode = JsonNodeFactory.instance.objectNode();
+    }
+
+    {
       boolean requiredValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
       boolean recommendedValue = readBoolean(vcNode, vcPath, VALUE_CONSTRAINTS_RECOMMENDED_VALUE, false);
       // multipleChoice carries semantic meaning for LIST-typed fields (where it
@@ -95,15 +106,12 @@ final class JsonValueConstraintsReader {
             NumericValueConstraints.create(numberType.get(), minValue, maxValue, decimalPlaces, unitOfMeasure,
                 numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
       } else if (fieldInputType == FieldInputType.TEMPORAL) {
-        if (!temporalType.isPresent()) {
-          throw new ArtifactParseException("a temporal type must be present for a temporal field", fieldKey, path);
-        }
         Optional<TemporalDefaultValue> temporalDefaultValue = defaultValue.isPresent() ?
             Optional.of(defaultValue.get().asTemporalDefaultValue()) :
             Optional.empty();
         return Optional.of(
-            TemporalValueConstraints.create(temporalType.get(), temporalDefaultValue, requiredValue, recommendedValue,
-                multipleChoice));
+            TemporalValueConstraints.create(temporalType.orElse(XsdTemporalDatatype.DATETIME), temporalDefaultValue,
+                requiredValue, recommendedValue, multipleChoice));
 
       } else if (fieldInputType.isIri()) {
         Optional<LinkDefaultValue> linkDefaultValue = defaultValue.isPresent() ?
@@ -131,8 +139,6 @@ final class JsonValueConstraintsReader {
                 recommendedValue,
                 multipleChoice, regex));
       }
-    } else {
-      return Optional.empty();
     }
   }
 

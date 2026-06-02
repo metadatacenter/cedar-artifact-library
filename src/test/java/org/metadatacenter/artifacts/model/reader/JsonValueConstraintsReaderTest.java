@@ -4,18 +4,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraintsAction;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TemporalValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -130,5 +141,64 @@ public class JsonValueConstraintsReaderTest
     arr.add("not-an-object");
     assertThrows(ArtifactParseException.class,
       () -> JsonValueConstraintsReader.readValueConstraintsActions(parent, "/", "actions"));
+  }
+
+  // When a value-bearing field carries no _valueConstraints node, the reader synthesizes the
+  // type-appropriate empty constraints so a JSON-read field matches a builder-built one and a
+  // YAML-read one (both of which always carry value constraints). Static and attribute-value
+  // fields, which legitimately have no constraints, stay empty.
+
+  private Optional<ValueConstraints> readAbsent(FieldInputType fieldInputType)
+  {
+    // A source node with no _valueConstraints child.
+    return JsonValueConstraintsReader.readValueConstraints(
+      mapper.createObjectNode(), "/", "_valueConstraints", fieldInputType, false, false);
+  }
+
+  @Test public void testAbsentValueConstraintsSynthesizesTextForTextField()
+  {
+    Optional<ValueConstraints> vc = readAbsent(FieldInputType.TEXTFIELD);
+
+    assertTrue(vc.isPresent());
+    assertInstanceOf(TextValueConstraints.class, vc.get());
+  }
+
+  @Test public void testAbsentValueConstraintsSynthesizesNumericForNumericField()
+  {
+    Optional<ValueConstraints> vc = readAbsent(FieldInputType.NUMERIC);
+
+    assertTrue(vc.isPresent());
+    NumericValueConstraints numeric = assertInstanceOf(NumericValueConstraints.class, vc.get());
+    // Number type defaults to xsd:decimal when unspecified.
+    assertEquals(XsdNumericDatatype.DECIMAL, numeric.numberType());
+  }
+
+  @Test public void testAbsentValueConstraintsSynthesizesTemporalForTemporalField()
+  {
+    // Regression: a temporal field with no _valueConstraints previously threw because no temporal
+    // type was present; it now defaults to xsd:dateTime, mirroring the YAML reader.
+    Optional<ValueConstraints> vc = readAbsent(FieldInputType.TEMPORAL);
+
+    assertTrue(vc.isPresent());
+    TemporalValueConstraints temporal = assertInstanceOf(TemporalValueConstraints.class, vc.get());
+    assertEquals(XsdTemporalDatatype.DATETIME, temporal.temporalType());
+  }
+
+  @Test public void testAbsentValueConstraintsSynthesizesLinkForIriField()
+  {
+    Optional<ValueConstraints> vc = readAbsent(FieldInputType.LINK);
+
+    assertTrue(vc.isPresent());
+    assertInstanceOf(LinkValueConstraints.class, vc.get());
+  }
+
+  @Test public void testAbsentValueConstraintsStaysEmptyForAttributeValueField()
+  {
+    assertFalse(readAbsent(FieldInputType.ATTRIBUTE_VALUE).isPresent());
+  }
+
+  @Test public void testAbsentValueConstraintsStaysEmptyForStaticField()
+  {
+    assertFalse(readAbsent(FieldInputType.PAGE_BREAK).isPresent());
   }
 }

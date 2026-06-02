@@ -92,6 +92,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public PageBreakFieldUiBuilder withContent(String content)
@@ -108,7 +109,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public PageBreakFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
-      this.hidden = hidden;
+      this.continuePreviousLine = continuePreviousLine;
       return this;
     }
 
@@ -120,7 +121,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, false, Optional.empty(),
+      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, continuePreviousLine, Optional.empty(),
         Optional.empty());
     }
   }
@@ -138,6 +139,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
+      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public SectionBreakFieldUiBuilder withContent(String content)
@@ -167,8 +169,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, false, Optional.empty(),
-        Optional.empty());
+      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, continuePreviousLine,
+        Optional.empty(), Optional.empty());
     }
   }
 
