@@ -27,11 +27,15 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   model to JSON yields an *incomplete* JSON instance, and a YAML→JSON translation that is to
   produce a valid CEDAR instance must re-add the empty placeholders — which requires the
   template (to know which fields exist). That placeholder generation belongs **in the
-  library**: complete the currently-stubbed `InstanceFixer(template, instance)` so the
-  library can inflate a sparse instance to the full JSON form. Today this inflation is done
-  outside the library, MCP-side (`cedar-artifact-mcp`'s `InstanceInflater`), as an interim
-  stand-in; fold it into the library and have the instance JSON renderer / YAML→JSON path use
-  it. Painful but necessary while the all-fields-present JSON rule stands.
+  library**: add a template-driven inflater that takes a (possibly sparse) instance plus its
+  template and fills the missing empty placeholders, recursing into elements. The traversal
+  must be driven by the *template* structure, not by visiting the instance — a visitor over a
+  sparse instance never reaches the fields that are absent, which are exactly the ones to add.
+  (An earlier instance-visitor stub, `InstanceFixer`, was removed for this reason; it could
+  only touch fields already present.) A tested stand-in already exists outside the library,
+  MCP-side (`cedar-artifact-mcp`'s `InstanceInflater` / `EmptyFieldInstances`); fold it into
+  the library and have the instance JSON renderer / YAML→JSON path use it. Painful but
+  necessary while the all-fields-present JSON rule stands.
 
 ## Known limitations
 
