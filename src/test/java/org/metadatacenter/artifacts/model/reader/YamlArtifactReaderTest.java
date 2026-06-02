@@ -173,7 +173,6 @@ public class YamlArtifactReaderTest
     assertEquals(language, elementSchemaArtifact.language().get());
   }
 
-  // TODO Need to activate this
   @Test public void readFieldSchemaArtifactTest()
   {
     String fieldKey = "study_name";
@@ -249,7 +248,7 @@ public class YamlArtifactReaderTest
     assertEquals(preferredLabel, fieldSchemaArtifact.preferredLabel().get());
     assertEquals(altLabels, fieldSchemaArtifact.alternateLabels());
     assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
-    // TODO assertEquals(requiredValue, fieldSchemaArtifact.valueConstraints().get().requiredValue());
+    assertEquals(requiredValue, fieldSchemaArtifact.valueConstraints().get().requiredValue());
     assertEquals(valueRecommendation, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
     assertEquals(hidden, fieldSchemaArtifact.fieldUi().hidden());
     assertEquals(isMultiple, fieldSchemaArtifact.isMultiple());
