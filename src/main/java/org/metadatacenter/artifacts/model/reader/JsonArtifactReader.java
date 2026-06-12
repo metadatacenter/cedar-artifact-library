@@ -98,6 +98,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 import static org.metadatacenter.model.ModelNodeNames.UI_TEMPORAL_GRANULARITY;
 import static org.metadatacenter.model.ModelNodeNames.UI_TIMEZONE_ENABLED;
 import static org.metadatacenter.model.ModelNodeNames.UI_VALUE_RECOMMENDATION_ENABLED;
+import static org.metadatacenter.model.ModelNodeNames.UI_SIZE;
 import static org.metadatacenter.model.ModelNodeNames.UI_WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
@@ -870,8 +871,18 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     boolean valueRecommendationEnabled = readBoolean(uiNode, uiPath, UI_VALUE_RECOMMENDATION_ENABLED, false);
     boolean hidden = readBoolean(uiNode, uiPath, UI_HIDDEN, false);
     boolean continuePreviousLine = readBoolean(uiNode, uiPath, UI_CONTINUE_PREVIOUS_LINE, false);
-    Optional<Integer> width = readInteger(uiNode, uiPath, UI_WIDTH);
-    Optional<Integer> height = readInteger(uiNode, uiPath, UI_HEIGHT);
+    // The canonical wire form nests static dimensions as _ui._size {width, height}; the
+    // flat keys are accepted as a fallback for artifacts serialized by older versions.
+    Optional<Integer> width;
+    Optional<Integer> height;
+    if (uiNode.has(UI_SIZE) && uiNode.get(UI_SIZE).isObject()) {
+      ObjectNode sizeNode = (ObjectNode) uiNode.get(UI_SIZE);
+      width = readInteger(sizeNode, uiPath + "/" + UI_SIZE, UI_WIDTH);
+      height = readInteger(sizeNode, uiPath + "/" + UI_SIZE, UI_HEIGHT);
+    } else {
+      width = readInteger(uiNode, uiPath, UI_WIDTH);
+      height = readInteger(uiNode, uiPath, UI_HEIGHT);
+    }
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(uiNode, uiPath, UI_TEMPORAL_GRANULARITY);

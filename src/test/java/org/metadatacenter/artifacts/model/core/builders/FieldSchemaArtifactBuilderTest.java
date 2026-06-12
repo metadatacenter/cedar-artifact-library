@@ -1204,4 +1204,33 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(original.fieldUi().asStaticFieldUi(), copied.fieldUi().asStaticFieldUi());
   }
 
+  @Test public void staticDimensionsRenderAsUiSizeAndRoundTrip() throws Exception
+  {
+    ImageField original = ImageField.builder()
+      .withName("Logo")
+      .withContent("https://example.org/logo.png")
+      .withWidth(640)
+      .withHeight(480)
+      .build();
+
+    com.fasterxml.jackson.databind.node.ObjectNode rendered =
+      new org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer().renderFieldSchemaArtifact(original);
+
+    // Canonical wire form: _ui._size {width, height}; the flat keys are rejected by the
+    // CEDAR meta-schema's additionalProperties: false.
+    Assertions.assertEquals(640, rendered.path("_ui").path("_size").path("width").asInt());
+    Assertions.assertEquals(480, rendered.path("_ui").path("_size").path("height").asInt());
+    Assertions.assertFalse(rendered.path("_ui").has("width"));
+    Assertions.assertFalse(rendered.path("_ui").has("height"));
+
+    FieldSchemaArtifact roundTripped =
+      new org.metadatacenter.artifacts.model.reader.JsonArtifactReader().readFieldSchemaArtifact(rendered);
+    Assertions.assertEquals(original.fieldUi().asStaticFieldUi(), roundTripped.fieldUi().asStaticFieldUi());
+
+    org.metadatacenter.model.validation.report.ValidationReport report =
+      new org.metadatacenter.model.validation.CedarValidator().validateTemplateField(rendered);
+    Assertions.assertEquals("true", report.getValidationStatus(),
+      "a static field with dimensions must pass the canonical validator; got: " + report.getErrors());
+  }
+
 }

@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -69,6 +70,9 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_NOTATION;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.UI;
+import static org.metadatacenter.model.ModelNodeNames.UI_SIZE;
+import static org.metadatacenter.model.ModelNodeNames.UI_HEIGHT;
+import static org.metadatacenter.model.ModelNodeNames.UI_WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MULTIPLE_CHOICE;
 
@@ -347,6 +351,21 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     addCoreJsonSchemaRendering(fieldSchemaArtifact, rendering);
 
     rendering.put(UI, MAPPER.valueToTree(fieldSchemaArtifact.fieldUi()));
+
+    // The model holds a static field's dimensions flat, but the canonical wire form nests
+    // them as _ui._size {width, height} — the shape the CEDAR meta-schema requires (the
+    // flat keys are rejected by its additionalProperties: false).
+    ObjectNode fieldUiNode = (ObjectNode) rendering.get(UI);
+    JsonNode uiWidth = fieldUiNode.remove(UI_WIDTH);
+    JsonNode uiHeight = fieldUiNode.remove(UI_HEIGHT);
+    if (uiWidth != null || uiHeight != null) {
+      ObjectNode sizeNode = MAPPER.createObjectNode();
+      if (uiWidth != null)
+        sizeNode.set(UI_WIDTH, uiWidth);
+      if (uiHeight != null)
+        sizeNode.set(UI_HEIGHT, uiHeight);
+      fieldUiNode.set(UI_SIZE, sizeNode);
+    }
 
     // Static fields or attribute-value field have no value constraints field or JSON Schema properties specification
     if (!(fieldSchemaArtifact.isStatic() || fieldSchemaArtifact.isAttributeValue())) {
