@@ -551,7 +551,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         elementInstanceArtifact);
       // An all-empty entry cannot simply be omitted here: unlike a single-instance element —
       // whose presence is reconstructable from the template — the entry count of a
-      // multi-instance list is information (an appended-but-not-yet-filled sub-record).
+      // multi-instance list is information (an appended-but-not-yet-filled element instance).
       // Nor can it render as a bare `id:` map, which is read as a field. Emit a typed stub
       // instead; the reader classifies on the discriminator.
       if (elementInstanceArtifactRendering.isEmpty()) {

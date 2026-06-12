@@ -30,7 +30,7 @@ public class StandaloneElementInstanceRoundTripTest
   {
     ElementInstanceArtifact original = ElementInstanceArtifact.builder()
       .withName("Address")
-      .withDescription("A postal address sub-record")
+      .withDescription("A postal address element instance")
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-element-instances/aaaa1111-2222-3333-4444-555566667777"))
       .withSingleInstanceFieldInstance("street", TextFieldInstance.builder().withValue("Main St").build())
       .withMultiInstanceFieldInstances("tags", List.of(
@@ -86,7 +86,7 @@ public class StandaloneElementInstanceRoundTripTest
 
   @Test public void emptyEntriesInAMultiInstanceElementListSurviveTheYamlRoundTrip()
   {
-    // Entry count is information: an appended-but-not-yet-filled sub-record must not vanish.
+    // Entry count is information: an appended-but-not-yet-filled element instance must not vanish.
     // Empty entries render as `type: element-instance` stubs and classify as elements on read.
     ElementInstanceArtifact emptyEntry = ElementInstanceArtifact.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-element-instances/bbbb1111-2222-3333-4444-555566667777"))
@@ -142,7 +142,7 @@ public class StandaloneElementInstanceRoundTripTest
   {
     // The JSON reader classifies a nested object as an element by the presence of @context;
     // the renderer must therefore emit one even when there are no children to map, or an
-    // all-empty sub-record reads back as an IRI field value.
+    // all-empty element instance reads back as an IRI field value.
     TemplateInstanceArtifact original = TemplateInstanceArtifact.builder()
       .withName("Study record")
       .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/cccc1111-2222-3333-4444-555566667777"))

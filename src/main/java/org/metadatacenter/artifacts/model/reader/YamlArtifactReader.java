@@ -524,7 +524,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   /**
    * A child-instance map is an element instance when it carries a {@code children:} block, or
-   * when it is an all-empty sub-record stub carrying the {@code type: element-instance}
+   * when it is an all-empty element instance stub carrying the {@code type: element-instance}
    * discriminator (the renderer emits the stub for empty entries in a multi-instance list,
    * whose count must survive the round trip).
    */

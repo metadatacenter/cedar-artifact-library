@@ -540,7 +540,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         .filter(k -> isRegularInstanceChild(elementInstanceArtifact, k)).toList();
       // The @context is also what classifies a nested object as an element instance on read
       // (a field value carries none), so it is emitted even when there are no children to
-      // map — an all-empty sub-record must stay an element across the JSON round trip.
+      // map — an all-empty element instance must stay an element across the JSON round trip.
       rendering.put(JSON_LD_CONTEXT, MAPPER.createObjectNode());
       for (String childKey : regularChildKeys)
         rendering.withObject("/" + JSON_LD_CONTEXT)
