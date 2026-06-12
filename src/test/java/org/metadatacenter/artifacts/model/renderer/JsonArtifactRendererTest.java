@@ -302,7 +302,7 @@ public class JsonArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
-  @Test public void testRenderStandaloneField()
+  @Test public void testRenderStandaloneFieldPreservesItsFlags()
   {
     String fieldName = "Field name";
 
@@ -319,11 +319,13 @@ public class JsonArtifactRendererTest
 
     assertTrue(validateJsonSchema(rendering));
 
-    assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
-    assertEquals(null, rendering.get("_valueConstraints").get("recommendedValue"));
-    assertEquals(null, rendering.get("_ui").get("continuePreviousLine"));
-    assertEquals(null, rendering.get("_ui").get("hidden"));
-    assertEquals(null, rendering.get("_ui").get("valueRecommendationEnabled"));
+    // The flags live on the field artifact itself; the standalone rendering preserves them,
+    // keeping the standalone round trip lossless (they were previously scrubbed to false).
+    assertTrue(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
+    assertTrue(rendering.get("_valueConstraints").get("recommendedValue").asBoolean());
+    assertTrue(rendering.get("_ui").get("continuePreviousLine").asBoolean());
+    assertTrue(rendering.get("_ui").get("hidden").asBoolean());
+    assertTrue(rendering.get("_ui").get("valueRecommendationEnabled").asBoolean());
 
     assertTrue(validateFieldSchemaArtifact(rendering));
   }

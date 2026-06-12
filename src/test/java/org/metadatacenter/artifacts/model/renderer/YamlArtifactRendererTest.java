@@ -1411,4 +1411,25 @@ public class YamlArtifactRendererTest {
     }
   }
 
+  @Test public void standaloneFieldRoundTripsRequiredAndMultipleThroughConfiguration()
+  {
+    org.metadatacenter.artifacts.model.core.TextField field =
+      org.metadatacenter.artifacts.model.core.TextField.builder()
+        .withName("Probe").withRequiredValue(true).withIsMultiple(true).build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> configuration = (LinkedHashMap<String, Object>) rendering.get("configuration");
+    assertNotNull(configuration, "standalone field must carry its configuration block; got: " + rendering);
+    assertEquals(Boolean.TRUE, configuration.get("required"));
+    assertEquals(Boolean.TRUE, configuration.get("multiple"));
+
+    // And the standalone reader consumes exactly this shape back into the model.
+    org.metadatacenter.artifacts.model.core.FieldSchemaArtifact reread =
+      new org.metadatacenter.artifacts.model.reader.YamlArtifactReader(true).readFieldSchemaArtifact(rendering);
+    assertTrue(reread.valueConstraints().get().requiredValue(), "required must survive the round trip");
+    assertTrue(reread.isMultiple(), "multiple must survive the round trip");
+  }
+
 }

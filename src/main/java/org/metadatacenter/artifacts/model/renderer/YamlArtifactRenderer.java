@@ -197,10 +197,47 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
-    // A standalone field has no parent and therefore no `configuration:` block, which is
-    // where a nested child carries its field-level UI flags. Emit them here so a top-level
-    // field round-trips losslessly through the YAML reader/renderer pair.
+    // A standalone field has no parent, which is where a nested child's `configuration:`
+    // block is normally rendered. Emit the field-level UI flags and the field-own
+    // configuration entries here so a top-level field round-trips losslessly through the
+    // YAML reader/renderer pair.
     addStandaloneFieldUiRendering(fieldSchemaArtifact, rendering);
+
+    LinkedHashMap<String, Object> configuration = renderStandaloneFieldConfiguration(fieldSchemaArtifact);
+    if (!configuration.isEmpty())
+      rendering.put(CONFIGURATION, configuration);
+
+    return rendering;
+  }
+
+  /**
+   * The field-own {@code configuration:} entries for a standalone field — the subset of
+   * {@link #renderFieldConfiguration} that does not depend on a parent (no property-IRI
+   * mapping, no parent label/description overrides). The standalone reader consumes exactly
+   * these keys from a top-level {@code configuration:} block.
+   */
+  private LinkedHashMap<String, Object> renderStandaloneFieldConfiguration(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      if (fieldSchemaArtifact.valueConstraints().get().requiredValue())
+        rendering.put(REQUIRED, true);
+      if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
+        rendering.put(RECOMMENDED, true);
+    }
+
+    if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MULTIPLE, true);
+
+    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
+
+    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     return rendering;
   }

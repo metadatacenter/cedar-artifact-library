@@ -2,7 +2,6 @@ package org.metadatacenter.artifacts.model.renderer;
 
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
-import org.metadatacenter.artifacts.model.core.FieldSchemaArtifactBuilder;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 
@@ -21,17 +20,11 @@ public interface ArtifactRenderer<T>
 
   default T renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    FieldSchemaArtifactBuilder fieldSchemaArtifactBuilder = FieldSchemaArtifactBuilder.builder(fieldSchemaArtifact);
-
-    fieldSchemaArtifactBuilder.withRequiredValue(false);
-    fieldSchemaArtifactBuilder.withRecommendedValue(false);
-    fieldSchemaArtifactBuilder.withContinuePreviousLine(false);
-    fieldSchemaArtifactBuilder.withHidden(false);
-    fieldSchemaArtifactBuilder.withValueRecommendationEnabled(false);
-
-    FieldSchemaArtifact updatedFieldSchemaArtifact = fieldSchemaArtifactBuilder.build();
-
-    return renderFieldSchemaArtifact(fieldSchemaArtifact.name(), updatedFieldSchemaArtifact);
+    // Render the field exactly as it is. The required/recommended/hidden and related flags
+    // live on the field artifact itself (value constraints and field UI), and the readers
+    // accept them on a standalone field — scrubbing them here would make the standalone
+    // round trip lossy.
+    return renderFieldSchemaArtifact(fieldSchemaArtifact.name(), fieldSchemaArtifact);
   }
 
   T renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact);
