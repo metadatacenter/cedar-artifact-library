@@ -136,6 +136,8 @@ public class YamlSerializer {
       yamlSerialized = yamlArtifactRenderer.renderTemplateSchemaArtifact((TemplateSchemaArtifact) artifact);
     } else if (artifact instanceof TemplateInstanceArtifact) {
       yamlSerialized = yamlArtifactRenderer.renderTemplateInstanceArtifact((TemplateInstanceArtifact) artifact);
+    } else if (artifact instanceof ElementInstanceArtifact) {
+      yamlSerialized = yamlArtifactRenderer.renderElementInstanceArtifact((ElementInstanceArtifact) artifact);
     }
     return yamlSerialized;
   }
