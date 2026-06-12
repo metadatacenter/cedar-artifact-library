@@ -488,7 +488,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         Object first = list.get(0);
         if (!(first instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map entries in multi-instance list", childKey, path);
-        boolean isElement = ((LinkedHashMap<String, Object>) first).containsKey(CHILDREN);
+        boolean isElement = isElementInstanceMap((LinkedHashMap<String, Object>) first);
         if (isElement) {
           List<ElementInstanceArtifact> elements = new ArrayList<>();
           for (Object e : list)
@@ -502,7 +502,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         }
       } else if (rawValue instanceof LinkedHashMap<?, ?>) {
         LinkedHashMap<String, Object> mapValue = (LinkedHashMap<String, Object>) rawValue;
-        if (mapValue.containsKey(CHILDREN)) {
+        if (isElementInstanceMap(mapValue)) {
           acc.singleElement(childKey, readElementInstanceArtifact(mapValue, childPath));
         } else {
           acc.singleField(childKey, readFieldInstanceArtifact(mapValue, childPath));
@@ -520,6 +520,17 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       }
     }
     return acc;
+  }
+
+  /**
+   * A child-instance map is an element instance when it carries a {@code children:} block, or
+   * when it is an all-empty sub-record stub carrying the {@code type: element-instance}
+   * discriminator (the renderer emits the stub for empty entries in a multi-instance list,
+   * whose count must survive the round trip).
+   */
+  private static boolean isElementInstanceMap(LinkedHashMap<String, Object> map)
+  {
+    return map.containsKey(CHILDREN) || ELEMENT_INSTANCE.equals(map.get(TYPE));
   }
 
   private ElementInstanceArtifact readElementInstanceArtifact(LinkedHashMap<String, Object> sourceNode, String path)
@@ -566,7 +577,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * (they appear as values in a parent's {@code children:} map) and only ever carry {@code id}
    * and {@code children} as reserved keys.
    */
-  private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(ID, CHILDREN);
+  private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(TYPE, ID, CHILDREN);
 
   /**
    * Top-level YAML keys reserved by the standalone element-instance form ({@code type:

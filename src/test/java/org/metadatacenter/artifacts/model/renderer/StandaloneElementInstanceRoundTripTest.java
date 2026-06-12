@@ -83,6 +83,34 @@ public class StandaloneElementInstanceRoundTripTest
     assertEquals(original, roundTripped);  // no field instances, so model equality holds
   }
 
+  @Test public void emptyEntriesInAMultiInstanceElementListSurviveTheYamlRoundTrip()
+  {
+    // Entry count is information: an appended-but-not-yet-filled sub-record must not vanish.
+    // Empty entries render as `type: element-instance` stubs and classify as elements on read.
+    ElementInstanceArtifact emptyEntry = ElementInstanceArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-element-instances/bbbb1111-2222-3333-4444-555566667777"))
+      .build();
+    ElementInstanceArtifact filledEntry = ElementInstanceArtifact.builder()
+      .withSingleInstanceFieldInstance("street", TextFieldInstance.builder().withValue("Second St").build())
+      .build();
+    ElementInstanceArtifact original = ElementInstanceArtifact.builder()
+      .withName("Outer")
+      .withMultiInstanceElementInstances("addresses", List.of(emptyEntry, filledEntry))
+      .build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderElementInstanceArtifact(original);
+
+    ElementInstanceArtifact roundTripped = new YamlArtifactReader().readElementInstanceArtifact(rendering);
+    List<ElementInstanceArtifact> entries = roundTripped.multiInstanceElementInstances().get("addresses");
+    assertEquals(2, entries.size(), "both entries must survive; got: " + rendering);
+    assertEquals(emptyEntry.jsonLdId(), entries.get(0).jsonLdId(),
+      "the empty entry keeps its position and id; got: " + rendering);
+    assertEquals("Second St",
+      entries.get(1).singleInstanceFieldInstances().get("street").jsonLdValue().orElseThrow());
+    assertEquals(rendering, renderer.renderElementInstanceArtifact(roundTripped), "fixpoint");
+  }
+
   @Test public void yamlReaderRejectsAWrongDocumentType()
   {
     LinkedHashMap<String, Object> templateInstanceDocument = new LinkedHashMap<>();
