@@ -90,6 +90,18 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return this;
     }
 
+    public ImageFieldBuilder withWidth(Integer width)
+    {
+      fieldUiBuilder.withWidth(width);
+      return this;
+    }
+
+    public ImageFieldBuilder withHeight(Integer height)
+    {
+      fieldUiBuilder.withHeight(height);
+      return this;
+    }
+
     public ImageFieldBuilder withContent(String content)
     {
       fieldUiBuilder.withContent(content);

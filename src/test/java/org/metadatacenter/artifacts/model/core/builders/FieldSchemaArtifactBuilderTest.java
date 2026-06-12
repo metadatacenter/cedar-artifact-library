@@ -1163,4 +1163,45 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(initial, cloned);
   }
 
+  @Test public void imageFieldBuilderSetsContentAndDimensions()
+  {
+    ImageField imageField = ImageField.builder()
+      .withName("Logo")
+      .withContent("https://example.org/logo.png")
+      .withWidth(640)
+      .withHeight(480)
+      .build();
+
+    Assertions.assertEquals("https://example.org/logo.png",
+      imageField.fieldUi().asStaticFieldUi()._content().orElseThrow());
+    Assertions.assertEquals(640, imageField.fieldUi().asStaticFieldUi().width().orElseThrow());
+    Assertions.assertEquals(480, imageField.fieldUi().asStaticFieldUi().height().orElseThrow());
+  }
+
+  @Test public void imageFieldCopyBuilderKeepsContentAndDimensions()
+  {
+    ImageField original = ImageField.builder()
+      .withName("Logo")
+      .withContent("https://example.org/logo.png")
+      .withWidth(640)
+      .withHeight(480)
+      .build();
+
+    ImageField copied = ImageField.builder(original).build();
+    Assertions.assertEquals(original.fieldUi().asStaticFieldUi(), copied.fieldUi().asStaticFieldUi());
+  }
+
+  @Test public void youTubeFieldCopyBuilderKeepsDimensions()
+  {
+    YouTubeField original = YouTubeField.builder()
+      .withName("Intro video")
+      .withContent("https://youtube.com/watch?v=xyz")
+      .withWidth(1280)
+      .withHeight(720)
+      .build();
+
+    YouTubeField copied = YouTubeField.builder(original).build();
+    Assertions.assertEquals(original.fieldUi().asStaticFieldUi(), copied.fieldUi().asStaticFieldUi());
+  }
+
 }

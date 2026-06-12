@@ -227,6 +227,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
     private boolean hidden = false;
     private boolean continuePreviousLine = false;
     private boolean valueRecommendationEnabled = false;
+    private Optional<Integer> width = Optional.empty();
+    private Optional<Integer> height = Optional.empty();
 
     private ImageFieldUiBuilder()
     {
@@ -237,6 +239,20 @@ public non-sealed interface StaticFieldUi extends FieldUi
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
       this.continuePreviousLine = staticFieldUi.continuePreviousLine();
+      this.width = staticFieldUi.width();
+      this.height = staticFieldUi.height();
+    }
+
+    public ImageFieldUiBuilder withWidth(Integer width)
+    {
+      this.width = Optional.ofNullable(width);
+      return this;
+    }
+
+    public ImageFieldUiBuilder withHeight(Integer height)
+    {
+      this.height = Optional.ofNullable(height);
+      return this;
     }
 
     public ImageFieldUiBuilder withContent(String content)
@@ -265,8 +281,7 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine, Optional.empty(),
-        Optional.empty());
+      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine, width, height);
     }
   }
 
@@ -288,6 +303,8 @@ public non-sealed interface StaticFieldUi extends FieldUi
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
       this.continuePreviousLine = staticFieldUi.continuePreviousLine();
+      this.width = staticFieldUi.width();
+      this.height = staticFieldUi.height();
     }
 
     public YouTubeFieldUiBuilder withContent(String content)
