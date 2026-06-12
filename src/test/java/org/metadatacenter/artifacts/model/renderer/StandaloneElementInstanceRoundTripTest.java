@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.renderer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TextFieldInstance;
 import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
@@ -109,6 +110,56 @@ public class StandaloneElementInstanceRoundTripTest
     assertEquals("Second St",
       entries.get(1).singleInstanceFieldInstances().get("street").jsonLdValue().orElseThrow());
     assertEquals(rendering, renderer.renderElementInstanceArtifact(roundTripped), "fixpoint");
+  }
+
+  @Test public void emptyEntriesInATemplateInstanceSurviveTheYamlRoundTrip()
+  {
+    // Same contract as the element-level test, at the real usage level: a template
+    // instance's repeated element keeps its appended-but-empty entries.
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder()
+      .withName("Study record")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/cccc1111-2222-3333-4444-555566667777"))
+      .withMultiInstanceElementInstances("addresses", List.of(
+        ElementInstanceArtifact.builder().build(),
+        ElementInstanceArtifact.builder()
+          .withSingleInstanceFieldInstance("street", TextFieldInstance.builder().withValue("Main St").build())
+          .build()))
+      .build();
+
+    LinkedHashMap<String, Object> rendering =
+      new YamlArtifactRenderer(false).renderTemplateInstanceArtifact(original);
+    TemplateInstanceArtifact roundTripped =
+      new YamlArtifactReader().readTemplateInstanceArtifact(rendering);
+
+    List<ElementInstanceArtifact> entries = roundTripped.multiInstanceElementInstances().get("addresses");
+    assertEquals(2, entries.size(),
+      "both entries must survive as elements, not collapse to fields; got: " + rendering);
+    assertEquals("Main St",
+      entries.get(1).singleInstanceFieldInstances().get("street").jsonLdValue().orElseThrow());
+  }
+
+  @Test public void childlessElementInstancesStayElementsAcrossTheJsonRoundTrip()
+  {
+    // The JSON reader classifies a nested object as an element by the presence of @context;
+    // the renderer must therefore emit one even when there are no children to map, or an
+    // all-empty sub-record reads back as an IRI field value.
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder()
+      .withName("Study record")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/cccc1111-2222-3333-4444-555566667777"))
+      .withMultiInstanceElementInstances("addresses", List.of(
+        ElementInstanceArtifact.builder()
+          .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-element-instances/dddd1111-2222-3333-4444-555566667777"))
+          .build()))
+      .build();
+
+    ObjectNode rendering = new JsonArtifactRenderer().renderTemplateInstanceArtifact(original);
+    assertTrue(rendering.path("addresses").get(0).has("@context"),
+      "a childless element instance must still carry @context; got: " + rendering.path("addresses"));
+
+    TemplateInstanceArtifact roundTripped = new JsonArtifactReader().readTemplateInstanceArtifact(rendering);
+    assertTrue(roundTripped.multiInstanceElementInstances().containsKey("addresses"),
+      "the entry must read back as an element, not a field; got: " + roundTripped.multiInstanceFieldInstances());
+    assertEquals(1, roundTripped.multiInstanceElementInstances().get("addresses").size());
   }
 
   @Test public void yamlReaderRejectsAWrongDocumentType()
