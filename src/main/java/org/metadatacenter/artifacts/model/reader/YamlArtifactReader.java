@@ -125,6 +125,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEIGHT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT_INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IS_BASED_ON;
@@ -371,6 +372,49 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return builder.build();
   }
 
+  @Override public ElementInstanceArtifact readElementInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
+  {
+    String path = "/";
+    rejectNullAndEmptyValues(sourceNode, path);
+    String artifactType = readRequiredString(sourceNode, path, TYPE, false);
+
+    if (!artifactType.equals(ELEMENT_INSTANCE))
+      throw new ArtifactParseException(
+        "invalid artifact type " + artifactType + "; should be " + ELEMENT_INSTANCE, TYPE, path);
+
+    ElementInstanceArtifact.Builder builder = ElementInstanceArtifact.builder();
+    readString(sourceNode, path, NAME).ifPresent(builder::withName);
+    readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
+    readUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
+    readUri(sourceNode, path, MODIFIED_BY).ifPresent(builder::withModifiedBy);
+    readOffsetDatetime(sourceNode, path, CREATED_ON).ifPresent(builder::withCreatedOn);
+    readOffsetDatetime(sourceNode, path, MODIFIED_ON).ifPresent(builder::withLastUpdatedOn);
+
+    readChildInstanceArtifacts(sourceNode, path).accept(new InstanceChildVisitor() {
+      @Override public void visitSingleField(String key, FieldInstanceArtifact f) {
+        builder.withSingleInstanceFieldInstance(key, f);
+      }
+
+      @Override public void visitSingleElement(String key, ElementInstanceArtifact e) {
+        builder.withSingleInstanceElementInstance(key, e);
+      }
+
+      @Override public void visitMultiField(String key, List<FieldInstanceArtifact> fs) {
+        builder.withMultiInstanceFieldInstances(key, fs);
+      }
+
+      @Override public void visitMultiElement(String key, List<ElementInstanceArtifact> es) {
+        builder.withMultiInstanceElementInstances(key, es);
+      }
+    });
+
+    readAttributeValueFieldInstanceGroups(sourceNode, path, STANDALONE_ELEMENT_INSTANCE_RESERVED_KEYS,
+      builder::withAttributeValueFieldGroup);
+
+    return builder.build();
+  }
+
   /**
    * Enforce the YAML contract that none of {@code null}, an empty mapping ({@code {}}), or an
    * empty list ({@code []}) is a valid value. A key whose value is the null literal
@@ -523,6 +567,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * and {@code children} as reserved keys.
    */
   private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(ID, CHILDREN);
+
+  /**
+   * Top-level YAML keys reserved by the standalone element-instance form ({@code type:
+   * element-instance}) — the nested set plus the document-level keys the standalone
+   * renderer emits.
+   */
+  private static final Set<String> STANDALONE_ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(
+    TYPE, NAME, DESCRIPTION, ID, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
 
   /**
    * Walk top-level keys of an instance YAML map looking for attribute-value field groups. Each

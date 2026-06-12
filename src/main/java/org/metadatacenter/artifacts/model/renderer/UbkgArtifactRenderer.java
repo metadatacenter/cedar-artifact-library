@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.renderer;
 
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
@@ -141,6 +142,11 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
   }
 
   public UbkgRendering.Builder renderTemplateInstanceArtifact(TemplateInstanceArtifact templateInstanceArtifact)
+  {
+    return ubkgRenderingBuilder;
+  }
+
+  public UbkgRendering.Builder renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
   {
     return ubkgRenderingBuilder;
   }

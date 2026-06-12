@@ -43,6 +43,7 @@ public class YamlConstants
   public static final String TYPE = "type";
   public static final String CHILDREN = "children";
   public static final String INSTANCE = "instance";
+  public static final String ELEMENT_INSTANCE = "element-instance";
   public static final String INSTANCE_TYPE = "instanceType";
   public static final String DESCRIPTION = "description";
   public static final String IDENTIFIER = "identifier";

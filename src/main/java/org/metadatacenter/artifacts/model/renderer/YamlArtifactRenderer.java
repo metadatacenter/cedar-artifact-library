@@ -401,7 +401,58 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  /**
+   * Render a standalone element instance ({@code type: element-instance}). Unlike the
+   * nested form — which omits an all-empty element entirely, since its presence is
+   * reconstructable from the template — the standalone document always carries its
+   * {@code type} discriminator plus any name / description / id, so an empty skeleton
+   * still round-trips as a document.
+   */
+  public LinkedHashMap<String, Object> renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    rendering.put(TYPE, ELEMENT_INSTANCE);
+
+    if (elementInstanceArtifact.name().isPresent())
+      rendering.put(NAME, elementInstanceArtifact.name().get());
+
+    if (elementInstanceArtifact.description().isPresent() && !elementInstanceArtifact.description().get().isEmpty())
+      rendering.put(DESCRIPTION, elementInstanceArtifact.description().get());
+
+    // The id is emitted in both compact and full forms so the instance round-trips.
+    if (elementInstanceArtifact.jsonLdId().isPresent())
+      rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
+
+    if (!isCompact && elementInstanceArtifact.createdOn().isPresent())
+      rendering.put(CREATED_ON, renderOffsetDateTime(elementInstanceArtifact.createdOn().get()));
+
+    if (!isCompact && elementInstanceArtifact.createdBy().isPresent())
+      rendering.put(CREATED_BY, elementInstanceArtifact.createdBy().get().toString());
+
+    if (!isCompact && elementInstanceArtifact.lastUpdatedOn().isPresent())
+      rendering.put(MODIFIED_ON, renderOffsetDateTime(elementInstanceArtifact.lastUpdatedOn().get()));
+
+    if (!isCompact && elementInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(MODIFIED_BY, elementInstanceArtifact.modifiedBy().get().toString());
+
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
+      elementInstanceArtifact);
+    if (!childInstanceArtifactsRendering.isEmpty())
+      rendering.put(CHILDREN, childInstanceArtifactsRendering);
+
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
+      .entrySet()) {
+      Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
+      if (!fields.isEmpty())
+        rendering.put(attributeValueFieldInstanceGroup.getKey(),
+          renderAttributeValueFieldInstanceGroupFields(fields));
+    }
+
+    return rendering;
+  }
+
+  private LinkedHashMap<String, Object> renderNestedElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
@@ -456,7 +507,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
           ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances()
             .get(childKey);
-          LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(
+          LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderNestedElementInstanceArtifact(
             elementInstanceArtifact);
 
           if (!elementInstanceArtifactRendering.isEmpty())
@@ -496,7 +547,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
 
-      LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(
+      LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderNestedElementInstanceArtifact(
         elementInstanceArtifact);
       if (!elementInstanceArtifactRendering.isEmpty())
         elementInstanceArtifactsRendering.add(elementInstanceArtifactRendering);

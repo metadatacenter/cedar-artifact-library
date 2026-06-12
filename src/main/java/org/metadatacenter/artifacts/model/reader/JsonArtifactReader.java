@@ -534,6 +534,15 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
         attributeValueFieldInstances, annotations);
   }
 
+  /**
+   * Read a standalone element instance. The JSON form is the same object that appears
+   * nested inside a template instance ({@code @context} / {@code @id} / child values) —
+   * JSON-LD needs no document-kind discriminator.
+   */
+  public ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode) {
+    return readElementInstanceArtifact(sourceNode, "/");
+  }
+
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
