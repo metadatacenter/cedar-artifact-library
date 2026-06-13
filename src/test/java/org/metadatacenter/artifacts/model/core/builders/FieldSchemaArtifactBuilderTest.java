@@ -1233,4 +1233,23 @@ public class FieldSchemaArtifactBuilderTest {
       "a static field with dimensions must pass the canonical validator; got: " + report.getErrors());
   }
 
+  @Test public void controlledTermCloneBuilderAccumulatesConstraints()
+  {
+    ControlledTermField original = ControlledTermField.builder()
+      .withName("Disease")
+      .withClassValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_4"),
+        "DOID", "disease", "disease", ValueType.ONTOLOGY_CLASS)
+      .build();
+
+    ControlledTermField extended = ControlledTermField.builder(original)
+      .withOntologyValueConstraint(URI.create("https://data.bioontology.org/ontologies/LOINC"),
+        "LOINC", "Logical Observation Identifiers")
+      .build();
+
+    Assertions.assertEquals(1, extended.valueConstraints().orElseThrow()
+      .asControlledTermValueConstraints().classes().size());
+    Assertions.assertEquals(1, extended.valueConstraints().orElseThrow()
+      .asControlledTermValueConstraints().ontologies().size());
+  }
+
 }
