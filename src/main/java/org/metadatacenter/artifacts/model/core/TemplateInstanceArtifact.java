@@ -104,7 +104,7 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
   }
 
   class Builder {
-    private List<URI> jsonLdTypes = Collections.emptyList();
+    private List<URI> jsonLdTypes = new ArrayList<>();
     private Optional<URI> jsonLdId = Optional.empty();
     private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>();
     private URI isBasedOn;

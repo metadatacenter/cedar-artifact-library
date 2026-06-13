@@ -70,7 +70,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
   class Builder {
     private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(
         PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    private List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
+    private List<URI> jsonLdTypes = new ArrayList<>(List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)));
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> instanceJsonLdType = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
@@ -176,7 +176,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     }
 
     public Builder withJsonLdTypes(List<URI> jsonLdTypes) {
-      this.jsonLdTypes = List.copyOf(jsonLdTypes);
+      this.jsonLdTypes = new ArrayList<>(jsonLdTypes);
       return this;
     }
 

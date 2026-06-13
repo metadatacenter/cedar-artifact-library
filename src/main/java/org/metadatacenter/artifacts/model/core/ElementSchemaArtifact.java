@@ -72,7 +72,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
   {
     private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(
       PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    private List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
+    private List<URI> jsonLdTypes = new ArrayList<>(List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI)));
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<URI> instanceJsonLdType = Optional.empty();
     private Optional<URI> createdBy = Optional.empty();
@@ -190,7 +190,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
     public Builder withJsonLdTypes(List<URI> jsonLdTypes)
     {
-      this.jsonLdTypes = jsonLdTypes;
+      this.jsonLdTypes = new ArrayList<>(jsonLdTypes);
       return this;
     }
 

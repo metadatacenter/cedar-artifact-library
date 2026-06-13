@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.core;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +105,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
   class Builder
   {
     private LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>();
-    private List<URI> jsonLdTypes = Collections.emptyList();
+    private List<URI> jsonLdTypes = new ArrayList<>();
     private Optional<URI> jsonLdId = Optional.empty();
     private Optional<String> name = Optional.empty();
     private Optional<String> description = Optional.empty();
@@ -171,7 +170,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
 
     public Builder withJsonLdTypes(List<URI> jsonLdTypes)
     {
-      this.jsonLdTypes = List.copyOf(jsonLdTypes);
+      this.jsonLdTypes = new ArrayList<>(jsonLdTypes);
       return this;
     }
 
