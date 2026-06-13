@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
@@ -63,7 +63,7 @@ public class JsonArtifactRendererTest
   private ObjectMapper mapper;
   private ModelValidator cedarModelValidator;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     artifactReader = new JsonArtifactReader();
     jsonArtifactRenderer = new JsonArtifactRenderer();
@@ -201,7 +201,6 @@ public class JsonArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
-  // TODO Add defaultValue
   @Test public void testRenderNumericField()
   {
     String fieldName = "Field name";
@@ -209,6 +208,7 @@ public class JsonArtifactRendererTest
     boolean requiredValue = false;
     XsdNumericDatatype numericType = XsdNumericDatatype.DECIMAL;
     int decimalPlaces = 3;
+    Number defaultValue = 1.5;
 
     NumericField numericField = NumericField.builder().
             withName(fieldName).
@@ -216,6 +216,7 @@ public class JsonArtifactRendererTest
             withRequiredValue(requiredValue).
             withNumericType(numericType).
             withDecimalPlaces(decimalPlaces).
+            withDefaultValue(defaultValue).
             build();
 
     ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(numericField);
@@ -227,7 +228,6 @@ public class JsonArtifactRendererTest
     assertEquals(rendering.get(JSON_LD_TYPE).textValue(), FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
     assertEquals(rendering.get(SCHEMA_ORG_NAME).textValue(), fieldName);
     assertEquals(rendering.get(SCHEMA_ORG_DESCRIPTION).textValue(), fieldDescription);
-    //assertEquals(rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue(), defaultURI.toString());
     // CEDAR requires the follow keys to be present, even if the values are null
     assertTrue(rendering.has(PAV_CREATED_BY));
     assertTrue(rendering.has(PAV_CREATED_ON));
@@ -238,7 +238,31 @@ public class JsonArtifactRendererTest
     assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
     assertEquals(rendering.get("_valueConstraints").get("numberType").textValue(), numericType.getText());
     assertEquals(rendering.get("_valueConstraints").get("decimalPlace").asInt(), decimalPlaces);
+    // CEDAR's _valueConstraints.defaultValue schema permits only string or URI/label
+    // object — never a bare JSON number. Encode numeric defaults as their string form.
+    assertTrue(rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).isTextual(),
+        "numeric defaultValue must serialize as a JSON string, not a number");
+    assertEquals(defaultValue.toString(),
+        rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue());
 
+    assertTrue(validateFieldSchemaArtifact(rendering));
+  }
+
+  @Test public void testRenderNumericFieldWithIntegerDefault()
+  {
+    // Integer-typed default must also serialize as a string for the validator to accept
+    // it. The previous bare-number encoding produced "instance type (integer) does not
+    // match any allowed primitive type" against the CEDAR meta-schema.
+    NumericField numericField = NumericField.builder().
+        withName("Count").
+        withNumericType(XsdNumericDatatype.INT).
+        withDefaultValue(42).
+        build();
+
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(numericField);
+
+    assertTrue(rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).isTextual());
+    assertEquals("42", rendering.get("_valueConstraints").get(VALUE_CONSTRAINTS_DEFAULT_VALUE).textValue());
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
@@ -278,7 +302,7 @@ public class JsonArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
-  @Test public void testRenderStandaloneField()
+  @Test public void testRenderStandaloneFieldPreservesItsFlags()
   {
     String fieldName = "Field name";
 
@@ -295,11 +319,13 @@ public class JsonArtifactRendererTest
 
     assertTrue(validateJsonSchema(rendering));
 
-    assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
-    assertEquals(null, rendering.get("_valueConstraints").get("recommendedValue"));
-    assertEquals(null, rendering.get("_ui").get("continuePreviousLine"));
-    assertEquals(null, rendering.get("_ui").get("hidden"));
-    assertEquals(null, rendering.get("_ui").get("valueRecommendationEnabled"));
+    // The flags live on the field artifact itself; the standalone rendering preserves them,
+    // keeping the standalone round trip lossless (they were previously scrubbed to false).
+    assertTrue(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
+    assertTrue(rendering.get("_valueConstraints").get("recommendedValue").asBoolean());
+    assertTrue(rendering.get("_ui").get("continuePreviousLine").asBoolean());
+    assertTrue(rendering.get("_ui").get("hidden").asBoolean());
+    assertTrue(rendering.get("_ui").get("valueRecommendationEnabled").asBoolean());
 
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
@@ -419,8 +445,21 @@ public class JsonArtifactRendererTest
     assertEquals(instanceUri, URI.create(templateInstanceRendering.get(JSON_LD_ID).asText()));
     assertEquals(isBasedOnTemplateUri, URI.create(templateInstanceRendering.get(SCHEMA_IS_BASED_ON).asText()));
 
-    // TODO Need more comprehensive testing here
-}
+    // A multi-instance field renders as an array of @value objects, in order.
+    assertTrue(templateInstanceRendering.get(textField2Name).isArray());
+    assertEquals(2, templateInstanceRendering.get(textField2Name).size());
+    assertEquals("Value 2", templateInstanceRendering.get(textField2Name).get(0).get("@value").asText());
+    assertEquals("Value 3", templateInstanceRendering.get(textField2Name).get(1).get("@value").asText());
+
+    // A single-instance element renders as a nested object carrying its own field instance.
+    ObjectNode element1Rendering = (ObjectNode) templateInstanceRendering.get(element1Name);
+    assertEquals("Value 1", element1Rendering.get(textField1Name).get("@value").asText());
+
+    // The @context carries the entry added for the nested element.
+    assertTrue(templateInstanceRendering.get("@context").has(element1Name));
+
+    // Attribute-value group rendering is covered comprehensively by JsonAttributeValueRoundTripTest.
+  }
 
   @Test
   public void testRenderBasicElementInstance()
@@ -461,12 +500,20 @@ public class JsonArtifactRendererTest
     assertEquals(instanceName, elementInstanceRendering.get(SCHEMA_ORG_NAME).asText());
     assertEquals(instanceUri, URI.create(elementInstanceRendering.get(JSON_LD_ID).asText()));
 
-    // TODO Need more comprehensive testing here
-  }
+    // A multi-instance field renders as an array of @value objects, in order.
+    assertTrue(elementInstanceRendering.get(textField2Name).isArray());
+    assertEquals(2, elementInstanceRendering.get(textField2Name).size());
+    assertEquals("Value 2", elementInstanceRendering.get(textField2Name).get(0).get("@value").asText());
+    assertEquals("Value 3", elementInstanceRendering.get(textField2Name).get(1).get("@value").asText());
 
-  @Test
-  public void testRenderElementSchemaArtifact() {
-    // Similar test for renderElementSchemaArtifact() if needed
+    // A nested single-instance element renders as an object carrying its own field instance.
+    ObjectNode nestedElementRendering = (ObjectNode) elementInstanceRendering.get(element1Name);
+    assertEquals("Value 1", nestedElementRendering.get(textField1Name).get("@value").asText());
+
+    // The @context carries the entry added for the nested element.
+    assertTrue(elementInstanceRendering.get("@context").has(element1Name));
+
+    // Attribute-value group rendering is covered comprehensively by JsonAttributeValueRoundTripTest.
   }
 
   @Test

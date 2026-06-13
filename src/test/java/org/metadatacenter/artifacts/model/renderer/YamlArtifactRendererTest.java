@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
@@ -17,11 +17,16 @@ import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRendererTest {
@@ -30,7 +35,7 @@ public class YamlArtifactRendererTest {
   private YAMLFactory yamlFactory;
   private ObjectMapper mapper;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     yamlFactory = new YAMLFactory().
         disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
@@ -62,6 +67,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(DESCRIPTION, description);
+    expectedRendering.put(ID, "https://repo.metadatacenter.org/templates/123");
     expectedRendering.put(HEADER, header);
     expectedRendering.put(FOOTER, footer);
 
@@ -90,6 +96,7 @@ public class YamlArtifactRendererTest {
         type: template
         name: ${name}
         description: ${description}
+        id: https://repo.metadatacenter.org/templates/123
         header: ${header}
         footer: ${footer}
         """
@@ -122,6 +129,7 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
+    expectedRendering.put(ID, "https://repo.metadatacenter.org/template_elements/123");
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -146,6 +154,7 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
+        id: https://repo.metadatacenter.org/template_fields/123
         """
         .replace("${name}", name)
         .replace("${description}", description);
@@ -180,6 +189,33 @@ public class YamlArtifactRendererTest {
     LinkedHashMap<String, Object> expectedRendering = mapper.readValue(expectedYamlRendering, LinkedHashMap.class);
 
     assertEquals(expectedRendering, actualRendering);
+  }
+
+  @Test
+  public void testRenderNestedFieldWithoutIdOmitsId() {
+    // A nested child is not required to have an id. When the artifact has none, the keyed
+    // rendering carries no id key — the counterpart to the keyed tests below, which set an id
+    // and expect it to be preserved.
+    String name = "Study Name";
+    String description = "Study name field";
+
+    TextField textField = TextField.builder().
+        withName(name).
+        withDescription(description).
+        build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> actualRendering = yamlArtifactRenderer.renderFieldSchemaArtifact(name, textField);
+
+    LinkedHashMap<String, Object> expectedRendering = new LinkedHashMap<>();
+    expectedRendering.put(KEY, name);
+    expectedRendering.put(TYPE, TEXT_FIELD);
+    expectedRendering.put(NAME, name);
+    expectedRendering.put(DESCRIPTION, description);
+
+    assertEquals(expectedRendering.toString(), actualRendering.toString());
+    assertFalse(actualRendering.containsKey(ID));
   }
 
   @Test
@@ -225,6 +261,9 @@ public class YamlArtifactRendererTest {
     expectedBaseFieldRendering.put(TYPE, CONTROLLED_TERM_FIELD);
     expectedBaseFieldRendering.put(NAME, name);
     expectedBaseFieldRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedBaseFieldRendering.put(ID, fieldId.toString());
     expectedBaseFieldRendering.put(DATATYPE, IRI);
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
@@ -291,6 +330,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, LINK_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -318,6 +360,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ROR_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -345,6 +390,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ORCID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -372,6 +420,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PFAS_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -399,6 +450,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, RRID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -426,6 +480,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, NIH_GRANT_ID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -453,6 +510,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PUBMED_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -480,6 +540,9 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, DOI_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
+    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
+    // one is set on the artifact the renderer preserves it.
+    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -545,6 +608,7 @@ public class YamlArtifactRendererTest {
     String expectedYaml = """
         type: instance
         name: Simple instance
+        id: https://repo.metadatacenter.org/template-instances/2123be29-d114-4849-8a5e-7a68022b8bfd
         isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
         children:
           Controlled Terms:
@@ -931,6 +995,413 @@ public class YamlArtifactRendererTest {
     assertEquals(expectedYaml, actualYaml);
   }
 
+  // ---- Compact-mode toggle ----
+
+  @Test
+  public void testCompactModeOmitsAuditFields() {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withCreatedBy(java.net.URI.create("http://example.com/u/1"))
+        .withModifiedBy(java.net.URI.create("http://example.com/u/2"))
+        .withCreatedOn(OffsetDateTime.now())
+        .withLastUpdatedOn(OffsetDateTime.now())
+        .build();
+
+    YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
+    LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateSchemaArtifact(template);
+
+    assertFalse(rendering.containsKey(CREATED_BY));
+    assertFalse(rendering.containsKey(MODIFIED_BY));
+    assertFalse(rendering.containsKey(CREATED_ON));
+    assertFalse(rendering.containsKey(MODIFIED_ON));
+  }
+
+  @Test
+  public void testCompactModeIncludesIdButOmitsVersion() {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
+        .withVersion(new Version(2, 1, 0))
+        .withStatus(Status.PUBLISHED)
+        .build();
+
+    YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
+    LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateSchemaArtifact(template);
+
+    assertEquals("https://repo.metadatacenter.org/templates/abc", rendering.get(ID));
+    assertFalse(rendering.containsKey(VERSION));
+    assertFalse(rendering.containsKey(STATUS));
+    assertFalse(rendering.containsKey(MODEL_VERSION));
+  }
+
+  @Test
+  public void testCompactModeIncludesIdOnInstance() {
+    TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().withName("Inst")
+        .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template-instances/xyz"))
+        .withIsBasedOn(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
+        .build();
+
+    YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
+    LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateInstanceArtifact(instance);
+
+    assertEquals("https://repo.metadatacenter.org/template-instances/xyz", rendering.get(ID));
+  }
+
+  @Test
+  public void testCompactModeOmitsProvenanceOnInstance() {
+    TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().withName("Inst")
+        .withIsBasedOn(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
+        .withCreatedBy(java.net.URI.create("http://example.com/u/1"))
+        .withCreatedOn(OffsetDateTime.now())
+        .withLastUpdatedOn(OffsetDateTime.now())
+        .build();
+
+    YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
+    LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateInstanceArtifact(instance);
+
+    assertFalse(rendering.containsKey(CREATED_BY));
+    assertFalse(rendering.containsKey(CREATED_ON));
+    assertFalse(rendering.containsKey(MODIFIED_ON));
+  }
+
+  // ---- Full provenance (non-compact) ----
+
+  @Test
+  public void testRenderTemplateWithFullProvenance() {
+    OffsetDateTime when = OffsetDateTime.parse("2026-05-01T10:00:00Z");
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withPreviousVersion(java.net.URI.create("https://example.com/v1"))
+        .withDerivedFrom(java.net.URI.create("https://example.com/parent"))
+        .withCreatedBy(java.net.URI.create("http://example.com/u/1"))
+        .withModifiedBy(java.net.URI.create("http://example.com/u/2"))
+        .withCreatedOn(when)
+        .withLastUpdatedOn(when)
+        .build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+
+    assertEquals("https://example.com/v1", rendering.get(PREVIOUS_VERSION));
+    assertEquals("https://example.com/parent", rendering.get(DERIVED_FROM));
+    assertEquals("http://example.com/u/1", rendering.get(CREATED_BY));
+    assertEquals("http://example.com/u/2", rendering.get(MODIFIED_BY));
+    assertNotNull(rendering.get(CREATED_ON));
+    assertNotNull(rendering.get(MODIFIED_ON));
+  }
+
+  @Test
+  public void testRenderTemplateWithPreviousVersionOnly() {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withPreviousVersion(java.net.URI.create("https://example.com/v1"))
+        .build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+
+    assertEquals("https://example.com/v1", rendering.get(PREVIOUS_VERSION));
+    assertFalse(rendering.containsKey(DERIVED_FROM));
+    assertFalse(rendering.containsKey(CREATED_BY));
+  }
+
+  @Test
+  public void testRenderInstanceWithCreatedAndModifiedTimestamps() {
+    OffsetDateTime when = OffsetDateTime.parse("2026-05-01T10:00:00Z");
+    TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().withName("Inst")
+        .withIsBasedOn(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
+        .withCreatedBy(java.net.URI.create("http://example.com/u/1"))
+        .withCreatedOn(when)
+        .withLastUpdatedOn(when)
+        .build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateInstanceArtifact(instance);
+
+    assertNotNull(rendering.get(CREATED_ON));
+    assertNotNull(rendering.get(MODIFIED_ON));
+    assertEquals("http://example.com/u/1", rendering.get(CREATED_BY));
+  }
+
+  // ---- Nested-child configuration block ----
+
+  @Test
+  public void testRenderNestedFieldWithRequiredAndRecommended() {
+    TextField child = TextField.builder().withName("CRP")
+        .withRequiredValue(true).withRecommendedValue(true).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withFieldSchema(child).build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+    LinkedHashMap<String, Object> config = configurationOf(firstChild(rendering));
+
+    assertEquals(true, config.get(REQUIRED));
+    assertEquals(true, config.get(RECOMMENDED));
+  }
+
+  @Test
+  public void testRenderNestedFieldWithMinMaxItems() {
+    TextField child = TextField.builder().withName("CRP")
+        .withIsMultiple(true).withMinItems(2).withMaxItems(5).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withFieldSchema(child).build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+    LinkedHashMap<String, Object> config = configurationOf(firstChild(rendering));
+
+    assertEquals(true, config.get(MULTIPLE));
+    assertEquals(2, config.get(MIN_ITEMS));
+    assertEquals(5, config.get(MAX_ITEMS));
+  }
+
+  @Test
+  public void testRenderNestedFieldWithPropertyUri() {
+    URI propUri = java.net.URI.create("https://schema.metadatacenter.org/properties/abc");
+    TextField child = TextField.builder().withName("CRP").withPropertyUri(propUri).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withFieldSchema(child).build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+    LinkedHashMap<String, Object> config = configurationOf(firstChild(rendering));
+
+    assertEquals(propUri.toString(), config.get(PROPERTY_IRI));
+  }
+
+  @Test
+  public void testRenderNestedElementWithMultipleAndPropertyUri() {
+    URI propUri = java.net.URI.create("https://schema.metadatacenter.org/properties/addr");
+    ElementSchemaArtifact child = ElementSchemaArtifact.builder().withName("Address")
+        .withIsMultiple(true).withMinItems(0).withMaxItems(4)
+        .withPropertyUri(propUri).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+        .withElementSchema(child).build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+    LinkedHashMap<String, Object> config = configurationOf(firstChild(rendering));
+
+    assertEquals(true, config.get(MULTIPLE));
+    assertEquals(0, config.get(MIN_ITEMS));
+    assertEquals(4, config.get(MAX_ITEMS));
+    assertEquals(propUri.toString(), config.get(PROPERTY_IRI));
+  }
+
+  // ---- Field-type-name discrimination ----
+
+  @Test
+  public void testRenderListFieldEmitsSingleSelectListType() {
+    ListField field = ListField.builder().withName("Pick One").build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+
+    assertEquals(SINGLE_SELECT_LIST_FIELD, rendering.get(TYPE));
+  }
+
+  @Test
+  public void testRenderCheckboxFieldEmitsCheckboxType() {
+    CheckboxField field = CheckboxField.builder().withName("Flags").build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+
+    assertEquals(CHECKBOX_FIELD, rendering.get(TYPE));
+  }
+
+  @Test
+  public void testRenderRadioFieldEmitsRadioType() {
+    RadioField field = RadioField.builder().withName("Choice").build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+
+    assertEquals(RADIO_FIELD, rendering.get(TYPE));
+  }
+
+  // ---- Controlled-term constraint variants ----
+
+  @Test
+  public void testRenderControlledTermFieldWithOntologyConstraint() {
+    URI ontUri = java.net.URI.create("https://data.bioontology.org/ontologies/DOID");
+    ControlledTermField field = ControlledTermField.builder().withName("Disease")
+        .withOntologyValueConstraint(ontUri, "DOID", "Human Disease Ontology").build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+    List<LinkedHashMap<String, Object>> values = valuesOf(rendering);
+
+    assertEquals(1, values.size());
+    assertEquals(ONTOLOGY, values.get(0).get(TYPE));
+    assertEquals("DOID", values.get(0).get(ACRONYM));
+    assertEquals("Human Disease Ontology", values.get(0).get(ONTOLOGY_NAME));
+    assertEquals(ontUri.toString(), values.get(0).get(IRI));
+  }
+
+  @Test
+  public void testRenderControlledTermFieldWithValueSetConstraint() {
+    URI vsUri = java.net.URI.create("https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161");
+    ControlledTermField field = ControlledTermField.builder().withName("AreaUnit")
+        .withValueSetValueConstraint(vsUri, "HRAVS", "Area unit", 40).build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+    List<LinkedHashMap<String, Object>> values = valuesOf(rendering);
+
+    assertEquals(1, values.size());
+    assertEquals(VALUE_SET, values.get(0).get(TYPE));
+    assertEquals("HRAVS", values.get(0).get(ACRONYM));
+    assertEquals("Area unit", values.get(0).get(VALUE_SET_NAME));
+    assertEquals(vsUri.toString(), values.get(0).get(IRI));
+    assertEquals(40, values.get(0).get(NUM_TERMS));
+  }
+
+  // ---- Instance variants ----
+
+  @Test
+  public void testRenderInstanceWithDescriptionAndJsonLdId() {
+    URI id = java.net.URI.create("https://repo.metadatacenter.org/instances/abc");
+    TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().withName("Inst")
+        .withDescription("a study record")
+        .withJsonLdId(id)
+        .withIsBasedOn(java.net.URI.create("https://repo.metadatacenter.org/templates/xyz"))
+        .build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateInstanceArtifact(instance);
+
+    assertEquals("a study record", rendering.get(DESCRIPTION));
+    assertEquals(id.toString(), rendering.get(ID));
+  }
+
+  @Test
+  public void testRenderFieldInstanceWithLabelNotationAndPreferredLabel() {
+    FieldInstanceArtifact fieldInstance = FieldInstanceArtifact.create(
+        List.of(java.net.URI.create("https://example.com/types/Disease")),
+        Optional.of(java.net.URI.create("https://example.com/values/v1")),
+        Optional.empty(),
+        Optional.of("a label"), Optional.of("a notation"), Optional.of("a prefLabel"),
+        Optional.of("en"));
+
+    TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().withName("Inst")
+        .withIsBasedOn(java.net.URI.create("https://repo.metadatacenter.org/templates/xyz"))
+        .withSingleInstanceFieldInstance("Disease", fieldInstance)
+        .build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateInstanceArtifact(instance);
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> children = (LinkedHashMap<String, Object>) rendering.get(CHILDREN);
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> diseaseField = (LinkedHashMap<String, Object>) children.get("Disease");
+
+    assertEquals("a label", diseaseField.get(LABEL));
+    assertEquals("a notation", diseaseField.get(NOTATION));
+    assertEquals("a prefLabel", diseaseField.get(PREF_LABEL));
+    assertEquals("en", diseaseField.get(LANGUAGE));
+    assertNotNull(diseaseField.get(DATATYPE));
+    assertNotNull(diseaseField.get(ID));
+  }
+
+  // ---- Helpers for the additions above ----
+
+  @SuppressWarnings("unchecked")
+  private static LinkedHashMap<String, Object> firstChild(LinkedHashMap<String, Object> templateRendering) {
+    List<Object> children = (List<Object>) templateRendering.get(CHILDREN);
+    assertNotNull(children, "Template rendering must include a children list");
+    assertTrue(children.size() >= 1, "Children list must not be empty");
+    return (LinkedHashMap<String, Object>) children.get(0);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static LinkedHashMap<String, Object> configurationOf(LinkedHashMap<String, Object> childRendering) {
+    LinkedHashMap<String, Object> config =
+        (LinkedHashMap<String, Object>) childRendering.get(CONFIGURATION);
+    assertNotNull(config, "Child rendering must include a configuration block");
+    return config;
+  }
+
+  @SuppressWarnings("unchecked")
+  private static List<LinkedHashMap<String, Object>> valuesOf(LinkedHashMap<String, Object> fieldRendering) {
+    List<LinkedHashMap<String, Object>> values =
+        (List<LinkedHashMap<String, Object>>) fieldRendering.get(VALUES);
+    assertNotNull(values, "Controlled-term field must include a values list");
+    return values;
+  }
+
+  // ----------------------------------------------------------------------
+  // Numeric default-value rendering: plain numbers should land in the YAML
+  // map as Number-typed values (so the YAML serializer emits them unquoted),
+  // and round-trip through the reader to the same canonical model state.
+  // Pathological forms stay String-typed so the YAML serializer keeps them
+  // quoted.
+  // ----------------------------------------------------------------------
+
+  @Test
+  public void numericDefaultRendersUnquoted_integer() {
+    NumericField field = NumericField.builder()
+        .withName("Age")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.INT)
+        .withDefaultValue(42)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertNotNull(emitted, "DEFAULT key must be present");
+    assertTrue(emitted instanceof Number,
+        "plain-integer default should land in the map as a Number so YAML emits it unquoted; "
+            + "got " + emitted.getClass().getSimpleName() + " = " + emitted);
+    assertEquals(42L, ((Number) emitted).longValue());
+  }
+
+  @Test
+  public void numericDefaultRendersUnquoted_decimal() {
+    NumericField field = NumericField.builder()
+        .withName("pH")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.DECIMAL)
+        .withDefaultValue(3.14)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertTrue(emitted instanceof Number,
+        "plain-decimal default should land in the map as a Number; got "
+            + emitted.getClass().getSimpleName() + " = " + emitted);
+    assertEquals(3.14, ((Number) emitted).doubleValue(), 1e-9);
+  }
+
+  @Test
+  public void numericDefaultRendersUnquoted_zero() {
+    // Zero is a valid plain-integer form that must not match the leading-zero
+    // pathological case; this pins the regex boundary.
+    NumericField field = NumericField.builder()
+        .withName("Count")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.INT)
+        .withDefaultValue(0)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertTrue(emitted instanceof Number, "0 should emit unquoted; got " + emitted);
+    assertEquals(0L, ((Number) emitted).longValue());
+  }
+
+  @Test
+  public void numericDefaultRendersUnquoted_negativeInteger() {
+    NumericField field = NumericField.builder()
+        .withName("Offset")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.INT)
+        .withDefaultValue(-17)
+        .build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    Object emitted = rendering.get(DEFAULT);
+    assertTrue(emitted instanceof Number, "negative integer should emit unquoted; got " + emitted);
+    assertEquals(-17L, ((Number) emitted).longValue());
+  }
+
   private ObjectNode getFileContentAsObjectNode(String jsonFileName) {
     try {
       return (ObjectNode) mapper.readTree(new File(
@@ -938,6 +1409,27 @@ public class YamlArtifactRendererTest {
     } catch (IOException e) {
       throw new RuntimeException("Error reading JSON file " + jsonFileName + ": " + e.getMessage());
     }
+  }
+
+  @Test public void standaloneFieldRoundTripsRequiredAndMultipleThroughConfiguration()
+  {
+    org.metadatacenter.artifacts.model.core.TextField field =
+      org.metadatacenter.artifacts.model.core.TextField.builder()
+        .withName("Probe").withRequiredValue(true).withIsMultiple(true).build();
+
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
+
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> configuration = (LinkedHashMap<String, Object>) rendering.get("configuration");
+    assertNotNull(configuration, "standalone field must carry its configuration block; got: " + rendering);
+    assertEquals(Boolean.TRUE, configuration.get("required"));
+    assertEquals(Boolean.TRUE, configuration.get("multiple"));
+
+    // And the standalone reader consumes exactly this shape back into the model.
+    org.metadatacenter.artifacts.model.core.FieldSchemaArtifact reread =
+      new org.metadatacenter.artifacts.model.reader.YamlArtifactReader(true).readFieldSchemaArtifact(rendering);
+    assertTrue(reread.valueConstraints().get().requiredValue(), "required must survive the round trip");
+    assertTrue(reread.isMultiple(), "multiple must survive the round trip");
   }
 
 }

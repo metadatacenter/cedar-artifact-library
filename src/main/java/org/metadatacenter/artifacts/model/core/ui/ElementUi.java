@@ -40,7 +40,7 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
     }
 
     private Builder(ElementUi elementUi) {
-      this.order = List.copyOf(elementUi.order());
+      this.order = new ArrayList<>(elementUi.order());
       this.propertyLabels = new LinkedHashMap<>(elementUi.propertyLabels());
       this.propertyDescriptions = new LinkedHashMap<>(elementUi.propertyDescriptions());
     }
@@ -86,6 +86,21 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
       return this;
     }
 
+    public Builder withoutOrder(String fieldKey) {
+      this.order.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyLabel(String fieldKey) {
+      this.propertyLabels.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyDescription(String fieldKey) {
+      this.propertyDescriptions.remove(fieldKey);
+      return this;
+    }
+
     public ElementUi build()
     {
       return new ElementUiRecord(order, propertyLabels, propertyDescriptions);
@@ -108,4 +123,3 @@ record ElementUiRecord(List<String> order,
     propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
   }
 }
-

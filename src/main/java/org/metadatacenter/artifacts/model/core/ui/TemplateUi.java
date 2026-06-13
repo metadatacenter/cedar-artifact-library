@@ -51,7 +51,7 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
 
     private Builder(TemplateUi templateUi)
     {
-      this.order = List.copyOf(templateUi.order());
+      this.order = new ArrayList<>(templateUi.order());
       this.propertyLabels = new LinkedHashMap<>(templateUi.propertyLabels());
       this.propertyDescriptions = new LinkedHashMap<>(templateUi.propertyDescriptions());
       this.header = templateUi.header();
@@ -96,6 +96,21 @@ public non-sealed interface TemplateUi extends Ui, ParentArtifactUi
         throw new IllegalArgumentException("Duplicate property description field " + fieldKey + " passed to " + this.getClass().getName());
 
       this.propertyDescriptions.put(fieldKey, propertyDescription);
+      return this;
+    }
+
+    public Builder withoutOrder(String fieldKey) {
+      this.order.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyLabel(String fieldKey) {
+      this.propertyLabels.remove(fieldKey);
+      return this;
+    }
+
+    public Builder withoutPropertyDescription(String fieldKey) {
+      this.propertyDescriptions.remove(fieldKey);
       return this;
     }
 

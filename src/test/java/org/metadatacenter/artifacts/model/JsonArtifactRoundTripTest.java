@@ -6,9 +6,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -26,8 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class JsonArtifactRoundTripTest
@@ -37,7 +36,7 @@ public class JsonArtifactRoundTripTest
   private ObjectMapper mapper;
   private ModelValidator cedarModelValidator;
 
-  @Before public void setUp()
+  @BeforeEach public void setUp()
   {
     artifactReader = new JsonArtifactReader();
     jsonArtifactRenderer = new JsonArtifactRenderer();
@@ -82,6 +81,30 @@ public class JsonArtifactRoundTripTest
       .withNumericType(numericType).withMinValue(minValue).withMaxValue(maxValue).build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+  }
+
+  @Test public void testRoundTripNumericFieldWithDoubleDefault()
+  {
+    // Exercises the string-encoded numeric defaultValue path through both the renderer
+    // (which must produce a string for the CEDAR validator) and the reader (which must
+    // re-hydrate a NumericDefaultValue when the enclosing field input type is NUMERIC).
+    NumericField original = NumericField.builder().withName("Percent")
+      .withNumericType(XsdNumericDatatype.DOUBLE)
+      .withMinValue(0.0).withMaxValue(100.0)
+      .withDefaultValue(42.5).build();
+
+    testRoundTripFieldSchemaArtifact(original);
+  }
+
+  @Test public void testRoundTripNumericFieldWithIntegerDefault()
+  {
+    // Use LONG: XsdNumericDatatype.INT and INTEGER both serialize as "xsd:int" so
+    // fromString cannot distinguish them on read-back; LONG has a unique text.
+    NumericField original = NumericField.builder().withName("Count")
+      .withNumericType(XsdNumericDatatype.LONG)
+      .withDefaultValue(7).build();
+
+    testRoundTripFieldSchemaArtifact(original);
   }
 
   @Test public void testRoundTripTemporalField()
@@ -314,8 +337,7 @@ public class JsonArtifactRoundTripTest
 
   // Can add attribute-value to literalFieldUIContent.json in meta model but then it complains about missing
   // valueConstraints
-  @Ignore // Fix standalone attribute-value field
-  @Test public void testRoundTripAttributeValueField()
+    @Test public void testRoundTripAttributeValueField()
   {
     String name = "Field name";
     String description = "Field description";

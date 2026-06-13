@@ -11,7 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFieldBuilder,
+public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchemaArtifactBuilder<SELF>>
+  permits TextField.TextFieldBuilder,
     TextAreaField.TextAreaFieldBuilder, TemporalField.TemporalFieldBuilder,
     RadioField.RadioFieldBuilder, PhoneNumberField.PhoneNumberFieldBuilder,
     NumericField.NumericFieldBuilder, ListField.ListFieldBuilder,
@@ -23,6 +24,10 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     LinkField.LinkFieldBuilder, RorField.RorFieldBuilder, OrcidField.OrcidFieldBuilder,
     PfasField.PfasFieldBuilder, RridField.RridFieldBuilder, PubMedField.PubMedFieldBuilder,
     NihGrantIdField.NihGrantIdFieldBuilder, DoiField.DoiFieldBuilder {
+
+  @SuppressWarnings("unchecked")
+  protected SELF self() { return (SELF) this; }
+
   protected LinkedHashMap<String, URI> jsonLdContext;
   protected List<URI> jsonLdTypes = new ArrayList<>();
   protected Optional<URI> jsonLdId = Optional.empty();
@@ -37,7 +42,7 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<String> identifier = Optional.empty();
   protected Optional<String> preferredLabel = Optional.empty();
   protected List<String> alternateLabels = Collections.emptyList();
-  protected Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO Put 0.0.1. in ModelNodeNames
+  protected Optional<Version> version = Optional.of(Version.DEFAULT);
   protected Optional<Status> status = Optional.of(Status.DRAFT);
   protected Optional<URI> previousVersion = Optional.empty();
   protected Optional<URI> derivedFrom = Optional.empty();
@@ -51,55 +56,55 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
   protected Optional<Annotations> annotations = Optional.empty();
 
   static public FieldSchemaArtifactBuilder builder(FieldSchemaArtifact fieldSchemaArtifact) {
-    // TODO Use typesafe switch when available
-    if (fieldSchemaArtifact instanceof TextField) {
-      return new TextField.TextFieldBuilder(fieldSchemaArtifact.asTextField());
-    } else if (fieldSchemaArtifact instanceof TextAreaField) {
-      return new TextAreaField.TextAreaFieldBuilder(fieldSchemaArtifact.asTextAreaField());
-    } else if (fieldSchemaArtifact instanceof TemporalField) {
-      return new TemporalField.TemporalFieldBuilder(fieldSchemaArtifact.asTemporalField());
-    } else if (fieldSchemaArtifact instanceof RadioField) {
-      return new RadioField.RadioFieldBuilder(fieldSchemaArtifact.asRadioField());
-    } else if (fieldSchemaArtifact instanceof PhoneNumberField) {
-      return new PhoneNumberField.PhoneNumberFieldBuilder(fieldSchemaArtifact.asPhoneNumberField());
-    } else if (fieldSchemaArtifact instanceof NumericField) {
-      return new NumericField.NumericFieldBuilder(fieldSchemaArtifact.asNumericField());
-    } else if (fieldSchemaArtifact instanceof ListField) {
-      return new ListField.ListFieldBuilder(fieldSchemaArtifact.asListField());
-    } else if (fieldSchemaArtifact instanceof LinkField) {
-      return new LinkField.LinkFieldBuilder(fieldSchemaArtifact.asLinkField());
-    } else if (fieldSchemaArtifact instanceof EmailField) {
-      return new EmailField.EmailFieldBuilder(fieldSchemaArtifact.asEmailField());
-    } else if (fieldSchemaArtifact instanceof ControlledTermField) {
-      return new ControlledTermField.ControlledTermFieldBuilder(fieldSchemaArtifact.asControlledTermField());
-    } else if (fieldSchemaArtifact instanceof CheckboxField) {
-      return new CheckboxField.CheckboxFieldBuilder(fieldSchemaArtifact.asCheckboxField());
-    } else if (fieldSchemaArtifact instanceof AttributeValueField) {
-      return new AttributeValueField.AttributeValueFieldBuilder(fieldSchemaArtifact.asAttributeValueField());
-    } else if (fieldSchemaArtifact instanceof PageBreakField) {
-      return new PageBreakField.PageBreakFieldBuilder(fieldSchemaArtifact.asPageBreakField());
-    } else if (fieldSchemaArtifact instanceof SectionBreakField) {
-      return new SectionBreakField.SectionBreakFieldBuilder(fieldSchemaArtifact.asSectionBreakField());
-    } else if (fieldSchemaArtifact instanceof ImageField) {
-      return new ImageField.ImageFieldBuilder(fieldSchemaArtifact.asImageField());
-    } else if (fieldSchemaArtifact instanceof YouTubeField) {
-      return new YouTubeField.YouTubeFieldBuilder(fieldSchemaArtifact.asYouTubeField());
-    } else if (fieldSchemaArtifact instanceof RichTextField) {
-      return new RichTextField.RichTextFieldBuilder(fieldSchemaArtifact.asRichTextField());
-    } else if (fieldSchemaArtifact instanceof RorField) {
-      return new RorField.RorFieldBuilder(fieldSchemaArtifact.asRorField());
-    } else if (fieldSchemaArtifact instanceof OrcidField) {
-      return new OrcidField.OrcidFieldBuilder(fieldSchemaArtifact.asOrcidField());
-    } else if (fieldSchemaArtifact instanceof PfasField) {
-      return new PfasField.PfasFieldBuilder(fieldSchemaArtifact.asPfasField());
-    } else if (fieldSchemaArtifact instanceof RridField) {
-      return new RridField.RridFieldBuilder(fieldSchemaArtifact.asRridField());
-    } else if (fieldSchemaArtifact instanceof PubMedField) {
-      return new PubMedField.PubMedFieldBuilder(fieldSchemaArtifact.asPubMedField());
-    } else if (fieldSchemaArtifact instanceof NihGrantIdField) {
-      return new NihGrantIdField.NihGrantIdFieldBuilder(fieldSchemaArtifact.asNihGrantIdField());
-    } else if (fieldSchemaArtifact instanceof DoiField) {
-      return new DoiField.DoiFieldBuilder(fieldSchemaArtifact.asDoiField());
+    // TODO Use sealed pattern switch when adopted (Java 21+)
+    if (fieldSchemaArtifact instanceof TextField tf) {
+      return new TextField.TextFieldBuilder(tf);
+    } else if (fieldSchemaArtifact instanceof TextAreaField tf) {
+      return new TextAreaField.TextAreaFieldBuilder(tf);
+    } else if (fieldSchemaArtifact instanceof TemporalField tf) {
+      return new TemporalField.TemporalFieldBuilder(tf);
+    } else if (fieldSchemaArtifact instanceof RadioField rf) {
+      return new RadioField.RadioFieldBuilder(rf);
+    } else if (fieldSchemaArtifact instanceof PhoneNumberField pf) {
+      return new PhoneNumberField.PhoneNumberFieldBuilder(pf);
+    } else if (fieldSchemaArtifact instanceof NumericField nf) {
+      return new NumericField.NumericFieldBuilder(nf);
+    } else if (fieldSchemaArtifact instanceof ListField lf) {
+      return new ListField.ListFieldBuilder(lf);
+    } else if (fieldSchemaArtifact instanceof LinkField lf) {
+      return new LinkField.LinkFieldBuilder(lf);
+    } else if (fieldSchemaArtifact instanceof EmailField ef) {
+      return new EmailField.EmailFieldBuilder(ef);
+    } else if (fieldSchemaArtifact instanceof ControlledTermField ctf) {
+      return new ControlledTermField.ControlledTermFieldBuilder(ctf);
+    } else if (fieldSchemaArtifact instanceof CheckboxField cf) {
+      return new CheckboxField.CheckboxFieldBuilder(cf);
+    } else if (fieldSchemaArtifact instanceof AttributeValueField avf) {
+      return new AttributeValueField.AttributeValueFieldBuilder(avf);
+    } else if (fieldSchemaArtifact instanceof PageBreakField pf) {
+      return new PageBreakField.PageBreakFieldBuilder(pf);
+    } else if (fieldSchemaArtifact instanceof SectionBreakField sf) {
+      return new SectionBreakField.SectionBreakFieldBuilder(sf);
+    } else if (fieldSchemaArtifact instanceof ImageField imgf) {
+      return new ImageField.ImageFieldBuilder(imgf);
+    } else if (fieldSchemaArtifact instanceof YouTubeField yf) {
+      return new YouTubeField.YouTubeFieldBuilder(yf);
+    } else if (fieldSchemaArtifact instanceof RichTextField rtf) {
+      return new RichTextField.RichTextFieldBuilder(rtf);
+    } else if (fieldSchemaArtifact instanceof RorField rf) {
+      return new RorField.RorFieldBuilder(rf);
+    } else if (fieldSchemaArtifact instanceof OrcidField of) {
+      return new OrcidField.OrcidFieldBuilder(of);
+    } else if (fieldSchemaArtifact instanceof PfasField pf) {
+      return new PfasField.PfasFieldBuilder(pf);
+    } else if (fieldSchemaArtifact instanceof RridField rf) {
+      return new RridField.RridFieldBuilder(rf);
+    } else if (fieldSchemaArtifact instanceof PubMedField pmf) {
+      return new PubMedField.PubMedFieldBuilder(pmf);
+    } else if (fieldSchemaArtifact instanceof NihGrantIdField ngf) {
+      return new NihGrantIdField.NihGrantIdFieldBuilder(ngf);
+    } else if (fieldSchemaArtifact instanceof DoiField df) {
+      return new DoiField.DoiFieldBuilder(df);
     } else {
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
     }
@@ -140,40 +145,40 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
     this.annotations = fieldSchemaArtifact.annotations();
   }
 
-  public abstract FieldSchemaArtifactBuilder withRequiredValue(boolean required);
+  public abstract SELF withRequiredValue(boolean required);
 
-  public abstract FieldSchemaArtifactBuilder withRecommendedValue(boolean recommendedValue);
+  public abstract SELF withRecommendedValue(boolean recommendedValue);
 
-  public abstract FieldSchemaArtifactBuilder withContinuePreviousLine(boolean continuePreviousLine);
+  public abstract SELF withContinuePreviousLine(boolean continuePreviousLine);
 
-  public abstract FieldSchemaArtifactBuilder withHidden(boolean hidden);
+  public abstract SELF withHidden(boolean hidden);
 
-  public abstract FieldSchemaArtifactBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled);
+  public abstract SELF withValueRecommendationEnabled(boolean valueRecommendationEnabled);
 
-  protected FieldSchemaArtifactBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext) {
+  public SELF withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext) {
     if (jsonLdContext == null) {
       throw new IllegalArgumentException("null JSON-LD @context passed to builder");
     }
 
     this.jsonLdContext = new LinkedHashMap<>(jsonLdContext);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withJsonLdType(URI jsonLdType) {
+  public SELF withJsonLdType(URI jsonLdType) {
     if (jsonLdType == null) {
       throw new IllegalArgumentException("null JSON-LD @type passed to builder");
     }
 
     this.jsonLdTypes.add(jsonLdType);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withJsonLdId(URI jsonLdId) {
+  public SELF withJsonLdId(URI jsonLdId) {
     this.jsonLdId = Optional.ofNullable(jsonLdId);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withName(String name) {
+  public SELF withName(String name) {
     if (name == null) {
       throw new IllegalArgumentException("null name passed to builder");
     }
@@ -188,157 +193,157 @@ public abstract sealed class FieldSchemaArtifactBuilder permits TextField.TextFi
       this.internalDescription = name + " field schema generated by the CEDAR Artifact Library";
     }
 
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withDescription(String description) {
+  public SELF withDescription(String description) {
     if (description == null) {
       throw new IllegalArgumentException("null description passed to builder");
     }
 
     this.description = description;
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withIdentifier(String identifier) {
+  public SELF withIdentifier(String identifier) {
     if (identifier == null) {
       throw new IllegalArgumentException("null identifier passed to builder");
     }
 
     this.identifier = Optional.ofNullable(identifier);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withPreferredLabel(String preferredLabel) {
+  public SELF withPreferredLabel(String preferredLabel) {
     if (preferredLabel == null) {
       throw new IllegalArgumentException("null preferred label passed to builder");
     }
 
     this.preferredLabel = Optional.ofNullable(preferredLabel);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withAlternateLabels(List<String> alternateLabels) {
+  public SELF withAlternateLabels(List<String> alternateLabels) {
     if (alternateLabels == null) {
       throw new IllegalArgumentException("null alternate labels passed to builder");
     }
 
     this.alternateLabels = alternateLabels;
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withVersion(Version version) {
+  public SELF withVersion(Version version) {
     if (version == null) {
       throw new IllegalArgumentException("null artifact version passed to builder");
     }
 
     this.version = Optional.ofNullable(version);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withStatus(Status status) {
+  public SELF withStatus(Status status) {
     this.status = Optional.ofNullable(status);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withCreatedBy(URI createdBy) {
+  public SELF withCreatedBy(URI createdBy) {
     this.createdBy = Optional.ofNullable(createdBy);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withModifiedBy(URI modifiedBy) {
+  public SELF withModifiedBy(URI modifiedBy) {
     this.modifiedBy = Optional.ofNullable(modifiedBy);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withCreatedOn(OffsetDateTime createdOn) {
+  public SELF withCreatedOn(OffsetDateTime createdOn) {
     this.createdOn = Optional.ofNullable(createdOn);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn) {
+  public SELF withLastUpdatedOn(OffsetDateTime lastUpdatedOn) {
     this.lastUpdatedOn = Optional.ofNullable(lastUpdatedOn);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withPreviousVersion(URI previousVersion) {
+  public SELF withPreviousVersion(URI previousVersion) {
     this.previousVersion = Optional.ofNullable(previousVersion);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withDerivedFrom(URI derivedFrom) {
+  public SELF withDerivedFrom(URI derivedFrom) {
     this.derivedFrom = Optional.ofNullable(derivedFrom);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withIsMultiple(boolean isMultiple) {
+  public SELF withIsMultiple(boolean isMultiple) {
     this.isMultiple = isMultiple;
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withMinItems(Integer minItems) {
+  public SELF withMinItems(Integer minItems) {
     this.minItems = Optional.ofNullable(minItems);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withMaxItems(Integer maxItems) {
+  public SELF withMaxItems(Integer maxItems) {
     this.maxItems = Optional.ofNullable(maxItems);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withPropertyUri(URI propertyUri) {
+  public SELF withPropertyUri(URI propertyUri) {
     this.propertyUri = Optional.ofNullable(propertyUri);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withLanguage(String language) {
+  public SELF withLanguage(String language) {
     this.language = Optional.ofNullable(language);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withInternalName(String internalName) {
+  public SELF withInternalName(String internalName) {
     if (internalName == null) {
       throw new IllegalArgumentException("null JSON Schema title passed to builder");
     }
 
     this.internalName = internalName;
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withInternalDescription(String internalDescription) {
+  public SELF withInternalDescription(String internalDescription) {
     if (internalDescription == null) {
       throw new IllegalArgumentException("null JSON Schema description passed to builder");
     }
 
     this.internalDescription = internalDescription;
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withAnnotations(Annotations annotations) {
+  public SELF withAnnotations(Annotations annotations) {
     if (annotations == null) {
       throw new IllegalArgumentException("null annotations passed to builder");
     }
 
     this.annotations = Optional.ofNullable(annotations);
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withFieldUi(FieldUi fieldUi) {
+  public SELF withFieldUi(FieldUi fieldUi) {
     if (fieldUi == null) {
       throw new IllegalArgumentException("null field UI passed to builder");
     }
 
     this.fieldUi = fieldUi;
 
-    return this;
+    return self();
   }
 
-  protected FieldSchemaArtifactBuilder withValueConstraints(ValueConstraints valueConstraints) {
+  public SELF withValueConstraints(ValueConstraints valueConstraints) {
     if (valueConstraints == null) {
       throw new IllegalArgumentException("null value constraints passed to builder");
     }
 
     this.valueConstraints = Optional.ofNullable(valueConstraints);
-    return this;
+    return self();
   }
 }

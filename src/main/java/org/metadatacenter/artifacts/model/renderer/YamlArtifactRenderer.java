@@ -7,6 +7,7 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -20,7 +21,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private final boolean isCompact;
   private final DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   private final TerminologyServerClient terminologyServerClient;
-  private final Version modelVersion = Version.fromString("1.6.0");
+  private final Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
 
   public YamlArtifactRenderer(boolean isCompact, TerminologyServerClient terminologyServerClient)
   {
@@ -81,6 +82,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
+    if (templateSchemaArtifact.instanceJsonLdType().isPresent())
+      rendering.put(INSTANCE_TYPE, templateSchemaArtifact.instanceJsonLdType().get().toString());
+
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
 
@@ -126,6 +130,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
+    if (elementSchemaArtifact.instanceJsonLdType().isPresent())
+      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
+
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (elementSchemaArtifact.hasChildren())
@@ -139,6 +146,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(elementKey, elementSchemaArtifact,
       ELEMENT);
+
+    if (elementSchemaArtifact.instanceJsonLdType().isPresent())
+      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
@@ -186,6 +196,48 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       renderFieldTypeName(fieldSchemaArtifact));
 
     addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
+
+    // A standalone field has no parent, which is where a nested child's `configuration:`
+    // block is normally rendered. Emit the field-level UI flags and the field-own
+    // configuration entries here so a top-level field round-trips losslessly through the
+    // YAML reader/renderer pair.
+    addStandaloneFieldUiRendering(fieldSchemaArtifact, rendering);
+
+    LinkedHashMap<String, Object> configuration = renderStandaloneFieldConfiguration(fieldSchemaArtifact);
+    if (!configuration.isEmpty())
+      rendering.put(CONFIGURATION, configuration);
+
+    return rendering;
+  }
+
+  /**
+   * The field-own {@code configuration:} entries for a standalone field — the subset of
+   * {@link #renderFieldConfiguration} that does not depend on a parent (no property-IRI
+   * mapping, no parent label/description overrides). The standalone reader consumes exactly
+   * these keys from a top-level {@code configuration:} block.
+   */
+  private LinkedHashMap<String, Object> renderStandaloneFieldConfiguration(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
+      if (fieldSchemaArtifact.valueConstraints().get().requiredValue())
+        rendering.put(REQUIRED, true);
+      if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
+        rendering.put(RECOMMENDED, true);
+    }
+
+    if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MULTIPLE, true);
+
+    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
+
+    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
+      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     return rendering;
   }
@@ -302,14 +354,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     rendering.put(TYPE, INSTANCE);
 
     if (templateInstanceArtifact.name().isEmpty())
-      throw new RuntimeException("template instance must have a name");
+      throw new ArtifactRenderException("template instance must have a name");
     else
       rendering.put(NAME, templateInstanceArtifact.name().get());
 
     if (templateInstanceArtifact.description().isPresent() && !templateInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description().get());
 
-    if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
+    // The id is emitted in both compact and full forms so the instance round-trips.
+    if (templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
@@ -348,12 +401,40 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
-  private LinkedHashMap<String, Object> renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  /**
+   * Render a standalone element instance ({@code type: element-instance}). Unlike the
+   * nested form — which omits an all-empty element entirely, since its presence is
+   * reconstructable from the template — the standalone document always carries its
+   * {@code type} discriminator plus any name / description / id, so an empty skeleton
+   * still round-trips as a document.
+   */
+  public LinkedHashMap<String, Object> renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
+    rendering.put(TYPE, ELEMENT_INSTANCE);
+
+    if (elementInstanceArtifact.name().isPresent())
+      rendering.put(NAME, elementInstanceArtifact.name().get());
+
+    if (elementInstanceArtifact.description().isPresent() && !elementInstanceArtifact.description().get().isEmpty())
+      rendering.put(DESCRIPTION, elementInstanceArtifact.description().get());
+
+    // The id is emitted in both compact and full forms so the instance round-trips.
+    if (elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
+
+    if (!isCompact && elementInstanceArtifact.createdOn().isPresent())
+      rendering.put(CREATED_ON, renderOffsetDateTime(elementInstanceArtifact.createdOn().get()));
+
+    if (!isCompact && elementInstanceArtifact.createdBy().isPresent())
+      rendering.put(CREATED_BY, elementInstanceArtifact.createdBy().get().toString());
+
+    if (!isCompact && elementInstanceArtifact.lastUpdatedOn().isPresent())
+      rendering.put(MODIFIED_ON, renderOffsetDateTime(elementInstanceArtifact.lastUpdatedOn().get()));
+
+    if (!isCompact && elementInstanceArtifact.modifiedBy().isPresent())
+      rendering.put(MODIFIED_BY, elementInstanceArtifact.modifiedBy().get().toString());
 
     LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
       elementInstanceArtifact);
@@ -362,14 +443,47 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
-      String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
-      Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
-
-      if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
-        rendering.put(attributeValueFieldInstanceGroupKey,
-          renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
-      }
+      Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
+      if (!fields.isEmpty())
+        rendering.put(attributeValueFieldInstanceGroup.getKey(),
+          renderAttributeValueFieldInstanceGroupFields(fields));
     }
+
+    return rendering;
+  }
+
+  private LinkedHashMap<String, Object> renderNestedElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
+
+    LinkedHashMap<String, Object> childInstanceArtifactsRendering = renderChildInstanceArtifacts(
+      elementInstanceArtifact);
+
+    LinkedHashMap<String, Object> attributeValueGroups = new LinkedHashMap<>();
+    for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
+      .entrySet()) {
+      Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
+      if (!fields.isEmpty())
+        attributeValueGroups.put(attributeValueFieldInstanceGroup.getKey(),
+          renderAttributeValueFieldInstanceGroupFields(fields));
+    }
+
+    // An element with no set descendant field and no attribute-value groups is an unset slot:
+    // omit it entirely (not even a bare `id:`), exactly as an unset field is omitted. Emitting
+    // only an `id:` would both reintroduce noise and be ambiguous with a field on read (a field
+    // is a map with no `children:` key). The element's presence — and a fresh @id — are
+    // reconstructable from the template at the JSON boundary.
+    if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty())
+      return rendering;
+
+    // The id is emitted in both compact and full forms so the instance round-trips.
+    if (elementInstanceArtifact.jsonLdId().isPresent())
+      rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
+
+    if (!childInstanceArtifactsRendering.isEmpty())
+      rendering.put(CHILDREN, childInstanceArtifactsRendering);
+
+    rendering.putAll(attributeValueGroups);
 
     return rendering;
   }
@@ -384,13 +498,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           .get(childKey);
         LinkedHashMap<String, Object> fieldInstanceArtifactRendering = renderFieldInstanceArtifact(
           fieldInstanceArtifact);
+        // An unset single field renders empty and is omitted from YAML entirely (no `{}`); its
+        // presence is reconstructable from the template at the JSON boundary. Only fields that
+        // carry a value/id/label are emitted.
         if (!fieldInstanceArtifactRendering.isEmpty())
           childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactRendering);
       } else if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
         if (parentInstanceArtifact.singleInstanceElementInstances().containsKey(childKey)) {
           ElementInstanceArtifact elementInstanceArtifact = parentInstanceArtifact.singleInstanceElementInstances()
             .get(childKey);
-          LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(
+          LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderNestedElementInstanceArtifact(
             elementInstanceArtifact);
 
           if (!elementInstanceArtifactRendering.isEmpty())
@@ -400,6 +517,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         List<LinkedHashMap<String, Object>> fieldInstanceArtifactsRendering = renderFieldInstanceArtifacts(
           parentInstanceArtifact.multiInstanceFieldInstances().get(childKey));
 
+        // An empty multi-instance field is an unset slot: omit it entirely (no `[]`), in both
+        // modes, exactly as an unset single field is omitted. Its presence is reconstructable
+        // from the template at the JSON boundary.
         if (!fieldInstanceArtifactsRendering.isEmpty()) {
           childInstanceArtifactsRendering.put(childKey, fieldInstanceArtifactsRendering);
         }
@@ -407,6 +527,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         List<LinkedHashMap<String, Object>> elementInstanceArtifactsRendering = renderElementInstanceArtifacts(
           parentInstanceArtifact.multiInstanceElementInstances().get(childKey));
 
+        // An empty multi-element array stays elided: an empty YAML list is field/element
+        // ambiguous on read, so we only round-trip empty multi-instance *field* arrays (above),
+        // which the reader can default to a field. Empty multi-element slots are reconstructable
+        // from the schema.
         if (!elementInstanceArtifactsRendering.isEmpty()) {
           childInstanceArtifactsRendering.put(childKey, elementInstanceArtifactsRendering);
         }
@@ -423,10 +547,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (ElementInstanceArtifact elementInstanceArtifact : elementInstanceArtifacts) {
 
-      LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderElementInstanceArtifact(
+      LinkedHashMap<String, Object> elementInstanceArtifactRendering = renderNestedElementInstanceArtifact(
         elementInstanceArtifact);
-      if (!elementInstanceArtifactRendering.isEmpty())
-        elementInstanceArtifactsRendering.add(elementInstanceArtifactRendering);
+      // An all-empty entry cannot simply be omitted here: unlike a single-instance element —
+      // whose presence is reconstructable from the template — the entry count of a
+      // multi-instance list is information (an appended-but-not-yet-filled element instance).
+      // Nor can it render as a bare `id:` map, which is read as a field. Emit a typed stub
+      // instead; the reader classifies on the discriminator.
+      if (elementInstanceArtifactRendering.isEmpty()) {
+        elementInstanceArtifactRendering.put(TYPE, ELEMENT_INSTANCE);
+        if (elementInstanceArtifact.jsonLdId().isPresent())
+          elementInstanceArtifactRendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
+      }
+      elementInstanceArtifactsRendering.add(elementInstanceArtifactRendering);
     }
 
     return elementInstanceArtifactsRendering;
@@ -451,6 +584,21 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> fieldInstanceArtifactRendering = new LinkedHashMap<>();
 
+    // An unset field instance — no @value, no @id, no label/notation/prefLabel — is omitted
+    // from YAML entirely: it renders to an empty map here and the parent renderer elides the
+    // child. No `{}`, no `value: null`, and not even a bare datatype seed (the datatype is
+    // recoverable from the schema). The field's presence in the instance is reconstructable
+    // from the template at the JSON boundary, so the YAML carries only fields that hold a
+    // value. This applies to both compact and expanded output.
+    boolean hasValue = fieldInstanceArtifact.jsonLdValue() != null
+      && fieldInstanceArtifact.jsonLdValue().isPresent();
+    boolean hasId = fieldInstanceArtifact.jsonLdId().isPresent();
+    boolean hasLabel = fieldInstanceArtifact.label().isPresent()
+      || fieldInstanceArtifact.preferredLabel().isPresent()
+      || fieldInstanceArtifact.notation().isPresent();
+    if (!hasValue && !hasId && !hasLabel)
+      return fieldInstanceArtifactRendering;
+
     if (!fieldInstanceArtifact.jsonLdTypes().isEmpty())
       fieldInstanceArtifactRendering.put(DATATYPE,
         renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
@@ -458,10 +606,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldInstanceArtifact.jsonLdId().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
-    if (fieldInstanceArtifact.jsonLdValue() == null)
-      fieldInstanceArtifactRendering.put(VALUE, null);
-    else if (fieldInstanceArtifact.jsonLdValue().isPresent())
-      fieldInstanceArtifactRendering.put(VALUE, fieldInstanceArtifact.jsonLdValue().get());
+    // The value is emitted only when present (an unset slot returned early above, so this is
+    // never a `value: null`).
+    if (hasValue) {
+      // Same compact-YAML rule as numeric defaults: when the field's declared @type is
+      // an XSD numeric datatype and the stringified value parses cleanly as a number,
+      // emit a bare number for readable output. Pathological forms (leading zeros,
+      // exponential, etc.) stay String-typed so the YAML serializer keeps them quoted.
+      String raw = fieldInstanceArtifact.jsonLdValue().get();
+      Object rendered = isNumericInstance(fieldInstanceArtifact)
+        ? renderNumericLiteralForYaml(raw)
+        : raw;
+      fieldInstanceArtifactRendering.put(VALUE, rendered);
+    }
 
     if (fieldInstanceArtifact.label().isPresent())
       fieldInstanceArtifactRendering.put(LABEL, fieldInstanceArtifact.label().get());
@@ -532,10 +689,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldSchemaArtifact.fieldUi().isTemporal()) {
       TemporalFieldUi templateUi = fieldSchemaArtifact.fieldUi().asTemporalFieldUi();
-      rendering.put(GRANULARITY, templateUi.temporalGranularity());
+      rendering.put(GRANULARITY, templateUi.temporalGranularity().toString());
       if (!templateUi.temporalGranularity().isYear() && !templateUi.temporalGranularity().isMonth()
-        && !templateUi.temporalGranularity().isDay()) {
-        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat());
+        && !templateUi.temporalGranularity().isDay() && templateUi.inputTimeFormat().isPresent()) {
+        rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat().get().toString());
       }
       if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
         rendering.put(INPUT_TIME_ZONE, true);
@@ -554,6 +711,37 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (fieldSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
+  }
+
+  /**
+   * Emit the field-level UI flags that a nested child carries in its {@code configuration:}
+   * block but that a top-level (standalone) field would otherwise drop on a YAML round trip:
+   * {@code hidden}, {@code continuePreviousLine}, {@code valueRecommendation}, and the
+   * static-field {@code width} / {@code height}. The reader accepts all of these at the field
+   * level (see {@code YamlArtifactReader.readFieldUi}). Parent-relative settings (required,
+   * recommended, multiple, min/maxItems, override labels, propertyIri) are intentionally
+   * excluded — they are only meaningful for a field embedded in a parent.
+   */
+  private void addStandaloneFieldUiRendering(FieldSchemaArtifact fieldSchemaArtifact,
+    LinkedHashMap<String, Object> rendering)
+  {
+    if (fieldSchemaArtifact.fieldUi().hidden())
+      rendering.put(HIDDEN, true);
+
+    if (fieldSchemaArtifact.fieldUi().continuePreviousLine())
+      rendering.put(CONTINUE_PREVIOUS_LINE, true);
+
+    if (fieldSchemaArtifact.fieldUi().valueRecommendationEnabled())
+      rendering.put(VALUE_RECOMMENDATION, true);
+
+    if (fieldSchemaArtifact.fieldUi().isStatic()) {
+      StaticFieldUi staticFieldUi = fieldSchemaArtifact.fieldUi().asStaticFieldUi();
+      if (staticFieldUi.width().isPresent())
+        rendering.put(WIDTH, staticFieldUi.width().get());
+
+      if (staticFieldUi.height().isPresent())
+        rendering.put(HEIGHT, staticFieldUi.height().get());
+    }
   }
 
   /**
@@ -827,9 +1015,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           actionRendering.put(ACTION, renderActionName(action.action()));
           if (action.to().isPresent())
             actionRendering.put(ACTION_TO, action.to().get());
-          actionRendering.put(TERM_IRI, action.termUri());
+          actionRendering.put(TERM_IRI, action.termUri().toString());
           if (action.sourceUri().isPresent())
-            actionRendering.put(SOURCE_IRI, action.sourceUri().get());
+            actionRendering.put(SOURCE_IRI, action.sourceUri().get().toString());
           actionRendering.put(SOURCE_ACRONYM, action.source());
 
           // TODO Use typesafe switch when available
@@ -854,11 +1042,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // TODO Use typesafe switch when available
     if (valueConstraints instanceof NumericValueConstraints) {
       NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
-      rendering.put(DATATYPE, numericValueConstraints.numberType());
+      rendering.put(DATATYPE, numericValueConstraints.numberType().toString());
     } else if (valueConstraints instanceof TemporalValueConstraints) {
       TemporalValueConstraints temporalValueConstraints = (TemporalValueConstraints)valueConstraints;
-      rendering.put(DATATYPE, temporalValueConstraints.temporalType());
-      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity());
+      rendering.put(DATATYPE, temporalValueConstraints.temporalType().toString());
+      rendering.put(GRANULARITY, fieldUi.asTemporalFieldUi().temporalGranularity().toString());
     } else if (valueConstraints instanceof ControlledTermValueConstraints)
       rendering.put(DATATYPE, IRI);
 
@@ -870,14 +1058,26 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
           rendering.put(DEFAULT, textDefaultValue.value());
       } else if (defaultValue.isNumericDefaultValue()) {
         NumericDefaultValue numericDefaultValue = defaultValue.asNumericDefaultValue();
-        rendering.put(DEFAULT, numericDefaultValue.value());
+        // Compact YAML aesthetic: render plain numeric defaults unquoted (e.g.
+        // `default: 42`) and reserve quotes for values whose YAML auto-typing would
+        // change them on a subsequent read (leading-zero forms like '010', exponential
+        // notation like '1e3', etc.). The library's reader accepts either form and
+        // normalises to canonical string at the model boundary, so the round trip is
+        // safe in both directions; this only affects display.
+        rendering.put(DEFAULT, renderNumericLiteralForYaml(numericDefaultValue.value().toString()));
       } else if (defaultValue.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = defaultValue.asControlledTermDefaultValue();
         LinkedHashMap<String, Object> defaultRendering = new LinkedHashMap<>();
-        defaultRendering.put(DEFAULT_VALUE, controlledTermDefaultValue.value().getLeft());
+        defaultRendering.put(DEFAULT_VALUE, controlledTermDefaultValue.value().getLeft().toString());
         defaultRendering.put(DEFAULT_LABEL, controlledTermDefaultValue.value().getRight());
 
         rendering.put(DEFAULT, defaultRendering);
+      } else if (defaultValue.isLinkDefaultValue()) {
+        // Link / ext-* identifier default: a bare URI under `default:` (the reader reads it
+        // back via readLinkDefaultValue).
+        rendering.put(DEFAULT, defaultValue.asLinkDefaultValue().value().toString());
+      } else if (defaultValue.isTemporalDefaultValue()) {
+        rendering.put(DEFAULT, defaultValue.asTemporalDefaultValue().value());
       }
     }
 
@@ -998,7 +1198,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(RECOMMENDED, true);
     }
 
-    if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent())
+    // Attribute-value and static fields don't get a propertyUri mapping in the JSON
+    // @context (see ParentSchemaArtifact.getChildPropertyUris which skips them), so a
+    // propertyUri carried in their YAML configuration would be lost on the JSON round
+    // trip. Emit only for field kinds where the JSON serialization actually preserves it.
+    if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent()
+      && !fieldSchemaArtifact.isAttributeValue() && !fieldSchemaArtifact.isStatic())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldKey)) {
@@ -1080,8 +1285,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
-      rendering.put(ID, schemaArtifact.jsonLdId().get());
+    // The id is emitted whenever the artifact has one — top-level artifacts and nested
+    // children alike, in both compact and full forms. It identifies the artifact itself, so
+    // unlike the provenance/version fields below the compact form keeps it. A nested child is
+    // not required to have an id (the reader never demands one), but when it does the renderer
+    // preserves it so a JSON template carrying child ids survives a YAML round trip.
+    if (schemaArtifact.jsonLdId().isPresent())
+      rendering.put(ID, schemaArtifact.jsonLdId().get().toString());
 
     if (!isCompact && schemaArtifact.status().isPresent())
       rendering.put(STATUS, renderStatus(schemaArtifact.status().get()));
@@ -1120,7 +1330,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     case PUBLISHED:
       return PUBLISHED_STATUS;
     default:
-      throw new RuntimeException("Unknown status " + status);
+      throw new ArtifactRenderException("Unknown status " + status);
     }
   }
 
@@ -1133,7 +1343,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     case DELETE:
       return DELETE_ACTION;
     default:
-      throw new RuntimeException("Unknown action type " + actionType);
+      throw new ArtifactRenderException("Unknown action type " + actionType);
     }
   }
 
@@ -1195,8 +1405,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       case YOUTUBE:
         return STATIC_YOUTUBE_FIELD;
       default:
-        throw new RuntimeException("Unknown field input type " + fieldSchemaArtifact.fieldUi().inputType() + " for field "
-            + fieldSchemaArtifact.name());
+        throw new ArtifactRenderException(
+            "Unknown field input type " + fieldSchemaArtifact.fieldUi().inputType() + " for field "
+                + fieldSchemaArtifact.name());
     }
   }
 
@@ -1242,6 +1453,57 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
     return offsetDateTime.format(datetimeFormatter);
+  }
+
+  /** Set of XSD URIs that count as numeric for unquoting purposes in instance values. */
+  private static final Set<URI> XSD_NUMERIC_URIS;
+  static {
+    Set<URI> uris = new HashSet<>();
+    for (XsdNumericDatatype t : XsdNumericDatatype.values()) uris.add(t.toUri());
+    XSD_NUMERIC_URIS = Collections.unmodifiableSet(uris);
+  }
+
+  /** True when the instance's declared @type is an XSD numeric datatype. */
+  private static boolean isNumericInstance(FieldInstanceArtifact fieldInstanceArtifact)
+  {
+    for (URI t : fieldInstanceArtifact.jsonLdTypes())
+      if (XSD_NUMERIC_URIS.contains(t)) return true;
+    return false;
+  }
+
+  /**
+   * Decide how to emit a numeric literal in YAML output.
+   *
+   * <p>Returns the parsed {@link Number} (Long or Double) when the canonical string
+   * representation is round-trip-safe under SnakeYAML's auto-typing — i.e. a bare
+   * integer or a plain decimal with no leading zeros, no exponential notation, no
+   * trailing-dot weirdness. The YAML serializer then emits a bare number, which is
+   * the readable form a human would write.
+   *
+   * <p>Returns the input {@link String} unchanged for everything else. The library's
+   * YAML serializer has {@code ALWAYS_QUOTE_NUMBERS_AS_STRINGS} enabled, so a
+   * String that looks numeric stays quoted in the output — preserving its
+   * string-ness across a subsequent read (which is what the pathological forms
+   * need: a Java String "010" must not round-trip as octal Integer 8).
+   *
+   * <p>The library's reader normalises to a canonical String at the model boundary
+   * either way, so the round trip is correct in both directions.
+   */
+  private static Object renderNumericLiteralForYaml(String canonical)
+  {
+    if (canonical == null) return null;
+    // Plain integer: optional sign, no leading zeros except just "0".
+    if (canonical.matches("-?(0|[1-9]\\d*)")) {
+      try { return Long.parseLong(canonical); }
+      catch (NumberFormatException e) { /* fall through — out of long range */ }
+    }
+    // Plain decimal: digits, dot, digits; no leading zeros on the integer part.
+    if (canonical.matches("-?(0|[1-9]\\d*)\\.\\d+")) {
+      try { return Double.parseDouble(canonical); }
+      catch (NumberFormatException e) { /* fall through */ }
+    }
+    // Anything else stays String-typed and the YAML serializer will quote it.
+    return canonical;
   }
 
   /**
@@ -1379,4 +1641,3 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       return uri.toString();
   }
 }
-

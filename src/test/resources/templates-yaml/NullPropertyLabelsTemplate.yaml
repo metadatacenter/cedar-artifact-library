@@ -1,0 +1,123 @@
+type: template
+name: protocolsMultiForm
+description: Container to hold multiple instances
+id: https://repo.metadatacenter.net/templates/11ef4f0a-aa4d-489b-b938-318f4de76a42
+status: draft
+version: 0.0.1
+modelVersion: 1.6.0
+createdOn: '2017-07-13T12:37:48-07:00'
+createdBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+modifiedOn: '2017-07-13T12:37:48-07:00'
+modifiedBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+children:
+- key: templateType
+  type: text-field
+  name: templateType
+  description: templateType
+  modelVersion: 1.6.0
+  default: single
+  createdOn: '2017-07-13T12:37:48-07:00'
+  createdBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  modifiedOn: '2017-07-13T12:37:48-07:00'
+  modifiedBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  configuration:
+    required: true
+    hidden: true
+    propertyIri: https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-templateType
+- key: fileName
+  type: text-field
+  name: fileName
+  description: fileName
+  modelVersion: 1.6.0
+  default: protocols.txt
+  createdOn: '2017-07-13T12:37:48-07:00'
+  createdBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  modifiedOn: '2017-07-13T12:37:48-07:00'
+  modifiedBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  configuration:
+    required: true
+    hidden: true
+    propertyIri: https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-fileName
+- key: name
+  type: text-field
+  name: name
+  description: name
+  modelVersion: 1.6.0
+  default: protocols
+  createdOn: '2017-07-13T12:37:48-07:00'
+  createdBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  modifiedOn: '2017-07-13T12:37:48-07:00'
+  modifiedBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  configuration:
+    required: true
+    hidden: true
+    propertyIri: https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-name
+- key: data
+  type: element
+  name: protocols
+  description: The protocol template defines and annotates protocol documents that are to be linked to study, subjects, biological samples or experiments.
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2017-07-13T12:37:48-07:00'
+  createdBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  modifiedOn: '2017-07-13T12:37:48-07:00'
+  modifiedBy: https://metadatacenter.org/users/a93ee8cf-d233-4c00-9f7f-3fa64fa018b9
+  children:
+  - key: userDefinedId
+    type: text-field
+    name: User Defined ID
+    description: The protocol user defined ID is an identifier chosen by the data provider to refer to a protocol document. This ID may be referenced by other data records (e.g. study). The user defined ID is not shared.
+    modelVersion: 1.6.0
+    configuration:
+      required: true
+      propertyIri: https://schema.metadatacenter.net/properties/userDefinedID
+  - key: fileName
+    type: text-field
+    name: File Name
+    description: The protocol file name in this column must be an exact spelling match to a file in the ZIP archive that is uploaded. This includes the file extensions which may be hidden depending upon your computer's settings. The file size name limit is 240 characters.
+    modelVersion: 1.6.0
+    configuration:
+      required: true
+      propertyIri: https://schema.metadatacenter.net/properties/fileName
+  - key: name
+    type: text-field
+    name: Name
+    description: The protocol name is not referenced by other data records.
+    modelVersion: 1.6.0
+    configuration:
+      required: true
+      propertyIri: http://purl.obolibrary.org/obo/IAO_0000590
+  - key: description
+    type: text-field
+    name: Description
+    description: The summary is a brief description of the protocol's content.
+    modelVersion: 1.6.0
+    configuration:
+      propertyIri: http://semanticscience.org/resource/SIO_000136
+  - key: type
+    type: single-select-list-field
+    name: Type
+    description: The protocol type uses a preferred list of terms to characterize the protocol's content.
+    modelVersion: 1.6.0
+    values:
+    - label: Assay
+    - label: Bio Sample Preparation
+    - label: Bio Sample Treatment
+    - label: Biomaterial Transformation
+    - label: Clinical
+    - label: Data Processing
+    - label: Data Transformation
+    - label: Experiment
+    - label: Experimental Sample
+    - label: Not Specified
+    - label: Other
+    - label: Study Protocol
+    - label: Study Summary
+    - label: Subject Organism Treatment
+    configuration:
+      propertyIri: http://www.co-ode.org/ontologies/ont.owl#Study_type
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/https://schema.metadatacenter.org/ImmPort-protocols
+    multiple: true
+    minItems: 0

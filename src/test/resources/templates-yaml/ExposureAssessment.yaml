@@ -1,0 +1,821 @@
+type: template
+name: Environmental Exposure Assessment
+id: https://repo.metadatacenter.org/templates/021ff8d3-d41b-411e-aaa4-135f27a659da
+status: published
+version: 1.0.0
+modelVersion: 1.6.0
+derivedFrom: https://repo.metadatacenter.org/templates/1aaf93e9-5002-4720-bd44-3adb408a4a9f
+createdOn: '2025-06-23T09:02:15-07:00'
+createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+modifiedOn: '2026-01-11T19:51:05-08:00'
+modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+annotations:
+  https://datacite.com/doi:
+    id: https://doi.org/10.60745/kys3-pa43
+children:
+- key: 6ae3b93e-fcf4-4389-a3ff-58da7ffe769b
+  type: static-rich-text
+  name: Preamble
+  id: https://repo.metadatacenter.org/template-fields/07b2eae2-11db-49b7-8197-64d635754708
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preamble
+  content: |
+    <p><span id="docs-internal-guid-9e25a493-7fff-c326-d1f2-f9133b01cdc2"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Characterizing environmental exposures is critical to understanding health across the lifespan. However, exposure-related data are often not FAIR (Findable, Accessible, Interoperable, Reusable), limiting their discoverability, integration, and reuse. This template provides a standardized structure for reporting exposure-related study information. It is designed to improve data transparency, harmonization, and reproducibility, aligning with HHEAR (Human Health Exposure Analysis Resource) controlled vocabularies where applicable and our own new exposure value set. Researchers should use drop-down menus to complete all fields wherever possible.</span></span></p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: 436a83b7-1ecc-4c1c-a5f0-af86307abd3f
+  type: static-section-break
+  name: Study Design
+  description: Includes details about the overall study structure. These details capture the study representativeness, scope, and temporal relevance.
+  id: https://repo.metadatacenter.org/template-fields/d3606ded-60d2-464b-a430-ebe02ef2aa25
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Study Design
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: b819995c-2850-4402-a498-655c292a11e5
+  type: static-rich-text
+  name: Study Design Section Header
+  id: https://repo.metadatacenter.org/template-fields/752f33d6-f10e-4695-aa41-e1f180405593
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Study Design Section Header
+  content: |
+    <p>Includes details about the overall study structure. These details capture the study representativeness, scope, and temporal relevance.</p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: study_design
+  type: controlled-term-field
+  name: study_design
+  description: Describe the overall sampling or analytic design
+  id: https://repo.metadatacenter.org/template-fields/ae129df9-182e-4819-b0c5-eba0aca90dfb
+  modelVersion: 1.6.0
+  prefLabel: Study Design
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HHEARVS)
+    acronym: HHEARVS
+    termLabel: Study Design Classification
+    iri: http://purl.org/twc/HHEARVS_00004
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/d2a4dbe4-14bd-43cd-86c5-cf6bb8d26933
+- key: study_country
+  type: controlled-term-field
+  name: study_country
+  description: Country where the study was conducted
+  id: https://repo.metadatacenter.org/template-fields/2a51e685-765a-484b-ae31-3a3f46ede71f
+  modelVersion: 1.6.0
+  prefLabel: Study Country
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (NCIT)
+    acronym: NCIT
+    termLabel: Country
+    iri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25464
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/a6d14e3d-41c3-4fb8-824f-73244cecec9d
+- key: study_state_or_province
+  type: controlled-term-field
+  name: study_state_or_province
+  description: State where the study was conducted
+  id: https://repo.metadatacenter.org/template-fields/0f79c881-2473-41e4-b2ab-4a18dafac0f3
+  modelVersion: 1.6.0
+  prefLabel: Study State or Province
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HHEARVS)
+    acronym: HHEARVS
+    termLabel: Study State
+    iri: http://purl.org/twc/HHEARVS_00003
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/668df583-ec43-4de0-ae7a-5d8687c5da84
+- key: study_start_year
+  type: temporal-field
+  name: study_start_year
+  description: Start year of study during which data or samples were collected
+  id: https://repo.metadatacenter.org/template-fields/70481c19-f82c-4776-9552-0df4710ae95f
+  modelVersion: 1.6.0
+  prefLabel: Study Start Year
+  datatype: xsd:date
+  granularity: year
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/2ed1f50d-a8b6-4e6c-82b1-92e55f0611be
+- key: study_end_year
+  type: temporal-field
+  name: study_end_year
+  description: Final year of study during which data or samples were collected
+  id: https://repo.metadatacenter.org/template-fields/8e9187c0-ab31-4333-be87-e86e18a71ff2
+  modelVersion: 1.6.0
+  prefLabel: Study End Year
+  datatype: xsd:date
+  granularity: year
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/febcefa3-192e-4bab-b4cc-8c33f35e8727
+- key: study_sampling_method
+  type: controlled-term-field
+  name: study_sampling_method
+  description: Specify whether participants were selected using random or non-random methods
+  id: https://repo.metadatacenter.org/template-fields/d9d1227c-218b-42ed-9449-495c943747dd
+  modelVersion: 1.6.0
+  prefLabel: Study Sampling Method
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (EVS)
+    acronym: EVS
+    termLabel: Study Population Sampling Design
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000001
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/7c5b307e-0972-499d-8666-326bbdcfef7c
+- key: 3a13fada-87f9-4fdd-a178-3a34657810fa
+  type: static-section-break
+  name: Study Population
+  description: Summarizes key participant characteristics. These fields provide context on who was studied and support analyses of susceptibility or exposure disparities.
+  id: https://repo.metadatacenter.org/template-fields/db20e4a0-fef3-4a12-a16c-0e5b64a68ff4
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Study Population
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: 7214f618-79fb-4c3b-aaef-f684c941c3a7
+  type: static-rich-text
+  name: Study Population Header
+  id: https://repo.metadatacenter.org/template-fields/cfceaa91-1cce-4fc6-9cbb-1f011f7039c3
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Study Population Header
+  content: |
+    <p><span style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; font-size: 16px; white-space-collapse: preserve; background-color: rgb(255, 255, 255);">Summarizes key participant characteristics. These fields provide context on who was studied and support analyses of susceptibility or exposure disparities.</span></p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: study_life_stage
+  type: controlled-term-field
+  name: study_life_stage
+  description: Participant developmental stage
+  id: https://repo.metadatacenter.org/template-fields/a6028b8a-920a-4ad1-8cff-84395b2b239c
+  modelVersion: 1.6.0
+  prefLabel: Study Life Stage
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HHEARVS)
+    acronym: HHEARVS
+    termLabel: Study Life Stages
+    iri: http://purl.org/twc/HHEARVS_00006
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/5b5c4085-f00d-410f-9645-4fc263b01b81
+- key: biological_sex
+  type: controlled-term-field
+  name: biological_sex
+  description: Sex assigned at birth of included participants
+  id: https://repo.metadatacenter.org/template-fields/e8497580-3b08-46c4-b32e-508a2aa69743
+  modelVersion: 1.6.0
+  prefLabel: Biological Sex
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (SDOHO)
+    acronym: SDOHO
+    termLabel: Biological_Sex
+    iri: https://sbmi.uth.edu/bsdi/SDoHO#209
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/ffd3312a-6322-493d-9d9d-31fb68fe43b4
+- key: gender_identity
+  type: controlled-term-field
+  name: gender_identity
+  description: Gender with which participants identify
+  id: https://repo.metadatacenter.org/template-fields/fd70a75a-1006-4989-a60f-9a00f5371a79
+  modelVersion: 1.6.0
+  prefLabel: Gender Identity
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (SDOHO)
+    acronym: SDOHO
+    termLabel: Gender_Identity
+    iri: https://sbmi.uth.edu/bsdi/SDoHO#210
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/6f9bdbb0-5c1d-4def-85fc-4599e234c43d
+- key: ethnicity
+  type: controlled-term-field
+  name: ethnicity
+  description: Ethnicity categories as defined in the study of included participants
+  id: https://repo.metadatacenter.org/template-fields/d6df8c7a-8f44-4e4a-82dd-7b9ede66aee3
+  modelVersion: 1.6.0
+  prefLabel: Ethnicity
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (SDOHO)
+    acronym: SDOHO
+    termLabel: Ethnicity
+    iri: https://sbmi.uth.edu/bsdi/SDoHO#352
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/83d36cd8-dfe7-4a43-9437-4548501b326d
+- key: race
+  type: controlled-term-field
+  name: race
+  description: Race categories as defined in the study of included participants
+  id: https://repo.metadatacenter.org/template-fields/8e129cad-4d6a-4176-9195-cfe88d7b5254
+  modelVersion: 1.6.0
+  prefLabel: Race
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (SDOHO)
+    acronym: SDOHO
+    termLabel: Race
+    iri: https://sbmi.uth.edu/bsdi/SDoHO#222
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/f632480f-faf0-4646-afc9-ee2a038da2ef
+- key: occupation
+  type: controlled-term-field
+  name: occupation
+  description: Occupation or industry of the study population, if the study is occupational in nature
+  id: https://repo.metadatacenter.org/template-fields/6071086c-5671-4a19-97c6-53bd00e89959
+  modelVersion: 1.6.0
+  prefLabel: Occupation
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: SNOMED CT (SNOMEDCT)
+    acronym: SNOMEDCT
+    termLabel: Occupation
+    iri: http://purl.bioontology.org/ontology/SNOMEDCT/14679004
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/cc706af5-545d-4114-ba45-9e09723cdeb5
+- key: 2cbec0ad-3b0a-4f2b-8c0f-7365af674dfe
+  type: static-section-break
+  name: Exposure Assessment Overview
+  description: Provides a high-level summary of what exposures were evaluated and how they were measured or estimated.
+  id: https://repo.metadatacenter.org/template-fields/87949868-fda0-49d9-98bd-caafac21963d
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Overview
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: d5161474-7c88-42de-a33d-753e23524de6
+  type: static-rich-text
+  name: Exposure Assessment Overview Header
+  id: https://repo.metadatacenter.org/template-fields/aa87db82-05ba-4647-9039-1a9bd5e75c6a
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Overview Header
+  content: |
+    <p><span id="docs-internal-guid-e6f35795-7fff-c290-8c75-ebd10be2837b"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">&nbsp;Provides a high-level summary of what exposures were evaluated and how they were measured or estimated</span></span></p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: exposure_stressor
+  type: controlled-term-field
+  name: exposure_stressor
+  description: Type of environmental agent or stressor evaluated
+  id: https://repo.metadatacenter.org/template-fields/862fe29c-9d52-4051-9ed8-b2d5bd29923e
+  modelVersion: 1.6.0
+  prefLabel: Exposure Stressor
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (EVS)
+    acronym: EVS
+    termLabel: Environmental Stressor
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000030
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/7c489dee-aa77-469b-8147-fff0423fa438
+- key: environmental_measurement
+  type: controlled-term-field
+  name: environmental_measurement
+  description: General approach to exposure measurement
+  id: https://repo.metadatacenter.org/template-fields/8501f283-d656-4cdf-9b38-e921b2ae9bd7
+  modelVersion: 1.6.0
+  prefLabel: Environmental Measurement
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: Exposure Value Set (EVS)
+    acronym: EVS
+    termLabel: Exposure Assessment Method
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000002
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/f68b107b-edd5-4ae5-b224-fe5274d8175b
+- key: study_environmental_exposures_assessed
+  type: controlled-term-field
+  name: study_environmental_exposures_assessed
+  description: For chemical exposures, identify the class or category
+  id: https://repo.metadatacenter.org/template-fields/e015b200-a988-4eb3-9a6b-5608f1c3e71d
+  modelVersion: 1.6.0
+  prefLabel: Study Environmental Exposures Assessed
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HHEARVS)
+    acronym: HHEARVS
+    termLabel: Study Environmental Exposures Assessed
+    iri: http://purl.org/twc/HHEARVS_00008
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/357f8bce-ad6f-4a26-aab0-caf18d0cfc65
+- key: exposure_route
+  type: controlled-term-field
+  name: exposure_route
+  description: Primary route through which exposure occurred
+  id: https://repo.metadatacenter.org/template-fields/b8ba7034-4049-45b8-9673-8a832a4877cf
+  modelVersion: 1.6.0
+  prefLabel: Exposure Route
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (EVS)
+    acronym: EVS
+    termLabel: Exposure Route
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000023
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/a7f564a8-0c1b-4f24-ae51-ae48e2e0978d
+- key: 9694fe63-0b70-4776-8e6e-b00b5e704352
+  type: static-section-break
+  name: Exposure Assessment Methods - Surveys
+  description: Captures details on survey instruments used to assess exposures or exposure-related behaviors
+  id: https://repo.metadatacenter.org/template-fields/b6228eb8-6628-4453-9b3b-3afd0646ffc6
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods - Surveys
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: 14657b65-2a52-434c-b858-acd86f271a40
+  type: static-rich-text
+  name: Exposure Assessment Methods – Surveys Header
+  id: https://repo.metadatacenter.org/template-fields/2c8b6d8c-b43b-4523-8707-66c9aa3bdc59
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods – Surveys Header
+  content: |
+    <p><span id="docs-internal-guid-7d64c07e-7fff-6235-592c-df0946776986"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Captures details on survey instruments used to assess exposures or exposure-related behaviors.</span></span></p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: survey_based_methods_used
+  type: radio-field
+  name: survey_based_methods_used
+  description: Indicate whether survey-based methods were used
+  id: https://repo.metadatacenter.org/template-fields/aa2cb26b-5ce0-4670-af6c-5fe2796281ff
+  modelVersion: 1.6.0
+  prefLabel: Survey-Based Methods Used
+  values:
+  - label: 'Yes'
+  - label: 'No'
+    selected: true
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/a490493c-f14c-4cd9-9df5-6c0f1c85787d
+- key: survey_type
+  type: controlled-term-field
+  name: survey_type
+  description: Survey format
+  id: https://repo.metadatacenter.org/template-fields/4b0421ef-d6f5-461d-9b07-c4ccf691c835
+  modelVersion: 1.6.0
+  prefLabel: Survey Type
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: Exposure Value Set (EVS)
+    acronym: EVS
+    termLabel: Survey Assessment Method
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000007
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/5093af35-4aa2-4a5a-8b32-d97bb6e5bfd7
+- key: 8c050517-1655-4b05-a97b-c117f68a585b
+  type: static-section-break
+  name: Exposure Assessment Methods – Environmental or External Sampling
+  description: Details for studies using sampling of environmental media to characterize external exposures.
+  id: https://repo.metadatacenter.org/template-fields/d7fb679f-97ae-4154-b845-fbdaf58e09a9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods – Environmental or External Sampling
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: c237593c-5546-4ab2-bf55-f3a003f2e22d
+  type: static-rich-text
+  name: Exposure Assessment Methods – Environmental or External Sampling Header
+  description: Help Text
+  id: https://repo.metadatacenter.org/template-fields/87201950-2e5c-46f1-ae6e-e2c8f02d5568
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods – Environmental or External Sampling Header
+  content: |
+    <p><span id="docs-internal-guid-9ff24ee0-7fff-06dc-5918-945797ef8222"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Details for studies using sampling of environmental media to characterize external exposures.</span></span></p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: evnironmental_samples_collected_or_used
+  type: checkbox-field
+  name: evnironmental_samples_collected_or_used
+  description: Indicate whether environmental samples were collected or used
+  id: https://repo.metadatacenter.org/template-fields/50ccf5be-f8ca-4aa4-a50e-6ab934fd6cdc
+  modelVersion: 1.6.0
+  prefLabel: Environmental Samples Collected or Used
+  values:
+  - label: 'Yes'
+  - label: 'No'
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/6ab8109e-602f-404d-9c0e-80f61ef84c9e
+- key: sampled_media
+  type: controlled-term-field
+  name: sampled_media
+  description: Identify the environmental medium sampled
+  id: https://repo.metadatacenter.org/template-fields/d055bbe8-daed-4415-b090-6b5b3b318824
+  modelVersion: 1.6.0
+  prefLabel: Sampled Media
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: Exposure Value Set (EVS)
+    acronym: EVS
+    termLabel: Sampled Environmental Media
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000016
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/62ebc4bb-d964-4963-bf80-42056de4e2ef
+- key: water_type
+  type: controlled-term-field
+  name: water_type
+  description: If applicable, specify the type of water sampled
+  id: https://repo.metadatacenter.org/template-fields/c3f44563-3b7d-4939-bde0-87189a2e9c1e
+  modelVersion: 1.6.0
+  prefLabel: Water Type
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: Exposure Value Set (EVS)
+    acronym: EVS
+    termLabel: Type of Water Sampled
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000037
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/ace429bf-719f-49ad-b57a-ebe271f4c407
+- key: air_sampling_location
+  type: controlled-term-field
+  name: air_sampling_location
+  description: Identify where air sampling occurred
+  id: https://repo.metadatacenter.org/template-fields/5b104bd3-ece8-429b-ae40-2a2180272684
+  modelVersion: 1.6.0
+  prefLabel: Air Sampling Location
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (EVS)
+    acronym: EVS
+    termLabel: Air Sampling Location
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000033
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/0c3a7c8b-6871-412e-8f5d-70fff29d2c27
+- key: skin_sampling_method
+  type: controlled-term-field
+  name: skin_sampling_method
+  description: Specify the dermal sampling technique used
+  id: https://repo.metadatacenter.org/template-fields/0340f636-6637-439f-bf60-0feae1610a33
+  modelVersion: 1.6.0
+  prefLabel: Skin Sampling Method
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (EVS)
+    acronym: EVS
+    termLabel: Type of Dermal Sample
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000043
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/99b0f769-92a0-4feb-9e6f-829aa3fb7bc8
+- key: 00b42c88-ba48-4c4c-a185-8b69e3d5cb31
+  type: static-section-break
+  name: Exposure Assessment Methods – Biomarkers
+  description: Describes biological sample collection to measure internal exposure levels.
+  id: https://repo.metadatacenter.org/template-fields/222bd963-39b8-4a58-a2da-b167e64e708d
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods – Biomarkers
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: 4e841800-d5f6-4dcb-9418-3c8e408e5b8f
+  type: static-rich-text
+  name: Exposure Assessment Methods – Biomarkers Header
+  description: Help Text
+  id: https://repo.metadatacenter.org/template-fields/020eeb8c-b1c8-4e18-a9d1-d72b2a712e57
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods – Biomarkers Header
+  content: |
+    <p><span id="docs-internal-guid-86148945-7fff-86f9-08b1-553e3cb8ed8e"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Describes biological sample collection to measure internal exposure levels.</span></span></p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: biomarkers_of_exposure_used
+  type: checkbox-field
+  name: biomarkers_of_exposure_used
+  description: Indicate whether biomarkers of exposure were used
+  id: https://repo.metadatacenter.org/template-fields/4f482657-54a7-4444-a97f-c8d4f1f9ef00
+  modelVersion: 1.6.0
+  prefLabel: Biomarkers of Exposure Used
+  values:
+  - label: 'Yes'
+  - label: 'No'
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/05800e65-96b0-416c-8236-b253cf424887
+- key: biological_media
+  type: controlled-term-field
+  name: biological_media
+  description: Specify biological matrices collected
+  id: https://repo.metadatacenter.org/template-fields/1df7b23f-b6b7-40d4-82ac-9c664a939600
+  modelVersion: 1.6.0
+  prefLabel: Biological Media
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (EVS)
+    acronym: EVS
+    termLabel: Sampled Biological Media
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000015
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/b33c4e12-9c07-4e88-bb02-a1d7cfa2ae8a
+- key: 0d5f68f7-bb52-4206-ad38-661c236101e5
+  type: static-section-break
+  name: Exposure Assessment Methods – Models
+  description: Documents computational or statistical modeling approaches used to estimate exposure.
+  id: https://repo.metadatacenter.org/template-fields/1cea9317-ba07-4850-8368-d3d4c30f6db9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods – Models
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: 95ae6e7b-146a-41b1-82a0-47ae2b1e777c
+  type: static-rich-text
+  name: Exposure Assessment Methods – Models Header
+  description: Help Text
+  id: https://repo.metadatacenter.org/template-fields/add34546-e8c9-4e61-a653-b1abf677cad1
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Exposure Assessment Methods – Models Header
+  content: |
+    <p dir="ltr" style="line-height:1.3900000000000001;margin-top:0pt;margin-bottom:8pt;"><span id="docs-internal-guid-8a70f118-7fff-7ed1-5861-668ec95c46cf"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Documents computational or statistical modeling approaches used to estimate exposure.</span></span></p>
+
+    <div>&nbsp;</div>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: chemical_physical_biological_exposure_models_used
+  type: checkbox-field
+  name: chemical_physical_biological_exposure_models_used
+  description: Indicate whether modeling methods were used
+  id: https://repo.metadatacenter.org/template-fields/169dcc95-e6ee-468f-b171-a7037e6229d9
+  modelVersion: 1.6.0
+  prefLabel: Chemical Physical Biological Exposure Models Used
+  values:
+  - label: 'Yes'
+  - label: 'No'
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/70184c52-e33e-4410-867c-2ec808eb4873
+- key: exposure_model
+  type: controlled-term-field
+  name: exposure_model
+  description: Specify the kind of modeling that was applied
+  id: https://repo.metadatacenter.org/template-fields/66e47468-cb54-4810-934f-b6756fdfa555
+  modelVersion: 1.6.0
+  prefLabel: Exposure Model
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (EVS)
+    acronym: EVS
+    termLabel: Exposure Model
+    iri: https://purl.exposure.io/vocab/evs/EVS_0000017
+    maxDepth: 0
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/22884f33-aa3c-41f3-8464-0d317e66c867
+- key: 8fc56663-6c84-4921-a5dc-b511fcbafc20
+  type: static-section-break
+  name: Quality Control
+  description: Captures data quality and analytical reliability indicators.
+  id: https://repo.metadatacenter.org/template-fields/606ea0af-3ff7-4098-a971-40149b2b5c8e
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Quality Control
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: c44d3199-b90c-4e64-9995-7a000a7739d6
+  type: static-rich-text
+  name: Quality Control Header
+  description: Help Text
+  id: https://repo.metadatacenter.org/template-fields/283bc8fa-df58-4b6e-8bc0-bf814bfadace
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Quality Control Header
+  content: |
+    <p><span id="docs-internal-guid-6b1426e1-7fff-f1d9-c96e-6fefd6976db4"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Captures data quality and analytical reliability indicators</span></span></p>
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+- key: quality_control_measures_reported
+  type: checkbox-field
+  name: quality_control_measures_reported
+  description: Indicate whether quality control samples were collected
+  id: https://repo.metadatacenter.org/template-fields/0770104d-a7bc-43ee-9314-7886c2602927
+  modelVersion: 1.6.0
+  prefLabel: Quality Control Measures Reported
+  values:
+  - label: 'Yes'
+  - label: 'No'
+  - label: Not applicable
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/7266fd35-ee30-422d-b169-9fd380ae2126
+- key: limit_of_detection_reported
+  type: checkbox-field
+  name: limit_of_detection_reported
+  description: Indicate whether limits of detection were reported
+  id: https://repo.metadatacenter.org/template-fields/27d53b9f-c67d-4d13-9527-b5b5493da781
+  modelVersion: 1.6.0
+  prefLabel: Limit Of Detection Reported
+  values:
+  - label: 'Yes'
+  - label: 'No'
+  - label: Not applicable
+  createdOn: '2026-01-11T19:51:05-08:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2026-01-11T19:51:05-08:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/90f07cfe-ce88-48b5-9e25-1c3ff69d8d8b

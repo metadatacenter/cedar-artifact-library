@@ -21,4 +21,3 @@ public record BranchValueConstraint(URI uri, String source, String acronym, Stri
     validateIntegerFieldNotNull(this, maxDepth, VALUE_CONSTRAINTS_NAME);
   }
 }
-

@@ -6,36 +6,13 @@ import org.metadatacenter.artifacts.model.core.ui.TemplateUi;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toSet;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContains;
-import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.PAV_DERIVED_FROM;
-import static org.metadatacenter.model.ModelNodeNames.PAV_PREVIOUS_VERSION;
-import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
-import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
 
 public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact {
   static TemplateSchemaArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
@@ -103,7 +80,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private String name;
     private String description = "";
     private Optional<String> identifier = Optional.empty();
-    private Optional<Version> version = Optional.of(new Version(0, 0, 1)); // TODO
+    private Optional<Version> version = Optional.of(Version.DEFAULT);
     private Optional<Status> status = Optional.of(Status.DRAFT);
     private Optional<URI> previousVersion = Optional.empty();
     private Optional<URI> derivedFrom = Optional.empty();
@@ -341,6 +318,28 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return withElementSchema(elementSchemaArtifact.name(), elementSchemaArtifact, propertyLabel, propertyDescription);
     }
 
+    public Builder withoutFieldSchema(String fieldKey) {
+      if (!this.fieldSchemas.containsKey(fieldKey)) {
+        throw new IllegalArgumentException("Template has no field child " + fieldKey);
+      }
+      this.fieldSchemas.remove(fieldKey);
+      this.templateUiBuilder.withoutOrder(fieldKey);
+      this.templateUiBuilder.withoutPropertyLabel(fieldKey);
+      this.templateUiBuilder.withoutPropertyDescription(fieldKey);
+      return this;
+    }
+
+    public Builder withoutElementSchema(String elementKey) {
+      if (!this.elementSchemas.containsKey(elementKey)) {
+        throw new IllegalArgumentException("Template has no element child " + elementKey);
+      }
+      this.elementSchemas.remove(elementKey);
+      this.templateUiBuilder.withoutOrder(elementKey);
+      this.templateUiBuilder.withoutPropertyLabel(elementKey);
+      this.templateUiBuilder.withoutPropertyDescription(elementKey);
+      return this;
+    }
+
     public Builder withHeader(String header) {
       this.templateUiBuilder.withHeader(header);
       return this;
@@ -378,40 +377,13 @@ record TemplateSchemaArtifactRecord(
     String internalDescription)
     implements TemplateSchemaArtifact {
   public TemplateSchemaArtifactRecord {
-    validateStringFieldNotNull(this, internalName, JSON_SCHEMA_TITLE);
-    validateStringFieldNotNull(this, internalDescription, JSON_SCHEMA_DESCRIPTION);
-    validateStringFieldNotEmpty(this, name, SCHEMA_ORG_NAME);
-    validateStringFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
-    validateOptionalFieldNotNull(this, version, PAV_VERSION);
-    validateOptionalFieldNotNull(this, status, BIBO_STATUS);
-    validateOptionalFieldNotNull(this, previousVersion, PAV_PREVIOUS_VERSION);
-    validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
-    validateMapFieldContainsAll(this, jsonLdContext, JSON_LD_CONTEXT, PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    validateUriListFieldContains(this, jsonLdTypes, JSON_LD_TYPE, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
-    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
-    validateOptionalFieldNotNull(this, instanceJsonLdType, "instanceJsonLdType");
-    validateMapFieldNotNull(this, fieldSchemas, "fieldSchemas");
-    validateMapFieldNotNull(this, elementSchemas, "elementSchemas");
-    validateOptionalFieldNotNull(this, language, "language");
-    validateUiFieldNotNull(this, templateUi, UI);
-    validateOptionalFieldNotNull(this, annotations, "annotations");
-
-    Set<String> order = new HashSet<>(templateUi.order());
-    Set<String> childKeys = Stream.concat(fieldSchemas.keySet().stream(), elementSchemas.keySet().stream())
-        .collect(toSet());
-
-    if (!order.containsAll(childKeys)) {
-      childKeys.removeAll(order); // Generate the names of children not in the order map
-      order.removeAll(childKeys); // Silently remove these extra children from the order
-      for (String childToRemove : childKeys) { // And from the
-        fieldSchemas.remove(childToRemove);
-        elementSchemas.remove(childToRemove);
-      }
-    }
+    ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
+      jsonLdContext, jsonLdTypes, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdType,
+      version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, templateUi, annotations);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
-    fieldSchemas = new LinkedHashMap<>(fieldSchemas);
-    elementSchemas = new LinkedHashMap<>(elementSchemas);
+    fieldSchemas = ParentSchemaArtifactInvariants.prunedToOrder(fieldSchemas, templateUi.order());
+    elementSchemas = ParentSchemaArtifactInvariants.prunedToOrder(elementSchemas, templateUi.order());
   }
 }

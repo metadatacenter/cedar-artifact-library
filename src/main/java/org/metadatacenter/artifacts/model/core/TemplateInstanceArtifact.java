@@ -313,6 +313,53 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
+    // The replace* methods swap the value at an existing key without disturbing its
+    // position in childKeys. A without/with pair achieves the same data outcome but
+    // moves the key to the end of the LinkedHashMap, which leaks into YAML/JSON
+    // rendering as a visible reordering after every set_field_value call. Use these
+    // when updating an existing child; use the with*/without* pair when adding or
+    // removing.
+
+    public Builder replaceSingleInstanceFieldInstance(String childKey, FieldInstanceArtifact fieldInstance) {
+      if (!childKeys.contains(childKey) || !singleInstanceFieldInstances.containsKey(childKey)) {
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+      }
+
+      singleInstanceFieldInstances.put(childKey, fieldInstance);
+
+      return this;
+    }
+
+    public Builder replaceSingleInstanceElementInstance(String childKey, ElementInstanceArtifact elementInstance) {
+      if (!childKeys.contains(childKey) || !singleInstanceElementInstances.containsKey(childKey)) {
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+      }
+
+      singleInstanceElementInstances.put(childKey, elementInstance);
+
+      return this;
+    }
+
+    public Builder replaceMultiInstanceFieldInstances(String childKey, List<FieldInstanceArtifact> fieldInstances) {
+      if (!childKeys.contains(childKey) || !multiInstanceFieldInstances.containsKey(childKey)) {
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+      }
+
+      this.multiInstanceFieldInstances.put(childKey, List.copyOf(fieldInstances));
+
+      return this;
+    }
+
+    public Builder replaceMultiInstanceElementInstances(String childKey, List<ElementInstanceArtifact> elementInstances) {
+      if (!childKeys.contains(childKey) || !multiInstanceElementInstances.containsKey(childKey)) {
+        throw new IllegalArgumentException("child " + childKey + " not present in instance");
+      }
+
+      this.multiInstanceElementInstances.put(childKey, List.copyOf(elementInstances));
+
+      return this;
+    }
+
     public Builder withAttributeValueFieldGroup(String attributeValueFieldGroupName,
                                                 LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances) {
       Set<String> attributeValueFieldInstanceNames = attributeValueFieldInstances.keySet();
@@ -345,7 +392,23 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
       return this;
     }
 
-    // TODO Add withoutAttributeValueFieldGroup
+    public Builder withoutAttributeValueFieldGroup(String attributeValueFieldGroupName) {
+      if (!childKeys.contains(attributeValueFieldGroupName)
+          || !attributeValueFieldInstanceGroups.containsKey(attributeValueFieldGroupName)) {
+        throw new IllegalArgumentException(
+            "attribute-value field group " + attributeValueFieldGroupName + " not present in instance");
+      }
+
+      // Remove both the group name itself and each inner field-instance name from childKeys.
+      Map<String, FieldInstanceArtifact> groupEntries =
+          attributeValueFieldInstanceGroups.get(attributeValueFieldGroupName);
+      childKeys.removeAll(groupEntries.keySet());
+      childKeys.remove(attributeValueFieldGroupName);
+
+      attributeValueFieldInstanceGroups.remove(attributeValueFieldGroupName);
+
+      return this;
+    }
 
     public TemplateInstanceArtifact build() {
       return new TemplateInstanceArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
@@ -368,26 +431,16 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
                                       LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups,
                                       Optional<Annotations> annotations) implements TemplateInstanceArtifact {
   public TemplateInstanceArtifactRecord {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
-    validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
-    validateOptionalFieldNotNull(this, name, SCHEMA_ORG_NAME);
-    validateOptionalFieldNotNull(this, description, SCHEMA_ORG_DESCRIPTION);
-    validateOptionalFieldNotNull(this, createdBy, PAV_CREATED_BY);
+    InstanceArtifactInvariants.validate(this, jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
     validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
-    validateOptionalFieldNotNull(this, modifiedBy, OSLC_MODIFIED_BY);
-    validateOptionalFieldNotNull(this, createdOn, PAV_CREATED_ON);
-    validateOptionalFieldNotNull(this, lastUpdatedOn, PAV_LAST_UPDATED_ON);
     validateUriFieldNotNull(this, isBasedOn, SCHEMA_IS_BASED_ON);
-    validateListFieldNotNull(this, childKeys, "childKeys");
-    validateMapFieldNotNull(this, singleInstanceFieldInstances, "singleInstanceFieldInstances");
-    validateMapFieldNotNull(this, multiInstanceFieldInstances, "multiInstanceFieldInstances");
-    validateMapFieldNotNull(this, singleInstanceElementInstances, "singleInstanceElementInstances");
-    validateMapFieldNotNull(this, multiInstanceElementInstances, "multiInstanceElementInstances");
-    validateMapFieldNotNull(this, attributeValueFieldInstanceGroups, "attributeValueFieldInstanceGroups");
     validateOptionalFieldNotNull(this, annotations, "annotations");
 
-    // TODO Check that all childKeys present in child instances maps and that there are no extra fields in maps
+    InstanceArtifactInvariants.validateChildKeyConsistency(this, childKeys, singleInstanceFieldInstances,
+      multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
+      attributeValueFieldInstanceGroups);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

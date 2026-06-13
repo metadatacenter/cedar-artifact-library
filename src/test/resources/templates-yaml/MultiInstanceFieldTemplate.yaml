@@ -1,0 +1,26 @@
+type: template
+name: TemplateWithMultiInstanceField
+id: https://repo.metadatacenter.org/templates/1efd5e70-c11e-42e8-be13-595d495dc493
+status: draft
+version: 0.0.1
+modelVersion: 1.6.0
+createdOn: '2023-07-12T15:49:59-07:00'
+createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+modifiedOn: '2023-07-12T15:49:59-07:00'
+modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+children:
+- key: Aliases
+  type: text-field
+  name: Aliases
+  description: Help Text
+  id: https://repo.metadatacenter.org/template-fields/6ca61391-6d13-443f-aed6-822eab3c9635
+  modelVersion: 1.6.0
+  createdOn: '2023-07-12T15:49:59-07:00'
+  createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  modifiedOn: '2023-07-12T15:49:59-07:00'
+  modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/c5e2f392-7fba-42c3-8063-f59edf1db86b
+    multiple: true
+    minItems: 3
+    maxItems: 7

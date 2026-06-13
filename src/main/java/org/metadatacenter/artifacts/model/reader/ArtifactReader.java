@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -14,4 +15,6 @@ public interface ArtifactReader<T>
   FieldSchemaArtifact readFieldSchemaArtifact(T source);
 
   TemplateInstanceArtifact readTemplateInstanceArtifact(T source);
+
+  ElementInstanceArtifact readElementInstanceArtifact(T source);
 }

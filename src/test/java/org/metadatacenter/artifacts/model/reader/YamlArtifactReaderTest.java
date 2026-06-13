@@ -2,15 +2,15 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +19,10 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
@@ -44,6 +46,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VER
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_RECOMMENDATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION;
@@ -53,7 +56,7 @@ public class YamlArtifactReaderTest
   private YamlArtifactReader artifactReader;
   private ObjectMapper objectMapper;
 
-  @Before public void setup()
+  @BeforeEach public void setup()
   {
     artifactReader = new YamlArtifactReader();
     objectMapper = new ObjectMapper(new YAMLFactory());
@@ -65,7 +68,7 @@ public class YamlArtifactReaderTest
     String description = "My study";
     String identifier = "ID1";
     URI id = URI.create("https://repo.metadatacenter.org/templates/66");
-    Version modelVersion = Version.fromString("1.6.0");
+    Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
     Version version = Version.fromString("1.2.3");
     Status status = Status.DRAFT;
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/templates/4553");
@@ -117,7 +120,7 @@ public class YamlArtifactReaderTest
     String identifier = "ID3";
     URI id = URI.create("https://repo.metadatacenter.org/template-elements/2323");
     Version version = Version.fromString("1.2.3");
-    Version modelVersion = Version.fromString("1.6.0");
+    Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
     Status status = Status.DRAFT;
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/template-elements/4553");
     URI previousVersion = URI.create("https://repo.metadatacenter.org/template-elements/5465");
@@ -170,16 +173,17 @@ public class YamlArtifactReaderTest
     assertEquals(language, elementSchemaArtifact.language().get());
   }
 
-  // TODO Need to activate this
-  @Ignore @Test public void readFieldSchemaArtifactTest()
+  @Test public void readFieldSchemaArtifactTest()
   {
     String fieldKey = "study_name";
     String fieldName = "Study Name";
-    String fieldType = FieldInputType.TEXTFIELD.toString();
+    // The YAML `type:` discriminator is the kebab-case wire name (text-field),
+    // not the Java enum's default toString (TEXTFIELD). Use the constant.
+    String fieldType = TEXT_FIELD;
     String description = "Please enter a study name";
     String identifier = "ID4";
     Version version = Version.fromString("1.2.3");
-    Version modelVersion = Version.fromString("1.6.0");
+    Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
     Status status = Status.DRAFT;
     URI derivedFrom = URI.create("https://repo.metadatacenter.org/template-fields/4553");
     URI previousVersion = URI.create("https://repo.metadatacenter.org/template-fields/5465");
@@ -215,13 +219,18 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
     yamlSource.put(PREF_LABEL, preferredLabel);
     yamlSource.put(ALT_LABEL, altLabels);
-    yamlSource.put(REQUIRED, requiredValue);
     yamlSource.put(VALUE_RECOMMENDATION, valueRecommendation);
     yamlSource.put(HIDDEN, hidden);
-    yamlSource.put(MULTIPLE, isMultiple);
-    yamlSource.put(MIN_ITEMS, minItems);
-    yamlSource.put(MAX_ITEMS, maxItems);
     yamlSource.put(LANGUAGE, language);
+    // The canonical YAML form (matching what YamlArtifactRenderer emits for nested
+    // fields) puts required / multiple / minItems / maxItems inside a configuration:
+    // sub-block. The reader looks there for these flags.
+    LinkedHashMap<String, Object> configuration = new LinkedHashMap<>();
+    configuration.put(REQUIRED, requiredValue);
+    configuration.put(MULTIPLE, isMultiple);
+    configuration.put(MIN_ITEMS, minItems);
+    configuration.put(MAX_ITEMS, maxItems);
+    yamlSource.put(CONFIGURATION, configuration);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 
@@ -239,13 +248,43 @@ public class YamlArtifactReaderTest
     assertEquals(preferredLabel, fieldSchemaArtifact.preferredLabel().get());
     assertEquals(altLabels, fieldSchemaArtifact.alternateLabels());
     assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
-    // TODO assertEquals(requiredValue, fieldSchemaArtifact.valueConstraints().get().requiredValue());
+    assertEquals(requiredValue, fieldSchemaArtifact.valueConstraints().get().requiredValue());
     assertEquals(valueRecommendation, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
     assertEquals(hidden, fieldSchemaArtifact.fieldUi().hidden());
     assertEquals(isMultiple, fieldSchemaArtifact.isMultiple());
     assertEquals(minItems, fieldSchemaArtifact.minItems().get());
     assertEquals(maxItems, fieldSchemaArtifact.maxItems().get());
     assertEquals(language, fieldSchemaArtifact.language().get());
+  }
+
+  @Test public void readDefaultsTopLevelVersionAndStatusButNotNestedChildren()
+  {
+    // version/status default to 0.0.1 / draft on the top-level artifact (matching the builder),
+    // but a nested child that omits them is left untouched — so real templates with version-less
+    // child fields still round-trip unchanged.
+    LinkedHashMap<String, Object> childField = new LinkedHashMap<>();
+    childField.put("key", "patient_name");
+    childField.put("type", "text-field");
+    childField.put("name", "Patient name");
+
+    LinkedHashMap<String, Object> template = new LinkedHashMap<>();
+    template.put("type", "template");
+    template.put("name", "Patient");
+    template.put("modelVersion", "1.6.0");
+    template.put("children", List.of(childField));
+
+    TemplateSchemaArtifact read = artifactReader.readTemplateSchemaArtifact(template);
+
+    assertEquals(Version.DEFAULT, read.version().orElseThrow(),
+        "top-level version defaults to 0.0.1");
+    assertEquals(Status.DRAFT, read.status().orElseThrow(),
+        "top-level status defaults to draft");
+
+    FieldSchemaArtifact child = read.getFieldSchemaArtifact("patient_name");
+    assertTrue(child.version().isEmpty(),
+        "a nested child that omitted version must not be defaulted");
+    assertTrue(child.status().isEmpty(),
+        "a nested child that omitted status must not be defaulted");
   }
 
   private LinkedHashMap<String, Object> readYamlAsMap(String yamlFilePath)

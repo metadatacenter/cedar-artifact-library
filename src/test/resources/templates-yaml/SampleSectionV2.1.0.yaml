@@ -1,0 +1,443 @@
+type: template
+name: Sample Section
+description: The sample section metadata schema
+id: https://repo.metadatacenter.org/templates/01e9bc58-bdf2-49f4-9cf9-dd34f3cc62d7
+status: draft
+version: 2.1.0
+modelVersion: 1.6.0
+previousVersion: https://repo.metadatacenter.org/templates/1f3d4b00-f6f2-48a4-8795-755be215f546
+createdOn: '2023-09-20T15:36:38-07:00'
+createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+modifiedOn: '2025-04-24T10:18:31-07:00'
+modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+children:
+- key: source_id
+  type: text-field
+  name: source_id
+  description: 'Unique HuBMAP or SenNet identifier for the source (parent) from which the sample was taken. Example: HBM122.EFGH.789 or SNT234.RTYU.119'
+  id: https://repo.metadatacenter.org/template-fields/29b215b9-5c25-4a7f-b608-41011f8aea62
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source ID
+  regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}$
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/f6afae32-26b3-4be0-bee1-91f63aa30e3e
+- key: sample_id
+  type: text-field
+  name: sample_id
+  description: 'Unique HuBMAP or SenNet identifier for the sample assigned by the ingest portal. Example: HBM743.CKJW.876 or SNT923.UYTE.122'
+  id: https://repo.metadatacenter.org/template-fields/60776979-a126-46dd-ba8a-9f10afef0b51
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Sample ID
+  regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}$
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/9b8df828-42cc-4c52-b7aa-1432b0b8f0e9
+- key: lab_id
+  type: text-field
+  name: lab_id
+  description: An internal field labs can use it to add whatever ID(s) they want or need for dataset validation and tracking. This could be a single ID (e.g., "Visium_9OLC_A4_S1") or a delimited list of IDs (e.g., “9OL; 9OLC.A2; Visium_9OLC_A4_S1”). This field will not be accessible to anyone outside of the consortium and no effort will be made to check if IDs provided by one data provider are also used by another.
+  id: https://repo.metadatacenter.org/template-fields/bbc141a6-0e81-4cba-8651-8b61a623bd6c
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Lab ID
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/6b77028e-7ac0-48d6-9e18-51bf6e3797b6
+- key: preparation_protocol_doi
+  type: link-field
+  name: preparation_protocol_doi
+  description: 'DOI for the protocols.io page that describes the assay or sample procurement and preparation. For example for an imaging assay, the protocol might begin with staining of a section and finalize with the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1.'
+  id: https://repo.metadatacenter.org/template-fields/6c14b186-47e0-4e2c-a5f6-d8ac3cca10f2
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preparation protocol DOI
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/2d9a8d2a-91c8-4093-b693-188d199eee19
+- key: source_storage_duration_value
+  type: numeric-field
+  name: source_storage_duration_value
+  description: How long was the source material (parent) stored, prior to this sample being processed.
+  id: https://repo.metadatacenter.org/template-fields/34ea7885-e2b2-4e52-bf92-48327f30ffe9
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source storage duration value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/aca0968e-f3db-4ef0-b310-0f38d72d1b52
+- key: source_storage_duration_unit
+  type: controlled-term-field
+  name: source_storage_duration_unit
+  description: The time duration unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/d666d473-cf11-4025-bea0-2a4d77110044
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Source storage duration unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Source storage duration unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
+    maxDepth: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/a5f137e2-30e3-4b67-b524-2f22b3703078
+- key: preparation_medium
+  type: controlled-term-field
+  name: preparation_medium
+  description: The medium used during the sample preparation
+  id: https://repo.metadatacenter.org/template-fields/5eb04109-9e15-4889-bd11-ef93d7cb5f95
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preparation medium
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Preparation medium
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000041
+    maxDepth: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/3d96bf5e-fb9e-4f9f-a9a7-5013b210e034
+- key: preparation_condition
+  type: controlled-term-field
+  name: preparation_condition
+  description: The condition by which the preparation occurred, such as was the sample placed in dry ice during the preparation.
+  id: https://repo.metadatacenter.org/template-fields/8711a6de-b6af-40e6-9e74-b2320bb18a71
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Preparation condition
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Preparation condition
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000051
+    maxDepth: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/dbb8943a-dd7a-4d27-9af9-1a4284acdc1f
+- key: processing_time_value
+  type: numeric-field
+  name: processing_time_value
+  description: How long the tissue was being handled before the initial preservation.
+  id: https://repo.metadatacenter.org/template-fields/c2f4c0ce-5150-44e9-a4a0-3bd95b388d34
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Processing time value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/d85b4fce-fa32-41d5-84a5-b9ba99573d52
+- key: processing_time_unit
+  type: controlled-term-field
+  name: processing_time_unit
+  description: The time unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/e78b2f98-e783-4bce-b251-0dae403c6b7b
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Processing time unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Processing time unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000071
+    maxDepth: 0
+  actions:
+  - action: move
+    to: 0
+    termIri: http://purl.obolibrary.org/obo/UO_0000031
+    sourceIri: template
+    sourceAcronym: HRAVS
+    type: class
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/fb1ddfa3-796c-4384-99b0-2c0f0272d5e3
+- key: storage_medium
+  type: controlled-term-field
+  name: storage_medium
+  description: What was the sample preserved in.
+  id: https://repo.metadatacenter.org/template-fields/5533c854-9d23-4919-a895-4a3d4d6442a8
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Storage medium
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Storage medium
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000081
+    maxDepth: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/703017c3-de53-4cc9-b2ed-dfce4709b059
+- key: storage_method
+  type: controlled-term-field
+  name: storage_method
+  description: The method by which the sample was stored, after preparation and before the assay was performed.
+  id: https://repo.metadatacenter.org/template-fields/3ad380a4-13ce-4c85-8c49-8c26e1409ba5
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Storage method
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Storage method
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000091
+    maxDepth: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/cccdeb31-6117-4c61-a9f1-40a2909bbeda
+- key: quality_criteria
+  type: text-field
+  name: quality_criteria
+  description: 'For example, RIN: 8.7. For suspensions, measured by visual inspection prior to cell lysis or defined by known parameters such as wells with several cells or no cells. This can be captured at a high level. "OK" or "not OK", or with more specificity such as "debris", "clump", "low clump".'
+  id: https://repo.metadatacenter.org/template-fields/5ba7b675-6c2e-4567-a36a-771b7a210de0
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Quality criteria
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/ddb0f35e-e22d-4d06-bb49-e237e2b8718e
+- key: histological_report
+  type: text-field
+  name: histological_report
+  description: histopathological reporting of key variables that are important for the tissue (absence of necrosis, comment on composition, significant pathology description, high level inflammation/fibrosis assessment, etc.)
+  id: https://repo.metadatacenter.org/template-fields/bf9c49d6-4a25-4862-bfd0-068fe70eb6e7
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Histological report
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/e11c5f6b-96bd-47aa-aabd-601c1fc42584
+- key: thickness_value
+  type: numeric-field
+  name: thickness_value
+  description: Thickness of the sample section.
+  id: https://repo.metadatacenter.org/template-fields/ba6c6628-732c-45f2-9859-9d9a65c52998
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Thickness value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/41adcbb1-351e-425b-a195-133fb95fe86c
+- key: thickness_unit
+  type: controlled-term-field
+  name: thickness_unit
+  description: The thickness unit of measuement
+  id: https://repo.metadatacenter.org/template-fields/6c876cf3-1630-4c9b-90aa-458863ef9446
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Thickness unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Thickness unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000131
+    maxDepth: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/3ecdb58d-445c-4948-95f1-3bbcc173f014
+- key: section_index_number
+  type: numeric-field
+  name: section_index_number
+  description: The index number for the tissue section. The numbering of the tissue sections within a block should start with 1.
+  id: https://repo.metadatacenter.org/template-fields/6c9b5b10-df36-41c8-8aa3-592e24f2dc91
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Section index number
+  datatype: xsd:int
+  minValue: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/81db2e0d-4997-45c7-a32d-38b36f53ff3e
+- key: area_value
+  type: numeric-field
+  name: area_value
+  description: The area of the sample section.
+  id: https://repo.metadatacenter.org/template-fields/b01e3d55-d93c-4c3b-ba26-68c612b74e7e
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Area value
+  datatype: xsd:decimal
+  minValue: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/30f394dc-cc34-49e7-b069-1b0d49b2691a
+- key: area_unit
+  type: controlled-term-field
+  name: area_unit
+  description: The area unit of measurement
+  id: https://repo.metadatacenter.org/template-fields/ea6e26f1-30df-4a8c-9f15-63111ea0b68b
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Area unit
+  datatype: iri
+  values:
+  - type: branch
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Area unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
+    maxDepth: 0
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/d1fe9f5e-abf1-4b1d-90e8-bb5149a40afb
+- key: is_rehydrated
+  type: radio-field
+  name: is_rehydrated
+  description: Was the section rehydrated?
+  id: https://repo.metadatacenter.org/template-fields/1bc06d32-acb0-40fb-a11a-f0cdd8351c46
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Is rehydrated?
+  values:
+  - label: 'Yes'
+  - label: 'No'
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/5a65f01f-b5cf-41b0-84e5-9c3e921eb80d
+- key: notes
+  type: text-field
+  name: notes
+  description: Miscellaneous details about the sample, not captured in the existing metadata fields.
+  id: https://repo.metadatacenter.org/template-fields/2709b10f-bd05-4985-a3f2-50e2a2358008
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Notes
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/abfe4bf2-cdc6-4a1c-8b88-b40c700ff331
+- key: metadata_schema_id
+  type: text-field
+  name: metadata_schema_id
+  description: The string that serves as the definitive identifier for the metadata schema version and is readily interpretable by computers for data validation and processing.
+  id: https://repo.metadatacenter.org/template-fields/adb527d4-1dae-4e2a-9bdd-28a1a87af3ba
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  prefLabel: Metadata schema ID
+  default: 01e9bc58-bdf2-49f4-9cf9-dd34f3cc62d7
+  createdOn: '2025-04-24T10:18:31-07:00'
+  createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  modifiedOn: '2025-04-24T10:18:31-07:00'
+  modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
+  configuration:
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/3897582c-0a0c-451e-a237-64b4a0db2d2c

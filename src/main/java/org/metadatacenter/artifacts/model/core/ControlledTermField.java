@@ -17,27 +17,10 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
-import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_URI;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
-import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
-import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
-import static org.metadatacenter.model.ModelNodeNames.UI;
-import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 
 public sealed interface ControlledTermField extends FieldSchemaArtifact
 {
@@ -65,7 +48,8 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     return new ControlledTermFieldBuilder(controlledTermField);
   }
 
-  final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder
+  final class ControlledTermFieldBuilder extends FieldSchemaArtifactBuilder<ControlledTermField.ControlledTermFieldBuilder>
+      implements ControlledTermDefaultableFieldBuilder
   {
     private final FieldUi.Builder fieldUiBuilder;
     private final ControlledTermValueConstraints.ControlledTermValueConstraintsBuilder valueConstraintsBuilder;
@@ -81,12 +65,40 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     public ControlledTermFieldBuilder(ControlledTermField controlledTermField)
     {
       super(controlledTermField);
-
       this.fieldUiBuilder = FieldUi.builder(controlledTermField.fieldUi());
-      if (controlledTermField.valueConstraints().isPresent())
-        this.valueConstraintsBuilder = ControlledTermValueConstraints.builder(controlledTermField.valueConstraints().get().asControlledTermValueConstraints());
-      else
-        this.valueConstraintsBuilder = ControlledTermValueConstraints.builder();
+      this.valueConstraintsBuilder = controlledTermField.valueConstraints()
+        .map(vc -> ControlledTermValueConstraints.builder(vc.asControlledTermValueConstraints()))
+        .orElseGet(ControlledTermValueConstraints::builder);
+    }
+
+    @Override public ControlledTermFieldBuilder withRequiredValue(boolean requiredValue)
+    {
+      valueConstraintsBuilder.withRequiredValue(requiredValue);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withRecommendedValue(boolean recommendedValue)
+    {
+      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withHidden(boolean hidden)
+    {
+      fieldUiBuilder.withHidden(hidden);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    {
+      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
+      return this;
+    }
+
+    @Override public ControlledTermFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    {
+      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
+      return this;
     }
 
     public ControlledTermFieldBuilder withOntologyValueConstraint(URI uri, String acronym, String name)
@@ -97,9 +109,10 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
     }
 
     public ControlledTermFieldBuilder withOntologyValueConstraint(URI uri, String acronym, String name,
-      Optional<Integer> numTerms)
+      Integer numTerms)
     {
-      valueConstraintsBuilder.withOntologyValueConstraint(new OntologyValueConstraint(uri, acronym, name, numTerms));
+      valueConstraintsBuilder.withOntologyValueConstraint(
+        new OntologyValueConstraint(uri, acronym, name, Optional.of(numTerms)));
       return this;
     }
 
@@ -156,181 +169,6 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withRequiredValue(boolean requiredValue)
-    {
-      valueConstraintsBuilder.withRequiredValue(requiredValue);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withHidden(boolean hidden)
-    {
-      fieldUiBuilder.withHidden(hidden);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
-
-    @Override public ControlledTermFieldBuilder withRecommendedValue(boolean recommendedValue)
-    {
-      valueConstraintsBuilder.withRecommendedValue(recommendedValue);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext)
-    {
-      super.withJsonLdContext(jsonLdContext);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withJsonLdType(URI jsonLdType)
-    {
-      super.withJsonLdType(jsonLdType);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withJsonLdId(URI jsonLdId)
-    {
-      super.withJsonLdId(jsonLdId);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withName(String name)
-    {
-      super.withName(name);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withDescription(String description)
-    {
-      super.withDescription(description);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withIdentifier(String identifier)
-    {
-      super.withIdentifier(identifier);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withVersion(Version version)
-    {
-      super.withVersion(version);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withStatus(Status status)
-    {
-      super.withStatus(status);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withCreatedBy(URI createdBy)
-    {
-      super.withCreatedBy(createdBy);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withModifiedBy(URI modifiedBy)
-    {
-      super.withModifiedBy(modifiedBy);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withCreatedOn(OffsetDateTime createdOn)
-    {
-      super.withCreatedOn(createdOn);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withLastUpdatedOn(OffsetDateTime lastUpdatedOn)
-    {
-      super.withLastUpdatedOn(lastUpdatedOn);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withPreviousVersion(URI previousVersion)
-    {
-      super.withPreviousVersion(previousVersion);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withDerivedFrom(URI derivedFrom)
-    {
-      super.withDerivedFrom(derivedFrom);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withPreferredLabel(String preferredLabel)
-    {
-      super.withPreferredLabel(preferredLabel);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withAlternateLabels(List<String> alternateLabels)
-    {
-      super.withAlternateLabels(alternateLabels);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withIsMultiple(boolean isMultiple)
-    {
-      super.withIsMultiple(isMultiple);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withMinItems(Integer minItems)
-    {
-      super.withMinItems(minItems);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withMaxItems(Integer maxItems)
-    {
-      super.withMaxItems(maxItems);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withPropertyUri(URI propertyUri)
-    {
-      super.withPropertyUri(propertyUri);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withLanguage(String language)
-    {
-      super.withLanguage(language);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withInternalName(String internalName)
-    {
-      super.withInternalName(internalName);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withInternalDescription(String internalDescription)
-    {
-      super.withInternalDescription(internalDescription);
-      return this;
-    }
-
-    @Override public ControlledTermFieldBuilder withAnnotations(Annotations annotations)
-    {
-      super.withAnnotations(annotations);
-      return this;
-    }
-
     public ControlledTermField build()
     {
       withFieldUi(fieldUiBuilder.build());
@@ -359,33 +197,10 @@ implements ControlledTermField
 {
   public ControlledTermFieldRecord
   {
-    validateMapFieldNotNull(this, jsonLdContext, JSON_LD_CONTEXT);
-    validateUriListFieldContainsOneOf(this, jsonLdTypes, JSON_LD_TYPE,
-      Set.of(URI.create(FIELD_SCHEMA_ARTIFACT_TYPE_IRI), URI.create(STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI)));
-    validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
-    validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
-    validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
-    validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
-    validateOptionalFieldNotNull(this, propertyUri, "propertyUri"); // TODO Add to ModelNodeNames
-    validateOptionalFieldNotNull(this, language,  "language");
-    validateUiFieldNotNull(this, fieldUi, UI);
-    validateOptionalFieldNotNull(this, valueConstraints, VALUE_CONSTRAINTS);
-    validateOptionalFieldNotNull(this, annotations, "annotations");
-
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in element schema artifact " + name);
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in element schema artifact " + name);
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be less than or equal to maxItems in element schema artifact " + name);
-
-    if (fieldUi.isStatic())
-      jsonLdContext = new LinkedHashMap<>(STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-    else
-      jsonLdContext = new LinkedHashMap<>(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
-
+    FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
+      preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
+      fieldUi, valueConstraints, annotations);
+    jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

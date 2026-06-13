@@ -3,8 +3,8 @@ package org.metadatacenter.artifacts.model.core;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
 import org.metadatacenter.artifacts.model.visitors.TemplateReporter;
@@ -14,14 +14,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InstanceArtifactVisitorTest {
   private JsonArtifactReader artifactReader;
   private ObjectMapper mapper;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     artifactReader = new JsonArtifactReader();
     mapper = new ObjectMapper();

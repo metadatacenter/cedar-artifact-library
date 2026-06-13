@@ -1,0 +1,139 @@
+type: template
+name: Copy of Photograph Work Description
+description: Test Template for an ArtFrame photograph Description
+id: https://repo.metadatacenter.org/templates/0040a428-21db-4a0f-8e25-4788f3454478
+status: draft
+version: 0.0.1
+modelVersion: 1.6.0
+createdOn: '2017-12-21T12:51:12-08:00'
+createdBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+modifiedOn: '2017-12-21T13:25:13-08:00'
+modifiedBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+children:
+- key: Work Title
+  type: element
+  name: Work Title
+  id: https://repo.metadatacenter.org/template-elements/eb9b16fa-ea07-420d-904b-0d8dc4e3ccfa
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2017-12-21T13:25:13-08:00'
+  createdBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  modifiedOn: '2017-12-21T13:25:13-08:00'
+  modifiedBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  children:
+  - key: has Preferred Title
+    type: text-field
+    name: has Preferred Title
+    id: https://repo.metadatacenter.org/template-fields/c5ce002e-9ab0-45f4-b55f-da7febc3ea32
+    modelVersion: 1.6.0
+    createdOn: '2017-12-21T12:43:43-08:00'
+    createdBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+    modifiedOn: '2017-12-21T12:43:43-08:00'
+    modifiedBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+    configuration:
+      propertyIri: http://bibliotek-o.org/1.1/ontology/hasPreferredTitle
+  configuration:
+    propertyIri: http://bibliotek-o.org/1.1/ontology/hasPreferredTitle
+    overrideLabel: Custom Work Title
+- key: Activity
+  type: element
+  name: Activity
+  description: An action that is performed for an ongoing time
+  id: https://repo.metadatacenter.net/template-elements/eb162fb4-96f1-4271-b42f-363431803d3b
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2017-12-21T13:25:13-08:00'
+  createdBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  modifiedOn: '2017-12-21T13:25:13-08:00'
+  modifiedBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  children:
+  - key: typeOfActivity
+    type: controlled-term-field
+    name: Type of Activity
+    description: Description
+    id: https://repo.metadatacenter.net/template-fields/a3cd71ee-942f-4f72-b046-b0ba4df1804a
+    modelVersion: 1.6.0
+    datatype: iri
+    values:
+    - type: branch
+      ontologyName: The Biblioteko Ontology (BIBLIOTEK-O)
+      acronym: BIBLIOTEK-O
+      termLabel: Activity
+      iri: http://bibliotek-o.org/1.1/ontology/Activity
+      maxDepth: 0
+    createdOn: '2017-08-22T21:52:10-07:00'
+    createdBy: https://metadatacenter.org/users/1adf5ee5-cee0-47d1-9769-efbe00cdebee
+    modifiedOn: '2017-08-22T21:52:10-07:00'
+    modifiedBy: https://metadatacenter.org/users/1adf5ee5-cee0-47d1-9769-efbe00cdebee
+    configuration:
+      propertyIri: https://schema.metadatacenter.net/properties/typeOfActivity
+      overrideLabel: typeOfActivity
+      overrideDescription: ''
+  - key: agent
+    type: text-field
+    name: Agent
+    description: The agent associated with performing the activity, presented as an IRI. (Must look up IRI elsewhere and copy here.)
+    id: https://repo.metadatacenter.net/template-fields/a9f4dd80-1b8c-46b4-bf12-c7f2637fce08
+    modelVersion: 1.6.0
+    createdOn: '2017-08-22T21:52:10-07:00'
+    createdBy: https://metadatacenter.org/users/1adf5ee5-cee0-47d1-9769-efbe00cdebee
+    modifiedOn: '2017-08-22T21:52:10-07:00'
+    modifiedBy: https://metadatacenter.org/users/1adf5ee5-cee0-47d1-9769-efbe00cdebee
+    configuration:
+      propertyIri: http://bibliotek-o.org/1.1/ontology/hasAgent
+      overrideLabel: agent
+      overrideDescription: ''
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/f281249c-6ad8-491f-89a4-ebec002bb890
+    overrideLabel: Custom Activity
+    overrideDescription: ''
+- key: hasInstance
+  type: text-field
+  name: hasInstance
+  description: Instance is related to described Work. For use to connect Works to Instances in the BIBFRAME structure. Enter identifier for instance
+  id: https://repo.metadatacenter.org/template-fields/7376ddf2-ec56-4ea2-831d-6f0143a25d88
+  modelVersion: 1.6.0
+  createdOn: '2017-12-21T13:25:13-08:00'
+  createdBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  modifiedOn: '2017-12-21T13:25:13-08:00'
+  modifiedBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/84c895c3-3746-4666-aab4-db9748fa4289
+    overrideLabel: Custom hasInstance
+    overrideDescription: ''
+    valueRecommendation: true
+    multiple: true
+    minItems: 1
+- key: GenreForm
+  type: element
+  name: GenreForm
+  id: https://repo.metadatacenter.org/template-elements/8cc9247b-da19-4ca0-9ae5-692ebc22f0d3
+  status: draft
+  version: 0.0.1
+  modelVersion: 1.6.0
+  createdOn: '2017-12-21T13:25:13-08:00'
+  createdBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  modifiedOn: '2017-12-21T13:25:13-08:00'
+  modifiedBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+  children:
+  - key: genreForm
+    type: text-field
+    name: genreForm
+    description: Form category or genre to which a resource belongs. Search for IRI in separate vocabulary and enter here.
+    id: https://repo.metadatacenter.org/template-fields/6ad3dd1b-a107-4ed2-a3e6-419f66ceceb6
+    modelVersion: 1.6.0
+    createdOn: '2017-12-21T07:48:25-08:00'
+    createdBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+    modifiedOn: '2017-12-21T07:48:25-08:00'
+    modifiedBy: https://metadatacenter.org/users/bafe5e43-583f-4b5a-9067-e3df7fd1e671
+    configuration:
+      propertyIri: https://schema.metadatacenter.org/properties/1c96f039-2c02-4da8-b4c3-27e039a06839
+      overrideDescription: ''
+      valueRecommendation: true
+      multiple: true
+      minItems: 1
+  configuration:
+    propertyIri: https://schema.metadatacenter.org/properties/e0e1c645-4532-44d1-a572-a14b6578790b
+    overrideLabel: Custom GenreForm

@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.renderer;
 
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
@@ -145,6 +146,11 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     return ubkgRenderingBuilder;
   }
 
+  public UbkgRendering.Builder renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
+  {
+    return ubkgRenderingBuilder;
+  }
+
   private void populateCEDARNodes(UbkgRendering.Builder ubkgRenderingBuilder)
   {
     ubkgRenderingBuilder.withNode(TEMPLATE_SCHEMA_ARTIFACT_TYPE_URI, "cedar:Template", "A CEDAR template schema artifact");
@@ -190,4 +196,3 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
   }
 
 }
-
