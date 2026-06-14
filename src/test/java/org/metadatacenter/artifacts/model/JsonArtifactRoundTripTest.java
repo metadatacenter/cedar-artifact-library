@@ -69,6 +69,42 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+  @Test public void testRoundTripTemplateSchemaArtifactWithAnnotations()
+  {
+    Annotations annotations = Annotations.builder()
+      .withLiteralAnnotation("rdfs:comment", "study template")
+      .withIriAnnotation("skos:exactMatch", URI.create("https://example.org/term/1"))
+      .build();
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/123")).withName("Study")
+      .withAnnotations(annotations).build();
+
+    testRoundTripTemplateSchemaArtifact(original);
+  }
+
+  @Test public void testRoundTripElementSchemaArtifactWithAnnotations()
+  {
+    Annotations annotations = Annotations.builder()
+      .withLiteralAnnotation("rdfs:comment", "a postal address")
+      .withIriAnnotation("skos:exactMatch", URI.create("https://example.org/term/2"))
+      .build();
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).withName("Address")
+      .withAnnotations(annotations).build();
+
+    testRoundTripElementSchemaArtifact(original);
+  }
+
+  @Test public void testRoundTripFieldSchemaArtifactWithAnnotations()
+  {
+    Annotations annotations = Annotations.builder().withLiteralAnnotation("source", "manual").build();
+    TextField original = TextField.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Study ID")
+      .withAnnotations(annotations).build();
+
+    testRoundTripFieldSchemaArtifact(original);
+  }
+
   @Test public void testRoundTripNumericField()
   {
     String name = "Field name";

@@ -233,6 +233,17 @@ public class YamlArtifactRoundTripTest
     roundTripField(original);
   }
 
+  @Test public void testRoundTripElementWithAnnotations()
+  {
+    Annotations annotations = Annotations.builder()
+      .withLiteralAnnotation("rdfs:comment", "a postal address")
+      .withIriAnnotation("skos:exactMatch", URI.create("https://example.org/term/1"))
+      .build();
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder().withName("Address")
+      .withAnnotations(annotations).build();
+    roundTripElement(original);
+  }
+
   // -------- Template instance artifacts --------
 
   @Test public void testRoundTripSimpleTemplateInstance()
