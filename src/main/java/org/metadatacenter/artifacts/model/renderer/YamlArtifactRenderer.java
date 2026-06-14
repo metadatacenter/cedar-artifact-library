@@ -135,6 +135,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
+    if (elementSchemaArtifact.annotations().isPresent())
+      rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
+
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
 
