@@ -594,7 +594,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     while (instanceArtifactFieldKeys.hasNext()) {
       String instanceArtifactFieldKey = instanceArtifactFieldKeys.next();
 
-      if (!INSTANCE_ARTIFACT_KEYWORDS.contains(instanceArtifactFieldKey)) {
+      // The annotations block is read separately (readAnnotations); it is not a child instance.
+      // INSTANCE_ARTIFACT_KEYWORDS does not list it, so exclude it explicitly here — otherwise
+      // an instance's _annotations object is mis-parsed as a phantom child field instance.
+      if (!INSTANCE_ARTIFACT_KEYWORDS.contains(instanceArtifactFieldKey)
+          && !ANNOTATIONS.equals(instanceArtifactFieldKey)) {
         JsonNode nestedNode = parentNode.get(instanceArtifactFieldKey);
         String nestedInstanceArtifactPath = path + "/" + instanceArtifactFieldKey;
 

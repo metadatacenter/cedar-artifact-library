@@ -105,6 +105,31 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(original);
   }
 
+  @Test public void testRoundTripTemplateInstanceWithAnnotations()
+  {
+    // A template instance's annotations must survive a JSON render -> read, and the _annotations
+    // block must not be mis-parsed as a child field instance. (A full equals against the built
+    // instance would also trip on the canonical @context the JSON renderer supplies, which is
+    // expected; this asserts the annotation-specific contract directly.)
+    Annotations annotations = Annotations.builder()
+      .withLiteralAnnotation("source", "import")
+      .withIriAnnotation("prov:wasAttributedTo", URI.create("https://example.org/user/1"))
+      .build();
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-instances/123"))
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withAnnotations(annotations).build();
+
+    ObjectNode rendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(original);
+    TemplateInstanceArtifact roundTripped = artifactReader.readTemplateInstanceArtifact(rendering);
+
+    assertEquals(original.annotations(), roundTripped.annotations(),
+      "instance annotations must survive a JSON round-trip");
+    assertTrue(roundTripped.childKeys().isEmpty(),
+      "the _annotations block must not be read as a child field instance; got childKeys="
+        + roundTripped.childKeys());
+  }
+
   @Test public void testRoundTripNumericField()
   {
     String name = "Field name";
