@@ -1163,4 +1163,93 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(initial, cloned);
   }
 
+  @Test public void imageFieldBuilderSetsContentAndDimensions()
+  {
+    ImageField imageField = ImageField.builder()
+      .withName("Logo")
+      .withContent("https://example.org/logo.png")
+      .withWidth(640)
+      .withHeight(480)
+      .build();
+
+    Assertions.assertEquals("https://example.org/logo.png",
+      imageField.fieldUi().asStaticFieldUi()._content().orElseThrow());
+    Assertions.assertEquals(640, imageField.fieldUi().asStaticFieldUi().width().orElseThrow());
+    Assertions.assertEquals(480, imageField.fieldUi().asStaticFieldUi().height().orElseThrow());
+  }
+
+  @Test public void imageFieldCopyBuilderKeepsContentAndDimensions()
+  {
+    ImageField original = ImageField.builder()
+      .withName("Logo")
+      .withContent("https://example.org/logo.png")
+      .withWidth(640)
+      .withHeight(480)
+      .build();
+
+    ImageField copied = ImageField.builder(original).build();
+    Assertions.assertEquals(original.fieldUi().asStaticFieldUi(), copied.fieldUi().asStaticFieldUi());
+  }
+
+  @Test public void youTubeFieldCopyBuilderKeepsDimensions()
+  {
+    YouTubeField original = YouTubeField.builder()
+      .withName("Intro video")
+      .withContent("https://youtube.com/watch?v=xyz")
+      .withWidth(1280)
+      .withHeight(720)
+      .build();
+
+    YouTubeField copied = YouTubeField.builder(original).build();
+    Assertions.assertEquals(original.fieldUi().asStaticFieldUi(), copied.fieldUi().asStaticFieldUi());
+  }
+
+  @Test public void staticDimensionsRenderAsUiSizeAndRoundTrip() throws Exception
+  {
+    ImageField original = ImageField.builder()
+      .withName("Logo")
+      .withContent("https://example.org/logo.png")
+      .withWidth(640)
+      .withHeight(480)
+      .build();
+
+    com.fasterxml.jackson.databind.node.ObjectNode rendered =
+      new org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer().renderFieldSchemaArtifact(original);
+
+    // Canonical wire form: _ui._size {width, height}; the flat keys are rejected by the
+    // CEDAR meta-schema's additionalProperties: false.
+    Assertions.assertEquals(640, rendered.path("_ui").path("_size").path("width").asInt());
+    Assertions.assertEquals(480, rendered.path("_ui").path("_size").path("height").asInt());
+    Assertions.assertFalse(rendered.path("_ui").has("width"));
+    Assertions.assertFalse(rendered.path("_ui").has("height"));
+
+    FieldSchemaArtifact roundTripped =
+      new org.metadatacenter.artifacts.model.reader.JsonArtifactReader().readFieldSchemaArtifact(rendered);
+    Assertions.assertEquals(original.fieldUi().asStaticFieldUi(), roundTripped.fieldUi().asStaticFieldUi());
+
+    org.metadatacenter.model.validation.report.ValidationReport report =
+      new org.metadatacenter.model.validation.CedarValidator().validateTemplateField(rendered);
+    Assertions.assertEquals("true", report.getValidationStatus(),
+      "a static field with dimensions must pass the canonical validator; got: " + report.getErrors());
+  }
+
+  @Test public void controlledTermCloneBuilderAccumulatesConstraints()
+  {
+    ControlledTermField original = ControlledTermField.builder()
+      .withName("Disease")
+      .withClassValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_4"),
+        "DOID", "disease", "disease", ValueType.ONTOLOGY_CLASS)
+      .build();
+
+    ControlledTermField extended = ControlledTermField.builder(original)
+      .withOntologyValueConstraint(URI.create("https://data.bioontology.org/ontologies/LOINC"),
+        "LOINC", "Logical Observation Identifiers")
+      .build();
+
+    Assertions.assertEquals(1, extended.valueConstraints().orElseThrow()
+      .asControlledTermValueConstraints().classes().size());
+    Assertions.assertEquals(1, extended.valueConstraints().orElseThrow()
+      .asControlledTermValueConstraints().ontologies().size());
+  }
+
 }

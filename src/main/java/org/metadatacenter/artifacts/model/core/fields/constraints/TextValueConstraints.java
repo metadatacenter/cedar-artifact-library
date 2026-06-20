@@ -63,7 +63,8 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       this.minLength = textValueConstraints.minLength();
       this.maxLength = textValueConstraints.maxLength();
       this.defaultValue = textValueConstraints.defaultValue();
-      this.literals = List.copyOf(textValueConstraints.literals());
+      // Mutable copy: withChoice appends, so a cloned builder must accumulate further literals.
+      this.literals = new ArrayList<>(textValueConstraints.literals());
       this.requiredValue = textValueConstraints.requiredValue();
       this.recommendedValue = textValueConstraints.recommendedValue();
       this.multipleChoice = textValueConstraints.multipleChoice();

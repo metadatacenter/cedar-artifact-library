@@ -71,11 +71,13 @@ public non-sealed interface ControlledTermValueConstraints extends ValueConstrai
 
     private ControlledTermValueConstraintsBuilder(ControlledTermValueConstraints controlledTermValueConstraints)
     {
-      this.ontologies = List.copyOf(controlledTermValueConstraints.ontologies());
-      this.valueSets = List.copyOf(controlledTermValueConstraints.valueSets());
-      this.classes = List.copyOf(controlledTermValueConstraints.classes());
-      this.branches = List.copyOf(controlledTermValueConstraints.branches());
-      this.actions = List.copyOf(controlledTermValueConstraints.actions());
+      // Mutable copies: the with*ValueConstraint methods append, so a builder cloned from
+      // an existing constraints object must be able to accumulate further entries.
+      this.ontologies = new ArrayList<>(controlledTermValueConstraints.ontologies());
+      this.valueSets = new ArrayList<>(controlledTermValueConstraints.valueSets());
+      this.classes = new ArrayList<>(controlledTermValueConstraints.classes());
+      this.branches = new ArrayList<>(controlledTermValueConstraints.branches());
+      this.actions = new ArrayList<>(controlledTermValueConstraints.actions());
       this.defaultValue = controlledTermValueConstraints.defaultValue();
       this.requiredValue = controlledTermValueConstraints.requiredValue();
       this.recommendedValue = controlledTermValueConstraints.recommendedValue();

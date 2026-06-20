@@ -135,6 +135,32 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
+  public void testRenderElementSchemaArtifactWithAnnotations() {
+    // A standalone element's annotations must render. The single-arg
+    // renderElementSchemaArtifact overload (used for top-level elements) previously omitted the
+    // annotations block that the keyed (nested) overload emits.
+    Annotations annotations = Annotations.builder().
+        withLiteralAnnotation("rdfs:comment", "a postal address").
+        build();
+
+    ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder().
+        withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template_elements/123")).
+        withName("Address").
+        withDescription("Address element").
+        withAnnotations(annotations).
+        build();
+
+    LinkedHashMap<String, Object> actualRendering =
+        new YamlArtifactRenderer(true).renderElementSchemaArtifact(elementSchemaArtifact);
+
+    Object renderedAnnotations = actualRendering.get(ANNOTATIONS);
+    assertTrue(renderedAnnotations instanceof java.util.Map,
+        "standalone element rendering must include the annotations block; got: " + actualRendering);
+    assertTrue(((java.util.Map<?, ?>) renderedAnnotations).containsKey("rdfs:comment"),
+        "rendered annotations must carry the rdfs:comment property; got: " + renderedAnnotations);
+  }
+
+  @Test
   public void testRenderTextFieldCompact() throws JsonProcessingException {
 
     String name = "Study Name";

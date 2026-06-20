@@ -60,16 +60,6 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   explicitly parse-library-typed, opt-in "advanced" method so the coupling exists only where it is
   consciously chosen.
 
-## Known limitations
-
-- **`ImageFieldUiBuilder` can't set `width` / `height`** — the YAML reader/renderer pair
-  now preserves `width`/`height` on static fields end-to-end (a model that carries them —
-  e.g. read from JSON — survives a YAML round trip), and `YouTubeField.Builder` exposes
-  `withWidth` / `withHeight`. But `ImageField`'s UI builder still hardcodes both to
-  `Optional.empty()`, so an image field's dimensions can't be set through the Java builder
-  API. Add `withWidth` / `withHeight` to `StaticFieldUi.ImageFieldUiBuilder` (and the
-  `ImageField.Builder` passthroughs) to close the gap.
-
 ## Out of scope
 
 I/O-bound features (Excel rendering, REDCap export, terminology lookups,
