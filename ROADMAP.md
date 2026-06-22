@@ -17,7 +17,7 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   are left untouched (no defaulting), preserving lossless round-tripping of real templates whose
   child fields carry neither.
 
-- **The library should generate empty JSON instance placeholders.** A canonical CEDAR
+- **The library should generate empty JSON instance placeholders.** A CEDAR
   *JSON* instance must carry an entry for every field its template defines, even unset
   ones (rendered as an empty placeholder, e.g. `{"@value": null}`), because the template's
   JSON Schema marks those properties `required`. This is an old design decision we are not
