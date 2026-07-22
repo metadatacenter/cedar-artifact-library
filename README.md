@@ -531,26 +531,55 @@ Other file-based options are `-esf` for element schema artifacts, `-fsf` for fie
 
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
-```
-    mvn exec:java@artifact-convertor 
-      -Dexec.args="-tsi <artifact_iri> 
+    mvn exec:java@artifact-convertor
+      -Dexec.args="-tsi <artifact_iri>
                    -yf
-                   -f <output_YAML_filename> 
+                   -f <output_YAML_filename>
                    -r https://resource.metadatacenter.org
                    -k <CEDAR API key>"
 
 Other IRI-based options are `-esi` for element schema artifacts, `-fsi` for field schema artifacts, and `-tii` for template instance artifacts.
 
-If the `-y` option is omitted the output is written to the console.
+If the `-f` option is omitted the output is written to the console.
+
+### Expanded (Fully Materialized) YAML
+
+By default the YAML records a controlled-term field's value constraints as *references*: the
+ontology, branch, class, or value set its terms are drawn from. The individual terms are not
+listed, so the file stays small and needs no terminology server.
+
+Passing a terminology integrated-search endpoint with `-t`, together with an API key with `-k`,
+produces the **fully materialized** form instead. Each controlled-term constraint is expanded
+inline into the full set of terms it resolves to, every term with its IRI and label, fetched
+from the terminology server:
+
+    mvn exec:java@artifact-convertor
+      -Dexec.args="-tsi <artifact_iri>
+                   -yf
+                   -f <output_YAML_filename>
+                   -r https://resource.metadatacenter.org
+                   -t https://terminology.metadatacenter.org/bioportal/integrated-search/
+                   -k <CEDAR API key>"
+
+This is orthogonal to `-cy`. The `-t` option controls whether the terms are expanded, and `-cy`
+controls whether the surrounding structure is compact. Omit `-cy`, as above, for the full
+expanded form.
+
+**Warning: the materialized form can produce very large files.** A field bound to a whole
+ontology, or to a broad branch, materializes into every term beneath it, often thousands and
+sometimes hundreds of thousands. Each such field in the template expands independently, so a
+template that is a few kilobytes as references can become tens or hundreds of megabytes once
+materialized. It also makes a network call per constraint, so it is slower. Materialize only
+when you need the terms inline, and prefer narrow branches or value sets to whole ontologies.
 
 To generate a JSON Schema file from a CEDAR template stored in a file:
 
-    mvn exec:java@artifact-convertor 
+    mvn exec:java@artifact-convertor
       -Dexec.args="-tsf <input_artifact_filename> -jf -f <output_filename>"
 
-This will read a JSON-Schema-based template,convert it to JSON Schema and write it into a file. 
+This will read a JSON-Schema-based template, convert it to JSON Schema, and write it into a file.
 
-```
+
 ## Building the Library
 
 To build the code in this repository you must have the following items installed:
