@@ -60,6 +60,22 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   explicitly parse-library-typed, opt-in "advanced" method so the coupling exists only where it is
   consciously chosen.
 
+- **No instance ↔ RDF translation.** The model is designed so an instance maps to RDF. The
+  schema's `instanceType` gives each instance or element its `rdf:type`, each child's
+  `propertyIri` gives the predicate, the instance `id` is the subject, and field values are the
+  objects (a controlled term or link contributes its IRI, a literal contributes a plain or typed
+  literal). The library implements this in neither direction. No renderer emits an instance,
+  together with its template, as RDF (Turtle / N-Triples), and no reader ingests RDF back into an
+  instance model. Renderers today are JSON, JSON-LD `@context`, JSON Schema, YAML, Excel, and
+  UBKG. None produces a triple graph. The JSON instance form is already JSON-LD (it carries
+  `@context` / `@type` / `@id`), so it is RDF-serializable by an external JSON-LD processor; a
+  model-level translator would remove that dependency and, importantly, work from the sparse YAML
+  instance form, which relies on its template for the predicates (`propertyIri`) and types
+  (`instanceType`) the instance itself does not carry. Add a template-driven RDF renderer
+  (instance model + template → RDF) and, if round-tripping is wanted, an RDF reader (RDF +
+  template → instance model). The intended mapping is documented in the CEDAR YAML
+  specification's "Mapping to RDF" section.
+
 ## Out of scope
 
 I/O-bound features (Excel rendering, REDCap export, terminology lookups,
