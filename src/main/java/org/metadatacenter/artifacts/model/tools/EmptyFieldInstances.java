@@ -75,7 +75,7 @@ public final class EmptyFieldInstances
         yield builder.build();
       }
       case TEMPORAL -> {
-        // Same shape as NUMERIC: rendered sub-schema requires @type, so seed it
+        // Same shape as NUMERIC. The rendered sub-schema requires @type, so seed it
         // from the field's declared XsdTemporalDatatype.
         TemporalFieldInstance.TemporalFieldInstanceBuilder builder = TemporalFieldInstance.builder();
         XsdTemporalDatatype datatype = field.valueConstraints()

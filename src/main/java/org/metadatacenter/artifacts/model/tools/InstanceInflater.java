@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * the lean form a YAML serialization produces. But the CEDAR <em>JSON</em> instance must mirror the
  * template — every non-static, non-attribute-value field present, even when empty, because the
  * template's JSON Schema marks those properties required. That "all fields present" rule is a JSON-
- * serialization concern, not a property of the model. This class bridges the two: it re-adds the
+ * serialization concern, not a property of the model. This class bridges the two — it re-adds the
  * missing empty slots (recursing into elements) while preserving every value the sparse instance
  * already carries, so downstream serialization and validation operate on a complete instance.
  *

@@ -15,7 +15,7 @@ Currently, it supports (1) the reading of artifacts from their JSON Schema and J
 
 The library provides a class to convert the [Jackson Library](https://github.com/FasterXML/jackson) `ObjectNode` class representation of a JSON object containing a JSON Schema serialization of CEDAR artifacts to a Java representation of those artifacts. 
 
-A class called `JsonSchemaArtifactReader` provides methods to generate Java representations of templates, elements and fields from their JSON Schema representation.
+A class called `JsonArtifactReader` provides methods to generate Java representations of templates, elements and fields from their JSON Schema representation.
 
 For example, assuming we used the Jackson Library to read a JSON document containing a JSON Schema representation of a CEDAR template, we can generate a Java representation as follows:
 
@@ -23,8 +23,8 @@ For example, assuming we used the Jackson Library to read a JSON document contai
 // Obtain an instance of a Jackson Library ObjectNode class
 // containing a JSON Schema representation of a CEDAR template
 ObjectNode objectNode = ...
-// Generate an instance of the JsonSchemaArtifactReader class
-JsonSchemaArtifactReader artifactReader = new JsonSchemaArtifactReader();
+// Generate an instance of the JsonArtifactReader class
+JsonArtifactReader artifactReader = new JsonArtifactReader();
 // Generate a Java representation of the CEDAR template 
 TemplateSchemaArtifact templateSchemaArtifact 
   = artifactReader.readTemplateSchemaArtifact(objectNode);
@@ -32,7 +32,7 @@ TemplateSchemaArtifact templateSchemaArtifact
 
 The `TemplateSchemaArtifact` contains a full representation of a CEDAR template.
 
-The `JsonSchemaArtifactReader` class also provides methods to read CEDAR element, field and instance artifacts.
+The `JsonArtifactReader` class also provides methods to read CEDAR element, field and instance artifacts.
 
 ## Serializing Schema Artifacts
 
@@ -40,7 +40,7 @@ Currently, the following serializations are supported: JSON Schema, YAML, Excel,
 
 ### Serializing to JSON Schema 
 
-A class called `JsonSchemaArtifactRenderer` provides methods to serialize CEDAR schema artifacts to JSON Schema.
+A class called `JsonArtifactRenderer` provides methods to serialize CEDAR schema artifacts to JSON Schema.
 
 Again, the `ObjectNode` class from the Jackson Library is used to represent JSON documents.
 
@@ -73,7 +73,7 @@ LinkedHashMap<String, Object> yamlRendering
 This map can be written to a file using the Jackson Library as follows:
 
 ```java
-YAMLFactory yamlFactory = new YAMLFactory()
+YAMLFactory yamlFactory = new YAMLFactory().
           disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
           enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
           enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
@@ -204,7 +204,7 @@ This field can be added as a child to a template as follows:
 TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
   .withName("Study")
   .withDescription("A template describing a study")
-  .withFieldSchema(fieldSchemaArtifact);
+  .withFieldSchema(textField)
   .build();
 ```
 
@@ -212,7 +212,7 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 
 A builder supplied by a class called `NumericField` can be used to create a CEDAR numeric fields.
 
-In CEDAR, numeric fields can be one of XML Schema Datatypes decimal, integer, long, byte, short, int, float and double. An enumeration called `NumericType` can be used to specify this type on field creation. Numeric fields also allow the optional specification of minimum and maximum values, and of a default value.
+In CEDAR, numeric fields can be one of XML Schema Datatypes decimal, integer, long, byte, short, int, float and double. An enumeration called `XsdNumericDatatype` can be used to specify this type on field creation. Numeric fields also allow the optional specification of minimum and maximum values, and of a default value.
 
 An example numeric field representing the percentage of a treatment completed and with a default of 0% could be created as follows:
 
@@ -220,7 +220,7 @@ An example numeric field representing the percentage of a treatment completed an
     NumericField numericField = NumericField.builder().
       withName("Treatment Completed %").
       withDescription("Please enter the percentage of the treatment that has been completed").
-      withNumericType(NumericType.INTEGER).
+      withXsdNumericDatatype(XsdNumericDatatype.INTEGER).
       withMinValue(0).
       withMaxValue(100).
       withDefaultValue(0).
@@ -351,7 +351,7 @@ Using this class, we can create a link field as follows:
     LinkField linkField = LinkField.builder().
       withName("Institution Home Page").
       withDescription("Please enter your institution's home page").
-      withDefaultValue(URI.create("https://stanford.edu"), "Stanford")
+      withDefaultValue(URI.create("https://stanford.edu"), "Stanford").
       build();
 ```
 
@@ -364,7 +364,7 @@ A builder supplied by a class called `PhoneNumberField` can be used to create a 
 Using this class, we can create a phone number field as follows:
 
 ```java
-    PhoneNumber phoneNumber = PhoneNumberField.builder().
+    PhoneNumberField phoneNumberField = PhoneNumberField.builder().
       withName("Phone Number").
       withDescription("Please enter your phone number").
       build();
@@ -400,12 +400,12 @@ TextAreaField textAreaField = TextAreaField.builder().
 
 ### Creating Attribute-Value Fields
 
-A builder supplied by a class called `AttributeValueTextBuilder` can be used to create a CEDAR attribute-value fields.
+A builder supplied by a class called `AttributeValueField` can be used to create a CEDAR attribute-value fields.
 
 Using this class, we can create an attribute-value field as follows:
 
 ```java
-FieldSchemaArtifact fieldSchemaArtifact = FieldSchemaArtifact.attributeValueFieldBuilder().
+AttributeValueField attributeValueField = AttributeValueField.builder().
       withName("Additional Patient Characteristics").
       build();
 ```
@@ -436,7 +436,7 @@ ImageField imageField = ImageField.builder().
       build();
 ```
 
-### Creating Image Fields
+### Creating YouTube Fields
 
 A builder supplied by a class called `YouTubeField` can be used to create a CEDAR YouTube fields.
 
@@ -531,26 +531,55 @@ Other file-based options are `-esf` for element schema artifacts, `-fsf` for fie
 
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
-```
-    mvn exec:java@artifact-convertor 
-      -Dexec.args="-tsi <artifact_iri> 
+    mvn exec:java@artifact-convertor
+      -Dexec.args="-tsi <artifact_iri>
                    -yf
-                   -f <output_YAML_filename> 
+                   -f <output_YAML_filename>
                    -r https://resource.metadatacenter.org
                    -k <CEDAR API key>"
 
 Other IRI-based options are `-esi` for element schema artifacts, `-fsi` for field schema artifacts, and `-tii` for template instance artifacts.
 
-If the `-y` option is omitted the output is written to the console.
+If the `-f` option is omitted the output is written to the console.
+
+### Expanded (Fully Materialized) YAML
+
+By default the YAML records a controlled-term field's value constraints as *references*: the
+ontology, branch, class, or value set its terms are drawn from. The individual terms are not
+listed, so the file stays small and needs no terminology server.
+
+Passing a terminology integrated-search endpoint with `-t`, together with an API key with `-k`,
+produces the **fully materialized** form instead. Each controlled-term constraint is expanded
+inline into the full set of terms it resolves to, every term with its IRI and label, fetched
+from the terminology server:
+
+    mvn exec:java@artifact-convertor
+      -Dexec.args="-tsi <artifact_iri>
+                   -yf
+                   -f <output_YAML_filename>
+                   -r https://resource.metadatacenter.org
+                   -t https://terminology.metadatacenter.org/bioportal/integrated-search/
+                   -k <CEDAR API key>"
+
+This is orthogonal to `-cy`. The `-t` option controls whether the terms are expanded, and `-cy`
+controls whether the surrounding structure is compact. Omit `-cy`, as above, for the full
+expanded form.
+
+**Warning: the materialized form can produce very large files.** A field bound to a whole
+ontology, or to a broad branch, materializes into every term beneath it, often thousands and
+sometimes hundreds of thousands. Each such field in the template expands independently, so a
+template that is a few kilobytes as references can become tens or hundreds of megabytes once
+materialized. It also makes a network call per constraint, so it is slower. Materialize only
+when you need the terms inline, and prefer narrow branches or value sets to whole ontologies.
 
 To generate a JSON Schema file from a CEDAR template stored in a file:
 
-    mvn exec:java@artifact-convertor 
+    mvn exec:java@artifact-convertor
       -Dexec.args="-tsf <input_artifact_filename> -jf -f <output_filename>"
 
-This will read a JSON-Schema-based template,convert it to JSON Schema and write it into a file. 
+This will read a JSON-Schema-based template, convert it to JSON Schema, and write it into a file.
 
-```
+
 ## Building the Library
 
 To build the code in this repository you must have the following items installed:
