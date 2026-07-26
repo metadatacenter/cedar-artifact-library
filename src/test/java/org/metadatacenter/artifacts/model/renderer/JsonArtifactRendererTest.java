@@ -2,9 +2,9 @@ package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
@@ -524,9 +524,9 @@ public class JsonArtifactRendererTest
   private boolean validateJsonSchema(ObjectNode schemaNode)
   {
     try {
-      JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
+      JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
       return true;
-    } catch (ProcessingException e) {
+    } catch (RuntimeException e) {
       return false;
     }
   }
@@ -534,10 +534,10 @@ public class JsonArtifactRendererTest
   private boolean validateJsonSchema(ObjectNode schemaNode, ObjectNode instanceNode)
   {
     try {
-      JsonSchema schema = JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
+      JsonSchema schema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
       schema.validate(instanceNode);
       return true;
-    } catch (ProcessingException e) {
+    } catch (RuntimeException e) {
       return false;
     }
   }
