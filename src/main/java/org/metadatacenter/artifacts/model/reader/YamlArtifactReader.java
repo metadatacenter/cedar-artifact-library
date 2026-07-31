@@ -315,18 +315,22 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * type: controlled-term-field
    * name: Disease
    * values:
-   *   - branch: Disease
-   *     acronym: DPCO
-   *     termUri: http://purl.org/twc/dpo/ont/Disease
    *   - type: ontology
-   *     source: DOID
-   *     name: Human Disease Ontology
-   *     acronym: DOID
-   *     iri: https://data.bioontology.org/ontologies/DOID
-   *   - class: Translated Title
-   *     source: DATACITE-VOCAB
-   *     termUri: http://purl.org/datacite/v4.4/TranslatedTitle
-   *     type: OntologyClass
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
+   *     sourceUri: https://data.bioontology.org/ontologies/DOID
+   *   - type: branch
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: http://purl.org/twc/dpo/ont/Disease
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
+   *   - type: class
+   *     sourceAcronym: DATACITE-VOCAB
+   *     termIri: http://purl.org/datacite/v4.4/TranslatedTitle
+   *     termType: class
+   *     termLabel: Translated Title
+   *     label: Translated Title
    * </pre>
    */
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
