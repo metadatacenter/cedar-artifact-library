@@ -106,11 +106,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Source storage duration unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
+    termBaseLabel: Source storage duration unit
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:18:31-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:18:31-07:00'
@@ -130,11 +130,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Preparation medium
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000041
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000041
+    termBaseLabel: Preparation medium
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:18:31-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:18:31-07:00'
@@ -154,11 +154,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Preparation condition
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000051
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000051
+    termBaseLabel: Preparation condition
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:18:31-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:18:31-07:00'
@@ -195,11 +195,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Processing time unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000071
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000071
+    termBaseLabel: Processing time unit
+    termMaxDepth: 0
   actions:
   - action: move
     to: 0
@@ -225,11 +225,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Storage medium
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000081
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000081
+    termBaseLabel: Storage medium
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:18:31-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:18:31-07:00'
@@ -249,11 +249,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Storage method
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000091
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000091
+    termBaseLabel: Storage method
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:18:31-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:18:31-07:00'
@@ -321,11 +321,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Thickness unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000131
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000131
+    termBaseLabel: Thickness unit
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:18:31-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:18:31-07:00'
@@ -380,11 +380,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Area unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
+    termBaseLabel: Area unit
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:18:31-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:18:31-07:00'

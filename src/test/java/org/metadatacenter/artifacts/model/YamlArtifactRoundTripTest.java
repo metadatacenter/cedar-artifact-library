@@ -156,6 +156,26 @@ public class YamlArtifactRoundTripTest
     roundTripField(original);
   }
 
+  @Test public void testRoundTripFrozenOntologyConstraint()
+  {
+    // A frozen constraint carries the additive spec fields (sourceIri / sourceSystem / version); they
+    // must survive a YAML render -> read unchanged. The version triple exercises id + effectiveDate +
+    // declaredVersion; the reader's readVersion/readUri(SOURCE_IRI)/readString(SOURCE_SYSTEM) are shared
+    // by all four constraint kinds, so ontology coverage proves the mechanism for every kind.
+    var pinned = new org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec(
+      "63ef56dff672b6a1d3f9f23201aae788bacac7f073b858e705b9a6624525dd8b",
+      java.util.Optional.of("2026-07-01"), java.util.Optional.of("2026-06-30"));
+    var frozen = new org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint(
+      URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID", "Human Disease Ontology",
+      java.util.Optional.of(19578),
+      java.util.Optional.of(URI.create("http://purl.obolibrary.org/obo/doid")),
+      java.util.Optional.of("bioportal"), java.util.Optional.of(pinned));
+    ControlledTermField original = ControlledTermField.builder().withName("Disease")
+      .withOntologyValueConstraint(frozen)
+      .build();
+    roundTripField(original);
+  }
+
   // -------- Schemas with child schemas --------
 
   @Test public void testRoundTripTemplateWithSingleField()

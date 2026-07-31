@@ -33,6 +33,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.ui.ElementUi;
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
@@ -102,6 +103,16 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_SYSTEM;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_URI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_BASE_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_BASE_LABEL;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_MAX_DEPTH;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_COUNT;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION_ID;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION_EFFECTIVE_DATE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION_DECLARED_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_TYPE;
@@ -1439,26 +1450,28 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String path)
   {
     return readValuesEntriesOfType(sourceNode, path, ONTOLOGY, entry -> {
-      String acronym = readRequiredString(entry, path, ACRONYM, false);
-      String name = readRequiredString(entry, path, ONTOLOGY_NAME, false);
-      URI iri = readRequiredUri(entry, path, IRI);
-      Optional<Integer> numTerms = readInteger(entry, path, NUM_TERMS);
-      return new OntologyValueConstraint(iri, acronym, name, numTerms);
+      String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
+      String name = readRequiredString(entry, path, SOURCE_NAME, false);
+      URI uri = readRequiredUri(entry, path, SOURCE_URI);
+      Optional<Integer> numTerms = readInteger(entry, path, TERM_COUNT);
+      return new OntologyValueConstraint(uri, acronym, name, numTerms,
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
   }
 
   private List<ClassValueConstraint> readClassValueConstraints(LinkedHashMap<String, Object> sourceNode, String path)
   {
     return readValuesEntriesOfType(sourceNode, path, CLASS, entry -> {
-      String label = readRequiredString(entry, path, LABEL, false);
-      String acronym = readRequiredString(entry, path, ACRONYM, false);
+      String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
       String termType = readRequiredString(entry, path, TERM_TYPE, false);
       String termLabel = readRequiredString(entry, path, TERM_LABEL, false);
-      URI iri = readRequiredUri(entry, path, IRI);
+      String label = readRequiredString(entry, path, LABEL, false);
+      URI uri = readRequiredUri(entry, path, TERM_IRI);
       ValueType valueType = termType.equalsIgnoreCase(CLASS)
         ? ValueType.ONTOLOGY_CLASS
         : ValueType.VALUE;
-      return new ClassValueConstraint(iri, acronym, label, termLabel, valueType);
+      return new ClassValueConstraint(uri, acronym, label, termLabel, valueType,
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
   }
 
@@ -1466,24 +1479,43 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String path)
   {
     return readValuesEntriesOfType(sourceNode, path, VALUE_SET, entry -> {
-      String acronym = readRequiredString(entry, path, ACRONYM, false);
-      String name = readRequiredString(entry, path, VALUE_SET_NAME, false);
-      URI iri = readRequiredUri(entry, path, IRI);
-      Optional<Integer> numTerms = readInteger(entry, path, NUM_TERMS);
-      return new ValueSetValueConstraint(iri, acronym, name, numTerms);
+      String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
+      String name = readRequiredString(entry, path, TERM_BASE_LABEL, false);
+      URI uri = readRequiredUri(entry, path, TERM_BASE_IRI);
+      Optional<Integer> numTerms = readInteger(entry, path, TERM_COUNT);
+      return new ValueSetValueConstraint(uri, acronym, name, numTerms,
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
   }
 
   private List<BranchValueConstraint> readBranchValueConstraints(LinkedHashMap<String, Object> sourceNode, String path)
   {
     return readValuesEntriesOfType(sourceNode, path, BRANCH, entry -> {
-      String ontologyName = readRequiredString(entry, path, ONTOLOGY_NAME, false);
-      String acronym = readRequiredString(entry, path, ACRONYM, false);
-      String termLabel = readRequiredString(entry, path, TERM_LABEL, false);
-      URI iri = readRequiredUri(entry, path, IRI);
-      Optional<Integer> maxDepth = readInteger(entry, path, MAX_DEPTH);
-      return new BranchValueConstraint(iri, ontologyName, acronym, termLabel, maxDepth.orElse(0));
+      String ontologyName = readRequiredString(entry, path, SOURCE_NAME, false);
+      String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
+      String termLabel = readRequiredString(entry, path, TERM_BASE_LABEL, false);
+      URI uri = readRequiredUri(entry, path, TERM_BASE_IRI);
+      Optional<Integer> maxDepth = readInteger(entry, path, TERM_MAX_DEPTH);
+      return new BranchValueConstraint(uri, ontologyName, acronym, termLabel, maxDepth.orElse(0),
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
+  }
+
+  /** Reads the version triple: absent or a plain string ({@code latest}) ⇒ latest (empty); a map ⇒ a
+   *  pinned {@link VersionSpec} (its {@code id} required). Mirrors the JSON reader. */
+  private Optional<VersionSpec> readVersion(LinkedHashMap<String, Object> entry, String path)
+  {
+    Object v = entry.get(VERSION);
+    if (!(v instanceof LinkedHashMap)) {
+      return Optional.empty(); // absent, or the "latest" string
+    }
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> versionMap = (LinkedHashMap<String, Object>) v;
+    String versionPath = path + "/" + VERSION;
+    String id = readRequiredString(versionMap, versionPath, VERSION_ID, false);
+    Optional<String> effectiveDate = readString(versionMap, versionPath, VERSION_EFFECTIVE_DATE);
+    Optional<String> declaredVersion = readString(versionMap, versionPath, VERSION_DECLARED_VERSION);
+    return Optional.of(new VersionSpec(id, effectiveDate, declaredVersion));
   }
 
   /**

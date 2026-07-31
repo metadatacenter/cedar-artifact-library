@@ -58,11 +58,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: The Biblioteko Ontology (BIBLIOTEK-O)
-      acronym: BIBLIOTEK-O
-      termLabel: Activity
-      iri: http://bibliotek-o.org/1.1/ontology/Activity
-      maxDepth: 0
+      sourceAcronym: BIBLIOTEK-O
+      sourceName: The Biblioteko Ontology (BIBLIOTEK-O)
+      termBaseIri: http://bibliotek-o.org/1.1/ontology/Activity
+      termBaseLabel: Activity
+      termMaxDepth: 0
     createdOn: '2017-08-22T21:52:10-07:00'
     createdBy: https://metadatacenter.org/users/1adf5ee5-cee0-47d1-9769-efbe00cdebee
     modifiedOn: '2017-08-22T21:52:10-07:00'
