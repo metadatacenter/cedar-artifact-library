@@ -24,6 +24,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConst
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 
@@ -400,7 +401,8 @@ final class JsonValueConstraintsReader {
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
     Optional<Integer> numTerms = readInteger(sourceNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
 
-    return new OntologyValueConstraint(uri, acronym, name, numTerms);
+    return new OntologyValueConstraint(uri, acronym, name, numTerms,
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
   }
 
 
@@ -411,7 +413,8 @@ final class JsonValueConstraintsReader {
     String label = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_LABEL);
     String source = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
 
-    return new ClassValueConstraint(uri, source, label, preferredLabel, valueType);
+    return new ClassValueConstraint(uri, source, label, preferredLabel, valueType,
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
   }
 
 
@@ -421,7 +424,8 @@ final class JsonValueConstraintsReader {
     String vsCollection = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_VS_COLLECTION);
     Optional<Integer> numTerms = readInteger(sourceNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
 
-    return new ValueSetValueConstraint(uri, vsCollection, name, numTerms);
+    return new ValueSetValueConstraint(uri, vsCollection, name, numTerms,
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
   }
 
 
@@ -432,7 +436,34 @@ final class JsonValueConstraintsReader {
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
     int maxDepth = readRequiredInt(sourceNode, path, VALUE_CONSTRAINTS_MAX_DEPTH);
 
-    return new BranchValueConstraint(uri, source, acronym, name, maxDepth);
+    return new BranchValueConstraint(uri, source, acronym, name, maxDepth,
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
+  }
+
+  /* The additive, source-explicit fields (VERSIONING-DESIGN §6). All optional and tolerant: a legacy
+   * entry that omits them reads as empty (BioPortal source, latest version, acronym-derived iri). */
+
+  private static Optional<URI> readIri(ObjectNode sourceNode, String path) {
+    return readUri(sourceNode, path, VALUE_CONSTRAINTS_IRI);
+  }
+
+  private static Optional<String> readSourceSystem(ObjectNode sourceNode, String path) {
+    return readString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE_SYSTEM);
+  }
+
+  /** Reads the version triple. Absent, or the explicit string {@code "latest"}, means latest (empty);
+   *  a JSON object is read as a pinned {@link VersionSpec} (its {@code id} required). */
+  private static Optional<VersionSpec> readVersionSpec(ObjectNode sourceNode, String path) {
+    JsonNode versionNode = sourceNode.get(VALUE_CONSTRAINTS_VERSION);
+    if (versionNode == null || versionNode.isNull() || !versionNode.isObject()) {
+      return Optional.empty(); // absent or "latest" -> latest
+    }
+    ObjectNode version = (ObjectNode) versionNode;
+    String versionPath = path + "/" + VALUE_CONSTRAINTS_VERSION;
+    String id = readRequiredString(version, versionPath, VALUE_CONSTRAINTS_VERSION_ID);
+    Optional<String> effectiveDate = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_EFFECTIVE_DATE);
+    Optional<String> declaredVersion = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_DECLARED_VERSION);
+    return Optional.of(new VersionSpec(id, effectiveDate, declaredVersion));
   }
 
 
