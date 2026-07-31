@@ -113,4 +113,52 @@ public class TemplateVersionFreezerTest {
 
     assertEquals(before, template.toString());
   }
+
+  private static final String ELEMENT_TYPE = "https://schema.metadatacenter.org/core/TemplateElement";
+  private static final String FIELD_TYPE = "https://schema.metadatacenter.org/core/TemplateField";
+
+  @Test public void freezesConstraintsInsideAnElementArtifact() {
+    // An element publishes independently; the freeze hook runs for it too. Its field's constraint sits
+    // under "properties" exactly as in a template, so the same walk pins it.
+    ObjectNode element = mapper.createObjectNode();
+    element.put("@type", ELEMENT_TYPE);
+    ObjectNode vc = element.putObject("properties").putObject("diseaseField").putObject("_valueConstraints");
+    vc.putArray("ontologies").addObject().put("acronym", "DOID");
+
+    TemplateVersionFreezer.freeze(element, resolver("DOID", null, null, DOID_V));
+
+    ObjectNode ontology = (ObjectNode) element.get("properties").get("diseaseField")
+        .get("_valueConstraints").get("ontologies").get(0);
+    assertEquals("63ef56dff672", ontology.get("version").get("id").asText());
+  }
+
+  @Test public void freezesConstraintsInAnElementNestedInsideAnElement() {
+    // Elements nest arbitrarily deep — a constraint two elements down still freezes.
+    ObjectNode outer = mapper.createObjectNode();
+    outer.put("@type", ELEMENT_TYPE);
+    ObjectNode inner = outer.putObject("properties").putObject("innerElement");
+    inner.put("@type", ELEMENT_TYPE);
+    ObjectNode vc = inner.putObject("properties").putObject("f").putObject("_valueConstraints");
+    vc.putArray("branches").addObject().put("acronym", "DOID");
+
+    TemplateVersionFreezer.freeze(outer, resolver("DOID", null, null, DOID_V));
+
+    ObjectNode branch = (ObjectNode) outer.get("properties").get("innerElement").get("properties")
+        .get("f").get("_valueConstraints").get("branches").get(0);
+    assertEquals("63ef56dff672", branch.get("version").get("id").asText());
+  }
+
+  @Test public void freezesAStandaloneFieldArtifact() {
+    // A field published on its own: its _valueConstraints sit at the artifact root, with no
+    // "properties" wrapper. The walk finds them there just the same.
+    ObjectNode field = mapper.createObjectNode();
+    field.put("@type", FIELD_TYPE);
+    ObjectNode vc = field.putObject("_valueConstraints");
+    vc.putArray("valueSets").addObject().put("vsCollection", "CEDARVS");
+
+    TemplateVersionFreezer.freeze(field, resolver(null, null, "CEDARVS", DOID_V));
+
+    ObjectNode valueSet = (ObjectNode) field.get("_valueConstraints").get("valueSets").get(0);
+    assertEquals("63ef56dff672", valueSet.get("version").get("id").asText());
+  }
 }
