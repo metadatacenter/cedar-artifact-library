@@ -173,24 +173,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * name: Disease
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
+   *     sourceUri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     termBaseLabel: Area unit
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
@@ -255,24 +256,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * name: Disease
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: https://data.bioontology.org/ontologies/DOID
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
+   *     sourceUri: https://data.bioontology.org/ontologies/DOID
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: http://purl.bioontology.org/ontology/LNC/LA19711-3
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: http://purl.bioontology.org/ontology/LNC/LA19711-3
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: http://purl.org/twc/dpo/ont/Disease
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: http://purl.org/twc/dpo/ont/Disease
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
+   *     termBaseLabel: Area unit
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey,
@@ -647,24 +649,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * altLabels: [ "Patient Diseases", "Diseases" ]
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
+   *     sourceUri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     termBaseLabel: Area unit
    * </pre>
    */
   private void addCoreFieldSchemaArtifactRendering(FieldSchemaArtifact fieldSchemaArtifact,
@@ -754,24 +757,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <pre>
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
+   *     sourceUri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     termBaseLabel: Area unit
    * </pre>
    */
   private void renderValueConstraintsValues(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
@@ -830,23 +834,23 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <pre>
    * values:
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: class
-   *     label: mm^2
-   *     acronym: HRAVS
-   *     termType: ValueSet
+   *     sourceAcronym: HRAVS
+   *     termIri: http://purl.obolibrary.org/obo/UO_0000082
+   *     termType: value
    *     termLabel: square millimeter
-   *     iri: http://purl.obolibrary.org/obo/UO_0000082
+   *     label: mm^2
    *   - type: class
-   *     label: um^2
-   *     acronym: HRAVS
-   *     termType: ValueSet
+   *     sourceAcronym: HRAVS
+   *     termIri: http://purl.obolibrary.org/obo/UO_0010001
+   *     termType: value
    *     termLabel: square micrometer
-   *     iri: http://purl.obolibrary.org/obo/UO_0010001
+   *     label: um^2
    * </pre>
    */
   private void renderValueConstraintsValuesInlined(ValueConstraints valueConstraints,
@@ -1515,11 +1519,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: class
-   *   label: Human
-   *   acronym: LOINC
+   *   sourceAcronym: LOINC
+   *   termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
    *   termType: class
    *   termLabel: Homo Sapiens
-   *   iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *   label: Human
    * </pre>
    */
   /** The pinned version triple {@code {id, effectiveDate?, declaredVersion?}}; absent version omits the
@@ -1554,9 +1558,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: ontology
-   *   acronym: DOID
-   *   ontologyName: Human Disease Ontology
-   *   iri: "https://data.bioontology.org/ontologies/DOID"
+   *   sourceAcronym: DOID
+   *   sourceName: Human Disease Ontology
+   *   sourceUri: "https://data.bioontology.org/ontologies/DOID"
    * </pre>
    */
   private LinkedHashMap<String, Object> renderOntologyValueConstraint(OntologyValueConstraint o)
@@ -1579,10 +1583,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: branch
-   *   ontologyName: Diabetes Pharmacology Ontology
-   *   acronym: DPCO
-   *   termLabel: Disease
-   *   iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   sourceAcronym: DPCO
+   *   sourceName: Diabetes Pharmacology Ontology
+   *   termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *   termBaseLabel: Disease
+   *   termMaxDepth: 0
    * </pre>
    */
   private LinkedHashMap<String, Object> renderBranchValueConstraint(BranchValueConstraint b)
@@ -1606,9 +1611,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: valueSet
-   *   acronym: HRAVS
-   *   valueSetName: Area unit
-   *   iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *   sourceAcronym: HRAVS
+   *   termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *   termBaseLabel: Area unit
    * </pre>
    */
   private LinkedHashMap<String, Object> renderValueSetValueConstraint(ValueSetValueConstraint vs)
