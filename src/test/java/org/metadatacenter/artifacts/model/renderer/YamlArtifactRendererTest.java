@@ -296,21 +296,21 @@ public class YamlArtifactRendererTest {
 
     LinkedHashMap<String, Object> doidDiseaseBranchRendering = new LinkedHashMap<>();
     doidDiseaseBranchRendering.put(TYPE, BRANCH);
-    doidDiseaseBranchRendering.put(ONTOLOGY_NAME, doidSource);
-    doidDiseaseBranchRendering.put(ACRONYM, doidSourceAcronym);
-    doidDiseaseBranchRendering.put(TERM_LABEL, doidDiseaseBranchName);
-    doidDiseaseBranchRendering.put(IRI, doidDiseaseBranchIri);
-    doidDiseaseBranchRendering.put(MAX_DEPTH, doidDiseaseBranchDepth);
+    doidDiseaseBranchRendering.put(SOURCE_ACRONYM, doidSourceAcronym);
+    doidDiseaseBranchRendering.put(SOURCE_NAME, doidSource);
+    doidDiseaseBranchRendering.put(TERM_BASE_IRI, doidDiseaseBranchIri);
+    doidDiseaseBranchRendering.put(TERM_BASE_LABEL, doidDiseaseBranchName);
+    doidDiseaseBranchRendering.put(TERM_MAX_DEPTH, doidDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(doidDiseaseBranchRendering);
 
     LinkedHashMap<String, Object> pmrDiseaseBranchRendering = new LinkedHashMap<>();
     pmrDiseaseBranchRendering.put(TYPE, BRANCH);
-    pmrDiseaseBranchRendering.put(ONTOLOGY_NAME, pmrSource);
-    pmrDiseaseBranchRendering.put(ACRONYM, pmrSourceAcronym);
-    pmrDiseaseBranchRendering.put(TERM_LABEL, pmrDiseaseBranchName);
-    pmrDiseaseBranchRendering.put(IRI, pmrDiseaseBranchIri);
-    pmrDiseaseBranchRendering.put(MAX_DEPTH, pmrDiseaseBranchDepth);
+    pmrDiseaseBranchRendering.put(SOURCE_ACRONYM, pmrSourceAcronym);
+    pmrDiseaseBranchRendering.put(SOURCE_NAME, pmrSource);
+    pmrDiseaseBranchRendering.put(TERM_BASE_IRI, pmrDiseaseBranchIri);
+    pmrDiseaseBranchRendering.put(TERM_BASE_LABEL, pmrDiseaseBranchName);
+    pmrDiseaseBranchRendering.put(TERM_MAX_DEPTH, pmrDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(pmrDiseaseBranchRendering);
 
@@ -602,11 +602,11 @@ public class YamlArtifactRendererTest {
             datatype: iri
             values:
               - type: class
-                label: ${classLabel}
-                acronym: ${classSource}
+                sourceAcronym: ${classSource}
+                termIri: ${classUri}
                 termType: class
                 termLabel: ${classPrefLabel}
-                iri: ${classUri}
+                label: ${classLabel}
         """
         .replace("${fieldName}", fieldKey)
         .replace("${description}", description)
@@ -1257,9 +1257,9 @@ public class YamlArtifactRendererTest {
 
     assertEquals(1, values.size());
     assertEquals(ONTOLOGY, values.get(0).get(TYPE));
-    assertEquals("DOID", values.get(0).get(ACRONYM));
-    assertEquals("Human Disease Ontology", values.get(0).get(ONTOLOGY_NAME));
-    assertEquals(ontUri.toString(), values.get(0).get(IRI));
+    assertEquals("DOID", values.get(0).get(SOURCE_ACRONYM));
+    assertEquals("Human Disease Ontology", values.get(0).get(SOURCE_NAME));
+    assertEquals(ontUri.toString(), values.get(0).get(SOURCE_URI));
   }
 
   @Test
@@ -1274,10 +1274,10 @@ public class YamlArtifactRendererTest {
 
     assertEquals(1, values.size());
     assertEquals(VALUE_SET, values.get(0).get(TYPE));
-    assertEquals("HRAVS", values.get(0).get(ACRONYM));
-    assertEquals("Area unit", values.get(0).get(VALUE_SET_NAME));
-    assertEquals(vsUri.toString(), values.get(0).get(IRI));
-    assertEquals(40, values.get(0).get(NUM_TERMS));
+    assertEquals("HRAVS", values.get(0).get(SOURCE_ACRONYM));
+    assertEquals("Area unit", values.get(0).get(TERM_BASE_LABEL));
+    assertEquals(vsUri.toString(), values.get(0).get(TERM_BASE_IRI));
+    assertEquals(40, values.get(0).get(TERM_COUNT));
   }
 
   // ---- Instance variants ----

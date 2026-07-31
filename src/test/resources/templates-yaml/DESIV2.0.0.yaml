@@ -74,11 +74,11 @@ children:
     label: DESI
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Dataset type
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
+    termBaseLabel: Dataset type
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -98,11 +98,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Analyte class
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000371
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000371
+    termBaseLabel: Analyte class
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -142,11 +142,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Acquisition instrument vendor
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000391
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000391
+    termBaseLabel: Acquisition instrument vendor
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -166,11 +166,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Acquisition instrument model
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000401
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000401
+    termBaseLabel: Acquisition instrument model
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -208,11 +208,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Source storage duration unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
+    termBaseLabel: Source storage duration unit
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -249,11 +249,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Time since acquisition instrument calibration unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000421
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000421
+    termBaseLabel: Time since acquisition instrument calibration unit
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -306,11 +306,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: MS ionization technique
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001361
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001361
+    termBaseLabel: MS ionization technique
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -330,11 +330,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: MS scan mode
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001431
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001431
+    termBaseLabel: MS scan mode
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -354,11 +354,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Mass analysis polarity
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001371
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001371
+    termBaseLabel: Mass analysis polarity
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -446,11 +446,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Ion mobility
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001421
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001421
+    termBaseLabel: Ion mobility
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -469,11 +469,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Matrix deposition method
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001441
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001441
+    termBaseLabel: Matrix deposition method
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -492,11 +492,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Preparation instrument vendor
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000501
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000501
+    termBaseLabel: Preparation instrument vendor
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -515,11 +515,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Preparation instrument model
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000511
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000511
+    termBaseLabel: Preparation instrument model
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -538,11 +538,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Preparation matrix
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001451
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001451
+    termBaseLabel: Preparation matrix
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -561,11 +561,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Desorption solvent
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001461
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001461
+    termBaseLabel: Desorption solvent
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'
@@ -602,11 +602,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Desorption solvent flow rate unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001481
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001481
+    termBaseLabel: Desorption solvent flow rate unit
+    termMaxDepth: 0
   createdOn: '2025-04-24T10:38:42-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:38:42-07:00'

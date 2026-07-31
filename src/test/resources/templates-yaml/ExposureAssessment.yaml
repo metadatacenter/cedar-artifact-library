@@ -64,11 +64,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HHEARVS)
-    acronym: HHEARVS
-    termLabel: Study Design Classification
-    iri: http://purl.org/twc/HHEARVS_00004
-    maxDepth: 0
+    sourceAcronym: HHEARVS
+    sourceName: undefined (HHEARVS)
+    termBaseIri: http://purl.org/twc/HHEARVS_00004
+    termBaseLabel: Study Design Classification
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -85,11 +85,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (NCIT)
-    acronym: NCIT
-    termLabel: Country
-    iri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25464
-    maxDepth: 0
+    sourceAcronym: NCIT
+    sourceName: undefined (NCIT)
+    termBaseIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25464
+    termBaseLabel: Country
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -106,11 +106,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HHEARVS)
-    acronym: HHEARVS
-    termLabel: Study State
-    iri: http://purl.org/twc/HHEARVS_00003
-    maxDepth: 0
+    sourceAcronym: HHEARVS
+    sourceName: undefined (HHEARVS)
+    termBaseIri: http://purl.org/twc/HHEARVS_00003
+    termBaseLabel: Study State
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -157,11 +157,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (EVS)
-    acronym: EVS
-    termLabel: Study Population Sampling Design
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000001
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: undefined (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000001
+    termBaseLabel: Study Population Sampling Design
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -205,11 +205,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HHEARVS)
-    acronym: HHEARVS
-    termLabel: Study Life Stages
-    iri: http://purl.org/twc/HHEARVS_00006
-    maxDepth: 0
+    sourceAcronym: HHEARVS
+    sourceName: undefined (HHEARVS)
+    termBaseIri: http://purl.org/twc/HHEARVS_00006
+    termBaseLabel: Study Life Stages
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -226,11 +226,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (SDOHO)
-    acronym: SDOHO
-    termLabel: Biological_Sex
-    iri: https://sbmi.uth.edu/bsdi/SDoHO#209
-    maxDepth: 0
+    sourceAcronym: SDOHO
+    sourceName: undefined (SDOHO)
+    termBaseIri: https://sbmi.uth.edu/bsdi/SDoHO#209
+    termBaseLabel: Biological_Sex
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -247,11 +247,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (SDOHO)
-    acronym: SDOHO
-    termLabel: Gender_Identity
-    iri: https://sbmi.uth.edu/bsdi/SDoHO#210
-    maxDepth: 0
+    sourceAcronym: SDOHO
+    sourceName: undefined (SDOHO)
+    termBaseIri: https://sbmi.uth.edu/bsdi/SDoHO#210
+    termBaseLabel: Gender_Identity
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -268,11 +268,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (SDOHO)
-    acronym: SDOHO
-    termLabel: Ethnicity
-    iri: https://sbmi.uth.edu/bsdi/SDoHO#352
-    maxDepth: 0
+    sourceAcronym: SDOHO
+    sourceName: undefined (SDOHO)
+    termBaseIri: https://sbmi.uth.edu/bsdi/SDoHO#352
+    termBaseLabel: Ethnicity
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -289,11 +289,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (SDOHO)
-    acronym: SDOHO
-    termLabel: Race
-    iri: https://sbmi.uth.edu/bsdi/SDoHO#222
-    maxDepth: 0
+    sourceAcronym: SDOHO
+    sourceName: undefined (SDOHO)
+    termBaseIri: https://sbmi.uth.edu/bsdi/SDoHO#222
+    termBaseLabel: Race
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -310,11 +310,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: SNOMED CT (SNOMEDCT)
-    acronym: SNOMEDCT
-    termLabel: Occupation
-    iri: http://purl.bioontology.org/ontology/SNOMEDCT/14679004
-    maxDepth: 0
+    sourceAcronym: SNOMEDCT
+    sourceName: SNOMED CT (SNOMEDCT)
+    termBaseIri: http://purl.bioontology.org/ontology/SNOMEDCT/14679004
+    termBaseLabel: Occupation
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -358,11 +358,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (EVS)
-    acronym: EVS
-    termLabel: Environmental Stressor
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000030
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: undefined (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000030
+    termBaseLabel: Environmental Stressor
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -379,11 +379,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: Exposure Value Set (EVS)
-    acronym: EVS
-    termLabel: Exposure Assessment Method
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000002
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: Exposure Value Set (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000002
+    termBaseLabel: Exposure Assessment Method
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -400,11 +400,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HHEARVS)
-    acronym: HHEARVS
-    termLabel: Study Environmental Exposures Assessed
-    iri: http://purl.org/twc/HHEARVS_00008
-    maxDepth: 0
+    sourceAcronym: HHEARVS
+    sourceName: undefined (HHEARVS)
+    termBaseIri: http://purl.org/twc/HHEARVS_00008
+    termBaseLabel: Study Environmental Exposures Assessed
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -421,11 +421,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (EVS)
-    acronym: EVS
-    termLabel: Exposure Route
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000023
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: undefined (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000023
+    termBaseLabel: Exposure Route
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -486,11 +486,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: Exposure Value Set (EVS)
-    acronym: EVS
-    termLabel: Survey Assessment Method
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000007
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: Exposure Value Set (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000007
+    termBaseLabel: Survey Assessment Method
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -551,11 +551,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: Exposure Value Set (EVS)
-    acronym: EVS
-    termLabel: Sampled Environmental Media
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000016
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: Exposure Value Set (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000016
+    termBaseLabel: Sampled Environmental Media
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -572,11 +572,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: Exposure Value Set (EVS)
-    acronym: EVS
-    termLabel: Type of Water Sampled
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000037
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: Exposure Value Set (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000037
+    termBaseLabel: Type of Water Sampled
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -593,11 +593,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (EVS)
-    acronym: EVS
-    termLabel: Air Sampling Location
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000033
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: undefined (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000033
+    termBaseLabel: Air Sampling Location
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -614,11 +614,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (EVS)
-    acronym: EVS
-    termLabel: Type of Dermal Sample
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000043
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: undefined (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000043
+    termBaseLabel: Type of Dermal Sample
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -679,11 +679,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (EVS)
-    acronym: EVS
-    termLabel: Sampled Biological Media
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000015
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: undefined (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000015
+    termBaseLabel: Sampled Biological Media
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'
@@ -746,11 +746,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (EVS)
-    acronym: EVS
-    termLabel: Exposure Model
-    iri: https://purl.exposure.io/vocab/evs/EVS_0000017
-    maxDepth: 0
+    sourceAcronym: EVS
+    sourceName: undefined (EVS)
+    termBaseIri: https://purl.exposure.io/vocab/evs/EVS_0000017
+    termBaseLabel: Exposure Model
+    termMaxDepth: 0
   createdOn: '2026-01-11T19:51:05-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2026-01-11T19:51:05-08:00'

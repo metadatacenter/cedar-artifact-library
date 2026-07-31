@@ -121,9 +121,9 @@ children:
   datatype: iri
   values:
   - type: ontology
-    acronym: MESH
-    ontologyName: MESH
-    iri: https://bioportal.bioontology.org/ontologies/MESH
+    sourceAcronym: MESH
+    sourceName: MESH
+    sourceUri: https://bioportal.bioontology.org/ontologies/MESH
   configuration:
     propertyIri: https://w3id.org/radx/radmo/subjectIdentifier
     multiple: true
@@ -174,11 +174,11 @@ children:
       label: Person
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/ResourceCreatorType
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/ResourceCreatorType
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/creatorType
   - key: Creator Name
@@ -266,11 +266,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/ContributorRole
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/ContributorRole
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/creatorRole
   configuration:
@@ -307,11 +307,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/IdentifierType
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/relatedResourceIdentifierType
   - key: Related Resource File Name
@@ -335,11 +335,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/ResourceTypeCategory
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/ResourceTypeCategory
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/relatedResourceTypeCategory
   - key: Related Resource Relation
@@ -379,11 +379,11 @@ children:
       label: Person
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/ResourceCreatorType
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/ResourceCreatorType
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/contributorType
   - key: Contributor Name
@@ -471,11 +471,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/ContributorRole
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/ContributorRole
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/contributorRole
   configuration:
@@ -502,11 +502,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/LicenseIdentifier
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/LicenseIdentifier
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/licenseName
   - key: License Text
@@ -549,11 +549,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/DateType
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/DateType
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/eventType
   - key: Date
@@ -777,11 +777,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/IdentifierScheme
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/distributionPublisherIdentifier
   - key: Distribution Identifier
@@ -805,11 +805,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/IdentifierType
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/distributionIdentifierType
   - key: Distribution Format
@@ -833,11 +833,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/GDMT
-      acronym: GDMT
-      termLabel: GDMT
-      iri: https://w3id.org/gdmt/MIMEType
-      maxDepth: 2147483647
+      sourceAcronym: GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/GDMT
+      termBaseIri: https://w3id.org/gdmt/MIMEType
+      termBaseLabel: GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: https://w3id.org/radx/radmo/distributionMediaType
   - key: Distribution Size

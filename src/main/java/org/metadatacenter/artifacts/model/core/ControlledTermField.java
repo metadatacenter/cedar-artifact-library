@@ -116,6 +116,13 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
+    /** Accepts a pre-built constraint (e.g. a frozen one carrying iri / sourceSystem / version). */
+    public ControlledTermFieldBuilder withOntologyValueConstraint(OntologyValueConstraint constraint)
+    {
+      valueConstraintsBuilder.withOntologyValueConstraint(constraint);
+      return this;
+    }
+
     public ControlledTermFieldBuilder withValueSetValueConstraint(URI uri, String vsCollection, String name)
     {
       valueConstraintsBuilder.withValueSetValueConstraint(
