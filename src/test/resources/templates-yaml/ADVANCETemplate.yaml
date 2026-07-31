@@ -110,10 +110,10 @@ children:
     datatype: iri
     values:
     - type: ontology
-      sourceAcronym: ENVTHES
-      sourceName: Thesaurus for long-term ecological research, monitoring, experiments
-      sourceUri: https://data.bioontology.org/ontologies/ENVTHES
-      termCount: 2
+      acronym: ENVTHES
+      ontologyName: Thesaurus for long-term ecological research, monitoring, experiments
+      iri: https://data.bioontology.org/ontologies/ENVTHES
+      numTerms: 2
     createdOn: '2022-10-05T05:11:11-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
     modifiedOn: '2022-10-05T05:11:11-07:00'
@@ -206,17 +206,17 @@ children:
       datatype: iri
       values:
       - type: class
-        sourceAcronym: ELTER_CL
-        termIri: http://vocabs.lter-europe.net/elter_cl/10195
+        label: other
+        acronym: ELTER_CL
         termType: class
         termLabel: other
-        label: other
+        iri: http://vocabs.lter-europe.net/elter_cl/10195
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: eLTER Controlled Lists (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10461
-        termBaseLabel: institution type
-        termMaxDepth: 0
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: institution type
+        iri: http://vocabs.lter-europe.net/elter_cl/10461
+        maxDepth: 0
       actions:
       - action: move
         to: 4
@@ -267,10 +267,10 @@ children:
     datatype: iri
     values:
     - type: ontology
-      sourceAcronym: ISO19115ROLES
-      sourceName: ISO 19115 Role Codes
-      sourceUri: https://data.bioontology.org/ontologies/ISO19115ROLES
-      termCount: 2
+      acronym: ISO19115ROLES
+      ontologyName: ISO 19115 Role Codes
+      iri: https://data.bioontology.org/ontologies/ISO19115ROLES
+      numTerms: 2
     actions:
     - action: move
       to: 7
@@ -351,17 +351,17 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10563
-        termBaseLabel: funding source
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: funding source
+        iri: http://vocabs.lter-europe.net/elter_cl/10563
+        maxDepth: 0
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-        termBaseLabel: generic answer option
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
       actions:
       - action: delete
         termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C45252
@@ -528,11 +528,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: eLTER Controlled Lists (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10466
-      termBaseLabel: data availability
-      termMaxDepth: 0
+      ontologyName: eLTER Controlled Lists (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: data availability
+      iri: http://vocabs.lter-europe.net/elter_cl/10466
+      maxDepth: 0
     actions:
     - action: move
       to: 3
@@ -567,17 +567,17 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10611
-        termBaseLabel: license
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: license
+        iri: http://vocabs.lter-europe.net/elter_cl/10611
+        maxDepth: 0
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: eLTER Controlled Lists (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-        termBaseLabel: generic answer option
-        termMaxDepth: 0
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
       actions:
       - action: delete
         termIri: http://vocabs.lter-europe.net/elter_cl/10595
@@ -646,11 +646,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: undefined (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10471
-      termBaseLabel: willingness to share data
-      termMaxDepth: 0
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: willingness to share data
+      iri: http://vocabs.lter-europe.net/elter_cl/10471
+      maxDepth: 0
     actions:
     - action: move
       to: 3
@@ -704,11 +704,11 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10569
-        termBaseLabel: motivation to launch monitoring scheme
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: motivation to launch monitoring scheme
+        iri: http://vocabs.lter-europe.net/elter_cl/10569
+        maxDepth: 0
       actions:
       - action: move
         to: 1
@@ -769,17 +769,17 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10575
-        termBaseLabel: scope of monitoring
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: scope of monitoring
+        iri: http://vocabs.lter-europe.net/elter_cl/10575
+        maxDepth: 0
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-        termBaseLabel: generic answer option
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
       actions:
       - action: move
         to: 0
@@ -896,11 +896,11 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: eLTER Controlled Lists (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10584
-        termBaseLabel: type of data collected
-        termMaxDepth: 0
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: type of data collected
+        iri: http://vocabs.lter-europe.net/elter_cl/10584
+        maxDepth: 0
       actions:
       - action: move
         to: 0
@@ -1001,17 +1001,17 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: eLTER Controlled Lists (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10580
-        termBaseLabel: biodiversity threats and pressures addressed
-        termMaxDepth: 0
+        ontologyName: eLTER Controlled Lists (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: biodiversity threats and pressures addressed
+        iri: http://vocabs.lter-europe.net/elter_cl/10580
+        maxDepth: 0
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-        termBaseLabel: generic answer option
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
       actions:
       - action: move
         to: 0
@@ -1142,11 +1142,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: eLTER Controlled Lists (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-      termBaseLabel: generic answer option
-      termMaxDepth: 0
+      ontologyName: eLTER Controlled Lists (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: generic answer option
+      iri: http://vocabs.lter-europe.net/elter_cl/10192
+      maxDepth: 0
     actions:
     - action: delete
       termIri: http://vocabs.lter-europe.net/elter_cl/10595
@@ -1318,11 +1318,11 @@ children:
     datatype: iri
     values:
     - type: class
-      sourceAcronym: ELTER_CL
-      termIri: http://vocabs.lter-europe.net/elter_cl/10591
+      label: geographical scope
+      acronym: ELTER_CL
       termType: class
       termLabel: geographical scope
-      label: geographical scope
+      iri: http://vocabs.lter-europe.net/elter_cl/10591
     createdOn: '2022-10-05T05:05:21-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
     modifiedOn: '2022-10-05T05:05:21-07:00'
@@ -1339,11 +1339,11 @@ children:
     datatype: iri
     values:
     - type: class
-      sourceAcronym: NCIT
-      termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20108
+      label: Country Code
+      acronym: NCIT
       termType: class
       termLabel: Country Code
-      label: Country Code
+      iri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20108
     createdOn: '2022-10-05T05:05:21-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
     modifiedOn: '2022-10-05T05:05:21-07:00'
@@ -1358,11 +1358,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: undefined (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10546
-      termBaseLabel: Bio-geographical Region
-      termMaxDepth: 0
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: Bio-geographical Region
+      iri: http://vocabs.lter-europe.net/elter_cl/10546
+      maxDepth: 0
     createdOn: '2022-10-05T05:05:21-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
     modifiedOn: '2022-10-05T05:05:21-07:00'
@@ -1400,11 +1400,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: eLTER Controlled Lists (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-      termBaseLabel: generic answer option
-      termMaxDepth: 0
+      ontologyName: eLTER Controlled Lists (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: generic answer option
+      iri: http://vocabs.lter-europe.net/elter_cl/10192
+      maxDepth: 0
     actions:
     - action: delete
       termIri: http://vocabs.lter-europe.net/elter_cl/10194
@@ -1489,11 +1489,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: undefined (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10596
-      termBaseLabel: habitat classification authority
-      termMaxDepth: 0
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: habitat classification authority
+      iri: http://vocabs.lter-europe.net/elter_cl/10596
+      maxDepth: 0
     actions:
     - action: move
       to: 0
@@ -1625,11 +1625,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: undefined (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10601
-      termBaseLabel: experimental design
-      termMaxDepth: 0
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: experimental design
+      iri: http://vocabs.lter-europe.net/elter_cl/10601
+      maxDepth: 0
     createdOn: '2022-10-05T05:00:25-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
     modifiedOn: '2022-10-05T05:00:25-07:00'
@@ -1656,17 +1656,17 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10605
-        termBaseLabel: site selection
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: site selection
+        iri: http://vocabs.lter-europe.net/elter_cl/10605
+        maxDepth: 0
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-        termBaseLabel: generic answer option
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
       actions:
       - action: delete
         termIri: http://vocabs.lter-europe.net/elter_cl/10595
@@ -1776,11 +1776,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: ELTER_CL
-      sourceName: undefined (ELTER_CL)
-      termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-      termBaseLabel: generic answer option
-      termMaxDepth: 0
+      ontologyName: undefined (ELTER_CL)
+      acronym: ELTER_CL
+      termLabel: generic answer option
+      iri: http://vocabs.lter-europe.net/elter_cl/10192
+      maxDepth: 0
     actions:
     - action: delete
       termIri: http://purl.org/zonmw/generic/10100
@@ -1887,11 +1887,11 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: ELTER_CL
-        sourceName: undefined (ELTER_CL)
-        termBaseIri: http://vocabs.lter-europe.net/elter_cl/10192
-        termBaseLabel: generic answer option
-        termMaxDepth: 0
+        ontologyName: undefined (ELTER_CL)
+        acronym: ELTER_CL
+        termLabel: generic answer option
+        iri: http://vocabs.lter-europe.net/elter_cl/10192
+        maxDepth: 0
       actions:
       - action: delete
         termIri: http://vocabs.lter-europe.net/elter_cl/10595

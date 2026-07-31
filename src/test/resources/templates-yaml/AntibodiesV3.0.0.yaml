@@ -135,11 +135,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001921
-    termBaseLabel: Antibody concentration unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Antibody concentration unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001921
+    maxDepth: 0
   createdOn: '2025-03-14T16:45:48-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-03-14T16:45:48-07:00'

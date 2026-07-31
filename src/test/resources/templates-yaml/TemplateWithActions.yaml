@@ -18,11 +18,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: DATACITE-VOCAB
-    sourceName: DATACITE V4.4 (DATACITE-VOCAB)
-    termBaseIri: http://purl.org/datacite/v4.4/TitleType
-    termBaseLabel: Title Type
-    termMaxDepth: 0
+    ontologyName: DATACITE V4.4 (DATACITE-VOCAB)
+    acronym: DATACITE-VOCAB
+    termLabel: Title Type
+    iri: http://purl.org/datacite/v4.4/TitleType
+    maxDepth: 0
   actions:
   - action: delete
     termIri: http://purl.org/datacite/v4.4/OtherTitle

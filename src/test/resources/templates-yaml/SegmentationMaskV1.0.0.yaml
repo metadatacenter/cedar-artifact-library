@@ -73,11 +73,11 @@ children:
     label: Segmentation Mask
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1002101
-    termBaseLabel: Derived dataset type
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Derived dataset type
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1002101
+    maxDepth: 0
   createdOn: '2024-08-07T09:56:36-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2024-08-07T09:56:36-07:00'

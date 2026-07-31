@@ -495,10 +495,10 @@ children:
   datatype: iri
   values:
   - type: ontology
-    sourceAcronym: DOID
-    sourceName: Human Disease Ontology
-    sourceUri: https://data.bioontology.org/ontologies/DOID
-    termCount: 18055
+    acronym: DOID
+    ontologyName: Human Disease Ontology
+    iri: https://data.bioontology.org/ontologies/DOID
+    numTerms: 18055
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2022-12-01T14:25:30-08:00'
@@ -514,11 +514,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: DOID
-    sourceName: Human Disease Ontology (DOID)
-    termBaseIri: http://purl.obolibrary.org/obo/DOID_4
-    termBaseLabel: disease
-    termMaxDepth: 0
+    ontologyName: Human Disease Ontology (DOID)
+    acronym: DOID
+    termLabel: disease
+    iri: http://purl.obolibrary.org/obo/DOID_4
+    maxDepth: 0
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2022-12-01T14:25:30-08:00'
@@ -534,23 +534,23 @@ children:
   datatype: iri
   values:
   - type: class
-    sourceAcronym: DOID
-    termIri: http://purl.obolibrary.org/obo/DOID_530
+    label: eyelid disease
+    acronym: DOID
     termType: class
     termLabel: eyelid disease
-    label: eyelid disease
+    iri: http://purl.obolibrary.org/obo/DOID_530
   - type: class
-    sourceAcronym: DOID
-    termIri: http://purl.obolibrary.org/obo/DOID_2825
+    label: nose disease
+    acronym: DOID
     termType: class
     termLabel: nose disease
-    label: nose disease
+    iri: http://purl.obolibrary.org/obo/DOID_2825
   - type: class
-    sourceAcronym: DOID
-    termIri: http://purl.obolibrary.org/obo/DOID_850
+    label: lung disease
+    acronym: DOID
     termType: class
     termLabel: lung disease
-    label: lung disease
+    iri: http://purl.obolibrary.org/obo/DOID_850
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2022-12-01T14:25:30-08:00'

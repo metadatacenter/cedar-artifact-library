@@ -71,11 +71,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000362
-    termBaseLabel: Dataset type v1
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Dataset type v1
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000362
+    maxDepth: 0
   createdOn: '2023-11-15T10:37:54-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2023-11-15T10:37:54-08:00'
@@ -146,11 +146,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001251
-    termBaseLabel: Mapped area unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Mapped area unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001251
+    maxDepth: 0
   createdOn: '2023-11-15T10:37:54-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2023-11-15T10:37:54-08:00'
@@ -187,11 +187,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001271
-    termBaseLabel: Spot size unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Spot size unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001271
+    maxDepth: 0
   createdOn: '2023-11-15T10:37:54-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2023-11-15T10:37:54-08:00'
@@ -245,11 +245,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001301
-    termBaseLabel: Spot spacing unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Spot spacing unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001301
+    maxDepth: 0
   createdOn: '2023-11-15T10:37:54-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2023-11-15T10:37:54-08:00'
@@ -314,11 +314,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001331
-    termBaseLabel: Permeabilization time unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Permeabilization time unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001331
+    maxDepth: 0
   createdOn: '2023-11-15T10:37:54-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2023-11-15T10:37:54-08:00'

@@ -1522,30 +1522,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
    * </pre>
    */
-  /** The pinned version triple {@code {id, effectiveDate?, declaredVersion?}}; absent version omits the
-   *  whole key (⇒ latest), mirroring the JSON renderer. */
-  private static LinkedHashMap<String, Object> renderVersionSpec(VersionSpec v)
+  private LinkedHashMap<String, Object> renderClassValueConstraint(ClassValueConstraint classValueConstraint)
   {
-    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
-    m.put(VERSION_ID, v.id());
-    v.effectiveDate().ifPresent(d -> m.put(VERSION_EFFECTIVE_DATE, d));
-    v.declaredVersion().ifPresent(d -> m.put(VERSION_DECLARED_VERSION, d));
-    return m;
-  }
+    LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
 
-  private LinkedHashMap<String, Object> renderClassValueConstraint(ClassValueConstraint c)
-  {
-    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
-    m.put(TYPE, CLASS);
-    c.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
-    m.put(SOURCE_ACRONYM, c.source());
-    c.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
-    m.put(TERM_IRI, c.uri().toString());
-    m.put(TERM_TYPE, c.type() == ValueType.ONTOLOGY_CLASS ? "class" : "value");
-    m.put(TERM_LABEL, c.prefLabel());
-    m.put(LABEL, c.label());
-    c.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
-    return m;
+    classValueConstraintRendering.put(TYPE, CLASS);
+    classValueConstraintRendering.put(LABEL, classValueConstraint.label());
+    classValueConstraintRendering.put(ACRONYM, classValueConstraint.source());
+
+    // TODO Use typesafe switch when available
+    if (classValueConstraint.type() == ValueType.ONTOLOGY_CLASS)
+      classValueConstraintRendering.put(TERM_TYPE, "class");
+    else
+      classValueConstraintRendering.put(TERM_TYPE, "value");
+
+    classValueConstraintRendering.put(TERM_LABEL, classValueConstraint.prefLabel());
+    classValueConstraintRendering.put(IRI, classValueConstraint.uri().toString());
+
+    return classValueConstraintRendering;
   }
 
   /**
@@ -1559,18 +1553,18 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   iri: "https://data.bioontology.org/ontologies/DOID"
    * </pre>
    */
-  private LinkedHashMap<String, Object> renderOntologyValueConstraint(OntologyValueConstraint o)
+  private LinkedHashMap<String, Object> renderOntologyValueConstraint(OntologyValueConstraint ontologyValueConstraint)
   {
-    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
-    m.put(TYPE, ONTOLOGY);
-    o.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
-    m.put(SOURCE_ACRONYM, o.acronym());
-    m.put(SOURCE_NAME, o.name());
-    o.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
-    m.put(SOURCE_URI, o.uri().toString());
-    o.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
-    o.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
-    return m;
+    LinkedHashMap<String, Object> ontologyValueConstraintRendering = new LinkedHashMap<>();
+
+    ontologyValueConstraintRendering.put(TYPE, ONTOLOGY);
+    ontologyValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
+    ontologyValueConstraintRendering.put(ONTOLOGY_NAME, ontologyValueConstraint.name());
+    ontologyValueConstraintRendering.put(IRI, ontologyValueConstraint.uri().toString());
+    if (ontologyValueConstraint.numTerms().isPresent())
+      ontologyValueConstraintRendering.put(NUM_TERMS, ontologyValueConstraint.numTerms().get());
+
+    return ontologyValueConstraintRendering;
   }
 
   /**
@@ -1585,19 +1579,18 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   iri: "http://purl.org/twc/dpo/ont/Disease"
    * </pre>
    */
-  private LinkedHashMap<String, Object> renderBranchValueConstraint(BranchValueConstraint b)
+  private LinkedHashMap<String, Object> renderBranchValueConstraint(BranchValueConstraint branchValueConstraint)
   {
-    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
-    m.put(TYPE, BRANCH);
-    b.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
-    m.put(SOURCE_ACRONYM, b.acronym());
-    m.put(SOURCE_NAME, b.source());
-    b.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
-    m.put(TERM_BASE_IRI, b.uri().toString());
-    m.put(TERM_BASE_LABEL, b.name());
-    m.put(TERM_MAX_DEPTH, b.maxDepth());
-    b.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
-    return m;
+    LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
+
+    branchValueConstraintRendering.put(TYPE, BRANCH);
+    branchValueConstraintRendering.put(ONTOLOGY_NAME, branchValueConstraint.source());
+    branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
+    branchValueConstraintRendering.put(TERM_LABEL, branchValueConstraint.name());
+    branchValueConstraintRendering.put(IRI, branchValueConstraint.uri().toString());
+    branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
+
+    return branchValueConstraintRendering;
   }
 
   /**
@@ -1611,18 +1604,18 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
    * </pre>
    */
-  private LinkedHashMap<String, Object> renderValueSetValueConstraint(ValueSetValueConstraint vs)
+  private LinkedHashMap<String, Object> renderValueSetValueConstraint(ValueSetValueConstraint valueSetValueConstraint)
   {
-    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
-    m.put(TYPE, VALUE_SET);
-    vs.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
-    m.put(SOURCE_ACRONYM, vs.vsCollection());
-    vs.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
-    m.put(TERM_BASE_IRI, vs.uri().toString());
-    m.put(TERM_BASE_LABEL, vs.name());
-    vs.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
-    vs.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
-    return m;
+    LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
+
+    valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
+    valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
+    valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
+    valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri().toString());
+    if (valueSetValueConstraint.numTerms().isPresent())
+      valueSetValueConstraintRendering.put(NUM_TERMS, valueSetValueConstraint.numTerms().get());
+
+    return valueSetValueConstraintRendering;
   }
 
   private static LinkedHashMap<String, Object> renderLiteralValueConstraint(

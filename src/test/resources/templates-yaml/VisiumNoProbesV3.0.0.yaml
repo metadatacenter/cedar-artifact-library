@@ -74,11 +74,11 @@ children:
     label: Visium (no probes)
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
-    termBaseLabel: Dataset type
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Dataset type
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
+    maxDepth: 0
   createdOn: '2025-04-24T10:29:11-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:29:11-07:00'
@@ -148,11 +148,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001251
-    termBaseLabel: Mapped area unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Mapped area unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001251
+    maxDepth: 0
   createdOn: '2025-04-24T10:29:11-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:29:11-07:00'
@@ -189,11 +189,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001271
-    termBaseLabel: Spot size unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Spot size unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001271
+    maxDepth: 0
   createdOn: '2025-04-24T10:29:11-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:29:11-07:00'
@@ -247,11 +247,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001301
-    termBaseLabel: Spot spacing unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Spot spacing unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001301
+    maxDepth: 0
   createdOn: '2025-04-24T10:29:11-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:29:11-07:00'
@@ -316,11 +316,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001331
-    termBaseLabel: Permeabilization time unit
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Permeabilization time unit
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001331
+    maxDepth: 0
   createdOn: '2025-04-24T10:29:11-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:29:11-07:00'
@@ -339,11 +339,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000501
-    termBaseLabel: Preparation instrument vendor
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Preparation instrument vendor
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000501
+    maxDepth: 0
   createdOn: '2025-04-24T10:29:11-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:29:11-07:00'
@@ -362,11 +362,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    sourceAcronym: HRAVS
-    sourceName: undefined (HRAVS)
-    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000511
-    termBaseLabel: Preparation instrument model
-    termMaxDepth: 0
+    ontologyName: undefined (HRAVS)
+    acronym: HRAVS
+    termLabel: Preparation instrument model
+    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000511
+    maxDepth: 0
   createdOn: '2025-04-24T10:29:11-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-04-24T10:29:11-07:00'

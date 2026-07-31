@@ -67,17 +67,17 @@ children:
     datatype: iri
     values:
     - type: class
-      sourceAcronym: PATEL
-      termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
+      label: Personal
+      acronym: PATEL
       termType: class
       termLabel: Personal
-      label: Personal
+      iri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
     - type: class
-      sourceAcronym: VIVO
-      termIri: http://www.w3.org/2006/vcard/ns#Organizational
+      label: Organizational
+      acronym: VIVO
       termType: class
       termLabel: Organizational
-      label: Organizational
+      iri: http://www.w3.org/2006/vcard/ns#Organizational
     createdOn: '2023-06-19T10:59:00-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-19T10:59:00-07:00'
@@ -278,11 +278,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: DATACITE V4.4 (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/TitleType
-      termBaseLabel: Title Type
-      termMaxDepth: 0
+      ontologyName: DATACITE V4.4 (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Title Type
+      iri: http://purl.org/datacite/v4.4/TitleType
+      maxDepth: 0
     createdOn: '2023-06-26T14:56:02-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T14:56:02-07:00'
@@ -457,17 +457,17 @@ children:
     datatype: iri
     values:
     - type: class
-      sourceAcronym: PATEL
-      termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
+      label: Personal
+      acronym: PATEL
       termType: class
       termLabel: Personal
-      label: Personal
+      iri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
     - type: class
-      sourceAcronym: VIVO
-      termIri: http://www.w3.org/2006/vcard/ns#Organizational
+      label: Organizational
+      acronym: VIVO
       termType: class
       termLabel: Organizational
-      label: Organizational
+      iri: http://www.w3.org/2006/vcard/ns#Organizational
     createdOn: '2023-06-26T16:01:04-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:01:04-07:00'
@@ -513,11 +513,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: undefined (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/ContributorType
-      termBaseLabel: Contributor Type
-      termMaxDepth: 0
+      ontologyName: undefined (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Contributor Type
+      iri: http://purl.org/datacite/v4.4/ContributorType
+      maxDepth: 0
     createdOn: '2023-06-26T16:01:04-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:01:04-07:00'
@@ -691,11 +691,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: undefined (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/DateType
-      termBaseLabel: Date Type
-      termMaxDepth: 0
+      ontologyName: undefined (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Date Type
+      iri: http://purl.org/datacite/v4.4/DateType
+      maxDepth: 0
     createdOn: '2023-06-26T16:17:45-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:17:45-07:00'
@@ -733,10 +733,10 @@ children:
   datatype: iri
   values:
   - type: ontology
-    sourceAcronym: ISO639-1
-    sourceName: 'ISO 639-1: Codes for the Representation of Names of Languages - Part 1: Two-letter codes for languages'
-    sourceUri: https://data.bioontology.org/ontologies/ISO639-1
-    termCount: 2
+    acronym: ISO639-1
+    ontologyName: 'ISO 639-1: Codes for the Representation of Names of Languages - Part 1: Two-letter codes for languages'
+    iri: https://data.bioontology.org/ontologies/ISO639-1
+    numTerms: 2
   createdOn: '2023-07-11T17:00:51-07:00'
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
@@ -828,11 +828,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: DATACITE V4.4 (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/RelatedIdentifierType
-      termBaseLabel: Related Identifier Type
-      termMaxDepth: 0
+      ontologyName: DATACITE V4.4 (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Related Identifier Type
+      iri: http://purl.org/datacite/v4.4/RelatedIdentifierType
+      maxDepth: 0
     createdOn: '2023-06-26T16:34:12-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:34:12-07:00'
@@ -851,11 +851,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: undefined (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/RelationType
-      termBaseLabel: Relation Type
-      termMaxDepth: 0
+      ontologyName: undefined (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Relation Type
+      iri: http://purl.org/datacite/v4.4/RelationType
+      maxDepth: 0
     createdOn: '2023-06-26T16:34:12-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:34:12-07:00'
@@ -919,11 +919,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: undefined (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/ResourceTypeGeneral
-      termBaseLabel: Resource Type General
-      termMaxDepth: 0
+      ontologyName: undefined (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Resource Type General
+      iri: http://purl.org/datacite/v4.4/ResourceTypeGeneral
+      maxDepth: 0
     createdOn: '2023-06-26T16:34:12-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:34:12-07:00'
@@ -1113,11 +1113,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: undefined (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/DescriptionType
-      termBaseLabel: Description Type
-      termMaxDepth: 0
+      ontologyName: undefined (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Description Type
+      iri: http://purl.org/datacite/v4.4/DescriptionType
+      maxDepth: 0
     createdOn: '2023-06-26T17:07:27-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T17:07:27-07:00'
@@ -1348,29 +1348,29 @@ children:
     datatype: iri
     values:
     - type: class
-      sourceAcronym: FDC-GDMT
-      termIri: https://www.grid.ac/
+      label: GRID
+      acronym: FDC-GDMT
       termType: class
       termLabel: GRID
-      label: GRID
+      iri: https://www.grid.ac/
     - type: class
-      sourceAcronym: BIBFRAME
-      termIri: http://id.loc.gov/ontologies/bibframe/Isni
+      label: ISNI
+      acronym: BIBFRAME
       termType: class
       termLabel: ISNI
-      label: ISNI
+      iri: http://id.loc.gov/ontologies/bibframe/Isni
     - type: class
-      sourceAcronym: BE
-      termIri: http://purl.obolibrary.org/obo/BE_ROR
+      label: ROR
+      acronym: BE
       termType: class
       termLabel: ROR
-      label: ROR
+      iri: http://purl.obolibrary.org/obo/BE_ROR
     - type: class
-      sourceAcronym: NCIT
-      termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17649
+      label: Other
+      acronym: NCIT
       termType: class
       termLabel: Other
-      label: Other
+      iri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17649
     createdOn: '2023-06-26T17:52:37-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T17:52:37-07:00'
@@ -1465,11 +1465,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: DATACITE V4.4 (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/ResourceTypeGeneral
-      termBaseLabel: Resource Type General
-      termMaxDepth: 0
+      ontologyName: DATACITE V4.4 (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Resource Type General
+      iri: http://purl.org/datacite/v4.4/ResourceTypeGeneral
+      maxDepth: 0
     createdOn: '2023-06-28T11:24:50-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
@@ -1488,11 +1488,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: undefined (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/RelationType
-      termBaseLabel: Relation Type
-      termMaxDepth: 0
+      ontologyName: undefined (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Relation Type
+      iri: http://purl.org/datacite/v4.4/RelationType
+      maxDepth: 0
     createdOn: '2023-06-28T11:24:50-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
@@ -1526,11 +1526,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      sourceAcronym: DATACITE-VOCAB
-      sourceName: DATACITE V4.4 (DATACITE-VOCAB)
-      termBaseIri: http://purl.org/datacite/v4.4/RelatedIdentifierType
-      termBaseLabel: Related Identifier Type
-      termMaxDepth: 0
+      ontologyName: DATACITE V4.4 (DATACITE-VOCAB)
+      acronym: DATACITE-VOCAB
+      termLabel: Related Identifier Type
+      iri: http://purl.org/datacite/v4.4/RelatedIdentifierType
+      maxDepth: 0
     createdOn: '2023-06-28T11:24:50-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
@@ -1621,17 +1621,17 @@ children:
       datatype: iri
       values:
       - type: class
-        sourceAcronym: PATEL
-        termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
+        label: Personal
+        acronym: PATEL
         termType: class
         termLabel: Personal
-        label: Personal
+        iri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
       - type: class
-        sourceAcronym: VIVO
-        termIri: http://www.w3.org/2006/vcard/ns#Organizational
+        label: Organizational
+        acronym: VIVO
         termType: class
         termLabel: Organizational
-        label: Organizational
+        iri: http://www.w3.org/2006/vcard/ns#Organizational
       createdOn: '2023-05-23T15:40:37-07:00'
       createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
       modifiedOn: '2023-05-23T15:40:37-07:00'
@@ -1710,11 +1710,11 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: DATACITE-VOCAB
-        sourceName: DATACITE V4.4 (DATACITE-VOCAB)
-        termBaseIri: http://purl.org/datacite/v4.4/TitleType
-        termBaseLabel: Title Type
-        termMaxDepth: 0
+        ontologyName: DATACITE V4.4 (DATACITE-VOCAB)
+        acronym: DATACITE-VOCAB
+        termLabel: Title Type
+        iri: http://purl.org/datacite/v4.4/TitleType
+        maxDepth: 0
       createdOn: '2023-05-31T16:03:26-07:00'
       createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
       modifiedOn: '2023-05-31T16:03:26-07:00'
@@ -1752,29 +1752,29 @@ children:
     datatype: iri
     values:
     - type: class
-      sourceAcronym: NCIT
-      termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C47902
+      label: Article
+      acronym: NCIT
       termType: class
       termLabel: Article
-      label: Article
+      iri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C47902
     - type: class
-      sourceAcronym: G-PROV
-      termIri: http://purl.org/ontology/bibo/Chapter
+      label: Chapter
+      acronym: G-PROV
       termType: class
       termLabel: Chapter
-      label: Chapter
+      iri: http://purl.org/ontology/bibo/Chapter
     - type: class
-      sourceAcronym: SNOMEDCT
-      termIri: http://purl.bioontology.org/ontology/SNOMEDCT/229059009
+      label: Report
+      acronym: SNOMEDCT
       termType: class
       termLabel: Report
-      label: Report
+      iri: http://purl.bioontology.org/ontology/SNOMEDCT/229059009
     - type: class
-      sourceAcronym: NCIT
-      termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17649
+      label: Other
+      acronym: NCIT
       termType: class
       termLabel: Other
-      label: Other
+      iri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17649
     createdOn: '2023-06-28T11:24:50-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
@@ -1909,11 +1909,11 @@ children:
       datatype: iri
       values:
       - type: branch
-        sourceAcronym: DATACITE-VOCAB
-        sourceName: undefined (DATACITE-VOCAB)
-        termBaseIri: http://purl.org/datacite/v4.4/ContributorType
-        termBaseLabel: Contributor Type
-        termMaxDepth: 0
+        ontologyName: undefined (DATACITE-VOCAB)
+        acronym: DATACITE-VOCAB
+        termLabel: Contributor Type
+        iri: http://purl.org/datacite/v4.4/ContributorType
+        maxDepth: 0
       createdOn: '2023-05-23T15:41:18-07:00'
       createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
       modifiedOn: '2023-05-23T15:41:18-07:00'
@@ -1947,17 +1947,17 @@ children:
       datatype: iri
       values:
       - type: class
-        sourceAcronym: PATEL
-        termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
+        label: Personal
+        acronym: PATEL
         termType: class
         termLabel: Personal
-        label: Personal
+        iri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
       - type: class
-        sourceAcronym: VIVO
-        termIri: http://www.w3.org/2006/vcard/ns#Organizational
+        label: Organizational
+        acronym: VIVO
         termType: class
         termLabel: Organizational
-        label: Organizational
+        iri: http://www.w3.org/2006/vcard/ns#Organizational
       createdOn: '2023-05-23T15:41:18-07:00'
       createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
       modifiedOn: '2023-05-23T15:41:18-07:00'
