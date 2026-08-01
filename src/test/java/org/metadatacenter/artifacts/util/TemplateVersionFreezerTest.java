@@ -65,6 +65,19 @@ public class TemplateVersionFreezerTest {
     assertEquals("DOID", firstOntology(template).get("acronym").asText());
   }
 
+  @Test public void freezesEveryRepresentationOfLatest() {
+    ObjectNode missing = templateWithOntologyField();
+    ObjectNode explicitNull = templateWithOntologyField();
+    firstOntology(explicitNull).putNull("version");
+    ObjectNode latestSentinel = templateWithOntologyField();
+    firstOntology(latestSentinel).put("version", "LATEST");
+
+    for (ObjectNode template : new ObjectNode[]{missing, explicitNull, latestSentinel}) {
+      TemplateVersionFreezer.freeze(template, resolver("DOID", null, null, DOID_V));
+      assertEquals("63ef56dff672", firstOntology(template).get("version").get("id").asText());
+    }
+  }
+
   @Test public void leavesAnAlreadyPinnedEntryUntouched() {
     ObjectNode template = templateWithOntologyField();
     ObjectNode existing = firstOntology(template).putObject("version");

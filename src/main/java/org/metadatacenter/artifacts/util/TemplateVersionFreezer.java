@@ -15,8 +15,8 @@ import java.util.function.Function;
  * of drifting with "latest".
  *
  * The walk is deliberately <b>surgical</b>: it only <i>adds</i> a {@code version} object to entries
- * that lack one and that the resolver can resolve. It never reshapes, reorders, or removes anything
- * else, so a published document is byte-identical to before except for the added pins — critical for
+ * that are semantically unpinned and that the resolver can resolve. It never reshapes, reorders, or
+ * removes anything else, so a published document is byte-identical to before except for the added pins — critical for
  * a publish path that must not disturb existing content. An entry already carrying a {@code version},
  * or one the resolver cannot resolve, is left untouched (idempotent, and safely a no-op when the
  * resolver serves nothing — e.g. the terminology local store is off).
@@ -68,11 +68,18 @@ public final class TemplateVersionFreezer {
       return;
     }
     for (JsonNode entry : entries) {
-      if (entry.isObject() && !entry.has(VERSION)) { // absent version ⇒ latest ⇒ eligible to freeze
+      if (entry.isObject() && isUnpinned((ObjectNode) entry)) {
         resolve.apply((ObjectNode) entry)
             .ifPresent(v -> ((ObjectNode) entry).set(VERSION, versionNode((ObjectNode) entry, v)));
       }
     }
+  }
+
+  /** Missing, explicit null, and the legacy latest sentinel all name mutable current content. */
+  private static boolean isUnpinned(ObjectNode entry) {
+    JsonNode version = entry.get(VERSION);
+    return version == null || version.isNull()
+        || version.isTextual() && "latest".equalsIgnoreCase(version.asText());
   }
 
   /** Serializes a triple as {@code {id, effectiveDate?, declaredVersion?}}, omitting absent parts. */
