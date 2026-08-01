@@ -1245,7 +1245,6 @@ children:
       termIri: http://vocab.fairdatacollective.org/gdmt/Dataset
       termType: class
       termLabel: Dataset
-      label: Dataset
     configuration:
       hidden: true
       propertyIri: http://purl.org/radx-terms/metadata-terms/typeOfContent

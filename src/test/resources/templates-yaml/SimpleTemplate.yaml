@@ -537,19 +537,16 @@ children:
     termIri: http://purl.obolibrary.org/obo/DOID_530
     termType: class
     termLabel: eyelid disease
-    label: eyelid disease
   - type: class
     sourceAcronym: DOID
     termIri: http://purl.obolibrary.org/obo/DOID_2825
     termType: class
     termLabel: nose disease
-    label: nose disease
   - type: class
     sourceAcronym: DOID
     termIri: http://purl.obolibrary.org/obo/DOID_850
     termType: class
     termLabel: lung disease
-    label: lung disease
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2022-12-01T14:25:30-08:00'

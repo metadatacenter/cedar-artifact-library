@@ -1543,7 +1543,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     m.put(TERM_IRI, c.uri().toString());
     m.put(TERM_TYPE, c.type() == ValueType.ONTOLOGY_CLASS ? "class" : "value");
     m.put(TERM_LABEL, c.prefLabel());
-    m.put(LABEL, c.label());
+    // The author-facing display label is not rendered: the compact YAML has no display-label key; it
+    // defaults to the preferred label on read (VERSIONING-ROADMAP "Revisit").
     c.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
     return m;
   }

@@ -606,7 +606,6 @@ public class YamlArtifactRendererTest {
                 termIri: ${classUri}
                 termType: class
                 termLabel: ${classPrefLabel}
-                label: ${classLabel}
         """
         .replace("${fieldName}", fieldKey)
         .replace("${description}", description)

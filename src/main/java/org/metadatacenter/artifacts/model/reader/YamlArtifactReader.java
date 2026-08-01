@@ -1479,12 +1479,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
       String termType = readRequiredString(entry, path, TERM_TYPE, false);
       String termLabel = readRequiredString(entry, path, TERM_LABEL, false);
-      String label = readRequiredString(entry, path, LABEL, false);
       URI uri = readRequiredUri(entry, path, TERM_IRI);
       ValueType valueType = termType.equalsIgnoreCase(CLASS)
         ? ValueType.ONTOLOGY_CLASS
         : ValueType.VALUE;
-      return new ClassValueConstraint(uri, acronym, label, termLabel, valueType,
+      // The compact YAML has no author-facing display label; it defaults to the term's preferred label
+      // (VERSIONING-ROADMAP "Revisit"). The model and JSON Schema still carry both.
+      return new ClassValueConstraint(uri, acronym, termLabel, termLabel, valueType,
         readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
   }

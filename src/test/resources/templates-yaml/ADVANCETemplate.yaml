@@ -209,7 +209,6 @@ children:
         termIri: http://vocabs.lter-europe.net/elter_cl/10195
         termType: class
         termLabel: other
-        label: other
       - type: branch
         sourceAcronym: ELTER_CL
         sourceName: eLTER Controlled Lists (ELTER_CL)
@@ -1320,7 +1319,6 @@ children:
       termIri: http://vocabs.lter-europe.net/elter_cl/10591
       termType: class
       termLabel: geographical scope
-      label: geographical scope
     createdOn: '2022-10-05T05:05:21-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
     modifiedOn: '2022-10-05T05:05:21-07:00'
@@ -1341,7 +1339,6 @@ children:
       termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20108
       termType: class
       termLabel: Country Code
-      label: Country Code
     createdOn: '2022-10-05T05:05:21-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
     modifiedOn: '2022-10-05T05:05:21-07:00'

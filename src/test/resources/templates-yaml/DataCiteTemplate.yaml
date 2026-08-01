@@ -71,13 +71,11 @@ children:
       termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
       termType: class
       termLabel: Personal
-      label: Personal
     - type: class
       sourceAcronym: VIVO
       termIri: http://www.w3.org/2006/vcard/ns#Organizational
       termType: class
       termLabel: Organizational
-      label: Organizational
     createdOn: '2023-06-19T10:59:00-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-19T10:59:00-07:00'
@@ -461,13 +459,11 @@ children:
       termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
       termType: class
       termLabel: Personal
-      label: Personal
     - type: class
       sourceAcronym: VIVO
       termIri: http://www.w3.org/2006/vcard/ns#Organizational
       termType: class
       termLabel: Organizational
-      label: Organizational
     createdOn: '2023-06-26T16:01:04-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:01:04-07:00'
@@ -1351,25 +1347,21 @@ children:
       termIri: https://www.grid.ac/
       termType: class
       termLabel: GRID
-      label: GRID
     - type: class
       sourceAcronym: BIBFRAME
       termIri: http://id.loc.gov/ontologies/bibframe/Isni
       termType: class
       termLabel: ISNI
-      label: ISNI
     - type: class
       sourceAcronym: BE
       termIri: http://purl.obolibrary.org/obo/BE_ROR
       termType: class
       termLabel: ROR
-      label: ROR
     - type: class
       sourceAcronym: NCIT
       termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17649
       termType: class
       termLabel: Other
-      label: Other
     createdOn: '2023-06-26T17:52:37-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T17:52:37-07:00'
@@ -1624,13 +1616,11 @@ children:
         termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
         termType: class
         termLabel: Personal
-        label: Personal
       - type: class
         sourceAcronym: VIVO
         termIri: http://www.w3.org/2006/vcard/ns#Organizational
         termType: class
         termLabel: Organizational
-        label: Organizational
       createdOn: '2023-05-23T15:40:37-07:00'
       createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
       modifiedOn: '2023-05-23T15:40:37-07:00'
@@ -1755,25 +1745,21 @@ children:
       termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C47902
       termType: class
       termLabel: Article
-      label: Article
     - type: class
       sourceAcronym: G-PROV
       termIri: http://purl.org/ontology/bibo/Chapter
       termType: class
       termLabel: Chapter
-      label: Chapter
     - type: class
       sourceAcronym: SNOMEDCT
       termIri: http://purl.bioontology.org/ontology/SNOMEDCT/229059009
       termType: class
       termLabel: Report
-      label: Report
     - type: class
       sourceAcronym: NCIT
       termIri: http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17649
       termType: class
       termLabel: Other
-      label: Other
     createdOn: '2023-06-28T11:24:50-07:00'
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
@@ -1950,13 +1936,11 @@ children:
         termIri: http://www.semanticweb.org/ambrish/ontologies/2020/10/untitled-ontology-24#Personal
         termType: class
         termLabel: Personal
-        label: Personal
       - type: class
         sourceAcronym: VIVO
         termIri: http://www.w3.org/2006/vcard/ns#Organizational
         termType: class
         termLabel: Organizational
-        label: Organizational
       createdOn: '2023-05-23T15:41:18-07:00'
       createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
       modifiedOn: '2023-05-23T15:41:18-07:00'
