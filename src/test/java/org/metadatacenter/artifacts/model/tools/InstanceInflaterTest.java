@@ -2,16 +2,24 @@ package org.metadatacenter.artifacts.model.tools;
 
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
+import org.metadatacenter.artifacts.model.core.PageBreakField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TextField;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InstanceInflaterTest
@@ -67,5 +75,129 @@ public class InstanceInflaterTest
     assertTrue(inflated.singleInstanceFieldInstances().containsKey(second));
     assertTrue(inflated.singleInstanceFieldInstances().get(second).jsonLdValue().isEmpty(),
       "the omitted field should be filled empty, not given a value");
+  }
+
+  @Test public void missingMultipleFieldBecomesAnEmptyList()
+  {
+    TextField aliases = TextField.builder().withName("Aliases").withIsMultiple(true).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(aliases).build();
+    String key = template.getUi().order().get(0);
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    assertTrue(inflated.multiInstanceFieldInstances().containsKey(key));
+    assertTrue(inflated.multiInstanceFieldInstances().get(key).isEmpty());
+  }
+
+  @Test public void staticFieldsNeverAcquireInstanceSlots()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(PageBreakField.builder().withName("Break").build()).build();
+    String key = template.getUi().order().get(0);
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    assertFalse(inflated.singleInstanceFieldInstances().containsKey(key));
+    assertFalse(inflated.multiInstanceFieldInstances().containsKey(key));
+  }
+
+  @Test public void missingAttributeValueFieldBecomesAnEmptyGroup()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(AttributeValueField.builder().withName("Attributes").build()).build();
+    String key = template.getUi().order().get(0);
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    assertTrue(inflated.attributeValueFieldInstanceGroups().containsKey(key));
+    assertTrue(inflated.attributeValueFieldInstanceGroups().get(key).isEmpty());
+  }
+
+  @Test public void existingAttributeValueGroupIsPreservedAndDetached()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(AttributeValueField.builder().withName("Attributes").build()).build();
+    String key = template.getUi().order().get(0);
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("custom", literal("value"));
+    TemplateInstanceArtifact sparse = sparseInstance().withAttributeValueFieldGroup(key, group).build();
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparse);
+
+    assertEquals("value", inflated.attributeValueFieldInstanceGroups().get(key).get("custom")
+      .jsonLdValue().orElseThrow());
+    assertFalse(inflated.attributeValueFieldInstanceGroups().get(key)
+      == sparse.attributeValueFieldInstanceGroups().get(key));
+  }
+
+  @Test public void missingNestedElementIsRecursivelyMaterialized()
+  {
+    ElementSchemaArtifact element = ElementSchemaArtifact.builder().withName("Address")
+      .withFieldSchema(TextField.builder().withName("Street").build()).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withElementSchema(element).build();
+    String elementKey = template.getUi().order().get(0);
+    String fieldKey = element.getUi().order().get(0);
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    ElementInstanceArtifact nested = inflated.singleInstanceElementInstances().get(elementKey);
+    assertTrue(nested.singleInstanceFieldInstances().containsKey(fieldKey));
+    assertTrue(nested.singleInstanceFieldInstances().get(fieldKey).jsonLdValue().isEmpty());
+  }
+
+  @Test public void existingMultipleElementsAreEachRecursivelyInflated()
+  {
+    ElementSchemaArtifact element = ElementSchemaArtifact.builder().withName("Address")
+      .withIsMultiple(true).withFieldSchema(TextField.builder().withName("Street").build()).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withElementSchema(element).build();
+    String elementKey = template.getUi().order().get(0);
+    String fieldKey = element.getUi().order().get(0);
+    ElementInstanceArtifact first = ElementInstanceArtifact.builder().build();
+    ElementInstanceArtifact second = ElementInstanceArtifact.builder().build();
+    TemplateInstanceArtifact sparse = sparseInstance()
+      .withMultiInstanceElementInstances(elementKey, List.of(first, second)).build();
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparse);
+
+    assertEquals(2, inflated.multiInstanceElementInstances().get(elementKey).size());
+    for (ElementInstanceArtifact nested : inflated.multiInstanceElementInstances().get(elementKey))
+      assertTrue(nested.singleInstanceFieldInstances().containsKey(fieldKey));
+  }
+
+  @Test public void schemaContextIsCompletedWithoutOverwritingExistingBinding()
+  {
+    TemplateSchemaArtifact template = twoFieldTemplate();
+    String first = template.getUi().order().get(0);
+    URI custom = URI.create("https://example.org/custom");
+    TemplateInstanceArtifact sparse = sparseInstance().withJsonLdContextEntry(first, custom).build();
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparse);
+
+    assertEquals(custom, inflated.jsonLdContext().get(first));
+    for (String key : template.getUi().order())
+      assertTrue(inflated.jsonLdContext().containsKey(key));
+  }
+
+  @Test public void inflationCanonicalizesKnownChildrenWithoutMutatingSparseInput()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(TextField.builder().withName("A").build())
+      .withFieldSchema(TextField.builder().withName("B").build())
+      .withFieldSchema(TextField.builder().withName("C").build()).build();
+    List<String> order = template.getUi().order();
+    TemplateInstanceArtifact sparse = sparseInstance()
+      .withSingleInstanceFieldInstance(order.get(2), literal("c"))
+      .withSingleInstanceFieldInstance(order.get(0), literal("a")).build();
+    List<String> sparseOrder = new ArrayList<>(sparse.singleInstanceFieldInstances().keySet());
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparse);
+
+    assertEquals(order, new ArrayList<>(inflated.singleInstanceFieldInstances().keySet()));
+    assertEquals(sparseOrder, new ArrayList<>(sparse.singleInstanceFieldInstances().keySet()));
+    assertSame(sparse.singleInstanceFieldInstances().get(order.get(0)),
+      inflated.singleInstanceFieldInstances().get(order.get(0)));
   }
 }
