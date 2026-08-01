@@ -57,7 +57,8 @@ public final class TemplateVersionFreezer {
     freezeEntries(valueConstraints.get("branches"),
         e -> textValue(e, "acronym").flatMap(resolver::currentVersionByAcronym));
     freezeEntries(valueConstraints.get("classes"),
-        e -> textValue(e, "uri").map(URI::create).flatMap(resolver::currentVersionByClassUri));
+        e -> textValue(e, "uri").flatMap(TemplateVersionFreezer::parseUri)
+            .flatMap(resolver::currentVersionByClassUri));
     freezeEntries(valueConstraints.get("valueSets"),
         e -> textValue(e, "vsCollection").flatMap(resolver::currentVersionByValueSetCollection));
   }
@@ -87,6 +88,15 @@ public final class TemplateVersionFreezer {
     JsonNode node = entry.get(field);
     return node != null && node.isTextual() && !node.asText().isBlank()
         ? Optional.of(node.asText()) : Optional.empty();
+  }
+
+  /** A malformed legacy class URI must not make publication fail; it is simply not freezable. */
+  private static Optional<URI> parseUri(String value) {
+    try {
+      return Optional.of(URI.create(value));
+    } catch (IllegalArgumentException e) {
+      return Optional.empty();
+    }
   }
 
   private TemplateVersionFreezer() {}
