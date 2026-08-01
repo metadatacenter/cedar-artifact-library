@@ -175,7 +175,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   - type: ontology
    *     sourceAcronym: DOID
    *     sourceName: Human Disease Ontology
-   *     sourceUri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
    *     sourceAcronym: LOINC
    *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
@@ -258,7 +257,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   - type: ontology
    *     sourceAcronym: DOID
    *     sourceName: Human Disease Ontology
-   *     sourceUri: https://data.bioontology.org/ontologies/DOID
    *   - type: class
    *     sourceAcronym: LOINC
    *     termIri: http://purl.bioontology.org/ontology/LNC/LA19711-3
@@ -651,7 +649,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   - type: ontology
    *     sourceAcronym: DOID
    *     sourceName: Human Disease Ontology
-   *     sourceUri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
    *     sourceAcronym: LOINC
    *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
@@ -759,7 +756,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   - type: ontology
    *     sourceAcronym: DOID
    *     sourceName: Human Disease Ontology
-   *     sourceUri: "https://data.bioontology.org/ontologies/DOID"
    *   - type: class
    *     sourceAcronym: LOINC
    *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
@@ -1560,7 +1556,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    *   type: ontology
    *   sourceAcronym: DOID
    *   sourceName: Human Disease Ontology
-   *   sourceUri: "https://data.bioontology.org/ontologies/DOID"
    * </pre>
    */
   private LinkedHashMap<String, Object> renderOntologyValueConstraint(OntologyValueConstraint o)
@@ -1571,7 +1566,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     m.put(SOURCE_ACRONYM, o.acronym());
     m.put(SOURCE_NAME, o.name());
     o.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
-    m.put(SOURCE_URI, o.uri().toString());
+    // The ontology's backend URL is not rendered: it is derivable from the acronym and reconstructed on
+    // read (VERSIONING-ROADMAP "Revisit: sourceUri is derivable").
     o.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
     o.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
     return m;

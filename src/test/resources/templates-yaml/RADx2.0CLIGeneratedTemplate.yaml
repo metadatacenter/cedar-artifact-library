@@ -123,7 +123,6 @@ children:
   - type: ontology
     sourceAcronym: MESH
     sourceName: MESH
-    sourceUri: https://bioportal.bioontology.org/ontologies/MESH
   configuration:
     propertyIri: https://w3id.org/radx/radmo/subjectIdentifier
     multiple: true

@@ -105,7 +105,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRON
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_SYSTEM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_URI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_BASE_IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_BASE_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_MAX_DEPTH;
@@ -1456,11 +1455,22 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return readValuesEntriesOfType(sourceNode, path, ONTOLOGY, entry -> {
       String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
       String name = readRequiredString(entry, path, SOURCE_NAME, false);
-      URI uri = readRequiredUri(entry, path, SOURCE_URI);
       Optional<Integer> numTerms = readInteger(entry, path, TERM_COUNT);
-      return new OntologyValueConstraint(uri, acronym, name, numTerms,
+      return new OntologyValueConstraint(deriveOntologyUri(acronym), acronym, name, numTerms,
         readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
+  }
+
+  /**
+   * Reconstruct an ontology's backend URL from its acronym. The compact YAML no longer carries the URL
+   * because it is derivable (VERSIONING-ROADMAP "Revisit: sourceUri is derivable"), but the model — and
+   * the JSON Schema it renders to — still require it. BioPortal addresses every ontology at
+   * {@code https://data.bioontology.org/ontologies/{ACRONYM}}, and only BioPortal is served today
+   * (absent {@code sourceSystem} means BioPortal). A different source system would need its own rule.
+   */
+  private static URI deriveOntologyUri(String acronym)
+  {
+    return URI.create("https://data.bioontology.org/ontologies/" + acronym);
   }
 
   private List<ClassValueConstraint> readClassValueConstraints(LinkedHashMap<String, Object> sourceNode, String path)

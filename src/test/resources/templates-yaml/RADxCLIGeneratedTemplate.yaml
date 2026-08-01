@@ -921,7 +921,6 @@ children:
     - type: ontology
       sourceAcronym: MESH
       sourceName: MESH
-      sourceUri: https://bioportal.bioontology.org/ontologies/MESH
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/subjectIdentifier
   - key: Subject Identifier Scheme

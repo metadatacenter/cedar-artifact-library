@@ -735,7 +735,6 @@ children:
   - type: ontology
     sourceAcronym: ISO639-1
     sourceName: 'ISO 639-1: Codes for the Representation of Names of Languages - Part 1: Two-letter codes for languages'
-    sourceUri: https://data.bioontology.org/ontologies/ISO639-1
     termCount: 2
   createdOn: '2023-07-11T17:00:51-07:00'
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44

@@ -109,7 +109,8 @@ public class YamlConstants
   // Value-constraint entry keys (VERSIONING-DESIGN §6). source* = the vocabulary, term* = the member.
   public static final String SOURCE_SYSTEM = "sourceSystem";     // backend; absent ⇒ bioportal
   public static final String SOURCE_NAME = "sourceName";         // source display name (was ontologyName/valueSetName)
-  public static final String SOURCE_URI = "sourceUri";           // ontology only: its backend URL (legacy; see roadmap)
+  // NB: an ontology's backend URL is no longer a YAML key. It is reconstructed from the acronym on read
+  // (VERSIONING-ROADMAP "Revisit: sourceUri is derivable"); the JSON Schema still carries it.
   public static final String TERM_BASE_IRI = "termBaseIri";      // branch/valueSet: the base of a term set
   public static final String TERM_BASE_LABEL = "termBaseLabel";  // branch/valueSet: the base's label
   public static final String TERM_MAX_DEPTH = "termMaxDepth";    // branch (was maxDepth)

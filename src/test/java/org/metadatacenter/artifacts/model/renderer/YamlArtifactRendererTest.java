@@ -1259,7 +1259,7 @@ public class YamlArtifactRendererTest {
     assertEquals(ONTOLOGY, values.get(0).get(TYPE));
     assertEquals("DOID", values.get(0).get(SOURCE_ACRONYM));
     assertEquals("Human Disease Ontology", values.get(0).get(SOURCE_NAME));
-    assertEquals(ontUri.toString(), values.get(0).get(SOURCE_URI));
+    // The ontology's backend URL is derivable from the acronym, so it is no longer a YAML key.
   }
 
   @Test

@@ -112,7 +112,6 @@ children:
     - type: ontology
       sourceAcronym: ENVTHES
       sourceName: Thesaurus for long-term ecological research, monitoring, experiments
-      sourceUri: https://data.bioontology.org/ontologies/ENVTHES
       termCount: 2
     createdOn: '2022-10-05T05:11:11-07:00'
     createdBy: https://metadatacenter.org/users/1de50ba2-aac9-462d-8298-0c8cc0da0662
@@ -269,7 +268,6 @@ children:
     - type: ontology
       sourceAcronym: ISO19115ROLES
       sourceName: ISO 19115 Role Codes
-      sourceUri: https://data.bioontology.org/ontologies/ISO19115ROLES
       termCount: 2
     actions:
     - action: move

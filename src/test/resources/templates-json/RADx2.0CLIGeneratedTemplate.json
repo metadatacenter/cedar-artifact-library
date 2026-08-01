@@ -993,7 +993,7 @@
         },
         "_valueConstraints" : {
           "ontologies" : [ {
-            "uri" : "https://bioportal.bioontology.org/ontologies/MESH",
+            "uri" : "https://data.bioontology.org/ontologies/MESH",
             "acronym" : "MESH",
             "name" : "MESH"
           } ],

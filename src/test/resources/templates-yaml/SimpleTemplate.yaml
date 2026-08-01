@@ -497,7 +497,6 @@ children:
   - type: ontology
     sourceAcronym: DOID
     sourceName: Human Disease Ontology
-    sourceUri: https://data.bioontology.org/ontologies/DOID
     termCount: 18055
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
