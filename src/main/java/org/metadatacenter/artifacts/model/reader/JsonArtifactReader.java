@@ -342,6 +342,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
+    Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
+    List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
     Optional<String> language = readLanguage(sourceNode, path);
@@ -360,8 +362,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdType, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion,
-        derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiInstance,
-        minItems, maxItems, propertyUri, language, elementUi, annotations);
+        derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas,
+        elementSchemas, isMultiInstance, minItems, maxItems, propertyUri, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path, String childKey,

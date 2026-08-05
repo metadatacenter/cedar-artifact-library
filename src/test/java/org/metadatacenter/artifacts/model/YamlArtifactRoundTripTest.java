@@ -62,6 +62,20 @@ public class YamlArtifactRoundTripTest
     roundTripElement(original);
   }
 
+  @Test public void testRoundTripElementSchemaArtifactWithPreferredAndAlternateLabels()
+  {
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/456")).withName("Data File Language")
+      .withPreferredLabel("Data File Language").withAlternateLabels(java.util.List.of("File Language", "Language"))
+      .build();
+    roundTripElement(original);
+
+    ElementSchemaArtifact roundTripped = yamlArtifactReader.readElementSchemaArtifact(
+      yamlArtifactRenderer.renderElementSchemaArtifact(original));
+    assertEquals("Data File Language", roundTripped.preferredLabel().get());
+    assertEquals(java.util.List.of("File Language", "Language"), roundTripped.alternateLabels());
+  }
+
   // -------- Per-field-type round trips --------
 
   @Test public void testRoundTripTextField()

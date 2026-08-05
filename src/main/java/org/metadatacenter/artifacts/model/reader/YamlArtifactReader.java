@@ -56,7 +56,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
@@ -85,18 +84,14 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DATATYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DECIMAL_PLACES;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DELETE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.FIELD_TYPES;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LITERAL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_DEPTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NOTATION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUM_TERMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REGEX;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
@@ -117,7 +112,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VALUE_SET_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTINUE_PREVIOUS_LINE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONTROLLED_TERM_FIELD;
@@ -790,6 +784,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, String> childLabels = new LinkedHashMap<>();
     LinkedHashMap<String, String> childDescriptions = new LinkedHashMap<>();
     readChildSchemas(sourceNode, path, fieldSchemas, elementSchemas, childOrder, childLabels, childDescriptions);
+    Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL);
+    List<String> alternateLabels = readStringArray(sourceNode, path, ALT_LABEL);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     ElementUi elementUi = readElementUi(sourceNode, path, childOrder, childLabels, childDescriptions);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
@@ -806,8 +802,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType, elementName, description, identifier, version, status, previousVersion, derivedFrom,
-      createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems,
-      propertyUri, language, elementUi, annotations);
+      createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas,
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations);
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)

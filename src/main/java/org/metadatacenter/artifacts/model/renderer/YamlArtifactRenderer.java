@@ -135,6 +135,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
+    if (elementSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, elementSchemaArtifact.preferredLabel().get());
+
+    if (!elementSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(elementSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
+    }
+
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
@@ -154,6 +162,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
+
+    if (elementSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, elementSchemaArtifact.preferredLabel().get());
+
+    if (!elementSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(elementSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
+    }
 
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
