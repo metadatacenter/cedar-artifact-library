@@ -10,10 +10,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.*;
+import org.metadatacenter.artifacts.model.renderer.ArtifactRenderException;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -108,8 +110,7 @@ public class YamlSerializer {
       v = v.replaceAll("\\\\_", "\u00a0");
       return v;
     } catch (IOException e) {
-      e.printStackTrace();
-      return null;
+      throw new UncheckedIOException("Failed to serialize " + artifact.getClass().getName() + " as YAML", e);
     }
   }
 
@@ -118,7 +119,7 @@ public class YamlSerializer {
     try {
       Files.writeString(outputFilePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new UncheckedIOException("Failed to write YAML artifact to " + outputFilePath.toAbsolutePath(), e);
     }
   }
 
@@ -127,7 +128,10 @@ public class YamlSerializer {
         new YamlArtifactRenderer(compactYaml) :
         new YamlArtifactRenderer(compactYaml, terminologyServerClient);
 
-    LinkedHashMap<String, Object> yamlSerialized = null;
+    if (artifact == null)
+      throw new ArtifactRenderException("Cannot render a null artifact as YAML");
+
+    LinkedHashMap<String, Object> yamlSerialized;
     if (artifact instanceof FieldSchemaArtifact) {
       yamlSerialized = yamlArtifactRenderer.renderFieldSchemaArtifact((FieldSchemaArtifact) artifact);
     } else if (artifact instanceof ElementSchemaArtifact) {
@@ -138,6 +142,8 @@ public class YamlSerializer {
       yamlSerialized = yamlArtifactRenderer.renderTemplateInstanceArtifact((TemplateInstanceArtifact) artifact);
     } else if (artifact instanceof ElementInstanceArtifact) {
       yamlSerialized = yamlArtifactRenderer.renderElementInstanceArtifact((ElementInstanceArtifact) artifact);
+    } else {
+      throw new ArtifactRenderException("Unsupported artifact type for YAML rendering: " + artifact.getClass().getName());
     }
     return yamlSerialized;
   }

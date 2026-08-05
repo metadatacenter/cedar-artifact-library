@@ -10,12 +10,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.cli.*;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.ArtifactRenderException;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -203,7 +205,7 @@ public class ArtifactConvertor {
       } catch (IOException e) {
         throw new RuntimeException("Error writing file: " + e.getMessage());
       }
-    } catch (ParseException e) {
+    } catch (ParseException | ArtifactRenderException | UncheckedIOException e) {
       Usage(options, e.getMessage());
     }
   }
