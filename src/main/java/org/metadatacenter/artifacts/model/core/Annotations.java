@@ -5,6 +5,11 @@ import java.util.LinkedHashMap;
 
 public record Annotations(LinkedHashMap<String, AnnotationValue> annotations)
 {
+  public Annotations
+  {
+    annotations = new LinkedHashMap<>(annotations);
+  }
+
   public LinkedHashMap<String, AnnotationValue> annotations()
   {
     return new LinkedHashMap<>(annotations);

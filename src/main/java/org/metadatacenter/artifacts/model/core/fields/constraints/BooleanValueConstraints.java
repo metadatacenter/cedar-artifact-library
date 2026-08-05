@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model.core.fields.constraints;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.metadatacenter.artifacts.model.core.fields.BooleanDefaultValue;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -153,6 +154,6 @@ record BooleanValueConstraintsRecord(@JsonInclude(JsonInclude.Include.NON_ABSENT
       orderedLabels.put(VALUE_CONSTRAINTS_LABEL_FALSE, labels.get(VALUE_CONSTRAINTS_LABEL_FALSE));
     if (labels.containsKey(VALUE_CONSTRAINTS_LABEL_NULL))
       orderedLabels.put(VALUE_CONSTRAINTS_LABEL_NULL, labels.get(VALUE_CONSTRAINTS_LABEL_NULL));
-    labels = orderedLabels;
+    labels = Collections.unmodifiableMap(orderedLabels);
   }
 }

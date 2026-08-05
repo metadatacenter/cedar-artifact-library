@@ -116,5 +116,11 @@ record AttributeValueFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<
 
     jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
+    alternateLabels = List.copyOf(alternateLabels);
+  }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
   }
 }

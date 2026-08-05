@@ -386,4 +386,19 @@ record TemplateSchemaArtifactRecord(
     fieldSchemas = ParentSchemaArtifactInvariants.prunedToOrder(fieldSchemas, templateUi.order());
     elementSchemas = ParentSchemaArtifactInvariants.prunedToOrder(elementSchemas, templateUi.order());
   }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
+  }
+
+  @Override public LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas()
+  {
+    return ModelCollections.copyMap(fieldSchemas);
+  }
+
+  @Override public LinkedHashMap<String, ElementSchemaArtifact> elementSchemas()
+  {
+    return ModelCollections.copyMap(elementSchemas);
+  }
 }

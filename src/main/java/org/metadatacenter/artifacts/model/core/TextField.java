@@ -142,5 +142,11 @@ record TextFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonL
       fieldUi, valueConstraints, annotations);
     jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
+    alternateLabels = List.copyOf(alternateLabels);
+  }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
   }
 }

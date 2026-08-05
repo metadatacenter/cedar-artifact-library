@@ -151,5 +151,11 @@ record TemporalFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> j
       fieldUi, valueConstraints, annotations);
     jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
+    alternateLabels = List.copyOf(alternateLabels);
+  }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
   }
 }

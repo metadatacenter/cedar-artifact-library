@@ -435,13 +435,43 @@ record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, L
       multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
       attributeValueFieldInstanceGroups);
 
-    jsonLdContext = new LinkedHashMap<>(jsonLdContext);
+    jsonLdContext = ModelCollections.copyMap(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
     childKeys = List.copyOf(childKeys);
-    singleInstanceFieldInstances = new LinkedHashMap<>(singleInstanceFieldInstances);
-    multiInstanceFieldInstances = new LinkedHashMap<>(multiInstanceFieldInstances);
-    singleInstanceElementInstances = new LinkedHashMap<>(singleInstanceElementInstances);
-    multiInstanceElementInstances = new LinkedHashMap<>(multiInstanceElementInstances);
-    attributeValueFieldInstanceGroups = new LinkedHashMap<>(attributeValueFieldInstanceGroups);
+    singleInstanceFieldInstances = ModelCollections.copyMap(singleInstanceFieldInstances);
+    multiInstanceFieldInstances = ModelCollections.copyListValuedMap(multiInstanceFieldInstances);
+    singleInstanceElementInstances = ModelCollections.copyMap(singleInstanceElementInstances);
+    multiInstanceElementInstances = ModelCollections.copyListValuedMap(multiInstanceElementInstances);
+    attributeValueFieldInstanceGroups = ModelCollections.copyMapValuedMap(attributeValueFieldInstanceGroups);
+  }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
+  }
+
+  @Override public LinkedHashMap<String, FieldInstanceArtifact> singleInstanceFieldInstances()
+  {
+    return ModelCollections.copyMap(singleInstanceFieldInstances);
+  }
+
+  @Override public LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances()
+  {
+    return ModelCollections.copyListValuedMap(multiInstanceFieldInstances);
+  }
+
+  @Override public LinkedHashMap<String, ElementInstanceArtifact> singleInstanceElementInstances()
+  {
+    return ModelCollections.copyMap(singleInstanceElementInstances);
+  }
+
+  @Override public LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances()
+  {
+    return ModelCollections.copyListValuedMap(multiInstanceElementInstances);
+  }
+
+  @Override public LinkedHashMap<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroups()
+  {
+    return ModelCollections.copyMapValuedMap(attributeValueFieldInstanceGroups);
   }
 }

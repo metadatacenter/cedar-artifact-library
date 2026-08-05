@@ -477,9 +477,24 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
     ParentSchemaArtifactInvariants.validateItemBounds(this, name(), minItems, maxItems);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
-    jsonLdTypes = new ArrayList<>(jsonLdTypes);
-    alternateLabels = new ArrayList<>(alternateLabels);
+    jsonLdTypes = List.copyOf(jsonLdTypes);
+    alternateLabels = List.copyOf(alternateLabels);
     fieldSchemas = ParentSchemaArtifactInvariants.prunedToOrder(fieldSchemas, elementUi.order());
     elementSchemas = ParentSchemaArtifactInvariants.prunedToOrder(elementSchemas, elementUi.order());
+  }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
+  }
+
+  @Override public LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas()
+  {
+    return ModelCollections.copyMap(fieldSchemas);
+  }
+
+  @Override public LinkedHashMap<String, ElementSchemaArtifact> elementSchemas()
+  {
+    return ModelCollections.copyMap(elementSchemas);
   }
 }

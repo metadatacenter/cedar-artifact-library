@@ -133,5 +133,11 @@ record ImageFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> json
       preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     jsonLdContext = FieldSchemaArtifactInvariants.staticContext();
     jsonLdTypes = List.copyOf(jsonLdTypes);
+    alternateLabels = List.copyOf(alternateLabels);
+  }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
   }
 }

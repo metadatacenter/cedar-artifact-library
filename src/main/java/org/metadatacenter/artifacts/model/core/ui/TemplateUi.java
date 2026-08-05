@@ -149,4 +149,14 @@ record TemplateUiRecord(List<String> order,
     propertyLabels = new LinkedHashMap<>(propertyLabels);
     propertyDescriptions = new LinkedHashMap<>(propertyDescriptions);
   }
+
+  @Override public LinkedHashMap<String, String> propertyLabels()
+  {
+    return new LinkedHashMap<>(propertyLabels);
+  }
+
+  @Override public LinkedHashMap<String, String> propertyDescriptions()
+  {
+    return new LinkedHashMap<>(propertyDescriptions);
+  }
 }
