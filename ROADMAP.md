@@ -17,7 +17,7 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   are left untouched (no defaulting), preserving lossless round-tripping of real templates whose
   child fields carry neither.
 
-- **The library should generate empty JSON instance placeholders.** A CEDAR
+- **Integrate template-aware instance inflation with JSON rendering.** A CEDAR
   *JSON* instance must carry an entry for every field its template defines, even unset
   ones (rendered as an empty placeholder, e.g. `{"@value": null}`), because the template's
   JSON Schema marks those properties `required`. This is an old design decision we are not
@@ -26,23 +26,21 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   `null`, no `{}`, no `[]`). The consequence is an asymmetry: rendering a sparse instance
   model to JSON yields an *incomplete* JSON instance, and a YAML→JSON translation that is to
   produce a valid CEDAR instance must re-add the empty placeholders — which requires the
-  template (to know which fields exist). That placeholder generation belongs **in the
-  library**: add a template-driven inflater that takes a (possibly sparse) instance plus its
-  template and fills the missing empty placeholders, recursing into elements. The traversal
-  must be driven by the *template* structure, not by visiting the instance — a visitor over a
-  sparse instance never reaches the fields that are absent, which are exactly the ones to add.
-  (An earlier instance-visitor stub, `InstanceFixer`, was removed for this reason; it could
-  only touch fields already present.) A tested stand-in already exists outside the library,
-  MCP-side (`cedar-artifact-mcp`'s `InstanceInflater` / `EmptyFieldInstances`); fold it into
-  the library and have the instance JSON renderer / YAML→JSON path use it. Painful but
-  necessary while the all-fields-present JSON rule stands.
+  template (to know which fields exist). `InstanceInflater` and `EmptyFieldInstances` now provide
+  that template-driven traversal in this library, including recursive elements, and downstream
+  MCP callers use them explicitly. What remains is a template-aware JSON rendering API, such as
+  `renderTemplateInstanceArtifact(template, sparseInstance)`, that performs inflation before
+  rendering. YAML→JSON callers should use that API instead of having to compose inflation and
+  rendering themselves. The existing one-argument renderer cannot inflate because an instance
+  alone does not contain the schema needed to discover missing fields.
 
 - **The public reader/renderer API leaks the parse-library tree type** *(major-version change)*.
   `JsonArtifactReader` / `JsonArtifactRenderer` take and return Jackson's `ObjectNode`, and
-  `YamlArtifactReader` / `YamlArtifactRenderer` take and return SnakeYAML's
-  `LinkedHashMap<String, Object>` — so the underlying parse library is part of the public contract
-  (it even leaks into the shared `ArtifactReader<N>` type parameter). This couples clients to
-  Jackson/SnakeYAML and forces them to obtain or build those tree types just to call the library.
+  `YamlArtifactReader` / `YamlArtifactRenderer` take and return JDK
+  `LinkedHashMap<String, Object>` trees — so the underlying tree representation is part of the
+  public contract (it even leaks into the shared `ArtifactReader<N>` type parameter). This couples
+  clients to Jackson or generic YAML map trees and forces them to obtain or build those tree types
+  just to call the library.
   The fix is to move the public boundary to the **wire format itself — `String`**:
   `readTemplate(String)` / `renderTemplate(artifact) → String` (and the element/field/instance
   counterparts), parsing/serializing internally. This hides both libraries, unifies JSON and YAML

@@ -81,9 +81,10 @@ YAMLFactory yamlFactory = new YAMLFactory().
 ObjectMapper mapper = new ObjectMapper(yamlFactory);
 
 LinkedHashMap<String, Object> yamlRendering 
-  = yamlRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+  = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
 
-mapper.writeValue([file], yamlRendering);
+Path outputFile = Path.of("template.yaml");
+mapper.writeValue(outputFile.toFile(), yamlRendering);
 ```
 
 ### Serializing Templates to Excel
@@ -94,7 +95,7 @@ Only top-level fields in templates will be serialized. All nested elements will 
 
 The [Apache POI](https://poi.apache.org/) library `Workbook` class is used to store the generated Excel representation.
 
-Using the `ExcelArtifactRendered`, we can generate a YAML serialization of a CEDAR template as follows:
+Using the `ExcelArtifactRenderer`, we can generate an Excel serialization of a CEDAR template as follows:
 
 ```java
 // Pass a CEDAR terminology server endpoint (e.g., https://terminology.metadatacenter.org/bioportal/integrated-search/) with a CEDAR API key
@@ -118,11 +119,9 @@ StringBuffer tsvBuffer = SpreadSheetUtil.convertSheetToTsv(workbook.getSheetAt(0
 This string buffer can be written to a file as follows:
 
 ```java
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter([file]))) {
-      writer.write(tsvBuffer.toString());
-    } catch (IOException e) {
-      ...
-    }
+try (BufferedWriter writer = Files.newBufferedWriter(Path.of("template.tsv"))) {
+  writer.write(tsvBuffer.toString());
+}
 ```
 
 ### Serializing Templates to CSV
@@ -143,6 +142,7 @@ A companion builder class can be used to create a template.
 
 For example, to create a minimal template with a name and description, we can use the library as follows:
 
+<!-- readme-test: compile -->
 ```java
 TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
   .withName("Study")
@@ -158,6 +158,7 @@ Again, a companion builder class can be used to create an element.
 
 For example, to create a minimal element with a name and description, we can use the library as follows:
 
+<!-- readme-test: compile -->
 ```java
 ElementSchemaArtifact elementSchemaArtifact = ElementSchemaArtifact.builder()
   .withName("Address")
@@ -177,18 +178,28 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 
 ## Creating Fields
 
-Currently, CEDAR provides the following types of fields: text, temporal, numeric, controlled term, text area, phone number, email, radio, list, link, image, YouTube, section break, rich text, and attribute-value.
+The sealed `FieldSchemaArtifact` hierarchy currently contains these field types:
 
-A class called `FieldSchemaArtifact` represents all of these field types.
+<!-- field-types:start -->
+- General inputs: `TextField`, `TextAreaField`, `TemporalField`, `NumericField`, `BooleanField`,
+  `ControlledTermField`, `RadioField`, `CheckboxField`, `ListField`, `LinkField`, `PhoneNumberField`,
+  `EmailField`, and `AttributeValueField`.
+- Static content: `PageBreakField`, `SectionBreakField`, `ImageField`, `YouTubeField`, and `RichTextField`.
+- Identifier-oriented inputs: `RorField`, `OrcidField`, `PfasField`, `RridField`, `PubMedField`,
+  `NihGrantIdField`, and `DoiField`.
+<!-- field-types:end -->
 
-Since each field has specific characteristics, a custom builder is provided to contruct each field type.
+The sealed `FieldSchemaArtifact` interface represents all of these field types.
+
+Since each field has specific characteristics, a custom builder is provided to construct each field type.
 
 ### Creating Text Fields
 
-A builder supplied by a class called `TextField` can be used to create a CEDAR text field.
+The `TextField` builder can be used to create a CEDAR text field.
 
 With this class we can create a text field representing a study name with a minimum length of 2 and a maximum length of 10 as follows:
 
+<!-- readme-test: compile -->
 ```java
 TextField textField = TextField.builder().
       withName("Study ID").
@@ -210,17 +221,18 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 
 ### Creating Numeric Fields
 
-A builder supplied by a class called `NumericField` can be used to create a CEDAR numeric fields.
+The `NumericField` builder can be used to create a CEDAR numeric field.
 
 In CEDAR, numeric fields can be one of XML Schema Datatypes decimal, integer, long, byte, short, int, float and double. An enumeration called `XsdNumericDatatype` can be used to specify this type on field creation. Numeric fields also allow the optional specification of minimum and maximum values, and of a default value.
 
 An example numeric field representing the percentage of a treatment completed and with a default of 0% could be created as follows:
 
+<!-- readme-test: compile -->
 ```java
     NumericField numericField = NumericField.builder().
       withName("Treatment Completed %").
       withDescription("Please enter the percentage of the treatment that has been completed").
-      withXsdNumericDatatype(XsdNumericDatatype.INTEGER).
+      withNumericType(XsdNumericDatatype.INTEGER).
       withMinValue(0).
       withMaxValue(100).
       withDefaultValue(0).
@@ -229,25 +241,26 @@ An example numeric field representing the percentage of a treatment completed an
 
 ### Creating Temporal Fields
 
-A builder supplied by a class called `TemporalField` can be used to create a CEDAR temporal fields.
+The `TemporalField` builder can be used to create a CEDAR temporal field.
 
-In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. An enumerated type called `TemporalType` can be used to specify this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can optionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
+In CEDAR, temporal fields can represent a time value, a date value, and a datetime value. The `XsdTemporalDatatype` enumeration specifies this type when creating a temporal field. Similarly, the desired granularity and whether a 12- or 24-hour presentation is desired can optionally be specified; an enumeration called `TemporalGranularity` can be used to specify the format, and an enumeration called `InputTimeFormat` for the latter. Finally, a temporal field may optionally be configured to display time zone information.
 
 An example temporal field representing the time of a patient visit recorded with the accuracy of minutes and presented in 24-hour format with time zone information displayed could be created as follows:
 
+<!-- readme-test: compile -->
 ```java
     TemporalField temporalField = TemporalField.builder().
       withName("Patient Visit Time").
-      withTemporalType(TemporalType.DATETIME).
-      withTemporalGranularity(TemporalGranularity.MINUTES).
-      withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOURS).
+      withTemporalType(XsdTemporalDatatype.DATETIME).
+      withTemporalGranularity(TemporalGranularity.MINUTE).
+      withInputTimeFormat(InputTimeFormat.TWENTY_FOUR_HOUR).
       withTimeZoneEnabled(true).
       build();
 ```
 
 ### Creating Controlled Term Fields
 
-A builder supplied by a class called `ControlledTermField` can be used to create a CEDAR controlled term fields.
+The `ControlledTermField` builder can be used to create a CEDAR controlled-term field.
 
 Controlled term fields can have four possible value types: classes, ontologies, ontology branches, and value sets.
 
@@ -255,6 +268,7 @@ The builder class has methods `withClassValueConstraint`, `withOntologyValueCons
 
 Here, for example, is the builder being used to create a field with all four types:
 
+<!-- readme-test: compile -->
 ```java
     String name = "Disease";
     String description = "Please enter a disease";
@@ -289,12 +303,13 @@ Here, for example, is the builder being used to create a field with all four typ
 
 ### Creating Radio Fields
 
-A builder supplied by a class called `RadioField` can be used to create a CEDAR radio field.
+The `RadioField` builder can be used to create a CEDAR radio field.
 
 A list of options can be supplied when creating a radio field. Whether an option is selected by default can also be indicated.
 
 For example, we can create a radio field representing a question with options Yes/No/Maybe, with Maybe selected by default as follows:
 
+<!-- readme-test: compile -->
 ```java
     RadioField radioField = RadioField.builder().
       withName("Covid-19 Status").
@@ -307,12 +322,13 @@ For example, we can create a radio field representing a question with options Ye
 
 ### Creating List Fields
 
-A builder supplied by a class called `ListField` can be used to create a CEDAR list field.
+The `ListField` builder can be used to create a CEDAR list field.
 
-A list of options can be supplied when creation a list field. Whether an option is selected by default can also be indicated.
+A list of options can be supplied when creating a list field. Whether an option is selected by default can also be indicated.
 
 Using this class, we can create a list field representing a question with options Moderna/Pfizer/None, with None selected by default as follows:
 
+<!-- readme-test: compile -->
 ```java
     ListField listField = ListField.builder().
       withName("Covid-19 Vaccine").
@@ -325,12 +341,13 @@ Using this class, we can create a list field representing a question with option
 
 ### Creating Checkbox Fields
 
-A builder supplied by a class called `CheckboxField` can be used to create a CEDAR checkbox field.
+The `CheckboxField` builder can be used to create a CEDAR checkbox field.
 
 When creating a checkbox field, a list of options can be supplied. Whether an option is selected by default can also be indicated.
 
 For example, we can create a checkbox field representing a question with options Yes/No/Don't Know, with Don't Know selected by default as follows:
 
+<!-- readme-test: compile -->
 ```java
     CheckboxField checkboxField = CheckboxField.builder().
       withName("DTAP Status").
@@ -343,26 +360,28 @@ For example, we can create a checkbox field representing a question with options
 
 ### Creating Link Fields
 
-A builder supplied by a class called `LinkField` can be used to create a CEDAR link field.
+The `LinkField` builder can be used to create a CEDAR link field.
 
 Using this class, we can create a link field as follows:
 
+<!-- readme-test: compile -->
 ```java
     LinkField linkField = LinkField.builder().
       withName("Institution Home Page").
       withDescription("Please enter your institution's home page").
-      withDefaultValue(URI.create("https://stanford.edu"), "Stanford").
+      withDefaultValue(URI.create("https://stanford.edu")).
       build();
 ```
 
-A default value can be specified using the `withDefaultValue` builder method. This method must be supplied with the URI of the default value and a user-friendly label for it.
+A default value can be specified using the `withDefaultValue` builder method. This method must be supplied with the URI of the default value.
 
 ### Creating Phone Number Fields
 
-A builder supplied by a class called `PhoneNumberField` can be used to create a CEDAR phone number field.
+The `PhoneNumberField` builder can be used to create a CEDAR phone number field.
 
 Using this class, we can create a phone number field as follows:
 
+<!-- readme-test: compile -->
 ```java
     PhoneNumberField phoneNumberField = PhoneNumberField.builder().
       withName("Phone Number").
@@ -372,10 +391,11 @@ Using this class, we can create a phone number field as follows:
 
 ### Creating Email Fields
 
-A builder supplied by a class called `EmailField` can be used to create a CEDAR email field.
+The `EmailField` builder can be used to create a CEDAR email field.
 
 Using this class, we can create an email field as follows:
 
+<!-- readme-test: compile -->
 ```java
     EmailField emailField = EmailField.builder().
       withName("Email Address").
@@ -385,10 +405,11 @@ Using this class, we can create an email field as follows:
 
 ### Creating Text Area Fields
 
-A builder supplied by a class called `TextAreaField` can be used to create a CEDAR text area fields.
+The `TextAreaField` builder can be used to create a CEDAR text-area field.
 
 For example, to create a text area field representing a study description with a minimum length of 20 and a maximum length of 10000 we can do the following:
 
+<!-- readme-test: compile -->
 ```java
 TextAreaField textAreaField = TextAreaField.builder().
       withName("Study Description").
@@ -400,10 +421,11 @@ TextAreaField textAreaField = TextAreaField.builder().
 
 ### Creating Attribute-Value Fields
 
-A builder supplied by a class called `AttributeValueField` can be used to create a CEDAR attribute-value fields.
+The `AttributeValueField` builder can be used to create a CEDAR attribute-value field.
 
 Using this class, we can create an attribute-value field as follows:
 
+<!-- readme-test: compile -->
 ```java
 AttributeValueField attributeValueField = AttributeValueField.builder().
       withName("Additional Patient Characteristics").
@@ -412,10 +434,11 @@ AttributeValueField attributeValueField = AttributeValueField.builder().
 
 ### Creating Section Break Fields
 
-A builder supplied by a class called `SectionBreakField` can be used to create a CEDAR section break fields.
+The `SectionBreakField` builder can be used to create a CEDAR section-break field.
 
 Using this class, we can create a section break field as follows:
 
+<!-- readme-test: compile -->
 ```java
 SectionBreakField sectionBreakField = SectionBreakField.builder().
       withName("Patient Details Section").
@@ -425,10 +448,11 @@ SectionBreakField sectionBreakField = SectionBreakField.builder().
 
 ### Creating Image Fields
 
-A builder supplied by a class called `ImageField` can be used to create a CEDAR image fields.
+The `ImageField` builder can be used to create a CEDAR image field.
 
 Using this class, we can create an image field as follows:
 
+<!-- readme-test: compile -->
 ```java
 ImageField imageField = ImageField.builder().
       withName("Patient Picture").
@@ -438,10 +462,11 @@ ImageField imageField = ImageField.builder().
 
 ### Creating YouTube Fields
 
-A builder supplied by a class called `YouTubeField` can be used to create a CEDAR YouTube fields.
+The `YouTubeField` builder can be used to create a CEDAR YouTube field.
 
 Using this class, we can create a YouTube field as follows:
 
+<!-- readme-test: compile -->
 ```java
 YouTubeField youTubeField = YouTubeField.builder().
       withName("Patient Video").
@@ -451,10 +476,11 @@ YouTubeField youTubeField = YouTubeField.builder().
 
 ### Creating Rich Text Fields
 
-A builder supplied by a class called `RichTextField` can be used to create a CEDAR rich text fields.
+The `RichTextField` builder can be used to create a CEDAR rich-text field.
 
 Using this class, we can create a rich text field as follows:
 
+<!-- readme-test: compile -->
 ```java
 RichTextField richTextField = RichTextField.builder().
       withName("Patient Video").
@@ -601,5 +627,3 @@ Change into the cedar-artifact-library directory:
 Then build it with Maven:
 
     mvn clean install
-
-
