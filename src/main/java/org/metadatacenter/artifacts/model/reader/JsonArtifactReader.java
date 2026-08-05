@@ -15,6 +15,8 @@ import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+
+import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.FIELD_INPUT_TYPE_BOOLEAN;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
@@ -1026,7 +1028,9 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private FieldInputType readFieldInputType(ObjectNode sourceNode, String path, String fieldKey) {
     String inputType = readRequiredString(sourceNode, path, fieldKey);
 
-    if (!INPUT_TYPES.contains(inputType)) {
+    // INPUT_TYPES comes from the core model library and does not yet list the boolean type, so
+    // accept it explicitly alongside that set.
+    if (!INPUT_TYPES.contains(inputType) && !FIELD_INPUT_TYPE_BOOLEAN.equals(inputType)) {
       throw new ArtifactParseException("Invalid field input type " + inputType, fieldKey, path);
     }
 

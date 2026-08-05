@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.Annotations;
+import org.metadatacenter.artifacts.model.core.BooleanField;
 import org.metadatacenter.artifacts.model.core.CheckboxField;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
@@ -125,6 +126,21 @@ public class YamlArtifactRoundTripTest
   @Test public void testRoundTripPhoneNumberField()
   {
     PhoneNumberField original = PhoneNumberField.builder().withName("Phone").build();
+    roundTripField(original);
+  }
+
+  @Test public void testRoundTripBooleanField()
+  {
+    BooleanField original = BooleanField.builder().withName("Boolean Field")
+      .withNullEnabled(true).withDefaultValue(true)
+      .withTrueLabel("True").withFalseLabel("False").withNullLabel("Null").build();
+    roundTripField(original);
+  }
+
+  @Test public void testRoundTripBooleanFieldWithoutNullChoice()
+  {
+    BooleanField original = BooleanField.builder().withName("Boolean Field")
+      .withTrueLabel("True").withFalseLabel("False").build();
     roundTripField(original);
   }
 

@@ -99,6 +99,9 @@ public final class EmptyFieldInstances
       case PUBMED -> PubMedFieldInstance.builder().build();
       case NIH_GRANT_ID -> NihGrantIdFieldInstance.builder().build();
       case DOI -> DoiFieldInstance.builder().build();
+      // A boolean field stores its value in a literal @value (true/false/null), so an empty
+      // instance is a plain literal instance.
+      case BOOLEAN -> TextFieldInstance.builder().build();
       case TEXTFIELD -> throw new IllegalStateException("handled above");
       case ATTRIBUTE_VALUE -> throw new IllegalArgumentException(
           "attribute-value fields have no regular instance; caller must skip them");

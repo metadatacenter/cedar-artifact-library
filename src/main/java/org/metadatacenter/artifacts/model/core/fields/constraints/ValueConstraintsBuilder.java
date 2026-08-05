@@ -7,7 +7,8 @@ public sealed interface ValueConstraintsBuilder permits
   TemporalValueConstraints.TemporalValueConstraintsBuilder,
   LinkValueConstraints.LinkValueConstraintsBuilder,
   EmailValueConstraints.EmailValueConstraintsBuilder,
-  PhoneNumberValueConstraints.PhoneNumberValueConstraintsBuilder
+  PhoneNumberValueConstraints.PhoneNumberValueConstraintsBuilder,
+  BooleanValueConstraints.BooleanValueConstraintsBuilder
 {
   ValueConstraintsBuilder withRequiredValue(boolean requiredValue);
 
@@ -30,6 +31,8 @@ public sealed interface ValueConstraintsBuilder permits
       return EmailValueConstraints.builder(valueConstraints.asEmailValueConstraints());
     else if (valueConstraints instanceof PhoneNumberValueConstraints)
       return PhoneNumberValueConstraints.builder(valueConstraints.asPhoneNumberValueConstraints());
+    else if (valueConstraints instanceof BooleanValueConstraints)
+      return BooleanValueConstraints.builder(valueConstraints.asBooleanValueConstraints());
     else
       throw new IllegalArgumentException("class " + valueConstraints.getClass().getName() + " has no known builder");
   }

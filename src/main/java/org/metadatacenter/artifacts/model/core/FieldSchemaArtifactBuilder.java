@@ -23,7 +23,8 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
     ControlledTermField.ControlledTermFieldBuilder,
     LinkField.LinkFieldBuilder, RorField.RorFieldBuilder, OrcidField.OrcidFieldBuilder,
     PfasField.PfasFieldBuilder, RridField.RridFieldBuilder, PubMedField.PubMedFieldBuilder,
-    NihGrantIdField.NihGrantIdFieldBuilder, DoiField.DoiFieldBuilder {
+    NihGrantIdField.NihGrantIdFieldBuilder, DoiField.DoiFieldBuilder,
+    BooleanField.BooleanFieldBuilder {
 
   @SuppressWarnings("unchecked")
   protected SELF self() { return (SELF) this; }
@@ -105,6 +106,8 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
       return new NihGrantIdField.NihGrantIdFieldBuilder(ngf);
     } else if (fieldSchemaArtifact instanceof DoiField df) {
       return new DoiField.DoiFieldBuilder(df);
+    } else if (fieldSchemaArtifact instanceof BooleanField bf) {
+      return new BooleanField.BooleanFieldBuilder(bf);
     } else {
       throw new IllegalArgumentException("class " + fieldSchemaArtifact.getClass().getName() + " has no known builder");
     }

@@ -4,7 +4,7 @@ package org.metadatacenter.artifacts.model.core.fields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefaultValue, ControlledTermDefaultValue,
-  TemporalDefaultValue, LinkDefaultValue, EmailDefaultValue, PhoneNumberDefaultValue
+  TemporalDefaultValue, LinkDefaultValue, EmailDefaultValue, PhoneNumberDefaultValue, BooleanDefaultValue
 {
    @JsonIgnore
    DefaultValueType getValueType();
@@ -32,6 +32,9 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
 
    @JsonIgnore
    default boolean isPhoneNumberDefaultValue() { return getValueType() == DefaultValueType.PHONE_NUMBER; }
+
+   @JsonIgnore
+   default boolean isBooleanDefaultValue() { return getValueType() == DefaultValueType.BOOLEAN; }
 
    default TextDefaultValue asTextDefaultValue()
    {
@@ -89,5 +92,14 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
       else
          throw new ClassCastException(
            "Cannot convert " + this.getClass().getName() + " to " + PhoneNumberDefaultValue.class.getName());
+   }
+
+   default BooleanDefaultValue asBooleanDefaultValue()
+   {
+      if (getValueType() == DefaultValueType.BOOLEAN)
+         return (BooleanDefaultValue)this;
+      else
+         throw new ClassCastException(
+           "Cannot convert " + this.getClass().getName() + " to " + BooleanDefaultValue.class.getName());
    }
 }

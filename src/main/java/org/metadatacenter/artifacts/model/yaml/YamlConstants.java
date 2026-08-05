@@ -26,6 +26,7 @@ public class YamlConstants
   public static final String NIH_GRANT_ID_FIELD = "ext-nih-grant-id-field";
   public static final String DOI_FIELD = "ext-doi-field";
   public static final String ATTRIBUTE_VALUE_FIELD = "attribute-value-field";
+  public static final String BOOLEAN_FIELD = "boolean-field";
   public static final String STATIC_PAGE_BREAK = "static-page-break";
   public static final String STATIC_SECTION_BREAK = "static-section-break";
   public static final String STATIC_IMAGE = "static-image";
@@ -36,7 +37,7 @@ public class YamlConstants
     NUMERIC_FIELD, TEMPORAL_FIELD, RADIO_FIELD, CHECKBOX_FIELD, SINGLE_SELECT_LIST_FIELD, MULTI_SELECT_LIST_FIELD,
     PHONE_FIELD, EMAIL_FIELD, ATTRIBUTE_VALUE_FIELD, STATIC_PAGE_BREAK, STATIC_SECTION_BREAK, STATIC_IMAGE,
     STATIC_RICH_TEXT, STATIC_YOUTUBE_FIELD, LINK_FIELD, ROR_FIELD, ORCID_FIELD, PFAS_FIELD, RRID_FIELD,
-    NIH_GRANT_ID_FIELD, PUBMED_FIELD, DOI_FIELD);
+    NIH_GRANT_ID_FIELD, PUBMED_FIELD, DOI_FIELD, BOOLEAN_FIELD);
 
   public static final String KEY = "key";
   public static final String NAME = "name";
@@ -77,6 +78,8 @@ public class YamlConstants
   public static final String DEFAULT = "default";
   public static final String DEFAULT_VALUE = "value";
   public static final String DEFAULT_LABEL = "label";
+  public static final String NULL_ENABLED = "nullEnabled";
+  public static final String LABELS = "labels";
   public static final String MIN_VALUE = "minValue";
   public static final String MAX_VALUE = "maxValue";
   public static final String REGEX = "regex";
