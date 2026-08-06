@@ -945,18 +945,33 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return readBoolean(sourceNode, path, key, false);
   }
 
+  /**
+   * Reads an integer that may live either under a field's {@code configuration:} sub-block
+   * (where the renderer puts it for a nested child) or at the field level (where it renders a
+   * standalone field, and where hand-authored YAML sometimes puts it). Returns an empty
+   * Optional if absent from both locations.
+   */
+  private Optional<Integer> readIntegerFromConfigOrField(LinkedHashMap<String, Object> configNode,
+    LinkedHashMap<String, Object> sourceNode, String path, String key)
+  {
+    if (configNode != null && configNode.containsKey(key))
+      return readInteger(configNode, path, key);
+    return readInteger(sourceNode, path, key);
+  }
+
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path, FieldInputType fieldInputType,
     LinkedHashMap<String, Object> configNode)
   {
-    // The renderer emits hidden / valueRecommendation / continuePreviousLine under the
-    // `configuration:` sub-block for nested fields. Older YAML or hand-authored YAML may
-    // place them at the field level. Accept either, preferring configuration when present.
+    // The renderer emits hidden / valueRecommendation / continuePreviousLine, and the static
+    // width / height, under the `configuration:` sub-block for nested fields. Older YAML or
+    // hand-authored YAML may place them at the field level, as does the renderer for a
+    // standalone field. Accept either, preferring configuration when present.
     boolean valueRecommendationEnabled = readBooleanFromConfigOrField(configNode, sourceNode, path,
       VALUE_RECOMMENDATION);
     boolean hidden = readBooleanFromConfigOrField(configNode, sourceNode, path, HIDDEN);
     boolean continuePreviousLine = readBooleanFromConfigOrField(configNode, sourceNode, path, CONTINUE_PREVIOUS_LINE);
-    Optional<Integer> width = readInteger(sourceNode, path, WIDTH);
-    Optional<Integer> height = readInteger(sourceNode, path, HEIGHT);
+    Optional<Integer> width = readIntegerFromConfigOrField(configNode, sourceNode, path, WIDTH);
+    Optional<Integer> height = readIntegerFromConfigOrField(configNode, sourceNode, path, HEIGHT);
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
