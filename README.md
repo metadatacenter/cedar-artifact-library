@@ -543,28 +543,46 @@ To generate a TSV file from a CEDAR template stored on the main CEDAR system:
                    -k <CEDAR API key>"
 ```
 
-To generate a YAML file from a CEDAR template stored in a file:
+### Converting Artifacts Between JSON and YAML
+
+The artifact convertor reads a CEDAR artifact and writes it out again in either serialization.
+The input and output formats are chosen independently: `-jif` or `-yif` selects the format the
+artifact is read in, and `-jof` or `-yof` the format it is written in. All four combinations are
+accepted, so the tool converts in either direction and can also normalize an artifact into the
+canonical form of its own format.
+
+To generate a YAML file from a JSON Schema template stored in a file:
 
     mvn exec:java@artifact-convertor 
-      -Dexec.args="-tsf <input_artifact_filename> -yf -f <output_filename>"
+      -Dexec.args="-tsf <input_artifact_filename> -jif -yof -f <output_filename>"
 
-This will read a JSON-Schema-based template and convert it into a YAML file. 
 If the optional -cy argument is present then a compact YAML rendering of the artifact is generated; otherwise the full form is produced.
+Compact YAML omits the model version, so a compact file must be read back with `-cy` as well.
 
 If the `-f` option is omitted the YAML is written to the console.
 
 Other file-based options are `-esf` for element schema artifacts, `-fsf` for field schema artifacts, and `-tif` for template instance artifacts.
 
+To convert a YAML template back into JSON Schema, exchange the two format options:
+
+    mvn exec:java@artifact-convertor
+      -Dexec.args="-tsf <input_YAML_filename> -yif -jof -f <output_JSON_filename>"
+
 To generate a YAML file from a CEDAR template stored on the main CEDAR system:
 
     mvn exec:java@artifact-convertor
       -Dexec.args="-tsi <artifact_iri>
-                   -yf
+                   -jif
+                   -yof
                    -f <output_YAML_filename>
                    -r https://resource.metadatacenter.org
                    -k <CEDAR API key>"
 
 Other IRI-based options are `-esi` for element schema artifacts, `-fsi` for field schema artifacts, and `-tii` for template instance artifacts.
+
+For an artifact named by IRI, the input format also selects the `Accept` media type of the
+request, and the Resource Server negotiates its response accordingly. Passing `-yif` therefore
+retrieves the artifact as YAML rather than converting a JSON response locally.
 
 If the `-f` option is omitted the output is written to the console.
 
@@ -581,7 +599,8 @@ from the terminology server:
 
     mvn exec:java@artifact-convertor
       -Dexec.args="-tsi <artifact_iri>
-                   -yf
+                   -jif
+                   -yof
                    -f <output_YAML_filename>
                    -r https://resource.metadatacenter.org
                    -t https://terminology.metadatacenter.org/bioportal/integrated-search/
@@ -598,12 +617,12 @@ template that is a few kilobytes as references can become tens or hundreds of me
 materialized. It also makes a network call per constraint, so it is slower. Materialize only
 when you need the terms inline, and prefer narrow branches or value sets to whole ontologies.
 
-To generate a JSON Schema file from a CEDAR template stored in a file:
+To normalize a JSON Schema file from a CEDAR template stored in a file:
 
     mvn exec:java@artifact-convertor
-      -Dexec.args="-tsf <input_artifact_filename> -jf -f <output_filename>"
+      -Dexec.args="-tsf <input_artifact_filename> -jif -jof -f <output_filename>"
 
-This will read a JSON-Schema-based template, convert it to JSON Schema, and write it into a file.
+This will read a JSON-Schema-based template, render it as JSON Schema again, and write it into a file.
 
 
 ## Building the Library

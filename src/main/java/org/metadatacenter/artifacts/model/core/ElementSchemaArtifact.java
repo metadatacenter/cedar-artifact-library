@@ -474,7 +474,7 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
     validateOptionalFieldNotNull(this, minItems, JSON_SCHEMA_MIN_ITEMS);
     validateOptionalFieldNotNull(this, maxItems, JSON_SCHEMA_MAX_ITEMS);
 
-    ParentSchemaArtifactInvariants.validateItemBounds(this, name(), minItems, maxItems);
+    ValidationHelper.validateItemBounds(this, name(), minItems, maxItems);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

@@ -107,17 +107,15 @@ public class YamlConstants
   public static final String SOURCE_ACRONYM = "sourceAcronym";
   public static final String SOURCE_IRI = "sourceIri";
   public static final String SELECTED_BY_DEFAULT = "selected";
-  public static final String MAX_DEPTH = "maxDepth";
-  public static final String NUM_TERMS = "numTerms";
   // Value-constraint entry keys (VERSIONING-DESIGN §6). source* = the vocabulary, term* = the member.
   public static final String SOURCE_SYSTEM = "sourceSystem";     // backend; absent ⇒ bioportal
-  public static final String SOURCE_NAME = "sourceName";         // source display name (was ontologyName/valueSetName)
+  public static final String SOURCE_NAME = "sourceName";         // source display name
   // NB: an ontology's backend URL is no longer a YAML key. It is reconstructed from the acronym on read
   // (VERSIONING-ROADMAP "Revisit: sourceUri is derivable"); the JSON Schema still carries it.
   public static final String TERM_BASE_IRI = "termBaseIri";      // branch/valueSet: the base of a term set
   public static final String TERM_BASE_LABEL = "termBaseLabel";  // branch/valueSet: the base's label
-  public static final String TERM_MAX_DEPTH = "termMaxDepth";    // branch (was maxDepth)
-  public static final String TERM_COUNT = "termCount";           // ontology/valueSet (was numTerms)
+  public static final String TERM_MAX_DEPTH = "termMaxDepth";    // branch: how far below the base to descend
+  public static final String TERM_COUNT = "termCount";           // ontology/valueSet: number of terms
   public static final String VERSION_ID = "id";                 // version triple: content-hash id
   public static final String VERSION_EFFECTIVE_DATE = "effectiveDate";
   public static final String VERSION_DECLARED_VERSION = "declaredVersion";
