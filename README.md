@@ -1,6 +1,8 @@
 CEDAR Artifact Library
 ======================
 
+[![CI](https://github.com/metadatacenter/cedar-artifact-library/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/metadatacenter/cedar-artifact-library/actions/workflows/ci.yml)
+
 This library provides various tools to work with CEDAR model artifacts (templates, elements, fields, and template instances).
 
 Primarily, the library provides a Java API to work with CEDAR artifacts.
