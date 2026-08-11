@@ -1452,8 +1452,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String attributeValueFieldInstanceFieldKey = attributeValueFieldInstanceGroupField.getKey();
       FieldInstanceArtifact fieldInstanceArtifact = attributeValueFieldInstanceGroupField.getValue();
 
-      attributeValueFieldInstanceGroupFieldsRendering.put(attributeValueFieldInstanceFieldKey,
-        renderFieldInstanceArtifact(fieldInstanceArtifact));
+      LinkedHashMap<String, Object> fieldRendering = renderFieldInstanceArtifact(fieldInstanceArtifact);
+      // The same omission rule applies inside an attribute-value group: an attribute whose
+      // value is unknown must not become `{}`, because the strict YAML reader rejects empty
+      // placeholders everywhere in the document.
+      if (!fieldRendering.isEmpty())
+        attributeValueFieldInstanceGroupFieldsRendering.put(attributeValueFieldInstanceFieldKey, fieldRendering);
     }
 
     return attributeValueFieldInstanceGroupFieldsRendering;

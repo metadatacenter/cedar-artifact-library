@@ -33,6 +33,7 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -476,7 +477,9 @@ public class YamlArtifactRoundTripTest
     FieldInstanceArtifact attr1 = simpleLiteralField("foo");
     FieldInstanceArtifact attr2 = simpleLiteralField("bar");
     LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
-    group.put("attr1", attr1);
+    // "value" is a legal JSON-LD property name even though it is also the
+    // YAML field-literal key; the nested group shape must keep it unambiguous.
+    group.put("value", attr1);
     group.put("attr2", attr2);
 
     TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
@@ -484,6 +487,30 @@ public class YamlArtifactRoundTripTest
       .withAttributeValueFieldGroup("custom-attrs", group)
       .build();
     roundTripTemplateInstance(original);
+  }
+
+  @Test public void testValuelessAttributeIsOmittedFromYaml()
+  {
+    FieldInstanceArtifact empty = FieldInstanceArtifact.create(
+      java.util.Collections.emptyList(), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty());
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("empty", empty);
+    group.put("filled", simpleLiteralField("value"));
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("Attributes")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withAttributeValueFieldGroup("custom-attrs", group)
+      .build();
+
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(original);
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> attributes = (LinkedHashMap<String, Object>) rendering.get("custom-attrs");
+
+    assertFalse(attributes.containsKey("empty"), "an unset attribute must be omitted, not rendered as {}");
+    assertTrue(attributes.containsKey("filled"));
+    yamlArtifactReader.readTemplateInstanceArtifact(rendering);
   }
 
   @Test public void testYamlReaderRejectsAttributeNameThatWouldCollideInJson()
