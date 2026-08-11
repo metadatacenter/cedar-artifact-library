@@ -20,6 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InstanceInflaterTest
@@ -112,6 +113,46 @@ public class InstanceInflaterTest
 
     assertTrue(inflated.attributeValueFieldInstanceGroups().containsKey(key));
     assertTrue(inflated.attributeValueFieldInstanceGroups().get(key).isEmpty());
+  }
+
+  /**
+   * An attribute-value field naming no attribute is written as an empty array, and an instance
+   * is read without its template, so {@code JsonArtifactReader} records that array as an empty
+   * multi-instance field. Inflating is where the schema settles what it is.
+   */
+  @Test public void emptyAttributeValueFieldReadAsAMultiInstanceFieldBecomesAGroup()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(AttributeValueField.builder().withName("Attributes").build()).build();
+    String key = template.getUi().order().get(0);
+    TemplateInstanceArtifact sparse =
+      sparseInstance().withMultiInstanceFieldInstances(key, List.of()).build();
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparse);
+
+    assertTrue(inflated.attributeValueFieldInstanceGroups().containsKey(key));
+    assertTrue(inflated.attributeValueFieldInstanceGroups().get(key).isEmpty());
+    assertFalse(inflated.multiInstanceFieldInstances().containsKey(key));
+  }
+
+  /**
+   * The withdrawal above covers a key the reader could not classify. A key carrying values is a
+   * disagreement about what the child is, and silently dropping the values would lose them.
+   */
+  @Test public void attributeValueFieldHoldingValuesUnderAnotherKindIsReported()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(AttributeValueField.builder().withName("Attributes").build()).build();
+    String key = template.getUi().order().get(0);
+    TemplateInstanceArtifact sparse =
+      sparseInstance().withMultiInstanceFieldInstances(key, List.of(literal("value"))).build();
+
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+      () -> InstanceInflater.inflate(template, sparse));
+
+    assertTrue(thrown.getMessage().contains(key), "the message should name the child");
+    assertTrue(thrown.getMessage().contains("attribute-value field"),
+      "the message should say what the schema declares");
   }
 
   @Test public void existingAttributeValueGroupIsPreservedAndDetached()

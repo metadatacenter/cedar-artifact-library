@@ -3,10 +3,13 @@ package org.metadatacenter.artifacts.model;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
+import org.metadatacenter.artifacts.model.tools.InstanceInflater;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -95,5 +98,33 @@ public class JsonAttributeValueRoundTripTest
     TemplateInstanceArtifact roundTripped = reader.readTemplateInstanceArtifact(json);
 
     assertEquals("Inst", roundTripped.name().get());
+  }
+
+  /**
+   * What the test above leaves open: the empty group does not survive a round trip on its own,
+   * because the array it renders as carries nothing to classify it by, and the reader has only
+   * the instance. Inflating against the template is what settles it, so the group comes back and
+   * renders as the same empty array it started as.
+   */
+  @Test public void testEmptyAttributeValueGroupSurvivesARoundTripThroughItsTemplate()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(AttributeValueField.builder().withName("Attributes").build()).build();
+    String key = template.getUi().order().get(0);
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("Inst")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withAttributeValueFieldGroup(key, new LinkedHashMap<>())
+      .build();
+
+    ObjectNode json = renderer.renderTemplateInstanceArtifact(original);
+    assertTrue(json.get(key).isArray(), "an attribute-value field naming nothing is an empty array");
+    assertTrue(json.get(key).isEmpty());
+
+    TemplateInstanceArtifact inflated =
+      InstanceInflater.inflate(template, reader.readTemplateInstanceArtifact(json));
+
+    assertTrue(inflated.attributeValueFieldInstanceGroups().containsKey(key));
+    assertTrue(inflated.attributeValueFieldInstanceGroups().get(key).isEmpty());
+    assertTrue(renderer.renderTemplateInstanceArtifact(inflated).get(key).isArray());
   }
 }
