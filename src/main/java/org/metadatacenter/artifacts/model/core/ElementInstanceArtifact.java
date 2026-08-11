@@ -365,6 +365,10 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
     {
       Set<String> attributeValueFieldInstanceKeys = attributeValueFieldInstances.keySet();
 
+      for (String name : attributeValueFieldInstanceKeys)
+        if (InstanceArtifactInvariants.isReservedAttributeValueName(name))
+          throw new IllegalArgumentException("attribute-value field name " + name + " is reserved for instance metadata");
+
       if (childKeys.contains(attributeValueFieldGroupName))
         throw new IllegalArgumentException("child " + attributeValueFieldGroupName + " already present in instance");
 

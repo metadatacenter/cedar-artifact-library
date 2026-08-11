@@ -486,6 +486,30 @@ public class YamlArtifactRoundTripTest
     roundTripTemplateInstance(original);
   }
 
+  @Test public void testYamlReaderRejectsAttributeNameThatWouldCollideInJson()
+  {
+    LinkedHashMap<String, Object> ordinaryValue = new LinkedHashMap<>();
+    ordinaryValue.put("value", "ordinary");
+    LinkedHashMap<String, Object> children = new LinkedHashMap<>();
+    children.put("title", ordinaryValue);
+
+    LinkedHashMap<String, Object> attributeValue = new LinkedHashMap<>();
+    attributeValue.put("value", "attribute");
+    LinkedHashMap<String, Object> attributes = new LinkedHashMap<>();
+    attributes.put("title", attributeValue);
+
+    LinkedHashMap<String, Object> instance = new LinkedHashMap<>();
+    instance.put("type", "instance");
+    instance.put("name", "Collision");
+    instance.put("isBasedOn", "https://repo.metadatacenter.org/templates/abc");
+    instance.put("children", children);
+    instance.put("attributes", attributes);
+
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+      () -> yamlArtifactReader.readTemplateInstanceArtifact(instance));
+    assertTrue(ex.getMessage().contains("already present"));
+  }
+
   @Test public void testRoundTripElementInstanceWithAttributeValueFieldGroup()
   {
     FieldInstanceArtifact attr = simpleLiteralField("foo");

@@ -646,6 +646,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                   }
 
                   if (attributeValueFieldGroupInstanceNames.containsKey(instanceArtifactFieldKey)) {
+                    if (attributeValueFieldGroupInstanceNames.get(instanceArtifactFieldKey)
+                      .contains(attributeValueFieldName))
+                      throw new ArtifactParseException("Duplicate attribute-value field name "
+                        + attributeValueFieldName + " in group " + instanceArtifactFieldKey,
+                        instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
                     attributeValueFieldGroupInstanceNames.get(instanceArtifactFieldKey).add(attributeValueFieldName);
                   } else {
                     List<String> attributeValueFieldInstanceNames = new ArrayList<>();

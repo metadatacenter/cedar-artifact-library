@@ -364,6 +364,10 @@ public non-sealed interface TemplateInstanceArtifact extends InstanceArtifact, P
                                                 LinkedHashMap<String, FieldInstanceArtifact> attributeValueFieldInstances) {
       Set<String> attributeValueFieldInstanceNames = attributeValueFieldInstances.keySet();
 
+      for (String name : attributeValueFieldInstanceNames)
+        if (InstanceArtifactInvariants.isReservedAttributeValueName(name))
+          throw new IllegalArgumentException("attribute-value field name " + name + " is reserved for instance metadata");
+
       if (childKeys.contains(attributeValueFieldGroupName)) {
         throw new IllegalArgumentException("child " + attributeValueFieldGroupName + " already present in instance");
       }

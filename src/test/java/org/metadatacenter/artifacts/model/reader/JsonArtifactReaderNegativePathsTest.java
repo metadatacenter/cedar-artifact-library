@@ -14,6 +14,7 @@ import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONT
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
@@ -28,6 +29,7 @@ import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 
@@ -95,6 +97,18 @@ public class JsonArtifactReaderNegativePathsTest
     node.put(SCHEMA_ORG_DESCRIPTION, "d");
 
     assertThrows(Exception.class, () -> reader.readTemplateInstanceArtifact(node));
+  }
+
+  @Test public void testReadTemplateInstanceRejectsDuplicateAttributeValueName()
+  {
+    ObjectNode node = mapper.createObjectNode();
+    node.put(SCHEMA_IS_BASED_ON, "https://repo.metadatacenter.org/templates/abc");
+    node.putArray("attrs").add("colour").add("colour");
+    node.putObject("colour").put(JSON_LD_VALUE, "blue");
+
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateInstanceArtifact(node));
+    assertTrue(ex.getMessage().contains("Duplicate attribute-value"));
   }
 
   @Test public void testReadElementThrowsOnMissingProperties()
