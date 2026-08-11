@@ -28,9 +28,15 @@ conventions see [CLAUDE.md](./CLAUDE.md).
   produce a valid CEDAR instance must re-add the empty placeholders — which requires the
   template (to know which fields exist). `InstanceInflater` and `EmptyFieldInstances` now provide
   that template-driven traversal in this library, including recursive elements, and downstream
-  MCP callers use them explicitly. What remains is a template-aware JSON rendering API, such as
-  `renderTemplateInstanceArtifact(template, sparseInstance)`, that performs inflation before
-  rendering. YAML→JSON callers should use that API instead of having to compose inflation and
+  MCP callers use them explicitly. Inflation is also where the reader's one admitted guess is
+  settled: an instance is read without its template, so an empty array names no kind, and
+  `JsonArtifactReader` records one as an empty multi-instance field — which is right for two of
+  the three things it could be and wrong for an attribute-value field naming no attribute.
+  `InstanceInflater` holds the schema and withdraws that choice before the group takes the key,
+  where the misfiled child carries nothing; a child carrying values is reported as a
+  schema/instance disagreement rather than discarded. What remains is a template-aware JSON
+  rendering API, such as `renderTemplateInstanceArtifact(template, sparseInstance)`, that
+  performs inflation before rendering. YAML→JSON callers should use that API instead of having to compose inflation and
   rendering themselves. The existing one-argument renderer cannot inflate because an instance
   alone does not contain the schema needed to discover missing fields.
 
