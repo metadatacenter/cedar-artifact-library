@@ -9,14 +9,6 @@ conventions see [CLAUDE.md](./CLAUDE.md).
 
 ## Next
 
-- **Reader vs. builder defaulting for `version` / `status`** — *resolved.* The readers now
-  default a **top-level** artifact's `version`/`status` to `0.0.1` / `draft` when absent, matching
-  the builder, so a built model and a read model agree for the same logical input. The shared
-  default is `Version.DEFAULT` (and `Status.DRAFT`), used by the template/element/field builders
-  and by `YamlArtifactReader` / `JsonArtifactReader`. Nested children that omit `version`/`status`
-  are left untouched (no defaulting), preserving lossless round-tripping of real templates whose
-  child fields carry neither.
-
 - **Integrate template-aware instance inflation with JSON rendering.** A CEDAR
   *JSON* instance must carry an entry for every field its template defines, even unset
   ones (rendered as an empty placeholder, e.g. `{"@value": null}`), because the template's
