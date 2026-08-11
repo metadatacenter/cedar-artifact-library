@@ -7,6 +7,7 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
+import org.metadatacenter.artifacts.util.TerminologyValue;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -938,14 +939,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
       .withOntologyValueConstraint(ontologyValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+    List<TerminologyValue> values = terminologyServerClient.getValuesFromTerminologyServer(
       controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
-      String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
-      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, ontologyValueConstraint.acronym(),
-        preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
+    for (TerminologyValue value : values) {
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(value.uri(),
+        ontologyValueConstraint.acronym(), value.prefLabel(), value.prefLabel(), ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -963,14 +962,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
       .withBranchValueConstraint(branchValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+    List<TerminologyValue> values = terminologyServerClient.getValuesFromTerminologyServer(
       controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
-      String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
-      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, branchValueConstraint.acronym(),
-        preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
+    for (TerminologyValue value : values) {
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(value.uri(),
+        branchValueConstraint.acronym(), value.prefLabel(), value.prefLabel(), ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -988,14 +985,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
       .withValueSetValueConstraint(valueSetValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+    List<TerminologyValue> values = terminologyServerClient.getValuesFromTerminologyServer(
       controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
-      String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
-      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, valueSetValueConstraint.vsCollection(),
-        preferredLabel, preferredLabel, ValueType.VALUE);
+    for (TerminologyValue value : values) {
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(value.uri(),
+        valueSetValueConstraint.vsCollection(), value.prefLabel(), value.prefLabel(), ValueType.VALUE);
       classValueConstraints.add(classValueConstraint);
     }
 

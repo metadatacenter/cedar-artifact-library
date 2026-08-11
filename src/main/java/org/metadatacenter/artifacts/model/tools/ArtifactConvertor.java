@@ -65,7 +65,7 @@ public class ArtifactConvertor {
   private static final String YAML_FULL_QUOTES = "yq";
   private static final String OUTPUT_FILE_OPTION = "f";
   private static final String CEDAR_RESOURCE_REST_API_BASE_OPTION = "r";
-  private static final String CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API = "t";
+  private static final String CEDAR_TERMINOLOGY_REST_API = "t";
   private static final String CEDAR_APIKEY_OPTION = "k";
 
   private static final String APPLICATION_JSON_MEDIA_TYPE = "application/json";
@@ -291,9 +291,9 @@ public class ArtifactConvertor {
   }
 
   private static TerminologyServerClient createTerminologyServerClientIfPossible(CommandLine command) {
-    if (command.hasOption(CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API)) {
-      String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(
-          CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API);
+    if (command.hasOption(CEDAR_TERMINOLOGY_REST_API)) {
+      String terminologyServerEndpoint = command.getOptionValue(
+          CEDAR_TERMINOLOGY_REST_API);
 
       if (!command.hasOption(CEDAR_APIKEY_OPTION)) {
         throw new ConvertorException("no CEDAR API key provided for terminology server");
@@ -301,7 +301,7 @@ public class ArtifactConvertor {
 
       String terminologyServerApiKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
 
-      return new TerminologyServerClient(terminologyServerIntegratedSearchEndpoint, terminologyServerApiKey);
+      return new TerminologyServerClient(terminologyServerEndpoint, terminologyServerApiKey);
     } else {
       return null;
     }
@@ -400,10 +400,10 @@ public class ArtifactConvertor {
         .desc("CEDAR Resource Server REST API base, e.g., https://resource.metadatacenter.org")
         .build();
 
-    Option terminologySearchOption = Option.builder(CEDAR_TERMINOLOGY_INTEGRATED_SEARCH_REST_API)
-        .argName("cedar-terminology-terminology-integrated-search-rest-api")
+    Option terminologyServerOption = Option.builder(CEDAR_TERMINOLOGY_REST_API)
+        .argName("cedar-terminology-rest-api")
         .hasArg()
-        .desc("CEDAR Terminology Server REST API, e.g., https://resource.metadatacenter.org")
+        .desc("CEDAR Terminology Server REST API, e.g., https://terminology.metadatacenter.org/bioportal")
         .build();
 
     Option keyOption = Option.builder(CEDAR_APIKEY_OPTION)
@@ -443,7 +443,7 @@ public class ArtifactConvertor {
     options.addOption(compactYamlOption);
     options.addOption(yamlFullquotesOption);
     options.addOption(resourceOption);
-    options.addOption(terminologySearchOption);
+    options.addOption(terminologyServerOption);
     options.addOption(keyOption);
 
     return options;

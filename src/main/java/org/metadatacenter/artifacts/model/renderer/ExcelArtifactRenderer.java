@@ -42,6 +42,7 @@ import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
 import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
+import org.metadatacenter.artifacts.util.TerminologyValue;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.IOException;
@@ -459,9 +460,13 @@ public class ExcelArtifactRenderer {
             (ControlledTermValueConstraints) valueConstraints.get();
 
         if (controlledTermValueConstraints.hasExplicitConstraints()) {
-          Map<String, String> ontologyBasedValues =
+          List<TerminologyValue> ontologyBasedValues =
               terminologyServerClient.getValuesFromTerminologyServer(controlledTermValueConstraints);
-          possibleValues.putAll(ontologyBasedValues);
+
+          // A spreadsheet dropdown offers labels, so values sharing a label collapse to one entry here
+          for (TerminologyValue ontologyBasedValue : ontologyBasedValues) {
+            possibleValues.put(ontologyBasedValue.prefLabel(), ontologyBasedValue.uri().toString());
+          }
         }
       }
 

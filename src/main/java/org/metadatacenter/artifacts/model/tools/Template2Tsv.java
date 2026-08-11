@@ -46,7 +46,7 @@ public class Template2Tsv
 
       checkCommandLine(command, options);
 
-      String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(CEDAR_SEARCH_ENDPOINT_OPTION);
+      String terminologyServerEndpoint = command.getOptionValue(CEDAR_SEARCH_ENDPOINT_OPTION);
       String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
       String tsvFileName = command.getOptionValue(TSV_FILE_OPTION);
       File tsvFile = new File(tsvFileName);
@@ -80,7 +80,7 @@ public class Template2Tsv
       JsonArtifactReader artifactReader = new JsonArtifactReader();
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
-      TerminologyServerClient terminologyServerClient = new TerminologyServerClient(terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
+      TerminologyServerClient terminologyServerClient = new TerminologyServerClient(terminologyServerEndpoint, cedarAPIKey);
       ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerClient);
 
       Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);
