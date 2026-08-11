@@ -629,15 +629,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // The value is emitted only when present (an unset slot returned early above, so this is
     // never a `value: null`).
     if (hasValue) {
-      // Same compact-YAML rule as numeric defaults: when the field's declared @type is
-      // an XSD numeric datatype and the stringified value parses cleanly as a number,
-      // emit a bare number for readable output. Pathological forms (leading zeros,
-      // exponential, etc.) stay String-typed so the YAML serializer keeps them quoted.
       String raw = fieldInstanceArtifact.jsonLdValue().get();
-      Object rendered = isNumericInstance(fieldInstanceArtifact)
-        ? renderNumericLiteralForYaml(raw)
-        : raw;
-      fieldInstanceArtifactRendering.put(VALUE, rendered);
+      // Instance @value is string-valued in the model and in JSON. Keep it a
+      // string in YAML as well so choosing a serialization format cannot change
+      // the value's scalar type. Numeric schema defaults remain numeric below.
+      fieldInstanceArtifactRendering.put(VALUE, raw);
     }
 
     if (fieldInstanceArtifact.label().isPresent())
@@ -1491,24 +1487,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return offsetDateTime.format(datetimeFormatter);
   }
 
-  /** Set of XSD URIs that count as numeric for unquoting purposes in instance values. */
-  private static final Set<URI> XSD_NUMERIC_URIS;
-  static {
-    Set<URI> uris = new HashSet<>();
-    for (XsdNumericDatatype t : XsdNumericDatatype.values()) uris.add(t.toUri());
-    XSD_NUMERIC_URIS = Collections.unmodifiableSet(uris);
-  }
-
-  /** True when the instance's declared @type is an XSD numeric datatype. */
-  private static boolean isNumericInstance(FieldInstanceArtifact fieldInstanceArtifact)
-  {
-    for (URI t : fieldInstanceArtifact.jsonLdTypes())
-      if (XSD_NUMERIC_URIS.contains(t)) return true;
-    return false;
-  }
-
   /**
-   * Decide how to emit a numeric literal in YAML output.
+   * Decide how to emit a numeric schema default in YAML output.
    *
    * <p>Returns the parsed {@link Number} (Long or Double) when the canonical string
    * representation is round-trip-safe under SnakeYAML's auto-typing — i.e. a bare
@@ -1522,8 +1502,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * string-ness across a subsequent read (which is what the pathological forms
    * need: a Java String "010" must not round-trip as octal Integer 8).
    *
-   * <p>The library's reader normalises to a canonical String at the model boundary
-   * either way, so the round trip is correct in both directions.
+   * <p>Instance values do not use this conversion: their JSON-LD {@code @value}
+   * is string-valued and YAML preserves that same scalar type.
    */
   private static Object renderNumericLiteralForYaml(String canonical)
   {

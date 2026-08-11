@@ -666,9 +666,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   /**
    * Read a field-instance {@code value:} as a string. Unlike {@link #readString}, this coerces a
-   * scalar number or boolean to its string form: the renderer emits numeric instance values as
-   * bare YAML numbers (e.g. {@code value: 33}) for readability, but the model stores @value as a
-   * string. An absent key or an explicit {@code null} reads as empty.
+   * scalar number or boolean to its string form. The renderer preserves model values as quoted
+   * strings, but accepting scalars keeps the reader useful for human-authored YAML. An absent key
+   * or an explicit {@code null} reads as empty.
    */
   private Optional<String> readScalarAsString(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {

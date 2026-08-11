@@ -351,6 +351,29 @@ public class YamlArtifactRoundTripTest
       "a field that carries a value must still be rendered, got: " + children);
   }
 
+  @Test public void testNumericInstanceValueRemainsAStringInYaml()
+  {
+    FieldInstanceArtifact age = FieldInstanceArtifact.create(
+      java.util.List.of(URI.create("http://www.w3.org/2001/XMLSchema#int")),
+      java.util.Optional.empty(), java.util.Optional.of("42"), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty(), java.util.Optional.empty());
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("Numeric instance")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withSingleInstanceFieldInstance("Age", age)
+      .build();
+
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(original);
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> children = (LinkedHashMap<String, Object>) rendering.get("children");
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> renderedAge = (LinkedHashMap<String, Object>) children.get("Age");
+
+    assertEquals("42", renderedAge.get("value"));
+    assertTrue(renderedAge.get("value") instanceof String,
+      "YAML and JSON must expose the same string-valued instance literal");
+    roundTripTemplateInstance(original);
+  }
+
   @Test public void testReaderRejectsExplicitNullValue()
   {
     // YAML contract: null is never a valid value. A `value: null` (or any null, anywhere) is
