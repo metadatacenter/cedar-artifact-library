@@ -95,20 +95,12 @@ public class YamlSerializer {
   public static String getYAML(Artifact artifact, boolean compactYaml, boolean fullQuotes, TerminologyServerClient terminologyServerClient) {
     LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact, compactYaml, terminologyServerClient);
     try {
-      String v = null;
-      if (fullQuotes) {
-        v = YAML_OBJECT_MAPPER_FULL_QUOTES.writeValueAsString(yamlSerialized);
-      } else {
-        v = YAML_OBJECT_MAPPER.writeValueAsString(yamlSerialized);
-      }
-      for (int i = 0x80; i <= 0x9f; i++) {
-        String hexString = String.format("\\\\x%02x", i);
-        String unicodeString = Character.toString(i);
-        v = v.replaceAll(hexString, unicodeString);
-      }
-      v = v.replaceAll("\\\\N", Character.toString(0x85));
-      v = v.replaceAll("\\\\_", "\u00a0");
-      return v;
+      // The writer's escapes are returned as it wrote them. DEL and the C1 controls are not
+      // printable characters in YAML, so a document can only carry them escaped: this method used
+      // to substitute the characters back for \xNN, \N and \_, which produced a document no parser
+      // accepts, this library's own reader included.
+      ObjectMapper yamlMapper = fullQuotes ? YAML_OBJECT_MAPPER_FULL_QUOTES : YAML_OBJECT_MAPPER;
+      return yamlMapper.writeValueAsString(yamlSerialized);
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to serialize " + artifact.getClass().getName() + " as YAML", e);
     }
