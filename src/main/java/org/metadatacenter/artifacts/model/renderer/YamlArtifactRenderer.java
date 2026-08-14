@@ -1088,12 +1088,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(DEFAULT, defaultValue.asLinkDefaultValue().value().toString());
       } else if (defaultValue.isTemporalDefaultValue()) {
         rendering.put(DEFAULT, defaultValue.asTemporalDefaultValue().value());
-      } else if (defaultValue.isBooleanDefaultValue()) {
-        // A boolean default is a bare true/false. An explicit null default is not emitted: the
-        // YAML exchange form forbids null values, so it cannot carry one (the JSON form does).
-        Boolean booleanDefault = defaultValue.asBooleanDefaultValue().value();
-        if (booleanDefault != null)
-          rendering.put(DEFAULT, booleanDefault);
       }
     }
 
@@ -1127,15 +1121,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(REGEX, textValueConstraints.regex().get());
     }
 
-    if (valueConstraints instanceof BooleanValueConstraints) {
-      BooleanValueConstraints booleanValueConstraints = (BooleanValueConstraints)valueConstraints;
-
-      if (booleanValueConstraints.nullEnabled().isPresent())
-        rendering.put(NULL_ENABLED, booleanValueConstraints.nullEnabled().get());
-
-      if (!booleanValueConstraints.labels().isEmpty())
-        rendering.put(LABELS, new LinkedHashMap<>(booleanValueConstraints.labels()));
-    }
   }
 
   private List<LinkedHashMap<String, Object>> renderChildSchemas(ParentSchemaArtifact parentSchemaArtifact,
@@ -1418,8 +1403,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         return NUMERIC_FIELD;
       case TEMPORAL:
         return TEMPORAL_FIELD;
-      case BOOLEAN:
-        return BOOLEAN_FIELD;
       case ATTRIBUTE_VALUE:
         return ATTRIBUTE_VALUE_FIELD;
       case PAGE_BREAK:

@@ -69,47 +69,7 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
-  @Test public void testRoundTripBooleanField()
-  {
-    // The shipped CEDAR meta-schema does not yet model the boolean value-constraints shape
-    // (nullEnabled / labels / boolean default), so this asserts the build -> render -> read ->
-    // assertEquals contract and value-constraint survival directly rather than through the
-    // meta-schema validator.
-    BooleanField originalFieldSchemaArtifact = BooleanField.builder()
-      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Boolean Field")
-      .withRequiredValue(false).withNullEnabled(true).withDefaultValue(true)
-      .withTrueLabel("True").withFalseLabel("False").withNullLabel("Null").build();
 
-    BooleanField roundTripped = (BooleanField) artifactReader.readFieldSchemaArtifact(
-      jsonArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact));
-
-    assertEquals(originalFieldSchemaArtifact, roundTripped);
-
-    var valueConstraints = roundTripped.valueConstraints().orElseThrow().asBooleanValueConstraints();
-    assertEquals(java.util.Optional.of(true), valueConstraints.nullEnabled());
-    assertEquals(Boolean.TRUE, valueConstraints.defaultValue().orElseThrow().value());
-    assertEquals("True", valueConstraints.labels().get("true"));
-    assertEquals("False", valueConstraints.labels().get("false"));
-    assertEquals("Null", valueConstraints.labels().get("null"));
-  }
-
-  @Test public void testRoundTripBooleanFieldWithExplicitNullDefault()
-  {
-    BooleanField originalFieldSchemaArtifact = BooleanField.builder()
-      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/124")).withName("Boolean Field")
-      .withRequiredValue(false).withNullEnabled(true).withNullDefaultValue()
-      .withTrueLabel("True").withFalseLabel("False").withNullLabel("Null").build();
-
-    BooleanField roundTripped = (BooleanField) artifactReader.readFieldSchemaArtifact(
-      jsonArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact));
-
-    assertEquals(originalFieldSchemaArtifact, roundTripped);
-
-    var valueConstraints = roundTripped.valueConstraints().orElseThrow().asBooleanValueConstraints();
-    // The explicit null default must survive as a present-but-null default, not collapse to absent.
-    assertTrue(valueConstraints.defaultValue().isPresent());
-    assertEquals(null, valueConstraints.defaultValue().get().value());
-  }
 
   @Test public void testRoundTripTemplateSchemaArtifactWithAnnotations()
   {

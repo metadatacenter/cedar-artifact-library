@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public sealed interface ValueConstraints permits TextValueConstraints, NumericValueConstraints,
   ControlledTermValueConstraints, TemporalValueConstraints, LinkValueConstraints, EmailValueConstraints,
-  PhoneNumberValueConstraints, BooleanValueConstraints
+  PhoneNumberValueConstraints
 {
   boolean requiredValue();
 
@@ -40,9 +40,6 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   @JsonIgnore
   default boolean isPhoneNumberValueConstraint() { return this instanceof PhoneNumberValueConstraints; }
-
-  @JsonIgnore
-  default boolean isBooleanValueConstraint() { return this instanceof BooleanValueConstraints; }
 
   default TextValueConstraints asTextValueConstraints()
   {
@@ -98,14 +95,6 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
       return (PhoneNumberValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PhoneNumberValueConstraints.class.getName());
-  }
-
-  default BooleanValueConstraints asBooleanValueConstraints()
-  {
-    if (this instanceof BooleanValueConstraints) // TODO Use typesafe switch when available
-      return (BooleanValueConstraints)this;
-    else
-      throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + BooleanValueConstraints.class.getName());
   }
 
 }

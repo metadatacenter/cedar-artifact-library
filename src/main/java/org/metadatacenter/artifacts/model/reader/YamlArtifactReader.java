@@ -16,12 +16,10 @@ import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
-import org.metadatacenter.artifacts.model.core.fields.BooleanDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
-import org.metadatacenter.artifacts.model.core.fields.constraints.BooleanValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
@@ -63,13 +61,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ACTION_TO;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ANNOTATIONS;
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_LABEL_FALSE;
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_LABEL_NULL;
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_LABEL_TRUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ATTRIBUTE_VALUE_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BOOLEAN_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LABELS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NULL_ENABLED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.BRANCH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DOI_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.EMAIL_FIELD;
@@ -1027,13 +1019,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     List<LiteralValueConstraint> literals = readLiteralValueConstraints(sourceNode, path);
     List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(sourceNode, path);
 
-    if (fieldInputType == FieldInputType.BOOLEAN) {
-      Optional<Boolean> nullEnabled = readBoolean(sourceNode, path, NULL_ENABLED);
-      Optional<BooleanDefaultValue> booleanDefaultValue = readBooleanDefaultValue(sourceNode, path);
-      LinkedHashMap<String, String> labels = readBooleanLabels(sourceNode, path);
-      return Optional.of(BooleanValueConstraints.create(nullEnabled, booleanDefaultValue, labels, requiredValue,
-        recommendedValue, multipleChoice));
-    } else if (fieldInputType == FieldInputType.NUMERIC) {
+    if (fieldInputType == FieldInputType.NUMERIC) {
       Optional<XsdNumericDatatype> numberType = readNumberType(sourceNode, path, DATATYPE);
       Optional<NumericDefaultValue> numericDefaultValue = readNumericDefaultValue(sourceNode, path);
       return Optional.of(NumericValueConstraints.create(numberType.orElse(XsdNumericDatatype.DECIMAL), minValue,
@@ -1275,7 +1261,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (inputTypeString.equals(PUBMED_FIELD)) return FieldInputType.PUBMED;
     if (inputTypeString.equals(NIH_GRANT_ID_FIELD)) return FieldInputType.NIH_GRANT_ID;
     if (inputTypeString.equals(DOI_FIELD)) return FieldInputType.DOI;
-    if (inputTypeString.equals(BOOLEAN_FIELD)) return FieldInputType.BOOLEAN;
     if (inputTypeString.equals(ATTRIBUTE_VALUE_FIELD)) return FieldInputType.ATTRIBUTE_VALUE;
     if (inputTypeString.equals(STATIC_PAGE_BREAK)) return FieldInputType.PAGE_BREAK;
     if (inputTypeString.equals(STATIC_SECTION_BREAK)) return FieldInputType.SECTION_BREAK;
@@ -1619,34 +1604,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   // A boolean default is a bare true/false or an explicit null. Distinguish an absent key (no
   // default) from a present null (explicit null default), so the three states round-trip.
-  private Optional<BooleanDefaultValue> readBooleanDefaultValue(LinkedHashMap<String, Object> sourceNode, String path)
-  {
-    if (!sourceNode.containsKey(DEFAULT))
-      return Optional.empty();
 
-    Object raw = sourceNode.get(DEFAULT);
-    if (raw == null)
-      return Optional.of(new BooleanDefaultValue(null));
-    if (raw instanceof Boolean)
-      return Optional.of(new BooleanDefaultValue((Boolean) raw));
-
-    throw new ArtifactParseException("boolean default value must be true, false, or null", DEFAULT, path);
-  }
-
-  private LinkedHashMap<String, String> readBooleanLabels(LinkedHashMap<String, Object> sourceNode, String path)
-  {
-    LinkedHashMap<String, String> labels = new LinkedHashMap<>();
-    Object raw = sourceNode.get(LABELS);
-    if (raw instanceof Map<?, ?> labelsMap) {
-      for (String labelKey : new String[] {VALUE_CONSTRAINTS_LABEL_TRUE, VALUE_CONSTRAINTS_LABEL_FALSE,
-        VALUE_CONSTRAINTS_LABEL_NULL}) {
-        Object labelValue = labelsMap.get(labelKey);
-        if (labelValue != null)
-          labels.put(labelKey, labelValue.toString());
-      }
-    }
-    return labels;
-  }
 
   private Optional<NumericDefaultValue> readNumericDefaultValue(LinkedHashMap<String, Object> sourceNode, String path)
   {

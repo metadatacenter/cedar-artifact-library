@@ -183,7 +183,7 @@ TemplateSchemaArtifact templateSchemaArtifact = TemplateSchemaArtifact.builder()
 The sealed `FieldSchemaArtifact` hierarchy currently contains these field types:
 
 <!-- field-types:start -->
-- General inputs: `TextField`, `TextAreaField`, `TemporalField`, `NumericField`, `BooleanField`,
+- General inputs: `TextField`, `TextAreaField`, `TemporalField`, `NumericField`,
   `ControlledTermField`, `RadioField`, `CheckboxField`, `ListField`, `LinkField`, `PhoneNumberField`,
   `EmailField`, and `AttributeValueField`.
 - Static content: `PageBreakField`, `SectionBreakField`, `ImageField`, `YouTubeField`, and `RichTextField`.

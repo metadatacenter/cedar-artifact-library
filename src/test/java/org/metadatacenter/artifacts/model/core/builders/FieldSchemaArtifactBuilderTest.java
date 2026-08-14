@@ -8,7 +8,6 @@ import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
-import org.metadatacenter.artifacts.model.core.fields.constraints.BooleanValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
@@ -1253,56 +1252,6 @@ public class FieldSchemaArtifactBuilderTest {
       .asControlledTermValueConstraints().ontologies().size());
   }
 
-  @Test
-  public void testCreateBooleanFieldWithBuilder() {
-    String name = "Field name";
-    String description = "Field description";
 
-    BooleanField booleanField = BooleanField.builder().
-        withName(name).
-        withDescription(description).
-        withRequiredValue(false).
-        withNullEnabled(true).
-        withDefaultValue(true).
-        withTrueLabel("True").
-        withFalseLabel("False").
-        withNullLabel("Null").
-        build();
-
-    Assertions.assertEquals(FieldInputType.BOOLEAN, booleanField.fieldUi().inputType());
-    Assertions.assertEquals(name, booleanField.name());
-    Assertions.assertEquals(description, booleanField.description());
-
-    BooleanValueConstraints valueConstraints = booleanField.valueConstraints().orElseThrow()
-        .asBooleanValueConstraints();
-    Assertions.assertEquals(false, valueConstraints.requiredValue());
-    Assertions.assertEquals(java.util.Optional.of(true), valueConstraints.nullEnabled());
-    Assertions.assertEquals(Boolean.TRUE, valueConstraints.defaultValue().orElseThrow().value());
-    Assertions.assertEquals("True", valueConstraints.labels().get("true"));
-    Assertions.assertEquals("False", valueConstraints.labels().get("false"));
-    Assertions.assertEquals("Null", valueConstraints.labels().get("null"));
-  }
-
-  @Test
-  public void testCreateBooleanFieldWithNullDefaultViaCopyBuilder() {
-    BooleanField original = BooleanField.builder().
-        withName("Field name").
-        withNullEnabled(true).
-        withNullDefaultValue().
-        withTrueLabel("True").
-        withFalseLabel("False").
-        withNullLabel("Null").
-        build();
-
-    BooleanField cloned = new BooleanField.BooleanFieldBuilder(original).build();
-
-    BooleanValueConstraints valueConstraints = cloned.valueConstraints().orElseThrow().asBooleanValueConstraints();
-    // An explicit null default is present but carries a null value, distinct from no default.
-    Assertions.assertTrue(valueConstraints.defaultValue().isPresent());
-    Assertions.assertNull(valueConstraints.defaultValue().get().value());
-    Assertions.assertEquals(java.util.Optional.of(true), valueConstraints.nullEnabled());
-    Assertions.assertEquals("Null", valueConstraints.labels().get("null"));
-    Assertions.assertEquals(original, cloned);
-  }
 
 }

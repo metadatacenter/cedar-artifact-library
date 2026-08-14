@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.reader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.metadatacenter.artifacts.model.core.fields.BooleanDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
@@ -12,7 +11,6 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
-import org.metadatacenter.artifacts.model.core.fields.constraints.BooleanValueConstraints;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
@@ -36,11 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_LABELS;
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_LABEL_FALSE;
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_LABEL_NULL;
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_LABEL_TRUE;
-import static org.metadatacenter.artifacts.model.core.fields.BooleanConstants.VALUE_CONSTRAINTS_NULL_ENABLED;
 import static org.metadatacenter.artifacts.model.reader.JsonArtifactShapeChecks.*;
 import static org.metadatacenter.artifacts.model.reader.JsonNodeReaders.*;
 import static org.metadatacenter.artifacts.model.reader.JsonValueConstraintsReader.*;
@@ -101,15 +94,10 @@ final class JsonValueConstraintsReader {
       List<LiteralValueConstraint> literals = readLiteralValueConstraints(vcNode, vcPath, VALUE_CONSTRAINTS_LITERALS);
       List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(vcNode, vcPath,
           VALUE_CONSTRAINTS_ACTIONS);
-      // Boolean defaults are a bare JSON true/false/null; the generic default reader does not
-      // understand that shape, so the boolean branch below reads the default directly.
-      Optional<? extends DefaultValue> defaultValue = fieldInputType == FieldInputType.BOOLEAN ?
-          Optional.empty() :
+      Optional<? extends DefaultValue> defaultValue =
           readDefaultValue(vcNode, vcPath, VALUE_CONSTRAINTS_DEFAULT_VALUE, fieldInputType);
 
-      if (fieldInputType == FieldInputType.BOOLEAN) {
-        return Optional.of(readBooleanValueConstraints(vcNode, vcPath, requiredValue, recommendedValue, multipleChoice));
-      } else if (fieldInputType == FieldInputType.NUMERIC) {
+      if (fieldInputType == FieldInputType.NUMERIC) {
         Optional<NumericDefaultValue> numericDefaultValue = defaultValue.isPresent() ?
             Optional.of(defaultValue.get().asNumericDefaultValue()) :
             Optional.empty();
@@ -160,36 +148,6 @@ final class JsonValueConstraintsReader {
   // A boolean field's value constraints hold nullEnabled (a tri-state: absent, true, or false), a
   // three-state default (absent, an explicit true/false, or an explicit null), and a labels map
   // keyed by "true"/"false"/"null". None of these fit the other value-constraint types.
-  static BooleanValueConstraints readBooleanValueConstraints(ObjectNode vcNode, String vcPath, boolean requiredValue,
-                                                             boolean recommendedValue, boolean multipleChoice) {
-    Optional<Boolean> nullEnabled = readOptionalBoolean(vcNode, VALUE_CONSTRAINTS_NULL_ENABLED);
-
-    Optional<BooleanDefaultValue> defaultValue;
-    if (vcNode.has(VALUE_CONSTRAINTS_DEFAULT_VALUE)) {
-      JsonNode defaultValueNode = vcNode.get(VALUE_CONSTRAINTS_DEFAULT_VALUE);
-      if (defaultValueNode.isNull()) {
-        defaultValue = Optional.of(new BooleanDefaultValue(null));
-      } else if (defaultValueNode.isBoolean()) {
-        defaultValue = Optional.of(new BooleanDefaultValue(defaultValueNode.booleanValue()));
-      } else {
-        throw new ArtifactParseException("boolean default value must be true, false, or null",
-            VALUE_CONSTRAINTS_DEFAULT_VALUE, vcPath);
-      }
-    } else {
-      defaultValue = Optional.empty();
-    }
-
-    LinkedHashMap<String, String> labels = new LinkedHashMap<>();
-    JsonNode labelsNode = vcNode.get(VALUE_CONSTRAINTS_LABELS);
-    if (labelsNode != null && labelsNode.isObject()) {
-      readLabel(labelsNode, VALUE_CONSTRAINTS_LABEL_TRUE, labels);
-      readLabel(labelsNode, VALUE_CONSTRAINTS_LABEL_FALSE, labels);
-      readLabel(labelsNode, VALUE_CONSTRAINTS_LABEL_NULL, labels);
-    }
-
-    return BooleanValueConstraints.create(nullEnabled, defaultValue, labels, requiredValue, recommendedValue,
-        multipleChoice);
-  }
 
   private static void readLabel(JsonNode labelsNode, String labelKey, LinkedHashMap<String, String> labels) {
     JsonNode labelNode = labelsNode.get(labelKey);

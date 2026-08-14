@@ -6,7 +6,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -142,19 +141,6 @@ class ArtifactImmutabilityTest
 
     assertEquals(List.of("one"), new ArrayList<>(annotations.annotations().keySet()));
     assertEquals(originalHashCode, annotations.hashCode());
-  }
-
-  @Test void booleanConstraintLabelsAreUnmodifiable()
-  {
-    BooleanField field = BooleanField.builder()
-      .withName("Boolean")
-      .withTrueLabel("Yes")
-      .withFalseLabel("No")
-      .build();
-    Map<String, String> labels = field.valueConstraints().orElseThrow()
-      .asBooleanValueConstraints().labels();
-
-    assertThrows(UnsupportedOperationException.class, () -> labels.put("true", "mutation"));
   }
 
   private static void assertParentInstanceIsImmutable(ParentInstanceArtifact instance)

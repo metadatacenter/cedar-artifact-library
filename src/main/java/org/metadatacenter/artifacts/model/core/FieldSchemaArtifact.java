@@ -14,8 +14,7 @@ import java.util.Optional;
 public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact
   permits TextField, TextAreaField, TemporalField, RadioField, PhoneNumberField, NumericField, ListField, EmailField,
   CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField, YouTubeField, RichTextField,
-  ControlledTermField, LinkField, RorField, OrcidField, PfasField, RridField, PubMedField, NihGrantIdField, DoiField,
-  BooleanField
+  ControlledTermField, LinkField, RorField, OrcidField, PfasField, RridField, PubMedField, NihGrantIdField, DoiField
 {
   FieldUi fieldUi();
 
@@ -157,10 +156,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy,
         modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(),
         valueConstraints, annotations, internalName, internalDescription);
-      case BOOLEAN -> BooleanField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
-        status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
-        lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
+
       case ATTRIBUTE_VALUE -> AttributeValueField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
         identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
         createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,

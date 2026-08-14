@@ -30,8 +30,7 @@ public enum FieldInputType
   RRID(FIELD_INPUT_TYPE_EXT_RRID),
   PUBMED(FIELD_INPUT_TYPE_EXT_PUBMED),
   NIH_GRANT_ID(FIELD_INPUT_TYPE_EXT_NIH_GRANT_ID),
-  DOI(FIELD_INPUT_TYPE_EXT_DOI),
-  BOOLEAN(BooleanConstants.FIELD_INPUT_TYPE_BOOLEAN);
+  DOI(FIELD_INPUT_TYPE_EXT_DOI);
 
   private final String text;
 
@@ -62,7 +61,6 @@ public enum FieldInputType
 
   public boolean isList() { return this == LIST; }
 
-  public boolean isBoolean() { return this == BOOLEAN; }
 
   public boolean isAttributeValue() { return this == ATTRIBUTE_VALUE; }
 
