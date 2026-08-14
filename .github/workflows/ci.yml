@@ -41,6 +41,25 @@ jobs:
       - name: Run Maven verification
         run: ./mvnw --batch-mode --no-transfer-progress --update-snapshots verify --settings .m2/travis-settings.xml
 
+      # The shared corpus carries this library's output for every artifact, and the TypeScript
+      # library's build compares its own output against those files. That comparison only means
+      # anything while they are current: a change to a writer here, without a regeneration there,
+      # leaves it measuring output this library no longer produces.
+      - name: Check out the shared corpus
+        uses: actions/checkout@v7
+        with:
+          repository: metadatacenter/cedar-test-artifacts
+          ref: develop
+          path: cedar-test-artifacts
+
+      - name: Verify the committed corpus fixtures are current
+        run: >
+          ./mvnw --batch-mode --no-transfer-progress test-compile exec:java
+          --settings .m2/travis-settings.xml
+          -Dexec.classpathScope=test
+          -Dexec.mainClass=org.metadatacenter.artifacts.model.CorpusFixtureVerifier
+          -Dexec.args=cedar-test-artifacts
+
       # Other repositories resolve this artifact from Nexus, so a merged change
       # is invisible to their builds until the snapshot is republished. Tests have
       # already run in the step above; this only uploads what they verified.
