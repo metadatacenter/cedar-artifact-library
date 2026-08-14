@@ -492,22 +492,16 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
     }
 
-    // Emit the @context child property mappings the instance carries. When the model has none
-    // (e.g. it was read from the context-free YAML exchange form) fall back to generating the
-    // deterministic default mapping for each regular child, so the JSON instance still
-    // validates. A populated context is used verbatim — it preserves custom propertyIris and
-    // attribute-value entries that aren't reconstructable from child keys alone.
+    // Emit the @context child property mappings the instance carries, and only those. An instance
+    // read from the YAML exchange form carries none — that form leaves them out, because they are
+    // the template's to supply and InstanceInflater puts them back from it. Deriving one from the
+    // child's name instead produced an IRI that is not the one the template pins its context entry
+    // to, so an instance rendered that way failed against its own template where it was required,
+    // and carried a fabricated mapping where it was not.
     if (!templateInstanceArtifact.jsonLdContext().isEmpty()) {
       for (var propertyMapping : templateInstanceArtifact.jsonLdContext().entrySet())
         rendering.withObject("/" + JSON_LD_CONTEXT)
           .put(propertyMapping.getKey(), renderUri(propertyMapping.getValue()));
-    } else {
-      for (String childKey : templateInstanceArtifact.childKeys()) {
-        if (!isRegularInstanceChild(templateInstanceArtifact, childKey))
-          continue;
-        rendering.withObject("/" + JSON_LD_CONTEXT)
-          .put(childKey, renderUri(instanceChildPropertyUri(templateInstanceArtifact, childKey)));
-      }
     }
 
     rendering.put(SCHEMA_IS_BASED_ON, renderUri(templateInstanceArtifact.isBasedOn()));
@@ -563,17 +557,12 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         rendering.withObject("/" + JSON_LD_CONTEXT)
           .put(propertyMapping.getKey(), renderUri(propertyMapping.getValue()));
     } else {
-      // No carried context (e.g. read from the YAML exchange form): generate the deterministic
-      // default mapping for each regular child so the element instance still validates.
-      java.util.List<String> regularChildKeys = elementInstanceArtifact.childKeys().stream()
-        .filter(k -> isRegularInstanceChild(elementInstanceArtifact, k)).toList();
-      // The @context is also what classifies a nested object as an element instance on read
-      // (a field value carries none), so it is emitted even when there are no children to
-      // map — an all-empty element instance must stay an element across the JSON round trip.
+      // No carried context: the YAML exchange form leaves the child property mappings out, and they
+      // are the template's to supply through InstanceInflater rather than this renderer's to invent.
+      // The @context is still what classifies a nested object as an element instance on read (a field
+      // value carries none), so it is emitted, empty — an all-empty element instance must stay an
+      // element across the JSON round trip.
       rendering.put(JSON_LD_CONTEXT, MAPPER.createObjectNode());
-      for (String childKey : regularChildKeys)
-        rendering.withObject("/" + JSON_LD_CONTEXT)
-          .put(childKey, renderUri(instanceChildPropertyUri(elementInstanceArtifact, childKey)));
     }
 
     if (elementInstanceArtifact.createdOn().isPresent()) {
@@ -662,13 +651,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
   }
 
   /** A regular (field/element, not attribute-value) child needing an @context property mapping. */
-  private static boolean isRegularInstanceChild(ParentInstanceArtifact instance, String childKey) {
-    return instance.singleInstanceFieldInstances().containsKey(childKey)
-      || instance.multiInstanceFieldInstances().containsKey(childKey)
-      || instance.singleInstanceElementInstances().containsKey(childKey)
-      || instance.multiInstanceElementInstances().containsKey(childKey);
-  }
-
   /**
    * The @context property URI for an instance child: the value the model carries when present
    * (preserving any custom propertyIri), otherwise the deterministic default the CEDAR JSON
@@ -676,14 +658,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
    * lets an instance read from the (context-free) YAML exchange form still serialize a valid
    * @context.
    */
-  private static URI instanceChildPropertyUri(ParentInstanceArtifact instance, String childKey) {
-    URI stored = instance.jsonLdContext().get(childKey);
-    if (stored != null)
-      return stored;
-    return URI.create("https://schema.metadatacenter.org/properties/"
-      + java.net.URLEncoder.encode(childKey, java.nio.charset.StandardCharsets.UTF_8));
-  }
-
   private ObjectNode renderParentInstanceArtifact(ParentInstanceArtifact parentInstanceArtifact) {
     ObjectNode rendering = MAPPER.createObjectNode();
 

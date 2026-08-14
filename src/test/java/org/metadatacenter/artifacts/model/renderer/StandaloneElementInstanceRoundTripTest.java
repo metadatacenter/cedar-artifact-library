@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -196,7 +197,13 @@ public class StandaloneElementInstanceRoundTripTest
     assertEquals(firstRendering, secondRendering);
     assertEquals("Main St", secondRendering.path("street").path("@value").asText(),
       "the field value must survive the JSON boundary; got: " + secondRendering);
-    assertTrue(secondRendering.path("@context").has("street"),
-      "the minted default @context must cover the child; got: " + secondRendering);
+    // The child property mapping is not the renderer's to invent: an element instance built without
+    // a context has none, and the IRI belongs to the template, which InstanceInflater applies. What
+    // has to survive is the @context itself, since its presence is what marks a nested object as an
+    // element instance rather than an IRI field value.
+    assertTrue(secondRendering.has("@context"),
+      "an element instance must carry an @context; got: " + secondRendering);
+    assertFalse(secondRendering.path("@context").has("street"),
+      "a child mapping must not be invented from the child's name; got: " + secondRendering);
   }
 }
