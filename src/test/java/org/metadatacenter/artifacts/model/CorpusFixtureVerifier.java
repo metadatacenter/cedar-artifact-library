@@ -124,26 +124,12 @@ public final class CorpusFixtureVerifier
     }
   }
 
-  /**
-   * An element instance whose identifier the source does not carry is given a fresh one on every read,
-   * so a fixture holding one cannot be byte-stable. Both sides have those identifiers replaced before
-   * the comparison, which leaves every other difference visible. That the reader mints them at all is a
-   * separate matter, recorded in the parity survey.
-   */
-  private static final java.util.regex.Pattern MINTED_ELEMENT_INSTANCE_ID =
-    java.util.regex.Pattern.compile("template-element-instances/[0-9a-f-]{36}");
-
-  private static String comparable(String rendering)
-  {
-    return MINTED_ELEMENT_INSTANCE_ID.matcher(rendering.trim()).replaceAll("template-element-instances/<minted>");
-  }
-
   /** Returns 1 when the fixture was present and compared, 0 when there was nothing to compare. */
   private static int compare(Path fixture, String rendered, List<String> stale) throws IOException
   {
     if (!Files.isRegularFile(fixture))
       return 0;
-    if (!comparable(Files.readString(fixture)).equals(comparable(rendered)))
+    if (!Files.readString(fixture).trim().equals(rendered.trim()))
       stale.add(fixture.getParent().getParent().getFileName() + "/" + fixture.getParent().getFileName() + "/"
         + fixture.getFileName());
     return 1;

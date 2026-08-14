@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.metadatacenter.model.ModelNodeNames.ANNOTATIONS;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -688,12 +687,15 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
   private ObjectNode renderParentInstanceArtifact(ParentInstanceArtifact parentInstanceArtifact) {
     ObjectNode rendering = MAPPER.createObjectNode();
 
+    // An instance whose source carries no identifier gets a null one, not a minted one. The key has to
+    // be there: a template's schema lists @id among an element instance's required properties, and 30
+    // element children across the shared corpus do. A fresh URI would satisfy that too, and did, but it
+    // asserted an identity the artifact does not have and made every rendering of the same document
+    // differ from the last. A null passes validation and says what is true.
     if (parentInstanceArtifact.jsonLdId().isPresent()) {
       rendering.put(JSON_LD_ID, renderUri(parentInstanceArtifact.jsonLdId().get()));
-    } else // TODO Put constant in ModelNodeNames
-    {
-      rendering.put(JSON_LD_ID,
-          renderUri(URI.create("https://repo.metadatacenter.org/template-element-instances/" + UUID.randomUUID())));
+    } else {
+      rendering.putNull(JSON_LD_ID);
     }
 
     if (parentInstanceArtifact.name().isPresent()) {
