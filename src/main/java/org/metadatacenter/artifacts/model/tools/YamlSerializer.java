@@ -28,7 +28,13 @@ public class YamlSerializer {
   private static ObjectMapper YAML_OBJECT_MAPPER_FULL_QUOTES;
 
   static {
-    YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+    // Both writers decide per string whether a quote is needed. Jackson's own answer leaves spellings
+    // a reader turns into numbers, and characters a plain scalar cannot hold, unquoted; the full-quotes
+    // writer quotes every value but still writes some names plain, so it needs the same answer.
+    YAMLFactory yamlFactory = YAMLFactory.builder()
+        .stringQuotingChecker(new YamlScalarQuotingChecker())
+        .build()
+        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // omit quotes when unambiguous
         // ... but still quote Java Strings whose content looks like a number, otherwise
         // they'd round-trip as numbers and lose the String type (and the field's XSD
@@ -38,7 +44,10 @@ public class YamlSerializer {
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
         .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
 
-    YAMLFactory yamlFactoryFullQuotes = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+    YAMLFactory yamlFactoryFullQuotes = YAMLFactory.builder()
+        .stringQuotingChecker(new YamlScalarQuotingChecker())
+        .build()
+        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // This is different
         .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
