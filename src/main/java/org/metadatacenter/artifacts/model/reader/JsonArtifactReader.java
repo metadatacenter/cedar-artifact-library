@@ -581,8 +581,12 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<String> notation = readString(sourceNode, path, SKOS_NOTATION);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
 
+    // Whether the document wrote an @value key at all, which is the only thing distinguishing an
+    // unfilled literal field from an unfilled controlled-term or link field once the value is gone.
+    boolean carriesValueKey = sourceNode.has(JSON_LD_VALUE);
+
     return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, rdfsLabel, notation, preferredLabel,
-        language);
+        language, carriesValueKey);
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path, List<String> childKeys,
