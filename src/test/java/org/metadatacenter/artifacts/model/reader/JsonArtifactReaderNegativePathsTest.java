@@ -247,4 +247,24 @@ public class JsonArtifactReaderNegativePathsTest
       node.put(e.getKey(), e.getValue().toString());
     return node;
   }
+
+  @Test public void anEmptyIdentifierIsRefusedRatherThanReadAsAbsent() throws Exception
+  {
+    // The reader production documents arrive through. It read "" as though the key were absent, so an
+    // instance carrying one came back with null in its place and nothing said so.
+    ObjectNode instance = (ObjectNode) mapper.readTree("""
+        {
+          "@id": "https://repo.metadatacenter.org/template-instances/i1",
+          "@context": {},
+          "schema:name": "I",
+          "schema:description": "",
+          "schema:isBasedOn": "https://repo.metadatacenter.org/templates/t1",
+          "address": { "@context": {}, "@id": "", "street": { "@value": "x" } }
+        }
+        """);
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateInstanceArtifact(instance));
+    assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
+  }
 }

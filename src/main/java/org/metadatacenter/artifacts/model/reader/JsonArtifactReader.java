@@ -283,7 +283,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -325,7 +325,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                                                           Optional<Integer> maxItems, Optional<URI> propertyUri) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -373,7 +373,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                                                       Optional<URI> propertyUri) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -512,7 +512,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -550,7 +550,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -572,9 +572,30 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
         singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
   }
 
+  /**
+   * The artifact's identifier, refusing an empty string.
+   *
+   * A document writes {@code ""} where one has not been assigned — half the element occurrences in the
+   * shared corpus once did — and reading it as though the key were absent hides that from whoever wrote
+   * it, then writes {@code null} back in its place. The value for an identifier not yet assigned is
+   * {@code null}. Only {@code @id} is held to this: {@code pav:derivedFrom} carries an empty string on
+   * 437 corpus artifacts, so tightening the rest needs a decision and a migration, tracked on the
+   * backend roadmap with the rest of this question.
+   */
+  private Optional<URI> readJsonLdId(ObjectNode sourceNode, String path) {
+    JsonNode idNode = sourceNode.get(JSON_LD_ID);
+
+    if (idNode != null && idNode.isTextual() && idNode.asText().isBlank())
+      throw new ArtifactParseException(
+          "An empty string is not a URI; write null or leave the key out where there is no value",
+          JSON_LD_ID, path);
+
+    return readUri(sourceNode, path, JSON_LD_ID);
+  }
+
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readUri(sourceNode, path, JSON_LD_ID);
+    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<String> jsonLdValue = readPossiblyNullString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
     Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
