@@ -1541,8 +1541,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     m.put(TERM_IRI, c.uri().toString());
     m.put(TERM_TYPE, c.type() == ValueType.ONTOLOGY_CLASS ? "class" : "value");
     m.put(TERM_LABEL, c.prefLabel());
-    // The author-facing display label is not rendered: the compact YAML has no display-label key; it
-    // defaults to the preferred label on read (VERSIONING-ROADMAP "Revisit").
+    // What the ontology calls the term, then what this template calls it, the second only when an
+    // author has made them differ. A class read back with no display label of its own takes the
+    // preferred one, so the common case stays a single key.
+    if (!c.label().equals(c.prefLabel()))
+      m.put(TERM_DISPLAY_LABEL, c.label());
     c.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
     return m;
   }

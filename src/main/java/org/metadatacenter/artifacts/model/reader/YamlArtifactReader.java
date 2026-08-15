@@ -108,6 +108,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION_ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION_EFFECTIVE_DATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.VERSION_DECLARED_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_DISPLAY_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_TYPE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.UNIT;
@@ -1501,9 +1502,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       ValueType valueType = termType.equalsIgnoreCase(CLASS)
         ? ValueType.ONTOLOGY_CLASS
         : ValueType.VALUE;
-      // The compact YAML has no author-facing display label; it defaults to the term's preferred label
-      // (VERSIONING-ROADMAP "Revisit"). The model and JSON Schema still carry both.
-      return new ClassValueConstraint(uri, acronym, termLabel, termLabel, valueType,
+      // A display label of the template's own where the author set one, and the ontology's preferred
+      // label otherwise. The model and the JSON Schema carry both either way.
+      String displayLabel = readString(entry, path, TERM_DISPLAY_LABEL).orElse(termLabel);
+      return new ClassValueConstraint(uri, acronym, displayLabel, termLabel, valueType,
         readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
   }

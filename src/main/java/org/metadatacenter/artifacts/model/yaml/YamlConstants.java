@@ -93,6 +93,7 @@ public class YamlConstants
   public static final String VALUE_SET_NAME = "valueSetName";
   public static final String TERM_TYPE = "termType";
   public static final String TERM_LABEL = "termLabel";
+  public static final String TERM_DISPLAY_LABEL = "termDisplayLabel";
   public static final String ONTOLOGY = "ontology";
   public static final String CLASS = "class";
   public static final String BRANCH = "branch";
