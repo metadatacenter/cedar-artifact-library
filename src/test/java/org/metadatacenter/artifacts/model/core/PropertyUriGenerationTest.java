@@ -11,17 +11,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A child with no property IRI of its own is given one derived from its name, and it has to be the same
- * IRI the TypeScript library derives. The two disagreed over five characters — {@code !}, {@code '},
- * {@code (}, {@code )} and {@code ~}, which this library's {@code URLEncoder} escapes and JavaScript's
- * {@code encodeURIComponent} does not — so the same field was identified as {@code Dose+%28mg%29} here
- * and {@code Dose+(mg)} there.
+ * IRI the TypeScript library derives. The name becomes a path segment, so it is percent-encoded: a
+ * space is {@code %20}, and the characters a segment takes literally — {@code !}, {@code '}, {@code (},
+ * {@code )}, {@code ~} and {@code *} — are left alone.
+ *
+ * <p>Both libraries used to reach for form encoding, which is meant for a query string and writes a
+ * space as {@code +}. In a path a {@code +} is a literal plus, so the IRI did not decode back to the
+ * name it came from; and the two encoders disagreed over those six characters besides, so the same
+ * field was identified as {@code Dose+%28mg%29} here and {@code Dose+(mg)} there.
  *
  * <p>The table below is the shared answer, pinned on both sides: {@code PropertyIri.spec.ts} carries the
  * same pairs. A change to either encoder breaks one of the two.
- *
- * <p>What the table does not settle is whether form encoding is the right choice for a path segment. A
- * {@code +} there is a literal plus rather than a space, so the IRI does not decode back to the name.
- * That is a question about the scheme; this test is about the two libraries agreeing on whatever it is.
  */
 public class PropertyUriGenerationTest
 {
@@ -30,13 +30,13 @@ public class PropertyUriGenerationTest
   static Stream<Arguments> namesAndTheirEncodings()
   {
     return Stream.of(
-      Arguments.of("Study Name", "Study+Name"),
-      Arguments.of("Dose (mg)", "Dose+%28mg%29"),
-      Arguments.of("Patient's age", "Patient%27s+age"),
-      Arguments.of("A~B", "A%7EB"),
-      Arguments.of("E!F", "E%21F"),
+      Arguments.of("Study Name", "Study%20Name"),
+      Arguments.of("Dose (mg)", "Dose%20(mg)"),
+      Arguments.of("Patient's age", "Patient's%20age"),
+      Arguments.of("A~B", "A~B"),
+      Arguments.of("E!F", "E!F"),
       Arguments.of("C*D", "C*D"),
-      Arguments.of("50% ± 3", "50%25+%C2%B1+3"),
+      Arguments.of("50% ± 3", "50%25%20%C2%B1%203"),
       Arguments.of("a/b", "a%2Fb"),
       Arguments.of("a+b", "a%2Bb"),
       Arguments.of("x,y", "x%2Cy"),
@@ -45,13 +45,13 @@ public class PropertyUriGenerationTest
       Arguments.of("a&b", "a%26b"),
       Arguments.of("a=b", "a%3Db"),
       Arguments.of("a:b", "a%3Ab"),
-      Arguments.of("Ω αβγ", "%CE%A9+%CE%B1%CE%B2%CE%B3"),
+      Arguments.of("Ω αβγ", "%CE%A9%20%CE%B1%CE%B2%CE%B3"),
       Arguments.of("中文", "%E4%B8%AD%E6%96%87"),
-      Arguments.of("emoji 😀", "emoji+%F0%9F%98%80"),
+      Arguments.of("emoji 😀", "emoji%20%F0%9F%98%80"),
       Arguments.of("a.b-c_d", "a.b-c_d"),
       Arguments.of("a\tb", "a%09b"),
       Arguments.of("a\nb", "a%0Ab"),
-      Arguments.of("!'()~", "%21%27%28%29%7E"));
+      Arguments.of("!'()~", "!'()~"));
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("namesAndTheirEncodings")

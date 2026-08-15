@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.core;
 import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -186,7 +185,32 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact
 
   default URI generatePropertyUri(String childKey)
   { // TODO Put constant in ModelNodeNames; childKey is temporary
-    return URI.create(
-      "https://schema.metadatacenter.org/properties/" + URLEncoder.encode(childKey, StandardCharsets.UTF_8));
+    return URI.create("https://schema.metadatacenter.org/properties/" + percentEncode(childKey));
+  }
+
+  /**
+   * Percent-encodes a child's name for the path segment it becomes, as JavaScript's
+   * {@code encodeURIComponent} does, which is what the TypeScript library uses.
+   *
+   * <p>Not {@code URLEncoder.encode}: that is {@code application/x-www-form-urlencoded}, meant for a
+   * query string, and it writes a space as {@code +}. In a path segment a {@code +} is a literal plus,
+   * so the IRI did not decode back to the name it was derived from. Everything outside the unreserved
+   * set and the sub-delimiters a segment takes literally is written as its UTF-8 bytes in upper-case
+   * hexadecimal.
+   */
+  private static String percentEncode(String text)
+  {
+    StringBuilder encoded = new StringBuilder(text.length());
+    for (byte b : text.getBytes(StandardCharsets.UTF_8)) {
+      char c = (char) (b & 0xff);
+      boolean unreserved = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
+        || c == '-' || c == '_' || c == '.' || c == '~';
+      boolean literalInASegment = c == '!' || c == '*' || c == '\'' || c == '(' || c == ')';
+      if (unreserved || literalInASegment)
+        encoded.append(c);
+      else
+        encoded.append('%').append(String.format("%02X", b & 0xff));
+    }
+    return encoded.toString();
   }
 }
