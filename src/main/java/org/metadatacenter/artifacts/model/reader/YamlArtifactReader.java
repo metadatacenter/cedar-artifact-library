@@ -1396,6 +1396,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (rawValue instanceof URI)
       return (URI)rawValue;
     else if (rawValue instanceof String) {
+      rejectEmptyUri((String)rawValue, fieldKey, path);
       try {
         return new URI((String)rawValue);
       } catch (URISyntaxException e) {
@@ -1418,6 +1419,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (rawValue instanceof URI)
       return Optional.of((URI)rawValue);
     else if (rawValue instanceof String) {
+      rejectEmptyUri((String)rawValue, fieldKey, path);
       try {
         return Optional.of(new URI((String)rawValue));
       } catch (URISyntaxException e) {
@@ -1425,6 +1427,21 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       }
     } else
       throw new ArtifactParseException("Expecting URI or string value, got " + rawValue.getClass(), fieldKey, path);
+  }
+
+  /**
+   * An empty string is not a URI, and it is not an absence of one either.
+   *
+   * Documents carry it where an identifier has not been assigned — half the element occurrences in the
+   * shared corpus once did — and reading it as though the key were absent hides that from whoever wrote
+   * it. A key that is not to be answered yet is written {@code null} or left out.
+   */
+  private static void rejectEmptyUri(String rawValue, String fieldKey, String path)
+  {
+    if (rawValue.isBlank())
+      throw new ArtifactParseException(
+        "An empty string is not a URI; write null or leave the key out where there is no value",
+        fieldKey, path);
   }
 
   private Optional<OffsetDateTime> readOffsetDatetime(LinkedHashMap<String, Object> sourceNode, String path,

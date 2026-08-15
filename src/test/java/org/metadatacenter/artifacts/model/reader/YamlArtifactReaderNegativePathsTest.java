@@ -232,4 +232,34 @@ public class YamlArtifactReaderNegativePathsTest
     assertTrue(template.createdOn().isEmpty());
     assertTrue(template.lastUpdatedOn().isEmpty());
   }
+
+  @Test public void anEmptyIdentifierIsRefusedRatherThanReadAsAbsent()
+  {
+    // What a document writes where an identifier has not been assigned. Reading it as though the key
+    // were absent hides that from whoever wrote it; the value to write there is null.
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "template");
+    node.put("name", "Blank identity");
+    node.put("id", "");
+    node.put("modelVersion", MODEL_VERSION);
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> new YamlArtifactReader(true).readTemplateSchemaArtifact(node));
+    assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
+  }
+
+  @Test public void anEmptyIdentifierOnAnInstanceIsRefusedToo()
+  {
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "instance");
+    node.put("name", "Blank identity");
+    node.put("id", "");
+    node.put("isBasedOn", "https://repo.metadatacenter.org/templates/t1");
+
+    // The ordinary reader: the compact one refuses any identifier on a compact document, which would
+    // answer this before the value is looked at.
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> new YamlArtifactReader().readTemplateInstanceArtifact(node));
+    assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
+  }
 }
