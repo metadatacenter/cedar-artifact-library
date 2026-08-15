@@ -258,6 +258,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (!artifactType.equals(TEMPLATE))
       throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + TEMPLATE, TYPE, path);
 
+    checkDocumentCarriesNoIdentifier(sourceNode, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
     return readTemplateSchemaArtifact(sourceNode, path);
   }
@@ -296,6 +297,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (!artifactType.equals(ELEMENT))
       throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + ELEMENT, TYPE, path);
 
+    checkDocumentCarriesNoIdentifier(sourceNode, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
     return readElementSchemaArtifact(sourceNode, path);
   }
@@ -331,6 +333,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String path = "/";
     rejectNullAndEmptyValues(sourceNode, path);
 
+    checkDocumentCarriesNoIdentifier(sourceNode, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
     return readFieldSchemaArtifact(sourceNode, path);
   }
@@ -343,6 +346,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     if (!artifactType.equals(INSTANCE))
       throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + INSTANCE, TYPE, path);
+
+    checkDocumentCarriesNoIdentifier(sourceNode, path);
 
     TemplateInstanceArtifact.Builder builder = TemplateInstanceArtifact.builder();
     builder.withName(readRequiredString(sourceNode, path, NAME, false));
@@ -389,6 +394,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (!artifactType.equals(ELEMENT_INSTANCE))
       throw new ArtifactParseException(
         "invalid artifact type " + artifactType + "; should be " + ELEMENT_INSTANCE, TYPE, path);
+
+    checkDocumentCarriesNoIdentifier(sourceNode, path);
 
     ElementInstanceArtifact.Builder builder = ElementInstanceArtifact.builder();
     readString(sourceNode, path, NAME).ifPresent(builder::withName);
@@ -1754,6 +1761,26 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         throw new ArtifactParseException("Unknown child type " + childType, TYPE, childPath);
       }
     }
+  }
+
+  /**
+   * A compact document may not name the artifact it describes.
+   *
+   * The compact form is for an artifact being authored, not one already stored: it leaves out what a
+   * repository assigns, and an identifier is the first of those. Ignoring an {@code id:} written here
+   * would let an author believe the document still refers to a stored artifact, and a conversion would
+   * then quietly give that artifact's children freshly derived property IRIs. Refusing says so instead.
+   * Children keep their identifiers, since a child names the artifact it was copied from.
+   */
+  private void checkDocumentCarriesNoIdentifier(LinkedHashMap<String, Object> sourceNode, String path)
+  {
+    // Only of a document in the compact form. The compact reader also accepts a full one, where the
+    // model version says so and the identifier belongs; an instance carries no model version in either
+    // form, so asking for this reader is itself the statement that the document is compact.
+    if (isCompact && !sourceNode.containsKey(MODEL_VERSION) && sourceNode.containsKey(ID))
+      throw new ArtifactParseException(
+        "a compact document describes an artifact being authored, so it cannot carry an " + ID
+          + "; use the full form to represent a stored artifact", ID, path);
   }
 
   private void checkSchemaArtifactModelVersion(LinkedHashMap<String, Object> sourceNode, String path)

@@ -381,8 +381,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateInstanceArtifact.description().isPresent() && !templateInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description().get());
 
-    // The id is emitted in both compact and full forms so the instance round-trips.
-    if (templateInstanceArtifact.jsonLdId().isPresent())
+    // Left out of the compact form with the rest of what a repository assigns; see
+    // renderTopLevelSchemaArtifactBase.
+    if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
@@ -440,8 +441,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementInstanceArtifact.description().isPresent() && !elementInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, elementInstanceArtifact.description().get());
 
-    // The id is emitted in both compact and full forms so the instance round-trips.
-    if (elementInstanceArtifact.jsonLdId().isPresent())
+    // Left out of the compact form with the rest of what a repository assigns; see
+    // renderTopLevelSchemaArtifactBase.
+    if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
     if (!isCompact && elementInstanceArtifact.createdOn().isPresent())
@@ -1264,7 +1266,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    addSchemaArtifactBaseRendering(schemaArtifact, artifactTypeName, rendering);
+    addSchemaArtifactBaseRendering(schemaArtifact, artifactTypeName, rendering, true);
 
     return rendering;
   }
@@ -1276,13 +1278,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(KEY, childKey);
 
-    addSchemaArtifactBaseRendering(childSchemaArtifact, artifactTypeName, rendering);
+    addSchemaArtifactBaseRendering(childSchemaArtifact, artifactTypeName, rendering, false);
 
     return rendering;
   }
 
   private void addSchemaArtifactBaseRendering(SchemaArtifact schemaArtifact, String artifactTypeName,
-    LinkedHashMap<String, Object> rendering)
+    LinkedHashMap<String, Object> rendering, boolean isDocumentRoot)
   {
     rendering.put(TYPE, artifactTypeName);
 
@@ -1297,12 +1299,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    // The id is emitted whenever the artifact has one — top-level artifacts and nested
-    // children alike, in both compact and full forms. It identifies the artifact itself, so
-    // unlike the provenance/version fields below the compact form keeps it. A nested child is
-    // not required to have an id (the reader never demands one), but when it does the renderer
-    // preserves it so a JSON template carrying child ids survives a YAML round trip.
-    if (schemaArtifact.jsonLdId().isPresent())
+    // The compact form describes an artifact being authored rather than one already stored, so the
+    // document's own identifier is left out of it: a repository assigns that on save, as it assigns the
+    // provenance below. A child keeps its identifier in both forms — it names the artifact this one was
+    // copied from, which does exist — and is never required to have one.
+    if ((!isDocumentRoot || !isCompact) && schemaArtifact.jsonLdId().isPresent())
       rendering.put(ID, schemaArtifact.jsonLdId().get().toString());
 
     if (!isCompact && schemaArtifact.status().isPresent())

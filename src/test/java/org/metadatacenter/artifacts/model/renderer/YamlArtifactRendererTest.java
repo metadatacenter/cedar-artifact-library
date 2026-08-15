@@ -67,7 +67,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(ID, "https://repo.metadatacenter.org/templates/123");
     expectedRendering.put(HEADER, header);
     expectedRendering.put(FOOTER, footer);
 
@@ -96,7 +95,6 @@ public class YamlArtifactRendererTest {
         type: template
         name: ${name}
         description: ${description}
-        id: https://repo.metadatacenter.org/templates/123
         header: ${header}
         footer: ${footer}
         """
@@ -129,7 +127,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(ID, "https://repo.metadatacenter.org/template_elements/123");
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -180,7 +177,6 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
-        id: https://repo.metadatacenter.org/template_fields/123
         """
         .replace("${name}", name)
         .replace("${description}", description);
@@ -633,7 +629,6 @@ public class YamlArtifactRendererTest {
     String expectedYaml = """
         type: instance
         name: Simple instance
-        id: https://repo.metadatacenter.org/template-instances/2123be29-d114-4849-8a5e-7a68022b8bfd
         isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
         children:
           Controlled Terms:
@@ -1041,7 +1036,7 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testCompactModeIncludesIdButOmitsVersion() {
+  public void testCompactModeOmitsTheDocumentIdWithTheVersion() {
     TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
         .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
         .withVersion(new Version(2, 1, 0))
@@ -1051,14 +1046,14 @@ public class YamlArtifactRendererTest {
     YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
     LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateSchemaArtifact(template);
 
-    assertEquals("https://repo.metadatacenter.org/templates/abc", rendering.get(ID));
+    assertFalse(rendering.containsKey(ID));
     assertFalse(rendering.containsKey(VERSION));
     assertFalse(rendering.containsKey(STATUS));
     assertFalse(rendering.containsKey(MODEL_VERSION));
   }
 
   @Test
-  public void testCompactModeIncludesIdOnInstance() {
+  public void testCompactModeOmitsTheIdOnInstance() {
     TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().withName("Inst")
         .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template-instances/xyz"))
         .withIsBasedOn(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
@@ -1067,7 +1062,7 @@ public class YamlArtifactRendererTest {
     YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
     LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateInstanceArtifact(instance);
 
-    assertEquals("https://repo.metadatacenter.org/template-instances/xyz", rendering.get(ID));
+    assertFalse(rendering.containsKey(ID));
   }
 
   @Test
