@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Freeze-on-publish for controlled-term value constraints (VERSIONING-DESIGN §7). Given a resolver
+ * Freeze-on-publish for controlled-term value constraints (VERSIONING-ROADMAP "The Model" §7). Given a resolver
  * that maps a value space to its current version triple, returns a copy of the constraints with every
  * <b>unpinned</b> entry — ontology, branch, class, and value set — stamped with that triple, so a
  * published template resolves to a fixed vocabulary state forever instead of drifting with "latest".

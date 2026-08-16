@@ -16,7 +16,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VERSION;
 
 /**
  * An ontology value space. {@code uri}/{@code acronym}/{@code name}/{@code numTerms} are the legacy,
- * BioPortal-shaped fields. The source-explicit fields are additive and optional (VERSIONING-DESIGN
+ * BioPortal-shaped fields. The source-explicit fields are additive and optional (VERSIONING-ROADMAP "The Model"
  * §6): {@code iri} is the canonical cross-source identity, {@code sourceSystem} names the backend
  * (absent ⇒ BioPortal), and {@code version} pins a state (absent ⇒ latest). A legacy constraint
  * omits all three and is read/rendered exactly as before.

@@ -16,7 +16,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VERSION;
 
 /**
  * A single-class value space. {@code source} is the legacy free-text display string, <b>not</b> a
- * backend. The additive, source-explicit fields (VERSIONING-DESIGN §6) are optional: {@code iri}
+ * backend. The additive, source-explicit fields (VERSIONING-ROADMAP "The Model" §6) are optional: {@code iri}
  * (canonical identity; derivable from the target uri), {@code sourceSystem} (backend; absent ⇒
  * BioPortal), and {@code version} (absent ⇒ latest). A legacy constraint omits all three.
  */

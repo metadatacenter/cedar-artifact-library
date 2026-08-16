@@ -10,7 +10,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VERSION_
 
 /**
  * The version triple that pins a value-constraint entry to a reproducible vocabulary state
- * (VERSIONING-DESIGN §4.1):
+ * (VERSIONING-ROADMAP "The Model" §4.1):
  * <ul>
  *   <li>{@code id} — the content-hash version id. <b>Identity</b>: resolution uses only this.</li>
  *   <li>{@code effectiveDate} — when the state entered circulation (display/ordering; may be

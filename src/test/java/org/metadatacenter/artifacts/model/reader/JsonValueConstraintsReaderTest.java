@@ -53,7 +53,7 @@ public class JsonValueConstraintsReaderTest
     assertEquals(15000, result.numTerms().get());
   }
 
-  // Source-explicit, version-pinned value constraints (VERSIONING-DESIGN §6) — additive and tolerant.
+  // Source-explicit, version-pinned value constraints (VERSIONING-ROADMAP "The Model" §6) — additive and tolerant.
 
   @Test public void testLegacyOntologyConstraintHasEmptySourceExplicitFields()
   {

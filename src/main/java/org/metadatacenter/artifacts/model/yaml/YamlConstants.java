@@ -107,7 +107,7 @@ public class YamlConstants
   public static final String SOURCE_ACRONYM = "sourceAcronym";
   public static final String SOURCE_IRI = "sourceIri";
   public static final String SELECTED_BY_DEFAULT = "selected";
-  // Value-constraint entry keys (VERSIONING-DESIGN §6). source* = the vocabulary, term* = the member.
+  // Value-constraint entry keys (VERSIONING-ROADMAP "The Model" §6). source* = the vocabulary, term* = the member.
   public static final String SOURCE_SYSTEM = "sourceSystem";     // backend; absent ⇒ bioportal
   public static final String SOURCE_NAME = "sourceName";         // source display name
   // NB: an ontology's backend URL is no longer a YAML key. It is reconstructed from the acronym on read

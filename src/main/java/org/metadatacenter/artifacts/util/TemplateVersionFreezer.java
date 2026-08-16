@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * Freeze-on-publish over a whole template/element document (VERSIONING-DESIGN §7). Walks the template
+ * Freeze-on-publish over a whole template/element document (VERSIONING-ROADMAP "The Model" §7). Walks the template
  * JSON, finds every field's {@code _valueConstraints}, and stamps each <b>unpinned</b> controlled-term
  * entry with its current version triple — so a published template locks its vocabulary state instead
  * of drifting with "latest".

@@ -18,7 +18,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VERSION;
 /**
  * A branch value space (a subtree of an ontology). {@code source} is the legacy free-text display
  * string (e.g. {@code "Human Disease Ontology (DOID)"}), <b>not</b> a backend. The additive,
- * source-explicit fields (VERSIONING-DESIGN §6) are optional: {@code iri} (canonical identity;
+ * source-explicit fields (VERSIONING-ROADMAP "The Model" §6) are optional: {@code iri} (canonical identity;
  * derivable from the target uri), {@code sourceSystem} (backend; absent ⇒ BioPortal), and
  * {@code version} (absent ⇒ latest). A legacy constraint omits all three.
  */

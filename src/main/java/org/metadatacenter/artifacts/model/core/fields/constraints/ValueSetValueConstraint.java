@@ -15,7 +15,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLECTION;
 
 /**
- * A value-set value space. The additive, source-explicit fields (VERSIONING-DESIGN §6) are optional:
+ * A value-set value space. The additive, source-explicit fields (VERSIONING-ROADMAP "The Model" §6) are optional:
  * {@code iri} (canonical identity), {@code sourceSystem} (backend; absent ⇒ BioPortal), and
  * {@code version} (absent ⇒ latest). A legacy constraint omits all three.
  */

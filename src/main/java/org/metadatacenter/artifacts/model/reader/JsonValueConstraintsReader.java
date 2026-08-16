@@ -459,7 +459,7 @@ final class JsonValueConstraintsReader {
         readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
   }
 
-  /* The additive, source-explicit fields (VERSIONING-DESIGN §6). All optional and tolerant: a legacy
+  /* The additive, source-explicit fields (VERSIONING-ROADMAP "The Model" §6). All optional and tolerant: a legacy
    * entry that omits them reads as empty (BioPortal source, latest version, acronym-derived iri). */
 
   private static Optional<URI> readIri(ObjectNode sourceNode, String path) {
