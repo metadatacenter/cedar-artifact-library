@@ -267,4 +267,32 @@ public class JsonArtifactReaderNegativePathsTest
       () -> reader.readTemplateInstanceArtifact(instance));
     assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
   }
+
+  @Test public void anEmptyDerivedFromIsRefusedToo() throws Exception
+  {
+    // pav:derivedFrom names the artifact this one was copied from, and it is optional: an artifact
+    // derived from nothing leaves the key out. 289 schema artifacts in the shared corpus wrote "" for
+    // it, against 41 naming a real IRI. The meta-schema types it as a string with format: uri and the
+    // validator does assert that format — it rejects "not a uri at all" — but an empty relative
+    // reference is a well-formed URI, so "" passes where the schema means it should not.
+    ObjectNode field = (ObjectNode) mapper.readTree("""
+        {
+          "@id": "https://repo.metadatacenter.org/template-fields/f1",
+          "@type": "https://schema.metadatacenter.org/core/TemplateField",
+          "@context": {},
+          "type": "object",
+          "title": "F",
+          "description": "d",
+          "_ui": { "inputType": "textfield" },
+          "_valueConstraints": { "requiredValue": false },
+          "pav:derivedFrom": "",
+          "schema:name": "F",
+          "schema:description": "d"
+        }
+        """);
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> reader.readFieldSchemaArtifact(field));
+    assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
+  }
 }

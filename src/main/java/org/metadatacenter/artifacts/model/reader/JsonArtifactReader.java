@@ -300,7 +300,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
     Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
-    Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
+    Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
@@ -342,7 +342,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
     Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
-    Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
+    Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
@@ -389,7 +389,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
     Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
     Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
-    Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
+    Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
     Optional<String> language = readLanguage(sourceNode, path);
@@ -518,7 +518,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     URI isBasedOn = readRequiredUri(sourceNode, path, SCHEMA_IS_BASED_ON);
-    Optional<URI> derivedFrom = readUri(sourceNode, path, PAV_DERIVED_FROM);
+    Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     List<String> childKeys = new ArrayList<>();
@@ -572,25 +572,40 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
         singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
   }
 
+  private Optional<URI> readJsonLdId(ObjectNode sourceNode, String path) {
+    return readIdentifier(sourceNode, path, JSON_LD_ID);
+  }
+
+  private Optional<URI> readDerivedFrom(ObjectNode sourceNode, String path) {
+    return readIdentifier(sourceNode, path, PAV_DERIVED_FROM);
+  }
+
   /**
-   * The artifact's identifier, refusing an empty string.
+   * An identifier-valued key, refusing an empty string.
    *
    * A document writes {@code ""} where one has not been assigned — half the element occurrences in the
-   * shared corpus once did — and reading it as though the key were absent hides that from whoever wrote
-   * it, then writes {@code null} back in its place. The value for an identifier not yet assigned is
-   * {@code null}. Only {@code @id} is held to this: {@code pav:derivedFrom} carries an empty string on
-   * 437 corpus artifacts, so tightening the rest needs a decision and a migration, tracked on the
-   * backend roadmap with the rest of this question.
+   * shared corpus once did, and 289 schema artifacts wrote one for {@code pav:derivedFrom} — and
+   * reading it as though the key were absent hides that from whoever wrote it, then writes {@code null}
+   * back in its place.
+   *
+   * The meta-schema agrees where it can. Both keys are typed as a string with {@code format: uri}, and
+   * the validator does assert that format: it rejects {@code "not a uri at all"}. What it accepts is
+   * the empty string, because {@code ""} is a well-formed relative URI reference. So the rule the schema
+   * means is one the schema cannot state, and a reader is where it gets stated.
+   *
+   * What absence looks like differs by key. An artifact awaiting an identifier writes {@code @id: null},
+   * since the server assigns it; {@code pav:derivedFrom} is optional, so an artifact derived from
+   * nothing leaves it out.
    */
-  private Optional<URI> readJsonLdId(ObjectNode sourceNode, String path) {
-    JsonNode idNode = sourceNode.get(JSON_LD_ID);
+  private Optional<URI> readIdentifier(ObjectNode sourceNode, String path, String key) {
+    JsonNode node = sourceNode.get(key);
 
-    if (idNode != null && idNode.isTextual() && idNode.asText().isBlank())
+    if (node != null && node.isTextual() && node.asText().isBlank())
       throw new ArtifactParseException(
           "An empty string is not a URI; write null or leave the key out where there is no value",
-          JSON_LD_ID, path);
+          key, path);
 
-    return readUri(sourceNode, path, JSON_LD_ID);
+    return readUri(sourceNode, path, key);
   }
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {

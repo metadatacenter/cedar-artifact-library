@@ -3,7 +3,6 @@
   "schema:identifier" : "subject_identifier_scheme",
   "schema:name" : "Subject Identifier Scheme",
   "schema:description" : "The name of the scheme or authority used for the Subject Identifier.",
-  "pav:derivedFrom" : "",
   "skos:prefLabel" : "Subject Identifier Scheme",
   "skos:altLabel" : [ ],
   "pav:version" : "0.9.1",
