@@ -208,18 +208,26 @@ public class InstanceInflaterTest
       assertTrue(nested.singleInstanceFieldInstances().containsKey(fieldKey));
   }
 
-  @Test public void schemaContextIsCompletedWithoutOverwritingExistingBinding()
+  /**
+   * Inflation copies the property IRI each child carries, and invents none.
+   *
+   * <p>A template built here declares no property IRI for its children — the repository assigns those
+   * when the template is uploaded — so there is nothing to copy and the instance's context stays as
+   * the caller left it. What inflation must not do is overwrite a binding the instance already has,
+   * which is the case this pins.
+   */
+  @Test public void schemaContextTakesTheBindingsThereAreWithoutOverwritingOne()
   {
     TemplateSchemaArtifact template = twoFieldTemplate();
     String first = template.getUi().order().get(0);
+    String second = template.getUi().order().get(1);
     URI custom = URI.create("https://example.org/custom");
     TemplateInstanceArtifact sparse = sparseInstance().withJsonLdContextEntry(first, custom).build();
 
     TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparse);
 
     assertEquals(custom, inflated.jsonLdContext().get(first));
-    for (String key : template.getUi().order())
-      assertTrue(inflated.jsonLdContext().containsKey(key));
+    assertFalse(inflated.jsonLdContext().containsKey(second));
   }
 
   @Test public void inflationCanonicalizesKnownChildrenWithoutMutatingSparseInput()

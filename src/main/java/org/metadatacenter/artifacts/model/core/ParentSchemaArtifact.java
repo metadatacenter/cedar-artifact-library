@@ -3,7 +3,6 @@ package org.metadatacenter.artifacts.model.core;
 import org.metadatacenter.artifacts.model.core.ui.ParentArtifactUi;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -94,10 +93,11 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact
       String childKey = childSchemaArtifactEntry.getKey();
       if (!isStaticField(childKey) && !isAttributeValueField(childKey)) {
         ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
-        if (childSchemaArtifact.propertyUri().isPresent())
-          childPropertyUris.put(childKey, childSchemaArtifact.propertyUri().get());
-        else // Missing property-IRI mapping, generate one
-          childPropertyUris.put(childKey, generatePropertyUri(childKey));
+        // A child with no property IRI of its own gets no mapping here. The IRI is identity, so the
+        // repository assigns it when the artifact is uploaded, exactly as it assigns an attribute's;
+        // deriving one from the child's name asserted an identity nothing had assigned, and one that
+        // would change the moment the author renamed the child.
+        childSchemaArtifact.propertyUri().ifPresent(uri -> childPropertyUris.put(childKey, uri));
       }
     }
 
@@ -181,36 +181,5 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact
       .filter(name -> !isStaticField(name) && !isAttributeValueField(name)).toList();
 
     return childKeys;
-  }
-
-  default URI generatePropertyUri(String childKey)
-  { // TODO Put constant in ModelNodeNames; childKey is temporary
-    return URI.create("https://schema.metadatacenter.org/properties/" + percentEncode(childKey));
-  }
-
-  /**
-   * Percent-encodes a child's name for the path segment it becomes, as JavaScript's
-   * {@code encodeURIComponent} does, which is what the TypeScript library uses.
-   *
-   * <p>Not {@code URLEncoder.encode}: that is {@code application/x-www-form-urlencoded}, meant for a
-   * query string, and it writes a space as {@code +}. In a path segment a {@code +} is a literal plus,
-   * so the IRI did not decode back to the name it was derived from. Everything outside the unreserved
-   * set and the sub-delimiters a segment takes literally is written as its UTF-8 bytes in upper-case
-   * hexadecimal.
-   */
-  private static String percentEncode(String text)
-  {
-    StringBuilder encoded = new StringBuilder(text.length());
-    for (byte b : text.getBytes(StandardCharsets.UTF_8)) {
-      char c = (char) (b & 0xff);
-      boolean unreserved = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
-        || c == '-' || c == '_' || c == '.' || c == '~';
-      boolean literalInASegment = c == '!' || c == '*' || c == '\'' || c == '(' || c == ')';
-      if (unreserved || literalInASegment)
-        encoded.append(c);
-      else
-        encoded.append('%').append(String.format("%02X", b & 0xff));
-    }
-    return encoded.toString();
   }
 }
