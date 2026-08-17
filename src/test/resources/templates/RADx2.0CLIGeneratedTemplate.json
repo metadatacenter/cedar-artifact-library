@@ -1648,7 +1648,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Creator Type": {
@@ -2687,7 +2687,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Related Resource Identifier": {
@@ -3342,7 +3342,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Contributor Type": {
@@ -4363,7 +4363,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "License Name": {
@@ -4673,7 +4673,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Event Type": {
@@ -5004,7 +5004,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "PHS Identifier": {
@@ -5635,7 +5635,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Award Title": {
@@ -6292,7 +6292,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Distribution Publisher": {
@@ -7615,7 +7615,7 @@
           ]
         },
         "@id": {
-          "type": "string",
+          "type": [ "string", "null" ],
           "format": "uri"
         },
         "Data Characteristics Table in HTML": {
@@ -8099,7 +8099,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Data Source Name": {
@@ -8418,7 +8418,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Data Stream Name": {
@@ -8941,7 +8941,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Process Name": {
@@ -9460,7 +9460,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Temporal Extent Minimum Value": {
@@ -9979,7 +9979,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Bounding Boxes": {
@@ -10082,7 +10082,7 @@
                   ]
                 },
                 "@id": {
-                  "type": "string",
+                  "type": [ "string", "null" ],
                   "format": "uri"
                 },
                 "Maximum Latitude": {
@@ -10595,7 +10595,7 @@
                   ]
                 },
                 "@id": {
-                  "type": "string",
+                  "type": [ "string", "null" ],
                   "format": "uri"
                 },
                 "Point Number": {
@@ -10996,7 +10996,7 @@
                   ]
                 },
                 "@id": {
-                  "type": "string",
+                  "type": [ "string", "null" ],
                   "format": "uri"
                 },
                 "Geopolitical region": {
@@ -11247,7 +11247,7 @@
             ]
           },
           "@id": {
-            "type": "string",
+            "type": [ "string", "null" ],
             "format": "uri"
           },
           "Vertical Extent Minimum Value": {
@@ -11735,7 +11735,7 @@
           ]
         },
         "@id": {
-          "type": "string",
+          "type": [ "string", "null" ],
           "format": "uri"
         },
         "Data File Descriptive Key-Value Pairs": {
