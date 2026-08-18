@@ -39,7 +39,7 @@ jobs:
           cache: maven
 
       - name: Run Maven verification
-        run: ./mvnw --batch-mode --no-transfer-progress --update-snapshots verify --settings .m2/travis-settings.xml
+        run: ./mvnw --batch-mode --no-transfer-progress --update-snapshots verify --settings .m2/nexus-settings.xml
 
       # The shared corpus carries this library's output for every artifact, and the TypeScript
       # library's build compares its own output against those files. That comparison only means
@@ -55,7 +55,7 @@ jobs:
       - name: Verify the committed corpus fixtures are current
         run: >
           ./mvnw --batch-mode --no-transfer-progress test-compile exec:java
-          --settings .m2/travis-settings.xml
+          --settings .m2/nexus-settings.xml
           -Dexec.classpathScope=test
           -Dexec.mainClass=org.metadatacenter.artifacts.model.CorpusFixtureVerifier
           -Dexec.args=cedar-test-artifacts
@@ -65,7 +65,7 @@ jobs:
       # already run in the step above; this only uploads what they verified.
       - name: Publish the snapshot
         if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-        run: ./mvnw --batch-mode --no-transfer-progress deploy -DskipTests --settings .m2/travis-settings.xml
+        run: ./mvnw --batch-mode --no-transfer-progress deploy -DskipTests --settings .m2/nexus-settings.xml
 
       - name: Upload test reports
         if: always()
