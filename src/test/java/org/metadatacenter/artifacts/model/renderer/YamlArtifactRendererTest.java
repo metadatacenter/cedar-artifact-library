@@ -1219,6 +1219,18 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
+  public void testRenderMultipleChoiceListFieldEmitsMultiSelectListType() {
+    ListField field = ListField.builder().withName("Pick Many").withMultipleChoice(true).build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+
+    assertEquals(MULTI_SELECT_LIST_FIELD, rendering.get(TYPE));
+    assertTrue(field.isMultiple());
+    assertEquals(Optional.of(0), field.minItems());
+  }
+
+  @Test
   public void testRenderCheckboxFieldEmitsCheckboxType() {
     CheckboxField field = CheckboxField.builder().withName("Flags").build();
 

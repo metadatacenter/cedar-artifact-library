@@ -26,8 +26,21 @@ public sealed interface ListField extends FieldSchemaArtifact
     Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
     String internalDescription)
   {
+    // A multiple-choice list is intrinsically multi-valued.  Older JSON artifacts and the
+    // compact YAML representation can carry the discriminator solely in _valueConstraints /
+    // `type: multi-select-list-field`, without a separate outer-array flag.  Canonicalize that
+    // semantic fact at the model boundary so every reader and builder renders the required
+    // JSON Schema array wrapper.
+    boolean isMultipleChoice = valueConstraints.map(ValueConstraints::multipleChoice).orElse(false);
+    boolean canonicalIsMultiple = isMultiple || isMultipleChoice;
+    Optional<Integer> canonicalMinItems = minItems;
+    if (isMultipleChoice && canonicalMinItems.isEmpty()) {
+      boolean requiredValue = valueConstraints.map(ValueConstraints::requiredValue).orElse(false);
+      canonicalMinItems = Optional.of(requiredValue ? 1 : 0);
+    }
+
     return new ListFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-      previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      previousVersion, derivedFrom, canonicalIsMultiple, canonicalMinItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
       internalDescription);
   }

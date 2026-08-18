@@ -12,6 +12,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstrain
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
 import java.net.URI;
+import java.util.Optional;
 
 public class FieldSchemaArtifactBuilderTest {
 
@@ -478,6 +479,26 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(true,
         listField.valueConstraints().get().asTextValueConstraints().literals().get(2).selectedByDefault());
     Assertions.assertEquals(true, listField.isMultiple());
+  }
+
+  @Test
+  public void testMultipleChoiceListIsIntrinsicallyMultiple() {
+    ListField optionalList = ListField.builder().
+        withName("Optional multiple-choice list").
+        withMultipleChoice(true).
+        build();
+
+    Assertions.assertTrue(optionalList.isMultiple());
+    Assertions.assertEquals(Optional.of(0), optionalList.minItems());
+
+    ListField requiredList = ListField.builder().
+        withName("Required multiple-choice list").
+        withMultipleChoice(true).
+        withRequiredValue(true).
+        build();
+
+    Assertions.assertTrue(requiredList.isMultiple());
+    Assertions.assertEquals(Optional.of(1), requiredList.minItems());
   }
 
   @Test
