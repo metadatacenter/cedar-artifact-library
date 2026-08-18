@@ -12,7 +12,6 @@ import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.yaml.YamlConstants;
 
 import java.util.HashSet;
@@ -89,7 +88,7 @@ public class YamlPlainScalarPolicyTest
     members.add(Arguments.of(DATATYPE, IRI));
     enumText(ValueConstraintsActionType.values()).forEach(value -> members.add(Arguments.of(ACTION, value)));
     enumText(TemporalGranularity.values()).forEach(value -> members.add(Arguments.of(GRANULARITY, value)));
-    enumText(ValueType.values()).forEach(value -> members.add(Arguments.of(TERM_TYPE, value)));
+    Stream.of(CLASS, VALUE).forEach(value -> members.add(Arguments.of(TERM_TYPE, value)));
     enumText(InputTimeFormat.values()).forEach(value -> members.add(Arguments.of(INPUT_TIME_FORMAT, value)));
     return members.build();
   }

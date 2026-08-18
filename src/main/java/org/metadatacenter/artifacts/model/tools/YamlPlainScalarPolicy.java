@@ -5,7 +5,6 @@ import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
-import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.yaml.YamlConstants;
 
 import java.util.HashMap;
@@ -73,7 +72,7 @@ final class YamlPlainScalarPolicy
     exemptions.put(DATATYPE, members(datatypeValues()));
     exemptions.put(ACTION, members(enumText(ValueConstraintsActionType.values())));
     exemptions.put(GRANULARITY, members(enumText(TemporalGranularity.values())));
-    exemptions.put(TERM_TYPE, members(enumText(ValueType.values())));
+    exemptions.put(TERM_TYPE, members(Set.of(CLASS, VALUE)));
     exemptions.put(INPUT_TIME_FORMAT, members(enumText(InputTimeFormat.values())));
     return Map.copyOf(exemptions);
   }
