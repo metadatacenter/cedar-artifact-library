@@ -30,7 +30,8 @@ public class YamlSerializer {
   static {
     // Both writers decide per string whether a quote is needed. Jackson's own answer leaves spellings
     // a reader turns into numbers, and characters a plain scalar cannot hold, unquoted; the full-quotes
-    // writer quotes every value but still writes some names plain, so it needs the same answer.
+    // base writer quotes every value before the field-aware structural vocabulary policy is applied,
+    // but still writes some names plain, so it needs the same answer.
     YAMLFactory yamlFactory = YAMLFactory.builder()
         .stringQuotingChecker(new YamlScalarQuotingChecker())
         .build()
@@ -109,7 +110,7 @@ public class YamlSerializer {
       // to substitute the characters back for \xNN, \N and \_, which produced a document no parser
       // accepts, this library's own reader included.
       ObjectMapper yamlMapper = fullQuotes ? YAML_OBJECT_MAPPER_FULL_QUOTES : YAML_OBJECT_MAPPER;
-      return yamlMapper.writeValueAsString(yamlSerialized);
+      return YamlPlainScalarPolicy.apply(yamlMapper.writeValueAsString(yamlSerialized));
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to serialize " + artifact.getClass().getName() + " as YAML", e);
     }

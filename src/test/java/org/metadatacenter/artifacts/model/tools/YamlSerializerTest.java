@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,6 +58,18 @@ public class YamlSerializerTest
     YamlSerializer.saveYAML(artifact, false, false, outputFile);
 
     assertEquals(YamlSerializer.getYAML(artifact, false, false), Files.readString(outputFile));
+  }
+
+  @Test public void canonicalYamlLeavesOnlyCedarOwnedStructuralValuesPlain()
+  {
+    TemplateSchemaArtifact artifact = TemplateSchemaArtifact.builder().withName("Study").build();
+
+    String yaml = YamlSerializer.getYAML(artifact, false, true);
+
+    assertTrue(yaml.startsWith("type: template\n"), yaml);
+    assertTrue(yaml.contains("name: \"Study\"\n"), yaml);
+    assertTrue(yaml.contains("modelVersion: "), yaml);
+    assertFalse(yaml.contains("modelVersion: \""), yaml);
   }
 
   private static final class UnsupportedArtifact implements Artifact

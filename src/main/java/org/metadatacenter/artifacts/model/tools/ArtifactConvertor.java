@@ -391,7 +391,7 @@ public class ArtifactConvertor {
 
     Option yamlFullquotesOption = Option.builder(YAML_FULL_QUOTES)
         .argName("yaml-full-quotes")
-        .desc("YAML Full Quotes")
+        .desc("Quote open-ended YAML strings; CEDAR-owned structural vocabularies remain plain")
         .build();
 
     Option resourceOption = Option.builder(CEDAR_RESOURCE_REST_API_BASE_OPTION)

@@ -58,35 +58,32 @@ ObjectNode rendering
 
 ### Serializing to YAML
 
-A class called `YamlArtifactRenderer` provides methods to serialize CEDAR schema artifacts to YAML.
+A class called `YamlSerializer` provides the canonical YAML serialization of every CEDAR artifact
+type. It applies the same scalar-style policy used by the servers and by the TypeScript model
+library.
 
 For example, we can generate a YAML serialization of a CEDAR template as follows:
 
 ```java
-// Set to 'false' for a complete YAML representation of an artifact, 'true' for a condensed representation
-boolean isCompact = false;
-// Create the renderer
-YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(isCompact);
-// Generate a map containing a YAML representation of the template
-LinkedHashMap<String, Object> yamlRendering 
-  = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
+// Set to false for a complete representation, true for a condensed representation.
+boolean compact = false;
+// Quote every open-ended string. CEDAR's closed structural vocabularies remain plain.
+boolean fullQuotes = true;
+String yaml = YamlSerializer.getYAML(templateSchemaArtifact, compact, fullQuotes);
 ```
 
-This map can be written to a file using the Jackson Library as follows:
+The canonical form deliberately leaves values plain only for `type`, `modelVersion`, `status`,
+`version`, `datatype`, `action`, `granularity`, `termType`, and `inputTimeFormat`, after checking that
+the value belongs to that field's CEDAR-owned vocabulary. IRIs, timestamps, external vocabularies,
+and user-authored strings remain quoted. Use `YamlArtifactRenderer` directly only when a
+`LinkedHashMap<String, Object>` representation is needed; serializing that map with a generic YAML
+writer bypasses this scalar-style policy.
+
+The canonical string can be saved directly or through `YamlSerializer.saveYAML`:
 
 ```java
-YAMLFactory yamlFactory = new YAMLFactory().
-          disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER).
-          enable(YAMLGenerator.Feature.MINIMIZE_QUOTES).
-          enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR).
-          disable(YAMLGenerator.Feature.SPLIT_LINES);
-ObjectMapper mapper = new ObjectMapper(yamlFactory);
-
-LinkedHashMap<String, Object> yamlRendering 
-  = yamlArtifactRenderer.renderTemplateSchemaArtifact(templateSchemaArtifact);
-
 Path outputFile = Path.of("template.yaml");
-mapper.writeValue(outputFile.toFile(), yamlRendering);
+YamlSerializer.saveYAML(templateSchemaArtifact, compact, fullQuotes, outputFile);
 ```
 
 ### Serializing Templates to Excel
