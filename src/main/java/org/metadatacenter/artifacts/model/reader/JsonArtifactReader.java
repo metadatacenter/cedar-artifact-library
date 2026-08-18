@@ -351,7 +351,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
-    checkArtifactJsonSchemaSchemaUri(sourceNode, path);
+    checkArtifactJsonSchemaSchemaUri(sourceNode, path, isRootPath(path));
     checkArtifactJsonSchemaType(sourceNode, path, JSON_SCHEMA_OBJECT);
     checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
@@ -398,7 +398,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
         fieldUi.inputType(), isMultiInstance, isStandalone);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
 
-    checkArtifactJsonSchemaSchemaUri(sourceNode, path);
+    checkArtifactJsonSchemaSchemaUri(sourceNode, path, isRootPath(path));
     checkFieldSchemaArtifactJsonLdType(jsonLdTypes, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
 
