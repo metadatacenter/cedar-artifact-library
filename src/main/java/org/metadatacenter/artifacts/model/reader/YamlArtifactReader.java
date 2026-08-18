@@ -1789,7 +1789,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * repository assigns, and an identifier is the first of those. Ignoring an {@code id:} written here
    * would let an author believe the document still refers to a stored artifact, and a conversion would
    * then quietly give that artifact's children freshly derived property IRIs. Refusing says so instead.
-   * Children keep their identifiers, since a child names the artifact it was copied from.
+   * Older compact documents may carry child identifiers. The reader accepts those for compatibility;
+   * the canonical compact renderer omits schema-artifact identity at every depth.
    */
   private void checkDocumentCarriesNoIdentifier(LinkedHashMap<String, Object> sourceNode, String path)
   {

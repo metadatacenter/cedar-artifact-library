@@ -215,9 +215,8 @@ public class YamlArtifactRendererTest {
 
   @Test
   public void testRenderNestedFieldWithoutIdOmitsId() {
-    // A nested child is not required to have an id. When the artifact has none, the keyed
-    // rendering carries no id key — the counterpart to the keyed tests below, which set an id
-    // and expect it to be preserved.
+    // A nested child is not required to have an id. Compact output also omits one when the source
+    // artifact does have an assigned repository identifier.
     String name = "Study Name";
     String description = "Study name field";
 
@@ -283,9 +282,6 @@ public class YamlArtifactRendererTest {
     expectedBaseFieldRendering.put(TYPE, CONTROLLED_TERM_FIELD);
     expectedBaseFieldRendering.put(NAME, name);
     expectedBaseFieldRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedBaseFieldRendering.put(ID, fieldId.toString());
     expectedBaseFieldRendering.put(DATATYPE, IRI);
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
@@ -352,9 +348,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, LINK_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -382,9 +375,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ROR_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -412,9 +402,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ORCID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -442,9 +429,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PFAS_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -472,9 +456,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, RRID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -502,9 +483,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, NIH_GRANT_ID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -532,9 +510,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PUBMED_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -562,9 +537,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, DOI_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }

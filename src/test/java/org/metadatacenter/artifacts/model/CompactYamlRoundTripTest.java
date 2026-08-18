@@ -27,11 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The compact YAML form is the same artifact with the content the system records about it left out:
- * the model version, the version, the status and the provenance. Everything else it carries, and a
- * reader given the compact form recovers the artifact it came from — which this test asserts over
- * the same template battery the full-form round trip uses, so its coverage follows the fixtures
- * rather than a document written by hand.
+ * The compact YAML form is an identity-free structural description of an artifact. It leaves out
+ * repository-assigned identifiers at every schema-artifact depth, together with the model version,
+ * version, status and provenance. A reader can still recover that structural description, which this
+ * test asserts over the same template battery the full-form round trip uses.
  *
  * <p>The round trip is
  *
@@ -62,14 +61,12 @@ public class CompactYamlRoundTripTest
   private YamlArtifactReader fullReader;
   private YamlArtifactReader compactReader;
   private YamlArtifactRenderer compactRenderer;
-  private YamlArtifactRenderer fullRenderer;
 
   @BeforeEach public void setUp()
   {
     fullReader = new YamlArtifactReader();
     compactReader = new YamlArtifactReader(true);
     compactRenderer = new YamlArtifactRenderer(true);
-    fullRenderer = new YamlArtifactRenderer(false);
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
@@ -107,16 +104,14 @@ public class CompactYamlRoundTripTest
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
-  public void compactFormKeepsTheIdentifiersOfChildren(String displayName, Path yamlFile) throws Exception
+  public void compactFormDropsTheIdentifiersOfChildren(String displayName, Path yamlFile) throws Exception
   {
     TemplateSchemaArtifact artifact = fullReader.readTemplateSchemaArtifact(parse(yamlFile));
 
     LinkedHashMap<String, Object> compact = compactRenderer.renderTemplateSchemaArtifact(artifact);
-    LinkedHashMap<String, Object> full = fullRenderer.renderTemplateSchemaArtifact(artifact);
 
-    // A child's identifier names the artifact it was copied from, which does exist, so it stays.
-    assertEquals(childIdentifiers(full), childIdentifiers(compact),
-      "the compact form lost a child's identifier: " + displayName);
+    assertTrue(childIdentifiers(compact).stream().allMatch(identifier -> identifier == null),
+      "the compact form carries a child's repository identifier: " + displayName);
   }
 
   @SuppressWarnings("unchecked")
