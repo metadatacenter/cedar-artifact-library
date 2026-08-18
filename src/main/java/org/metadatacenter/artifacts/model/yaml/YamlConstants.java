@@ -85,7 +85,6 @@ public class YamlConstants
   public static final String DECIMAL_PLACES = "decimalPlaces";
   public static final String MIN_LENGTH = "minLength";
   public static final String MAX_LENGTH = "maxLength";
-  public static final String URI = "termUri";
   public static final String VALUES = "values";
   public static final String ACTIONS = "actions";
   public static final String ACRONYM = "acronym";
