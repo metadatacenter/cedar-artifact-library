@@ -62,6 +62,28 @@ public class TemplateInstanceArtifactBuilderTest
       () -> builder.withAttributeValueFieldGroup("attrs", group));
   }
 
+  @Test public void testAttributeValueNameRejectsConflictWithExistingChild()
+  {
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("title", literal("attribute"));
+
+    TemplateInstanceArtifact.Builder builder = minimalBuilder()
+      .withSingleInstanceFieldInstance("title", literal("ordinary"));
+
+    assertThrows(IllegalArgumentException.class,
+      () -> builder.withAttributeValueFieldGroup("attrs", group));
+  }
+
+  @Test public void testAttributeValueNameRejectsReservedInstanceKey()
+  {
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("@context", literal("attribute"));
+
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+      () -> minimalBuilder().withAttributeValueFieldGroup("attrs", group));
+    assertTrue(ex.getMessage().contains("reserved"));
+  }
+
   @Test public void testWithoutAttributeValueFieldGroupAllowsReadditionUnderSameName()
   {
     LinkedHashMap<String, FieldInstanceArtifact> first = new LinkedHashMap<>();

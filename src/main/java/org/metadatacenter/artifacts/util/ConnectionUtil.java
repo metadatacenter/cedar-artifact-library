@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -63,7 +64,29 @@ public class ConnectionUtil {
     return sb.toString();
   }
 
+  /**
+   * Read a response body verbatim, preserving its line structure. Required for line-oriented
+   * formats such as YAML, whose meaning depends on line breaks and indentation.
+   */
+  public static String readResponseBody(InputStream is) {
+    try {
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
   public static HttpURLConnection createAndOpenConnection(String requestMethod, String endpoint, String apiKey) throws IOException {
+    return createAndOpenConnection(requestMethod, endpoint, apiKey, null);
+  }
+
+  /**
+   * @param acceptMediaType the media type to request through the Accept header, selecting a
+   *                        representation from a server that negotiates its response format;
+   *                        no Accept header is sent when it is null
+   */
+  public static HttpURLConnection createAndOpenConnection(String requestMethod, String endpoint, String apiKey,
+                                                          String acceptMediaType) throws IOException {
     ignoreSSLCheckingByAcceptingAnyCertificates();
     try {
       URL url = new URL(endpoint);
@@ -72,6 +95,9 @@ public class ConnectionUtil {
       conn.setDoOutput(true);
       conn.setRequestProperty("Content-Type", "application/json");
       conn.setRequestProperty("Authorization", "apiKey " + apiKey);
+      if (acceptMediaType != null) {
+        conn.setRequestProperty("Accept", acceptMediaType);
+      }
       return conn;
     } catch (MalformedURLException e) {
       throw new RuntimeException(e.getMessage());

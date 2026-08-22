@@ -3,9 +3,13 @@ package org.metadatacenter.artifacts.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ImageField;
 import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.RorField;
+import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.fields.constraints.LinkValueConstraints;
 import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.TextField;
@@ -134,9 +138,80 @@ public class YamlAsymmetryProbeTest
       roundTripped.fieldUi().asTemporalFieldUi().temporalGranularity());
   }
 
+  // A field nested in a parent carries its UI flags in a `configuration:` block rather than at
+  // the field level, so it exercises a different reader path than the standalone probes above.
+  // Reading the static width / height from the field level alone drops the _ui._size box of
+  // every static image and YouTube field embedded in a template or element.
+  @Test public void testRoundTripPreservesImageWidthHeightNestedInTemplate()
+  {
+    ImageField logo = ImageField.builder()
+      .withName("Logo").withContent("https://example.org/logo.png").withWidth(300).withHeight(200).build();
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
+      .withName("Study").withFieldSchema(logo).build();
+
+    TemplateSchemaArtifact roundTripped = roundTripTemplate(original);
+
+    StaticFieldUi ui = roundTripped.getFieldSchemaArtifact("Logo").fieldUi().asStaticFieldUi();
+    assertEquals(300, ui.width().get());
+    assertEquals(200, ui.height().get());
+  }
+
+  @Test public void testRoundTripPreservesYouTubeWidthHeightNestedInTemplate()
+  {
+    YouTubeField video = YouTubeField.builder()
+      .withName("Demo Video").withContent("dQw4w9WgXcQ").withWidth(640).withHeight(480).build();
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
+      .withName("Study").withFieldSchema(video).build();
+
+    TemplateSchemaArtifact roundTripped = roundTripTemplate(original);
+
+    StaticFieldUi ui = roundTripped.getFieldSchemaArtifact("Demo Video").fieldUi().asStaticFieldUi();
+    assertEquals(640, ui.width().get());
+    assertEquals(480, ui.height().get());
+  }
+
+  // Two levels down: the child of an element that is itself a child of a template.
+  @Test public void testRoundTripPreservesImageWidthHeightNestedInElement()
+  {
+    ImageField logo = ImageField.builder()
+      .withName("Logo").withContent("https://example.org/logo.png").withWidth(120).withHeight(60).build();
+    ElementSchemaArtifact branding = ElementSchemaArtifact.builder()
+      .withName("Branding").withFieldSchema(logo).build();
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
+      .withName("Study").withElementSchema(branding).build();
+
+    TemplateSchemaArtifact roundTripped = roundTripTemplate(original);
+
+    StaticFieldUi ui = roundTripped.getElementSchemaArtifact("Branding")
+      .getFieldSchemaArtifact("Logo").fieldUi().asStaticFieldUi();
+    assertEquals(120, ui.width().get());
+    assertEquals(60, ui.height().get());
+  }
+
+  // A static field with no size set must stay unset rather than picking up a default.
+  @Test public void testRoundTripLeavesAbsentWidthHeightAbsentNestedInTemplate()
+  {
+    ImageField logo = ImageField.builder()
+      .withName("Logo").withContent("https://example.org/logo.png").build();
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
+      .withName("Study").withFieldSchema(logo).build();
+
+    TemplateSchemaArtifact roundTripped = roundTripTemplate(original);
+
+    StaticFieldUi ui = roundTripped.getFieldSchemaArtifact("Logo").fieldUi().asStaticFieldUi();
+    assertTrue(ui.width().isEmpty());
+    assertTrue(ui.height().isEmpty());
+  }
+
   private FieldSchemaArtifact roundTripField(FieldSchemaArtifact original)
   {
     LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(original);
     return reader.readFieldSchemaArtifact(rendering);
+  }
+
+  private TemplateSchemaArtifact roundTripTemplate(TemplateSchemaArtifact original)
+  {
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(original);
+    return reader.readTemplateSchemaArtifact(rendering);
   }
 }

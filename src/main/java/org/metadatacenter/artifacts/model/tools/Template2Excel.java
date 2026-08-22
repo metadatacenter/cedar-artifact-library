@@ -44,7 +44,7 @@ public class Template2Excel
 
       checkCommandLine(command, options);
 
-      String terminologyServerIntegratedSearchEndpoint = command.getOptionValue(CEDAR_SEARCH_ENDPOINT_OPTION);
+      String terminologyServerEndpoint = command.getOptionValue(CEDAR_SEARCH_ENDPOINT_OPTION);
       String cedarAPIKey = command.getOptionValue(CEDAR_APIKEY_OPTION);
       String excelFileName = command.getOptionValue(EXCEL_FILE_OPTION);
       File excelFile = new File(excelFileName);
@@ -79,7 +79,7 @@ public class Template2Excel
       TemplateSchemaArtifact templateSchemaArtifact = artifactReader.readTemplateSchemaArtifact(templateObjectNode);
 
       TerminologyServerClient terminologyServerClient = new TerminologyServerClient(
-        terminologyServerIntegratedSearchEndpoint, cedarAPIKey);
+        terminologyServerEndpoint, cedarAPIKey);
       ExcelArtifactRenderer renderer = new ExcelArtifactRenderer(terminologyServerClient);
 
       Workbook workbook = renderer.render(templateSchemaArtifact, 0, 0);

@@ -83,7 +83,11 @@ final class JsonSchemaArtifactPropertyRenderers {
 
     rendering.put(JSON_LD_CONTEXT,
         renderElementSchemaArtifactContextPropertiesJsonSchemaSpecification(elementSchemaArtifact));
-    rendering.put(JSON_LD_ID, renderUriJsonSchemaTypeSpecification());
+    // As a template types its own instance's @id. An occurrence of this element has no identity until
+    // the instance is uploaded, and null is what a document carries meanwhile; typed as a bare string,
+    // the template refused a draft the server itself would fill. The meta-schema accepts either form,
+    // so an element stored before this validates exactly as it did.
+    rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
 
     if (elementSchemaArtifact.instanceJsonLdType().isEmpty()) {
       rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaTypeSpecification(1, true));

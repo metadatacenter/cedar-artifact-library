@@ -137,5 +137,11 @@ record RadioFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> json
       fieldUi, valueConstraints, annotations);
     jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
+    alternateLabels = List.copyOf(alternateLabels);
+  }
+
+  @Override public LinkedHashMap<String, URI> jsonLdContext()
+  {
+    return ModelCollections.copyMap(jsonLdContext);
   }
 }

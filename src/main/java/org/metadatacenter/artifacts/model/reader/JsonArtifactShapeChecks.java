@@ -77,6 +77,15 @@ final class JsonArtifactShapeChecks {
 
 
   static void checkArtifactJsonSchemaSchemaUri(ObjectNode sourceNode, String path) {
+    checkArtifactJsonSchemaSchemaUri(sourceNode, path, true);
+  }
+
+
+  static void checkArtifactJsonSchemaSchemaUri(ObjectNode sourceNode, String path, boolean required) {
+    if (!required && !sourceNode.has(JSON_SCHEMA_SCHEMA)) {
+      return;
+    }
+
     String artifactJsonSchemaSchemaUri = readRequiredString(sourceNode, path, JSON_SCHEMA_SCHEMA);
 
     if (!artifactJsonSchemaSchemaUri.equals(JSON_SCHEMA_SCHEMA_URI)) {

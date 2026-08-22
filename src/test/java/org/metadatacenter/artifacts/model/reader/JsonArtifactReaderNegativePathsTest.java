@@ -14,6 +14,7 @@ import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONT
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_LD_VALUE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ADDITIONAL_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
@@ -28,6 +29,7 @@ import static org.metadatacenter.model.ModelNodeNames.PAV_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_DESCRIPTION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
 
@@ -95,6 +97,18 @@ public class JsonArtifactReaderNegativePathsTest
     node.put(SCHEMA_ORG_DESCRIPTION, "d");
 
     assertThrows(Exception.class, () -> reader.readTemplateInstanceArtifact(node));
+  }
+
+  @Test public void testReadTemplateInstanceRejectsDuplicateAttributeValueName()
+  {
+    ObjectNode node = mapper.createObjectNode();
+    node.put(SCHEMA_IS_BASED_ON, "https://repo.metadatacenter.org/templates/abc");
+    node.putArray("attrs").add("colour").add("colour");
+    node.putObject("colour").put(JSON_LD_VALUE, "blue");
+
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateInstanceArtifact(node));
+    assertTrue(ex.getMessage().contains("Duplicate attribute-value"));
   }
 
   @Test public void testReadElementThrowsOnMissingProperties()
@@ -232,5 +246,53 @@ public class JsonArtifactReaderNegativePathsTest
     for (var e : contextMap.entrySet())
       node.put(e.getKey(), e.getValue().toString());
     return node;
+  }
+
+  @Test public void anEmptyIdentifierIsRefusedRatherThanReadAsAbsent() throws Exception
+  {
+    // The reader production documents arrive through. It read "" as though the key were absent, so an
+    // instance carrying one came back with null in its place and nothing said so.
+    ObjectNode instance = (ObjectNode) mapper.readTree("""
+        {
+          "@id": "https://repo.metadatacenter.org/template-instances/i1",
+          "@context": {},
+          "schema:name": "I",
+          "schema:description": "",
+          "schema:isBasedOn": "https://repo.metadatacenter.org/templates/t1",
+          "address": { "@context": {}, "@id": "", "street": { "@value": "x" } }
+        }
+        """);
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateInstanceArtifact(instance));
+    assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
+  }
+
+  @Test public void anEmptyDerivedFromIsRefusedToo() throws Exception
+  {
+    // pav:derivedFrom names the artifact this one was copied from, and it is optional: an artifact
+    // derived from nothing leaves the key out. 289 schema artifacts in the shared corpus wrote "" for
+    // it, against 41 naming a real IRI. The meta-schema types it as a string with format: uri and the
+    // validator does assert that format — it rejects "not a uri at all" — but an empty relative
+    // reference is a well-formed URI, so "" passes where the schema means it should not.
+    ObjectNode field = (ObjectNode) mapper.readTree("""
+        {
+          "@id": "https://repo.metadatacenter.org/template-fields/f1",
+          "@type": "https://schema.metadatacenter.org/core/TemplateField",
+          "@context": {},
+          "type": "object",
+          "title": "F",
+          "description": "d",
+          "_ui": { "inputType": "textfield" },
+          "_valueConstraints": { "requiredValue": false },
+          "pav:derivedFrom": "",
+          "schema:name": "F",
+          "schema:description": "d"
+        }
+        """);
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> reader.readFieldSchemaArtifact(field));
+    assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
   }
 }

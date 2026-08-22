@@ -156,6 +156,7 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
         version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy,
         modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(),
         valueConstraints, annotations, internalName, internalDescription);
+
       case ATTRIBUTE_VALUE -> AttributeValueField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
         identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
         createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,

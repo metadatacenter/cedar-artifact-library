@@ -75,11 +75,11 @@ children:
     label: CODEX
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Dataset type
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
+    termBaseLabel: Dataset type
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -99,11 +99,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Analyte class
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000371
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000371
+    termBaseLabel: Analyte class
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -143,11 +143,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Acquisition instrument vendor
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000391
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000391
+    termBaseLabel: Acquisition instrument vendor
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -167,11 +167,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Acquisition instrument model
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000401
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000401
+    termBaseLabel: Acquisition instrument model
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -209,11 +209,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Source storage duration unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
+    termBaseLabel: Source storage duration unit
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -250,11 +250,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Time since acquisition instrument calibration unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000421
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000421
+    termBaseLabel: Time since acquisition instrument calibration unit
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -324,11 +324,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Preparation instrument vendor
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000501
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000501
+    termBaseLabel: Preparation instrument vendor
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -348,11 +348,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Preparation instrument model
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000511
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000511
+    termBaseLabel: Preparation instrument model
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'
@@ -389,11 +389,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: undefined (HRAVS)
-    acronym: HRAVS
-    termLabel: Total run time unit
-    iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000631
-    maxDepth: 0
+    sourceAcronym: HRAVS
+    sourceName: undefined (HRAVS)
+    termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000631
+    termBaseLabel: Total run time unit
+    termMaxDepth: 0
   createdOn: '2025-06-04T13:50:37-07:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   modifiedOn: '2025-06-04T13:50:37-07:00'

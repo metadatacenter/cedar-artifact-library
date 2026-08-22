@@ -13,6 +13,33 @@ import java.util.Set;
 
 public class ValidationHelper
 {
+  /**
+   * The maxItems value meaning "no upper bound". CEDAR overloads zero for this rather than
+   * omitting the key; the Template Designer presents it to authors as "unlimited".
+   */
+  public static final int UNBOUNDED_MAX_ITEMS = 0;
+
+  /**
+   * Range-check the cardinality bounds of a multi-instance field or element. A maxItems of
+   * {@link #UNBOUNDED_MAX_ITEMS} imposes no upper bound, so it is accepted whatever minItems is.
+   * Throws {@link IllegalStateException} on violation.
+   */
+  public static void validateItemBounds(Object obj, String name, Optional<Integer> minItems,
+    Optional<Integer> maxItems)
+  {
+    String kind = obj.getClass().getSimpleName();
+
+    if (minItems.isPresent() && minItems.get() < 0)
+      throw new IllegalStateException("minItems must be zero or greater in " + kind + " " + name);
+
+    if (maxItems.isPresent() && maxItems.get() < 0)
+      throw new IllegalStateException("maxItems must be zero or greater in " + kind + " " + name);
+
+    if (minItems.isPresent() && maxItems.isPresent() && maxItems.get() != UNBOUNDED_MAX_ITEMS
+      && minItems.get() > maxItems.get())
+      throw new IllegalStateException("minItems must be less than or equal to maxItems in " + kind + " " + name);
+  }
+
   public static void validateStringFieldNotNull(Object obj, String field, String fieldKey)
   {
     if (field == null)

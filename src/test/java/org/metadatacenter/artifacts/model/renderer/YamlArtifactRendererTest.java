@@ -67,7 +67,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, TEMPLATE);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(ID, "https://repo.metadatacenter.org/templates/123");
     expectedRendering.put(HEADER, header);
     expectedRendering.put(FOOTER, footer);
 
@@ -96,7 +95,6 @@ public class YamlArtifactRendererTest {
         type: template
         name: ${name}
         description: ${description}
-        id: https://repo.metadatacenter.org/templates/123
         header: ${header}
         footer: ${footer}
         """
@@ -129,7 +127,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(NAME, name);
     expectedRendering.put(TYPE, ELEMENT);
     expectedRendering.put(DESCRIPTION, description);
-    expectedRendering.put(ID, "https://repo.metadatacenter.org/template_elements/123");
 
     assertEquals(expectedRendering, actualRendering);
   }
@@ -180,7 +177,6 @@ public class YamlArtifactRendererTest {
         type: text-field
         name: ${name}
         description: ${description}
-        id: https://repo.metadatacenter.org/template_fields/123
         """
         .replace("${name}", name)
         .replace("${description}", description);
@@ -219,9 +215,8 @@ public class YamlArtifactRendererTest {
 
   @Test
   public void testRenderNestedFieldWithoutIdOmitsId() {
-    // A nested child is not required to have an id. When the artifact has none, the keyed
-    // rendering carries no id key — the counterpart to the keyed tests below, which set an id
-    // and expect it to be preserved.
+    // A nested child is not required to have an id. Compact output also omits one when the source
+    // artifact does have an assigned repository identifier.
     String name = "Study Name";
     String description = "Study name field";
 
@@ -287,30 +282,27 @@ public class YamlArtifactRendererTest {
     expectedBaseFieldRendering.put(TYPE, CONTROLLED_TERM_FIELD);
     expectedBaseFieldRendering.put(NAME, name);
     expectedBaseFieldRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedBaseFieldRendering.put(ID, fieldId.toString());
     expectedBaseFieldRendering.put(DATATYPE, IRI);
 
     List<LinkedHashMap<String, Object>> expectedValueConstraintsRendering = new ArrayList<>();
 
     LinkedHashMap<String, Object> doidDiseaseBranchRendering = new LinkedHashMap<>();
     doidDiseaseBranchRendering.put(TYPE, BRANCH);
-    doidDiseaseBranchRendering.put(ONTOLOGY_NAME, doidSource);
-    doidDiseaseBranchRendering.put(ACRONYM, doidSourceAcronym);
-    doidDiseaseBranchRendering.put(TERM_LABEL, doidDiseaseBranchName);
-    doidDiseaseBranchRendering.put(IRI, doidDiseaseBranchIri);
-    doidDiseaseBranchRendering.put(MAX_DEPTH, doidDiseaseBranchDepth);
+    doidDiseaseBranchRendering.put(SOURCE_ACRONYM, doidSourceAcronym);
+    doidDiseaseBranchRendering.put(SOURCE_NAME, doidSource);
+    doidDiseaseBranchRendering.put(TERM_BASE_IRI, doidDiseaseBranchIri);
+    doidDiseaseBranchRendering.put(TERM_BASE_LABEL, doidDiseaseBranchName);
+    doidDiseaseBranchRendering.put(TERM_MAX_DEPTH, doidDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(doidDiseaseBranchRendering);
 
     LinkedHashMap<String, Object> pmrDiseaseBranchRendering = new LinkedHashMap<>();
     pmrDiseaseBranchRendering.put(TYPE, BRANCH);
-    pmrDiseaseBranchRendering.put(ONTOLOGY_NAME, pmrSource);
-    pmrDiseaseBranchRendering.put(ACRONYM, pmrSourceAcronym);
-    pmrDiseaseBranchRendering.put(TERM_LABEL, pmrDiseaseBranchName);
-    pmrDiseaseBranchRendering.put(IRI, pmrDiseaseBranchIri);
-    pmrDiseaseBranchRendering.put(MAX_DEPTH, pmrDiseaseBranchDepth);
+    pmrDiseaseBranchRendering.put(SOURCE_ACRONYM, pmrSourceAcronym);
+    pmrDiseaseBranchRendering.put(SOURCE_NAME, pmrSource);
+    pmrDiseaseBranchRendering.put(TERM_BASE_IRI, pmrDiseaseBranchIri);
+    pmrDiseaseBranchRendering.put(TERM_BASE_LABEL, pmrDiseaseBranchName);
+    pmrDiseaseBranchRendering.put(TERM_MAX_DEPTH, pmrDiseaseBranchDepth);
 
     expectedValueConstraintsRendering.add(pmrDiseaseBranchRendering);
 
@@ -356,9 +348,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, LINK_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -386,9 +375,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ROR_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -416,9 +402,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, ORCID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -446,9 +429,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PFAS_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -476,9 +456,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, RRID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -506,9 +483,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, NIH_GRANT_ID_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -536,9 +510,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, PUBMED_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -566,9 +537,6 @@ public class YamlArtifactRendererTest {
     expectedRendering.put(TYPE, DOI_FIELD);
     expectedRendering.put(NAME, name);
     expectedRendering.put(DESCRIPTION, description);
-    // Rendered as a nested child (keyed form); a child is not required to have an id, but when
-    // one is set on the artifact the renderer preserves it.
-    expectedRendering.put(ID, fieldId.toString());
 
     assertEquals(expectedRendering.toString(), actualRendering.toString());
   }
@@ -602,11 +570,11 @@ public class YamlArtifactRendererTest {
             datatype: iri
             values:
               - type: class
-                label: ${classLabel}
-                acronym: ${classSource}
+                sourceAcronym: ${classSource}
+                termIri: ${classUri}
                 termType: class
                 termLabel: ${classPrefLabel}
-                iri: ${classUri}
+                termDisplayLabel: ${classLabel}
         """
         .replace("${fieldName}", fieldKey)
         .replace("${description}", description)
@@ -634,7 +602,6 @@ public class YamlArtifactRendererTest {
     String expectedYaml = """
         type: instance
         name: Simple instance
-        id: https://repo.metadatacenter.org/template-instances/2123be29-d114-4849-8a5e-7a68022b8bfd
         isBasedOn: https://repo.metadatacenter.org/templates/5c48700a-4163-436d-8daa-95af7311cded
         children:
           Controlled Terms:
@@ -1042,7 +1009,7 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
-  public void testCompactModeIncludesIdButOmitsVersion() {
+  public void testCompactModeOmitsTheDocumentIdWithTheVersion() {
     TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
         .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
         .withVersion(new Version(2, 1, 0))
@@ -1052,14 +1019,14 @@ public class YamlArtifactRendererTest {
     YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
     LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateSchemaArtifact(template);
 
-    assertEquals("https://repo.metadatacenter.org/templates/abc", rendering.get(ID));
+    assertFalse(rendering.containsKey(ID));
     assertFalse(rendering.containsKey(VERSION));
     assertFalse(rendering.containsKey(STATUS));
     assertFalse(rendering.containsKey(MODEL_VERSION));
   }
 
   @Test
-  public void testCompactModeIncludesIdOnInstance() {
+  public void testCompactModeOmitsTheIdOnInstance() {
     TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().withName("Inst")
         .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/template-instances/xyz"))
         .withIsBasedOn(java.net.URI.create("https://repo.metadatacenter.org/templates/abc"))
@@ -1068,7 +1035,7 @@ public class YamlArtifactRendererTest {
     YamlArtifactRenderer compactRenderer = new YamlArtifactRenderer(true);
     LinkedHashMap<String, Object> rendering = compactRenderer.renderTemplateInstanceArtifact(instance);
 
-    assertEquals("https://repo.metadatacenter.org/template-instances/xyz", rendering.get(ID));
+    assertFalse(rendering.containsKey(ID));
   }
 
   @Test
@@ -1224,6 +1191,18 @@ public class YamlArtifactRendererTest {
   }
 
   @Test
+  public void testRenderMultipleChoiceListFieldEmitsMultiSelectListType() {
+    ListField field = ListField.builder().withName("Pick Many").withMultipleChoice(true).build();
+
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+
+    assertEquals(MULTI_SELECT_LIST_FIELD, rendering.get(TYPE));
+    assertTrue(field.isMultiple());
+    assertEquals(Optional.of(0), field.minItems());
+  }
+
+  @Test
   public void testRenderCheckboxFieldEmitsCheckboxType() {
     CheckboxField field = CheckboxField.builder().withName("Flags").build();
 
@@ -1257,9 +1236,9 @@ public class YamlArtifactRendererTest {
 
     assertEquals(1, values.size());
     assertEquals(ONTOLOGY, values.get(0).get(TYPE));
-    assertEquals("DOID", values.get(0).get(ACRONYM));
-    assertEquals("Human Disease Ontology", values.get(0).get(ONTOLOGY_NAME));
-    assertEquals(ontUri.toString(), values.get(0).get(IRI));
+    assertEquals("DOID", values.get(0).get(SOURCE_ACRONYM));
+    assertEquals("Human Disease Ontology", values.get(0).get(SOURCE_NAME));
+    // The ontology's backend URL is derivable from the acronym, so it is no longer a YAML key.
   }
 
   @Test
@@ -1274,10 +1253,10 @@ public class YamlArtifactRendererTest {
 
     assertEquals(1, values.size());
     assertEquals(VALUE_SET, values.get(0).get(TYPE));
-    assertEquals("HRAVS", values.get(0).get(ACRONYM));
-    assertEquals("Area unit", values.get(0).get(VALUE_SET_NAME));
-    assertEquals(vsUri.toString(), values.get(0).get(IRI));
-    assertEquals(40, values.get(0).get(NUM_TERMS));
+    assertEquals("HRAVS", values.get(0).get(SOURCE_ACRONYM));
+    assertEquals("Area unit", values.get(0).get(TERM_BASE_LABEL));
+    assertEquals(vsUri.toString(), values.get(0).get(TERM_BASE_IRI));
+    assertEquals(40, values.get(0).get(TERM_COUNT));
   }
 
   // ---- Instance variants ----

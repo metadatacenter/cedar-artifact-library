@@ -3,7 +3,6 @@
   "schema:identifier" : "study_start_date",
   "schema:name" : "Study Start Date",
   "schema:description" : "The official start date for the study for which this data file was created. This date must be in the ISO-8601 format of yyyy-mm-dd. For example, 2022-10-05 specifies October 5, 2022.\n\nThis field is considered auxiliary information to the initially registered Study Start Date. It will not update the registered information, but may trigger a verification that the registered Start Date has not changed.",
-  "pav:derivedFrom" : "",
   "skos:prefLabel" : "Study Start Date",
   "skos:altLabel" : [ ],
   "pav:version" : "0.9.1",

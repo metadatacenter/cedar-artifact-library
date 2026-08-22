@@ -89,24 +89,6 @@ final class ParentSchemaArtifactInvariants
   }
 
   /**
-   * Range-check minItems and maxItems for records that have them (element schema artifacts).
-   * Throws {@link IllegalStateException} on violation.
-   */
-  static void validateItemBounds(Object self, String name, Optional<Integer> minItems, Optional<Integer> maxItems)
-  {
-    String kind = self.getClass().getSimpleName();
-
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in " + kind + " " + name);
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in " + kind + " " + name);
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be less than or equal to maxItems in " + kind + " " + name);
-  }
-
-  /**
    * Return a copy of {@code children} with any entry whose key is absent from the UI {@code order}
    * list removed. The input map is not modified.
    * <p>

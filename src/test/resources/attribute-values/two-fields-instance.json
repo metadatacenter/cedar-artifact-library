@@ -1,0 +1,72 @@
+{
+  "@id": "https://repo.metadatacenter.orgx/template-instances/e3edd4ba-c50b-4c07-beb5-ce533362f4d9",
+  "schema:name": "AV metadata",
+  "schema:description": "",
+  "My AV Field 1": [
+    "A11",
+    "A12"
+  ],
+  "My AV Field 2": [
+    "A21",
+    "A22"
+  ],
+  "A11": {
+    "@value": "V11"
+  },
+  "A12": {
+    "@value": "V12"
+  },
+  "A21": {
+    "@value": "V21"
+  },
+  "A22": {
+    "@value": "V22"
+  },
+  "@context": {
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "pav": "http://purl.org/pav/",
+    "schema": "http://schema.org/",
+    "oslc": "http://open-services.net/ns/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdfs:label": {
+      "@type": "xsd:string"
+    },
+    "schema:isBasedOn": {
+      "@type": "@id"
+    },
+    "schema:name": {
+      "@type": "xsd:string"
+    },
+    "schema:description": {
+      "@type": "xsd:string"
+    },
+    "pav:derivedFrom": {
+      "@type": "@id"
+    },
+    "pav:createdOn": {
+      "@type": "xsd:dateTime"
+    },
+    "pav:createdBy": {
+      "@type": "@id"
+    },
+    "pav:lastUpdatedOn": {
+      "@type": "xsd:dateTime"
+    },
+    "oslc:modifiedBy": {
+      "@type": "@id"
+    },
+    "skos:notation": {
+      "@type": "xsd:string"
+    },
+    "A11": "https://schema.metadatacenter.org/properties/b0d20efc-966b-4625-b621-8984e746a7c8",
+    "A12": "https://schema.metadatacenter.org/properties/83000381-60de-4270-b362-fa4dad70f769",
+    "A21": "https://schema.metadatacenter.org/properties/2268c516-c02d-4eb0-9480-45e4a34c870f",
+    "A22": "https://schema.metadatacenter.org/properties/b6280b72-e29d-41d6-8057-5720b94aa494"
+  },
+  "schema:isBasedOn": "https://repo.metadatacenter.orgx/templates/4ac4ccde-c3c2-4528-8967-d0313d5c71a4",
+  "pav:createdOn": "2026-08-11T16:24:35Z",
+  "pav:createdBy": "https://metadatacenter.org/users/0e97ec85-77a9-434c-8549-33f9eae22608",
+  "pav:lastUpdatedOn": "2026-08-11T16:26:07Z",
+  "oslc:modifiedBy": "https://metadatacenter.org/users/0e97ec85-77a9-434c-8549-33f9eae22608"
+}

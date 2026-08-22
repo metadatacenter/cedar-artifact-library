@@ -33,6 +33,8 @@ public sealed interface DefaultValue<T> permits TextDefaultValue, NumericDefault
    @JsonIgnore
    default boolean isPhoneNumberDefaultValue() { return getValueType() == DefaultValueType.PHONE_NUMBER; }
 
+   @JsonIgnore
+
    default TextDefaultValue asTextDefaultValue()
    {
       if (getValueType() == DefaultValueType.TEXT)

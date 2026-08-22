@@ -11,6 +11,8 @@ import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.LinkField;
+import org.metadatacenter.artifacts.model.core.ListField;
+import org.metadatacenter.artifacts.model.core.ListFieldInstance;
 import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -390,6 +392,41 @@ public class JsonArtifactRendererTest
   }
 
   @Test
+  public void testPopulatedMultipleChoiceListValidatesAgainstRenderedTemplate() throws Exception {
+    URI templateId = URI.create("https://repo.metadatacenter.org/templates/multi-select-probe");
+    String fieldName = "Pick Many";
+    ListField listField = ListField.builder().
+      withName(fieldName).
+      withOption("Choice 1").
+      withOption("Choice 2").
+      withMultipleChoice(true).
+      build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().
+      withName("Multiple-choice template").
+      withJsonLdId(templateId).
+      withFieldSchema(listField).
+      build();
+
+    TemplateInstanceArtifact instance = TemplateInstanceArtifact.builder().
+      withIsBasedOn(templateId).
+      withName("Populated instance").
+      withMultiInstanceFieldInstances(fieldName, List.of(
+        ListFieldInstance.builder().withValue("Choice 1").build(),
+        ListFieldInstance.builder().withValue("Choice 2").build())).
+      build();
+
+    ObjectNode templateRendering = jsonArtifactRenderer.renderTemplateSchemaArtifact(template);
+    ObjectNode instanceRendering = jsonArtifactRenderer.renderTemplateInstanceArtifact(instance);
+
+    assertTrue(templateRendering.path("properties").path(fieldName).isArray()
+      || templateRendering.path("properties").path(fieldName).path("type").asText().equals("array"));
+    assertTrue(instanceRendering.path(fieldName).isArray());
+    assertTrue(validateJsonSchema(templateRendering, instanceRendering));
+    ValidationReport report = cedarModelValidator.validateTemplateInstance(instanceRendering, templateRendering);
+    assertEquals("true", report.getValidationStatus(), () -> report.getErrors().toString());
+  }
+
+  @Test
   public void testRenderHuBMAPSampleSection()
   {
     ObjectNode objectNode = getFileContentAsObjectNode("templates/SampleSection.json");
@@ -535,8 +572,7 @@ public class JsonArtifactRendererTest
   {
     try {
       JsonSchema schema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
-      schema.validate(instanceNode);
-      return true;
+      return schema.validate(instanceNode).isEmpty();
     } catch (RuntimeException e) {
       return false;
     }

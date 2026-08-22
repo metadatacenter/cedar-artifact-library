@@ -73,5 +73,6 @@ record ListFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Op
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
     validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
+    jsonLdTypes = List.copyOf(jsonLdTypes);
   }
 }

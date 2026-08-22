@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.metadatacenter.model.ModelNodeNames.ANNOTATIONS;
 import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
@@ -281,6 +280,17 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     addCoreSchemaOrgRendering(elementSchemaArtifact, rendering);
     addProvenanceRendering(elementSchemaArtifact, rendering);
 
+    if (elementSchemaArtifact.preferredLabel().isPresent()) {
+      rendering.put(SKOS_PREFLABEL, elementSchemaArtifact.preferredLabel().get());
+    }
+
+    if (!elementSchemaArtifact.alternateLabels().isEmpty()) {
+      rendering.put(SKOS_ALTLABEL, MAPPER.createArrayNode());
+      for (String alternateLabel : elementSchemaArtifact.alternateLabels()) {
+        rendering.withArray(SKOS_ALTLABEL).add(alternateLabel);
+      }
+    }
+
     addVersionRendering(elementSchemaArtifact, rendering);
 
     rendering.put(SCHEMA_ORG_SCHEMA_VERSION, MODEL_VERSION.toString());
@@ -482,22 +492,16 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       rendering.put(ANNOTATIONS, renderAnnotations(templateInstanceArtifact.annotations().get()));
     }
 
-    // Emit the @context child property mappings the instance carries. When the model has none
-    // (e.g. it was read from the context-free YAML exchange form) fall back to generating the
-    // deterministic default mapping for each regular child, so the JSON instance still
-    // validates. A populated context is used verbatim — it preserves custom propertyIris and
-    // attribute-value entries that aren't reconstructable from child keys alone.
+    // Emit the @context child property mappings the instance carries, and only those. An instance
+    // read from the YAML exchange form carries none — that form leaves them out, because they are
+    // the template's to supply and InstanceInflater puts them back from it. Deriving one from the
+    // child's name instead produced an IRI that is not the one the template pins its context entry
+    // to, so an instance rendered that way failed against its own template where it was required,
+    // and carried a fabricated mapping where it was not.
     if (!templateInstanceArtifact.jsonLdContext().isEmpty()) {
       for (var propertyMapping : templateInstanceArtifact.jsonLdContext().entrySet())
         rendering.withObject("/" + JSON_LD_CONTEXT)
           .put(propertyMapping.getKey(), renderUri(propertyMapping.getValue()));
-    } else {
-      for (String childKey : templateInstanceArtifact.childKeys()) {
-        if (!isRegularInstanceChild(templateInstanceArtifact, childKey))
-          continue;
-        rendering.withObject("/" + JSON_LD_CONTEXT)
-          .put(childKey, renderUri(instanceChildPropertyUri(templateInstanceArtifact, childKey)));
-      }
     }
 
     rendering.put(SCHEMA_IS_BASED_ON, renderUri(templateInstanceArtifact.isBasedOn()));
@@ -553,17 +557,12 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         rendering.withObject("/" + JSON_LD_CONTEXT)
           .put(propertyMapping.getKey(), renderUri(propertyMapping.getValue()));
     } else {
-      // No carried context (e.g. read from the YAML exchange form): generate the deterministic
-      // default mapping for each regular child so the element instance still validates.
-      java.util.List<String> regularChildKeys = elementInstanceArtifact.childKeys().stream()
-        .filter(k -> isRegularInstanceChild(elementInstanceArtifact, k)).toList();
-      // The @context is also what classifies a nested object as an element instance on read
-      // (a field value carries none), so it is emitted even when there are no children to
-      // map — an all-empty element instance must stay an element across the JSON round trip.
+      // No carried context: the YAML exchange form leaves the child property mappings out, and they
+      // are the template's to supply through InstanceInflater rather than this renderer's to invent.
+      // The @context is still what classifies a nested object as an element instance on read (a field
+      // value carries none), so it is emitted, empty — an all-empty element instance must stay an
+      // element across the JSON round trip.
       rendering.put(JSON_LD_CONTEXT, MAPPER.createObjectNode());
-      for (String childKey : regularChildKeys)
-        rendering.withObject("/" + JSON_LD_CONTEXT)
-          .put(childKey, renderUri(instanceChildPropertyUri(elementInstanceArtifact, childKey)));
     }
 
     if (elementInstanceArtifact.createdOn().isPresent()) {
@@ -609,15 +608,14 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         objectNode.putNull(JSON_LD_VALUE);
       } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {
         objectNode.put(JSON_LD_VALUE, fieldInstanceArtifact.jsonLdValue().get().toString());
-      } else {
-        // jsonLdValue() is Optional.empty() — the generic FieldInstanceArtifact path the
-        // JsonArtifactReader uses when reading an instance without per-field schema context.
-        // CEDAR's contract on a literal-valued field instance requires @value to be present
-        // (possibly null) — dropping it produces {} which the template's sub-schema rejects
-        // ('required: [@value]'). Match the LiteralFieldInstance branch above and emit
-        // @value: null.
+      } else if (fieldInstanceArtifact.carriesValueKey()) {
+        // jsonLdValue() is Optional.empty() on the generic FieldInstanceArtifact the JsonArtifactReader
+        // produces when it reads an instance with no template to say what kind each field is. The
+        // document wrote an @value key, so this is an unfilled literal field, whose sub-schema requires
+        // one ('required: [@value]').
         objectNode.putNull(JSON_LD_VALUE);
-      } // No @id or @value present
+      } // The document wrote {}: an unfilled controlled-term or link field, whose sub-schema allows no
+        // @value at all. Rendering one here made the instance invalid against its own template.
     }
 
     if (fieldInstanceArtifact.label().isPresent() && fieldInstanceArtifact.label().get() != null) {
@@ -652,13 +650,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
   }
 
   /** A regular (field/element, not attribute-value) child needing an @context property mapping. */
-  private static boolean isRegularInstanceChild(ParentInstanceArtifact instance, String childKey) {
-    return instance.singleInstanceFieldInstances().containsKey(childKey)
-      || instance.multiInstanceFieldInstances().containsKey(childKey)
-      || instance.singleInstanceElementInstances().containsKey(childKey)
-      || instance.multiInstanceElementInstances().containsKey(childKey);
-  }
-
   /**
    * The @context property URI for an instance child: the value the model carries when present
    * (preserving any custom propertyIri), otherwise the deterministic default the CEDAR JSON
@@ -666,23 +657,18 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
    * lets an instance read from the (context-free) YAML exchange form still serialize a valid
    * @context.
    */
-  private static URI instanceChildPropertyUri(ParentInstanceArtifact instance, String childKey) {
-    URI stored = instance.jsonLdContext().get(childKey);
-    if (stored != null)
-      return stored;
-    return URI.create("https://schema.metadatacenter.org/properties/"
-      + java.net.URLEncoder.encode(childKey, java.nio.charset.StandardCharsets.UTF_8));
-  }
-
   private ObjectNode renderParentInstanceArtifact(ParentInstanceArtifact parentInstanceArtifact) {
     ObjectNode rendering = MAPPER.createObjectNode();
 
+    // An instance whose source carries no identifier gets a null one, not a minted one. The key has to
+    // be there: a template's schema lists @id among an element instance's required properties, and 30
+    // element children across the shared corpus do. A fresh URI would satisfy that too, and did, but it
+    // asserted an identity the artifact does not have and made every rendering of the same document
+    // differ from the last. A null passes validation and says what is true.
     if (parentInstanceArtifact.jsonLdId().isPresent()) {
       rendering.put(JSON_LD_ID, renderUri(parentInstanceArtifact.jsonLdId().get()));
-    } else // TODO Put constant in ModelNodeNames
-    {
-      rendering.put(JSON_LD_ID,
-          renderUri(URI.create("https://repo.metadatacenter.org/template-element-instances/" + UUID.randomUUID())));
+    } else {
+      rendering.putNull(JSON_LD_ID);
     }
 
     if (parentInstanceArtifact.name().isPresent()) {

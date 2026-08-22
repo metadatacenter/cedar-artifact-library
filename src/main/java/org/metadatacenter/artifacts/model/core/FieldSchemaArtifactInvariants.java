@@ -74,16 +74,7 @@ final class FieldSchemaArtifactInvariants
     validateOptionalFieldNotNull(self, valueConstraints, VALUE_CONSTRAINTS);
     validateOptionalFieldNotNull(self, annotations, "annotations");
 
-    String kind = self.getClass().getSimpleName();
-
-    if (minItems.isPresent() && minItems.get() < 0)
-      throw new IllegalStateException("minItems must be zero or greater in " + kind + " " + name);
-
-    if (maxItems.isPresent() && maxItems.get() < 1)
-      throw new IllegalStateException("maxItems must be one or greater in " + kind + " " + name);
-
-    if (minItems.isPresent() && maxItems.isPresent() && (minItems.get() > maxItems.get()))
-      throw new IllegalStateException("minItems must be less than or equal to maxItems in " + kind + " " + name);
+    ValidationHelper.validateItemBounds(self, name, minItems, maxItems);
   }
 
   /**

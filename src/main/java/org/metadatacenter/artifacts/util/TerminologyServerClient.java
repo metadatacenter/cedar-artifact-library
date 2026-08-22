@@ -10,21 +10,33 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTerm
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TerminologyServerClient
 {
-  private final String terminologyServerIntegratedSearchEndpoint;
+  private static final String INTEGRATED_SEARCH_PATH_SEGMENT = "integrated-search";
+  private static final String INTEGRATED_RETRIEVE_PATH_SEGMENT = "integrated-retrieve";
+
+  private static final int PAGE_SIZE = 1000;
+  private static final int MAXIMUM_PAGES = 1000;
+
+  private final String terminologyServerIntegratedRetrieveEndpoint;
   private final String terminologyServerApiKey;
   private final ObjectMapper mapper;
   private final ObjectWriter objectWriter;
 
-  public TerminologyServerClient(String terminologyServerIntegratedSearchEndpoint, String terminologyServerApiKey)
+  /**
+   * @param terminologyServerEndpoint The integrated-retrieve endpoint, the integrated-search
+   *                                  endpoint, or the base that the two share
+   */
+  public TerminologyServerClient(String terminologyServerEndpoint, String terminologyServerApiKey)
   {
-    this.terminologyServerIntegratedSearchEndpoint = terminologyServerIntegratedSearchEndpoint;
+    this.terminologyServerIntegratedRetrieveEndpoint = integratedRetrieveEndpoint(terminologyServerEndpoint);
     this.terminologyServerApiKey = terminologyServerApiKey;
 
     this.mapper = new ObjectMapper();
@@ -34,81 +46,116 @@ public class TerminologyServerClient
     this.objectWriter = mapper.writer().withDefaultPrettyPrinter();
   }
 
-  // Return prefLabel->URI
-  // TODO Replace this with call to integrated-retrieve endpoint so that more than 4000 values can be retrieved
   // TODO Think about sleep to avoid BioPortal limit of 15 calls per second limit
-  public Map<String, String> getValuesFromTerminologyServer(ControlledTermValueConstraints controlledTermValueConstraints)
+
+  /**
+   * Retrieve every value in the value space described by the supplied constraints, in the order that
+   * the terminology server returns them. Values are distinguished by URI, so classes that share a
+   * preferred label are all retained; a URI seen more than once is retained once.
+   */
+  public List<TerminologyValue> getValuesFromTerminologyServer(
+    ControlledTermValueConstraints controlledTermValueConstraints)
   {
-    Map<String, String> values = new HashMap<>();
+    Map<URI, TerminologyValue> valuesByUri = new LinkedHashMap<>();
 
     try {
       String vc = controlledTermValueConstraints2Json(controlledTermValueConstraints);
       Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
 
-      List<Map<String, String>> valueDescriptions;
-      // TODO Replace arbitrary 4000 BioPortal terms; show error if more
-      Map<String, Object> searchResult = integratedSearch(vcMap, 1, 4000,
-        terminologyServerIntegratedSearchEndpoint, terminologyServerApiKey);
-      valueDescriptions = searchResult.containsKey("collection") ?
-        (List<Map<String, String>>)searchResult.get("collection") :
-        new ArrayList<>();
-      if (valueDescriptions.size() > 0) {
-        for (int valueDescriptionsIndex = 0; valueDescriptionsIndex < valueDescriptions.size(); valueDescriptionsIndex++) {
-          String uri = valueDescriptions.get(valueDescriptionsIndex).get("@id");
-          String preferredLabel = valueDescriptions.get(valueDescriptionsIndex).get("prefLabel");
-          values.put(preferredLabel, uri);
+      int page = 1;
+      int retrievedCount = 0;
+
+      while (true) {
+        Map<String, Object> pageOfResults = integratedRetrieve(vcMap, page, PAGE_SIZE,
+          terminologyServerIntegratedRetrieveEndpoint, terminologyServerApiKey);
+
+        List<Map<String, String>> valueDescriptions = valueDescriptions(pageOfResults);
+
+        for (Map<String, String> valueDescription : valueDescriptions) {
+          TerminologyValue value = terminologyValue(valueDescription);
+          valuesByUri.putIfAbsent(value.uri(), value);
         }
+        retrievedCount += valueDescriptions.size();
+
+        if (valueDescriptions.size() < PAGE_SIZE)
+          break;
+
+        // The server reports no total when it has sorted values merged from several sources
+        Integer totalCount = totalCount(pageOfResults);
+        if (totalCount != null && retrievedCount >= totalCount)
+          break;
+
+        if (page == MAXIMUM_PAGES)
+          throw new RuntimeException(
+            "value space exceeds " + (MAXIMUM_PAGES * PAGE_SIZE) + " values, which is more than this client retrieves");
+
+        page++;
       }
     } catch (IOException | RuntimeException e) {
-      throw new RuntimeException("Error retrieving values from terminology server " + e.getMessage());
+      throw new RuntimeException("Error retrieving values from terminology server " + e.getMessage(), e);
     }
-    return values;
+
+    return List.copyOf(valuesByUri.values());
   }
 
-  private Map<String, Object> integratedSearch(java.util.Map<String, Object> valueConstraints,
-    Integer page, Integer pageSize, String integratedSearchEndpoint, String apiKey) throws IOException, RuntimeException
+  private TerminologyValue terminologyValue(Map<String, String> valueDescription)
+  {
+    String uri = valueDescription.get("@id");
+    String prefLabel = valueDescription.get("prefLabel");
+
+    if (uri == null)
+      throw new RuntimeException("value returned with no @id: " + valueDescription);
+
+    if (prefLabel == null)
+      throw new RuntimeException("value returned with no prefLabel: " + uri);
+
+    return new TerminologyValue(URI.create(uri), prefLabel);
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<Map<String, String>> valueDescriptions(Map<String, Object> pageOfResults)
+  {
+    return pageOfResults.containsKey("collection") ?
+      (List<Map<String, String>>)pageOfResults.get("collection") :
+      new ArrayList<>();
+  }
+
+  private Integer totalCount(Map<String, Object> pageOfResults)
+  {
+    Object totalCount = pageOfResults.get("totalCount");
+
+    return totalCount instanceof Number ? ((Number)totalCount).intValue() : null;
+  }
+
+  /**
+   * The integrated-retrieve endpoint pages through each constrained source and concatenates the
+   * results, so a request is bounded only by the page size it is given.
+   */
+  private static String integratedRetrieveEndpoint(String terminologyServerEndpoint)
+  {
+    String endpoint = terminologyServerEndpoint;
+
+    while (endpoint.endsWith("/"))
+      endpoint = endpoint.substring(0, endpoint.length() - 1);
+
+    if (endpoint.endsWith("/" + INTEGRATED_SEARCH_PATH_SEGMENT) ||
+      endpoint.endsWith("/" + INTEGRATED_RETRIEVE_PATH_SEGMENT))
+      endpoint = endpoint.substring(0, endpoint.lastIndexOf('/'));
+
+    return endpoint + "/" + INTEGRATED_RETRIEVE_PATH_SEGMENT;
+  }
+
+  private Map<String, Object> integratedRetrieve(Map<String, Object> valueConstraints,
+    Integer page, Integer pageSize, String integratedRetrieveEndpoint, String apiKey) throws IOException, RuntimeException
   {
     HttpURLConnection connection = null;
     Map<String, Object> resultsMap;
 
     try {
-      java.util.Map<String, Object> vcMap = new HashMap<>();
-      vcMap.put("valueConstraints", valueConstraints);
+      // integrated-retrieve takes the value constraints directly, where integrated-search nests
+      // them in a parameterObject alongside the user's input text
       Map<String, Object> payloadMap = new HashMap<>();
-      payloadMap.put("parameterObject", vcMap);
-      payloadMap.put("page", page);
-      payloadMap.put("pageSize", pageSize);
-      String payload = mapper.writeValueAsString(payloadMap);
-      connection = ConnectionUtil.createAndOpenConnection("POST", integratedSearchEndpoint, apiKey);
-      OutputStream os = connection.getOutputStream();
-      os.write(payload.getBytes());
-      os.flush();
-      int responseCode = connection.getResponseCode();
-      if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-        String message = "Error running integrated search. Response code: " + responseCode + "; Payload: " + payload;
-        throw new RuntimeException(message);
-      } else {
-        String response = ConnectionUtil.readResponseMessage(connection.getInputStream());
-        resultsMap = mapper.readValue(response, HashMap.class);
-      }
-    } finally {
-      if (connection != null) {
-        connection.disconnect();
-      }
-    }
-    return resultsMap;
-  }
-
-  private java.util.Map<String, Object> integratedRetrieve(java.util.Map<String, Object> valueConstraints,
-    Integer page, Integer pageSize, String integratedRetrieveEndpoint, String apiKey) throws IOException, RuntimeException
-  {
-    HttpURLConnection connection = null;
-    java.util.Map<String, Object> resultsMap;
-    try {
-      java.util.Map<String, Object> vcMap = new HashMap<>();
-      vcMap.put("valueConstraints", valueConstraints);
-      Map<String, Object> payloadMap = new HashMap<>();
-      payloadMap.put("parameterObject", vcMap);
+      payloadMap.put("valueConstraints", valueConstraints);
       payloadMap.put("page", page);
       payloadMap.put("pageSize", pageSize);
       String payload = mapper.writeValueAsString(payloadMap);

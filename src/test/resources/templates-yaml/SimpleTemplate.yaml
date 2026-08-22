@@ -495,10 +495,9 @@ children:
   datatype: iri
   values:
   - type: ontology
-    acronym: DOID
-    ontologyName: Human Disease Ontology
-    iri: https://data.bioontology.org/ontologies/DOID
-    numTerms: 18055
+    sourceAcronym: DOID
+    sourceName: Human Disease Ontology
+    termCount: 18055
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2022-12-01T14:25:30-08:00'
@@ -514,11 +513,11 @@ children:
   datatype: iri
   values:
   - type: branch
-    ontologyName: Human Disease Ontology (DOID)
-    acronym: DOID
-    termLabel: disease
-    iri: http://purl.obolibrary.org/obo/DOID_4
-    maxDepth: 0
+    sourceAcronym: DOID
+    sourceName: Human Disease Ontology (DOID)
+    termBaseIri: http://purl.obolibrary.org/obo/DOID_4
+    termBaseLabel: disease
+    termMaxDepth: 0
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2022-12-01T14:25:30-08:00'
@@ -534,23 +533,20 @@ children:
   datatype: iri
   values:
   - type: class
-    label: eyelid disease
-    acronym: DOID
+    sourceAcronym: DOID
+    termIri: http://purl.obolibrary.org/obo/DOID_530
     termType: class
     termLabel: eyelid disease
-    iri: http://purl.obolibrary.org/obo/DOID_530
   - type: class
-    label: nose disease
-    acronym: DOID
+    sourceAcronym: DOID
+    termIri: http://purl.obolibrary.org/obo/DOID_2825
     termType: class
     termLabel: nose disease
-    iri: http://purl.obolibrary.org/obo/DOID_2825
   - type: class
-    label: lung disease
-    acronym: DOID
+    sourceAcronym: DOID
+    termIri: http://purl.obolibrary.org/obo/DOID_850
     termType: class
     termLabel: lung disease
-    iri: http://purl.obolibrary.org/obo/DOID_850
   createdOn: '2022-12-01T14:25:30-08:00'
   createdBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   modifiedOn: '2022-12-01T14:25:30-08:00'

@@ -61,6 +61,7 @@ public enum FieldInputType
 
   public boolean isList() { return this == LIST; }
 
+
   public boolean isAttributeValue() { return this == ATTRIBUTE_VALUE; }
 
   public boolean isStatic() { return this == PAGE_BREAK || this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }

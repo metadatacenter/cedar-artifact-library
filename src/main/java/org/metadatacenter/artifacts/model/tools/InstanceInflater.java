@@ -110,6 +110,37 @@ public final class InstanceInflater
   }
 
   /**
+   * Hand an attribute-value field's key back before its group claims it.
+   *
+   * An instance is read without its template, so an empty array names no kind. {@code
+   * JsonArtifactReader} records one as an empty multi-instance field, which is one of the three
+   * things it could be, and an attribute-value field that names no attribute is written as
+   * exactly that empty array. The schema is in hand here and says which of the three it is, so
+   * the reader's provisional choice is withdrawn — the builders reject a key that is already
+   * registered, and the group cannot take a key the misreading still holds.
+   *
+   * Only an empty list is withdrawn. A child carrying values is a disagreement between the
+   * schema and the instance about what that child is, and is reported rather than discarded.
+   *
+   * @throws IllegalArgumentException if the instance holds the key as anything but an empty
+   *   multi-instance field.
+   */
+  private static void releaseAttributeValueChildKey(ParentInstanceArtifact existing, String childKey, Ops ops)
+  {
+    if (existing == null || !existing.childKeys().contains(childKey))
+      return;
+
+    List<FieldInstanceArtifact> misread = existing.multiInstanceFieldInstances().get(childKey);
+
+    if (misread == null || !misread.isEmpty())
+      throw new IllegalArgumentException("child " + childKey
+          + " is an attribute-value field in the schema, but the instance holds it as something"
+          + " other than a list of attribute names");
+
+    ops.removeMultiField().accept(childKey);
+  }
+
+  /**
    * Walk the schema's children in display order and (re-)emit each one: a child the instance is
    * missing gets the empty slot the JSON form requires; a child it carries is removed and
    * re-added — values untouched, elements recursively inflated — so the children end up in the
@@ -129,6 +160,7 @@ public final class InstanceInflater
           ops.removeAttrGroup().accept(childKey);
           ops.putAttrGroup().accept(childKey, group);
         } else {
+          releaseAttributeValueChildKey(existing, childKey, ops);
           ops.putAttrGroup().accept(childKey, new LinkedHashMap<>());
         }
         continue;

@@ -32,6 +32,7 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -60,6 +61,20 @@ public class YamlArtifactRoundTripTest
     ElementSchemaArtifact original = ElementSchemaArtifact.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/123")).withName("Study").build();
     roundTripElement(original);
+  }
+
+  @Test public void testRoundTripElementSchemaArtifactWithPreferredAndAlternateLabels()
+  {
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/456")).withName("Data File Language")
+      .withPreferredLabel("Data File Language").withAlternateLabels(java.util.List.of("File Language", "Language"))
+      .build();
+    roundTripElement(original);
+
+    ElementSchemaArtifact roundTripped = yamlArtifactReader.readElementSchemaArtifact(
+      yamlArtifactRenderer.renderElementSchemaArtifact(original));
+    assertEquals("Data File Language", roundTripped.preferredLabel().get());
+    assertEquals(java.util.List.of("File Language", "Language"), roundTripped.alternateLabels());
   }
 
   // -------- Per-field-type round trips --------
@@ -114,6 +129,8 @@ public class YamlArtifactRoundTripTest
     roundTripField(original);
   }
 
+
+
   @Test public void testRoundTripRadioFieldWithOptions()
   {
     RadioField original = RadioField.builder().withName("Covid-19 Status").withOption("Yes").withOption("No")
@@ -152,6 +169,26 @@ public class YamlArtifactRoundTripTest
       .withClassValueConstraint(URI.create("http://purl.bioontology.org/ontology/LNC/LA19711-3"), "LOINC", "Human",
         "Human",
         org.metadatacenter.artifacts.model.core.fields.constraints.ValueType.ONTOLOGY_CLASS)
+      .build();
+    roundTripField(original);
+  }
+
+  @Test public void testRoundTripFrozenOntologyConstraint()
+  {
+    // A frozen constraint carries the additive spec fields (sourceIri / sourceSystem / version); they
+    // must survive a YAML render -> read unchanged. The version triple exercises id + effectiveDate +
+    // declaredVersion; the reader's readVersion/readUri(SOURCE_IRI)/readString(SOURCE_SYSTEM) are shared
+    // by all four constraint kinds, so ontology coverage proves the mechanism for every kind.
+    var pinned = new org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec(
+      "63ef56dff672b6a1d3f9f23201aae788bacac7f073b858e705b9a6624525dd8b",
+      java.util.Optional.of("2026-07-01"), java.util.Optional.of("2026-06-30"));
+    var frozen = new org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint(
+      URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID", "Human Disease Ontology",
+      java.util.Optional.of(19578),
+      java.util.Optional.of(URI.create("http://purl.obolibrary.org/obo/doid")),
+      java.util.Optional.of("bioportal"), java.util.Optional.of(pinned));
+    ControlledTermField original = ControlledTermField.builder().withName("Disease")
+      .withOntologyValueConstraint(frozen)
       .build();
     roundTripField(original);
   }
@@ -300,6 +337,29 @@ public class YamlArtifactRoundTripTest
       "a field that carries a value must still be rendered, got: " + children);
   }
 
+  @Test public void testNumericInstanceValueRemainsAStringInYaml()
+  {
+    FieldInstanceArtifact age = FieldInstanceArtifact.create(
+      java.util.List.of(URI.create("http://www.w3.org/2001/XMLSchema#int")),
+      java.util.Optional.empty(), java.util.Optional.of("42"), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty(), java.util.Optional.empty());
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("Numeric instance")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withSingleInstanceFieldInstance("Age", age)
+      .build();
+
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(original);
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> children = (LinkedHashMap<String, Object>) rendering.get("children");
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> renderedAge = (LinkedHashMap<String, Object>) children.get("Age");
+
+    assertEquals("42", renderedAge.get("value"));
+    assertTrue(renderedAge.get("value") instanceof String,
+      "YAML and JSON must expose the same string-valued instance literal");
+    roundTripTemplateInstance(original);
+  }
+
   @Test public void testReaderRejectsExplicitNullValue()
   {
     // YAML contract: null is never a valid value. A `value: null` (or any null, anywhere) is
@@ -426,7 +486,9 @@ public class YamlArtifactRoundTripTest
     FieldInstanceArtifact attr1 = simpleLiteralField("foo");
     FieldInstanceArtifact attr2 = simpleLiteralField("bar");
     LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
-    group.put("attr1", attr1);
+    // "value" is a legal JSON-LD property name even though it is also the
+    // YAML field-literal key; the nested group shape must keep it unambiguous.
+    group.put("value", attr1);
     group.put("attr2", attr2);
 
     TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
@@ -434,6 +496,54 @@ public class YamlArtifactRoundTripTest
       .withAttributeValueFieldGroup("custom-attrs", group)
       .build();
     roundTripTemplateInstance(original);
+  }
+
+  @Test public void testValuelessAttributeIsOmittedFromYaml()
+  {
+    FieldInstanceArtifact empty = FieldInstanceArtifact.create(
+      java.util.Collections.emptyList(), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty(), java.util.Optional.empty(), java.util.Optional.empty(),
+      java.util.Optional.empty());
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("empty", empty);
+    group.put("filled", simpleLiteralField("value"));
+
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("Attributes")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withAttributeValueFieldGroup("custom-attrs", group)
+      .build();
+
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderTemplateInstanceArtifact(original);
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> attributes = (LinkedHashMap<String, Object>) rendering.get("custom-attrs");
+
+    assertFalse(attributes.containsKey("empty"), "an unset attribute must be omitted, not rendered as {}");
+    assertTrue(attributes.containsKey("filled"));
+    yamlArtifactReader.readTemplateInstanceArtifact(rendering);
+  }
+
+  @Test public void testYamlReaderRejectsAttributeNameThatWouldCollideInJson()
+  {
+    LinkedHashMap<String, Object> ordinaryValue = new LinkedHashMap<>();
+    ordinaryValue.put("value", "ordinary");
+    LinkedHashMap<String, Object> children = new LinkedHashMap<>();
+    children.put("title", ordinaryValue);
+
+    LinkedHashMap<String, Object> attributeValue = new LinkedHashMap<>();
+    attributeValue.put("value", "attribute");
+    LinkedHashMap<String, Object> attributes = new LinkedHashMap<>();
+    attributes.put("title", attributeValue);
+
+    LinkedHashMap<String, Object> instance = new LinkedHashMap<>();
+    instance.put("type", "instance");
+    instance.put("name", "Collision");
+    instance.put("isBasedOn", "https://repo.metadatacenter.org/templates/abc");
+    instance.put("children", children);
+    instance.put("attributes", attributes);
+
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+      () -> yamlArtifactReader.readTemplateInstanceArtifact(instance));
+    assertTrue(ex.getMessage().contains("already present"));
   }
 
   @Test public void testRoundTripElementInstanceWithAttributeValueFieldGroup()

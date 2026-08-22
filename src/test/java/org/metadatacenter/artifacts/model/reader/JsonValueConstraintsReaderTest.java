@@ -1,9 +1,12 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
@@ -48,6 +51,87 @@ public class JsonValueConstraintsReaderTest
     assertEquals("DOID", result.acronym());
     assertEquals("Human Disease Ontology", result.name());
     assertEquals(15000, result.numTerms().get());
+  }
+
+  // Source-explicit, version-pinned value constraints (VERSIONING-ROADMAP "The Model" §6) — additive and tolerant.
+
+  @Test public void testLegacyOntologyConstraintHasEmptySourceExplicitFields()
+  {
+    ObjectNode node = mapper.createObjectNode();
+    node.put("uri", "https://data.bioontology.org/ontologies/DOID");
+    node.put("acronym", "DOID");
+    node.put("name", "Human Disease Ontology");
+
+    OntologyValueConstraint result = JsonValueConstraintsReader.readOntologyValueConstraint(node, "/");
+
+    // A legacy entry omits the additive fields; they read as absent (BioPortal, latest, acronym iri).
+    assertTrue(result.iri().isEmpty());
+    assertTrue(result.sourceSystem().isEmpty());
+    assertTrue(result.version().isEmpty());
+  }
+
+  @Test public void testPinnedOntologyConstraintReadsTheTriple()
+  {
+    ObjectNode node = mapper.createObjectNode();
+    node.put("uri", "https://data.bioontology.org/ontologies/DOID");
+    node.put("acronym", "DOID");
+    node.put("name", "Human Disease Ontology");
+    node.put("iri", "http://purl.obolibrary.org/obo/doid");
+    node.put("sourceSystem", "BioPortal");
+    ObjectNode version = node.putObject("version");
+    version.put("id", "63ef56dff672");
+    version.put("effectiveDate", "2026-07-01");
+    version.put("declaredVersion", "2026-06-30");
+
+    OntologyValueConstraint result = JsonValueConstraintsReader.readOntologyValueConstraint(node, "/");
+
+    assertEquals(URI.create("http://purl.obolibrary.org/obo/doid"), result.iri().get());
+    assertEquals("BioPortal", result.sourceSystem().get());
+    assertTrue(result.version().isPresent());
+    assertEquals("63ef56dff672", result.version().get().id());
+    assertEquals("2026-07-01", result.version().get().effectiveDate().get());
+    assertEquals("2026-06-30", result.version().get().declaredVersion().get());
+  }
+
+  @Test public void testExplicitLatestVersionStringReadsAsLatest()
+  {
+    // The polymorphic "version": "latest" means latest, identical to omitting it -> empty.
+    ObjectNode node = mapper.createObjectNode();
+    node.put("uri", "https://data.bioontology.org/ontologies/DOID");
+    node.put("acronym", "DOID");
+    node.put("name", "Human Disease Ontology");
+    node.put("version", "latest");
+
+    assertTrue(JsonValueConstraintsReader.readOntologyValueConstraint(node, "/").version().isEmpty());
+  }
+
+  @Test public void testPinnedOntologyConstraintRoundTripsThroughJson()
+  {
+    // Render (via the renderer's mapper config) then read back: the triple survives, and a constraint
+    // without the fields renders none of them (NON_ABSENT omits empty Optionals).
+    ObjectMapper renderMapper = new ObjectMapper()
+      .registerModule(new Jdk8Module())
+      .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+
+    OntologyValueConstraint pinned = new OntologyValueConstraint(
+      URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID", "Human Disease Ontology",
+      Optional.of(19578), Optional.of(URI.create("http://purl.obolibrary.org/obo/doid")),
+      Optional.of("BioPortal"),
+      Optional.of(new VersionSpec("63ef56dff672", Optional.of("2026-07-01"), Optional.of("2026-06-30"))));
+
+    ObjectNode rendered = renderMapper.valueToTree(pinned);
+    assertEquals("http://purl.obolibrary.org/obo/doid", rendered.get("iri").asText());
+    assertEquals("BioPortal", rendered.get("sourceSystem").asText());
+    assertEquals("63ef56dff672", rendered.get("version").get("id").asText());
+
+    assertEquals(pinned, JsonValueConstraintsReader.readOntologyValueConstraint(rendered, "/"));
+
+    // A legacy constraint renders none of the additive keys — byte-identical to the old output.
+    ObjectNode legacyRendered = renderMapper.valueToTree(new OntologyValueConstraint(
+      URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID", "Human Disease Ontology", Optional.empty()));
+    assertFalse(legacyRendered.has("iri"));
+    assertFalse(legacyRendered.has("sourceSystem"));
+    assertFalse(legacyRendered.has("version"));
   }
 
   @Test public void testReadOntologyValueConstraintsArray()

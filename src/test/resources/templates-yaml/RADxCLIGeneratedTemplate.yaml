@@ -328,11 +328,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/identifierType
   - key: File Name
@@ -919,9 +919,8 @@ children:
     datatype: iri
     values:
     - type: ontology
-      acronym: MESH
-      ontologyName: MESH
-      iri: https://bioportal.bioontology.org/ontologies/MESH
+      sourceAcronym: MESH
+      sourceName: MESH
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/subjectIdentifier
   - key: Subject Identifier Scheme
@@ -1242,11 +1241,10 @@ children:
       label: Dataset
     values:
     - type: class
-      label: Dataset
-      acronym: GDMT
+      sourceAcronym: GDMT
+      termIri: http://vocab.fairdatacollective.org/gdmt/Dataset
       termType: class
       termLabel: Dataset
-      iri: http://vocab.fairdatacollective.org/gdmt/Dataset
     configuration:
       hidden: true
       propertyIri: http://purl.org/radx-terms/metadata-terms/typeOfContent
@@ -1298,11 +1296,11 @@ children:
       label: Person
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/ResourceCreatorType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/ResourceCreatorType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/creatorType
   - key: Creator Name
@@ -1355,11 +1353,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/creatorIdentifierScheme
   - key: Creator Email
@@ -1403,11 +1401,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/creatorAffiliationIdentifierScheme
   - key: Creator Role
@@ -1421,11 +1419,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/ContributorRole
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/ContributorRole
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/creatorRole
   configuration:
@@ -1462,11 +1460,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/relatedResourceIdentifierType
   - key: Related Resource File Name
@@ -1490,11 +1488,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/ResourceTypeCategory
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/ResourceTypeCategory
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/relatedResourceTypeCategory
   - key: Related Resource Relation
@@ -1534,11 +1532,11 @@ children:
       label: Person
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/ResourceCreatorType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/ResourceCreatorType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/contributorType
   - key: Contributor Name
@@ -1592,11 +1590,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/contributorIdentifierScheme
   - key: Contributor Affiliation
@@ -1630,11 +1628,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/contributorAffiliationIdentifierScheme
   - key: Contributor Email
@@ -1658,11 +1656,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/ContributorRole
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/ContributorRole
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/contributorRole
   configuration:
@@ -1689,11 +1687,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/LicenseIdentifier
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/LicenseIdentifier
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/licenseName
   - key: License Text
@@ -1736,11 +1734,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/DateType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/DateType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/eventType
   - key: Date
@@ -1803,11 +1801,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/parentStudyIdentifierScheme
   - key: Study Name
@@ -1959,11 +1957,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/funderIdentifierScheme
   configuration:
@@ -2000,11 +1998,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/distributionPublisherIdentifier
   - key: Distribution Publisher Identifier Scheme
@@ -2018,11 +2016,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierScheme
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/distributionPublisherIdentifierScheme
   - key: Distribution Identifier
@@ -2046,11 +2044,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/distributionIdentifierType
   - key: Distribution Format
@@ -2074,11 +2072,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/MIMEType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/MIMEType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/distributionMediaType
   - key: Distribution Size
@@ -2248,11 +2246,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/dataSourceIdentifierScheme
   configuration:
@@ -2299,11 +2297,11 @@ children:
     datatype: iri
     values:
     - type: branch
-      ontologyName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
-      acronym: FDC-GDMT
-      termLabel: FDC-GDMT
-      iri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
-      maxDepth: 2147483647
+      sourceAcronym: FDC-GDMT
+      sourceName: https://bioportal.bioontology.org/ontologies/FDC-GDMT
+      termBaseIri: http://vocab.fairdatacollective.org/gdmt/IdentifierType
+      termBaseLabel: FDC-GDMT
+      termMaxDepth: 2147483647
     configuration:
       propertyIri: http://purl.org/radx-terms/metadata-terms/dataStreamIdentifierScheme
   - key: Data Stream Variable Names

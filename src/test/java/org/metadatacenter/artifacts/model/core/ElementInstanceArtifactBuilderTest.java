@@ -101,4 +101,14 @@ public class ElementInstanceArtifactBuilderTest
     assertThrows(IllegalArgumentException.class,
       () -> builder.withAttributeValueFieldGroup("attrs", group));
   }
+
+  @Test public void testWithAttributeValueFieldGroupRejectsReservedNameInNestedContainer()
+  {
+    LinkedHashMap<String, FieldInstanceArtifact> group = new LinkedHashMap<>();
+    group.put("@context", literal("must not replace element metadata"));
+
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+      () -> ElementInstanceArtifact.builder().withAttributeValueFieldGroup("attrs", group));
+    assertTrue(ex.getMessage().contains("reserved"));
+  }
 }

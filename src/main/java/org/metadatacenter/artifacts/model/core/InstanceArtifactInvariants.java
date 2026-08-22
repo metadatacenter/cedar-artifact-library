@@ -119,6 +119,52 @@ final class InstanceArtifactInvariants
       if (!accountedFor.contains(childKey))
         throw new IllegalStateException("childKey " + childKey + " in " + self.getClass().getSimpleName()
           + " has no corresponding child instance");
+
+    validateAttributeValueNames(self, singleInstanceFieldInstances, multiInstanceFieldInstances,
+      singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
+  }
+
+  private static final Set<String> RESERVED_ATTRIBUTE_VALUE_NAMES = Set.of(
+    "@context", "@id", "@type", "@value", "@language",
+    "schema:isBasedOn", "schema:name", "schema:description",
+    "pav:derivedFrom", "pav:createdOn", "pav:createdBy", "pav:lastUpdatedOn",
+    "oslc:modifiedBy", "rdfs:label", "skos:prefLabel", "skos:altLabel", "skos:notation",
+    "_annotations");
+
+  static boolean isReservedAttributeValueName(String name)
+  {
+    return name.startsWith("@") || RESERVED_ATTRIBUTE_VALUE_NAMES.contains(name);
+  }
+
+  private static void validateAttributeValueNames(Object self,
+                                                  Map<String, ?> singleInstanceFieldInstances,
+                                                  Map<String, ?> multiInstanceFieldInstances,
+                                                  Map<String, ?> singleInstanceElementInstances,
+                                                  Map<String, ?> multiInstanceElementInstances,
+                                                  Map<String, ? extends Map<String, ?>> attributeValueFieldInstanceGroups)
+  {
+    Set<String> siblingNames = new HashSet<>();
+    siblingNames.addAll(singleInstanceFieldInstances.keySet());
+    siblingNames.addAll(multiInstanceFieldInstances.keySet());
+    siblingNames.addAll(singleInstanceElementInstances.keySet());
+    siblingNames.addAll(multiInstanceElementInstances.keySet());
+    siblingNames.addAll(attributeValueFieldInstanceGroups.keySet());
+
+    Map<String, String> firstGroupForName = new java.util.HashMap<>();
+    for (Map.Entry<String, ? extends Map<String, ?>> group : attributeValueFieldInstanceGroups.entrySet()) {
+      for (String name : group.getValue().keySet()) {
+        if (isReservedAttributeValueName(name))
+          throw new IllegalStateException("attribute-value name " + name + " in " + group.getKey()
+            + " of " + self.getClass().getSimpleName() + " is reserved for instance metadata");
+        if (siblingNames.contains(name))
+          throw new IllegalStateException("attribute-value name " + name + " in " + group.getKey()
+            + " of " + self.getClass().getSimpleName() + " collides with another child in the same object");
+        String firstGroup = firstGroupForName.putIfAbsent(name, group.getKey());
+        if (firstGroup != null)
+          throw new IllegalStateException("attribute-value name " + name + " in " + group.getKey()
+            + " of " + self.getClass().getSimpleName() + " is already used by attribute-value field " + firstGroup);
+      }
+    }
   }
 
   private static void checkKeysDeclared(Object self, Set<String> declaredChildKeys, Set<String> mapKeys,

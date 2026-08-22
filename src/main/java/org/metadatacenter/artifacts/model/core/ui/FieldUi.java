@@ -60,6 +60,7 @@ public sealed interface FieldUi extends Ui permits TemporalFieldUi, NumericField
 
   @JsonIgnore default boolean isList() { return inputType() == FieldInputType.LIST; }
 
+
   @JsonIgnore default boolean isPhoneNumber() { return inputType() == FieldInputType.PHONE_NUMBER; }
 
   @JsonIgnore default boolean isIri() { return inputType().isIri(); }

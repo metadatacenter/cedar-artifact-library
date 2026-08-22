@@ -69,6 +69,8 @@ public class JsonArtifactRoundTripTest
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
+
+
   @Test public void testRoundTripTemplateSchemaArtifactWithAnnotations()
   {
     Annotations annotations = Annotations.builder()
@@ -93,6 +95,21 @@ public class JsonArtifactRoundTripTest
       .withAnnotations(annotations).build();
 
     testRoundTripElementSchemaArtifact(original);
+  }
+
+  @Test public void testRoundTripElementSchemaArtifactWithPreferredAndAlternateLabels()
+  {
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/456")).withName("Data File Language")
+      .withPreferredLabel("Data File Language").withAlternateLabels(java.util.List.of("File Language", "Language"))
+      .build();
+
+    testRoundTripElementSchemaArtifact(original);
+
+    ElementSchemaArtifact roundTripped = artifactReader.readElementSchemaArtifact(
+      jsonArtifactRenderer.renderElementSchemaArtifact(original));
+    assertEquals("Data File Language", roundTripped.preferredLabel().get());
+    assertEquals(java.util.List.of("File Language", "Language"), roundTripped.alternateLabels());
   }
 
   @Test public void testRoundTripFieldSchemaArtifactWithAnnotations()

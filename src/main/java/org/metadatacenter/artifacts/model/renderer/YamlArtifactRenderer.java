@@ -7,6 +7,7 @@ import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
+import org.metadatacenter.artifacts.util.TerminologyValue;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -135,6 +136,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
+    if (elementSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, elementSchemaArtifact.preferredLabel().get());
+
+    if (!elementSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(elementSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
+    }
+
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
@@ -155,6 +164,14 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
+    if (elementSchemaArtifact.preferredLabel().isPresent())
+      rendering.put(PREF_LABEL, elementSchemaArtifact.preferredLabel().get());
+
+    if (!elementSchemaArtifact.alternateLabels().isEmpty()) {
+      List<Object> alternateLabelRendering = new ArrayList<>(elementSchemaArtifact.alternateLabels());
+      rendering.put(ALT_LABEL, alternateLabelRendering);
+    }
+
     if (elementSchemaArtifact.annotations().isPresent())
       rendering.put(ANNOTATIONS, renderAnnotations(elementSchemaArtifact.annotations().get()));
 
@@ -173,24 +190,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * name: Disease
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     termBaseLabel: Area unit
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
@@ -255,24 +272,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * name: Disease
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: https://data.bioontology.org/ontologies/DOID
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: http://purl.bioontology.org/ontology/LNC/LA19711-3
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: http://purl.bioontology.org/ontology/LNC/LA19711-3
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: http://purl.org/twc/dpo/ont/Disease
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: http://purl.org/twc/dpo/ont/Disease
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161
+   *     termBaseLabel: Area unit
    * </pre>
    */
   public LinkedHashMap<String, Object> renderFieldSchemaArtifact(String fieldKey,
@@ -364,8 +381,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateInstanceArtifact.description().isPresent() && !templateInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description().get());
 
-    // The id is emitted in both compact and full forms so the instance round-trips.
-    if (templateInstanceArtifact.jsonLdId().isPresent())
+    // Left out of the compact form with the rest of what a repository assigns; see
+    // renderTopLevelSchemaArtifactBase.
+    if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
@@ -423,8 +441,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementInstanceArtifact.description().isPresent() && !elementInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, elementInstanceArtifact.description().get());
 
-    // The id is emitted in both compact and full forms so the instance round-trips.
-    if (elementInstanceArtifact.jsonLdId().isPresent())
+    // Left out of the compact form with the rest of what a repository assigns; see
+    // renderTopLevelSchemaArtifactBase.
+    if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
     if (!isCompact && elementInstanceArtifact.createdOn().isPresent())
@@ -612,15 +631,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // The value is emitted only when present (an unset slot returned early above, so this is
     // never a `value: null`).
     if (hasValue) {
-      // Same compact-YAML rule as numeric defaults: when the field's declared @type is
-      // an XSD numeric datatype and the stringified value parses cleanly as a number,
-      // emit a bare number for readable output. Pathological forms (leading zeros,
-      // exponential, etc.) stay String-typed so the YAML serializer keeps them quoted.
       String raw = fieldInstanceArtifact.jsonLdValue().get();
-      Object rendered = isNumericInstance(fieldInstanceArtifact)
-        ? renderNumericLiteralForYaml(raw)
-        : raw;
-      fieldInstanceArtifactRendering.put(VALUE, rendered);
+      // Instance @value is string-valued in the model and in JSON. Keep it a
+      // string in YAML as well so choosing a serialization format cannot change
+      // the value's scalar type. Numeric schema defaults remain numeric below.
+      fieldInstanceArtifactRendering.put(VALUE, raw);
     }
 
     if (fieldInstanceArtifact.label().isPresent())
@@ -647,24 +662,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * altLabels: [ "Patient Diseases", "Diseases" ]
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     termBaseLabel: Area unit
    * </pre>
    */
   private void addCoreFieldSchemaArtifactRendering(FieldSchemaArtifact fieldSchemaArtifact,
@@ -754,24 +769,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <pre>
    * values:
    *   - type: ontology
-   *     acronym: DOID
-   *     ontologyName: Human Disease Ontology
-   *     iri: "https://data.bioontology.org/ontologies/DOID"
+   *     sourceAcronym: DOID
+   *     sourceName: Human Disease Ontology
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: branch
-   *     ontologyName: Diabetes Pharmacology Ontology
-   *     acronym: DPCO
-   *     termLabel: Disease
-   *     iri: "http://purl.org/twc/dpo/ont/Disease"
+   *     sourceAcronym: DPCO
+   *     sourceName: Diabetes Pharmacology Ontology
+   *     termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *     termBaseLabel: Disease
+   *     termMaxDepth: 0
    *   - type: valueSet
-   *     acronym: HRAVS
-   *     valueSetName: Area unit
-   *     iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     sourceAcronym: HRAVS
+   *     termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *     termBaseLabel: Area unit
    * </pre>
    */
   private void renderValueConstraintsValues(ValueConstraints valueConstraints, LinkedHashMap<String, Object> rendering)
@@ -830,23 +845,23 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * <pre>
    * values:
    *   - type: class
-   *     label: Human
-   *     acronym: LOINC
-   *     termType: OntologyClass
+   *     sourceAcronym: LOINC
+   *     termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     termType: class
    *     termLabel: Homo Sapiens
-   *     iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *     label: Human
    *   - type: class
-   *     label: mm^2
-   *     acronym: HRAVS
-   *     termType: ValueSet
+   *     sourceAcronym: HRAVS
+   *     termIri: http://purl.obolibrary.org/obo/UO_0000082
+   *     termType: value
    *     termLabel: square millimeter
-   *     iri: http://purl.obolibrary.org/obo/UO_0000082
+   *     label: mm^2
    *   - type: class
-   *     label: um^2
-   *     acronym: HRAVS
-   *     termType: ValueSet
+   *     sourceAcronym: HRAVS
+   *     termIri: http://purl.obolibrary.org/obo/UO_0010001
+   *     termType: value
    *     termLabel: square micrometer
-   *     iri: http://purl.obolibrary.org/obo/UO_0010001
+   *     label: um^2
    * </pre>
    */
   private void renderValueConstraintsValuesInlined(ValueConstraints valueConstraints,
@@ -922,14 +937,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
       .withOntologyValueConstraint(ontologyValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+    List<TerminologyValue> values = terminologyServerClient.getValuesFromTerminologyServer(
       controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
-      String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
-      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, ontologyValueConstraint.acronym(),
-        preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
+    for (TerminologyValue value : values) {
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(value.uri(),
+        ontologyValueConstraint.acronym(), value.prefLabel(), value.prefLabel(), ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -947,14 +960,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
       .withBranchValueConstraint(branchValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+    List<TerminologyValue> values = terminologyServerClient.getValuesFromTerminologyServer(
       controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
-      String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
-      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, branchValueConstraint.acronym(),
-        preferredLabel, preferredLabel, ValueType.ONTOLOGY_CLASS);
+    for (TerminologyValue value : values) {
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(value.uri(),
+        branchValueConstraint.acronym(), value.prefLabel(), value.prefLabel(), ValueType.ONTOLOGY_CLASS);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -972,14 +983,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     ControlledTermValueConstraints controlledTermValueConstraints = ControlledTermValueConstraints.builder()
       .withValueSetValueConstraint(valueSetValueConstraint).build();
 
-    Map<String, String> preferredLabel2Uri = terminologyServerClient.getValuesFromTerminologyServer(
+    List<TerminologyValue> values = terminologyServerClient.getValuesFromTerminologyServer(
       controlledTermValueConstraints);
 
-    for (Map.Entry<String, String> preferredLabel2UriEntry : preferredLabel2Uri.entrySet()) {
-      String preferredLabel = preferredLabel2UriEntry.getKey();
-      URI uri = java.net.URI.create(preferredLabel2UriEntry.getValue());
-      ClassValueConstraint classValueConstraint = new ClassValueConstraint(uri, valueSetValueConstraint.vsCollection(),
-        preferredLabel, preferredLabel, ValueType.VALUE);
+    for (TerminologyValue value : values) {
+      ClassValueConstraint classValueConstraint = new ClassValueConstraint(value.uri(),
+        valueSetValueConstraint.vsCollection(), value.prefLabel(), value.prefLabel(), ValueType.VALUE);
       classValueConstraints.add(classValueConstraint);
     }
 
@@ -1113,6 +1122,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       if (textValueConstraints.regex().isPresent())
         rendering.put(REGEX, textValueConstraints.regex().get());
     }
+
   }
 
   private List<LinkedHashMap<String, Object>> renderChildSchemas(ParentSchemaArtifact parentSchemaArtifact,
@@ -1201,12 +1211,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(RECOMMENDED, true);
     }
 
-    // Attribute-value and static fields don't get a propertyUri mapping in the JSON
-    // @context (see ParentSchemaArtifact.getChildPropertyUris which skips them), so a
-    // propertyUri carried in their YAML configuration would be lost on the JSON round
-    // trip. Emit only for field kinds where the JSON serialization actually preserves it.
-    if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent()
-      && !fieldSchemaArtifact.isAttributeValue() && !fieldSchemaArtifact.isStatic())
+    // The IRI the child is addressed by, written for whatever kind of field carries one. An
+    // attribute-value or static field was skipped here because the JSON @context has no mapping for
+    // one (ParentSchemaArtifact.getChildPropertyUris skips them), so what YAML kept, a conversion to
+    // JSON would drop. That is a fact about the JSON representation, which both model libraries apply
+    // the same way; it is not a reason for the YAML to forget what the template declared. The compact
+    // form drops the key for every kind, as it drops the rest of what the system records.
+    if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
     if (parentSchemaArtifact.getUi().propertyLabels().containsKey(fieldKey)) {
@@ -1288,12 +1299,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    // The id is emitted whenever the artifact has one — top-level artifacts and nested
-    // children alike, in both compact and full forms. It identifies the artifact itself, so
-    // unlike the provenance/version fields below the compact form keeps it. A nested child is
-    // not required to have an id (the reader never demands one), but when it does the renderer
-    // preserves it so a JSON template carrying child ids survives a YAML round trip.
-    if (schemaArtifact.jsonLdId().isPresent())
+    // The compact form is an identity-free structural description. Repository identifiers belong to
+    // the stored schema artifacts, including embedded fields and elements, and therefore appear only
+    // in the full form. Semantic identifiers in instance values are rendered by the instance paths.
+    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
       rendering.put(ID, schemaArtifact.jsonLdId().get().toString());
 
     if (!isCompact && schemaArtifact.status().isPresent())
@@ -1423,8 +1432,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String attributeValueFieldInstanceFieldKey = attributeValueFieldInstanceGroupField.getKey();
       FieldInstanceArtifact fieldInstanceArtifact = attributeValueFieldInstanceGroupField.getValue();
 
-      attributeValueFieldInstanceGroupFieldsRendering.put(attributeValueFieldInstanceFieldKey,
-        renderFieldInstanceArtifact(fieldInstanceArtifact));
+      LinkedHashMap<String, Object> fieldRendering = renderFieldInstanceArtifact(fieldInstanceArtifact);
+      // The same omission rule applies inside an attribute-value group: an attribute whose
+      // value is unknown must not become `{}`, because the strict YAML reader rejects empty
+      // placeholders everywhere in the document.
+      if (!fieldRendering.isEmpty())
+        attributeValueFieldInstanceGroupFieldsRendering.put(attributeValueFieldInstanceFieldKey, fieldRendering);
     }
 
     return attributeValueFieldInstanceGroupFieldsRendering;
@@ -1458,24 +1471,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return offsetDateTime.format(datetimeFormatter);
   }
 
-  /** Set of XSD URIs that count as numeric for unquoting purposes in instance values. */
-  private static final Set<URI> XSD_NUMERIC_URIS;
-  static {
-    Set<URI> uris = new HashSet<>();
-    for (XsdNumericDatatype t : XsdNumericDatatype.values()) uris.add(t.toUri());
-    XSD_NUMERIC_URIS = Collections.unmodifiableSet(uris);
-  }
-
-  /** True when the instance's declared @type is an XSD numeric datatype. */
-  private static boolean isNumericInstance(FieldInstanceArtifact fieldInstanceArtifact)
-  {
-    for (URI t : fieldInstanceArtifact.jsonLdTypes())
-      if (XSD_NUMERIC_URIS.contains(t)) return true;
-    return false;
-  }
-
   /**
-   * Decide how to emit a numeric literal in YAML output.
+   * Decide how to emit a numeric schema default in YAML output.
    *
    * <p>Returns the parsed {@link Number} (Long or Double) when the canonical string
    * representation is round-trip-safe under SnakeYAML's auto-typing — i.e. a bare
@@ -1489,8 +1486,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * string-ness across a subsequent read (which is what the pathological forms
    * need: a Java String "010" must not round-trip as octal Integer 8).
    *
-   * <p>The library's reader normalises to a canonical String at the model boundary
-   * either way, so the round trip is correct in both directions.
+   * <p>Instance values do not use this conversion: their JSON-LD {@code @value}
+   * is string-valued and YAML preserves that same scalar type.
    */
   private static Object renderNumericLiteralForYaml(String canonical)
   {
@@ -1515,31 +1512,41 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: class
-   *   label: Human
-   *   acronym: LOINC
+   *   sourceAcronym: LOINC
+   *   termIri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
    *   termType: class
    *   termLabel: Homo Sapiens
-   *   iri: "http://purl.bioontology.org/ontology/LNC/LA19711-3"
+   *   label: Human
    * </pre>
    */
-  private LinkedHashMap<String, Object> renderClassValueConstraint(ClassValueConstraint classValueConstraint)
+  /** The pinned version triple {@code {id, effectiveDate?, declaredVersion?}}; absent version omits the
+   *  whole key (⇒ latest), mirroring the JSON renderer. */
+  private static LinkedHashMap<String, Object> renderVersionSpec(VersionSpec v)
   {
-    LinkedHashMap<String, Object> classValueConstraintRendering = new LinkedHashMap<>();
+    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
+    m.put(VERSION_ID, v.id());
+    v.effectiveDate().ifPresent(d -> m.put(VERSION_EFFECTIVE_DATE, d));
+    v.declaredVersion().ifPresent(d -> m.put(VERSION_DECLARED_VERSION, d));
+    return m;
+  }
 
-    classValueConstraintRendering.put(TYPE, CLASS);
-    classValueConstraintRendering.put(LABEL, classValueConstraint.label());
-    classValueConstraintRendering.put(ACRONYM, classValueConstraint.source());
-
-    // TODO Use typesafe switch when available
-    if (classValueConstraint.type() == ValueType.ONTOLOGY_CLASS)
-      classValueConstraintRendering.put(TERM_TYPE, "class");
-    else
-      classValueConstraintRendering.put(TERM_TYPE, "value");
-
-    classValueConstraintRendering.put(TERM_LABEL, classValueConstraint.prefLabel());
-    classValueConstraintRendering.put(IRI, classValueConstraint.uri().toString());
-
-    return classValueConstraintRendering;
+  private LinkedHashMap<String, Object> renderClassValueConstraint(ClassValueConstraint c)
+  {
+    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
+    m.put(TYPE, CLASS);
+    c.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
+    m.put(SOURCE_ACRONYM, c.source());
+    c.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
+    m.put(TERM_IRI, c.uri().toString());
+    m.put(TERM_TYPE, c.type() == ValueType.ONTOLOGY_CLASS ? "class" : "value");
+    m.put(TERM_LABEL, c.prefLabel());
+    // What the ontology calls the term, then what this template calls it, the second only when an
+    // author has made them differ. A class read back with no display label of its own takes the
+    // preferred one, so the common case stays a single key.
+    if (!c.label().equals(c.prefLabel()))
+      m.put(TERM_DISPLAY_LABEL, c.label());
+    c.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    return m;
   }
 
   /**
@@ -1548,23 +1555,23 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: ontology
-   *   acronym: DOID
-   *   ontologyName: Human Disease Ontology
-   *   iri: "https://data.bioontology.org/ontologies/DOID"
+   *   sourceAcronym: DOID
+   *   sourceName: Human Disease Ontology
    * </pre>
    */
-  private LinkedHashMap<String, Object> renderOntologyValueConstraint(OntologyValueConstraint ontologyValueConstraint)
+  private LinkedHashMap<String, Object> renderOntologyValueConstraint(OntologyValueConstraint o)
   {
-    LinkedHashMap<String, Object> ontologyValueConstraintRendering = new LinkedHashMap<>();
-
-    ontologyValueConstraintRendering.put(TYPE, ONTOLOGY);
-    ontologyValueConstraintRendering.put(ACRONYM, ontologyValueConstraint.acronym());
-    ontologyValueConstraintRendering.put(ONTOLOGY_NAME, ontologyValueConstraint.name());
-    ontologyValueConstraintRendering.put(IRI, ontologyValueConstraint.uri().toString());
-    if (ontologyValueConstraint.numTerms().isPresent())
-      ontologyValueConstraintRendering.put(NUM_TERMS, ontologyValueConstraint.numTerms().get());
-
-    return ontologyValueConstraintRendering;
+    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
+    m.put(TYPE, ONTOLOGY);
+    o.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
+    m.put(SOURCE_ACRONYM, o.acronym());
+    m.put(SOURCE_NAME, o.name());
+    o.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
+    // The ontology's backend URL is not rendered: it is derivable from the acronym and reconstructed on
+    // read (VERSIONING-ROADMAP "Revisit: sourceUri is derivable").
+    o.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
+    o.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    return m;
   }
 
   /**
@@ -1573,24 +1580,26 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: branch
-   *   ontologyName: Diabetes Pharmacology Ontology
-   *   acronym: DPCO
-   *   termLabel: Disease
-   *   iri: "http://purl.org/twc/dpo/ont/Disease"
+   *   sourceAcronym: DPCO
+   *   sourceName: Diabetes Pharmacology Ontology
+   *   termBaseIri: "http://purl.org/twc/dpo/ont/Disease"
+   *   termBaseLabel: Disease
+   *   termMaxDepth: 0
    * </pre>
    */
-  private LinkedHashMap<String, Object> renderBranchValueConstraint(BranchValueConstraint branchValueConstraint)
+  private LinkedHashMap<String, Object> renderBranchValueConstraint(BranchValueConstraint b)
   {
-    LinkedHashMap<String, Object> branchValueConstraintRendering = new LinkedHashMap<>();
-
-    branchValueConstraintRendering.put(TYPE, BRANCH);
-    branchValueConstraintRendering.put(ONTOLOGY_NAME, branchValueConstraint.source());
-    branchValueConstraintRendering.put(ACRONYM, branchValueConstraint.acronym());
-    branchValueConstraintRendering.put(TERM_LABEL, branchValueConstraint.name());
-    branchValueConstraintRendering.put(IRI, branchValueConstraint.uri().toString());
-    branchValueConstraintRendering.put(MAX_DEPTH, branchValueConstraint.maxDepth());
-
-    return branchValueConstraintRendering;
+    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
+    m.put(TYPE, BRANCH);
+    b.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
+    m.put(SOURCE_ACRONYM, b.acronym());
+    m.put(SOURCE_NAME, b.source());
+    b.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
+    m.put(TERM_BASE_IRI, b.uri().toString());
+    m.put(TERM_BASE_LABEL, b.name());
+    m.put(TERM_MAX_DEPTH, b.maxDepth());
+    b.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    return m;
   }
 
   /**
@@ -1599,23 +1608,23 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * e.g.,
    * <pre>
    *   type: valueSet
-   *   acronym: HRAVS
-   *   valueSetName: Area unit
-   *   iri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *   sourceAcronym: HRAVS
+   *   termBaseIri: "https://purl.humanatlas.io/vocab/hravs#HRAVS_1000161"
+   *   termBaseLabel: Area unit
    * </pre>
    */
-  private LinkedHashMap<String, Object> renderValueSetValueConstraint(ValueSetValueConstraint valueSetValueConstraint)
+  private LinkedHashMap<String, Object> renderValueSetValueConstraint(ValueSetValueConstraint vs)
   {
-    LinkedHashMap<String, Object> valueSetValueConstraintRendering = new LinkedHashMap<>();
-
-    valueSetValueConstraintRendering.put(TYPE, VALUE_SET);
-    valueSetValueConstraintRendering.put(ACRONYM, valueSetValueConstraint.vsCollection());
-    valueSetValueConstraintRendering.put(VALUE_SET_NAME, valueSetValueConstraint.name());
-    valueSetValueConstraintRendering.put(IRI, valueSetValueConstraint.uri().toString());
-    if (valueSetValueConstraint.numTerms().isPresent())
-      valueSetValueConstraintRendering.put(NUM_TERMS, valueSetValueConstraint.numTerms().get());
-
-    return valueSetValueConstraintRendering;
+    LinkedHashMap<String, Object> m = new LinkedHashMap<>();
+    m.put(TYPE, VALUE_SET);
+    vs.sourceSystem().ifPresent(s -> m.put(SOURCE_SYSTEM, s));
+    m.put(SOURCE_ACRONYM, vs.vsCollection());
+    vs.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
+    m.put(TERM_BASE_IRI, vs.uri().toString());
+    m.put(TERM_BASE_LABEL, vs.name());
+    vs.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
+    vs.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    return m;
   }
 
   private static LinkedHashMap<String, Object> renderLiteralValueConstraint(

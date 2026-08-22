@@ -140,4 +140,28 @@ public class InstanceArtifactChildKeyConsistencyTest
   {
     assertDoesNotThrow(() -> templateRecord(List.of(), singleField(), noGroups()));
   }
+
+  @Test public void testRecordRejectsAttributeValueNameCollidingWithOrdinaryChild()
+  {
+    IllegalStateException ex = assertThrows(IllegalStateException.class,
+      () -> templateRecord(List.of("title", "attrs"), singleField("title"), attrGroup("attrs", "title")));
+    assertTrue(ex.getMessage().contains("collides"), ex.getMessage());
+  }
+
+  @Test public void testRecordRejectsReservedAttributeValueName()
+  {
+    IllegalStateException ex = assertThrows(IllegalStateException.class,
+      () -> templateRecord(List.of("attrs", "@context"), singleField(), attrGroup("attrs", "@context")));
+    assertTrue(ex.getMessage().contains("reserved"), ex.getMessage());
+  }
+
+  @Test public void testRecordRejectsAttributeNameUsedByTwoGroups()
+  {
+    LinkedHashMap<String, Map<String, FieldInstanceArtifact>> groups = attrGroup("first", "shared");
+    groups.put("second", attrGroup("ignored", "shared").get("ignored"));
+
+    IllegalStateException ex = assertThrows(IllegalStateException.class,
+      () -> templateRecord(List.of("first", "second", "shared"), singleField(), groups));
+    assertTrue(ex.getMessage().contains("already used"), ex.getMessage());
+  }
 }

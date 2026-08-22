@@ -36,18 +36,18 @@ correctly.
 The pattern is intricate but mechanical. New field types must follow it exactly:
 
 ```java
-public final class FooField implements FieldSchemaArtifact {
-  // ... record-style accessors ...
+public sealed interface FooField extends FieldSchemaArtifact {
+  static FooFieldBuilder builder() { return new FooFieldBuilder(); }
+  static FooFieldBuilder builder(FooField existing) { return new FooFieldBuilder(existing); }
 
-  public static FooFieldBuilder builder() { return new FooFieldBuilder(); }
-  public static FooFieldBuilder builder(FooField existing) { return new FooFieldBuilder(existing); }
-
-  public static final class FooFieldBuilder
+  final class FooFieldBuilder
       extends FieldSchemaArtifactBuilder<FooFieldBuilder> {
     // ... type-specific with*() methods that return FooFieldBuilder ...
     public FooField build() { ... }
   }
 }
+
+record FooFieldRecord(/* artifact components */) implements FooField {}
 ```
 
 ## Principle 3: Records for data, sealed interfaces for closed hierarchies
@@ -118,13 +118,12 @@ Every artifact shape must satisfy:
 assertEquals(original, reader.read(renderer.render(original)));
 ```
 
-A failure to round-trip is a renderer or reader bug, not a "feature." Two such bugs are
-currently documented as `@Disabled` regressions in `YamlAsymmetryProbeTest`:
+A failure to round-trip is a renderer or reader bug, not a "feature." `YamlAsymmetryProbeTest`
+keeps regression coverage for two bugs that have been fixed:
 - YAML round-trip drops `width`/`height` on YouTube/Image fields.
 - YAML round-trip drops `valueRecommendation` on controlled-term fields.
 
-Both have the test in place; removing the `@Disabled` annotation and watching them go
-green is how the fix is verified.
+These tests remain enabled so either asymmetry will fail the suite if it returns.
 
 ## Principle 7: Model first, I/O second
 
@@ -209,10 +208,6 @@ permanent artifact; conversational context decays.
 
 These are deferred decisions; resolve before acting on them:
 
-- **Whether `FieldSchemaArtifact` should be sealed.** Currently it's a non-sealed interface
-  for historical reasons. Making it sealed would let the `FieldSchemaArtifact.create`
-  dispatcher be exhaustive at compile time — but it requires deciding whether any
-  downstream consumer subclasses it (we believe not).
 - **Whether to consolidate the seven "linked-style" field types** (RorField, OrcidField,
   PfasField, RridField, NihGrantIdField, PubMedField, DoiField) into a single
   parameterized field. Pure-internal change with zero wire-format impact, but real

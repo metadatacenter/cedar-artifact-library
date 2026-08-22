@@ -10,10 +10,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.metadatacenter.artifacts.model.core.*;
+import org.metadatacenter.artifacts.model.renderer.ArtifactRenderException;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +28,14 @@ public class YamlSerializer {
   private static ObjectMapper YAML_OBJECT_MAPPER_FULL_QUOTES;
 
   static {
-    YAMLFactory yamlFactory = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+    // Both writers decide per string whether a quote is needed. Jackson's own answer leaves spellings
+    // a reader turns into numbers, and characters a plain scalar cannot hold, unquoted; the full-quotes
+    // base writer quotes every value before the field-aware structural vocabulary policy is applied,
+    // but still writes some names plain, so it needs the same answer.
+    YAMLFactory yamlFactory = YAMLFactory.builder()
+        .stringQuotingChecker(new YamlScalarQuotingChecker())
+        .build()
+        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // omit quotes when unambiguous
         // ... but still quote Java Strings whose content looks like a number, otherwise
         // they'd round-trip as numbers and lose the String type (and the field's XSD
@@ -36,7 +45,10 @@ public class YamlSerializer {
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
         .disable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE);
 
-    YAMLFactory yamlFactoryFullQuotes = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+    YAMLFactory yamlFactoryFullQuotes = YAMLFactory.builder()
+        .stringQuotingChecker(new YamlScalarQuotingChecker())
+        .build()
+        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // This is different
         .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
         .disable(YAMLGenerator.Feature.SPLIT_LINES) //enable this
@@ -93,23 +105,14 @@ public class YamlSerializer {
   public static String getYAML(Artifact artifact, boolean compactYaml, boolean fullQuotes, TerminologyServerClient terminologyServerClient) {
     LinkedHashMap<String, Object> yamlSerialized = getSerializedYaml(artifact, compactYaml, terminologyServerClient);
     try {
-      String v = null;
-      if (fullQuotes) {
-        v = YAML_OBJECT_MAPPER_FULL_QUOTES.writeValueAsString(yamlSerialized);
-      } else {
-        v = YAML_OBJECT_MAPPER.writeValueAsString(yamlSerialized);
-      }
-      for (int i = 0x80; i <= 0x9f; i++) {
-        String hexString = String.format("\\\\x%02x", i);
-        String unicodeString = Character.toString(i);
-        v = v.replaceAll(hexString, unicodeString);
-      }
-      v = v.replaceAll("\\\\N", Character.toString(0x85));
-      v = v.replaceAll("\\\\_", "\u00a0");
-      return v;
+      // The writer's escapes are returned as it wrote them. DEL and the C1 controls are not
+      // printable characters in YAML, so a document can only carry them escaped: this method used
+      // to substitute the characters back for \xNN, \N and \_, which produced a document no parser
+      // accepts, this library's own reader included.
+      ObjectMapper yamlMapper = fullQuotes ? YAML_OBJECT_MAPPER_FULL_QUOTES : YAML_OBJECT_MAPPER;
+      return YamlPlainScalarPolicy.apply(yamlMapper.writeValueAsString(yamlSerialized));
     } catch (IOException e) {
-      e.printStackTrace();
-      return null;
+      throw new UncheckedIOException("Failed to serialize " + artifact.getClass().getName() + " as YAML", e);
     }
   }
 
@@ -118,7 +121,7 @@ public class YamlSerializer {
     try {
       Files.writeString(outputFilePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new UncheckedIOException("Failed to write YAML artifact to " + outputFilePath.toAbsolutePath(), e);
     }
   }
 
@@ -127,7 +130,10 @@ public class YamlSerializer {
         new YamlArtifactRenderer(compactYaml) :
         new YamlArtifactRenderer(compactYaml, terminologyServerClient);
 
-    LinkedHashMap<String, Object> yamlSerialized = null;
+    if (artifact == null)
+      throw new ArtifactRenderException("Cannot render a null artifact as YAML");
+
+    LinkedHashMap<String, Object> yamlSerialized;
     if (artifact instanceof FieldSchemaArtifact) {
       yamlSerialized = yamlArtifactRenderer.renderFieldSchemaArtifact((FieldSchemaArtifact) artifact);
     } else if (artifact instanceof ElementSchemaArtifact) {
@@ -138,6 +144,8 @@ public class YamlSerializer {
       yamlSerialized = yamlArtifactRenderer.renderTemplateInstanceArtifact((TemplateInstanceArtifact) artifact);
     } else if (artifact instanceof ElementInstanceArtifact) {
       yamlSerialized = yamlArtifactRenderer.renderElementInstanceArtifact((ElementInstanceArtifact) artifact);
+    } else {
+      throw new ArtifactRenderException("Unsupported artifact type for YAML rendering: " + artifact.getClass().getName());
     }
     return yamlSerialized;
   }
