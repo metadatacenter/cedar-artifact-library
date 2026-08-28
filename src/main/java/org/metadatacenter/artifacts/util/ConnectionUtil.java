@@ -5,10 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,25 +13,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 
 public class ConnectionUtil {
 
-  //@formatter:off
-  private static final TrustManager[] trustAllCerts = new TrustManager[1];
-  static {
-    trustAllCerts[0] = new X509TrustManager() {
-      public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
-      public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-      public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-    };
-  }
-
   private static final ObjectMapper mapper = new ObjectMapper();
-
-  //@formatter:on
 
   public static ObjectNode readJsonResponseMessage(InputStream is) {
 
@@ -87,7 +68,6 @@ public class ConnectionUtil {
    */
   public static HttpURLConnection createAndOpenConnection(String requestMethod, String endpoint, String apiKey,
                                                           String acceptMediaType) throws IOException {
-    ignoreSSLCheckingByAcceptingAnyCertificates();
     try {
       URL url = new URL(endpoint);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -100,17 +80,6 @@ public class ConnectionUtil {
       }
       return conn;
     } catch (MalformedURLException e) {
-      throw new RuntimeException(e.getMessage());
-    }
-  }
-
-  private static void ignoreSSLCheckingByAcceptingAnyCertificates() {
-    try {
-      SSLContext sc = SSLContext.getInstance("SSL");
-      sc.init(null, trustAllCerts, new java.security.SecureRandom());
-      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-      HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> 1 == 1);
-    } catch (KeyManagementException | NoSuchAlgorithmException e) {
       throw new RuntimeException(e.getMessage());
     }
   }
