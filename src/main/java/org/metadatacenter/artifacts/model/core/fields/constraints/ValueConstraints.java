@@ -43,7 +43,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   default TextValueConstraints asTextValueConstraints()
   {
-    if (this instanceof TextValueConstraints) // TODO Use typesafe switch when available
+    if (this instanceof TextValueConstraints)
       return (TextValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TextValueConstraints.class.getName());
@@ -51,7 +51,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   default LinkValueConstraints asLinkValueConstraints()
   {
-    if (this instanceof LinkValueConstraints) // TODO Use typesafe switch when available
+    if (this instanceof LinkValueConstraints)
       return (LinkValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + LinkValueConstraints.class.getName());
@@ -59,7 +59,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   default NumericValueConstraints asNumericValueConstraints()
   {
-    if (this instanceof NumericValueConstraints) // TODO Use typesafe switch when available
+    if (this instanceof NumericValueConstraints)
       return (NumericValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + NumericValueConstraints.class.getName());
@@ -67,7 +67,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   default ControlledTermValueConstraints asControlledTermValueConstraints()
   {
-    if (this instanceof ControlledTermValueConstraints) // TODO Use typesafe switch when available
+    if (this instanceof ControlledTermValueConstraints)
       return (ControlledTermValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + ControlledTermValueConstraints.class.getName());
@@ -75,7 +75,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   default TemporalValueConstraints asTemporalValueConstraints()
   {
-    if (this instanceof TemporalValueConstraints) // TODO Use typesafe switch when available
+    if (this instanceof TemporalValueConstraints)
       return (TemporalValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + TemporalValueConstraints.class.getName());
@@ -83,7 +83,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   default EmailValueConstraints asEmailValueConstraints()
   {
-    if (this instanceof EmailValueConstraints) // TODO Use typesafe switch when available
+    if (this instanceof EmailValueConstraints)
       return (EmailValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + EmailValueConstraints.class.getName());
@@ -91,7 +91,7 @@ public sealed interface ValueConstraints permits TextValueConstraints, NumericVa
 
   default PhoneNumberValueConstraints asPhoneNumberValueConstraints()
   {
-    if (this instanceof PhoneNumberValueConstraints) // TODO Use typesafe switch when available
+    if (this instanceof PhoneNumberValueConstraints)
       return (PhoneNumberValueConstraints)this;
     else
       throw new ClassCastException("Cannot convert " + this.getClass().getName() + " to " + PhoneNumberValueConstraints.class.getName());

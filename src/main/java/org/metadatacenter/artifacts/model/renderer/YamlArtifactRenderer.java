@@ -793,7 +793,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
 
-    // TODO Use typesafe switch when available
     if (valueConstraints instanceof ControlledTermValueConstraints) {
       ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
 
@@ -869,7 +868,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     List<LinkedHashMap<String, Object>> valuesRendering = new ArrayList<>();
 
-    // TODO Use typesafe switch when available
     if (valueConstraints instanceof ControlledTermValueConstraints) {
       ControlledTermValueConstraints controlledTermValueConstraints = (ControlledTermValueConstraints)valueConstraints;
 
@@ -1032,7 +1030,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
             actionRendering.put(SOURCE_IRI, action.sourceUri().get().toString());
           actionRendering.put(SOURCE_ACRONYM, action.source());
 
-          // TODO Use typesafe switch when available
           if (action.type() == ValueType.ONTOLOGY_CLASS)
             actionRendering.put(TYPE, CLASS);
           else
@@ -1051,7 +1048,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   private void renderCoreValueConstraints(ValueConstraints valueConstraints, FieldUi fieldUi,
     LinkedHashMap<String, Object> rendering)
   {
-    // TODO Use typesafe switch when available
     if (valueConstraints instanceof NumericValueConstraints) {
       NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
       rendering.put(DATATYPE, numericValueConstraints.numberType().toString());
@@ -1093,7 +1089,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       }
     }
 
-    // TODO Use typesafe switch when available
     if (valueConstraints instanceof NumericValueConstraints) {
       NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
 
@@ -1134,7 +1129,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String childKey = childSchemaArtifactEntry.getKey();
       ChildSchemaArtifact childSchemaArtifact = childSchemaArtifactEntry.getValue();
 
-      // TODO Use typesafe switch when available
       if (childSchemaArtifact instanceof FieldSchemaArtifact) {
         FieldSchemaArtifact fieldSchemaArtifact = (FieldSchemaArtifact)childSchemaArtifact;
         LinkedHashMap<String, Object> fieldSchemaRendering = renderFieldSchemaArtifact(childKey, fieldSchemaArtifact);
@@ -1335,7 +1329,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
   private String renderStatus(Status status)
   {
-    // TODO Use typesafe switch when available
     switch (status) {
     case DRAFT:
       return DRAFT_STATUS;
@@ -1348,7 +1341,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
   private String renderActionName(ValueConstraintsActionType actionType)
   {
-    // TODO Use typesafe switch when available
     switch (actionType) {
     case MOVE:
       return MOVE_ACTION;
@@ -1360,7 +1352,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   }
 
   private String renderFieldTypeName(FieldSchemaArtifact fieldSchemaArtifact) {
-    // TODO Use typesafe switch when available
     switch (fieldSchemaArtifact.fieldUi().inputType()) {
       case TEXTFIELD:
         if (fieldSchemaArtifact.valueConstraints().isPresent() && fieldSchemaArtifact.valueConstraints().get()
@@ -1452,7 +1443,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       AnnotationValue annotationValue = annotationValueEntry.getValue();
       LinkedHashMap<String, Object> annotationRendering = new LinkedHashMap<>();
 
-      // TODO Use typesafe switch when available
       if (annotationValue instanceof LiteralAnnotationValue) {
         LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue)annotationValue;
         annotationRendering.put(VALUE, literalAnnotationValue.getValue());

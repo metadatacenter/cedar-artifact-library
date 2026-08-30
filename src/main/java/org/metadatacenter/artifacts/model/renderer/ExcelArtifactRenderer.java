@@ -149,7 +149,7 @@ public class ExcelArtifactRenderer {
     }
 
     if (defaultValue.isPresent()) {
-      DefaultValue value = defaultValue.get(); // TODO Use typesafe switch when available
+      DefaultValue value = defaultValue.get();
       Cell dataCell = firstDataRow.createCell(columnIndex);
 
       if (value.isTextDefaultValue()) {
@@ -200,7 +200,7 @@ public class ExcelArtifactRenderer {
 
     // Only some fields have validation constraints that we can create messages for
     if (valueConstraints.isPresent()) {
-      if (valueConstraints.get() instanceof TextValueConstraints) { // TODO Use typesafe switch when available
+      if (valueConstraints.get() instanceof TextValueConstraints) {
         TextValueConstraints textValueConstraints = (TextValueConstraints) valueConstraints.get();
 
         if (textValueConstraints.minLength().isPresent()) {
