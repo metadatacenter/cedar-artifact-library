@@ -1,7 +1,5 @@
 package org.metadatacenter.artifacts.ss;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -98,51 +96,4 @@ public class SpreadSheetDataSource
     return workbook;
   }
 
-  private boolean hasWorkbook()
-  {
-    return workbook != null;
-  }
-
-  private String getCellLocationValue(CellLocation cellLocation)
-  {
-    int columnNumber = cellLocation.getColumnIndex();
-    int rowNumber = cellLocation.getRowNumber();
-
-    Sheet sheet = workbook.getSheet(cellLocation.getSheetName());
-    Row row = sheet.getRow(rowNumber);
-    if (row == null) {
-      throw new RuntimeException("invalid source specification @" + cellLocation + " - row is out of range");
-    }
-    Cell cell = row.getCell(columnNumber);
-    return getStringValue(cell);
-  }
-
-  private String getStringValue(Cell cell)
-  {
-    if (cell == null) {
-      return "";
-    }
-    switch (cell.getCellType()) {
-    case BLANK:
-      return "";
-    case STRING:
-      return cell.getStringCellValue();
-    case NUMERIC:
-      if (isInteger(cell.getNumericCellValue())) // check if the numeric is an integer or double
-        return Integer.toString((int)cell.getNumericCellValue());
-      else
-        return Double.toString(cell.getNumericCellValue());
-    case BOOLEAN:
-      return Boolean.toString(cell.getBooleanCellValue());
-    case FORMULA:
-      return Double.toString(cell.getNumericCellValue());
-    default:
-      return "";
-    }
-  }
-
-  private boolean isInteger(double number)
-  {
-    return (number == Math.floor(number) && !Double.isInfinite(number));
-  }
 }

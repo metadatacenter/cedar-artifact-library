@@ -149,20 +149,6 @@ final class JsonValueConstraintsReader {
   // three-state default (absent, an explicit true/false, or an explicit null), and a labels map
   // keyed by "true"/"false"/"null". None of these fit the other value-constraint types.
 
-  private static void readLabel(JsonNode labelsNode, String labelKey, LinkedHashMap<String, String> labels) {
-    JsonNode labelNode = labelsNode.get(labelKey);
-    if (labelNode != null && !labelNode.isNull())
-      labels.put(labelKey, labelNode.asText());
-  }
-
-  private static Optional<Boolean> readOptionalBoolean(ObjectNode sourceNode, String fieldKey) {
-    JsonNode node = sourceNode.get(fieldKey);
-    if (node == null || node.isNull() || !node.isBoolean())
-      return Optional.empty();
-    return Optional.of(node.booleanValue());
-  }
-
-
   static Optional<DefaultValue> readDefaultValue(ObjectNode sourceNode, String path, String fieldKey,
                                                   FieldInputType fieldInputType) {
     JsonNode childNode = sourceNode.get(fieldKey);
