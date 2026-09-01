@@ -15,7 +15,6 @@ public sealed interface ValueConstraintsBuilder permits
 
   static ValueConstraintsBuilder builder(ValueConstraints valueConstraints)
   {
-    // TODO Use typesafe switch when available
     if (valueConstraints instanceof TextValueConstraints)
       return TextValueConstraints.builder(valueConstraints.asTextValueConstraints());
     else if (valueConstraints instanceof NumericValueConstraints)

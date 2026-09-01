@@ -6,7 +6,6 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.reader.JsonArtifactShapeChecks.*;
 import static org.metadatacenter.artifacts.model.reader.JsonNodeReaders.*;
@@ -106,10 +105,27 @@ final class JsonArtifactShapeChecks {
   }
 
 
+  /**
+   * Rejects a model version that is not a version, and accepts every version that is.
+   *
+   * <p>The name overstates what this does, so read it here rather than infer it. {@code
+   * readModelVersion} throws on a value it cannot parse, and that is the whole of the enforcement:
+   * the comparison against {@link #MODEL_VERSION} below is commented out, so an artifact declaring
+   * any well-formed version is accepted whatever that version is.
+   *
+   * <p>Enabling the comparison would refuse every stored artifact written against an earlier model,
+   * which is why it was disabled rather than fixed. The artifacts have to be patched first —
+   * {@code cedar-development/ops/cedar_artifact_patch.py} is the tool for that — and until they are,
+   * turning this on takes the deployment's existing content out of reach.
+   *
+   * <p>{@code YamlArtifactReader} declares a method of this name that does compare the value, so
+   * one artifact can be accepted as JSON and refused as YAML. YAML has no corpus of older documents
+   * to patch, which is why the two differ.
+   */
   static void checkSchemaArtifactModelVersion(ObjectNode sourceNode, String path) {
-    Optional<Version> artifactModelVersion = readModelVersion(sourceNode, path);
+    readModelVersion(sourceNode, path);
 
-    // TODO Renable eventually after patching older artifacts
+    // Re-enable once older artifacts carry the current model version; see the note above.
     //    if (artifactModelVersion.isEmpty() || !artifactModelVersion.get().equals(MODEL_VERSION))
     //      throw new ArtifactParseException("Expecting model version " + MODEL_VERSION + ", got " +
     //      artifactModelVersion,

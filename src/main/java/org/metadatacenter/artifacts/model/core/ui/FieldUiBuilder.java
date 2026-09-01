@@ -10,7 +10,6 @@ public sealed interface FieldUiBuilder permits FieldUi.Builder, TemporalFieldUi.
 {
   static FieldUiBuilder builder(FieldUi fieldUi)
   {
-    // TODO Use typesafe switch when available
     if (fieldUi instanceof TemporalFieldUi)
       return TemporalFieldUi.builder(fieldUi.asTemporalFieldUi());
     else if (fieldUi instanceof NumericFieldUi)

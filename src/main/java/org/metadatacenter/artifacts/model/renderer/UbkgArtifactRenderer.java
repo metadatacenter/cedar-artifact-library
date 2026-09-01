@@ -116,7 +116,7 @@ public class UbkgArtifactRenderer implements ArtifactRenderer<UbkgRendering.Buil
     if (fieldSchemaArtifact.valueConstraints().isPresent()) {
       ValueConstraints valueConstraints = fieldSchemaArtifact.valueConstraints().get();
 
-      if (valueConstraints instanceof NumericValueConstraints) { // TODO Use typesafe switch when available
+      if (valueConstraints instanceof NumericValueConstraints) {
         NumericValueConstraints numericValueConstraints = (NumericValueConstraints)valueConstraints;
         ubkgRenderingBuilder.withEdge(fieldUri, HAS_DATATYPE_UBKG_PREDICATE, numericValueConstraints.numberType().toUri());
       } else if (valueConstraints instanceof TemporalValueConstraints) {

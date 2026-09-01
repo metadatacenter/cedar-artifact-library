@@ -40,18 +40,13 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstrain
 import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 import org.metadatacenter.artifacts.model.core.ui.TemporalFieldUi;
 import org.metadatacenter.artifacts.ss.SpreadsheetFactory;
-import org.metadatacenter.artifacts.util.ConnectionUtil;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
 import org.metadatacenter.artifacts.util.TerminologyValue;
 import org.metadatacenter.model.ModelNodeNames;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +144,7 @@ public class ExcelArtifactRenderer {
     }
 
     if (defaultValue.isPresent()) {
-      DefaultValue value = defaultValue.get(); // TODO Use typesafe switch when available
+      DefaultValue value = defaultValue.get();
       Cell dataCell = firstDataRow.createCell(columnIndex);
 
       if (value.isTextDefaultValue()) {
@@ -200,7 +195,7 @@ public class ExcelArtifactRenderer {
 
     // Only some fields have validation constraints that we can create messages for
     if (valueConstraints.isPresent()) {
-      if (valueConstraints.get() instanceof TextValueConstraints) { // TODO Use typesafe switch when available
+      if (valueConstraints.get() instanceof TextValueConstraints) {
         TextValueConstraints textValueConstraints = (TextValueConstraints) valueConstraints.get();
 
         if (textValueConstraints.minLength().isPresent()) {
@@ -676,39 +671,6 @@ public class ExcelArtifactRenderer {
     headerCellStyle.setFillBackgroundColor(LIGHT_CORNFLOUR_BLUE);
 
     return headerCellStyle;
-  }
-
-  private Map<String, Object> integratedSearch(Map<String, Object> valueConstraints,
-                                               Integer page, Integer pageSize, String integratedSearchEndpoint,
-                                               String apiKey) throws IOException, RuntimeException {
-    HttpURLConnection connection = null;
-    Map<String, Object> resultsMap;
-    try {
-      Map<String, Object> vcMap = new HashMap<>();
-      vcMap.put("valueConstraints", valueConstraints);
-      Map<String, Object> payloadMap = new HashMap<>();
-      payloadMap.put("parameterObject", vcMap);
-      payloadMap.put("page", page);
-      payloadMap.put("pageSize", pageSize);
-      String payload = mapper.writeValueAsString(payloadMap);
-      connection = ConnectionUtil.createAndOpenConnection("POST", integratedSearchEndpoint, apiKey);
-      OutputStream os = connection.getOutputStream();
-      os.write(payload.getBytes());
-      os.flush();
-      int responseCode = connection.getResponseCode();
-      if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-        String message = "Error running integrated search. Response code: " + responseCode + "; Payload: " + payload;
-        throw new RuntimeException(message);
-      } else {
-        String response = ConnectionUtil.readResponseMessage(connection.getInputStream());
-        resultsMap = mapper.readValue(response, HashMap.class);
-      }
-    } finally {
-      if (connection != null) {
-        connection.disconnect();
-      }
-    }
-    return resultsMap;
   }
 
   private void addMetadataSheet(TemplateSchemaArtifact templateSchemaArtifact) {

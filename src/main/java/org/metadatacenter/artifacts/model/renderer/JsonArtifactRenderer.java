@@ -587,7 +587,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
   private ObjectNode renderFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact) {
     ObjectNode objectNode = MAPPER.createObjectNode();
 
-    // TODO Use typesafe switch when available
     if (fieldInstanceArtifact instanceof IriFieldInstance) {
       if (fieldInstanceArtifact.jsonLdId().isPresent() && fieldInstanceArtifact.jsonLdId().get() != null) {
         objectNode.put(JSON_LD_ID, renderUri(fieldInstanceArtifact.jsonLdId().get()));
@@ -1473,7 +1472,6 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       String annotationName = annotationValueEntry.getKey();
       AnnotationValue annotationValue = annotationValueEntry.getValue();
 
-      // TODO Use typesafe switch when available
       if (annotationValue instanceof LiteralAnnotationValue) {
         LiteralAnnotationValue literalAnnotationValue = (LiteralAnnotationValue) annotationValue;
         ObjectNode annotationValueNode = MAPPER.createObjectNode();

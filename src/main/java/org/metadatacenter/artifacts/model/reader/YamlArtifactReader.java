@@ -17,7 +17,6 @@ import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
-import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
@@ -1345,16 +1344,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return readEnumOrString(sourceNode, path, fieldKey).map(XsdTemporalDatatype::fromString);
   }
 
-  private Status readRequiredStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
-  {
-    String statusString = readRequiredString(sourceNode, path, fieldKey, false);
-
-    if (Status.isValidStatus(statusString))
-      return Status.fromString(statusString);
-    else
-      throw new ArtifactParseException("Invalid status " + statusString, fieldKey, path);
-  }
-
   private Optional<Status> readStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
     Optional<String> statusString = readString(sourceNode, path, fieldKey, false);
@@ -1368,19 +1357,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.of(Status.PUBLISHED);
     else
       throw new ArtifactParseException("Invalid status " + statusString.get(), fieldKey, path);
-  }
-
-  private Optional<XsdDatatype> readXsdDatatype(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
-  {
-    Optional<String> xsdDatatypeString = readString(sourceNode, path, fieldKey, false);
-
-    if (xsdDatatypeString.isEmpty())
-      return Optional.empty();
-
-    if (XsdDatatype.isKnownXsdDatatype(xsdDatatypeString.get()))
-      return Optional.of(XsdDatatype.fromString(xsdDatatypeString.get()));
-    else
-      throw new ArtifactParseException("Invalid status " + xsdDatatypeString.get(), fieldKey, path);
   }
 
   private URI readRequiredUri(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
