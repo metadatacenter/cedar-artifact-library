@@ -381,9 +381,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateInstanceArtifact.description().isPresent() && !templateInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, templateInstanceArtifact.description().get());
 
-    // Left out of the compact form with the rest of what a repository assigns; see
-    // renderTopLevelSchemaArtifactBase.
-    if (!isCompact && templateInstanceArtifact.jsonLdId().isPresent())
+    // Identity belongs to the artifact in both forms; compact drops repository-recorded metadata,
+    // not the identifier of the artifact being represented.
+    if (templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
@@ -441,9 +441,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementInstanceArtifact.description().isPresent() && !elementInstanceArtifact.description().get().isEmpty())
       rendering.put(DESCRIPTION, elementInstanceArtifact.description().get());
 
-    // Left out of the compact form with the rest of what a repository assigns; see
-    // renderTopLevelSchemaArtifactBase.
-    if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
+    // Identity belongs to the artifact in both forms; compact drops repository-recorded metadata,
+    // not the identifier of the artifact being represented.
+    if (elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
     if (!isCompact && elementInstanceArtifact.createdOn().isPresent())
@@ -1293,10 +1293,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    // The compact form is an identity-free structural description. Repository identifiers belong to
-    // the stored schema artifacts, including embedded fields and elements, and therefore appear only
-    // in the full form. Semantic identifiers in instance values are rendered by the instance paths.
-    if (!isCompact && schemaArtifact.jsonLdId().isPresent())
+    // Identity belongs to the artifact in both forms. Compact omits version, status and provenance,
+    // but keeps the identifiers needed to say which schema artifacts it represents.
+    if (schemaArtifact.jsonLdId().isPresent())
       rendering.put(ID, schemaArtifact.jsonLdId().get().toString());
 
     if (!isCompact && schemaArtifact.status().isPresent())

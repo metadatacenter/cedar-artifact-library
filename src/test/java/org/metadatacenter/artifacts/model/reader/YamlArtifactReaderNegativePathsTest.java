@@ -256,8 +256,6 @@ public class YamlArtifactReaderNegativePathsTest
     node.put("id", "");
     node.put("isBasedOn", "https://repo.metadatacenter.org/templates/t1");
 
-    // The ordinary reader: the compact one refuses any identifier on a compact document, which would
-    // answer this before the value is looked at.
     ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
       () -> new YamlArtifactReader().readTemplateInstanceArtifact(node));
     assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
