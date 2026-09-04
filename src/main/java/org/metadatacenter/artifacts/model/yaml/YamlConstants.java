@@ -77,8 +77,6 @@ public class YamlConstants
   public static final String DEFAULT = "default";
   public static final String DEFAULT_VALUE = "value";
   public static final String DEFAULT_LABEL = "label";
-  public static final String NULL_ENABLED = "nullEnabled";
-  public static final String LABELS = "labels";
   public static final String MIN_VALUE = "minValue";
   public static final String MAX_VALUE = "maxValue";
   public static final String REGEX = "regex";

@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The compact YAML form is an identity-free structural description of an artifact. It leaves out
- * repository-assigned identifiers at every schema-artifact depth, together with the model version,
- * version, status and provenance. A reader can still recover that structural description, which this
- * test asserts over the same template battery the full-form round trip uses.
+ * The compact YAML form is the same artifact with the content the system records about it left out:
+ * the model version, version, status and provenance. It retains identity at every artifact depth, and
+ * a reader given the compact form recovers the artifact it came from. This test asserts that over the
+ * same template battery the full-form round trip uses.
  *
  * <p>The round trip is
  *
@@ -61,12 +61,14 @@ public class CompactYamlRoundTripTest
   private YamlArtifactReader fullReader;
   private YamlArtifactReader compactReader;
   private YamlArtifactRenderer compactRenderer;
+  private YamlArtifactRenderer fullRenderer;
 
   @BeforeEach public void setUp()
   {
     fullReader = new YamlArtifactReader();
     compactReader = new YamlArtifactReader(true);
     compactRenderer = new YamlArtifactRenderer(true);
+    fullRenderer = new YamlArtifactRenderer(false);
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
@@ -83,19 +85,17 @@ public class CompactYamlRoundTripTest
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
-  public void compactFormDropsTheDocumentIdentifierAndWhatTheSystemRecords(String displayName, Path yamlFile)
+  public void compactFormKeepsTheIdentifierAndDropsWhatTheSystemRecords(String displayName, Path yamlFile)
     throws Exception
   {
     TemplateSchemaArtifact artifact = fullReader.readTemplateSchemaArtifact(parse(yamlFile));
 
     LinkedHashMap<String, Object> compact = compactRenderer.renderTemplateSchemaArtifact(artifact);
+    LinkedHashMap<String, Object> full = fullRenderer.renderTemplateSchemaArtifact(artifact);
 
-    // The compact form describes an artifact being authored rather than one already stored, so it does
-    // not name the artifact it describes: a repository assigns that identifier on save, along with the
-    // provenance. Keeping it would let a conversion look like an edit of the stored artifact while
-    // giving that artifact's children freshly derived property IRIs.
-    assertFalse(compact.containsKey("id"),
-      "the compact form names the artifact it describes: " + displayName);
+    if (full.containsKey("id")) {
+      assertEquals(full.get("id"), compact.get("id"), "the compact form lost the identifier: " + displayName);
+    }
 
     for (String key : SYSTEM_RECORDED_KEYS) {
       assertFalse(compact.containsKey(key),
@@ -104,14 +104,15 @@ public class CompactYamlRoundTripTest
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
-  public void compactFormDropsTheIdentifiersOfChildren(String displayName, Path yamlFile) throws Exception
+  public void compactFormKeepsTheIdentifiersOfChildren(String displayName, Path yamlFile) throws Exception
   {
     TemplateSchemaArtifact artifact = fullReader.readTemplateSchemaArtifact(parse(yamlFile));
 
     LinkedHashMap<String, Object> compact = compactRenderer.renderTemplateSchemaArtifact(artifact);
+    LinkedHashMap<String, Object> full = fullRenderer.renderTemplateSchemaArtifact(artifact);
 
-    assertTrue(childIdentifiers(compact).stream().allMatch(identifier -> identifier == null),
-      "the compact form carries a child's repository identifier: " + displayName);
+    assertEquals(childIdentifiers(full), childIdentifiers(compact),
+      "the compact form lost a child's identifier: " + displayName);
   }
 
   @SuppressWarnings("unchecked")
@@ -141,22 +142,6 @@ public class CompactYamlRoundTripTest
       "the ordinary reader accepted compact input, so the compact reader is not what distinguishes them");
     assertTrue(thrown.getMessage().contains("modelVersion"),
       "expected the absent model version to be what the ordinary reader rejects, got: " + thrown.getMessage());
-  }
-
-  @Test public void theCompactReaderRefusesADocumentThatNamesItsArtifact() throws Exception
-  {
-    Path first = templates().findFirst().map(arguments -> (Path) arguments.get()[1]).orElseThrow();
-    LinkedHashMap<String, Object> compact =
-      compactRenderer.renderTemplateSchemaArtifact(fullReader.readTemplateSchemaArtifact(parse(first)));
-    compact.put("id", "https://repo.metadatacenter.org/templates/written-by-hand");
-
-    // Ignoring it would leave an author believing the document still refers to that stored template,
-    // while a conversion gave its children freshly derived property IRIs.
-    Exception thrown = org.junit.jupiter.api.Assertions.assertThrows(Exception.class,
-      () -> compactReader.readTemplateSchemaArtifact(compact),
-      "the compact reader accepted a document naming the artifact it describes");
-    assertTrue(thrown.getMessage().contains("id"),
-      "expected the identifier to be what the compact reader rejects, got: " + thrown.getMessage());
   }
 
   @SuppressWarnings("unchecked") private LinkedHashMap<String, Object> parse(Path yamlFile) throws Exception
