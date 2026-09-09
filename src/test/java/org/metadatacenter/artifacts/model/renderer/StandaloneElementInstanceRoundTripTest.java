@@ -139,6 +139,62 @@ public class StandaloneElementInstanceRoundTripTest
       entries.get(1).singleInstanceFieldInstances().get("street").jsonLdValue().orElseThrow());
   }
 
+  @SuppressWarnings("unchecked")
+  @Test public void compactYamlKeepsOnlyTheRootElementInstanceIdentifier()
+  {
+    URI rootId = URI.create(
+      "https://repo.metadatacenter.org/template-element-instances/aaaa1111-2222-3333-4444-555566667777");
+    URI childId = URI.create(
+      "https://repo.metadatacenter.org/template-element-instances/bbbb1111-2222-3333-4444-555566667777");
+    ElementInstanceArtifact original = ElementInstanceArtifact.builder()
+      .withName("Outer")
+      .withJsonLdId(rootId)
+      .withSingleInstanceElementInstance("address", ElementInstanceArtifact.builder()
+        .withJsonLdId(childId)
+        .withSingleInstanceFieldInstance("street", TextFieldInstance.builder().withValue("Main St").build())
+        .build())
+      .build();
+
+    LinkedHashMap<String, Object> compact =
+      new YamlArtifactRenderer(true).renderElementInstanceArtifact(original);
+    LinkedHashMap<String, Object> full =
+      new YamlArtifactRenderer(false).renderElementInstanceArtifact(original);
+    LinkedHashMap<String, Object> compactChild = (LinkedHashMap<String, Object>)
+      ((LinkedHashMap<String, Object>) compact.get("children")).get("address");
+    LinkedHashMap<String, Object> fullChild = (LinkedHashMap<String, Object>)
+      ((LinkedHashMap<String, Object>) full.get("children")).get("address");
+
+    assertEquals(rootId.toString(), compact.get("id"));
+    assertFalse(compactChild.containsKey("id"));
+    assertEquals(childId.toString(), fullChild.get("id"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test public void compactYamlOmitsTheIdentifierFromAnEmptyRepeatedElementStub()
+  {
+    URI childId = URI.create(
+      "https://repo.metadatacenter.org/template-element-instances/bbbb1111-2222-3333-4444-555566667777");
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder()
+      .withName("Study record")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/cccc1111-2222-3333-4444-555566667777"))
+      .withMultiInstanceElementInstances("addresses", List.of(
+        ElementInstanceArtifact.builder().withJsonLdId(childId).build()))
+      .build();
+
+    LinkedHashMap<String, Object> compact =
+      new YamlArtifactRenderer(true).renderTemplateInstanceArtifact(original);
+    LinkedHashMap<String, Object> full =
+      new YamlArtifactRenderer(false).renderTemplateInstanceArtifact(original);
+    List<LinkedHashMap<String, Object>> compactEntries = (List<LinkedHashMap<String, Object>>)
+      ((LinkedHashMap<String, Object>) compact.get("children")).get("addresses");
+    List<LinkedHashMap<String, Object>> fullEntries = (List<LinkedHashMap<String, Object>>)
+      ((LinkedHashMap<String, Object>) full.get("children")).get("addresses");
+
+    assertEquals("element-instance", compactEntries.get(0).get("type"));
+    assertFalse(compactEntries.get(0).containsKey("id"));
+    assertEquals(childId.toString(), fullEntries.get(0).get("id"));
+  }
+
   @Test public void childlessElementInstancesStayElementsAcrossTheJsonRoundTrip()
   {
     // The JSON reader classifies a nested object as an element by the presence of @context;

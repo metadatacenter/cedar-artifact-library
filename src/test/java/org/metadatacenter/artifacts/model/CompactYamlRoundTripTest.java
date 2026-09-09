@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The compact YAML form is the same artifact with the content the system records about it left out:
- * the model version, version, status and provenance. It retains identity at every artifact depth, and
- * a reader given the compact form recovers the artifact it came from. This test asserts that over the
- * same template battery the full-form round trip uses.
+ * The compact YAML form names only the artifact at the document root. It leaves out repository-owned
+ * identities below that root together with the model version, version, status and provenance. A read
+ * and second compact render must reach a fixpoint over the same template battery the full-form round
+ * trip uses.
  *
  * <p>The round trip is
  *
@@ -72,7 +72,7 @@ public class CompactYamlRoundTripTest
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
-  public void compactFormReadsBackAsTheSameArtifact(String displayName, Path yamlFile) throws Exception
+  public void compactFormReachesARenderingFixpoint(String displayName, Path yamlFile) throws Exception
   {
     TemplateSchemaArtifact fromFull = fullReader.readTemplateSchemaArtifact(parse(yamlFile));
 
@@ -81,7 +81,7 @@ public class CompactYamlRoundTripTest
     LinkedHashMap<String, Object> regenerated = compactRenderer.renderTemplateSchemaArtifact(fromCompact);
 
     assertEquals(compact, regenerated,
-      "the compact form did not read back as the artifact it was written from: " + displayName);
+      "the compact form did not reach a rendering fixpoint: " + displayName);
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
@@ -104,15 +104,13 @@ public class CompactYamlRoundTripTest
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
-  public void compactFormKeepsTheIdentifiersOfChildren(String displayName, Path yamlFile) throws Exception
+  public void compactFormOmitsTheIdentifiersOfChildren(String displayName, Path yamlFile) throws Exception
   {
     TemplateSchemaArtifact artifact = fullReader.readTemplateSchemaArtifact(parse(yamlFile));
 
     LinkedHashMap<String, Object> compact = compactRenderer.renderTemplateSchemaArtifact(artifact);
-    LinkedHashMap<String, Object> full = fullRenderer.renderTemplateSchemaArtifact(artifact);
-
-    assertEquals(childIdentifiers(full), childIdentifiers(compact),
-      "the compact form lost a child's identifier: " + displayName);
+    assertTrue(childIdentifiers(compact).stream().allMatch(identifier -> identifier == null),
+      "the compact form carries a child's repository identifier: " + displayName);
   }
 
   @SuppressWarnings("unchecked")

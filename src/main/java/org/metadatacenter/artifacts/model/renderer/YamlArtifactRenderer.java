@@ -498,8 +498,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty())
       return rendering;
 
-    // The id is emitted in both compact and full forms so the instance round-trips.
-    if (elementInstanceArtifact.jsonLdId().isPresent())
+    // A compact document identifies only its root artifact. Nested element occurrences are
+    // repository-owned structure and can be reconstructed from the template when needed.
+    if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
     if (!childInstanceArtifactsRendering.isEmpty())
@@ -578,7 +579,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       // instead; the reader classifies on the discriminator.
       if (elementInstanceArtifactRendering.isEmpty()) {
         elementInstanceArtifactRendering.put(TYPE, ELEMENT_INSTANCE);
-        if (elementInstanceArtifact.jsonLdId().isPresent())
+        if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
           elementInstanceArtifactRendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
       }
       elementInstanceArtifactsRendering.add(elementInstanceArtifactRendering);
@@ -1260,7 +1261,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
 
-    addSchemaArtifactBaseRendering(schemaArtifact, artifactTypeName, rendering);
+    addSchemaArtifactBaseRendering(schemaArtifact, artifactTypeName, rendering, true);
 
     return rendering;
   }
@@ -1272,13 +1273,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(KEY, childKey);
 
-    addSchemaArtifactBaseRendering(childSchemaArtifact, artifactTypeName, rendering);
+    addSchemaArtifactBaseRendering(childSchemaArtifact, artifactTypeName, rendering, false);
 
     return rendering;
   }
 
   private void addSchemaArtifactBaseRendering(SchemaArtifact schemaArtifact, String artifactTypeName,
-    LinkedHashMap<String, Object> rendering)
+    LinkedHashMap<String, Object> rendering, boolean isDocumentRoot)
   {
     rendering.put(TYPE, artifactTypeName);
 
@@ -1293,9 +1294,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (schemaArtifact.identifier().isPresent())
       rendering.put(IDENTIFIER, schemaArtifact.identifier().get());
 
-    // Identity belongs to the artifact in both forms. Compact omits version, status and provenance,
-    // but keeps the identifiers needed to say which schema artifacts it represents.
-    if (schemaArtifact.jsonLdId().isPresent())
+    // Compact YAML names the artifact represented by the document, but not repository-assigned
+    // identities below that root. Full YAML retains identity at every depth.
+    if ((!isCompact || isDocumentRoot) && schemaArtifact.jsonLdId().isPresent())
       rendering.put(ID, schemaArtifact.jsonLdId().get().toString());
 
     if (!isCompact && schemaArtifact.status().isPresent())
