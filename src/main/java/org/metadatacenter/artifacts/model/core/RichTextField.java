@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.core;
 
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
 import org.metadatacenter.artifacts.model.core.ui.StaticFieldUi;
+import org.metadatacenter.artifacts.model.core.ui.FieldUi;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -27,6 +28,20 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
       Collections.emptyList(), language, fieldUi, Optional.empty(), annotations, internalName,
       internalDescription);
+  }
+
+  /** Full metadata overload; the legacy factory remains source-compatible. */
+  static RichTextField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
+  {
+    return new RichTextFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi.asStaticFieldUi(), valueConstraints, annotations, internalName, internalDescription);
   }
 
   default boolean isMultiple() {return false;}
@@ -98,9 +113,9 @@ public sealed interface RichTextField extends FieldSchemaArtifact
     public RichTextField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
-        previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
-        fieldUi.asStaticFieldUi(), annotations, internalName, internalDescription);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi.asStaticFieldUi(), valueConstraints, annotations, internalName, internalDescription);
     }
   }
 }

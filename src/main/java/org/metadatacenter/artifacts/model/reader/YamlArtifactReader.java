@@ -1039,7 +1039,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.of(
         LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));
     } else if (fieldInputType == FieldInputType.TEXTFIELD && (
-      !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty())) {
+      !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()
+      || CONTROLLED_TERM_FIELD.equals(sourceNode.get(TYPE)))) {
       Optional<ControlledTermDefaultValue> controlledTermDefaultValue = readControlledTermDefaultValue(sourceNode, path);
       return Optional.of(
         ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,

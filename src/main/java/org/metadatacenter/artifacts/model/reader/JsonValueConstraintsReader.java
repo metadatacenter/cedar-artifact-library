@@ -123,7 +123,10 @@ final class JsonValueConstraintsReader {
       } else if (fieldInputType == FieldInputType.ATTRIBUTE_VALUE) {
         return Optional.empty();
       } else if (fieldInputType == FieldInputType.TEXTFIELD && (!ontologies.isEmpty() || !valueSets.isEmpty()
-          || !classes.isEmpty() || !branches.isEmpty())) {
+          || !classes.isEmpty() || !branches.isEmpty()
+          // An unfinished controlled-term field still stores IRI values, even before it has a constraint.
+          || sourceNode.path(JSON_SCHEMA_PROPERTIES).has(JSON_LD_ID)
+             && !sourceNode.path(JSON_SCHEMA_PROPERTIES).has(JSON_LD_VALUE))) {
         Optional<ControlledTermDefaultValue> controlledTermDefaultValue =
             defaultValue.isPresent() && defaultValue.get().isControlledTermDefaultValue() ?
                 Optional.of(defaultValue.get().asControlledTermDefaultValue()) :

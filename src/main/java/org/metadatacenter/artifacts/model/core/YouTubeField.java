@@ -29,6 +29,20 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       internalDescription);
   }
 
+  /** Full metadata overload; the legacy factory remains source-compatible. */
+  static YouTubeField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+    String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
+    Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+    List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+    Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations, String internalName,
+    String internalDescription)
+  {
+    return new YouTubeFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
+  }
+
   default boolean isMultiple() {return false;}
 
   default Optional<Integer> minItems() {return Optional.empty();}
@@ -107,9 +121,9 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
     public YouTubeField build()
     {
       withFieldUi(fieldUiBuilder.build());
-      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
-        identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, fieldUi, annotations, internalName, internalDescription);
+      return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
     }
   }
 }
