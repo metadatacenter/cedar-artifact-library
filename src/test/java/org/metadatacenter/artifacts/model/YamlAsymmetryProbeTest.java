@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
@@ -25,6 +26,7 @@ import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -201,6 +203,88 @@ public class YamlAsymmetryProbeTest
     StaticFieldUi ui = roundTripped.getFieldSchemaArtifact("Logo").fieldUi().asStaticFieldUi();
     assertTrue(ui.width().isEmpty());
     assertTrue(ui.height().isEmpty());
+  }
+
+  /**
+   * The one asymmetry this file records rather than repairs.
+   *
+   * <p>An attribute-value field records no requirement: the JSON form gives it no
+   * {@code _valueConstraints} node to keep one in, because its property names come from whoever
+   * fills the form and the template describes them through {@code additionalProperties} instead.
+   * The YAML form keeps a requirement on the child, in a {@code configuration:} block every kind of
+   * child has, so it had somewhere to write what JSON could not carry — and did, which left one
+   * template saying the field was required in one serialization and saying nothing in the other.
+   *
+   * <p>{@code AttributeValueField.Builder} has always refused a requirement — {@code
+   * withRequiredValue} and {@code withRecommendedValue} are no-ops on it — so this library's own
+   * model already held the rule. What did not was the YAML reader, which builds value constraints
+   * from the document rather than through that builder, so it accepted a requirement the builder
+   * would have dropped, and the renderer wrote it back out. The reader refuses one now as well,
+   * which leaves nothing that can put one in the model and so nothing for the renderer to write;
+   * that is why the renderer has no guard of its own.
+   *
+   * <p>Both halves are asserted below: no requirement survives a build and a render, and none is
+   * honoured when a document written before this declares one. The loss is the point, which is why
+   * it is asserted rather than probed for preservation like everything else here.
+   */
+  @Test public void testAttributeValueFieldRecordsNoRequirement()
+  {
+    AttributeValueField original = AttributeValueField.builder()
+      .withName("Attribute").withRequiredValue(true).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder()
+      .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/probe"))
+      .withName("Template").withDescription("").withFieldSchema(original).build();
+
+    assertFalse(template.getFieldSchemaArtifact("Attribute").requiredValue(),
+      "the builder refuses a requirement on this type, and has for as long as it has existed");
+
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+    assertFalse(renderedChildConfiguration(rendering, "Attribute").containsKey("required"),
+      "an attribute-value field's requirement has nowhere to go in JSON, so YAML writes none");
+
+    // A document written before this change says required; reading it must not resurrect one.
+    renderedChildConfiguration(rendering, "Attribute").put("required", true);
+    TemplateSchemaArtifact readBack = reader.readTemplateSchemaArtifact(rendering);
+    assertFalse(readBack.getFieldSchemaArtifact("Attribute").requiredValue(),
+      "a requirement read from an older document is not honoured either");
+  }
+
+  @Test public void testOrdinaryFieldStillRecordsItsRequirement()
+  {
+    TextField original = TextField.builder().withName("Title").withRequiredValue(true).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder()
+      .withJsonLdId(java.net.URI.create("https://repo.metadatacenter.org/templates/probe"))
+      .withName("Template").withDescription("").withFieldSchema(original).build();
+
+    LinkedHashMap<String, Object> rendering = renderer.renderTemplateSchemaArtifact(template);
+    assertEquals(true, renderedChildConfiguration(rendering, "Title").get("required"));
+    assertTrue(reader.readTemplateSchemaArtifact(rendering).getFieldSchemaArtifact("Title").requiredValue());
+  }
+
+  /**
+   * The child's {@code configuration:} block in a rendering, created and attached when the child has
+   * none.
+   *
+   * Attached rather than returned loose, so that a caller putting a key into it changes the
+   * rendering. Returning a throwaway map made the injection below a no-op and the assertion after it
+   * vacuous — it passed with the guards it was written to exercise removed.
+   */
+  @SuppressWarnings("unchecked")
+  private LinkedHashMap<String, Object> renderedChildConfiguration(LinkedHashMap<String, Object> rendering, String key)
+  {
+    for (Object child : (java.util.List<Object>) rendering.get("children")) {
+      LinkedHashMap<String, Object> childRendering = (LinkedHashMap<String, Object>) child;
+      if (key.equals(childRendering.get("key"))) {
+        LinkedHashMap<String, Object> configuration =
+          (LinkedHashMap<String, Object>) childRendering.get("configuration");
+        if (configuration == null) {
+          configuration = new LinkedHashMap<>();
+          childRendering.put("configuration", configuration);
+        }
+        return configuration;
+      }
+    }
+    throw new AssertionError("no child rendered under key " + key);
   }
 
   private FieldSchemaArtifact roundTripField(FieldSchemaArtifact original)
