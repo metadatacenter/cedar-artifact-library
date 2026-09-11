@@ -164,18 +164,18 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
       case PAGE_BREAK -> PageBreakField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
         version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
         alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
-      case SECTION_BREAK -> SectionBreakField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
-        identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, language, fieldUi, annotations, internalName, internalDescription);
-      case RICHTEXT -> RichTextField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier,
-        version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language,
-        preferredLabel, fieldUi.asStaticFieldUi(), annotations, internalName, internalDescription);
+      case SECTION_BREAK -> SectionBreakField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
+      case RICHTEXT -> RichTextField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
       case IMAGE -> ImageField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
-        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, language, preferredLabel,
-        fieldUi, annotations, internalName, internalDescription);
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
       case YOUTUBE -> YouTubeField.create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
-        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, fieldUi,
-        annotations, internalName, internalDescription);
+        status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+        alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription);
     };
   }
 }

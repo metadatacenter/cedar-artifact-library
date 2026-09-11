@@ -66,6 +66,29 @@ public enum FieldInputType
 
   public boolean isStatic() { return this == PAGE_BREAK || this == SECTION_BREAK || this == RICHTEXT || this == IMAGE || this == YOUTUBE; }
 
+  /**
+   * Whether a field of this type records a requirement.
+   *
+   * <p>CEDAR keeps a requirement in the field's own {@code _valueConstraints}, and two kinds of
+   * field have none. A static field shows something rather than collecting it. An attribute-value
+   * field describes fields whose names a form-filler supplies, so the template has no property to
+   * constrain and carries {@code additionalProperties} in place of one — which is why
+   * {@link org.metadatacenter.artifacts.model.core.ParentSchemaArtifact} excludes both kinds from
+   * the JSON Schema {@code required} array as well.
+   *
+   * <p>Asked by the YAML reader. The YAML form keeps a requirement on the child, in its {@code
+   * configuration:} block, where JSON keeps it inside the field; that block exists for every kind of
+   * child, so a YAML document can declare a requirement JSON has nowhere to carry. One written
+   * before this rule existed says the field is required, and honouring it would put in the model
+   * something no writer emits — and a form rendered from the stored JSON would not enforce it.
+   *
+   * <p>{@code AttributeValueField.Builder} has always refused a requirement, by making {@code
+   * withRequiredValue} and {@code withRecommendedValue} no-ops, so a caller cannot set one either.
+   * Between the two the renderer needs no guard of its own: a model that reached it carrying a
+   * requirement on this type would have to have been constructed through {@code create} directly.
+   */
+  public boolean recordsRequirement() { return !(isStatic() || isAttributeValue()); }
+
   public boolean isIri() { return IRI_TYPES.contains(this); }
 
   private static final Set<FieldInputType> IRI_TYPES = Set.of(LINK, ROR, ORCID, PFAS, RRID, PUBMED, DOI, NIH_GRANT_ID);

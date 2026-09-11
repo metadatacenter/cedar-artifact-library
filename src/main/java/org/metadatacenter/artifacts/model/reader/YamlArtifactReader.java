@@ -994,8 +994,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private Optional<ValueConstraints> readValueConstraints(LinkedHashMap<String, Object> sourceNode, String path,
     FieldInputType fieldInputType, LinkedHashMap<String, Object> configNode)
   {
-    boolean requiredValue = configNode != null && readBoolean(configNode, path, REQUIRED, false);
-    boolean recommendedValue = configNode != null && readBoolean(configNode, path, RECOMMENDED, false);
+    // Only where the type records one, which is what the renderer now writes. Honouring a
+    // requirement found on an attribute-value field in an older document would put one in the model
+    // that no writer emits, and a form built from that model would enforce something the stored
+    // JSON never said.
+    boolean recordsRequirement = fieldInputType.recordsRequirement();
+    boolean requiredValue =
+      recordsRequirement && configNode != null && readBoolean(configNode, path, REQUIRED, false);
+    boolean recommendedValue =
+      recordsRequirement && configNode != null && readBoolean(configNode, path, RECOMMENDED, false);
     // Checkbox is inherently multi-select. Lists can be either single or multi; the YAML
     // serialization encodes that via the multi-select-list-field vs single-select-list-field
     // discriminator. Both map to FieldInputType.LIST upstream, so we peek at the original
@@ -1039,7 +1046,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.of(
         LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));
     } else if (fieldInputType == FieldInputType.TEXTFIELD && (
-      !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty())) {
+      !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()
+      || CONTROLLED_TERM_FIELD.equals(sourceNode.get(TYPE)))) {
       Optional<ControlledTermDefaultValue> controlledTermDefaultValue = readControlledTermDefaultValue(sourceNode, path);
       return Optional.of(
         ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
