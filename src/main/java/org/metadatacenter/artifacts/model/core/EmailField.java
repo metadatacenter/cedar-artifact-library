@@ -77,7 +77,7 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

@@ -77,7 +77,7 @@ public sealed interface DoiField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public DoiFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public DoiFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

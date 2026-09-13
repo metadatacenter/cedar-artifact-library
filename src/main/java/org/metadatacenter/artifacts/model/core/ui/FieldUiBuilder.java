@@ -34,14 +34,12 @@ public sealed interface FieldUiBuilder permits FieldUi.Builder, TemporalFieldUi.
   FieldUi build();
 
   /*
-   * There is no withContinuePreviousLine here. The CEDAR model gives a line placement to a dynamic
-   * field, in literalFieldUIContent and iriFieldUIContent, and denies one to a static field, whose
-   * _ui admits an input type, content, a size and a hidden flag and nothing else. FieldUi.Builder,
-   * NumericFieldUiBuilder and TemporalFieldUiBuilder each declare the setter; the five static
-   * builders have none to call.
+   * There is no withContinuePreviousLine or withValueRecommendationEnabled here. The CEDAR model
+   * gives both to a dynamic field, in literalFieldUIContent and iriFieldUIContent, and denies both
+   * to a static field, whose _ui admits an input type, content, a size and a hidden flag and nothing
+   * else. FieldUi.Builder, NumericFieldUiBuilder and TemporalFieldUiBuilder each declare the two
+   * setters; the five static builders have neither to call.
    */
 
   FieldUiBuilder withHidden(boolean hidden);
-
-  FieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled);
 }

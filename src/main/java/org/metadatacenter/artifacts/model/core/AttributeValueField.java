@@ -71,7 +71,7 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public AttributeValueFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public AttributeValueFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

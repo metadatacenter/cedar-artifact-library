@@ -77,7 +77,7 @@ public sealed interface OrcidField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public OrcidFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public OrcidFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

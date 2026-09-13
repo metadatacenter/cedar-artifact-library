@@ -88,12 +88,6 @@ public sealed interface YouTubeField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public YouTubeFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
     public YouTubeFieldBuilder withContent(String content)
     {
       fieldUiBuilder.withContent(content);

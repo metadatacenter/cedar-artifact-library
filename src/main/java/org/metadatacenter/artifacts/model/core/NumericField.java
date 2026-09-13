@@ -77,7 +77,7 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public NumericFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public NumericFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

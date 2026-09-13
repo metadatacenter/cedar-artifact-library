@@ -92,12 +92,6 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ImageFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
     public ImageFieldBuilder withWidth(Integer width)
     {
       fieldUiBuilder.withWidth(width);

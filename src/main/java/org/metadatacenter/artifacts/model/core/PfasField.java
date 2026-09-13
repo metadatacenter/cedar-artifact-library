@@ -77,7 +77,7 @@ public sealed interface PfasField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PfasFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public PfasFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

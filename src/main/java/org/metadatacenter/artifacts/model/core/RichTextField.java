@@ -92,12 +92,6 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RichTextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
     public RichTextFieldBuilder withContent(String content)
     {
       fieldUiBuilder.withContent(content);

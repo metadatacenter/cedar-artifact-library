@@ -18,6 +18,10 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   default boolean recommendedValue() { return false; }
 
+  /**
+   * Always false, for the reason a line placement is: {@code staticFieldUIContent} has no room for
+   * it, and nothing here can set one.
+   */
   default boolean valueRecommendationEnabled() { return false; }
 
   /**
@@ -88,7 +92,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean valueRecommendationEnabled = false;
 
     private PageBreakFieldUiBuilder() {}
 
@@ -110,12 +113,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public PageBreakFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, Optional.empty(), Optional.empty());
@@ -126,7 +123,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean valueRecommendationEnabled = false;
 
     private SectionBreakFieldUiBuilder() {}
 
@@ -148,12 +144,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public SectionBreakFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, Optional.empty(), Optional.empty());
@@ -164,7 +154,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean valueRecommendationEnabled = false;
 
     private RichTextFieldUiBuilder() {}
 
@@ -186,12 +175,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public RichTextFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, Optional.empty(), Optional.empty());
@@ -202,7 +185,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean valueRecommendationEnabled = false;
     private Optional<Integer> width = Optional.empty();
     private Optional<Integer> height = Optional.empty();
 
@@ -242,12 +224,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public ImageFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
     public StaticFieldUi build()
     {
       return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, width, height);
@@ -258,7 +234,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean valueRecommendationEnabled = false;
     private Optional<Integer> width = Optional.empty();
     private Optional<Integer> height = Optional.empty();
 
@@ -283,12 +258,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     public YouTubeFieldUiBuilder withHidden(boolean hidden)
     {
       this.hidden = hidden;
-      return this;
-    }
-
-    public YouTubeFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
       return this;
     }
 

@@ -83,7 +83,7 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TextAreaFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public TextAreaFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

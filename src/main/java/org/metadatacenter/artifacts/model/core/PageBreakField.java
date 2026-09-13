@@ -77,12 +77,6 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PageBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
     public PageBreakFieldBuilder withContent(String content)
     {
       fieldUiBuilder.withContent(content);

@@ -150,14 +150,13 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
   public abstract SELF withRecommendedValue(boolean recommendedValue);
 
   /*
-   * No withContinuePreviousLine. A line placement belongs to a dynamic field, and the dynamic field
-   * builders declare the setter themselves; a static field's _ui has nowhere to keep one, so asking
-   * one of those builders for it is a compile error rather than a setting that goes nowhere.
+   * No withContinuePreviousLine and no withValueRecommendationEnabled. Both belong to a dynamic
+   * field, and the dynamic field builders declare them themselves; a static field's _ui has nowhere
+   * to keep either, so asking one of those builders is a compile error rather than a setting that
+   * goes nowhere.
    */
 
   public abstract SELF withHidden(boolean hidden);
-
-  public abstract SELF withValueRecommendationEnabled(boolean valueRecommendationEnabled);
 
   public SELF withJsonLdContext(LinkedHashMap<String, URI> jsonLdContext) {
     if (jsonLdContext == null) {
