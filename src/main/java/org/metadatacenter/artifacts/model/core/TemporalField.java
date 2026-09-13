@@ -78,7 +78,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TemporalFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public TemporalFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

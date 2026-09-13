@@ -83,7 +83,7 @@ public sealed interface OrcidField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public OrcidFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public OrcidFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

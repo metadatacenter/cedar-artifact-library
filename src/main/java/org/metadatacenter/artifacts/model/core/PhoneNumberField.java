@@ -86,7 +86,7 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PhoneNumberFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public PhoneNumberFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

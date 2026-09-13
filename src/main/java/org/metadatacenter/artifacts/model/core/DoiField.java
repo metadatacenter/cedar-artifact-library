@@ -83,7 +83,7 @@ public sealed interface DoiField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public DoiFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public DoiFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

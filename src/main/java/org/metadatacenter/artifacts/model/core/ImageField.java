@@ -98,12 +98,6 @@ public sealed interface ImageField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ImageFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
     public ImageFieldBuilder withWidth(Integer width)
     {
       fieldUiBuilder.withWidth(width);

@@ -98,12 +98,6 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RichTextFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
     public RichTextFieldBuilder withContent(String content)
     {
       fieldUiBuilder.withContent(content);

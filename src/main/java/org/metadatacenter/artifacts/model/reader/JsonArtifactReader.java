@@ -945,7 +945,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       return NumericFieldUi.create(hidden, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       Optional<String> content = readString(uiNode, uiPath, UI_CONTENT);
-      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine, width, height);
+      return StaticFieldUi.create(fieldInputType, content, hidden, width, height);
     } else {
       return FieldUi.create(fieldInputType, hidden, continuePreviousLine, valueRecommendationEnabled);
     }

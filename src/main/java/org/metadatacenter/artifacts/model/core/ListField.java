@@ -96,7 +96,7 @@ public sealed interface ListField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ListFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public ListFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

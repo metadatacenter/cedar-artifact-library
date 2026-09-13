@@ -83,12 +83,6 @@ public sealed interface PageBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PageBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
     public PageBreakFieldBuilder withContent(String content)
     {
       fieldUiBuilder.withContent(content);

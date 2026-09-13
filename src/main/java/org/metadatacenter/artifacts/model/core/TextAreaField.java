@@ -77,7 +77,7 @@ public sealed interface TextAreaField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TextAreaFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public TextAreaFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

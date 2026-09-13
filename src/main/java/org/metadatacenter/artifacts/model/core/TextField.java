@@ -83,7 +83,7 @@ public sealed interface TextField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TextFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public TextFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

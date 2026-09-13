@@ -83,7 +83,7 @@ public sealed interface RridField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RridFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public RridFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

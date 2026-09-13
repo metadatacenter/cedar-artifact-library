@@ -83,7 +83,7 @@ public sealed interface PfasField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PfasFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public PfasFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

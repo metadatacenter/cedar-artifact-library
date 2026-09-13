@@ -149,7 +149,11 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
 
   public abstract SELF withRecommendedValue(boolean recommendedValue);
 
-  public abstract SELF withContinuePreviousLine(boolean continuePreviousLine);
+  /*
+   * No withContinuePreviousLine. A line placement belongs to a dynamic field, and the dynamic field
+   * builders declare the setter themselves; a static field's _ui has nowhere to keep one, so asking
+   * one of those builders for it is a compile error rather than a setting that goes nowhere.
+   */
 
   public abstract SELF withHidden(boolean hidden);
 

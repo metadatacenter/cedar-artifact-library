@@ -83,7 +83,7 @@ public sealed interface NihGrantIdField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public NihGrantIdFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public NihGrantIdFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

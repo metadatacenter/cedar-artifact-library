@@ -77,7 +77,7 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public AttributeValueFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public AttributeValueFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

@@ -84,7 +84,7 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RadioFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public RadioFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;
