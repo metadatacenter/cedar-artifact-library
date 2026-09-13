@@ -997,6 +997,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     LinkedHashMap<String, String> originalPropertyLabels = readString2StringMap(uiNode, uiPath, UI_PROPERTY_LABELS);
     LinkedHashMap<String, String> originalPropertyDescriptions = readString2StringMap(uiNode, uiPath,
         UI_PROPERTY_DESCRIPTIONS);
+    Optional<String> header = readString(uiNode, uiPath, UI_HEADER);
+    Optional<String> footer = readString(uiNode, uiPath, UI_FOOTER);
 
     LinkedHashMap<String, String> reorderedPropertyLabels = new LinkedHashMap<>();
     LinkedHashMap<String, String> reorderedPropertyDescriptions = new LinkedHashMap<>();
@@ -1020,7 +1022,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     order.removeAll(orderEntriesToRemove); // Silently remove order entries with no corresponding children
 
-    return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions);
+    return ElementUi.create(order, reorderedPropertyLabels, reorderedPropertyDescriptions, header, footer);
   }
 
   private Optional<Annotations> readAnnotations(ObjectNode sourceNode, String path, String fieldKey) {

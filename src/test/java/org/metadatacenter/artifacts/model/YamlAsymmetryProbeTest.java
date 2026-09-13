@@ -44,6 +44,22 @@ public class YamlAsymmetryProbeTest
     renderer = new YamlArtifactRenderer(false);
   }
 
+  @Test public void testRoundTripPreservesElementHeaderAndFooter()
+  {
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder()
+      .withName("Study details")
+      .withHeader("Fill this section from the study protocol.")
+      .withFooter("Contact the data steward with questions.")
+      .withFieldSchema(TextField.builder().withName("Title").build())
+      .build();
+
+    LinkedHashMap<String, Object> rendering = renderer.renderElementSchemaArtifact(original);
+    ElementSchemaArtifact roundTripped = reader.readElementSchemaArtifact(rendering);
+
+    assertEquals("Fill this section from the study protocol.", roundTripped.elementUi().header().get());
+    assertEquals("Contact the data steward with questions.", roundTripped.elementUi().footer().get());
+  }
+
   @Test public void testRoundTripPreservesYouTubeWidthHeight()
   {
     YouTubeField original = YouTubeField.builder()

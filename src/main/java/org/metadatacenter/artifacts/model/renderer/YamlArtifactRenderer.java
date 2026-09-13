@@ -134,6 +134,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.instanceJsonLdType().isPresent())
       rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
 
+    if (elementSchemaArtifact.elementUi().header().isPresent())
+      rendering.put(HEADER, elementSchemaArtifact.elementUi().header().get());
+
+    if (elementSchemaArtifact.elementUi().footer().isPresent())
+      rendering.put(FOOTER, elementSchemaArtifact.elementUi().footer().get());
+
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
     if (elementSchemaArtifact.preferredLabel().isPresent())
@@ -161,6 +167,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     if (elementSchemaArtifact.instanceJsonLdType().isPresent())
       rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
+
+    if (elementSchemaArtifact.elementUi().header().isPresent())
+      rendering.put(HEADER, elementSchemaArtifact.elementUi().header().get());
+
+    if (elementSchemaArtifact.elementUi().footer().isPresent())
+      rendering.put(FOOTER, elementSchemaArtifact.elementUi().footer().get());
 
     addArtifactProvenanceRendering(elementSchemaArtifact, rendering);
 
