@@ -71,7 +71,7 @@ public sealed interface TextField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public TextFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
@@ -83,7 +83,7 @@ public sealed interface TextField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TextFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public TextFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

@@ -18,8 +18,17 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
   default boolean recommendedValue() { return false; }
 
+  /**
+   * Always false, for the reason a line placement is: {@code staticFieldUIContent} has no room for
+   * it, and nothing here can set one.
+   */
   default boolean valueRecommendationEnabled() { return false; }
 
+  /**
+   * Always false. {@code staticFieldUIContent} admits an input type, content, a size and a hidden
+   * flag, and closes with {@code additionalProperties: false}, so a static field rendered with a
+   * line placement is one the validation library rejects. Nothing here can set one.
+   */
   default boolean continuePreviousLine() { return false; }
 
   Optional<Integer> width();
@@ -27,9 +36,9 @@ public non-sealed interface StaticFieldUi extends FieldUi
   Optional<Integer> height();
 
   static StaticFieldUi create(FieldInputType fieldInputType, Optional<String> content, boolean hidden,
-    boolean continuePreviousLine, Optional<Integer> width, Optional<Integer> height)
+    Optional<Integer> width, Optional<Integer> height)
   {
-    return new StaticFieldUiRecord(fieldInputType, content, hidden, continuePreviousLine, width, height);
+    return new StaticFieldUiRecord(fieldInputType, content, hidden, width, height);
   }
 
   static PageBreakFieldUiBuilder pageBreakFieldUiBuilder()
@@ -83,8 +92,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean continuePreviousLine = false;
-    private boolean valueRecommendationEnabled = false;
 
     private PageBreakFieldUiBuilder() {}
 
@@ -92,7 +99,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
-      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public PageBreakFieldUiBuilder withContent(String content)
@@ -107,22 +113,9 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public PageBreakFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      this.continuePreviousLine = continuePreviousLine;
-      return this;
-    }
-
-    public PageBreakFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, continuePreviousLine, Optional.empty(),
-        Optional.empty());
+      return new StaticFieldUiRecord(FieldInputType.PAGE_BREAK, content, hidden, Optional.empty(), Optional.empty());
     }
   }
 
@@ -130,8 +123,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean continuePreviousLine = false;
-    private boolean valueRecommendationEnabled = false;
 
     private SectionBreakFieldUiBuilder() {}
 
@@ -139,7 +130,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
-      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public SectionBreakFieldUiBuilder withContent(String content)
@@ -154,23 +144,9 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public SectionBreakFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
-    public SectionBreakFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      this.continuePreviousLine = continuePreviousLine;
-      return this;
-    }
-
-
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, continuePreviousLine,
-        Optional.empty(), Optional.empty());
+      return new StaticFieldUiRecord(FieldInputType.SECTION_BREAK, content, hidden, Optional.empty(), Optional.empty());
     }
   }
 
@@ -178,8 +154,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean continuePreviousLine = false;
-    private boolean valueRecommendationEnabled = false;
 
     private RichTextFieldUiBuilder() {}
 
@@ -187,7 +161,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
-      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
     }
 
     public RichTextFieldUiBuilder withContent(String content)
@@ -202,22 +175,9 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public RichTextFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      this.continuePreviousLine = continuePreviousLine;
-      return this;
-    }
-
-    public RichTextFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, continuePreviousLine, Optional.empty(),
-        Optional.empty());
+      return new StaticFieldUiRecord(FieldInputType.RICHTEXT, content, hidden, Optional.empty(), Optional.empty());
     }
   }
 
@@ -225,8 +185,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean continuePreviousLine = false;
-    private boolean valueRecommendationEnabled = false;
     private Optional<Integer> width = Optional.empty();
     private Optional<Integer> height = Optional.empty();
 
@@ -238,7 +196,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
-      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
       this.width = staticFieldUi.width();
       this.height = staticFieldUi.height();
     }
@@ -267,21 +224,9 @@ public non-sealed interface StaticFieldUi extends FieldUi
       return this;
     }
 
-    public ImageFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      this.continuePreviousLine = continuePreviousLine;
-      return this;
-    }
-
-    public ImageFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
-      return this;
-    }
-
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, continuePreviousLine, width, height);
+      return new StaticFieldUiRecord(FieldInputType.IMAGE, content, hidden, width, height);
     }
   }
 
@@ -289,8 +234,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
   {
     private Optional<String> content = Optional.empty();
     private boolean hidden = false;
-    private boolean valueRecommendationEnabled = false;
-    private boolean continuePreviousLine = false;
     private Optional<Integer> width = Optional.empty();
     private Optional<Integer> height = Optional.empty();
 
@@ -302,7 +245,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     {
       this.content = staticFieldUi._content();
       this.hidden = staticFieldUi.hidden();
-      this.continuePreviousLine = staticFieldUi.continuePreviousLine();
       this.width = staticFieldUi.width();
       this.height = staticFieldUi.height();
     }
@@ -316,18 +258,6 @@ public non-sealed interface StaticFieldUi extends FieldUi
     public YouTubeFieldUiBuilder withHidden(boolean hidden)
     {
       this.hidden = hidden;
-      return this;
-    }
-
-    public YouTubeFieldUiBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      this.continuePreviousLine = continuePreviousLine;
-      return this;
-    }
-
-    public YouTubeFieldUiBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      this.valueRecommendationEnabled = valueRecommendationEnabled;
       return this;
     }
 
@@ -345,14 +275,14 @@ public non-sealed interface StaticFieldUi extends FieldUi
 
     public StaticFieldUi build()
     {
-      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden, continuePreviousLine, width, height);
+      return new StaticFieldUiRecord(FieldInputType.YOUTUBE, content, hidden, width, height);
     }
   }
 
 }
 
 record StaticFieldUiRecord(FieldInputType inputType, Optional<String> _content, boolean hidden,
-                           boolean continuePreviousLine, Optional<Integer> width, Optional<Integer> height) implements StaticFieldUi
+                           Optional<Integer> width, Optional<Integer> height) implements StaticFieldUi
 {
   public StaticFieldUiRecord
   {

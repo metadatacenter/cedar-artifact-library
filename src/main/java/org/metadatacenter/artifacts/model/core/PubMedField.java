@@ -77,13 +77,13 @@ public sealed interface PubMedField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PubMedFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public PubMedFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public PubMedFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public PubMedFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

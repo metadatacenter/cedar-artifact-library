@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StaticFieldUiTest
@@ -30,19 +31,18 @@ public class StaticFieldUiTest
 
     String content = "My content";
     boolean hidden = true;
-    boolean continuePreviousLine = false;
 
     StaticFieldUi staticFieldUi = StaticFieldUi.richTextFieldUiBuilder()
       .withContent(content)
       .withHidden(hidden)
-      .withContinuePreviousLine(false)
       .build();
 
     assertTrue(staticFieldUi.inputType().isStatic());
     assertEquals(FieldInputType.RICHTEXT, staticFieldUi.inputType());
     assertEquals(content, staticFieldUi._content().get());
     assertEquals(hidden, staticFieldUi.hidden());
-    assertEquals(continuePreviousLine, staticFieldUi.continuePreviousLine());
+    // A static field has no line placement to set, and reports none.
+    assertFalse(staticFieldUi.continuePreviousLine());
   }
 
   @Test
@@ -50,19 +50,18 @@ public class StaticFieldUiTest
 
     String content = "My content";
     boolean hidden = true;
-    boolean continuePreviousLine = false;
 
     StaticFieldUi staticFieldUi = StaticFieldUi.imageFieldUiBuilder()
       .withContent(content)
       .withHidden(hidden)
-      .withContinuePreviousLine(false)
       .build();
 
     assertTrue(staticFieldUi.inputType().isStatic());
     assertEquals(FieldInputType.IMAGE, staticFieldUi.inputType());
     assertEquals(content, staticFieldUi._content().get());
     assertEquals(hidden, staticFieldUi.hidden());
-    assertEquals(continuePreviousLine, staticFieldUi.continuePreviousLine());
+    // A static field has no line placement to set, and reports none.
+    assertFalse(staticFieldUi.continuePreviousLine());
   }
 
   @Test
@@ -70,19 +69,18 @@ public class StaticFieldUiTest
 
     String content = "My content";
     boolean hidden = true;
-    boolean continuePreviousLine = false;
 
     StaticFieldUi staticFieldUi = StaticFieldUi.youTubeFieldUiBuilder()
       .withContent(content)
       .withHidden(hidden)
-      .withContinuePreviousLine(false)
       .build();
 
     assertTrue(staticFieldUi.inputType().isStatic());
     assertEquals(FieldInputType.YOUTUBE, staticFieldUi.inputType());
     assertEquals(content, staticFieldUi._content().get());
     assertEquals(hidden, staticFieldUi.hidden());
-    assertEquals(continuePreviousLine, staticFieldUi.continuePreviousLine());
+    // A static field has no line placement to set, and reports none.
+    assertFalse(staticFieldUi.continuePreviousLine());
   }
 
 }

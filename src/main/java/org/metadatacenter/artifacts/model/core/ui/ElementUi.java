@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.model.ModelNodeNames.UI_FOOTER;
+import static org.metadatacenter.model.ModelNodeNames.UI_HEADER;
 import static org.metadatacenter.model.ModelNodeNames.UI_ORDER;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
@@ -15,10 +19,19 @@ import static org.metadatacenter.model.ModelNodeNames.UI_PROPERTY_LABELS;
 public non-sealed interface ElementUi extends Ui, ParentArtifactUi
 {
   static ElementUi create(List<String> order, LinkedHashMap<String, String> propertyLabels,
-    LinkedHashMap<String, String> propertyDescriptions)
+    LinkedHashMap<String, String> propertyDescriptions, Optional<String> header, Optional<String> footer)
   {
-    return new ElementUiRecord(order, propertyLabels, propertyDescriptions);
+    return new ElementUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
   }
+
+  /**
+   * The instructions an element shows above and below its fields. `templateElementUIFieldContent`
+   * declares both, and the metadata editor renders them when the element is expanded, so an element
+   * that arrives with either keeps it.
+   */
+  Optional<String> header();
+
+  Optional<String> footer();
 
   @JsonIgnore
   default UiType uiType() { return UiType.ELEMENT_UI; }
@@ -35,6 +48,8 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
     private List<String> order = new ArrayList<>();
     private LinkedHashMap<String, String> propertyLabels = new LinkedHashMap<>();
     private LinkedHashMap<String, String> propertyDescriptions = new LinkedHashMap<>();
+    private Optional<String> header = Optional.empty();
+    private Optional<String> footer = Optional.empty();
 
     private Builder() {
     }
@@ -43,6 +58,8 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
       this.order = new ArrayList<>(elementUi.order());
       this.propertyLabels = new LinkedHashMap<>(elementUi.propertyLabels());
       this.propertyDescriptions = new LinkedHashMap<>(elementUi.propertyDescriptions());
+      this.header = elementUi.header();
+      this.footer = elementUi.footer();
     }
 
     public Builder withOrder(String fieldKey) {
@@ -101,22 +118,35 @@ public non-sealed interface ElementUi extends Ui, ParentArtifactUi
       return this;
     }
 
+    public Builder withHeader(String header) {
+      this.header = Optional.ofNullable(header);
+      return this;
+    }
+
+    public Builder withFooter(String footer) {
+      this.footer = Optional.ofNullable(footer);
+      return this;
+    }
+
     public ElementUi build()
     {
-      return new ElementUiRecord(order, propertyLabels, propertyDescriptions);
+      return new ElementUiRecord(order, propertyLabels, propertyDescriptions, header, footer);
     }
   }
 }
 
 record ElementUiRecord(List<String> order,
                        LinkedHashMap<String, String> propertyLabels,
-                       LinkedHashMap<String, String> propertyDescriptions) implements ElementUi
+                       LinkedHashMap<String, String> propertyDescriptions,
+                       Optional<String> header, Optional<String> footer) implements ElementUi
 {
   public ElementUiRecord
   {
     validateListFieldDoesNotHaveDuplicates(this, order, UI_ORDER);
     validateMapFieldNotNull(this, propertyLabels, UI_PROPERTY_LABELS);
     validateMapFieldNotNull(this, propertyDescriptions, UI_PROPERTY_DESCRIPTIONS);
+    validateOptionalFieldNotNull(this, header, UI_HEADER);
+    validateOptionalFieldNotNull(this, footer, UI_FOOTER);
 
     order = List.copyOf(order);
     propertyLabels = new LinkedHashMap<>(propertyLabels);

@@ -77,13 +77,13 @@ public sealed interface RorField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RorFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public RorFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public RorFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public RorFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

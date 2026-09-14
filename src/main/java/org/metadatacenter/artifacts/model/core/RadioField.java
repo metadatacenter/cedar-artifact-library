@@ -78,13 +78,13 @@ public sealed interface RadioField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public RadioFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public RadioFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public RadioFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public RadioFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

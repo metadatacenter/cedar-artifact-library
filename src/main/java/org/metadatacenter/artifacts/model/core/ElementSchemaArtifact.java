@@ -421,6 +421,16 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
+    public Builder withHeader(String header) {
+      this.elementUiBuilder.withHeader(header);
+      return this;
+    }
+
+    public Builder withFooter(String footer) {
+      this.elementUiBuilder.withFooter(footer);
+      return this;
+    }
+
     public Builder withPropertyUri(URI propertyUri)
     {
       this.propertyUri = Optional.ofNullable(propertyUri);

@@ -77,13 +77,13 @@ public sealed interface NumericField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public NumericFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public NumericFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public NumericFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public NumericFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

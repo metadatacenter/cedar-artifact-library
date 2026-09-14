@@ -78,13 +78,13 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public TemporalFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public TemporalFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;
     }
 
-    @Override public TemporalFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public TemporalFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;

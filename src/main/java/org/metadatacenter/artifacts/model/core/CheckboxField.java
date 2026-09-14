@@ -78,13 +78,13 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public CheckboxFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public CheckboxFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public CheckboxFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

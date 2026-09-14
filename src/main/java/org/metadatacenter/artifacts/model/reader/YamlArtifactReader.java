@@ -887,8 +887,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (propertyLabels.isEmpty()) propertyLabels = derivedLabels;
     LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
     if (propertyDescriptions.isEmpty()) propertyDescriptions = derivedDescriptions;
+    Optional<String> header = readString(sourceNode, path, HEADER);
+    Optional<String> footer = readString(sourceNode, path, FOOTER);
 
-    return ElementUi.create(order, propertyLabels, propertyDescriptions);
+    return ElementUi.create(order, propertyLabels, propertyDescriptions, header, footer);
   }
 
   /**
@@ -976,7 +978,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return NumericFieldUi.create(hidden, continuePreviousLine);
     } else if (fieldInputType.isStatic()) {
       Optional<String> content = readString(sourceNode, path, CONTENT, true);
-      return StaticFieldUi.create(fieldInputType, content, hidden, continuePreviousLine, width, height);
+      return StaticFieldUi.create(fieldInputType, content, hidden, width, height);
     } else {
       return FieldUi.create(fieldInputType, hidden, continuePreviousLine, valueRecommendationEnabled);
     }

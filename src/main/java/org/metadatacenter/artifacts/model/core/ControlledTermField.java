@@ -89,13 +89,13 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public ControlledTermFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public ControlledTermFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public ControlledTermFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

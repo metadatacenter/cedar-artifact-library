@@ -92,18 +92,6 @@ public sealed interface SectionBreakField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public SectionBreakFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
-    {
-      fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
-      return this;
-    }
-
-    @Override public SectionBreakFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
-    {
-      fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
-      return this;
-    }
-
     public SectionBreakFieldBuilder withContent(String content)
     {
       fieldUiBuilder.withContent(content);

@@ -77,13 +77,13 @@ public sealed interface EmailField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public EmailFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public EmailFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public EmailFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

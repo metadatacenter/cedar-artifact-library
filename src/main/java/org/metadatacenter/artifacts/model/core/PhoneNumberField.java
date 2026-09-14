@@ -80,13 +80,13 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
       return this;
     }
 
-    @Override public PhoneNumberFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
+    public PhoneNumberFieldBuilder withValueRecommendationEnabled(boolean valueRecommendationEnabled)
     {
       fieldUiBuilder.withValueRecommendationEnabled(valueRecommendationEnabled);
       return this;
     }
 
-    @Override public PhoneNumberFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
+    public PhoneNumberFieldBuilder withContinuePreviousLine(boolean continuePreviousLine)
     {
       fieldUiBuilder.withContinuePreviousLine(continuePreviousLine);
       return this;

@@ -112,6 +112,21 @@ public class JsonArtifactRoundTripTest
     assertEquals(java.util.List.of("File Language", "Language"), roundTripped.alternateLabels());
   }
 
+  @Test public void testRoundTripElementSchemaArtifactWithHeaderAndFooter()
+  {
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_elements/789")).withName("Study details")
+      .withHeader("Fill this section from the study protocol.")
+      .withFooter("Contact the data steward with questions.").build();
+
+    testRoundTripElementSchemaArtifact(original);
+
+    ElementSchemaArtifact roundTripped = artifactReader.readElementSchemaArtifact(
+      jsonArtifactRenderer.renderElementSchemaArtifact(original));
+    assertEquals("Fill this section from the study protocol.", roundTripped.elementUi().header().get());
+    assertEquals("Contact the data steward with questions.", roundTripped.elementUi().footer().get());
+  }
+
   @Test public void testRoundTripFieldSchemaArtifactWithAnnotations()
   {
     Annotations annotations = Annotations.builder().withLiteralAnnotation("source", "manual").build();
