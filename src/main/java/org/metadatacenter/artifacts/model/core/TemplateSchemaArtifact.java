@@ -28,7 +28,25 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
                                        Optional<String> language, TemplateUi templateUi,
                                        Optional<Annotations> annotations, String internalName,
                                        String internalDescription) {
-    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description,
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType == null ? null : instanceJsonLdType.stream().toList(), name, description,
+        identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+        fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
+  }
+
+  static TemplateSchemaArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+                                       Optional<URI> jsonLdId, List<URI> instanceJsonLdTypes, String name,
+                                       String description,
+                                       Optional<String> identifier, Optional<Version> version,
+                                       Optional<Status> status, Optional<URI> previousVersion,
+                                       Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                       Optional<OffsetDateTime> createdOn,
+                                       Optional<OffsetDateTime> lastUpdatedOn, LinkedHashMap<String,
+      FieldSchemaArtifact> fieldSchemas,
+                                       LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
+                                       Optional<String> language, TemplateUi templateUi,
+                                       Optional<Annotations> annotations, String internalName,
+                                       String internalDescription) {
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name, description,
         identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
   }
@@ -72,7 +90,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
         PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     private List<URI> jsonLdTypes = new ArrayList<>(List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI)));
     private Optional<URI> jsonLdId = Optional.empty();
-    private Optional<URI> instanceJsonLdType = Optional.empty();
+    private List<URI> instanceJsonLdTypes = List.of();
     private Optional<URI> createdBy = Optional.empty();
     private Optional<URI> modifiedBy = Optional.empty();
     private Optional<OffsetDateTime> createdOn = Optional.empty();
@@ -99,7 +117,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       this.jsonLdContext = new LinkedHashMap<>(templateSchemaArtifact.jsonLdContext());
       this.jsonLdTypes = new ArrayList<>(templateSchemaArtifact.jsonLdTypes());
       this.jsonLdId = templateSchemaArtifact.jsonLdId();
-      this.instanceJsonLdType = templateSchemaArtifact.instanceJsonLdType();
+      this.instanceJsonLdTypes = templateSchemaArtifact.instanceJsonLdTypes();
       this.createdBy = templateSchemaArtifact.createdBy();
       this.modifiedBy = templateSchemaArtifact.modifiedBy();
       this.createdOn = templateSchemaArtifact.createdOn();
@@ -131,7 +149,12 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     }
 
     public Builder withInstanceJsonLdType(URI instanceJsonLdType) {
-      this.instanceJsonLdType = Optional.ofNullable(instanceJsonLdType);
+      this.instanceJsonLdTypes = instanceJsonLdType == null ? List.of() : List.of(instanceJsonLdType);
+      return this;
+    }
+
+    public Builder withInstanceJsonLdTypes(List<URI> instanceJsonLdTypes) {
+      this.instanceJsonLdTypes = List.copyOf(instanceJsonLdTypes);
       return this;
     }
 
@@ -357,7 +380,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
     public TemplateSchemaArtifact build() {
       return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
-          instanceJsonLdType, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
+          instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
           modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUiBuilder.build(),
           annotations, internalName, internalDescription);
     }
@@ -366,7 +389,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
 record TemplateSchemaArtifactRecord(
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
-    Optional<URI> jsonLdId, Optional<URI> instanceJsonLdType, String name,
+    Optional<URI> jsonLdId, List<URI> instanceJsonLdTypes, String name,
     String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
     Optional<URI> createdBy, Optional<URI> modifiedBy,
@@ -378,11 +401,12 @@ record TemplateSchemaArtifactRecord(
     implements TemplateSchemaArtifact {
   public TemplateSchemaArtifactRecord {
     ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
-      jsonLdContext, jsonLdTypes, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdType,
+      jsonLdContext, jsonLdTypes, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdTypes,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, templateUi, annotations);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);
+    instanceJsonLdTypes = List.copyOf(instanceJsonLdTypes);
     fieldSchemas = ParentSchemaArtifactInvariants.prunedToOrder(fieldSchemas, templateUi.order());
     elementSchemas = ParentSchemaArtifactInvariants.prunedToOrder(elementSchemas, templateUi.order());
   }

@@ -186,6 +186,26 @@ import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
 public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, Object>>
 {
+  private List<URI> readInstanceJsonLdTypes(LinkedHashMap<String, Object> sourceNode, String path) {
+    Object value = sourceNode.get(INSTANCE_TYPE);
+    if (value == null) return List.of();
+    if (!(value instanceof List<?>)) return readUri(sourceNode, path, INSTANCE_TYPE).stream().toList();
+    List<?> values = (List<?>) value;
+    if (values.isEmpty()) throw new ArtifactParseException("Instance types must not be empty", INSTANCE_TYPE, path);
+    List<URI> types = new ArrayList<>();
+    for (Object item : values) {
+      if (!(item instanceof String)) throw new ArtifactParseException("Instance type must be an IRI string", INSTANCE_TYPE, path);
+      try {
+        URI uri = URI.create((String) item);
+        if (!uri.isAbsolute() || types.contains(uri)) throw new IllegalArgumentException();
+        types.add(uri);
+      } catch (IllegalArgumentException e) {
+        throw new ArtifactParseException("Instance types must be unique absolute IRIs", INSTANCE_TYPE, path);
+      }
+    }
+    return types;
+  }
+
   private final Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
   private final boolean isCompact;
 
@@ -726,7 +746,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
-    Optional<URI> instanceJsonLdType = readUri(sourceNode, path, INSTANCE_TYPE);
+    List<URI> instanceJsonLdType = readInstanceJsonLdTypes(sourceNode, path);
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     // Default version/status on the top-level artifact only; preserve absence on nested children.
@@ -764,7 +784,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
     Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
-    Optional<URI> instanceJsonLdType = readUri(sourceNode, path, INSTANCE_TYPE);
+    List<URI> instanceJsonLdType = readInstanceJsonLdTypes(sourceNode, path);
     String description = readString(sourceNode, path, DESCRIPTION, "");
     Optional<String> identifier = readString(sourceNode, path, IDENTIFIER, true);
     // Default version/status on the top-level artifact only; preserve absence on nested children.

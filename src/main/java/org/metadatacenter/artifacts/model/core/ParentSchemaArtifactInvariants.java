@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldContainsAll;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldDoesNotHaveDuplicates;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
@@ -58,7 +59,7 @@ final class ParentSchemaArtifactInvariants
                        List<URI> jsonLdTypes,
                        URI requiredJsonLdTypeIri,
                        Optional<URI> jsonLdId,
-                       Optional<URI> instanceJsonLdType,
+                       List<URI> instanceJsonLdTypes,
                        Optional<Version> version,
                        Optional<Status> status,
                        Optional<URI> previousVersion,
@@ -80,7 +81,11 @@ final class ParentSchemaArtifactInvariants
     validateMapFieldContainsAll(self, jsonLdContext, JSON_LD_CONTEXT, PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     validateUriListFieldContains(self, jsonLdTypes, JSON_LD_TYPE, requiredJsonLdTypeIri);
     validateOptionalFieldNotNull(self, jsonLdId, JSON_LD_ID);
-    validateOptionalFieldNotNull(self, instanceJsonLdType, "instanceJsonLdType");
+    validateListFieldDoesNotHaveDuplicates(self, instanceJsonLdTypes, "instanceJsonLdTypes");
+    for (URI type : instanceJsonLdTypes) {
+      if (type == null || !type.isAbsolute())
+        throw new IllegalArgumentException("Instance types must be absolute IRIs");
+    }
     validateMapFieldNotNull(self, fieldSchemas, "fieldSchemas");
     validateMapFieldNotNull(self, elementSchemas, "elementSchemas");
     validateOptionalFieldNotNull(self, language, "language");

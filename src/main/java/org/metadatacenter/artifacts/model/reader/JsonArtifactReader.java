@@ -284,7 +284,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
-    Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
+    List<URI> instanceJsonLdType = readInstanceJsonLdTypes(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -326,7 +326,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
-    Optional<URI> instanceJsonLdType = readInstanceJsonLdType(sourceNode, path);
+    List<URI> instanceJsonLdType = readInstanceJsonLdTypes(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -901,16 +901,23 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    *   }
    * </pre>
    */
-  private Optional<URI> readInstanceJsonLdType(ObjectNode sourceNode, String path) {
-    String uriPath =
-        "/" + JSON_SCHEMA_PROPERTIES + "/" + JSON_LD_TYPE + "/" + JSON_SCHEMA_ONE_OF + "/0/" + JSON_SCHEMA_ENUM + "/0";
-    JsonNode uriNode = sourceNode.at(uriPath);
-
-    if (uriNode != null && uriNode.isTextual()) {
-      return Optional.of(URI.create(uriNode.asText()));
-    } else {
-      return Optional.empty();
+  private List<URI> readInstanceJsonLdTypes(ObjectNode sourceNode, String path) {
+    JsonNode values = sourceNode.at("/properties/@type/oneOf/0/enum");
+    if (values.isMissingNode()) return List.of();
+    if (!values.isArray() || values.isEmpty())
+      throw new ArtifactParseException("Instance types must be a nonempty array of IRIs", "enum", path);
+    List<URI> types = new ArrayList<>();
+    for (JsonNode value : values) {
+      if (!value.isTextual()) throw new ArtifactParseException("Instance type must be an IRI string", "enum", path);
+      try {
+        URI uri = URI.create(value.asText());
+        if (!uri.isAbsolute() || types.contains(uri)) throw new IllegalArgumentException();
+        types.add(uri);
+      } catch (IllegalArgumentException e) {
+        throw new ArtifactParseException("Instance types must be unique absolute IRIs", "enum", path);
+      }
     }
+    return types;
   }
 
   private FieldUi readFieldUi(ObjectNode sourceNode, String path, String fieldKey) {
