@@ -83,7 +83,12 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact
       throw new IllegalArgumentException("Field " + fieldKey + " not present in element " + name());
   }
 
-  Optional<URI> instanceJsonLdType();
+  List<URI> instanceJsonLdTypes();
+
+  /** Compatibility view for callers that only consume one allowed type. */
+  default Optional<URI> instanceJsonLdType() {
+    return instanceJsonLdTypes().stream().findFirst();
+  }
 
   default LinkedHashMap<String, URI> getChildPropertyUris()
   {

@@ -57,11 +57,11 @@ final class JsonSchemaArtifactPropertyRenderers {
 
     rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
 
-    if (templateSchemaArtifact.instanceJsonLdType().isEmpty()) {
+    if (templateSchemaArtifact.instanceJsonLdTypes().isEmpty()) {
       rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaTypeSpecification(1, true));
     } else {
-      URI instanceJsonLdType = templateSchemaArtifact.instanceJsonLdType().get();
-      rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaTypeEnumSpecification(1, true, instanceJsonLdType));
+      var instanceJsonLdTypes = templateSchemaArtifact.instanceJsonLdTypes();
+      rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaTypeEnumSpecification(1, true, instanceJsonLdTypes));
     }
 
     rendering.put(SCHEMA_IS_BASED_ON, renderUriJsonSchemaTypeSpecification());
@@ -89,11 +89,11 @@ final class JsonSchemaArtifactPropertyRenderers {
     // so an element stored before this validates exactly as it did.
     rendering.put(JSON_LD_ID, renderUriOrNullJsonSchemaTypeSpecification());
 
-    if (elementSchemaArtifact.instanceJsonLdType().isEmpty()) {
+    if (elementSchemaArtifact.instanceJsonLdTypes().isEmpty()) {
       rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaTypeSpecification(1, true));
     } else {
-      URI instanceJsonLdType = elementSchemaArtifact.instanceJsonLdType().get();
-      rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaTypeEnumSpecification(1, true, instanceJsonLdType));
+      var instanceJsonLdTypes = elementSchemaArtifact.instanceJsonLdTypes();
+      rendering.put(JSON_LD_TYPE, renderUriOrUriArrayJsonSchemaTypeEnumSpecification(1, true, instanceJsonLdTypes));
     }
 
     return rendering;

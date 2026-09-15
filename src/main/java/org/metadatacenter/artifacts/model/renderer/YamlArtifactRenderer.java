@@ -83,8 +83,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(templateSchemaArtifact, TEMPLATE);
 
-    if (templateSchemaArtifact.instanceJsonLdType().isPresent())
-      rendering.put(INSTANCE_TYPE, templateSchemaArtifact.instanceJsonLdType().get().toString());
+    if (!templateSchemaArtifact.instanceJsonLdTypes().isEmpty())
+      rendering.put(INSTANCE_TYPE, templateSchemaArtifact.instanceJsonLdTypes().size() == 1 ? templateSchemaArtifact.instanceJsonLdTypes().get(0).toString() : templateSchemaArtifact.instanceJsonLdTypes().stream().map(URI::toString).toList());
 
     if (templateSchemaArtifact.templateUi().header().isPresent())
       rendering.put(HEADER, templateSchemaArtifact.templateUi().header().get());
@@ -131,8 +131,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     LinkedHashMap<String, Object> rendering = renderTopLevelSchemaArtifactBase(elementSchemaArtifact, ELEMENT);
 
-    if (elementSchemaArtifact.instanceJsonLdType().isPresent())
-      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
+    if (!elementSchemaArtifact.instanceJsonLdTypes().isEmpty())
+      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdTypes().size() == 1 ? elementSchemaArtifact.instanceJsonLdTypes().get(0).toString() : elementSchemaArtifact.instanceJsonLdTypes().stream().map(URI::toString).toList());
 
     if (elementSchemaArtifact.elementUi().header().isPresent())
       rendering.put(HEADER, elementSchemaArtifact.elementUi().header().get());
@@ -165,8 +165,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> rendering = renderNestedSchemaArtifactBase(elementKey, elementSchemaArtifact,
       ELEMENT);
 
-    if (elementSchemaArtifact.instanceJsonLdType().isPresent())
-      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdType().get().toString());
+    if (!elementSchemaArtifact.instanceJsonLdTypes().isEmpty())
+      rendering.put(INSTANCE_TYPE, elementSchemaArtifact.instanceJsonLdTypes().size() == 1 ? elementSchemaArtifact.instanceJsonLdTypes().get(0).toString() : elementSchemaArtifact.instanceJsonLdTypes().stream().map(URI::toString).toList());
 
     if (elementSchemaArtifact.elementUi().header().isPresent())
       rendering.put(HEADER, elementSchemaArtifact.elementUi().header().get());

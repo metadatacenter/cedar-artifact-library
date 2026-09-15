@@ -193,6 +193,15 @@ final class JsonSchemaSpecRenderers {
   }
 
 
+  public static ObjectNode renderUriOrUriArrayJsonSchemaTypeEnumSpecification(int minItems, boolean uniqueItems, java.util.List<URI> uris) {
+    ObjectNode rendering = renderUriOrUriArrayJsonSchemaTypeSpecification(minItems, uniqueItems);
+    var alternatives = rendering.withArray(JSON_SCHEMA_ONE_OF);
+    var single = ((ObjectNode) alternatives.get(0)).putArray(JSON_SCHEMA_ENUM);
+    var multiple = ((ObjectNode) alternatives.get(1).get(JSON_SCHEMA_ITEMS)).putArray(JSON_SCHEMA_ENUM);
+    uris.forEach(uri -> { single.add(uri.toString()); multiple.add(uri.toString()); });
+    return rendering;
+  }
+
   public static ObjectNode renderUriOrUriArrayJsonSchemaTypeEnumSpecification(int minItems, boolean uniqueItems, URI uri) {
     ObjectNode rendering = MAPPER.createObjectNode();
 
