@@ -5,7 +5,9 @@ Start here:
 1. **[DESIGN.md](./DESIGN.md)** — the architectural principles. Read this before adding
    a field type, a value-constraint kind, a new reader/renderer, or any change to a
    builder API. It captures decisions that aren't obvious from the code.
-2. **[ROADMAP.md](./ROADMAP.md)** — what's open, what's known-broken, what's out of scope.
+2. **[CEDAR Backend Roadmap](https://github.com/metadatacenter/cedar-development/blob/develop/ops/BACKEND-ROADMAP.md)**
+   — this library's open work, under "Shared Libraries". DESIGN.md's Principle 7 says what
+   stays out of the library.
 3. **README.md** (in the project root if present) for end-user information.
 
 ## Conventions you must respect
