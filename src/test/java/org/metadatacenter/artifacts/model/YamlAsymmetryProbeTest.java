@@ -21,6 +21,11 @@ import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.core.fields.constraints.LiteralValueConstraint;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
@@ -29,6 +34,7 @@ import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -321,6 +327,39 @@ public class YamlAsymmetryProbeTest
 
     ObjectNode json = new JsonArtifactRenderer().renderFieldSchemaArtifact(roundTripped);
     assertFalse(json.get("_ui").get("timezoneEnabled").asBoolean());
+  }
+
+  @Test public void testRoundTripKeepsALiteralThatStatesItIsNotSelected() throws Exception
+  {
+    // The literals array is `uniqueItems` in the meta-schema, so an option written both ways is two
+    // entries to a validator. Writing the stated `false` back as nothing makes them one repeated
+    // value and takes the whole field down with it, turning a valid template into an invalid one.
+    String json = "{\"@type\":\"https://schema.metadatacenter.org/core/TemplateField\","
+      + "\"@id\":\"https://repo.metadatacenter.org/template-fields/00000000-0000-0000-0000-000000000000\","
+      + "\"schema:name\":\"Theme\",\"schema:description\":\"d\","
+      + "\"title\":\"Theme field schema\",\"description\":\"Theme field schema\","
+      + "\"_ui\":{\"inputType\":\"list\"},"
+      + "\"_valueConstraints\":{\"multipleChoice\":true,\"literals\":["
+      + "{\"label\":\"Meteorology\",\"selectedByDefault\":false},{\"label\":\"Meteorology\"}]},"
+      + "\"properties\":{},\"required\":[],\"type\":\"object\","
+      + "\"$schema\":\"http://json-schema.org/draft-04/schema#\"}";
+
+    FieldSchemaArtifact field = new JsonArtifactReader()
+      .readFieldSchemaArtifact((ObjectNode) new ObjectMapper().readTree(json));
+    List<LiteralValueConstraint> literals =
+      field.valueConstraints().get().asTextValueConstraints().literals();
+
+    assertEquals(2, literals.size());
+    assertTrue(literals.get(0).statesSelectedByDefault());
+    assertFalse(literals.get(0).isSelectedByDefault());
+    assertFalse(literals.get(1).statesSelectedByDefault());
+
+    ObjectNode rendered = new JsonArtifactRenderer().renderFieldSchemaArtifact(field);
+    JsonNode entries = rendered.get("_valueConstraints").get("literals");
+    assertTrue(entries.get(0).has("selectedByDefault"));
+    assertFalse(entries.get(0).get("selectedByDefault").asBoolean());
+    assertFalse(entries.get(1).has("selectedByDefault"));
+    assertNotEquals(entries.get(0), entries.get(1));
   }
 
   private FieldSchemaArtifact roundTripField(FieldSchemaArtifact original)

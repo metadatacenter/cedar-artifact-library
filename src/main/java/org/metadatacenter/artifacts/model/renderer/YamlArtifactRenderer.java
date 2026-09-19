@@ -1635,8 +1635,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> literalValueConstraintRendering = new LinkedHashMap<>();
 
     literalValueConstraintRendering.put(LITERAL, literalValueConstraint.label());
-    if (literalValueConstraint.selectedByDefault())
-      literalValueConstraintRendering.put(SELECTED_BY_DEFAULT, true);
+    if (literalValueConstraint.statesSelectedByDefault())
+      literalValueConstraintRendering.put(SELECTED_BY_DEFAULT, literalValueConstraint.isSelectedByDefault());
 
     return literalValueConstraintRendering;
   }

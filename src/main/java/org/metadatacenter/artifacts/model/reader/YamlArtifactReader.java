@@ -1590,8 +1590,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) rawEntry;
       if (entry.containsKey(LITERAL)) {
         String label = readRequiredString(entry, path, LITERAL, false);
-        boolean selected = readBoolean(entry, path, SELECTED_BY_DEFAULT, false);
-        result.add(new LiteralValueConstraint(label, selected));
+        result.add(entry.containsKey(SELECTED_BY_DEFAULT)
+          ? new LiteralValueConstraint(label, readBoolean(entry, path, SELECTED_BY_DEFAULT, false))
+          : new LiteralValueConstraint(label));
       }
     }
     return result;
