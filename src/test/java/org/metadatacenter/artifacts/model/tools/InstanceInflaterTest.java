@@ -91,6 +91,33 @@ public class InstanceInflaterTest
     assertTrue(inflated.multiInstanceFieldInstances().get(key).isEmpty());
   }
 
+  @Test public void omittedAuthorityFieldsInRepeatedNestedElementsKeepArrayShape()
+  {
+    var nih = org.metadatacenter.artifacts.model.core.NihGrantIdField.builder()
+      .withName("NIH Grant ID Field").withIsMultiple(true).build();
+    var doi = org.metadatacenter.artifacts.model.core.DoiField.builder()
+      .withName("DOI Field").withIsMultiple(true).build();
+    var nested = ElementSchemaArtifact.builder().withName("Nested").withIsMultiple(true)
+      .withFieldSchema(nih).withFieldSchema(doi).build();
+    var wrapper = ElementSchemaArtifact.builder().withName("Wrapper")
+      .withElementSchema(nested).build();
+    var template = TemplateSchemaArtifact.builder().withName("Authority fields")
+      .withElementSchema(wrapper).build();
+    var sparse = sparseInstance().withSingleInstanceElementInstance("Wrapper",
+      ElementInstanceArtifact.builder().withMultiInstanceElementInstances("Nested", List.of(
+        ElementInstanceArtifact.builder().build(), ElementInstanceArtifact.builder().build())).build()).build();
+    var inflated = InstanceInflater.inflate(template, sparse);
+    var occurrences = inflated.singleInstanceElementInstances().get("Wrapper")
+      .multiInstanceElementInstances().get("Nested");
+    assertEquals(2, occurrences.size());
+    for (var occurrence : occurrences) {
+      assertEquals(List.of(), occurrence.multiInstanceFieldInstances().get("NIH Grant ID Field"));
+      assertEquals(List.of(), occurrence.multiInstanceFieldInstances().get("DOI Field"));
+      assertTrue(occurrence.singleInstanceFieldInstances().isEmpty());
+    }
+    assertEquals(inflated, InstanceInflater.inflate(template, inflated));
+  }
+
   @Test public void staticFieldsNeverAcquireInstanceSlots()
   {
     TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
