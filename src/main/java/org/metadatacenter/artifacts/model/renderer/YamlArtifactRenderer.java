@@ -263,12 +263,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    // An inherently multiple field states no `multiple`, since its type already says so, but its
+    // occurrence bounds are values of its own that the type does not imply. Omitting them here
+    // lost them: a checkbox stored with `minItems: 0` came back as the default, so the bound the
+    // author set did not survive a YAML round trip. A bound equal to the default stays unwritten,
+    // which is what keeps the round trip in both directions stable.
+    if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    if (fieldSchemaArtifact.maxItems().isPresent() && boundsAreAuthored(fieldSchemaArtifact))
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     return rendering;
@@ -1249,8 +1252,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    // As above: the type implies `multiple`, never the bounds.
+    if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
     if (fieldSchemaArtifact.maxItems().isPresent())
@@ -1645,6 +1648,32 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     return fieldSchemaArtifact.fieldUi().isList() && fieldSchemaArtifact.valueConstraints().isPresent()
       && fieldSchemaArtifact.valueConstraints().get().multipleChoice();
+  }
+
+  /**
+   * Whether the field's occurrence bounds are the author's to state.
+   * <p>
+   * An attribute-value field and a multi-select list are wrapped with a bound of zero by
+   * construction rather than by an author, so stating it would put in the document something
+   * nobody wrote. A checkbox is not like them: its bound is the author's, and omitting it lost
+   * what they set.
+   */
+  private boolean boundsAreAuthored(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    return !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact);
+  }
+
+  /**
+   * Whether the field's lower occurrence bound is worth stating.
+   * <p>
+   * A bound equal to the one the JSON renderer supplies for a field that states none carries no
+   * information, and writing it would make a document that omitted it round trip into one that
+   * does not.
+   */
+  private boolean statesLowerBound(FieldSchemaArtifact fieldSchemaArtifact)
+  {
+    return fieldSchemaArtifact.minItems().isPresent() && boundsAreAuthored(fieldSchemaArtifact)
+      && fieldSchemaArtifact.minItems().get() != JsonSchemaSpecRenderers.DEFAULT_MIN_ITEMS;
   }
 
   private String renderPossiblyXsdPrefixedUri(URI uri)

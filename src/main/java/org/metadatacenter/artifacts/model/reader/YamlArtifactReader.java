@@ -990,7 +990,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
       Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(sourceNode, path, INPUT_TIME_FORMAT);
-      Optional<Boolean> timeZoneEnabled = readBoolean(sourceNode, path, INPUT_TIME_ZONE);
+      // A temporal field always says whether it carries a time zone, and the stored JSON of every
+      // one in production does. The YAML renderer writes the key only when it is true, so reading
+      // an absent key as "unsaid" rather than false dropped `timezoneEnabled` from the JSON of
+      // every temporal field that does not enable it, and the round trip lost an explicit false.
+      Optional<Boolean> timeZoneEnabled = Optional.of(readBoolean(sourceNode, path, INPUT_TIME_ZONE, false));
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden,
         continuePreviousLine);

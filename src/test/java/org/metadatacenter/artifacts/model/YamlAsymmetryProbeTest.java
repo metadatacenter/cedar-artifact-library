@@ -20,7 +20,10 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.artifacts.model.core.CheckboxField;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.util.LinkedHashMap;
@@ -301,6 +304,54 @@ public class YamlAsymmetryProbeTest
       }
     }
     throw new AssertionError("no child rendered under key " + key);
+  }
+
+  @Test public void testRoundTripKeepsATemporalFieldSayingItCarriesNoTimeZone()
+  {
+    TemporalField original = TemporalField.builder()
+      .withName("Collected at").withTemporalType(XsdTemporalDatatype.TIME)
+      .withTemporalGranularity(TemporalGranularity.MINUTE).build();
+
+    FieldSchemaArtifact roundTripped = roundTripField(original);
+
+    // The YAML states a time zone only when one is enabled, so an absent key has to read as
+    // disabled rather than unsaid. Reading it as unsaid dropped `timezoneEnabled` from the JSON,
+    // where every stored temporal field carries it.
+    assertTrue(roundTripped.fieldUi().asTemporalFieldUi().timezoneEnabled().isPresent());
+    assertFalse(roundTripped.fieldUi().asTemporalFieldUi().timezoneEnabled().get());
+
+    ObjectNode json = new JsonArtifactRenderer().renderFieldSchemaArtifact(roundTripped);
+    assertFalse(json.get("_ui").get("timezoneEnabled").asBoolean());
+  }
+
+  @Test public void testRoundTripPreservesACheckboxLowerBoundOfZero()
+  {
+    // A checkbox is multiple by its type, so the YAML states no `multiple` — but the bound is the
+    // author's, and omitting it turned a checkbox that admits no instances into one that demands
+    // an instance.
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
+      .withName("Study")
+      .withFieldSchema(CheckboxField.builder().withName("Symptoms")
+        .withOption("fever").withOption("cough").withMinItems(0).build())
+      .build();
+
+    TemplateSchemaArtifact roundTripped = roundTripTemplate(original);
+
+    assertEquals(0, roundTripped.getFieldSchemaArtifact("Symptoms").minItems().get());
+  }
+
+  @Test public void testACheckboxStatingNoLowerBoundTakesOneInstance()
+  {
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
+      .withName("Study")
+      .withFieldSchema(CheckboxField.builder().withName("Symptoms")
+        .withOption("fever").withOption("cough").build())
+      .build();
+
+    ObjectNode json = new JsonArtifactRenderer()
+      .renderTemplateSchemaArtifact(roundTripTemplate(original));
+
+    assertEquals(1, json.get("properties").get("Symptoms").get("minItems").asInt());
   }
 
   private FieldSchemaArtifact roundTripField(FieldSchemaArtifact original)
