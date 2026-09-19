@@ -33,10 +33,12 @@ public sealed interface ListField extends FieldSchemaArtifact
     // JSON Schema array wrapper.
     boolean isMultipleChoice = valueConstraints.map(ValueConstraints::multipleChoice).orElse(false);
     boolean canonicalIsMultiple = isMultiple || isMultipleChoice;
+    // A multi-select list that states no lower bound takes one instance. Tying the bound to the
+    // requirement said a list nobody has to answer may appear zero times, which is not what the
+    // system stores: every multi-select list in production carries one, answered or not.
     Optional<Integer> canonicalMinItems = minItems;
     if (isMultipleChoice && canonicalMinItems.isEmpty()) {
-      boolean requiredValue = valueConstraints.map(ValueConstraints::requiredValue).orElse(false);
-      canonicalMinItems = Optional.of(requiredValue ? 1 : 0);
+      canonicalMinItems = Optional.of(ChildSchemaArtifact.DEFAULT_MIN_ITEMS);
     }
 
     return new ListFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,

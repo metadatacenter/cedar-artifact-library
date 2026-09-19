@@ -489,7 +489,9 @@ public class FieldSchemaArtifactBuilderTest {
         build();
 
     Assertions.assertTrue(optionalList.isMultiple());
-    Assertions.assertEquals(Optional.of(0), optionalList.minItems());
+    // One instance whether or not the list demands a value: the bound a multi-instance child takes
+    // when it states none does not follow the requirement.
+    Assertions.assertEquals(Optional.of(1), optionalList.minItems());
 
     ListField requiredList = ListField.builder().
         withName("Required multiple-choice list").

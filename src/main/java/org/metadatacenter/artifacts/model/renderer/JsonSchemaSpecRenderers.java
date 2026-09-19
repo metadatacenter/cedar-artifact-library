@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 
 import java.net.URI;
@@ -253,7 +254,7 @@ final class JsonSchemaSpecRenderers {
     if (minItems.isPresent()) {
       wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, minItems.get());
     } else {
-      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, 0);
+      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, ChildSchemaArtifact.DEFAULT_MIN_ITEMS);
     }
 
     if (maxItems.isPresent()) {

@@ -236,7 +236,6 @@ children:
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/fcbe7f27-e429-4204-9e02-c743fe13fa01
     multiple: true
-    minItems: 1
 - key: title
   type: element
   name: title
@@ -290,7 +289,6 @@ children:
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/88556557-7e94-4738-8fe7-1a8bd0f5ad0a
     multiple: true
-    minItems: 1
 - key: publisher
   type: text-field
   name: publisher

@@ -263,12 +263,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.isAttributeValue())
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     return rendering;
@@ -1191,7 +1189,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.isMultiple())
       rendering.put(MULTIPLE, true);
 
-    if (elementSchemaArtifact.minItems().isPresent())
+    if (statesLowerBound(elementSchemaArtifact))
       rendering.put(MIN_ITEMS, elementSchemaArtifact.minItems().get());
 
     if (elementSchemaArtifact.maxItems().isPresent())
@@ -1249,8 +1247,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
     if (fieldSchemaArtifact.maxItems().isPresent())
@@ -1639,6 +1636,25 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       literalValueConstraintRendering.put(SELECTED_BY_DEFAULT, literalValueConstraint.isSelectedByDefault());
 
     return literalValueConstraintRendering;
+  }
+
+  /**
+   * Whether the child's lower bound is worth stating.
+   * <p>
+   * A bound equal to the one a child that states none is read with carries nothing, and writing it
+   * would make a document that omitted it round trip into one that does not. A lower bound the
+   * author chose differs from the default and is written, whether the child is an element, a field
+   * the template marks multiple, or a field multiple by its own type. An attribute-value field is
+   * wrapped with a zero by construction rather than by an author, so stating it would put in the
+   * document something nobody wrote.
+   */
+  private boolean statesLowerBound(ChildSchemaArtifact childSchemaArtifact)
+  {
+    if (childSchemaArtifact.minItems().isEmpty())
+      return false;
+    if (childSchemaArtifact instanceof FieldSchemaArtifact field && field.isAttributeValue())
+      return false;
+    return childSchemaArtifact.minItems().get() != ChildSchemaArtifact.DEFAULT_MIN_ITEMS;
   }
 
   private boolean isMultiSelectListField(FieldSchemaArtifact fieldSchemaArtifact)

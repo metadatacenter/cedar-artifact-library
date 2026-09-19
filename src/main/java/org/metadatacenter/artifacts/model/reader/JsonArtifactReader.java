@@ -61,7 +61,6 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
-import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_ONE_OF;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;

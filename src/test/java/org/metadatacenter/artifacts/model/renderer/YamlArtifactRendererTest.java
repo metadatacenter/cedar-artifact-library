@@ -1203,7 +1203,7 @@ public class YamlArtifactRendererTest {
 
     assertEquals(MULTI_SELECT_LIST_FIELD, rendering.get(TYPE));
     assertTrue(field.isMultiple());
-    assertEquals(Optional.of(0), field.minItems());
+    assertEquals(Optional.of(1), field.minItems());
   }
 
   @Test
