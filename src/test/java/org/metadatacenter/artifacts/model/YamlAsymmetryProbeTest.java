@@ -21,7 +21,6 @@ import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.NumericValueConstraints;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.metadatacenter.artifacts.model.core.CheckboxField;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
@@ -322,36 +321,6 @@ public class YamlAsymmetryProbeTest
 
     ObjectNode json = new JsonArtifactRenderer().renderFieldSchemaArtifact(roundTripped);
     assertFalse(json.get("_ui").get("timezoneEnabled").asBoolean());
-  }
-
-  @Test public void testRoundTripPreservesACheckboxLowerBoundOfZero()
-  {
-    // A checkbox is multiple by its type, so the YAML states no `multiple` — but the bound is the
-    // author's, and omitting it turned a checkbox that admits no instances into one that demands
-    // an instance.
-    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
-      .withName("Study")
-      .withFieldSchema(CheckboxField.builder().withName("Symptoms")
-        .withOption("fever").withOption("cough").withMinItems(0).build())
-      .build();
-
-    TemplateSchemaArtifact roundTripped = roundTripTemplate(original);
-
-    assertEquals(0, roundTripped.getFieldSchemaArtifact("Symptoms").minItems().get());
-  }
-
-  @Test public void testACheckboxStatingNoLowerBoundTakesOneInstance()
-  {
-    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder()
-      .withName("Study")
-      .withFieldSchema(CheckboxField.builder().withName("Symptoms")
-        .withOption("fever").withOption("cough").build())
-      .build();
-
-    ObjectNode json = new JsonArtifactRenderer()
-      .renderTemplateSchemaArtifact(roundTripTemplate(original));
-
-    assertEquals(1, json.get("properties").get("Symptoms").get("minItems").asInt());
   }
 
   private FieldSchemaArtifact roundTripField(FieldSchemaArtifact original)

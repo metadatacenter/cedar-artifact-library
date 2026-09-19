@@ -16,14 +16,6 @@ import static org.metadatacenter.model.ModelNodeNames.*;
 import static org.metadatacenter.model.ModelNodeValues.XSD_STRING;
 
 final class JsonSchemaSpecRenderers {
-  /**
-   * What a multi-instance child holding no lower bound of its own requires: one instance.
-   * <p>
-   * The YAML renderer omits a lower bound equal to this, so the two have to agree or a document
-   * round trips into a different one.
-   */
-  static final int DEFAULT_MIN_ITEMS = 1;
-
   private JsonSchemaSpecRenderers() {}
 
   public static ObjectNode renderJsonSchemaTypeUriEnumSpecification(String uri) {
@@ -261,11 +253,7 @@ final class JsonSchemaSpecRenderers {
     if (minItems.isPresent()) {
       wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, minItems.get());
     } else {
-      // A multi-instance child that states no lower bound takes one instance, not none. Defaulting
-      // to zero contradicted what the system stores — every such child in production carries
-      // minItems 1 — and said the array may be empty, which is a different contract and one the
-      // meta-schema takes literally.
-      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, DEFAULT_MIN_ITEMS);
+      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, 0);
     }
 
     if (maxItems.isPresent()) {

@@ -229,6 +229,7 @@ children:
       configuration:
         propertyIri: https://schema.metadatacenter.org/properties/9ffd234e-5291-4699-977a-612bb2437b3d
         multiple: true
+        minItems: 1
     - key: Please, provide organization type if not found in the drop-down list
       type: text-field
       name: Please, provide organization type if not found in the drop-down list
@@ -731,6 +732,7 @@ children:
       configuration:
         propertyIri: https://schema.metadatacenter.org/properties/fce3b181-0f33-40b7-8e05-64e40925c8b7
         multiple: true
+        minItems: 1
     - key: Please, provide your motivation if not found in the drop-down list
       type: text-field
       name: Please, provide your motivation if not found in the drop-down list
@@ -1115,6 +1117,7 @@ children:
       configuration:
         propertyIri: https://schema.metadatacenter.org/properties/f5bccb8f-5451-4c8d-92fe-c54c055b737e
         multiple: true
+        minItems: 1
     - key: Please, provide threat or pressure addressed if not found in the drop-down list
       type: text-field
       name: Please, provide threat or pressure addressed if not found in the drop-down list
@@ -1323,6 +1326,7 @@ children:
     configuration:
       propertyIri: https://schema.metadatacenter.org/properties/00e7f279-a808-4eeb-8d40-ceac03e511ea
       multiple: true
+      minItems: 1
   - key: Country
     type: controlled-term-field
     name: Country
