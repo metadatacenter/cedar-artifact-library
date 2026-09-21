@@ -420,9 +420,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
       Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
 
-      if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
-        rendering.put(attributeValueFieldInstanceGroupKey,
-          renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
+      // The group is judged by what it renders to, not by how many attributes it holds. A group
+      // whose every attribute is unset renders to nothing, and writing the key anyway produces
+      // `name: {}` — a placeholder the strict reader rejects, so the document does not survive
+      // its own round trip. An instance says what it holds by omission, and the server completes
+      // it against its template.
+      LinkedHashMap<String, Object> attributeValueFieldInstanceGroupRendering =
+        renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields);
+      if (!attributeValueFieldInstanceGroupRendering.isEmpty()) {
+        rendering.put(attributeValueFieldInstanceGroupKey, attributeValueFieldInstanceGroupRendering);
       }
     }
 
@@ -476,9 +482,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
-      if (!fields.isEmpty())
-        rendering.put(attributeValueFieldInstanceGroup.getKey(),
-          renderAttributeValueFieldInstanceGroupFields(fields));
+      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
+      if (!groupRendering.isEmpty())
+        rendering.put(attributeValueFieldInstanceGroup.getKey(), groupRendering);
     }
 
     return rendering;
@@ -495,9 +501,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
-      if (!fields.isEmpty())
-        attributeValueGroups.put(attributeValueFieldInstanceGroup.getKey(),
-          renderAttributeValueFieldInstanceGroupFields(fields));
+      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
+      if (!groupRendering.isEmpty())
+        attributeValueGroups.put(attributeValueFieldInstanceGroup.getKey(), groupRendering);
     }
 
     // An element with no set descendant field and no attribute-value groups is an unset slot:
