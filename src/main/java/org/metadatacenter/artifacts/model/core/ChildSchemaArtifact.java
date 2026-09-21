@@ -22,6 +22,27 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifac
 
   Optional<Integer> minItems();
 
+  /**
+   * Whether this child is multiple because of what it is, rather than because its author said so.
+   *
+   * A checkbox is always multiple, and a list is whenever its constraints say multiple choice. No
+   * one declared that, so no one declared how many occurrences it starts with either, and holding
+   * nothing is a state such a field can mean: nothing was ticked.
+   */
+  default boolean isMultipleByNature() {return false;}
+
+  /**
+   * How many occurrences this child starts with when nothing is chosen for it.
+   *
+   * A stated bound decides. Absent one, a child someone marked multiple takes
+   * {@link #DEFAULT_MIN_ITEMS}, for the reason above; a child that is multiple by nature takes
+   * none, because an occupant there would stand for a selection nobody made.
+   */
+  default int startingOccurrences()
+  {
+    return minItems().orElse(isMultipleByNature() ? 0 : DEFAULT_MIN_ITEMS);
+  }
+
   Optional<Integer> maxItems();
 
   Optional<URI> propertyUri();

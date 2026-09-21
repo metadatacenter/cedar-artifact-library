@@ -1,6 +1,5 @@
 package org.metadatacenter.artifacts.model.tools;
 
-import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -100,19 +99,6 @@ public final class InstanceInflater
       builder.withJsonLdContextEntry(entry.getKey(), entry.getValue());
     fillParent(schema, null, opsFor(builder));
     return builder.build();
-  }
-
-  /**
-   * How many occurrences the child's JSON Schema will demand.
-   *
-   * A template always states a lower bound for a multi-instance child, and states
-   * {@link ChildSchemaArtifact#DEFAULT_MIN_ITEMS} when the artifact names none, so an empty array
-   * fails the template unless the schema asked for zero. Completing an instance has to satisfy
-   * that bound the same way it fills a missing single field.
-   */
-  private static int lowerBound(ChildSchemaArtifact child)
-  {
-    return child.minItems().orElse(ChildSchemaArtifact.DEFAULT_MIN_ITEMS);
   }
 
   private static void ensureContext(Map<String, URI> required, Map<String, URI> existing,
@@ -233,7 +219,7 @@ public final class InstanceInflater
             values.addAll(existing.multiInstanceFieldInstances().get(childKey));
             ops.removeMultiField().accept(childKey);
           }
-          while (values.size() < lowerBound(field))
+          while (values.size() < field.startingOccurrences())
             values.add(EmptyFieldInstances.emptyFor(field));
           ops.putMultiField().accept(childKey, List.copyOf(values));
         } else {
@@ -257,7 +243,7 @@ public final class InstanceInflater
               inflated.add(inflateElement(element, e));
             ops.removeMultiElement().accept(childKey);
           }
-          while (inflated.size() < lowerBound(element))
+          while (inflated.size() < element.startingOccurrences())
             inflated.add(emptyElement(element));
           ops.putMultiElement().accept(childKey, List.copyOf(inflated));
         } else {
