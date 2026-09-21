@@ -514,6 +514,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty())
       return rendering;
 
+    // The reader tells an element from a field by `children:`. An element holding only
+    // attribute-value groups has no ordinary child and so writes no `children:` key, which left
+    // it indistinguishable from a field: it was read back as one and its groups were lost. State
+    // the discriminator whenever `children:` is absent, as the empty repeated entry below does.
+    if (childInstanceArtifactsRendering.isEmpty())
+      rendering.put(TYPE, ELEMENT_INSTANCE);
+
     // A compact document identifies only its root artifact. Nested element occurrences are
     // repository-owned structure and can be reconstructed from the template when needed.
     if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
