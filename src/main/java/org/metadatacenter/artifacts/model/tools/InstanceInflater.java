@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.tools;
 
+import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -101,6 +102,19 @@ public final class InstanceInflater
     return builder.build();
   }
 
+  /**
+   * How many occurrences the child's JSON Schema will demand.
+   *
+   * A template always states a lower bound for a multi-instance child, and states
+   * {@link ChildSchemaArtifact#DEFAULT_MIN_ITEMS} when the artifact names none, so an empty array
+   * fails the template unless the schema asked for zero. Completing an instance has to satisfy
+   * that bound the same way it fills a missing single field.
+   */
+  private static int lowerBound(ChildSchemaArtifact child)
+  {
+    return child.minItems().orElse(ChildSchemaArtifact.DEFAULT_MIN_ITEMS);
+  }
+
   private static void ensureContext(Map<String, URI> required, Map<String, URI> existing,
       BiConsumer<String, URI> put)
   {
@@ -141,6 +155,49 @@ public final class InstanceInflater
   }
 
   /**
+   * Describe how the instance holds a child, for an error that names the disagreement.
+   *
+   * @return the slot the instance uses, or null when it does not hold the child at all
+   */
+  private static String slotHolding(ParentInstanceArtifact existing, String childKey)
+  {
+    if (existing == null)
+      return null;
+    if (existing.singleInstanceFieldInstances().containsKey(childKey))
+      return "a single field";
+    if (existing.multiInstanceFieldInstances().containsKey(childKey))
+      return "a list of fields";
+    if (existing.singleInstanceElementInstances().containsKey(childKey))
+      return "a single element";
+    if (existing.multiInstanceElementInstances().containsKey(childKey))
+      return "a list of elements";
+    if (existing.attributeValueFieldInstanceGroups().containsKey(childKey))
+      return "an attribute-value group";
+    return existing.childKeys().contains(childKey) ? "something unrecognised" : null;
+  }
+
+  /**
+   * Refuse a child the instance holds in a different slot from the one the schema declares.
+   *
+   * The builders reject a key that is already registered, so without this the disagreement
+   * surfaced as {@code child X already present in instance} — which says a key collided without
+   * saying that the instance and its template disagree about what the child is. Every instance
+   * seen with this shape was already invalid against its own template, an array where an object
+   * was required, so the useful outcome is a diagnosis rather than a repair.
+   *
+   * @throws IllegalArgumentException when the instance holds the child in another slot
+   */
+  private static void requireMatchingSlot(ParentInstanceArtifact existing, String childKey,
+      String schemaSlot, String instanceSlot)
+  {
+    if (instanceSlot == null || instanceSlot.equals(schemaSlot))
+      return;
+    throw new IllegalArgumentException("the instance and its template disagree about child "
+        + childKey + ": the template declares " + schemaSlot + " and the instance holds "
+        + instanceSlot);
+  }
+
+  /**
    * Walk the schema's children in display order and (re-)emit each one: a child the instance is
    * missing gets the empty slot the JSON form requires; a child it carries is removed and
    * re-added — values untouched, elements recursively inflated — so the children end up in the
@@ -168,16 +225,19 @@ public final class InstanceInflater
 
       if (schema.isField(childKey)) {
         FieldSchemaArtifact field = schema.getFieldSchemaArtifact(childKey);
+        String holding = slotHolding(existing, childKey);
         if (field.isMultiple()) {
+          requireMatchingSlot(existing, childKey, "a list of fields", holding);
+          List<FieldInstanceArtifact> values = new ArrayList<>();
           if (existing != null && existing.multiInstanceFieldInstances().containsKey(childKey)) {
-            List<FieldInstanceArtifact> values =
-                new ArrayList<>(existing.multiInstanceFieldInstances().get(childKey));
+            values.addAll(existing.multiInstanceFieldInstances().get(childKey));
             ops.removeMultiField().accept(childKey);
-            ops.putMultiField().accept(childKey, values);
-          } else {
-            ops.putMultiField().accept(childKey, List.of());
           }
+          while (values.size() < lowerBound(field))
+            values.add(EmptyFieldInstances.emptyFor(field));
+          ops.putMultiField().accept(childKey, List.copyOf(values));
         } else {
+          requireMatchingSlot(existing, childKey, "a single field", holding);
           if (existing != null && existing.singleInstanceFieldInstances().containsKey(childKey)) {
             FieldInstanceArtifact value = existing.singleInstanceFieldInstances().get(childKey);
             ops.removeSingleField().accept(childKey);
@@ -188,17 +248,20 @@ public final class InstanceInflater
         }
       } else if (schema.isElement(childKey)) {
         ElementSchemaArtifact element = schema.getElementSchemaArtifact(childKey);
+        String holding = slotHolding(existing, childKey);
         if (element.isMultiple()) {
+          requireMatchingSlot(existing, childKey, "a list of elements", holding);
+          List<ElementInstanceArtifact> inflated = new ArrayList<>();
           if (existing != null && existing.multiInstanceElementInstances().containsKey(childKey)) {
-            List<ElementInstanceArtifact> inflated = new ArrayList<>();
             for (ElementInstanceArtifact e : existing.multiInstanceElementInstances().get(childKey))
               inflated.add(inflateElement(element, e));
             ops.removeMultiElement().accept(childKey);
-            ops.putMultiElement().accept(childKey, inflated);
-          } else {
-            ops.putMultiElement().accept(childKey, List.of());
           }
+          while (inflated.size() < lowerBound(element))
+            inflated.add(emptyElement(element));
+          ops.putMultiElement().accept(childKey, List.copyOf(inflated));
         } else {
+          requireMatchingSlot(existing, childKey, "a single element", holding);
           if (existing != null && existing.singleInstanceElementInstances().containsKey(childKey)) {
             ElementInstanceArtifact inflated =
                 inflateElement(element, existing.singleInstanceElementInstances().get(childKey));
