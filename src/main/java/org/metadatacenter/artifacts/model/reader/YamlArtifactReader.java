@@ -673,7 +673,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL, true);
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
 
-    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation, preferredLabel, language);
+    // Say whether the document wrote a value key, rather than letting the overload assume it did.
+    // A controlled-term field holding only a label writes no `value:`, and its sub-schema allows no
+    // `@value` at all, so assuming one made the JSON renderer emit `"@value": null` beside the
+    // label — a shape that is neither of the two empty forms and one the field's own sub-schema
+    // rejects.
+    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
+      preferredLabel, language, sourceNode.containsKey(VALUE));
   }
 
   /**
