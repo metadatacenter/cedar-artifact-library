@@ -40,7 +40,9 @@ import java.util.List;
  *       -Dexec.args=/path/to/cedar-test-artifacts
  * }</pre>
  *
- * Exits non-zero when a fixture is stale, so continuous integration can stand on it.
+ * Exits non-zero when a fixture is stale, so continuous integration can stand on it. Pass
+ * {@code --write} before the path to rewrite the stale ones instead of reporting them, which keeps a
+ * regeneration and the check that judges it to the same rendering call.
  */
 public final class CorpusFixtureVerifier
 {
@@ -69,10 +71,11 @@ public final class CorpusFixtureVerifier
   public static void main(String[] args) throws IOException
   {
     if (args.length < 1) {
-      System.err.println("Usage: CorpusFixtureVerifier <path to cedar-test-artifacts>");
+      System.err.println("Usage: CorpusFixtureVerifier [--write] <path to cedar-test-artifacts>");
       System.exit(2);
     }
-    Path artifacts = Path.of(args[0]).resolve("artifacts");
+    boolean write = List.of(args).contains("--write");
+    Path artifacts = Path.of(args[args.length - 1]).resolve("artifacts");
     if (!Files.isDirectory(artifacts)) {
       System.err.println("Not a corpus: " + artifacts.toAbsolutePath());
       System.exit(2);
@@ -104,34 +107,50 @@ public final class CorpusFixtureVerifier
           }
 
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.yaml"),
-            YamlSerializer.getYAML(artifact, false, true), stale);
+            YamlSerializer.getYAML(artifact, false, true), stale, write);
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.compact.yaml"),
-            YamlSerializer.getYAML(artifact, true, true), stale);
+            YamlSerializer.getYAML(artifact, true, true), stale, write);
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"),
-            renderJson(kind, artifact), stale);
+            renderJson(kind, artifact), stale, write);
         }
       }
     }
 
-    System.out.printf("corpus fixtures checked: %d   stale: %d   artifacts this library cannot read: %d%n",
-      checked, stale.size(), unreadable);
+    System.out.printf("corpus fixtures checked: %d   %s: %d   artifacts this library cannot read: %d%n",
+      checked, write ? "rewritten" : "stale", stale.size(), unreadable);
     if (!stale.isEmpty()) {
-      System.out.println("\nThese committed fixtures are not what this library writes now:");
+      System.out.println(write ? "\nThese fixtures now hold what this library writes:"
+        : "\nThese committed fixtures are not what this library writes now:");
       stale.forEach(fixture -> System.out.println("  " + fixture));
-      System.out.println("\nRegenerate them in cedar-test-artifacts, and in the copy the TypeScript library carries,\n"
-        + "or the comparison between the two libraries measures output this one no longer produces.");
-      System.exit(1);
+      if (write) {
+        System.out.println("\nMirror them into the copy the TypeScript library carries, and refresh that library's\n"
+          + "own fixtures, so the two are compared at the same revision of each writer.");
+      } else {
+        System.out.println("\nRegenerate them with --write, here and in the copy the TypeScript library carries,\n"
+          + "or the comparison between the two libraries measures output this one no longer produces.");
+        System.exit(1);
+      }
     }
   }
 
-  /** Returns 1 when the fixture was present and compared, 0 when there was nothing to compare. */
-  private static int compare(Path fixture, String rendered, List<String> stale) throws IOException
+  /**
+   * Returns 1 when the fixture was present and compared, 0 when there was nothing to compare.
+   *
+   * <p>Under {@code write} a fixture that differs is rewritten with what was rendered here, so a
+   * regeneration cannot be produced by a different call than the one that judges it stale. Only an
+   * existing fixture is rewritten: which artifacts the corpus records in which forms is the corpus's
+   * business, not this tool's.
+   */
+  private static int compare(Path fixture, String rendered, List<String> stale, boolean write) throws IOException
   {
     if (!Files.isRegularFile(fixture))
       return 0;
-    if (!Files.readString(fixture).trim().equals(rendered.trim()))
+    if (!Files.readString(fixture).trim().equals(rendered.trim())) {
       stale.add(fixture.getParent().getParent().getFileName() + "/" + fixture.getParent().getFileName() + "/"
         + fixture.getFileName());
+      if (write)
+        Files.writeString(fixture, rendered.trim() + "\n");
+    }
     return 1;
   }
 
