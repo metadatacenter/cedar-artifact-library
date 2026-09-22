@@ -105386,7 +105386,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -105696,7 +105696,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -106006,7 +106006,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -106544,7 +106544,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -106855,7 +106855,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -107166,7 +107166,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -107705,7 +107705,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -108016,7 +108016,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -108327,7 +108327,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -108887,7 +108887,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -109205,7 +109205,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -109523,7 +109523,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -110072,7 +110072,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -110384,7 +110384,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -110696,7 +110696,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -111233,7 +111233,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -111543,7 +111543,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -111853,7 +111853,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -112388,7 +112388,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -112698,7 +112698,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -113008,7 +113008,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -113545,7 +113545,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -113856,7 +113856,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -114167,7 +114167,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -114704,7 +114704,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -115015,7 +115015,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -115326,7 +115326,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -115861,7 +115861,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -116171,7 +116171,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -116481,7 +116481,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -117056,7 +117056,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -117380,7 +117380,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -117704,7 +117704,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -118251,7 +118251,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -118561,7 +118561,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -118871,7 +118871,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -119409,7 +119409,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -119720,7 +119720,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -120031,7 +120031,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -135592,7 +135592,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -135902,7 +135902,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -136212,7 +136212,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -136750,7 +136750,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -137061,7 +137061,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -137372,7 +137372,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -137911,7 +137911,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -138222,7 +138222,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -138533,7 +138533,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -139093,7 +139093,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -139411,7 +139411,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -139729,7 +139729,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -140278,7 +140278,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -140590,7 +140590,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -140902,7 +140902,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -141439,7 +141439,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -141749,7 +141749,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -142059,7 +142059,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -142594,7 +142594,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -142904,7 +142904,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -143214,7 +143214,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -143751,7 +143751,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -144062,7 +144062,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -144373,7 +144373,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -144910,7 +144910,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -145221,7 +145221,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -145532,7 +145532,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -146067,7 +146067,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -146377,7 +146377,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -146687,7 +146687,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -147262,7 +147262,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -147586,7 +147586,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -147910,7 +147910,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -148457,7 +148457,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -148767,7 +148767,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -149077,7 +149077,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -149615,7 +149615,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -149926,7 +149926,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : "https://example.org/fields/field",
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -150237,7 +150237,7 @@
       },
       "property-key" : {
         "type" : "array",
-        "minItems" : 1,
+        "minItems" : 0,
         "items" : {
           "@id" : null,
           "@type" : "https://schema.metadatacenter.org/core/TemplateField",

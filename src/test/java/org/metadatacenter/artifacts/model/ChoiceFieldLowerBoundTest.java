@@ -1,15 +1,22 @@
 package org.metadatacenter.artifacts.model;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.CheckboxField;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ListField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
+import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.artifacts.model.tools.InstanceInflater;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,6 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>An explicitly stated bound is still honoured, here as everywhere: the default only decides
  * what an unstated bound means.
+ *
+ * <p>The rendered template has to say the same thing. A JSON Schema lower bound is what a stored
+ * document is held to, so a template demanding one occurrence of a field an instance of it leaves
+ * empty is a template no instance of it satisfies.
  */
 public class ChoiceFieldLowerBoundTest
 {
@@ -99,5 +110,66 @@ public class ChoiceFieldLowerBoundTest
 
     assertTrue(inflated.singleInstanceFieldInstances().containsKey("Kind"),
       "a single-choice list is one field, not a list of them");
+  }
+
+  private static ObjectNode renderedProperty(TemplateSchemaArtifact template, String key)
+  {
+    return (ObjectNode) new JsonArtifactRenderer().renderTemplateSchemaArtifact(template)
+      .get("properties").get(key);
+  }
+
+  private static TemplateSchemaArtifact templateHolding(FieldSchemaArtifact field)
+  {
+    return TemplateSchemaArtifact.builder().withName("Study").withFieldSchema(field).build();
+  }
+
+  @Test public void aRenderedCheckboxDemandsNoOccupant()
+  {
+    CheckboxField checkbox = CheckboxField.builder().withName("Options").withOption("A").build();
+
+    assertEquals(0, renderedProperty(templateHolding(checkbox), "Options").get("minItems").asInt(),
+      "a template that states no bound must not demand a selection nobody made");
+  }
+
+  @Test public void aRenderedMultiSelectListDemandsNoOccupant()
+  {
+    ListField list = ListField.builder().withName("Kinds").withOption("A").withMultipleChoice(true).build();
+
+    assertEquals(0, renderedProperty(templateHolding(list), "Kinds").get("minItems").asInt());
+  }
+
+  @Test public void aRenderedAuthorDeclaredMultipleChildDemandsOne()
+  {
+    TextField aliases = TextField.builder().withName("Aliases").withIsMultiple(true).build();
+
+    assertEquals(ChildSchemaArtifact.DEFAULT_MIN_ITEMS,
+      renderedProperty(templateHolding(aliases), "Aliases").get("minItems").asInt(),
+      "the rule for a child someone marked multiple is unchanged");
+  }
+
+  @Test public void aRenderedTemplateDemandsWhatFillingItProduces()
+  {
+    CheckboxField checkbox = CheckboxField.builder().withName("Options").withOption("A").build();
+    TemplateSchemaArtifact template = templateHolding(checkbox);
+
+    int demanded = renderedProperty(template, "Options").get("minItems").asInt();
+    int produced = InstanceInflater.inflate(template, sparse().build())
+      .multiInstanceFieldInstances().get("Options").size();
+
+    assertTrue(produced >= demanded,
+      "an instance the library fills must satisfy the template the library writes");
+  }
+
+  @Test public void aCheckboxBoundOfOneSurvivesYaml()
+  {
+    CheckboxField checkbox = CheckboxField.builder().withName("Options")
+      .withOption("A").withMinItems(1).build();
+
+    LinkedHashMap<String, Object> yaml =
+      new YamlArtifactRenderer(false).renderTemplateSchemaArtifact(templateHolding(checkbox));
+    TemplateSchemaArtifact read = new YamlArtifactReader().readTemplateSchemaArtifact(yaml);
+
+    assertEquals(Optional.of(1), read.getFieldSchemaArtifact("Options").minItems(),
+      "a bound an author chose is the author's even when it matches another kind's default: " + yaml);
   }
 }

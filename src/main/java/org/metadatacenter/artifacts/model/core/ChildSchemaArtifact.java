@@ -32,15 +32,27 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifac
   default boolean isMultipleByNature() {return false;}
 
   /**
+   * The lower bound implied by what this child is, for one that states none.
+   *
+   * A child someone marked multiple takes {@link #DEFAULT_MIN_ITEMS}, for the reason above; a
+   * child that is multiple by nature takes none, because an occupant there would stand for a
+   * selection nobody made.
+   */
+  default int defaultOccurrences()
+  {
+    return isMultipleByNature() ? 0 : DEFAULT_MIN_ITEMS;
+  }
+
+  /**
    * How many occurrences this child starts with when nothing is chosen for it.
    *
-   * A stated bound decides. Absent one, a child someone marked multiple takes
-   * {@link #DEFAULT_MIN_ITEMS}, for the reason above; a child that is multiple by nature takes
-   * none, because an occupant there would stand for a selection nobody made.
+   * A stated bound decides; absent one, {@link #defaultOccurrences()} does. The same number is the
+   * lower bound a rendered JSON Schema states, so a template written from the model demands exactly
+   * what filling an instance from it produces.
    */
   default int startingOccurrences()
   {
-    return minItems().orElse(isMultipleByNature() ? 0 : DEFAULT_MIN_ITEMS);
+    return minItems().orElse(defaultOccurrences());
   }
 
   Optional<Integer> maxItems();

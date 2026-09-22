@@ -1667,7 +1667,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       return false;
     if (childSchemaArtifact instanceof FieldSchemaArtifact field && field.isAttributeValue())
       return false;
-    return childSchemaArtifact.minItems().get() != ChildSchemaArtifact.DEFAULT_MIN_ITEMS;
+    return childSchemaArtifact.minItems().get() != childSchemaArtifact.defaultOccurrences();
   }
 
   private boolean isMultiSelectListField(FieldSchemaArtifact fieldSchemaArtifact)
