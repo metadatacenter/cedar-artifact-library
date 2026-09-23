@@ -33,6 +33,8 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 
   default boolean isMultiple() {return true;}
 
+  @Override default boolean isMultipleByNature() {return true;}
+
   static CheckboxFieldBuilder builder() {return new CheckboxFieldBuilder();}
 
   static CheckboxFieldBuilder builder(CheckboxField checkboxField) {return new CheckboxFieldBuilder(checkboxField);}

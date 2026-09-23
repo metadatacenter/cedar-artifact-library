@@ -263,12 +263,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.isAttributeValue())
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     return rendering;
@@ -422,9 +420,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
       Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
 
-      if (!attributeValueFieldInstanceGroupFields.isEmpty()) {
-        rendering.put(attributeValueFieldInstanceGroupKey,
-          renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields));
+      // The group is judged by what it renders to, not by how many attributes it holds. A group
+      // whose every attribute is unset renders to nothing, and writing the key anyway produces
+      // `name: {}` — a placeholder the strict reader rejects, so the document does not survive
+      // its own round trip. An instance says what it holds by omission, and the server completes
+      // it against its template.
+      LinkedHashMap<String, Object> attributeValueFieldInstanceGroupRendering =
+        renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields);
+      if (!attributeValueFieldInstanceGroupRendering.isEmpty()) {
+        rendering.put(attributeValueFieldInstanceGroupKey, attributeValueFieldInstanceGroupRendering);
       }
     }
 
@@ -478,9 +482,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
-      if (!fields.isEmpty())
-        rendering.put(attributeValueFieldInstanceGroup.getKey(),
-          renderAttributeValueFieldInstanceGroupFields(fields));
+      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
+      if (!groupRendering.isEmpty())
+        rendering.put(attributeValueFieldInstanceGroup.getKey(), groupRendering);
     }
 
     return rendering;
@@ -497,9 +501,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
-      if (!fields.isEmpty())
-        attributeValueGroups.put(attributeValueFieldInstanceGroup.getKey(),
-          renderAttributeValueFieldInstanceGroupFields(fields));
+      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
+      if (!groupRendering.isEmpty())
+        attributeValueGroups.put(attributeValueFieldInstanceGroup.getKey(), groupRendering);
     }
 
     // An element with no set descendant field and no attribute-value groups is an unset slot:
@@ -509,6 +513,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // reconstructable from the template at the JSON boundary.
     if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty())
       return rendering;
+
+    // The reader tells an element from a field by `children:`. An element holding only
+    // attribute-value groups has no ordinary child and so writes no `children:` key, which left
+    // it indistinguishable from a field: it was read back as one and its groups were lost. State
+    // the discriminator whenever `children:` is absent, as the empty repeated entry below does.
+    if (childInstanceArtifactsRendering.isEmpty())
+      rendering.put(TYPE, ELEMENT_INSTANCE);
 
     // A compact document identifies only its root artifact. Nested element occurrences are
     // repository-owned structure and can be reconstructed from the template when needed.
@@ -1191,7 +1202,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.isMultiple())
       rendering.put(MULTIPLE, true);
 
-    if (elementSchemaArtifact.minItems().isPresent())
+    if (statesLowerBound(elementSchemaArtifact))
       rendering.put(MIN_ITEMS, elementSchemaArtifact.minItems().get());
 
     if (elementSchemaArtifact.maxItems().isPresent())
@@ -1249,8 +1260,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (fieldSchemaArtifact.minItems().isPresent() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
+    if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
     if (fieldSchemaArtifact.maxItems().isPresent())
@@ -1635,10 +1645,29 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> literalValueConstraintRendering = new LinkedHashMap<>();
 
     literalValueConstraintRendering.put(LITERAL, literalValueConstraint.label());
-    if (literalValueConstraint.selectedByDefault())
-      literalValueConstraintRendering.put(SELECTED_BY_DEFAULT, true);
+    if (literalValueConstraint.statesSelectedByDefault())
+      literalValueConstraintRendering.put(SELECTED_BY_DEFAULT, literalValueConstraint.isSelectedByDefault());
 
     return literalValueConstraintRendering;
+  }
+
+  /**
+   * Whether the child's lower bound is worth stating.
+   * <p>
+   * A bound equal to the one a child that states none is read with carries nothing, and writing it
+   * would make a document that omitted it round trip into one that does not. A lower bound the
+   * author chose differs from the default and is written, whether the child is an element, a field
+   * the template marks multiple, or a field multiple by its own type. An attribute-value field is
+   * wrapped with a zero by construction rather than by an author, so stating it would put in the
+   * document something nobody wrote.
+   */
+  private boolean statesLowerBound(ChildSchemaArtifact childSchemaArtifact)
+  {
+    if (childSchemaArtifact.minItems().isEmpty())
+      return false;
+    if (childSchemaArtifact instanceof FieldSchemaArtifact field && field.isAttributeValue())
+      return false;
+    return childSchemaArtifact.minItems().get() != childSchemaArtifact.defaultOccurrences();
   }
 
   private boolean isMultiSelectListField(FieldSchemaArtifact fieldSchemaArtifact)

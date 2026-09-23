@@ -159,7 +159,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue()) {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey, renderJsonSchemaArrayWrapperSpecification(
               renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact),
-              childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
+              childFieldSchemaArtifact.startingOccurrences(), childFieldSchemaArtifact.maxItems()));
         } else {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
               .put(childKey, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
@@ -171,7 +171,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         if (childElementSchemaArtifact.isMultiple()) {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey,
               renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childElementSchemaArtifact),
-                  childElementSchemaArtifact.minItems(), childElementSchemaArtifact.maxItems()));
+                  childElementSchemaArtifact.startingOccurrences(), childElementSchemaArtifact.maxItems()));
         } else {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
               .put(childKey, renderElementSchemaArtifact(childElementSchemaArtifact));
@@ -256,7 +256,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         if (childFieldSchemaArtifact.isMultiple() && !childFieldSchemaArtifact.isAttributeValue()) {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey, renderJsonSchemaArrayWrapperSpecification(
               renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact),
-              childFieldSchemaArtifact.minItems(), childFieldSchemaArtifact.maxItems()));
+              childFieldSchemaArtifact.startingOccurrences(), childFieldSchemaArtifact.maxItems()));
         } else {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
               .put(childKey, renderFieldSchemaArtifact(childFieldSchemaArtifact.name(), childFieldSchemaArtifact));
@@ -268,7 +268,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         if (childElementSchemaArtifact.isMultiple()) {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(childKey,
               renderJsonSchemaArrayWrapperSpecification(renderElementSchemaArtifact(childElementSchemaArtifact),
-                  childElementSchemaArtifact.minItems(), childElementSchemaArtifact.maxItems()));
+                  childElementSchemaArtifact.startingOccurrences(), childElementSchemaArtifact.maxItems()));
         } else {
           rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
               .put(childKey, renderElementSchemaArtifact(childElementSchemaArtifact));
@@ -444,7 +444,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     }
 
     if (fieldSchemaArtifact.isAttributeValue()) {
-      return renderJsonSchemaArrayWrapperSpecification(rendering, Optional.of(0), Optional.empty());
+      return renderJsonSchemaArrayWrapperSpecification(rendering, 0, Optional.empty());
     } else {
       return rendering;
     }

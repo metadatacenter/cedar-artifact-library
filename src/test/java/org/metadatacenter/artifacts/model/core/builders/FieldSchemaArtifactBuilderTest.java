@@ -489,7 +489,11 @@ public class FieldSchemaArtifactBuilderTest {
         build();
 
     Assertions.assertTrue(optionalList.isMultiple());
-    Assertions.assertEquals(Optional.of(0), optionalList.minItems());
+    // Multiple because its constraints say multiple choice, so it states no bound of its own and
+    // starts with nothing: choosing none from it is a state a reader can mean.
+    Assertions.assertTrue(optionalList.isMultipleByNature());
+    Assertions.assertEquals(Optional.empty(), optionalList.minItems());
+    Assertions.assertEquals(0, optionalList.startingOccurrences());
 
     ListField requiredList = ListField.builder().
         withName("Required multiple-choice list").
@@ -498,7 +502,9 @@ public class FieldSchemaArtifactBuilderTest {
         build();
 
     Assertions.assertTrue(requiredList.isMultiple());
-    Assertions.assertEquals(Optional.of(1), requiredList.minItems());
+    // Demanding a value says every occurrence must be answered, not that one must exist.
+    Assertions.assertEquals(Optional.empty(), requiredList.minItems());
+    Assertions.assertEquals(0, requiredList.startingOccurrences());
   }
 
   @Test

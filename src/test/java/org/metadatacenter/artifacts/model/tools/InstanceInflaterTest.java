@@ -78,8 +78,11 @@ public class InstanceInflaterTest
       "the omitted field should be filled empty, not given a value");
   }
 
-  @Test public void missingMultipleFieldBecomesAnEmptyList()
+  @Test public void missingMultipleFieldIsFilledToTheLowerBoundItsTemplateStates()
   {
+    // A template always states a lower bound for a multi-instance child, and states the default of
+    // one when the artifact names none, so an empty array fails the very template the instance
+    // names. Completing an instance fills the bound the same way it fills a missing single field.
     TextField aliases = TextField.builder().withName("Aliases").withIsMultiple(true).build();
     TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
       .withFieldSchema(aliases).build();
@@ -87,8 +90,140 @@ public class InstanceInflaterTest
 
     TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
 
-    assertTrue(inflated.multiInstanceFieldInstances().containsKey(key));
-    assertTrue(inflated.multiInstanceFieldInstances().get(key).isEmpty());
+    assertEquals(1, inflated.multiInstanceFieldInstances().get(key).size());
+    assertTrue(inflated.multiInstanceFieldInstances().get(key).get(0).jsonLdValue().isEmpty(),
+      "the filled occurrence should carry no value");
+  }
+
+  @Test public void aStatedLowerBoundAboveOneIsFilled()
+  {
+    TextField aliases = TextField.builder().withName("Aliases")
+      .withIsMultiple(true).withMinItems(3).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(aliases).build();
+    String key = template.getUi().order().get(0);
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    assertEquals(3, inflated.multiInstanceFieldInstances().get(key).size());
+  }
+
+  @Test public void aLowerBoundOfZeroLeavesTheListEmpty()
+  {
+    TextField aliases = TextField.builder().withName("Aliases")
+      .withIsMultiple(true).withMinItems(0).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(aliases).build();
+    String key = template.getUi().order().get(0);
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    assertTrue(inflated.multiInstanceFieldInstances().get(key).isEmpty(),
+      "a schema that asks for none must not be given one");
+  }
+
+  @Test public void aShortListIsToppedUpAndItsValuesKept()
+  {
+    TextField aliases = TextField.builder().withName("Aliases")
+      .withIsMultiple(true).withMinItems(3).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(aliases).build();
+    String key = template.getUi().order().get(0);
+
+    TemplateInstanceArtifact sparse = sparseInstance()
+      .withMultiInstanceFieldInstances(key, List.of(literal("A-1"))).build();
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparse);
+
+    List<FieldInstanceArtifact> occurrences = inflated.multiInstanceFieldInstances().get(key);
+    assertEquals(3, occurrences.size());
+    assertEquals("A-1", occurrences.get(0).jsonLdValue().orElse(null));
+    assertTrue(occurrences.get(1).jsonLdValue().isEmpty());
+    assertTrue(occurrences.get(2).jsonLdValue().isEmpty());
+  }
+
+  @Test public void aChildHeldInTheWrongSlotIsNamedRatherThanCollided()
+  {
+    // Two production instances hold a child as a list where their template declares an object,
+    // and are invalid against that template for exactly that reason. Completing one used to fail
+    // with "child X already present in instance", which reports a key collision inside the
+    // builder rather than the disagreement that caused it.
+    TextField optionSection = TextField.builder().withName("optionSection").build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(optionSection).build();
+
+    TemplateInstanceArtifact sparse = sparseInstance()
+      .withMultiInstanceFieldInstances("optionSection", List.of(literal("Next option"))).build();
+
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+      () -> InstanceInflater.inflate(template, sparse));
+    assertTrue(thrown.getMessage().contains("disagree about child optionSection"),
+      "the error should name the disagreement: " + thrown.getMessage());
+    assertTrue(thrown.getMessage().contains("a single field")
+        && thrown.getMessage().contains("a list of fields"),
+      "the error should say what each side declares: " + thrown.getMessage());
+  }
+
+  @Test public void anElementHeldAsAListWhereTheTemplateDeclaresOneIsNamed()
+  {
+    ElementSchemaArtifact funder = ElementSchemaArtifact.builder().withName("funder")
+      .withFieldSchema(TextField.builder().withName("name").build()).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Grant")
+      .withElementSchema(funder).build();
+
+    TemplateInstanceArtifact sparse = sparseInstance()
+      .withMultiInstanceElementInstances("funder",
+        List.of(ElementInstanceArtifact.builder().build())).build();
+
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+      () -> InstanceInflater.inflate(template, sparse));
+    assertTrue(thrown.getMessage().contains("disagree about child funder"),
+      "the error should name the disagreement: " + thrown.getMessage());
+  }
+
+  @Test public void aMissingRepeatedElementIsFilledToItsLowerBound()
+  {
+    ElementSchemaArtifact address = ElementSchemaArtifact.builder().withName("Address")
+      .withIsMultiple(true)
+      .withFieldSchema(TextField.builder().withName("Street").build()).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withElementSchema(address).build();
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    List<ElementInstanceArtifact> occurrences =
+      inflated.multiInstanceElementInstances().get("Address");
+    assertEquals(1, occurrences.size());
+    assertTrue(occurrences.get(0).singleInstanceFieldInstances().containsKey("Street"),
+      "the filled occurrence should itself be complete");
+  }
+
+  @Test public void omittedAuthorityFieldsInRepeatedNestedElementsKeepArrayShape()
+  {
+    var nih = org.metadatacenter.artifacts.model.core.NihGrantIdField.builder()
+      .withName("NIH Grant ID Field").withIsMultiple(true).build();
+    var doi = org.metadatacenter.artifacts.model.core.DoiField.builder()
+      .withName("DOI Field").withIsMultiple(true).build();
+    var nested = ElementSchemaArtifact.builder().withName("Nested").withIsMultiple(true)
+      .withFieldSchema(nih).withFieldSchema(doi).build();
+    var wrapper = ElementSchemaArtifact.builder().withName("Wrapper")
+      .withElementSchema(nested).build();
+    var template = TemplateSchemaArtifact.builder().withName("Authority fields")
+      .withElementSchema(wrapper).build();
+    var sparse = sparseInstance().withSingleInstanceElementInstance("Wrapper",
+      ElementInstanceArtifact.builder().withMultiInstanceElementInstances("Nested", List.of(
+        ElementInstanceArtifact.builder().build(), ElementInstanceArtifact.builder().build())).build()).build();
+    var inflated = InstanceInflater.inflate(template, sparse);
+    var occurrences = inflated.singleInstanceElementInstances().get("Wrapper")
+      .multiInstanceElementInstances().get("Nested");
+    assertEquals(2, occurrences.size());
+    for (var occurrence : occurrences) {
+      // Each occurrence keeps its array shape, filled to the lower bound its template states.
+      assertEquals(1, occurrence.multiInstanceFieldInstances().get("NIH Grant ID Field").size());
+      assertEquals(1, occurrence.multiInstanceFieldInstances().get("DOI Field").size());
+      assertTrue(occurrence.singleInstanceFieldInstances().isEmpty());
+    }
+    assertEquals(inflated, InstanceInflater.inflate(template, inflated));
   }
 
   @Test public void staticFieldsNeverAcquireInstanceSlots()

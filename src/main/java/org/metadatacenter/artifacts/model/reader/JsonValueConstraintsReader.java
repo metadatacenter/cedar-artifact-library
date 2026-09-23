@@ -472,9 +472,12 @@ final class JsonValueConstraintsReader {
 
   static LiteralValueConstraint readLiteralValueConstraint(ObjectNode sourceNode, String path) {
     String label = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_LABEL);
-    boolean selectedByDefault = readBoolean(sourceNode, path, VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT, false);
 
-    return new LiteralValueConstraint(label, selectedByDefault);
+    if (!sourceNode.has(VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT))
+      return new LiteralValueConstraint(label);
+
+    return new LiteralValueConstraint(label,
+      readBoolean(sourceNode, path, VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT, false));
   }
 
 }

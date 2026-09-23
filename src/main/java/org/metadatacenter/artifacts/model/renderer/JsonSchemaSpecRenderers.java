@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 
 import java.net.URI;
@@ -244,17 +245,20 @@ final class JsonSchemaSpecRenderers {
   }
 
 
-  public static ObjectNode renderJsonSchemaArrayWrapperSpecification(ObjectNode wrappedRendering, Optional<Integer> minItems,
+  /**
+   * Wrap a child's rendering in the array a multi-instance child is stored as.
+   * <p>
+   * The lower bound is asked for outright rather than defaulted here: a child that states none has
+   * one implied by what it is, and a renderer that supplied the same number to every kind wrote
+   * templates demanding an occupant of a checkbox nobody ticked. Callers pass
+   * {@link ChildSchemaArtifact#startingOccurrences()}, which answers both cases.
+   */
+  public static ObjectNode renderJsonSchemaArrayWrapperSpecification(ObjectNode wrappedRendering, int minItems,
                                                                Optional<Integer> maxItems) {
     ObjectNode wrapperRendering = MAPPER.createObjectNode();
 
     wrapperRendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_ARRAY);
-
-    if (minItems.isPresent()) {
-      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, minItems.get());
-    } else {
-      wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, 0);
-    }
+    wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, minItems);
 
     if (maxItems.isPresent()) {
       wrapperRendering.put(JSON_SCHEMA_MAX_ITEMS, maxItems.get());

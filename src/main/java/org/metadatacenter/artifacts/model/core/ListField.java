@@ -33,16 +33,26 @@ public sealed interface ListField extends FieldSchemaArtifact
     // JSON Schema array wrapper.
     boolean isMultipleChoice = valueConstraints.map(ValueConstraints::multipleChoice).orElse(false);
     boolean canonicalIsMultiple = isMultiple || isMultipleChoice;
+    // A multi-select list states its own lower bound or has none. It used to be given one, on the
+    // reading that a list nobody has to answer should not appear zero times -- but a multi-select
+    // is multiple because its constraints say so rather than because an author asked for several,
+    // and choosing nothing from it is a state a reader can mean. An occupant there stands for a
+    // selection nobody made, and reaches a host as a null entry in the value array.
     Optional<Integer> canonicalMinItems = minItems;
-    if (isMultipleChoice && canonicalMinItems.isEmpty()) {
-      boolean requiredValue = valueConstraints.map(ValueConstraints::requiredValue).orElse(false);
-      canonicalMinItems = Optional.of(requiredValue ? 1 : 0);
-    }
 
     return new ListFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
       previousVersion, derivedFrom, canonicalIsMultiple, canonicalMinItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
       internalDescription);
+  }
+
+  /**
+   * A list is multiple because its constraints say multiple choice, not because anyone declared
+   * several occurrences, so an unanswered one starts with none.
+   */
+  @Override default boolean isMultipleByNature()
+  {
+    return valueConstraints().map(constraints -> constraints.multipleChoice()).orElse(false);
   }
 
   static ListFieldBuilder builder() {return new ListFieldBuilder();}
