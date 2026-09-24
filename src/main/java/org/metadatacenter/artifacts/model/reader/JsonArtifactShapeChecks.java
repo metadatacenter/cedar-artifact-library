@@ -2,6 +2,8 @@ package org.metadatacenter.artifacts.model.reader;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.Version;
+
+import java.util.Optional;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -106,30 +108,25 @@ final class JsonArtifactShapeChecks {
 
 
   /**
-   * Rejects a model version that is not a version, and accepts every version that is.
+   * Refuses an artifact that does not declare the model this library implements.
    *
-   * <p>The name overstates what this does, so read it here rather than infer it. {@code
-   * readModelVersion} throws on a value it cannot parse, and that is the whole of the enforcement:
-   * the comparison against {@link #MODEL_VERSION} below is commented out, so an artifact declaring
-   * any well-formed version is accepted whatever that version is.
+   * <p>An artifact's {@code schema:schemaVersion} asserts which model it conforms to, so reading one
+   * that names another model, or names none, is reading a document this library cannot speak for.
+   * Absence is the harder half and refused on the same terms: an artifact that never declared a
+   * version is not thereby conformant.
    *
-   * <p>Enabling the comparison would refuse every stored artifact written against an earlier model,
-   * which is why it was disabled rather than fixed. The artifacts have to be patched first —
-   * {@code cedar-development/ops/cedar_artifact_patch.py} is the tool for that — and until they are,
-   * turning this on takes the deployment's existing content out of reach.
-   *
-   * <p>{@code YamlArtifactReader} declares a method of this name that does compare the value, so
-   * one artifact can be accepted as JSON and refused as YAML. YAML has no corpus of older documents
-   * to patch, which is why the two differ.
+   * <p>The comparison was disabled for years because enabling it would have refused stored
+   * artifacts written against an earlier model. That is no longer so. A walk of every schema
+   * artifact a deployment serves found {@code schema:schemaVersion} declared on all of them and
+   * holding one value throughout, the current one, so nothing is taken out of reach by asking.
    */
   static void checkSchemaArtifactModelVersion(ObjectNode sourceNode, String path) {
-    readModelVersion(sourceNode, path);
+    Optional<Version> artifactModelVersion = readModelVersion(sourceNode, path);
 
-    // Re-enable once older artifacts carry the current model version; see the note above.
-    //    if (artifactModelVersion.isEmpty() || !artifactModelVersion.get().equals(MODEL_VERSION))
-    //      throw new ArtifactParseException("Expecting model version " + MODEL_VERSION + ", got " +
-    //      artifactModelVersion,
-    //        SCHEMA_ORG_SCHEMA_VERSION, path);
+    if (artifactModelVersion.isEmpty() || !artifactModelVersion.get().equals(MODEL_VERSION))
+      throw new ArtifactParseException(
+        "Expecting model version " + MODEL_VERSION + ", got " + artifactModelVersion.map(Version::toString)
+          .orElse("none"), SCHEMA_ORG_SCHEMA_VERSION, path);
   }
 
 }

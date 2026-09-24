@@ -4,12 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
@@ -42,12 +40,11 @@ import static org.metadatacenter.model.ModelNodeNames.UI;
  * every stored artifact written against an earlier model, and refuse those carrying no version at
  * all, so the deployment's artifacts have to be patched first.
  *
- * <p>These tests state the current behavior rather than the wanted behavior. The two JSON
- * acceptances are expected to fail on the day the patch has run and the comparison comes back, and
- * that failure is the point: it makes the JSON reader's silence a decision with a visible expiry
- * rather than a commented-out line nothing exercises. Replace those two with the rejections they
- * assert against once the comparison is restored. Enabling the comparison against the suites as they
- * stand fails these two tests and nothing else, in any suite.
+ * <p>The two readers now agree. A walk of every schema artifact a deployment serves found
+ * {@code schema:schemaVersion} declared on all of them and holding the current value throughout,
+ * so the comparison was restored and these tests assert the rejections they were written to expect.
+ * They stay because the agreement is worth pinning: the day either reader stops refusing a stale or
+ * absent version, one of these fails rather than the divergence going unnoticed again.
  *
  * <p>Nothing else in the suites can catch the divergence. Every other fixture supplies the version by
  * referencing {@code ModelNodeNames.MODEL_VERSION}, the same constant the disabled comparison would
@@ -75,30 +72,30 @@ public class ModelVersionEnforcementTest
     mapper = new ObjectMapper();
   }
 
-  // ---- JSON: what the disabled comparison lets through ----
+  // ---- JSON: what the restored comparison refuses ----
 
-  @Test public void jsonAcceptsAStaleModelVersion()
+  @Test public void jsonRefusesAStaleModelVersion()
   {
-    // Restoring the comparison turns this into a rejection. Until the stored artifacts are patched,
-    // it has to stay an acceptance, because production declares versions this old.
     ObjectNode template = jsonTemplate();
     template.put(SCHEMA_ORG_SCHEMA_VERSION, STALE_VERSION);
 
-    TemplateSchemaArtifact artifact = jsonReader.readTemplateSchemaArtifact(template);
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> jsonReader.readTemplateSchemaArtifact(template));
 
-    assertEquals("T", artifact.name());
+    assertTrue(thrown.getMessage().contains(STALE_VERSION), thrown.getMessage());
   }
 
-  @Test public void jsonAcceptsAnArtifactDeclaringNoModelVersionAtAll()
+  @Test public void jsonRefusesAnArtifactDeclaringNoModelVersionAtAll()
   {
-    // The commented-out comparison rejects an absent version as well as a stale one, so the patch
-    // has two populations to cover, not one.
+    // Absence is not conformance: an artifact that never declared a version has not asserted that
+    // it follows this model.
     ObjectNode template = jsonTemplate();
     template.remove(SCHEMA_ORG_SCHEMA_VERSION);
 
-    TemplateSchemaArtifact artifact = jsonReader.readTemplateSchemaArtifact(template);
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> jsonReader.readTemplateSchemaArtifact(template));
 
-    assertEquals("T", artifact.name());
+    assertTrue(thrown.getMessage().toLowerCase().contains("model version"), thrown.getMessage());
   }
 
   @Test public void jsonRejectsAModelVersionItCannotParse()

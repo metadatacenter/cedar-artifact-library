@@ -32,6 +32,8 @@ import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.util.LinkedHashMap;
 
+import static org.metadatacenter.model.ModelNodeNames.MODEL_VERSION;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -337,6 +339,7 @@ public class YamlAsymmetryProbeTest
     String json = "{\"@type\":\"https://schema.metadatacenter.org/core/TemplateField\","
       + "\"@id\":\"https://repo.metadatacenter.org/template-fields/00000000-0000-0000-0000-000000000000\","
       + "\"schema:name\":\"Theme\",\"schema:description\":\"d\","
+      + "\"schema:schemaVersion\":\"" + MODEL_VERSION + "\","
       + "\"title\":\"Theme field schema\",\"description\":\"Theme field schema\","
       + "\"_ui\":{\"inputType\":\"list\"},"
       + "\"_valueConstraints\":{\"multipleChoice\":true,\"literals\":["
