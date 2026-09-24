@@ -10,6 +10,7 @@ import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
 import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
+import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -288,9 +289,13 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
-    String internalName = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
+    // `title` is derived, not read: it restates the artifact's name and says what kind of thing the
+    // name belongs to. Still required to be present, because the meta-schema demands the key and
+    // this reader does not decide that; its stored value is simply not what the model carries.
+    readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
     String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String internalName = SchemaArtifact.internalNameFor(name, SchemaArtifact.Kind.TEMPLATE);
     String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     // Default version/status on the top-level artifact only; preserve absence on nested children.
@@ -330,9 +335,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
-    String internalName = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
+    readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String internalName = SchemaArtifact.internalNameFor(schemaOrgName, SchemaArtifact.Kind.ELEMENT);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     // Default version/status on the top-level artifact only; preserve absence on nested children.
@@ -377,9 +383,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
-    String internalName = readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
+    readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
     String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String internalName = SchemaArtifact.internalNameFor(schemaOrgName, SchemaArtifact.Kind.FIELD);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
     // Default version/status on the top-level artifact only; preserve absence on nested children.
