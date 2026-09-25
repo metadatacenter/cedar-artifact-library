@@ -634,6 +634,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   }
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {
+    if (sourceNode.has(JSON_LD_ID) && sourceNode.has(JSON_LD_VALUE))
+      throw new ArtifactParseException("A field cannot contain both @id and @value", JSON_LD_VALUE, path);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<String> jsonLdValue = readPossiblyNullString(sourceNode, path, JSON_LD_VALUE);

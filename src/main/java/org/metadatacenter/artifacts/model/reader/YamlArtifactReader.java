@@ -674,6 +674,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    */
   private FieldInstanceArtifact readFieldInstanceArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
+    if (sourceNode.containsKey(ID) && sourceNode.containsKey(VALUE))
+      throw new ArtifactParseException("A field cannot contain both id and value", VALUE, path);
     List<URI> jsonLdTypes = new ArrayList<>();
     Optional<String> datatype = readEnumOrString(sourceNode, path, DATATYPE);
     if (datatype.isPresent()) {
