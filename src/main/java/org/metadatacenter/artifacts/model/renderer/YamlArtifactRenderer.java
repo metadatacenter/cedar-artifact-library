@@ -19,6 +19,18 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
+  private static final Set<String> INSTANCE_ENVELOPE_KEYS = Set.of(TYPE, NAME, DESCRIPTION, ID,
+    IS_BASED_ON, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN, ANNOTATIONS);
+  private static final Set<String> STANDALONE_ELEMENT_KEYS = Set.of(TYPE, NAME, DESCRIPTION, ID,
+    CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
+  private static final Set<String> NESTED_ELEMENT_KEYS = Set.of(TYPE, ID, CHILDREN);
+
+  private static void requireAttributeGroupName(String name, Set<String> reserved)
+  {
+    if (reserved.contains(name))
+      throw new ArtifactRenderException("Attribute-value field key \"" + name
+        + "\" is reserved for CEDAR YAML metadata.");
+  }
   private final boolean isCompact;
   private final DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   private final TerminologyServerClient terminologyServerClient;
@@ -418,6 +430,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : templateInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
       String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
+      requireAttributeGroupName(attributeValueFieldInstanceGroupKey, INSTANCE_ENVELOPE_KEYS);
       Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
 
       // The group is judged by what it renders to, not by how many attributes it holds. A group
@@ -481,6 +494,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
+      requireAttributeGroupName(attributeValueFieldInstanceGroup.getKey(), STANDALONE_ELEMENT_KEYS);
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
       LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
       if (!groupRendering.isEmpty())
@@ -500,6 +514,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> attributeValueGroups = new LinkedHashMap<>();
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
+      requireAttributeGroupName(attributeValueFieldInstanceGroup.getKey(), NESTED_ELEMENT_KEYS);
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
       LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
       if (!groupRendering.isEmpty())
