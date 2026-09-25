@@ -385,7 +385,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       childKeys.addAll(attributeValueFieldInstanceKeys);
 
       this.attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName,
-        Map.copyOf(attributeValueFieldInstances));
+        new LinkedHashMap<>(attributeValueFieldInstances));
 
       return this;
     }
