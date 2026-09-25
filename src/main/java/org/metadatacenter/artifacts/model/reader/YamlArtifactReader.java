@@ -1,5 +1,9 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
+
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
@@ -1762,6 +1766,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       LinkedHashMap<String, Object> childNode = (LinkedHashMap<String, Object>) rawChild;
 
       String childKey = readRequiredString(childNode, path, KEY, false);
+      if (TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
+          || FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
+          || ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)) {
+        throw new ArtifactParseException("Child schema uses a reserved instance property name", childKey,
+            path + "/children/" + childKey);
+      }
       String childType = readRequiredString(childNode, path, TYPE, false);
       String childPath = path + "/" + childKey;
 
