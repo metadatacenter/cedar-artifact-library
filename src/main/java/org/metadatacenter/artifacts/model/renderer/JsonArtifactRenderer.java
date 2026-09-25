@@ -548,6 +548,8 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       rendering.putNull(OSLC_MODIFIED_BY);
     }
 
+    templateInstanceArtifact.derivedFrom().ifPresent(uri -> rendering.put(PAV_DERIVED_FROM, renderUri(uri)));
+
     return rendering;
   }
 

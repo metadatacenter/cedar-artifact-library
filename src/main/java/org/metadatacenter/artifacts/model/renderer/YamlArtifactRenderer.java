@@ -20,7 +20,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
   private static final Set<String> INSTANCE_ENVELOPE_KEYS = Set.of(TYPE, NAME, DESCRIPTION, ID,
-    IS_BASED_ON, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN, ANNOTATIONS);
+    IS_BASED_ON, DERIVED_FROM, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN, ANNOTATIONS);
   private static final Set<String> STANDALONE_ELEMENT_KEYS = Set.of(TYPE, NAME, DESCRIPTION, ID,
     CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
   private static final Set<String> NESTED_ELEMENT_KEYS = Set.of(TYPE, ID, CHILDREN);
@@ -414,6 +414,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
+
+    if (!isCompact && templateInstanceArtifact.derivedFrom().isPresent())
+      rendering.put(DERIVED_FROM, templateInstanceArtifact.derivedFrom().get().toString());
 
     if (!isCompact && templateInstanceArtifact.createdOn().isPresent())
       rendering.put(CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));

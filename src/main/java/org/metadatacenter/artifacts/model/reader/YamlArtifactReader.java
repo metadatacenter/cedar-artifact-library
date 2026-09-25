@@ -374,6 +374,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
     readUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
     builder.withIsBasedOn(readRequiredUri(sourceNode, path, IS_BASED_ON));
+    readUri(sourceNode, path, DERIVED_FROM).ifPresent(builder::withDerivedFrom);
     readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
     readUri(sourceNode, path, MODIFIED_BY).ifPresent(builder::withModifiedBy);
     readOffsetDatetime(sourceNode, path, CREATED_ON).ifPresent(builder::withCreatedOn);
@@ -611,7 +612,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * to field instances.
    */
   private static final Set<String> TEMPLATE_INSTANCE_RESERVED_KEYS = Set.of(
-    TYPE, NAME, DESCRIPTION, ID, IS_BASED_ON,
+    TYPE, NAME, DESCRIPTION, ID, IS_BASED_ON, DERIVED_FROM,
     CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON,
     CHILDREN, ANNOTATIONS);
 
