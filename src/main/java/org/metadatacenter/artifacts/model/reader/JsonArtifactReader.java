@@ -676,6 +676,13 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
         } else if (nestedNode.isArray()) {
           Iterator<JsonNode> nodeIterator = nestedNode.iterator();
+          // A context-bearing sibling disambiguates identifier-only occurrences as elements.
+          // Classifying each entry separately splits a single list between two model maps,
+          // and the renderer then silently loses one of those maps.
+          boolean elementArray = false;
+          for (JsonNode entry : nestedNode) {
+            if (entry.isObject() && hasJsonLdContextField((ObjectNode) entry)) elementArray = true;
+          }
 
           if (childKeys.contains(instanceArtifactFieldKey)) {
             throw new ArtifactParseException("Duplicate field " + instanceArtifactFieldKey, instanceArtifactFieldKey,
@@ -700,7 +707,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                 if (instanceNode.isObject()) {
                   ObjectNode arrayEnclosedInstanceArtifactNode = (ObjectNode) instanceNode;
                   readNestedMultiInstanceArtifact(instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath,
-                      arrayEnclosedInstanceArtifactNode, childKeys, multiInstanceFieldInstances,
+                      arrayEnclosedInstanceArtifactNode, elementArray, childKeys, multiInstanceFieldInstances,
                       multiInstanceElementInstances);
                 } else if (instanceNode.isTextual()) { // A list of attribute-value field names
                   String attributeValueFieldName = instanceNode.asText();
@@ -812,7 +819,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   }
 
   private void readNestedMultiInstanceArtifact(String instanceArtifactFieldKey, String instanceArtifactPath,
-                                               ObjectNode instanceArtifactArrayNode, List<String> childKeys,
+                                               ObjectNode instanceArtifactArrayNode, boolean elementArray, List<String> childKeys,
                                                LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
                                                LinkedHashMap<String, List<ElementInstanceArtifact>> multiInstanceElementInstances) {
 
@@ -821,7 +828,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
           instanceArtifactPath);
     }
 
-    if (hasJsonLdContextField(instanceArtifactArrayNode)) { // Element instance artifacts have @context fields
+    if (elementArray) {
+      if (instanceArtifactArrayNode.has(JSON_LD_VALUE))
+        throw new ArtifactParseException("Cannot mix literal fields and element instances in one array",
+          instanceArtifactFieldKey, instanceArtifactPath);
+      // Empty and identifier-only occurrences still belong to this repeated element.
       ObjectNode elementInstanceArtifactNode = instanceArtifactArrayNode;
       ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
           instanceArtifactPath);
