@@ -675,14 +675,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (fieldInstanceArtifact.jsonLdId().isPresent())
       fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
 
-    // The value is emitted only when present (an unset slot returned early above, so this is
-    // never a `value: null`).
+    // A labelled null literal must retain its value key: a label-only field has a different shape.
     if (hasValue) {
       String raw = fieldInstanceArtifact.jsonLdValue().get();
       // Instance @value is string-valued in the model and in JSON. Keep it a
       // string in YAML as well so choosing a serialization format cannot change
       // the value's scalar type. Numeric schema defaults remain numeric below.
       fieldInstanceArtifactRendering.put(VALUE, raw);
+    } else if (!hasId && hasLabel && !(fieldInstanceArtifact instanceof IriFieldInstance)
+      && fieldInstanceArtifact.carriesValueKey()) {
+      fieldInstanceArtifactRendering.put(VALUE, null);
     }
 
     if (fieldInstanceArtifact.label().isPresent())

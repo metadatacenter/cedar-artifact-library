@@ -474,6 +474,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         Object type = map.get(TYPE);
         if (schema && key.equals("extensions") && type instanceof String schemaType
           && (schemaType.equals(TEMPLATE) || schemaType.equals(ELEMENT) || FIELD_TYPES.contains(schemaType))) continue;
+        // Retain the literal shape when a field has label metadata but an explicit null value.
+        if (!schema && key.equals(VALUE) && entry.getValue() == null
+          && (map.get(LABEL) instanceof String || map.get(PREF_LABEL) instanceof String
+            || map.get(NOTATION) instanceof String)) continue;
         rejectNullOrEmpty(entry.getValue(), key, path);
         rejectNullAndEmptyValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key, schema);
       }
