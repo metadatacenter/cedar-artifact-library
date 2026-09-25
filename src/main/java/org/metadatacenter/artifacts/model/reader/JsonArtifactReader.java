@@ -429,6 +429,25 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     while (jsonChildKeys.hasNext()) {
       String childKey = jsonChildKeys.next();
+      if (TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
+          || FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
+          || ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)) {
+        JsonNode declaration = propertiesNode.get(childKey);
+        if (JSON_SCHEMA_ARRAY.equals(declaration.path(JSON_SCHEMA_TYPE).asText())) {
+          declaration = declaration.path(JSON_SCHEMA_ITEMS);
+        }
+        JsonNode types = declaration.path(JSON_LD_TYPE);
+        List<JsonNode> declaredTypes = new ArrayList<>();
+        if (types.isArray()) types.forEach(declaredTypes::add);
+        else declaredTypes.add(types);
+        for (JsonNode type : declaredTypes) {
+          if (Set.of(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI, ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI,
+              FIELD_SCHEMA_ARTIFACT_TYPE_IRI, STATIC_FIELD_SCHEMA_ARTIFACT_TYPE_IRI).contains(type.asText())) {
+            throw new ArtifactParseException("Child schema uses a reserved instance property name", childKey,
+                path + "/properties/" + childKey);
+          }
+        }
+      }
       boolean isMultiInstance = false;
       Optional<Integer> minItems = Optional.empty();
       Optional<Integer> maxItems = Optional.empty();
