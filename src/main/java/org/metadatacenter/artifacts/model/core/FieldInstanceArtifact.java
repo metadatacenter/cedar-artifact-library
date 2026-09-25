@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateAtMostOneFieldInstanceType;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.*;
 
@@ -79,6 +80,7 @@ record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId
     implements FieldInstanceArtifact {
   public FieldInstanceArtifactRecord {
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
+    validateAtMostOneFieldInstanceType(this, jsonLdTypes);
     validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);

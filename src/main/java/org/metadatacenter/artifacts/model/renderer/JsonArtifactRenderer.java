@@ -626,16 +626,9 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
     }
 
-    if (fieldInstanceArtifact.jsonLdTypes().size() == 1) {
+    // The model holds at most one type for a field value.
+    if (!fieldInstanceArtifact.jsonLdTypes().isEmpty()) {
       objectNode.put(JSON_LD_TYPE, renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
-    } else if (fieldInstanceArtifact.jsonLdTypes().size() > 1) {
-      ArrayNode jsonLdTypesArrayNode = MAPPER.createArrayNode();
-
-      for (int i = 0; i < fieldInstanceArtifact.jsonLdTypes().size(); i++) {
-        jsonLdTypesArrayNode.add(renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(i)));
-      }
-
-      objectNode.put(JSON_LD_TYPE, jsonLdTypesArrayNode);
     }
 
     if (fieldInstanceArtifact.language().isPresent()) {
