@@ -21,6 +21,12 @@ import java.util.Optional;
  */
 public interface SchemaArtifact extends Artifact, JsonLdArtifact, VersionedArtifact, MonitoredArtifact
 {
+  /** Namespace-bound metadata on the schema itself. */
+  SchemaExtensions extensions();
+
+  /** Return a copy carrying the supplied extension metadata. */
+  SchemaArtifact withExtensions(SchemaExtensions extensions);
+
   /**
    * @return The artifact's own name, the one an author supplies. Renders as {@code schema:name}.
    */

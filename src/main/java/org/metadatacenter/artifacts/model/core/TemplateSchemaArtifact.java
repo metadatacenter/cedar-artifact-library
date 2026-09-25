@@ -15,6 +15,8 @@ import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CON
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 
 public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact {
+  @Override TemplateSchemaArtifact withExtensions(SchemaExtensions extensions);
+
   static TemplateSchemaArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
                                        Optional<URI> jsonLdId, Optional<URI> instanceJsonLdType, String name,
                                        String description,
@@ -28,7 +30,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
                                        Optional<String> language, TemplateUi templateUi,
                                        Optional<Annotations> annotations, String internalName,
                                        String internalDescription) {
-    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType == null ? null : instanceJsonLdType.stream().toList(), name, description,
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType == null ? null
+      : instanceJsonLdType.stream().toList(), name, description,
         identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
   }
@@ -46,7 +49,8 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
                                        Optional<String> language, TemplateUi templateUi,
                                        Optional<Annotations> annotations, String internalName,
                                        String internalDescription) {
-    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name, description,
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name,
+      description,
         identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
   }
@@ -107,6 +111,12 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     private Optional<String> language = Optional.empty();
     private TemplateUi.Builder templateUiBuilder = TemplateUi.builder();
     private Optional<Annotations> annotations = Optional.empty();
+    private SchemaExtensions extensions = SchemaExtensions.empty();
+
+    public Builder withExtensions(SchemaExtensions extensions) {
+      this.extensions = java.util.Objects.requireNonNull(extensions);
+      return this;
+    }
     private String internalName = "";
     private String internalDescription = "";
 
@@ -136,6 +146,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       this.language = templateSchemaArtifact.language();
       this.templateUiBuilder = TemplateUi.builder(templateSchemaArtifact.templateUi());
       this.annotations = templateSchemaArtifact.annotations();
+      this.extensions = templateSchemaArtifact.extensions();
     }
 
     public Builder withJsonLdId(URI jsonLdId) {
@@ -382,7 +393,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
       return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId,
           instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
           modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUiBuilder.build(),
-          annotations, internalName, internalDescription);
+          annotations, internalName, internalDescription).withExtensions(extensions);
     }
   }
 }
@@ -397,9 +408,33 @@ record TemplateSchemaArtifactRecord(
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
     Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations, String internalName,
-    String internalDescription)
+    String internalDescription, SchemaExtensions extensions)
     implements TemplateSchemaArtifact {
+  public TemplateSchemaArtifactRecord(
+    LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+    Optional<URI> jsonLdId, List<URI> instanceJsonLdTypes, String name,
+    String description, Optional<String> identifier, Optional<Version> version,
+    Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+    Optional<URI> createdBy, Optional<URI> modifiedBy,
+    Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
+    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
+    Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations, String internalName,
+    String internalDescription) {
+    this(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name, description, identifier, version, status,
+      previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
+      language, templateUi, annotations, internalName, internalDescription, SchemaExtensions.empty());
+  }
+
+  @Override public TemplateSchemaArtifact withExtensions(SchemaExtensions extensions) {
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name,
+      description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUi, annotations, internalName,
+      internalDescription, extensions);
+  }
+
   public TemplateSchemaArtifactRecord {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
       jsonLdContext, jsonLdTypes, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdTypes,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, templateUi, annotations);

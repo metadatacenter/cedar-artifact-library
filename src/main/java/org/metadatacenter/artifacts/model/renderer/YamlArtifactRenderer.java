@@ -112,6 +112,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(templateSchemaArtifact, templateSchemaArtifact.getChildSchemas()));
 
+    addSchemaExtensions(templateSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -168,6 +169,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
 
+    addSchemaExtensions(elementSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -202,6 +204,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
 
+    addSchemaExtensions(elementSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -251,6 +254,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!configuration.isEmpty())
       rendering.put(CONFIGURATION, configuration);
 
+    addSchemaExtensions(fieldSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -322,6 +326,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
+    addSchemaExtensions(fieldSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -1697,5 +1702,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
     else
       return uri.toString();
+  }
+
+  private void addSchemaExtensions(SchemaArtifact artifact, LinkedHashMap<String, Object> rendering) {
+    if (artifact.extensions().isEmpty()) return;
+    var extensions = new LinkedHashMap<String, Object>();
+    var prefixes = new LinkedHashMap<String, Object>();
+    artifact.extensions().prefixes().forEach((key, value) -> prefixes.put(key, value.toString()));
+    extensions.put("prefixes", prefixes);
+    extensions.put("properties", new com.fasterxml.jackson.databind.ObjectMapper()
+      .convertValue(artifact.extensions().properties(), LinkedHashMap.class));
+    rendering.put("extensions", extensions);
   }
 }

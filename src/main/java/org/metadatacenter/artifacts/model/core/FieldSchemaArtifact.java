@@ -16,6 +16,8 @@ public sealed interface FieldSchemaArtifact extends SchemaArtifact, ChildSchemaA
   CheckboxField, AttributeValueField, PageBreakField, SectionBreakField, ImageField, YouTubeField, RichTextField,
   ControlledTermField, LinkField, RorField, OrcidField, PfasField, RridField, PubMedField, NihGrantIdField, DoiField
 {
+  @Override FieldSchemaArtifact withExtensions(SchemaExtensions extensions);
+
   FieldUi fieldUi();
 
   Optional<ValueConstraints> valueConstraints();

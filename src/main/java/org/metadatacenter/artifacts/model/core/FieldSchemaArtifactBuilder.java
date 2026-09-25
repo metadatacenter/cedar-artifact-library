@@ -54,6 +54,12 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
   protected FieldUi fieldUi;
   protected Optional<ValueConstraints> valueConstraints = Optional.empty();
   protected Optional<Annotations> annotations = Optional.empty();
+  protected SchemaExtensions extensions = SchemaExtensions.empty();
+
+  public SELF withExtensions(SchemaExtensions extensions) {
+    this.extensions = java.util.Objects.requireNonNull(extensions);
+    return self();
+  }
 
   static public FieldSchemaArtifactBuilder builder(FieldSchemaArtifact fieldSchemaArtifact) {
     // TODO Use sealed pattern switch when adopted (Java 21+)
@@ -143,6 +149,7 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
     this.fieldUi = fieldSchemaArtifact.fieldUi();
     this.valueConstraints = fieldSchemaArtifact.valueConstraints();
     this.annotations = fieldSchemaArtifact.annotations();
+    this.extensions = fieldSchemaArtifact.extensions();
   }
 
   public abstract SELF withRequiredValue(boolean required);

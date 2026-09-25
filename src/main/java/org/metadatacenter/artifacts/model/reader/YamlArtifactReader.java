@@ -277,7 +277,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path, true);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(TEMPLATE))
@@ -315,7 +315,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path, true);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(ELEMENT))
@@ -354,7 +354,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path, true);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
     return readFieldSchemaArtifact(sourceNode, path);
@@ -453,23 +453,33 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * empty list ({@code []}) is a valid value. A key whose value is the null literal
    * ({@code key: null}, {@code key:}, {@code key: ~}), an empty mapping ({@code key: {}}), or an
    * empty list ({@code key: []}), and any such list element, is rejected anywhere in the
-   * document. The serialization rule is "if something is unknown, omit it"; an explicit null or
-   * empty placeholder is always an error on read, mirroring the renderer which never emits one.
+   * document, except namespace-bound schema extension metadata. For CEDAR properties, the rule is
+   * "if something is unknown, omit it"; an explicit null or empty placeholder is an error on read.
    * Run once at each public entry point, so the per-field read helpers never have to tolerate any
    * of them.
    */
   private static void rejectNullAndEmptyValues(Object node, String path)
   {
+    rejectNullAndEmptyValues(node, path, false);
+  }
+
+  private static void rejectNullAndEmptyValues(Object node, String path, boolean schema)
+  {
     if (node instanceof Map<?, ?> map) {
       for (Map.Entry<?, ?> entry : map.entrySet()) {
         String key = String.valueOf(entry.getKey());
+        // Extensions carry opaque JSON: null, empty objects and empty arrays are actual values.
+        // The extension reader validates this block separately; instance readers keep their rules.
+        Object type = map.get(TYPE);
+        if (schema && key.equals("extensions") && type instanceof String schemaType
+          && (schemaType.equals(TEMPLATE) || schemaType.equals(ELEMENT) || FIELD_TYPES.contains(schemaType))) continue;
         rejectNullOrEmpty(entry.getValue(), key, path);
-        rejectNullAndEmptyValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key);
+        rejectNullAndEmptyValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key, schema);
       }
     } else if (node instanceof List<?> list) {
       for (int i = 0; i < list.size(); i++) {
         rejectNullOrEmpty(list.get(i), "[" + i + "]", path);
-        rejectNullAndEmptyValues(list.get(i), path + "[" + i + "]");
+        rejectNullAndEmptyValues(list.get(i), path + "[" + i + "]", schema);
       }
     }
   }
@@ -784,7 +794,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, templateName,
       description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUi, annotations, internalName,
-      internalDescription);
+      internalDescription).withExtensions(SchemaExtensionReader.yaml(sourceNode));
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
@@ -834,7 +844,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType, elementName, description, identifier, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas,
-      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations);
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations).withExtensions(SchemaExtensionReader.yaml(sourceNode));
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
@@ -886,7 +896,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       fieldName, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
       propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
-      valueConstraints, annotations);
+      valueConstraints, annotations).withExtensions(SchemaExtensionReader.yaml(sourceNode));
   }
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path,

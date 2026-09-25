@@ -24,6 +24,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface ControlledTermField extends FieldSchemaArtifact
 {
+  @Override ControlledTermField withExtensions(SchemaExtensions extensions);
+
   static ControlledTermField create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Optional<Version> version,
@@ -183,7 +185,7 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return create(internalName, internalDescription, jsonLdContext,
         jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
         derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations).withExtensions(extensions);
     }
   }
 }
@@ -199,11 +201,34 @@ record ControlledTermFieldRecord(String internalName, String internalDescription
                                  Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                                  Optional<String> preferredLabel, List<String> alternateLabels,
                                  Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                                 Optional<Annotations> annotations)
+                                 Optional<Annotations> annotations, SchemaExtensions extensions)
 implements ControlledTermField
 {
+  public ControlledTermFieldRecord(String internalName, String internalDescription,
+                                 LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                                 String name, String description, Optional<String> identifier,
+                                 Optional<Version> version, Optional<Status> status,
+                                 Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                 boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                                 Optional<URI> propertyUri,
+                                 Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                 Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                 Optional<String> preferredLabel, List<String> alternateLabels,
+                                 Optional<String> language, FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                                 Optional<Annotations> annotations) {
+    this(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, SchemaExtensions.empty());
+  }
+
+  @Override public ControlledTermField withExtensions(SchemaExtensions extensions) {
+    return new ControlledTermFieldRecord(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
+      name, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
+      propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
+      fieldUi, valueConstraints, annotations, extensions);
+  }
+
   public ControlledTermFieldRecord
   {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
       fieldUi, valueConstraints, annotations);

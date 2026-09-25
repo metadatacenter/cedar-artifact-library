@@ -321,7 +321,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description,
         identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription);
+        fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription).withExtensions(SchemaExtensionReader.json(sourceNode));
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode, String path, String childKey,
@@ -369,7 +369,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdType, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion,
         derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas,
-        elementSchemas, isMultiInstance, minItems, maxItems, propertyUri, language, elementUi, annotations);
+        elementSchemas, isMultiInstance, minItems, maxItems, propertyUri, language, elementUi, annotations).withExtensions(SchemaExtensionReader.json(sourceNode));
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path, String childKey,
@@ -411,7 +411,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
         schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion, derivedFrom,
         isMultiInstance, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
+        preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations).withExtensions(SchemaExtensionReader.json(sourceNode));
   }
 
   private Map<String, String> readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,

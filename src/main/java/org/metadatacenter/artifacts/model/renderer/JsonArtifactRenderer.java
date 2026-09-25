@@ -194,6 +194,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
 
     rendering.put(JSON_SCHEMA_SCHEMA, renderUri(JSON_SCHEMA_SCHEMA_URI));
 
+    addSchemaExtensions(templateSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -311,6 +312,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
 
     rendering.put(JSON_SCHEMA_SCHEMA, renderUri(JSON_SCHEMA_SCHEMA_URI));
 
+    addSchemaExtensions(elementSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -443,6 +445,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       rendering.put(ANNOTATIONS, renderAnnotations(fieldSchemaArtifact.annotations().get()));
     }
 
+    addSchemaExtensions(fieldSchemaArtifact, rendering);
     if (fieldSchemaArtifact.isAttributeValue()) {
       return renderJsonSchemaArrayWrapperSpecification(rendering, 0, Optional.empty());
     } else {
@@ -1488,4 +1491,10 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     return rendering;
   }
 
+  private void addSchemaExtensions(SchemaArtifact artifact, ObjectNode rendering) {
+    if (artifact.extensions().isEmpty()) return;
+    ObjectNode context = (ObjectNode) rendering.get("@context");
+    artifact.extensions().prefixes().forEach((key, value) -> context.put(key, value.toString()));
+    rendering.setAll(artifact.extensions().properties());
+  }
 }

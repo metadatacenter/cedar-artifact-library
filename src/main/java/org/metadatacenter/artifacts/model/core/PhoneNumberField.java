@@ -17,6 +17,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface PhoneNumberField extends FieldSchemaArtifact
 {
+  @Override PhoneNumberField withExtensions(SchemaExtensions extensions);
+
   static PhoneNumberField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
     Optional<URI> jsonLdId, String name, String description, Optional<String> identifier, Optional<Version> version,
     Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple,
@@ -117,7 +119,7 @@ public sealed interface PhoneNumberField extends FieldSchemaArtifact
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description,
         identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri,
         createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
-        valueConstraints, annotations, internalName, internalDescription);
+        valueConstraints, annotations, internalName, internalDescription).withExtensions(extensions);
     }
   }
 }
@@ -130,11 +132,34 @@ record PhoneNumberFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI
                               Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                               Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
                               FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                              Optional<Annotations> annotations, String internalName, String internalDescription)
+                              Optional<Annotations> annotations, String internalName, String internalDescription, SchemaExtensions extensions)
   implements PhoneNumberField
 {
+  public PhoneNumberFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                              String name, String description, Optional<String> identifier, Optional<Version> version,
+                              Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                              boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                              Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+                              Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                              Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                              FieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                              Optional<Annotations> annotations, String internalName, String internalDescription) {
+    this(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
+      derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription, SchemaExtensions.empty());
+  }
+
+  @Override public PhoneNumberField withExtensions(SchemaExtensions extensions) {
+    return new PhoneNumberFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+      internalName, internalDescription, extensions);
+  }
+
   public PhoneNumberFieldRecord
   {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
       fieldUi, valueConstraints, annotations);

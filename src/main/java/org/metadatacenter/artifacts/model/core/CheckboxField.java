@@ -17,6 +17,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface CheckboxField extends FieldSchemaArtifact
 {
+  @Override CheckboxField withExtensions(SchemaExtensions extensions);
+
   static CheckboxField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<Integer> minItems, Optional<Integer> maxItems,
@@ -117,7 +119,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
         previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
         preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
-        internalDescription);
+        internalDescription).withExtensions(extensions);
     }
   }
 }
@@ -130,10 +132,33 @@ record CheckboxFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> j
                            Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
                            List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
                            Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
-                           String internalName, String internalDescription) implements CheckboxField
+                           String internalName, String internalDescription, SchemaExtensions extensions) implements CheckboxField
 {
+  public CheckboxFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           String name, String description, Optional<String> identifier, Optional<Version> version,
+                           Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                           Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+                           Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                           Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                           List<String> alternateLabels, Optional<String> language, FieldUi fieldUi,
+                           Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                           String internalName, String internalDescription) {
+    this(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
+      derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription, SchemaExtensions.empty());
+  }
+
+  @Override public CheckboxField withExtensions(SchemaExtensions extensions) {
+    return new CheckboxFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+      internalName, internalDescription, extensions);
+  }
+
   public CheckboxFieldRecord
   {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
       fieldUi, valueConstraints, annotations);

@@ -22,6 +22,8 @@ import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 
 public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildSchemaArtifact, ParentSchemaArtifact
 {
+  @Override ElementSchemaArtifact withExtensions(SchemaExtensions extensions);
+
   static ElementSchemaArtifact create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> instanceJsonLdType, String name, String description, Optional<String> identifier,
@@ -156,6 +158,12 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     private Optional<String> language = Optional.empty();
     private ElementUi.Builder elementUiBuilder = ElementUi.builder();
     private Optional<Annotations> annotations = Optional.empty();
+    private SchemaExtensions extensions = SchemaExtensions.empty();
+
+    public Builder withExtensions(SchemaExtensions extensions) {
+      this.extensions = java.util.Objects.requireNonNull(extensions);
+      return this;
+    }
 
     private Builder()
     {
@@ -187,6 +195,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       this.language = elementSchemaArtifact.language();
       this.elementUiBuilder = ElementUi.builder(elementSchemaArtifact.elementUi());
       this.annotations = elementSchemaArtifact.annotations();
+      this.extensions = elementSchemaArtifact.extensions();
     }
 
     public Builder withJsonLdType(URI jsonLdType)
@@ -491,7 +500,7 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return new ElementSchemaArtifactRecord(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
         modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas, isMultiple,
-        minItems, maxItems, propertyUri, language, elementUiBuilder.build(), annotations);
+        minItems, maxItems, propertyUri, language, elementUiBuilder.build(), annotations).withExtensions(extensions);
     }
   }
 }
@@ -507,11 +516,34 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
                                    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
                                    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple,
                                    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
-                                   Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations)
+                                   Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations, SchemaExtensions extensions)
   implements ElementSchemaArtifact
 {
+  public ElementSchemaArtifactRecord(String internalName, String internalDescription,
+                                   LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
+                                   Optional<URI> jsonLdId, List<URI> instanceJsonLdTypes, String name,
+                                   String description, Optional<String> identifier, Optional<Version> version,
+                                   Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                                   Optional<URI> createdBy, Optional<URI> modifiedBy,
+                                   Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                                   Optional<String> preferredLabel, List<String> alternateLabels,
+                                   LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
+                                   LinkedHashMap<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple,
+                                   Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
+                                   Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations) {
+    this(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations, SchemaExtensions.empty());
+  }
+
+  @Override public ElementSchemaArtifact withExtensions(SchemaExtensions extensions) {
+    return new ElementSchemaArtifactRecord(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas,
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations, extensions);
+  }
+
   public ElementSchemaArtifactRecord
   {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
       jsonLdContext, jsonLdTypes, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdTypes,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, elementUi, annotations);
