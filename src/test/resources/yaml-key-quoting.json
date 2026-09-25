@@ -1,0 +1,202 @@
+[
+  {
+    "key": "organization",
+    "quoted": false
+  },
+  {
+    "key": "Patient name",
+    "quoted": false
+  },
+  {
+    "key": "field_1",
+    "quoted": false
+  },
+  {
+    "key": "field-name",
+    "quoted": false
+  },
+  {
+    "key": "_metadata",
+    "quoted": false
+  },
+  {
+    "key": "A",
+    "quoted": false
+  },
+  {
+    "key": "a  b",
+    "quoted": false
+  },
+  {
+    "key": "a-",
+    "quoted": false
+  },
+  {
+    "key": "abc123",
+    "quoted": false
+  },
+  {
+    "key": "",
+    "quoted": true
+  },
+  {
+    "key": "123",
+    "quoted": true
+  },
+  {
+    "key": "1e3",
+    "quoted": true
+  },
+  {
+    "key": "3f9bb803-f05c-4dcc-b548-5457e3289436",
+    "quoted": true
+  },
+  {
+    "key": "1e3aa460-415f-408f-b22f-888e4aabc25a",
+    "quoted": true
+  },
+  {
+    "key": "true",
+    "quoted": true
+  },
+  {
+    "key": "tRuE",
+    "quoted": true
+  },
+  {
+    "key": "NULL",
+    "quoted": true
+  },
+  {
+    "key": "yes",
+    "quoted": true
+  },
+  {
+    "key": "No",
+    "quoted": true
+  },
+  {
+    "key": "ON",
+    "quoted": true
+  },
+  {
+    "key": "off",
+    "quoted": true
+  },
+  {
+    "key": "y",
+    "quoted": true
+  },
+  {
+    "key": "N",
+    "quoted": true
+  },
+  {
+    "key": "~",
+    "quoted": true
+  },
+  {
+    "key": "<<",
+    "quoted": true
+  },
+  {
+    "key": "=",
+    "quoted": true
+  },
+  {
+    "key": "2026-09-25",
+    "quoted": true
+  },
+  {
+    "key": "-example",
+    "quoted": true
+  },
+  {
+    "key": "+example",
+    "quoted": true
+  },
+  {
+    "key": ".example",
+    "quoted": true
+  },
+  {
+    "key": "a.b",
+    "quoted": true
+  },
+  {
+    "key": "schema:name",
+    "quoted": true
+  },
+  {
+    "key": "a: b",
+    "quoted": true
+  },
+  {
+    "key": "name # comment",
+    "quoted": true
+  },
+  {
+    "key": "@value",
+    "quoted": true
+  },
+  {
+    "key": "a,b",
+    "quoted": true
+  },
+  {
+    "key": "a[b]",
+    "quoted": true
+  },
+  {
+    "key": "a{b}",
+    "quoted": true
+  },
+  {
+    "key": " leading",
+    "quoted": true
+  },
+  {
+    "key": "trailing ",
+    "quoted": true
+  },
+  {
+    "key": "tab\tname",
+    "quoted": true
+  },
+  {
+    "key": "line\nname",
+    "quoted": true
+  },
+  {
+    "key": "name\n",
+    "quoted": true
+  },
+  {
+    "key": "café",
+    "quoted": true
+  },
+  {
+    "key": "日本語",
+    "quoted": true
+  },
+  {
+    "key": "a b",
+    "quoted": true
+  },
+  {
+    "key": "a\\b",
+    "quoted": true
+  },
+  {
+    "key": "a\"b",
+    "quoted": true
+  },
+  {
+    "key": "a'b",
+    "quoted": true
+  },
+  {
+    "key": "a/b",
+    "quoted": true
+  }
+]
