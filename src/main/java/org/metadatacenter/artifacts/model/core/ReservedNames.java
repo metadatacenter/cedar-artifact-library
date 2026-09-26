@@ -30,8 +30,8 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT
  *
  * An attribute-value field's own key has one more constraint. The YAML form writes it beside its
  * parent's metadata rather than under {@code children}, so it may not be one of the metadata keys
- * that parent's YAML mapping carries. A template's instance carries all of them; an element used
- * inside its parent carries only {@code type}, {@code id} and {@code children}.
+ * that parent's YAML mapping carries. Elements reserve the union of their nested and standalone metadata keys, so the same
+ * element instance remains writable in either form.
  *
  * The TypeScript model library's {@code ReservedNames} answers the same two questions with the
  * same sets, and the editors ask whichever library they are built on.
@@ -75,7 +75,7 @@ public final class ReservedNames
   private static Set<String> yamlKeys(AttributeValueFieldParent parent)
   {
     return parent == AttributeValueFieldParent.TEMPLATE ? TEMPLATE_INSTANCE_YAML_KEYS
-      : NESTED_ELEMENT_INSTANCE_YAML_KEYS;
+      : STANDALONE_ELEMENT_INSTANCE_YAML_KEYS;
   }
 
   /** Refuse an attribute-value field name {@link #isReservedAttributeValueFieldName} rejects. */

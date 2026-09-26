@@ -33,18 +33,15 @@ class YamlAttributeGroupNamesTest
 
   @Test void refusesAStandaloneElementInstanceWhoseGroupCollidesWithItsEnvelope()
   {
-    // A nested element reserves only type, id and children, so the model accepts a group named name;
-    // written on its own, the element also carries a name, and the renderer still refuses it.
-    var element = ElementInstanceArtifact.builder().withAttributeValueFieldGroup("name", values()).build();
-    for (boolean compact : List.of(false, true))
-      assertThrows(ArtifactRenderException.class,
-        () -> new YamlArtifactRenderer(compact).renderElementInstanceArtifact(element));
+    // Reject at construction so nested and standalone encodings accept the same model.
+    assertThrows(IllegalStateException.class,
+      () -> ElementInstanceArtifact.builder().withAttributeValueFieldGroup("name", values()).build());
   }
 
-  @Test void nestedNameGroupSurvivesRoundTrip()
+  @Test void nestedAnnotationsGroupSurvivesRoundTrip()
   {
     var element = ElementInstanceArtifact.builder().withJsonLdId(URI.create("urn:element"))
-      .withAttributeValueFieldGroup("name", values()).build();
+      .withAttributeValueFieldGroup("annotations", values()).build();
     var instance = TemplateInstanceArtifact.builder().withName("Instance")
       .withIsBasedOn(URI.create("urn:template"))
       .withSingleInstanceElementInstance("Element", element).build();
@@ -53,7 +50,7 @@ class YamlAttributeGroupNamesTest
       var result = new YamlArtifactReader().readTemplateInstanceArtifact(yaml)
         .singleInstanceElementInstances().get("Element");
       assertEquals(element.attributeValueFieldInstanceGroups().keySet(), result.attributeValueFieldInstanceGroups().keySet());
-      var group = result.attributeValueFieldInstanceGroups().get("name");
+      var group = result.attributeValueFieldInstanceGroups().get("annotations");
       assertEquals(values().keySet(), group.keySet());
       assertEquals("kept", group.get("answer").jsonLdValue().orElseThrow());
       if (!compact) assertEquals(element.jsonLdId(), result.jsonLdId());

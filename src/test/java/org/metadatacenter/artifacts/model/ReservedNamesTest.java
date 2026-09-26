@@ -34,10 +34,10 @@ class ReservedNamesTest
   {
     for (String name : ReservedNames.TEMPLATE_INSTANCE_YAML_KEYS)
       assertTrue(ReservedNames.isReservedAttributeValueFieldName(name, TEMPLATE), name);
-    for (String name : List.of("type", "id", "children"))
+    for (String name : ReservedNames.STANDALONE_ELEMENT_INSTANCE_YAML_KEYS)
       assertTrue(ReservedNames.isReservedAttributeValueFieldName(name, ELEMENT), name);
-    // An element used inside its parent writes only type, id and children beside its fields.
-    for (String name : List.of("name", "description", "isBasedOn"))
+    // Template-only metadata remains available to element groups.
+    for (String name : List.of("annotations", "derivedFrom", "isBasedOn"))
       assertFalse(ReservedNames.isReservedAttributeValueFieldName(name, ELEMENT), name);
     assertFalse(ReservedNames.isReservedAttributeValueFieldName("Channel type", TEMPLATE));
     assertTrue(ReservedNames.isReservedAttributeValueFieldName("schema:name", ELEMENT));
@@ -63,11 +63,13 @@ class ReservedNamesTest
         .withName("T").withFieldSchema(TextField.builder().withName("type").build()).build());
   }
 
-  @Test void anElementReservesOnlyTheNestedYamlKeys()
+  @Test void anElementReservesBothNestedAndStandaloneYamlKeys()
   {
     assertThrows(IllegalStateException.class, () -> ElementSchemaArtifact.builder()
         .withName("E").withFieldSchema(attributeValueField("type")).build());
     assertDoesNotThrow(() -> ElementSchemaArtifact.builder()
+        .withName("E").withFieldSchema(attributeValueField("annotations")).build());
+    assertThrows(IllegalStateException.class, () -> ElementSchemaArtifact.builder()
         .withName("E").withFieldSchema(attributeValueField("name")).build());
   }
 

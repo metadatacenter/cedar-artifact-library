@@ -96,6 +96,11 @@ final class InstanceArtifactInvariants
                                           Map<String, ?> multiInstanceElementInstances,
                                           Map<String, ? extends Map<String, ?>> attributeValueFieldInstanceGroups)
   {
+    for (String childKey : childKeys)
+      if (ReservedNames.isReservedName(childKey))
+        throw new IllegalStateException("child name \"" + childKey + "\" in " + self.getClass().getSimpleName()
+          + " is reserved for CEDAR instance metadata");
+
     Set<String> declared = new HashSet<>(childKeys);
 
     checkKeysDeclared(self, declared, singleInstanceFieldInstances.keySet(), "singleInstanceFieldInstances");
