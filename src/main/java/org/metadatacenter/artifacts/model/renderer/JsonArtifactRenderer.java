@@ -24,6 +24,7 @@ import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraints;
+import org.metadatacenter.artifacts.model.tools.InstanceInflater;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
@@ -497,10 +498,10 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
 
     // Emit the @context child property mappings the instance carries, and only those. An instance
     // read from the YAML exchange form carries none — that form leaves them out, because they are
-    // the template's to supply and InstanceInflater puts them back from it. Deriving one from the
-    // child's name instead produced an IRI that is not the one the template pins its context entry
-    // to, so an instance rendered that way failed against its own template where it was required,
-    // and carried a fabricated mapping where it was not.
+    // the template's to supply, and the overload that takes the template puts them back from it.
+    // Deriving one from the child's name instead produced an IRI that is not the one the template
+    // pins its context entry to, so an instance rendered that way failed against its own template
+    // where it was required, and carried a fabricated mapping where it was not.
     if (!templateInstanceArtifact.jsonLdContext().isEmpty()) {
       for (var propertyMapping : templateInstanceArtifact.jsonLdContext().entrySet())
         rendering.withObject("/" + JSON_LD_CONTEXT)
@@ -553,6 +554,32 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     return rendering;
   }
 
+  /**
+   * Generate a template instance artifact completed against its template.
+   * <p></p>
+   * A JSON instance carries an entry for every field and element its template defines, unset ones
+   * included, because the template's JSON Schema marks each of those properties required. The model
+   * has no such rule. An instance read from YAML omits every unset field, and an instance built in
+   * code may omit them too. {@link #renderTemplateInstanceArtifact(TemplateInstanceArtifact)} renders
+   * whatever the instance carries, so such an instance comes out as JSON its own template rejects.
+   * Only the template says which entries are missing.
+   * <p></p>
+   * This method first completes the instance against the template with
+   * {@link InstanceInflater#inflate}, then renders it. Completion adds an empty entry for each missing
+   * child, fills a repeated child to the lower bound the template states, restores the child property
+   * mappings in {@code @context}, and orders the children as the template orders them. It changes no
+   * value the instance already carries.
+   *
+   * @param templateSchemaArtifact the template the instance is based on
+   * @param templateInstanceArtifact the instance, whether complete or sparse
+   * @throws IllegalArgumentException if the instance and the template disagree about a child, for
+   *     example when the instance holds a list where the template declares a single field
+   */
+  public ObjectNode renderTemplateInstanceArtifact(TemplateSchemaArtifact templateSchemaArtifact,
+    TemplateInstanceArtifact templateInstanceArtifact) {
+    return renderTemplateInstanceArtifact(InstanceInflater.inflate(templateSchemaArtifact, templateInstanceArtifact));
+  }
+
   public ObjectNode renderElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact) {
     ObjectNode rendering = renderParentInstanceArtifact(elementInstanceArtifact);
 
@@ -563,10 +590,10 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
           .put(propertyMapping.getKey(), renderUri(propertyMapping.getValue()));
     } else {
       // No carried context: the YAML exchange form leaves the child property mappings out, and they
-      // are the template's to supply through InstanceInflater rather than this renderer's to invent.
-      // The @context is still what classifies a nested object as an element instance on read (a field
-      // value carries none), so it is emitted, empty — an all-empty element instance must stay an
-      // element across the JSON round trip.
+      // are the schema's to supply, through the overload that takes it, rather than this renderer's
+      // to invent. The @context is still what classifies a nested object as an element instance on
+      // read (a field value carries none), so it is emitted, empty — an all-empty element instance
+      // must stay an element across the JSON round trip.
       rendering.put(JSON_LD_CONTEXT, MAPPER.createObjectNode());
     }
 
@@ -587,6 +614,23 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     }
 
     return rendering;
+  }
+
+  /**
+   * Generate an element instance artifact completed against its element schema.
+   * <p></p>
+   * This is the element counterpart of
+   * {@link #renderTemplateInstanceArtifact(TemplateSchemaArtifact, TemplateInstanceArtifact)}. It
+   * completes the instance against the element schema with {@link InstanceInflater#inflateElement},
+   * then renders it.
+   *
+   * @param elementSchemaArtifact the element schema the instance fills
+   * @param elementInstanceArtifact the instance, whether complete or sparse
+   * @throws IllegalArgumentException if the instance and the element schema disagree about a child
+   */
+  public ObjectNode renderElementInstanceArtifact(ElementSchemaArtifact elementSchemaArtifact,
+    ElementInstanceArtifact elementInstanceArtifact) {
+    return renderElementInstanceArtifact(InstanceInflater.inflateElement(elementSchemaArtifact, elementInstanceArtifact));
   }
 
   private ObjectNode renderFieldInstanceArtifact(FieldInstanceArtifact fieldInstanceArtifact) {
