@@ -638,6 +638,27 @@ To normalize a JSON Schema file from a CEDAR template stored in a file:
 This will read a JSON-Schema-based template, render it as JSON Schema again, and write it into a file.
 
 
+## Exporting Instance RDF
+
+`RdfArtifactRenderer` accepts an instance and its template (or element schema). It completes sparse
+instance context/type information through the JSON renderer, then converts with Titanium JSON-LD.
+
+```java
+RdfArtifactRenderer rdf = new RdfArtifactRenderer();
+String nquads = rdf.renderNQuads(templateSchemaArtifact, templateInstanceArtifact);
+String turtle = rdf.renderTurtle(templateSchemaArtifact, templateInstanceArtifact);
+```
+
+Both methods return text and leave the models unchanged. IRIs and string-valued typed literals keep
+their exact spelling; native JSON numbers use JSON-LD numeric serialization. No remote contexts are
+fetched and no identifiers are minted. Empty fields state no triples. Attribute-name lists are
+structural; their named values supply the RDF statements. Malformed or unmapped populated values
+raise `IllegalArgumentException` instead of being omitted.
+
+Turtle currently uses the N-Triples subset of Turtle. It refuses named graphs, which N-Quads can
+preserve. An entirely empty instance produces an empty string. RDF export does not promise reverse
+reconstruction of CEDAR field order, empty fields or attribute-group membership.
+
 ## Building the Library
 
 To build the code in this repository you must have the following items installed:
