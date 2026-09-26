@@ -639,7 +639,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     if (sourceNode.path(JSON_LD_TYPE).isArray() && sourceNode.get(JSON_LD_TYPE).size() > 1)
       throw new ArtifactParseException("A field value can have at most one @type", JSON_LD_TYPE, path);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
+    Optional<String> jsonLdId = readString(sourceNode, path, JSON_LD_ID);
+    validateFieldIri(jsonLdId, JSON_LD_ID, path);
     Optional<String> jsonLdValue = readPossiblyNullString(sourceNode, path, JSON_LD_VALUE);
     Optional<String> rdfsLabel = readString(sourceNode, path, RDFS_LABEL);
     Optional<String> language = readString(sourceNode, path, JSON_LD_LANGUAGE);
@@ -650,8 +651,18 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     // unfilled literal field from an unfilled controlled-term or link field once the value is gone.
     boolean carriesValueKey = sourceNode.has(JSON_LD_VALUE);
 
-    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, rdfsLabel, notation, preferredLabel,
+    return FieldInstanceArtifact.createWithIri(jsonLdTypes, jsonLdId, jsonLdValue, rdfsLabel, notation, preferredLabel,
         language, carriesValueKey);
+  }
+
+  private void validateFieldIri(Optional<String> value, String key, String path) {
+    if (value.isEmpty()) return;
+    try {
+      if (value.get().isEmpty()) throw new IllegalArgumentException("Empty IRI");
+      org.metadatacenter.model.validation.IriReference.toUri(value.get());
+    } catch (java.net.URISyntaxException | IllegalArgumentException e) {
+      throw new ArtifactParseException("Value must be a valid nonempty IRI", key, path);
+    }
   }
 
   private void readNestedInstanceArtifacts(ObjectNode parentNode, String path, List<String> childKeys,

@@ -690,7 +690,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         ? URI.create(XSD_IRI + dt.substring("xsd:".length()))
         : URI.create(dt));
     }
-    Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
+    Optional<String> jsonLdId = readString(sourceNode, path, ID);
+    if (jsonLdId.isPresent()) {
+      try {
+        if (jsonLdId.get().isEmpty()) throw new IllegalArgumentException("Empty IRI");
+        org.metadatacenter.model.validation.IriReference.toUri(jsonLdId.get());
+      } catch (java.net.URISyntaxException | IllegalArgumentException e) {
+        throw new ArtifactParseException("Value must be a valid nonempty IRI", ID, path);
+      }
+    }
     Optional<String> jsonLdValue = readScalarAsString(sourceNode, path, VALUE);
     Optional<String> label = readString(sourceNode, path, LABEL, true);
     Optional<String> notation = readString(sourceNode, path, NOTATION, true);
@@ -702,7 +710,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     // `@value` at all, so assuming one made the JSON renderer emit `"@value": null` beside the
     // label — a shape that is neither of the two empty forms and one the field's own sub-schema
     // rejects.
-    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
+    return FieldInstanceArtifact.createWithIri(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
       preferredLabel, language, sourceNode.containsKey(VALUE));
   }
 

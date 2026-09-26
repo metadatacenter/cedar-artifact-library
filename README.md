@@ -86,6 +86,20 @@ Path outputFile = Path.of("template.yaml");
 YamlSerializer.saveYAML(templateSchemaArtifact, compact, fullQuotes, outputFile);
 ```
 
+### Unicode field identifiers
+
+Field-instance JSON `@id` and YAML `id` preserve RFC 3987 IRI spelling, including Unicode
+separators such as U+00A0. ASCII spaces, controls, invalid Unicode and malformed escapes remain
+errors. RDF identity is the original string: a raw Unicode IRI and its percent-encoded spelling
+remain distinct.
+
+Use `FieldInstanceArtifact.jsonLdIdIri()` for RDF identity and serialization. The existing
+`jsonLdId()` accessor remains a `java.net.URI` compatibility/transport view; it percent-encodes
+characters that Java's URI class cannot represent. Do not use that view to rewrite an RDF term.
+`ControlledTermFieldInstance.builder().withIriValue(value)` and
+`FieldInstanceArtifact.createWithIri(...)` accept exact IRI strings. Builder copies preserve them.
+Artifact, element-occurrence, schema and datatype URI APIs retain their existing contracts.
+
 ### Serializing Templates to Excel
 
 A class called `ExcelArtifactRenderer` provides methods to serialize CEDAR templates to Excel.

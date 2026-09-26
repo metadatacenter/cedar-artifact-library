@@ -20,7 +20,16 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
   static ControlledTermFieldInstance create(List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<String> label, Optional<String> notation, Optional<String> preferredLabel, Optional<String> language)
   {
-    return new ControlledTermFieldInstanceRecord(jsonLdTypes, jsonLdId, Optional.empty(), label, notation, preferredLabel, language);
+    return new ControlledTermFieldInstanceRecord(jsonLdTypes, jsonLdId, Optional.empty(), label, notation, preferredLabel, language, jsonLdId.map(URI::toString));
+  }
+
+  /** Construct a controlled term without rewriting the lexical RDF identifier. */
+  static ControlledTermFieldInstance createWithIri(List<URI> types, Optional<String> iri,
+      Optional<String> label, Optional<String> notation, Optional<String> preferredLabel, Optional<String> language) {
+    var field = FieldInstanceArtifact.createWithIri(types, iri, Optional.empty(), label, notation,
+        preferredLabel, language, false);
+    return new ControlledTermFieldInstanceRecord(types, field.jsonLdId(), Optional.empty(), label,
+        notation, preferredLabel, language, iri);
   }
 
   static ControlledTermFieldInstanceBuilder builder()
@@ -35,15 +44,25 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
 
   final class ControlledTermFieldInstanceBuilder extends FieldInstanceArtifactBuilder
   {
+    private Optional<String> iriValue = Optional.empty();
+
     public ControlledTermFieldInstanceBuilder() {}
 
     public ControlledTermFieldInstanceBuilder(ControlledTermFieldInstance controlledTermFieldInstance) {
       super(controlledTermFieldInstance);
+      this.iriValue = controlledTermFieldInstance.jsonLdIdIri();
     }
 
     public ControlledTermFieldInstanceBuilder withValue(URI value)
     {
       super.withJsonLdId(value);
+      this.iriValue = Optional.ofNullable(value).map(URI::toString);
+      return this;
+    }
+
+    /** Supply the exact IRI, including Unicode that java.net.URI cannot store directly. */
+    public ControlledTermFieldInstanceBuilder withIriValue(String value) {
+      this.iriValue = Optional.ofNullable(value);
       return this;
     }
 
@@ -67,7 +86,7 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
 
     public ControlledTermFieldInstance build()
     {
-      return create(jsonLdTypes, jsonLdId, label, notation, preferredLabel, language);
+      return createWithIri(jsonLdTypes, iriValue, label, notation, preferredLabel, language);
     }
   }
 
@@ -75,7 +94,7 @@ public sealed interface ControlledTermFieldInstance extends FieldInstanceArtifac
 
 record ControlledTermFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
-                               Optional<String> language)
+                               Optional<String> language, Optional<String> jsonLdIdIri)
   implements ControlledTermFieldInstance
 {
   public ControlledTermFieldInstanceRecord
@@ -84,6 +103,7 @@ record ControlledTermFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> js
     validateAtMostOneFieldInstanceType(this, jsonLdTypes);
     validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateOptionalFieldNotNull(this, jsonLdIdIri, JSON_LD_ID);
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);

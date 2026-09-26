@@ -671,7 +671,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
 
     if (fieldInstanceArtifact.jsonLdId().isPresent())
-      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
+      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdIdIri().orElseThrow());
 
     // A labelled null literal must retain its value key: a label-only field has a different shape.
     if (hasValue) {

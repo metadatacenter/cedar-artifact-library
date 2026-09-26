@@ -594,7 +594,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
 
     if (fieldInstanceArtifact instanceof IriFieldInstance) {
       if (fieldInstanceArtifact.jsonLdId().isPresent() && fieldInstanceArtifact.jsonLdId().get() != null) {
-        objectNode.put(JSON_LD_ID, renderUri(fieldInstanceArtifact.jsonLdId().get()));
+        objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdIdIri().orElseThrow());
       }
 
     } else if (fieldInstanceArtifact instanceof LiteralFieldInstance) {
@@ -607,7 +607,7 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       }
     } else { // No type given so some guessing involved
       if (fieldInstanceArtifact.jsonLdId().isPresent()) {
-        objectNode.put(JSON_LD_ID, renderUri(fieldInstanceArtifact.jsonLdId().get()));
+        objectNode.put(JSON_LD_ID, fieldInstanceArtifact.jsonLdIdIri().orElseThrow());
       } else if (fieldInstanceArtifact.jsonLdValue() == null) { // @value is explicitly null
         objectNode.putNull(JSON_LD_VALUE);
       } else if (fieldInstanceArtifact.jsonLdValue().isPresent()) {

@@ -18,7 +18,7 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
                                       Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation,
                                       Optional<String> preferredLabel, Optional<String> language) {
     return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
-        preferredLabel, language, true);
+        preferredLabel, language, true, jsonLdId.map(URI::toString));
   }
 
   /**
@@ -35,8 +35,24 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
                                       Optional<String> preferredLabel, Optional<String> language,
                                       boolean carriesValueKey) {
     return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
-        preferredLabel, language, carriesValueKey);
+        preferredLabel, language, carriesValueKey, jsonLdId.map(URI::toString));
   }
+
+  /** Construct a field preserving its exact RDF IRI spelling, including valid Unicode separators. */
+  static FieldInstanceArtifact createWithIri(List<URI> jsonLdTypes, Optional<String> jsonLdIdIri,
+      Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation,
+      Optional<String> preferredLabel, Optional<String> language, boolean carriesValueKey) {
+    Optional<URI> transportId = jsonLdIdIri.map(value -> {
+      if (value.isEmpty()) throw new IllegalArgumentException("An empty string is not a field IRI");
+      try { return org.metadatacenter.model.validation.IriReference.toUri(value); }
+      catch (java.net.URISyntaxException e) { throw new IllegalArgumentException("Invalid field IRI", e); }
+    });
+    return new FieldInstanceArtifactRecord(jsonLdTypes, transportId, jsonLdValue, label, notation,
+        preferredLabel, language, carriesValueKey, jsonLdIdIri);
+  }
+
+  /** Exact RDF identifier. Use this for identity and serialization; jsonLdId() is a URI view. */
+  default Optional<String> jsonLdIdIri() { return jsonLdId().map(URI::toString); }
 
   List<URI> jsonLdTypes();
 
@@ -76,13 +92,14 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
 
 record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                    Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
-                                   Optional<String> language, boolean carriesValueKey)
+                                   Optional<String> language, boolean carriesValueKey, Optional<String> jsonLdIdIri)
     implements FieldInstanceArtifact {
   public FieldInstanceArtifactRecord {
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
     validateAtMostOneFieldInstanceType(this, jsonLdTypes);
     validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
+    validateOptionalFieldNotNull(this, jsonLdIdIri, JSON_LD_ID);
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
