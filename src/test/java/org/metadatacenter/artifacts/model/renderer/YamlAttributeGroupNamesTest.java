@@ -17,24 +17,28 @@ class YamlAttributeGroupNamesTest
     return values;
   }
 
-  @Test void rejectsEnvelopeCollisionsInsteadOfOverwritingMetadata()
+  @Test void refusesEnvelopeCollisionsWhenTheInstanceIsBuilt()
   {
-    for (boolean compact : List.of(false, true)) {
-      var renderer = new YamlArtifactRenderer(compact);
-      for (String key : List.of("type", "id", "children", "name")) {
-        var instance = TemplateInstanceArtifact.builder().withName("Instance")
-          .withIsBasedOn(URI.create("urn:template"))
-          .withAttributeValueFieldGroup(key, values()).build();
-        assertThrows(ArtifactRenderException.class, () -> renderer.renderTemplateInstanceArtifact(instance));
-      }
-      for (String key : List.of("type", "id", "children")) {
-        var element = ElementInstanceArtifact.builder().withAttributeValueFieldGroup(key, values()).build();
-        var instance = TemplateInstanceArtifact.builder().withName("Instance")
-          .withIsBasedOn(URI.create("urn:template"))
-          .withSingleInstanceElementInstance("Element", element).build();
-        assertThrows(ArtifactRenderException.class, () -> renderer.renderTemplateInstanceArtifact(instance));
-      }
+    // The model refuses these before any renderer sees them; see ReservedNames.
+    for (String key : List.of("type", "id", "children", "name")) {
+      assertThrows(IllegalStateException.class, () -> TemplateInstanceArtifact.builder().withName("Instance")
+        .withIsBasedOn(URI.create("urn:template"))
+        .withAttributeValueFieldGroup(key, values()).build());
     }
+    for (String key : List.of("type", "id", "children")) {
+      assertThrows(IllegalStateException.class,
+        () -> ElementInstanceArtifact.builder().withAttributeValueFieldGroup(key, values()).build());
+    }
+  }
+
+  @Test void refusesAStandaloneElementInstanceWhoseGroupCollidesWithItsEnvelope()
+  {
+    // A nested element reserves only type, id and children, so the model accepts a group named name;
+    // written on its own, the element also carries a name, and the renderer still refuses it.
+    var element = ElementInstanceArtifact.builder().withAttributeValueFieldGroup("name", values()).build();
+    for (boolean compact : List.of(false, true))
+      assertThrows(ArtifactRenderException.class,
+        () -> new YamlArtifactRenderer(compact).renderElementInstanceArtifact(element));
   }
 
   @Test void nestedNameGroupSurvivesRoundTrip()

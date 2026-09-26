@@ -547,6 +547,8 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
     ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
       jsonLdContext, jsonLdTypes, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdTypes,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, elementUi, annotations);
+    ParentSchemaArtifactInvariants.validateChildNames(this, fieldSchemas, elementSchemas,
+      ReservedNames.AttributeValueFieldParent.ELEMENT);
     validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
     validateListFieldNotNull(this, alternateLabels, SKOS_ALTLABEL);
     validateOptionalFieldNotNull(this, propertyUri, "propertyUri");

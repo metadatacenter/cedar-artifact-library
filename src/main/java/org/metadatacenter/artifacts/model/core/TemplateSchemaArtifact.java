@@ -438,6 +438,8 @@ record TemplateSchemaArtifactRecord(
     ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
       jsonLdContext, jsonLdTypes, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdTypes,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, templateUi, annotations);
+    ParentSchemaArtifactInvariants.validateChildNames(this, fieldSchemas, elementSchemas,
+      ReservedNames.AttributeValueFieldParent.TEMPLATE);
 
     jsonLdContext = new LinkedHashMap<>(jsonLdContext);
     jsonLdTypes = List.copyOf(jsonLdTypes);

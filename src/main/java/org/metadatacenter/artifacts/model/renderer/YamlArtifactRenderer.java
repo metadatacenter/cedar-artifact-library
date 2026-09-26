@@ -19,11 +19,9 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
-  private static final Set<String> INSTANCE_ENVELOPE_KEYS = Set.of(TYPE, NAME, DESCRIPTION, ID,
-    IS_BASED_ON, DERIVED_FROM, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN, ANNOTATIONS);
-  private static final Set<String> STANDALONE_ELEMENT_KEYS = Set.of(TYPE, NAME, DESCRIPTION, ID,
-    CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
-  private static final Set<String> NESTED_ELEMENT_KEYS = Set.of(TYPE, ID, CHILDREN);
+  private static final Set<String> INSTANCE_ENVELOPE_KEYS = ReservedNames.TEMPLATE_INSTANCE_YAML_KEYS;
+  private static final Set<String> STANDALONE_ELEMENT_KEYS = ReservedNames.STANDALONE_ELEMENT_INSTANCE_YAML_KEYS;
+  private static final Set<String> NESTED_ELEMENT_KEYS = ReservedNames.NESTED_ELEMENT_INSTANCE_YAML_KEYS;
 
   private static void requireAttributeGroupName(String name, Set<String> reserved)
   {

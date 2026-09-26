@@ -434,6 +434,8 @@ record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, L
     InstanceArtifactInvariants.validate(this, jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
+    InstanceArtifactInvariants.validateAttributeValueFieldNames(this, attributeValueFieldInstanceGroups.keySet(),
+      ReservedNames.AttributeValueFieldParent.ELEMENT);
 
     InstanceArtifactInvariants.validateChildKeyConsistency(this, childKeys, singleInstanceFieldInstances,
       multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,
