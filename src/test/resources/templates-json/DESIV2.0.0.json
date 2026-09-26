@@ -102,6 +102,10 @@
     "@context" : {
       "type" : "object",
       "properties" : {
+        "_annotations" : {
+          "type" : "string",
+          "enum" : [ "@nest" ]
+        },
         "rdfs" : {
           "type" : "string",
           "format" : "uri",
@@ -367,6 +371,32 @@
     "oslc:modifiedBy" : {
       "type" : [ "string", "null" ],
       "format" : "uri"
+    },
+    "_annotations" : {
+      "type" : "object",
+      "patternProperties" : {
+        "^.+$" : {
+          "oneOf" : [ {
+            "type" : "object",
+            "properties" : {
+              "@id" : {
+                "type" : "string",
+                "format" : "uri"
+              }
+            },
+            "additionalProperties" : false
+          }, {
+            "type" : "object",
+            "properties" : {
+              "@value" : {
+                "type" : [ "string", "number", "boolean", "null" ]
+              }
+            },
+            "additionalProperties" : false
+          } ]
+        }
+      },
+      "additionalProperties" : false
     },
     "parent_sample_id" : {
       "@id" : "https://repo.metadatacenter.org/template-fields/3cd0be1e-4770-4fa1-8976-12eb3934916d",

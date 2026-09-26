@@ -72,10 +72,26 @@ final class JsonSchemaArtifactPropertyRenderers {
     rendering.put(PAV_CREATED_BY, renderUriOrNullJsonSchemaTypeSpecification());
     rendering.put(PAV_LAST_UPDATED_ON, renderDateTimeOrNullJsonSchemaTypeSpecification());
     rendering.put(OSLC_MODIFIED_BY, renderUriOrNullJsonSchemaTypeSpecification());
+    rendering.set(ANNOTATIONS, renderInstanceAnnotationsSpecification());
 
     return rendering;
   }
 
+
+  /** Optional platform metadata; exactly one value shape must match each named annotation. */
+  private static ObjectNode renderInstanceAnnotationsSpecification() {
+    ObjectNode schema = MAPPER.createObjectNode().put("type", "object");
+    var alternatives = schema.putObject("patternProperties").putObject("^.+$").putArray("oneOf");
+    ObjectNode iri = alternatives.addObject().put("type", "object");
+    iri.putObject("properties").set("@id", renderUriJsonSchemaTypeSpecification());
+    iri.put("additionalProperties", false);
+    ObjectNode literal = alternatives.addObject().put("type", "object");
+    literal.putObject("properties").putObject("@value").putArray("type")
+        .add("string").add("number").add("boolean").add("null");
+    literal.put("additionalProperties", false);
+    schema.put("additionalProperties", false);
+    return schema;
+  }
 
   public static ObjectNode renderElementSchemaArtifactPropertiesJsonSchemaSpecification(
       ElementSchemaArtifact elementSchemaArtifact) {
@@ -108,6 +124,8 @@ final class JsonSchemaArtifactPropertyRenderers {
 
     rendering.put(JSON_SCHEMA_PROPERTIES, MAPPER.createObjectNode());
 
+    rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).putObject(ANNOTATIONS)
+        .put("type", "string").putArray("enum").add("@nest");
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(RDFS, renderJsonSchemaTypeUriEnumSpecification(RDFS_IRI));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(XSD, renderJsonSchemaTypeUriEnumSpecification(XSD_IRI));
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES).put(PAV, renderJsonSchemaTypeUriEnumSpecification(PAV_IRI));
