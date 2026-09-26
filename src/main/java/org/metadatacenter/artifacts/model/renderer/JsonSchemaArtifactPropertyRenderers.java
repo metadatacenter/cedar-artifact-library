@@ -2,9 +2,11 @@ package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ParentSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 
 import static org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer.MAPPER;
 import static org.metadatacenter.artifacts.model.renderer.JsonLdContextRenderers.*;
@@ -20,6 +22,16 @@ import static org.metadatacenter.model.ModelNodeValues.XSD_IRI;
 
 final class JsonSchemaArtifactPropertyRenderers {
   private JsonSchemaArtifactPropertyRenderers() {}
+
+  /** Declared schema mappings include optional group IRIs; instance requirements still exclude them. */
+  private static LinkedHashMap<String, URI> declaredChildPropertyUris(ParentSchemaArtifact parent) {
+    LinkedHashMap<String, URI> mappings = new LinkedHashMap<>();
+    parent.getChildSchemas().forEach((key, child) -> {
+      if (!parent.isStaticField(key))
+        child.propertyUri().ifPresent(iri -> mappings.put(key, iri));
+    });
+    return mappings;
+  }
 
   public static ObjectNode renderAdditionalPropertiesForAttributeValueFieldJsonSchemaSpecification() {
     ObjectNode rendering = MAPPER.createObjectNode();
@@ -155,7 +167,7 @@ final class JsonSchemaArtifactPropertyRenderers {
     rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
         .put(SKOS_NOTATION, renderJsonSchemaJsonLdDatatypeSpecification("xsd:string"));
 
-    for (var entry : templateSchemaArtifact.getChildPropertyUris().entrySet()) {
+    for (var entry : declaredChildPropertyUris(templateSchemaArtifact).entrySet()) {
       String childKey = entry.getKey();
       URI propertyUri = entry.getValue();
       rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)
@@ -198,7 +210,7 @@ final class JsonSchemaArtifactPropertyRenderers {
 
     rendering.put(JSON_SCHEMA_PROPERTIES, MAPPER.createObjectNode());
 
-    for (var entry : elementSchemaArtifact.getChildPropertyUris().entrySet()) {
+    for (var entry : declaredChildPropertyUris(elementSchemaArtifact).entrySet()) {
       String childKey = entry.getKey();
       URI propertyUri = entry.getValue();
       rendering.withObject("/" + JSON_SCHEMA_PROPERTIES)

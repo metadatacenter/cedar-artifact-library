@@ -1252,12 +1252,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(RECOMMENDED, true);
     }
 
-    // The IRI the child is addressed by, written for whatever kind of field carries one. An
-    // attribute-value or static field was skipped here because the JSON @context has no mapping for
-    // one (ParentSchemaArtifact.getChildPropertyUris skips them), so what YAML kept, a conversion to
-    // JSON would drop. That is a fact about the JSON representation, which both model libraries apply
-    // the same way; it is not a reason for the YAML to forget what the template declared. The compact
-    // form drops the key for every kind, as it drops the rest of what the system records.
+    // Preserve every declared field IRI in full YAML. JSON also preserves an attribute-value
+    // group's optional mapping, but does not require it in instance contexts. Compact YAML omits
+    // property IRIs together with the other repository metadata.
     if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
