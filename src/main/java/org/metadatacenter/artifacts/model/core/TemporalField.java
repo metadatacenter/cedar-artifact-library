@@ -19,6 +19,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface TemporalField extends FieldSchemaArtifact
 {
+  @Override TemporalField withExtensions(SchemaExtensions extensions);
+
   static TemporalField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
@@ -128,7 +130,7 @@ public sealed interface TemporalField extends FieldSchemaArtifact
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi.asTemporalFieldUi(), valueConstraints,
-        annotations, internalName, internalDescription);
+        annotations, internalName, internalDescription).withExtensions(extensions);
     }
   }
 }
@@ -141,11 +143,34 @@ record TemporalFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> j
                            Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                            Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
                            TemporalFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
-                           Optional<Annotations> annotations, String internalName, String internalDescription)
+                           Optional<Annotations> annotations, String internalName, String internalDescription, SchemaExtensions extensions)
   implements TemporalField
 {
+  public TemporalFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           String name, String description, Optional<String> identifier, Optional<Version> version,
+                           Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                           boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                           Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+                           Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                           Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                           TemporalFieldUi fieldUi, Optional<ValueConstraints> valueConstraints,
+                           Optional<Annotations> annotations, String internalName, String internalDescription) {
+    this(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
+      derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription, SchemaExtensions.empty());
+  }
+
+  @Override public TemporalField withExtensions(SchemaExtensions extensions) {
+    return new TemporalFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+      internalName, internalDescription, extensions);
+  }
+
   public TemporalFieldRecord
   {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
       fieldUi, valueConstraints, annotations);

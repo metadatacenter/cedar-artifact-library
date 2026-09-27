@@ -385,7 +385,7 @@ public non-sealed interface ElementInstanceArtifact extends InstanceArtifact, Pa
       childKeys.addAll(attributeValueFieldInstanceKeys);
 
       this.attributeValueFieldInstanceGroups.put(attributeValueFieldGroupName,
-        Map.copyOf(attributeValueFieldInstances));
+        new LinkedHashMap<>(attributeValueFieldInstances));
 
       return this;
     }
@@ -434,6 +434,8 @@ record ElementInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, L
     InstanceArtifactInvariants.validate(this, jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
+    InstanceArtifactInvariants.validateAttributeValueFieldNames(this, attributeValueFieldInstanceGroups.keySet(),
+      ReservedNames.AttributeValueFieldParent.ELEMENT);
 
     InstanceArtifactInvariants.validateChildKeyConsistency(this, childKeys, singleInstanceFieldInstances,
       multiInstanceFieldInstances, singleInstanceElementInstances, multiInstanceElementInstances,

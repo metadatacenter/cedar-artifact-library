@@ -1,10 +1,15 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS;
+import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
+
 import org.metadatacenter.artifacts.model.core.Annotations;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -272,7 +277,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path, true);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(TEMPLATE))
@@ -310,7 +315,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path, true);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
 
     if (!artifactType.equals(ELEMENT))
@@ -349,7 +354,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
   {
     String path = "/";
-    rejectNullAndEmptyValues(sourceNode, path);
+    rejectNullAndEmptyValues(sourceNode, path, true);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
     return readFieldSchemaArtifact(sourceNode, path);
@@ -369,6 +374,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
     readUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
     builder.withIsBasedOn(readRequiredUri(sourceNode, path, IS_BASED_ON));
+    readUri(sourceNode, path, DERIVED_FROM).ifPresent(builder::withDerivedFrom);
     readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
     readUri(sourceNode, path, MODIFIED_BY).ifPresent(builder::withModifiedBy);
     readOffsetDatetime(sourceNode, path, CREATED_ON).ifPresent(builder::withCreatedOn);
@@ -448,23 +454,37 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * empty list ({@code []}) is a valid value. A key whose value is the null literal
    * ({@code key: null}, {@code key:}, {@code key: ~}), an empty mapping ({@code key: {}}), or an
    * empty list ({@code key: []}), and any such list element, is rejected anywhere in the
-   * document. The serialization rule is "if something is unknown, omit it"; an explicit null or
-   * empty placeholder is always an error on read, mirroring the renderer which never emits one.
+   * document, except namespace-bound schema extension metadata. For CEDAR properties, the rule is
+   * "if something is unknown, omit it"; an explicit null or empty placeholder is an error on read.
    * Run once at each public entry point, so the per-field read helpers never have to tolerate any
    * of them.
    */
   private static void rejectNullAndEmptyValues(Object node, String path)
   {
+    rejectNullAndEmptyValues(node, path, false);
+  }
+
+  private static void rejectNullAndEmptyValues(Object node, String path, boolean schema)
+  {
     if (node instanceof Map<?, ?> map) {
       for (Map.Entry<?, ?> entry : map.entrySet()) {
         String key = String.valueOf(entry.getKey());
+        // Extensions carry opaque JSON: null, empty objects and empty arrays are actual values.
+        // The extension reader validates this block separately; instance readers keep their rules.
+        Object type = map.get(TYPE);
+        if (schema && key.equals("extensions") && type instanceof String schemaType
+          && (schemaType.equals(TEMPLATE) || schemaType.equals(ELEMENT) || FIELD_TYPES.contains(schemaType))) continue;
+        // Retain the literal shape when a field has label metadata but an explicit null value.
+        if (!schema && key.equals(VALUE) && entry.getValue() == null
+          && (map.get(LABEL) instanceof String || map.get(PREF_LABEL) instanceof String
+            || map.get(NOTATION) instanceof String)) continue;
         rejectNullOrEmpty(entry.getValue(), key, path);
-        rejectNullAndEmptyValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key);
+        rejectNullAndEmptyValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key, schema);
       }
     } else if (node instanceof List<?> list) {
       for (int i = 0; i < list.size(); i++) {
         rejectNullOrEmpty(list.get(i), "[" + i + "]", path);
-        rejectNullAndEmptyValues(list.get(i), path + "[" + i + "]");
+        rejectNullAndEmptyValues(list.get(i), path + "[" + i + "]", schema);
       }
     }
   }
@@ -596,7 +616,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * to field instances.
    */
   private static final Set<String> TEMPLATE_INSTANCE_RESERVED_KEYS = Set.of(
-    TYPE, NAME, DESCRIPTION, ID, IS_BASED_ON,
+    TYPE, NAME, DESCRIPTION, ID, IS_BASED_ON, DERIVED_FROM,
     CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON,
     CHILDREN, ANNOTATIONS);
 
@@ -654,6 +674,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    */
   private FieldInstanceArtifact readFieldInstanceArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
+    if (sourceNode.containsKey(ID) && sourceNode.containsKey(VALUE))
+      throw new ArtifactParseException("A field cannot contain both id and value", VALUE, path);
+    if (sourceNode.get(DATATYPE) instanceof List<?>)
+      throw new ArtifactParseException("A field value can have at most one datatype", DATATYPE, path);
     List<URI> jsonLdTypes = new ArrayList<>();
     Optional<String> datatype = readEnumOrString(sourceNode, path, DATATYPE);
     if (datatype.isPresent()) {
@@ -666,7 +690,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         ? URI.create(XSD_IRI + dt.substring("xsd:".length()))
         : URI.create(dt));
     }
-    Optional<URI> jsonLdId = readUri(sourceNode, path, ID);
+    Optional<String> jsonLdId = readString(sourceNode, path, ID);
+    if (jsonLdId.isPresent()) {
+      try {
+        if (jsonLdId.get().isEmpty()) throw new IllegalArgumentException("Empty IRI");
+        org.metadatacenter.model.validation.IriReference.toUri(jsonLdId.get());
+      } catch (java.net.URISyntaxException | IllegalArgumentException e) {
+        throw new ArtifactParseException("Value must be a valid nonempty IRI", ID, path);
+      }
+    }
     Optional<String> jsonLdValue = readScalarAsString(sourceNode, path, VALUE);
     Optional<String> label = readString(sourceNode, path, LABEL, true);
     Optional<String> notation = readString(sourceNode, path, NOTATION, true);
@@ -678,7 +710,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     // `@value` at all, so assuming one made the JSON renderer emit `"@value": null` beside the
     // label — a shape that is neither of the two empty forms and one the field's own sub-schema
     // rejects.
-    return FieldInstanceArtifact.create(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
+    return FieldInstanceArtifact.createWithIri(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
       preferredLabel, language, sourceNode.containsKey(VALUE));
   }
 
@@ -747,7 +779,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
     String templateName = readRequiredString(sourceNode, path, NAME, false);
-    String internalName = templateName + " template schema";
+    String internalName = SchemaArtifact.internalNameFor(templateName, SchemaArtifact.Kind.TEMPLATE);
     String internalDescription = templateName + " template schema generated by the CEDAR Artifact Library";
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI));
@@ -779,13 +811,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, templateName,
       description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUi, annotations, internalName,
-      internalDescription);
+      internalDescription).withExtensions(SchemaExtensionReader.yaml(sourceNode));
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
     String elementName = readRequiredString(sourceNode, path, NAME, false);
-    String internalName = elementName + " element schema";
+    String internalName = SchemaArtifact.internalNameFor(elementName, SchemaArtifact.Kind.ELEMENT);
     String internalDescription = elementName + " element schema generated by the CEDAR Artifact Library";
     LinkedHashMap<String, URI> jsonLdContext = new LinkedHashMap<>(PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS);
     List<URI> jsonLdTypes = List.of(URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI));
@@ -829,13 +861,13 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType, elementName, description, identifier, version, status, previousVersion, derivedFrom,
       createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas,
-      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations);
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations).withExtensions(SchemaExtensionReader.yaml(sourceNode));
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode, String path)
   {
     String fieldName = readRequiredString(sourceNode, path, NAME, false);
-    String internalName = fieldName + " field schema";
+    String internalName = SchemaArtifact.internalNameFor(fieldName, SchemaArtifact.Kind.FIELD);
     String internalDescription = fieldName + " field schema generated by the CEDAR Artifact Library";
     // Static fields (page-break, section-break, richtext, image, youtube) have a
     // distinct JSON-LD @type and a different @context prefix-mappings table than
@@ -881,7 +913,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       fieldName, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
       propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi,
-      valueConstraints, annotations);
+      valueConstraints, annotations).withExtensions(SchemaExtensionReader.yaml(sourceNode));
   }
 
   private TemplateUi readTemplateUi(LinkedHashMap<String, Object> sourceNode, String path,
@@ -1761,6 +1793,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       LinkedHashMap<String, Object> childNode = (LinkedHashMap<String, Object>) rawChild;
 
       String childKey = readRequiredString(childNode, path, KEY, false);
+      if (TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
+          || FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
+          || ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)) {
+        throw new ArtifactParseException("Child schema uses a reserved instance property name", childKey,
+            path + "/children/" + childKey);
+      }
       String childType = readRequiredString(childNode, path, TYPE, false);
       String childPath = path + "/" + childKey;
 

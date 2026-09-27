@@ -94,6 +94,26 @@ final class ParentSchemaArtifactInvariants
   }
 
   /**
+   * Refuse a child whose key {@link ReservedNames} reserves: any reserved name for every child, and the
+   * parent's YAML metadata keys as well for an attribute-value field.
+   */
+  static void validateChildNames(Object self, Map<String, ? extends FieldSchemaArtifact> fieldSchemas,
+                                 Map<String, ?> elementSchemas, ReservedNames.AttributeValueFieldParent parent)
+  {
+    for (String key : elementSchemas.keySet())
+      if (ReservedNames.isReservedName(key))
+        throw new IllegalStateException("child name \"" + key + "\" in " + self.getClass().getSimpleName()
+          + " is reserved for CEDAR instance metadata");
+    for (Map.Entry<String, ? extends FieldSchemaArtifact> field : fieldSchemas.entrySet()) {
+      if (field.getValue() instanceof AttributeValueField)
+        ReservedNames.requireAttributeValueFieldName(self, field.getKey(), parent);
+      else if (ReservedNames.isReservedName(field.getKey()))
+        throw new IllegalStateException("child name \"" + field.getKey() + "\" in "
+          + self.getClass().getSimpleName() + " is reserved for CEDAR instance metadata");
+    }
+  }
+
+  /**
    * Return a copy of {@code children} with any entry whose key is absent from the UI {@code order}
    * list removed. The input map is not modified.
    * <p>

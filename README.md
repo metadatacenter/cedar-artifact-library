@@ -86,6 +86,20 @@ Path outputFile = Path.of("template.yaml");
 YamlSerializer.saveYAML(templateSchemaArtifact, compact, fullQuotes, outputFile);
 ```
 
+### Unicode field identifiers
+
+Field-instance JSON `@id` and YAML `id` preserve RFC 3987 IRI spelling, including Unicode
+separators such as U+00A0. ASCII spaces, controls, invalid Unicode and malformed escapes remain
+errors. RDF identity is the original string: a raw Unicode IRI and its percent-encoded spelling
+remain distinct.
+
+Use `FieldInstanceArtifact.jsonLdIdIri()` for RDF identity and serialization. The existing
+`jsonLdId()` accessor remains a `java.net.URI` compatibility/transport view; it percent-encodes
+characters that Java's URI class cannot represent. Do not use that view to rewrite an RDF term.
+`ControlledTermFieldInstance.builder().withIriValue(value)` and
+`FieldInstanceArtifact.createWithIri(...)` accept exact IRI strings. Builder copies preserve them.
+Artifact, element-occurrence, schema and datatype URI APIs retain their existing contracts.
+
 ### Serializing Templates to Excel
 
 A class called `ExcelArtifactRenderer` provides methods to serialize CEDAR templates to Excel.
@@ -623,6 +637,27 @@ To normalize a JSON Schema file from a CEDAR template stored in a file:
 
 This will read a JSON-Schema-based template, render it as JSON Schema again, and write it into a file.
 
+
+## Exporting Instance RDF
+
+`RdfArtifactRenderer` accepts an instance and its template (or element schema). It completes sparse
+instance context/type information through the JSON renderer, then converts with Titanium JSON-LD.
+
+```java
+RdfArtifactRenderer rdf = new RdfArtifactRenderer();
+String nquads = rdf.renderNQuads(templateSchemaArtifact, templateInstanceArtifact);
+String turtle = rdf.renderTurtle(templateSchemaArtifact, templateInstanceArtifact);
+```
+
+Both methods return text and leave the models unchanged. IRIs and string-valued typed literals keep
+their exact spelling; native JSON numbers use JSON-LD numeric serialization. No remote contexts are
+fetched and no identifiers are minted. Empty fields state no triples. Attribute-name lists are
+structural; their named values supply the RDF statements. Malformed or unmapped populated values
+raise `IllegalArgumentException` instead of being omitted.
+
+Turtle currently uses the N-Triples subset of Turtle. It refuses named graphs, which N-Quads can
+preserve. An entirely empty instance produces an empty string. RDF export does not promise reverse
+reconstruction of CEDAR field order, empty fields or attribute-group membership.
 
 ## Building the Library
 

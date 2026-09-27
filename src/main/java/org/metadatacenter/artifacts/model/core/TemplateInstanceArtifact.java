@@ -438,6 +438,8 @@ record TemplateInstanceArtifactRecord(LinkedHashMap<String, URI> jsonLdContext, 
     InstanceArtifactInvariants.validate(this, jsonLdContext, jsonLdTypes, jsonLdId, name, description, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, childKeys, singleInstanceFieldInstances, multiInstanceFieldInstances,
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
+    InstanceArtifactInvariants.validateAttributeValueFieldNames(this, attributeValueFieldInstanceGroups.keySet(),
+      ReservedNames.AttributeValueFieldParent.TEMPLATE);
     validateOptionalFieldNotNull(this, derivedFrom, PAV_DERIVED_FROM);
     validateUriFieldNotNull(this, isBasedOn, SCHEMA_IS_BASED_ON);
     validateOptionalFieldNotNull(this, annotations, "annotations");

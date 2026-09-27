@@ -17,6 +17,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface RichTextField extends FieldSchemaArtifact
 {
+  @Override RichTextField withExtensions(SchemaExtensions extensions);
+
   static RichTextField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, Optional<URI> createdBy, Optional<URI> modifiedBy,
@@ -103,7 +105,7 @@ public sealed interface RichTextField extends FieldSchemaArtifact
       withFieldUi(fieldUiBuilder.build());
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
         status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
-        alternateLabels, language, fieldUi.asStaticFieldUi(), valueConstraints, annotations, internalName, internalDescription);
+        alternateLabels, language, fieldUi.asStaticFieldUi(), valueConstraints, annotations, internalName, internalDescription).withExtensions(extensions);
     }
   }
 }
@@ -115,10 +117,31 @@ record RichTextFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> j
                            Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
                            List<String> alternateLabels, Optional<String> language, StaticFieldUi fieldUi,
                            Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
-                           String internalName, String internalDescription) implements RichTextField
+                           String internalName, String internalDescription, SchemaExtensions extensions) implements RichTextField
 {
+  public RichTextFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                           String name, String description, Optional<String> identifier, Optional<Version> version,
+                           Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                           Optional<URI> createdBy, Optional<URI> modifiedBy, Optional<OffsetDateTime> createdOn,
+                           Optional<OffsetDateTime> lastUpdatedOn, Optional<String> preferredLabel,
+                           List<String> alternateLabels, Optional<String> language, StaticFieldUi fieldUi,
+                           Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                           String internalName, String internalDescription) {
+    this(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
+      derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language,
+      fieldUi, valueConstraints, annotations, internalName, internalDescription, SchemaExtensions.empty());
+  }
+
+  @Override public RichTextField withExtensions(SchemaExtensions extensions) {
+    return new RichTextFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel,
+      alternateLabels, language, fieldUi, valueConstraints, annotations, internalName, internalDescription,
+      extensions);
+  }
+
   public RichTextFieldRecord
   {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     FieldSchemaArtifactInvariants.validateStatic(this, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     jsonLdContext = FieldSchemaArtifactInvariants.staticContext();

@@ -40,6 +40,21 @@ public class ValidationHelper
       throw new IllegalStateException("minItems must be less than or equal to maxItems in " + kind + " " + name);
   }
 
+  /**
+   * A field value carries at most one {@code @type}.
+   *
+   * On a literal, JSON-LD reads {@code @type} as the value's datatype and allows exactly one. On a
+   * controlled term, a list is legal JSON-LD, but the model and its YAML form have a single slot for
+   * it, and keeping only the first entry would silently discard the rest. A list is refused on
+   * either kind.
+   */
+  public static void validateAtMostOneFieldInstanceType(Object obj, List<URI> jsonLdTypes)
+  {
+    if (jsonLdTypes != null && jsonLdTypes.size() > 1)
+      throw new IllegalStateException("a field value can have at most one @type, but " + jsonLdTypes.size()
+          + " were given in " + obj);
+  }
+
   public static void validateStringFieldNotNull(Object obj, String field, String fieldKey)
   {
     if (field == null)

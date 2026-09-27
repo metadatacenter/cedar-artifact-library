@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateAtMostOneFieldInstanceType;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_ID;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_LANGUAGE;
@@ -68,6 +69,7 @@ record TextAreaFieldInstanceRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId
   public TextAreaFieldInstanceRecord
   {
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
+    validateAtMostOneFieldInstanceType(this, jsonLdTypes);
     validateOptionalFieldNotNull(this, jsonLdValue, JSON_LD_VALUE);
     validateOptionalFieldNotNull(this, jsonLdId, JSON_LD_ID);
     validateOptionalFieldNotNull(this, label, RDFS_LABEL);

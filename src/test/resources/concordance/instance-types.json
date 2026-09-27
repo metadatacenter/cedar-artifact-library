@@ -44,6 +44,10 @@
       "@context" : {
         "type" : "object",
         "properties" : {
+          "_annotations" : {
+            "type" : "string",
+            "enum" : [ "@nest" ]
+          },
           "rdfs" : {
             "type" : "string",
             "format" : "uri",
@@ -217,6 +221,32 @@
         "type" : [ "string", "null" ],
         "format" : "uri"
       },
+      "_annotations" : {
+        "type" : "object",
+        "patternProperties" : {
+          "^.+$" : {
+            "oneOf" : [ {
+              "type" : "object",
+              "properties" : {
+                "@id" : {
+                  "type" : "string",
+                  "format" : "uri"
+                }
+              },
+              "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "properties" : {
+                "@value" : {
+                  "type" : [ "string", "number", "boolean", "null" ]
+                }
+              },
+              "additionalProperties" : false
+            } ]
+          }
+        },
+        "additionalProperties" : false
+      },
       "Element" : {
         "@id" : null,
         "@type" : "https://schema.metadatacenter.org/core/TemplateElement",
@@ -379,6 +409,10 @@
       "@context" : {
         "type" : "object",
         "properties" : {
+          "_annotations" : {
+            "type" : "string",
+            "enum" : [ "@nest" ]
+          },
           "rdfs" : {
             "type" : "string",
             "format" : "uri",
@@ -554,6 +588,32 @@
         "type" : [ "string", "null" ],
         "format" : "uri"
       },
+      "_annotations" : {
+        "type" : "object",
+        "patternProperties" : {
+          "^.+$" : {
+            "oneOf" : [ {
+              "type" : "object",
+              "properties" : {
+                "@id" : {
+                  "type" : "string",
+                  "format" : "uri"
+                }
+              },
+              "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "properties" : {
+                "@value" : {
+                  "type" : [ "string", "number", "boolean", "null" ]
+                }
+              },
+              "additionalProperties" : false
+            } ]
+          }
+        },
+        "additionalProperties" : false
+      },
       "Element" : {
         "@id" : null,
         "@type" : "https://schema.metadatacenter.org/core/TemplateElement",
@@ -722,6 +782,10 @@
       "@context" : {
         "type" : "object",
         "properties" : {
+          "_annotations" : {
+            "type" : "string",
+            "enum" : [ "@nest" ]
+          },
           "rdfs" : {
             "type" : "string",
             "format" : "uri",
@@ -897,6 +961,32 @@
         "type" : [ "string", "null" ],
         "format" : "uri"
       },
+      "_annotations" : {
+        "type" : "object",
+        "patternProperties" : {
+          "^.+$" : {
+            "oneOf" : [ {
+              "type" : "object",
+              "properties" : {
+                "@id" : {
+                  "type" : "string",
+                  "format" : "uri"
+                }
+              },
+              "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "properties" : {
+                "@value" : {
+                  "type" : [ "string", "number", "boolean", "null" ]
+                }
+              },
+              "additionalProperties" : false
+            } ]
+          }
+        },
+        "additionalProperties" : false
+      },
       "Element" : {
         "@id" : null,
         "@type" : "https://schema.metadatacenter.org/core/TemplateElement",
@@ -1065,6 +1155,10 @@
       "@context" : {
         "type" : "object",
         "properties" : {
+          "_annotations" : {
+            "type" : "string",
+            "enum" : [ "@nest" ]
+          },
           "rdfs" : {
             "type" : "string",
             "format" : "uri",
@@ -1239,6 +1333,32 @@
       "oslc:modifiedBy" : {
         "type" : [ "string", "null" ],
         "format" : "uri"
+      },
+      "_annotations" : {
+        "type" : "object",
+        "patternProperties" : {
+          "^.+$" : {
+            "oneOf" : [ {
+              "type" : "object",
+              "properties" : {
+                "@id" : {
+                  "type" : "string",
+                  "format" : "uri"
+                }
+              },
+              "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "properties" : {
+                "@value" : {
+                  "type" : [ "string", "number", "boolean", "null" ]
+                }
+              },
+              "additionalProperties" : false
+            } ]
+          }
+        },
+        "additionalProperties" : false
       },
       "Element" : {
         "@id" : null,

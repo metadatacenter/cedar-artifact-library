@@ -19,6 +19,16 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
 {
+  private static final Set<String> INSTANCE_ENVELOPE_KEYS = ReservedNames.TEMPLATE_INSTANCE_YAML_KEYS;
+  private static final Set<String> STANDALONE_ELEMENT_KEYS = ReservedNames.STANDALONE_ELEMENT_INSTANCE_YAML_KEYS;
+  private static final Set<String> NESTED_ELEMENT_KEYS = ReservedNames.NESTED_ELEMENT_INSTANCE_YAML_KEYS;
+
+  private static void requireAttributeGroupName(String name, Set<String> reserved)
+  {
+    if (reserved.contains(name))
+      throw new ArtifactRenderException("Attribute-value field key \"" + name
+        + "\" is reserved for CEDAR YAML metadata.");
+  }
   private final boolean isCompact;
   private final DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   private final TerminologyServerClient terminologyServerClient;
@@ -100,6 +110,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(templateSchemaArtifact, templateSchemaArtifact.getChildSchemas()));
 
+    addSchemaExtensions(templateSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -156,6 +167,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
 
+    addSchemaExtensions(elementSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -190,6 +202,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.hasChildren())
       rendering.put(CHILDREN, renderChildSchemas(elementSchemaArtifact, elementSchemaArtifact.getChildSchemas()));
 
+    addSchemaExtensions(elementSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -239,6 +252,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!configuration.isEmpty())
       rendering.put(CONFIGURATION, configuration);
 
+    addSchemaExtensions(fieldSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -310,6 +324,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
+    addSchemaExtensions(fieldSchemaArtifact, rendering);
     return rendering;
   }
 
@@ -398,6 +413,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
 
+    if (!isCompact && templateInstanceArtifact.derivedFrom().isPresent())
+      rendering.put(DERIVED_FROM, templateInstanceArtifact.derivedFrom().get().toString());
+
     if (!isCompact && templateInstanceArtifact.createdOn().isPresent())
       rendering.put(CREATED_ON, renderOffsetDateTime(templateInstanceArtifact.createdOn().get()));
 
@@ -418,6 +436,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : templateInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
       String attributeValueFieldInstanceGroupKey = attributeValueFieldInstanceGroup.getKey();
+      requireAttributeGroupName(attributeValueFieldInstanceGroupKey, INSTANCE_ENVELOPE_KEYS);
       Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields = attributeValueFieldInstanceGroup.getValue();
 
       // The group is judged by what it renders to, not by how many attributes it holds. A group
@@ -481,6 +500,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
+      requireAttributeGroupName(attributeValueFieldInstanceGroup.getKey(), STANDALONE_ELEMENT_KEYS);
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
       LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
       if (!groupRendering.isEmpty())
@@ -500,6 +520,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     LinkedHashMap<String, Object> attributeValueGroups = new LinkedHashMap<>();
     for (Map.Entry<String, Map<String, FieldInstanceArtifact>> attributeValueFieldInstanceGroup : elementInstanceArtifact.attributeValueFieldInstanceGroups()
       .entrySet()) {
+      requireAttributeGroupName(attributeValueFieldInstanceGroup.getKey(), NESTED_ELEMENT_KEYS);
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
       LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
       if (!groupRendering.isEmpty())
@@ -650,16 +671,18 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         renderPossiblyXsdPrefixedUri(fieldInstanceArtifact.jsonLdTypes().get(0)));
 
     if (fieldInstanceArtifact.jsonLdId().isPresent())
-      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdId().get().toString());
+      fieldInstanceArtifactRendering.put(ID, fieldInstanceArtifact.jsonLdIdIri().orElseThrow());
 
-    // The value is emitted only when present (an unset slot returned early above, so this is
-    // never a `value: null`).
+    // A labelled null literal must retain its value key: a label-only field has a different shape.
     if (hasValue) {
       String raw = fieldInstanceArtifact.jsonLdValue().get();
       // Instance @value is string-valued in the model and in JSON. Keep it a
       // string in YAML as well so choosing a serialization format cannot change
       // the value's scalar type. Numeric schema defaults remain numeric below.
       fieldInstanceArtifactRendering.put(VALUE, raw);
+    } else if (!hasId && hasLabel && !(fieldInstanceArtifact instanceof IriFieldInstance)
+      && fieldInstanceArtifact.carriesValueKey()) {
+      fieldInstanceArtifactRendering.put(VALUE, null);
     }
 
     if (fieldInstanceArtifact.label().isPresent())
@@ -1229,12 +1252,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         rendering.put(RECOMMENDED, true);
     }
 
-    // The IRI the child is addressed by, written for whatever kind of field carries one. An
-    // attribute-value or static field was skipped here because the JSON @context has no mapping for
-    // one (ParentSchemaArtifact.getChildPropertyUris skips them), so what YAML kept, a conversion to
-    // JSON would drop. That is a fact about the JSON representation, which both model libraries apply
-    // the same way; it is not a reason for the YAML to forget what the template declared. The compact
-    // form drops the key for every kind, as it drops the rest of what the system records.
+    // Preserve every declared field IRI in full YAML. JSON also preserves an attribute-value
+    // group's optional mapping, but does not require it in instance contexts. Compact YAML omits
+    // property IRIs together with the other repository metadata.
     if (!isCompact && fieldSchemaArtifact.propertyUri().isPresent())
       rendering.put(PROPERTY_IRI, fieldSchemaArtifact.propertyUri().get().toString());
 
@@ -1682,5 +1702,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
     else
       return uri.toString();
+  }
+
+  private void addSchemaExtensions(SchemaArtifact artifact, LinkedHashMap<String, Object> rendering) {
+    if (artifact.extensions().isEmpty()) return;
+    var extensions = new LinkedHashMap<String, Object>();
+    var prefixes = new LinkedHashMap<String, Object>();
+    artifact.extensions().prefixes().forEach((key, value) -> prefixes.put(key, value.toString()));
+    extensions.put("prefixes", prefixes);
+    extensions.put("properties", new com.fasterxml.jackson.databind.ObjectMapper()
+      .convertValue(artifact.extensions().properties(), LinkedHashMap.class));
+    rendering.put("extensions", extensions);
   }
 }

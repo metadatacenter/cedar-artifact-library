@@ -198,6 +198,34 @@ public class JsonArtifactReaderNegativePathsTest
     assertThrows(ArtifactParseException.class, () -> reader.readTemplateSchemaArtifact(node));
   }
 
+  @Test public void reservedPropertiesCannotHideChildSchemas()
+  {
+    for (String key : java.util.List.of("@value", "@id", "schema:name", "rdfs:label")) {
+      for (boolean array : java.util.List.of(false, true)) {
+        ObjectNode parent = baseTemplate("T", "d");
+        ObjectNode child = baseField("Child", "d");
+        ObjectNode declaration = child;
+        if (array) {
+          declaration = mapper.createObjectNode().put("type", "array");
+          declaration.set("items", child);
+        }
+        parent.withObject("/properties").set(key, declaration);
+        ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+            () -> reader.readTemplateSchemaArtifact(parent));
+        assertTrue(ex.getMessage().contains("reserved instance property name"), ex.getMessage());
+        assertTrue(ex.getPath().endsWith("/properties/" + key), ex.getMessage());
+      }
+    }
+  }
+
+  @Test public void ordinaryMetadataPropertyConstraintsAreStillAccepted()
+  {
+    ObjectNode parent = baseTemplate("T", "d");
+    parent.withObject("/properties").set("@id", mapper.createObjectNode().put("type", "string"));
+    parent.withObject("/properties").set("schema:name", mapper.createObjectNode().put("type", "string"));
+    org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> reader.readTemplateSchemaArtifact(parent));
+  }
+
   // ---- Helpers ----
 
   private ObjectNode baseTemplate(String name, String description)

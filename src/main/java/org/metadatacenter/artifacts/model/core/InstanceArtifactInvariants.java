@@ -96,6 +96,11 @@ final class InstanceArtifactInvariants
                                           Map<String, ?> multiInstanceElementInstances,
                                           Map<String, ? extends Map<String, ?>> attributeValueFieldInstanceGroups)
   {
+    for (String childKey : childKeys)
+      if (ReservedNames.isReservedName(childKey))
+        throw new IllegalStateException("child name \"" + childKey + "\" in " + self.getClass().getSimpleName()
+          + " is reserved for CEDAR instance metadata");
+
     Set<String> declared = new HashSet<>(childKeys);
 
     checkKeysDeclared(self, declared, singleInstanceFieldInstances.keySet(), "singleInstanceFieldInstances");
@@ -124,16 +129,17 @@ final class InstanceArtifactInvariants
       singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstanceGroups);
   }
 
-  private static final Set<String> RESERVED_ATTRIBUTE_VALUE_NAMES = Set.of(
-    "@context", "@id", "@type", "@value", "@language",
-    "schema:isBasedOn", "schema:name", "schema:description",
-    "pav:derivedFrom", "pav:createdOn", "pav:createdBy", "pav:lastUpdatedOn",
-    "oslc:modifiedBy", "rdfs:label", "skos:prefLabel", "skos:altLabel", "skos:notation",
-    "_annotations");
-
   static boolean isReservedAttributeValueName(String name)
   {
-    return name.startsWith("@") || RESERVED_ATTRIBUTE_VALUE_NAMES.contains(name);
+    return ReservedNames.isReservedName(name);
+  }
+
+  /** Refuse an attribute-value field key the YAML form reserves beside its parent's metadata. */
+  static void validateAttributeValueFieldNames(Object self, Set<String> attributeValueFieldNames,
+                                               ReservedNames.AttributeValueFieldParent parent)
+  {
+    for (String name : attributeValueFieldNames)
+      ReservedNames.requireAttributeValueFieldName(self, name, parent);
   }
 
   private static void validateAttributeValueNames(Object self,

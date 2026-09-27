@@ -82,7 +82,9 @@ public class FieldConcordanceMatrixTest {
       .withModifiedBy(URI.create("https://example.org/users/editor"))
       .withCreatedOn(OffsetDateTime.parse("2026-01-01T01:02:03Z"))
       .withLastUpdatedOn(OffsetDateTime.parse("2026-02-01T04:05:06Z"));
-    if (feature.equals("schemaText")) b.withInternalName("Custom schema title").withInternalDescription("Custom schema description");
+    // Only the description: `title` is derived from the name, so a custom one does not survive a
+    // round trip and DerivedTitleTest is where that is asserted.
+    if (feature.equals("schemaText")) b.withInternalDescription("Custom schema description");
     if (feature.equals("default")) {
       if (b instanceof LiteralDefaultableFieldBuilder d) d.withDefaultValue("Example");
       else if (b instanceof IriDefaultableFieldBuilder d) d.withDefaultValue(URI.create("https://example.org/value"));
@@ -132,7 +134,9 @@ public class FieldConcordanceMatrixTest {
       expect(json, "/pav:lastUpdatedOn", "2026-02-01T04:05:06Z");
     }
     if (feature.equals("schemaText")) {
-      expect(json, "/title", "Custom schema title");
+      // The title is composed from the name whatever a document supplies; the description is the
+      // author's and survives. DerivedTitleTest asserts the composition itself.
+      expect(json, "/title", "Field field schema");
       expect(json, "/description", "Custom schema description");
     }
     if (feature.equals("default")) {

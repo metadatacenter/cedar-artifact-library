@@ -41,9 +41,14 @@ public final class YamlScalarQuotingChecker extends StringQuotingChecker.Default
     return super.needToQuoteValue(value) || resolvedBySomeReader(value) || plainCannotCarry(value);
   }
 
+  // Shared with TypeScript's yamlKeyNeedsQuoting: deliberately a small ASCII allowlist,
+  // independent of the YAML emitter's heuristic. Spaces and hyphens are allowed internally.
+  private static final Pattern PLAIN_KEY = Pattern.compile("[A-Za-z_](?:[A-Za-z0-9_ -]*[A-Za-z0-9_-])?");
+  private static final Pattern KEYWORD_KEY = Pattern.compile("(?i:y|yes|n|no|true|false|on|off|null)");
+
   @Override public boolean needToQuoteName(String name)
   {
-    return super.needToQuoteName(name) || resolvedBySomeReader(name) || plainCannotCarry(name);
+    return !PLAIN_KEY.matcher(name).matches() || KEYWORD_KEY.matcher(name).matches();
   }
 
   private static boolean resolvedBySomeReader(String text)

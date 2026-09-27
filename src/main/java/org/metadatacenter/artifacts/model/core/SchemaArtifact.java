@@ -21,6 +21,12 @@ import java.util.Optional;
  */
 public interface SchemaArtifact extends Artifact, JsonLdArtifact, VersionedArtifact, MonitoredArtifact
 {
+  /** Namespace-bound metadata on the schema itself. */
+  SchemaExtensions extensions();
+
+  /** Return a copy carrying the supplied extension metadata. */
+  SchemaArtifact withExtensions(SchemaExtensions extensions);
+
   /**
    * @return The artifact's own name, the one an author supplies. Renders as {@code schema:name}.
    */
@@ -38,8 +44,37 @@ public interface SchemaArtifact extends Artifact, JsonLdArtifact, VersionedArtif
   Optional<Annotations> annotations();
 
   /**
+   * The kinds of schema artifact, as the composed {@link #internalName()} names them.
+   */
+  enum Kind
+  {
+    TEMPLATE("template"), ELEMENT("element"), FIELD("field");
+
+    private final String noun;
+
+    Kind(String noun) {this.noun = noun;}
+
+    public String noun() {return noun;}
+  }
+
+  /**
+   * The internal name an artifact of this kind and name has.
+   *
+   * <p>Composed rather than stored: it restates the artifact's own name and says what kind of thing the name
+   * belongs to, so it carries nothing an author decided. A document supplying some other title is describing
+   * the same schema by another name, and reading that name back would let two artifacts with the same name
+   * and kind disagree about what their JSON Schema is called. Both readers compose it here, so neither can
+   * derive a different one.
+   */
+  static String internalNameFor(String name, Kind kind)
+  {
+    return name + " " + kind.noun() + " schema";
+  }
+
+  /**
    * @return The name of the JSON Schema constraining instances of this artifact, not of the artifact itself.
    * Renders as the JSON Schema keyword {@code title}. For the artifact's own name, see {@link #name()}.
+   * Derived from {@link #name()}: see {@link #internalNameFor(String, Kind)}.
    */
   String internalName();
 

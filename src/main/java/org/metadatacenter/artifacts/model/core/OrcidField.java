@@ -17,6 +17,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 
 public sealed interface OrcidField extends FieldSchemaArtifact
 {
+  @Override OrcidField withExtensions(SchemaExtensions extensions);
+
   static OrcidField create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     String name, String description, Optional<String> identifier, Optional<Version> version, Optional<Status> status,
     Optional<URI> previousVersion, Optional<URI> derivedFrom, boolean isMultiple, Optional<Integer> minItems,
@@ -102,7 +104,7 @@ public sealed interface OrcidField extends FieldSchemaArtifact
       return create(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status,
         previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn,
         lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
-        internalName, internalDescription);
+        internalName, internalDescription).withExtensions(extensions);
     }
   }
 }
@@ -115,10 +117,33 @@ record OrcidFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> json
                        Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
                        Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
                        FieldUi fieldUi, Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
-                       String internalName, String internalDescription) implements OrcidField
+                       String internalName, String internalDescription, SchemaExtensions extensions) implements OrcidField
 {
+  public OrcidFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
+                       String name, String description, Optional<String> identifier, Optional<Version> version,
+                       Optional<Status> status, Optional<URI> previousVersion, Optional<URI> derivedFrom,
+                       boolean isMultiple, Optional<Integer> minItems, Optional<Integer> maxItems,
+                       Optional<URI> propertyUri, Optional<URI> createdBy, Optional<URI> modifiedBy,
+                       Optional<OffsetDateTime> createdOn, Optional<OffsetDateTime> lastUpdatedOn,
+                       Optional<String> preferredLabel, List<String> alternateLabels, Optional<String> language,
+                       FieldUi fieldUi, Optional<ValueConstraints> valueConstraints, Optional<Annotations> annotations,
+                       String internalName, String internalDescription) {
+    this(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version, status, previousVersion,
+      derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy, createdOn, lastUpdatedOn,
+      preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations, internalName,
+      internalDescription, SchemaExtensions.empty());
+  }
+
+  @Override public OrcidField withExtensions(SchemaExtensions extensions) {
+    return new OrcidFieldRecord(jsonLdContext, jsonLdTypes, jsonLdId, name, description, identifier, version,
+      status, previousVersion, derivedFrom, isMultiple, minItems, maxItems, propertyUri, createdBy, modifiedBy,
+      createdOn, lastUpdatedOn, preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations,
+      internalName, internalDescription, extensions);
+  }
+
   public OrcidFieldRecord
   {
+    java.util.Objects.requireNonNull(extensions, "extensions");
     FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
       fieldUi, valueConstraints, annotations);
