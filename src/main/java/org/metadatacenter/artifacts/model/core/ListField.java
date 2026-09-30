@@ -128,7 +128,7 @@ public sealed interface ListField extends FieldSchemaArtifact
 
     public ListFieldBuilder withOption(String choice)
     {
-      valueConstraintsBuilder.withChoice(choice, false);
+      valueConstraintsBuilder.withChoice(choice);
       return this;
     }
 

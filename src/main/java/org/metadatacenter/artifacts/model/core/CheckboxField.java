@@ -108,7 +108,7 @@ public sealed interface CheckboxField extends FieldSchemaArtifact
 
     public CheckboxFieldBuilder withOption(String choice)
     {
-      valueConstraintsBuilder.withChoice(choice, false);
+      valueConstraintsBuilder.withChoice(choice);
       return this;
     }
 

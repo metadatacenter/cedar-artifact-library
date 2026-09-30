@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model.renderer;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.JsonSchema;
@@ -57,6 +58,8 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_DEFAULT_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_LITERALS;
 
 public class JsonArtifactRendererTest
 {
@@ -627,4 +630,22 @@ public class JsonArtifactRendererTest
     }
   }
 
+  @Test
+  public void testRenderListFieldStatesOnlyStatedSelections()
+  {
+    ListField listField = ListField.builder().
+      withName("Answers").
+      withDescription("Help Text").
+      withOption("A").
+      withOption("B", false).
+      withOption("C", true).
+      build();
+
+    ObjectNode rendering = jsonArtifactRenderer.renderFieldSchemaArtifact(listField);
+    JsonNode literals = rendering.get(VALUE_CONSTRAINTS).get(VALUE_CONSTRAINTS_LITERALS);
+
+    assertFalse(literals.get(0).has(VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT));
+    assertFalse(literals.get(1).get(VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT).booleanValue());
+    assertTrue(literals.get(2).get(VALUE_CONSTRAINTS_SELECTED_BY_DEFAULT).booleanValue());
+  }
 }

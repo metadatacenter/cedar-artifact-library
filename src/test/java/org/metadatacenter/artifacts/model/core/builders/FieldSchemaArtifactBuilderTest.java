@@ -405,11 +405,11 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(description, radioField.description());
     Assertions.assertEquals("Choice 1",
         radioField.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         radioField.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
     Assertions.assertEquals("Choice 2",
         radioField.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         radioField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
     Assertions.assertEquals("Choice 3",
         radioField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
@@ -437,11 +437,11 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(description, clonedRadioField.description());
     Assertions.assertEquals("Choice 1",
         clonedRadioField.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         clonedRadioField.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
     Assertions.assertEquals("Choice 2",
         clonedRadioField.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         clonedRadioField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
     Assertions.assertEquals("Choice 3",
         clonedRadioField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
@@ -468,11 +468,11 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(description, listField.description());
     Assertions.assertEquals("Choice 1",
         listField.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         listField.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
     Assertions.assertEquals("Choice 2",
         listField.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         listField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
     Assertions.assertEquals("Choice 3",
         listField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
@@ -527,11 +527,11 @@ public class FieldSchemaArtifactBuilderTest {
     Assertions.assertEquals(description, clonedListField.description());
     Assertions.assertEquals("Choice 1",
         clonedListField.valueConstraints().get().asTextValueConstraints().literals().get(0).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         clonedListField.valueConstraints().get().asTextValueConstraints().literals().get(0).selectedByDefault());
     Assertions.assertEquals("Choice 2",
         clonedListField.valueConstraints().get().asTextValueConstraints().literals().get(1).label());
-    Assertions.assertEquals(false,
+    Assertions.assertNull(
         clonedListField.valueConstraints().get().asTextValueConstraints().literals().get(1).selectedByDefault());
     Assertions.assertEquals("Choice 3",
         clonedListField.valueConstraints().get().asTextValueConstraints().literals().get(2).label());
