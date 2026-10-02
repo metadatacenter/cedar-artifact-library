@@ -21,10 +21,12 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
@@ -1442,4 +1444,24 @@ public class YamlArtifactRendererTest {
     assertTrue(reread.isMultiple(), "multiple must survive the round trip");
   }
 
+  @Test
+  public void testRenderListFieldStatesOnlyStatedSelections()
+  {
+    ListField listField = ListField.builder().
+      withName("Answers").
+      withDescription("Help Text").
+      withOption("A").
+      withOption("B", false).
+      withOption("C", true).
+      build();
+
+    YamlArtifactRenderer yamlArtifactRenderer = new YamlArtifactRenderer(true);
+
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderFieldSchemaArtifact(listField);
+    List<?> values = assertInstanceOf(List.class, rendering.get(VALUES));
+
+    assertFalse(assertInstanceOf(Map.class, values.get(0)).containsKey(SELECTED_BY_DEFAULT));
+    assertEquals(false, assertInstanceOf(Map.class, values.get(1)).get(SELECTED_BY_DEFAULT));
+    assertEquals(true, assertInstanceOf(Map.class, values.get(2)).get(SELECTED_BY_DEFAULT));
+  }
 }

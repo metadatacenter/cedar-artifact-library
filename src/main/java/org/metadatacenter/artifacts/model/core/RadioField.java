@@ -106,7 +106,7 @@ public sealed interface RadioField extends FieldSchemaArtifact
 
     public RadioFieldBuilder withOption(String choice)
     {
-      valueConstraintsBuilder.withChoice(choice, false);
+      valueConstraintsBuilder.withChoice(choice);
       return this;
     }
 

@@ -104,6 +104,12 @@ public non-sealed interface TextValueConstraints extends ValueConstraints
       return this;
     }
 
+    /** An option whose selection is left unstated, which a writer renders without the flag. */
+    public TextValueConstraintsBuilder withChoice(String choice) {
+      this.literals.add(new LiteralValueConstraint(choice));
+      return this;
+    }
+
     public TextValueConstraintsBuilder withRequiredValue(boolean requiredValue) {
       this.requiredValue = requiredValue;
       return this;
