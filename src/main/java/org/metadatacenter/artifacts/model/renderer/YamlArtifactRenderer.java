@@ -280,7 +280,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent())
+    if (statesUpperBound(fieldSchemaArtifact))
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     return rendering;
@@ -1228,7 +1228,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (statesLowerBound(elementSchemaArtifact))
       rendering.put(MIN_ITEMS, elementSchemaArtifact.minItems().get());
 
-    if (elementSchemaArtifact.maxItems().isPresent())
+    if (statesUpperBound(elementSchemaArtifact))
       rendering.put(MAX_ITEMS, elementSchemaArtifact.maxItems().get());
 
     return rendering;
@@ -1283,7 +1283,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent())
+    if (statesUpperBound(fieldSchemaArtifact))
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     if (fieldSchemaArtifact.fieldUi().isStatic()) {
@@ -1685,6 +1685,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (childSchemaArtifact.minItems().isEmpty())
       return false;
     return childSchemaArtifact.minItems().get() != childSchemaArtifact.defaultOccurrences();
+  }
+
+  /**
+   * Whether the child's upper bound is worth stating. A maximum of 0 is the Template Editor's "no
+   * upper bound", which is what leaving the bound out says, so it is left out as the JSON leaves it.
+   */
+  private boolean statesUpperBound(ChildSchemaArtifact childSchemaArtifact)
+  {
+    return childSchemaArtifact.maxItems().isPresent()
+      && childSchemaArtifact.maxItems().get() != ValidationHelper.UNBOUNDED_MAX_ITEMS;
   }
 
   private boolean isMultiSelectListField(FieldSchemaArtifact fieldSchemaArtifact)

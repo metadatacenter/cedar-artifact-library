@@ -48,7 +48,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * inflated failed its own template. This library wrote an attribute-value field's bounds as 0 and no
  * maximum whatever the author stated, and TypeScript wrote them. TypeScript also raised a maximum
  * below the minimum to the minimum on the way out, where this library refuses such a child, and
- * that turned CEDAR's maximum of 0, which means no upper bound, into a limit of the minimum.
+ * that turned a maximum of 0 into a limit of the minimum. The Template Editor stores 0 to mean no upper
+ * bound, but JSON Schema, and so the validator, reads it as no items, so both libraries now leave it
+ * out, which is how JSON Schema says there is no upper bound.
  *
  * <p>The expectations here are the model's, stated independently of any writer: a child marked
  * multiple starts with one occurrence, one multiple by nature with none, and a stated minimum
@@ -187,8 +189,10 @@ public class MultiplicityConcordanceMatrixTest {
     if (multiple) {
       assertEquals("array", schema.path("type").asText(), id);
       assertEquals(starting, schema.path("minItems").asInt(-1), id + ": the lower bound");
-      assertEquals(max.isPresent(), schema.has("maxItems"), id + ": whether there is an upper bound");
-      max.ifPresent(m -> assertEquals(m, schema.path("maxItems").asInt(), id + ": the upper bound"));
+      // A maximum of 0, the Template Editor's "no upper bound", is written as no maximum.
+      boolean statesMax = max.isPresent() && max.get() != ValidationHelper.UNBOUNDED_MAX_ITEMS;
+      assertEquals(statesMax, schema.has("maxItems"), id + ": whether there is an upper bound");
+      if (statesMax) assertEquals(max.get(), schema.path("maxItems").asInt(), id + ": the upper bound");
     } else {
       assertEquals("object", schema.path("type").asText(), id);
     }
@@ -217,19 +221,22 @@ public class MultiplicityConcordanceMatrixTest {
     } else {
       assertTrue(slot.isObject(), id + ": a single child's slot is one value: " + slot);
     }
-    // A maximum of 0 is CEDAR's "no upper bound", which the model accepts whatever the minimum, but
-    // the validator reads it as JSON Schema does, as "no items". Which is right is open, so those
-    // cases record no verdict rather than assert either reading.
-    if (!max.equals(Optional.of(ValidationHelper.UNBOUNDED_MAX_ITEMS))) {
-      String verdict = new CedarValidator().validateTemplateInstance(inflated, templateJson).getValidationStatus();
-      boolean valid = !(attributeValue && starting > 0);
-      assertEquals(valid ? CedarValidationReport.IS_VALID : CedarValidationReport.IS_INVALID, verdict,
-          id + ": the inflated instance against its template");
-    }
+    String verdict = new CedarValidator().validateTemplateInstance(inflated, templateJson).getValidationStatus();
+    boolean valid = !(attributeValue && starting > 0);
+    assertEquals(valid ? CedarValidationReport.IS_VALID : CedarValidationReport.IS_INVALID, verdict,
+        id + ": the inflated instance against its template");
 
     ObjectNode result = MAPPER.createObjectNode().put("id", id).put("base", baseKey).put("container", container)
         .put("refused", false);
     result.set("bounds", bounds);
+    // What the Template Editor stores for "no upper bound": the same child stating a maximum of 0,
+    // which a reader takes in and a writer leaves out.
+    if (max.equals(Optional.of(ValidationHelper.UNBOUNDED_MAX_ITEMS))) {
+      ObjectNode stored = ((ObjectNode) bounds).deepCopy().put("maxItems", ValidationHelper.UNBOUNDED_MAX_ITEMS);
+      assertEquals(templateJson, JSON.renderTemplateSchemaArtifact(new JsonArtifactReader().readTemplateSchemaArtifact(
+          withBounds(bases.get(baseKey), container, stored))), id + ": a stored maximum of 0 is written as none");
+      result.set("storedBounds", stored);
+    }
     result.put("yaml", YamlSerializer.getYAML(template, false, true));
     if (multiple) result.put("inflatedOccurrences", occurrences); else result.putNull("inflatedOccurrences");
     return result;
