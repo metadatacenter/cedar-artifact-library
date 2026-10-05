@@ -204,11 +204,126 @@ public class FieldConcordanceMatrixTest {
       if (type.equals("image") || type.equals("youtube"))
         for (String size : List.of("size-none", "size-width", "size-height", "size-width-height")) cases.add(renderCase(type, factory, size));
     });
+    ObjectNode fixture = compress(cases);
     if (Boolean.getBoolean("updateFieldConcordance")) {
       Files.createDirectories(FIXTURE.getParent());
-      Files.writeString(FIXTURE, MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(cases) + "\n");
+      Files.writeString(FIXTURE, MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(fixture) + "\n");
     }
     assertTrue(Files.exists(FIXTURE), "Generate with -DupdateFieldConcordance=true");
-    assertEquals(MAPPER.readTree(Files.readString(FIXTURE)), cases, "Java matrix fixtures are stale; regenerate and refresh TS concordance fixtures");
+    assertEquals(MAPPER.readTree(Files.readString(FIXTURE)), fixture, "Java matrix fixtures are stale; regenerate and refresh TS concordance fixtures");
+  }
+
+  // The fixture records each type's baseline whole, and every other case as what it changes: in its
+  // JSON, the keys it sets and removes; in its YAML, the lines it replaces. A document read back from
+  // YAML is recorded against the case's own JSON, which it mostly equals. Every case asserts that
+  // what it records rebuilds exactly what Java wrote, so a reader of the fixture reads Java's output.
+
+  private static final List<String> JSON_DOCUMENTS = List.of("json", "templateJson");
+  private static final List<String> YAML_DOCUMENTS = List.of("yaml", "compactYaml", "templateYaml", "templateCompactYaml");
+  /** A document read back from YAML, and the document of the case it is recorded against. */
+  private static final Map<String, String> READ_BACK = Map.of(
+    "jsonFromYaml", "json", "jsonFromCompactYaml", "json",
+    "templateJsonFromYaml", "templateJson", "templateJsonFromCompactYaml", "templateJson");
+
+  private static ObjectNode compress(ArrayNode cases) {
+    ObjectNode bases = MAPPER.createObjectNode();
+    for (JsonNode c : cases) {
+      if (!c.path("feature").asText().equals("baseline")) continue;
+      ObjectNode base = MAPPER.createObjectNode();
+      for (String document : JSON_DOCUMENTS) base.set(document, c.get(document));
+      for (String document : YAML_DOCUMENTS) base.set(document, c.get(document));
+      bases.set(c.path("type").asText(), base);
+    }
+    ArrayNode compressed = MAPPER.createArrayNode();
+    for (JsonNode c : cases) {
+      JsonNode base = bases.get(c.path("type").asText());
+      ObjectNode row = MAPPER.createObjectNode().put("id", c.path("id").asText()).put("type", c.path("type").asText())
+        .put("feature", c.path("feature").asText());
+      for (String document : JSON_DOCUMENTS) row.set(document, changes(base.get(document), c.get(document)));
+      for (String document : YAML_DOCUMENTS) row.set(document, lineChanges(base.get(document).asText(), c.get(document).asText()));
+      READ_BACK.forEach((document, against) -> row.set(document, changes(c.get(against), c.get(document))));
+      assertEquals(c, expand(row, base), c.path("id").asText() + ": the fixture rebuilds what Java wrote");
+      compressed.add(row);
+    }
+    ObjectNode fixture = MAPPER.createObjectNode();
+    fixture.set("bases", bases);
+    fixture.set("cases", compressed);
+    return fixture;
+  }
+
+  /** The case a fixture row records, rebuilt from its type's baseline. */
+  private static ObjectNode expand(JsonNode row, JsonNode base) {
+    ObjectNode c = MAPPER.createObjectNode().put("id", row.path("id").asText()).put("type", row.path("type").asText())
+      .put("feature", row.path("feature").asText());
+    for (String document : JSON_DOCUMENTS) c.set(document, applyChanges(base.get(document), row.get(document)));
+    for (String document : YAML_DOCUMENTS) c.put(document, applyLineChanges(base.get(document).asText(), row.get(document)));
+    READ_BACK.forEach((document, against) -> c.set(document, applyChanges(c.get(against), row.get(document))));
+    return c;
+  }
+
+  /** The keys `to` sets or removes relative to `from`, each at its path; a list or a scalar changes whole. */
+  private static ArrayNode changes(JsonNode from, JsonNode to) {
+    ArrayNode changes = MAPPER.createArrayNode();
+    collectChanges(from, to, MAPPER.createArrayNode(), changes);
+    return changes;
+  }
+
+  private static void collectChanges(JsonNode from, JsonNode to, ArrayNode path, ArrayNode changes) {
+    if (from.equals(to)) return;
+    if (from.isObject() && to.isObject()) {
+      from.fieldNames().forEachRemaining(key -> {
+        if (!to.has(key)) changes.add(MAPPER.createObjectNode().<ObjectNode>set("at", path.deepCopy().add(key)).put("remove", true));
+      });
+      to.fieldNames().forEachRemaining(key -> {
+        if (from.has(key)) collectChanges(from.get(key), to.get(key), path.deepCopy().add(key), changes);
+        else changes.add(MAPPER.createObjectNode().<ObjectNode>set("at", path.deepCopy().add(key)).set("set", to.get(key)));
+      });
+      return;
+    }
+    changes.add(MAPPER.createObjectNode().<ObjectNode>set("at", path).set("set", to));
+  }
+
+  private static JsonNode applyChanges(JsonNode from, JsonNode changes) {
+    JsonNode result = from.deepCopy();
+    for (JsonNode change : changes) {
+      JsonNode at = change.get("at");
+      if (at.isEmpty()) {
+        result = change.get("set").deepCopy();
+        continue;
+      }
+      ObjectNode parent = (ObjectNode) result;
+      for (int i = 0; i < at.size() - 1; i++) parent = (ObjectNode) parent.get(at.get(i).asText());
+      String key = at.get(at.size() - 1).asText();
+      if (change.has("remove")) parent.remove(key);
+      else parent.set(key, change.get("set").deepCopy());
+    }
+    return result;
+  }
+
+  /** The lines `to` replaces in `from`: how many to keep at each end, and what goes between. */
+  private static ObjectNode lineChanges(String from, String to) {
+    String[] a = from.split("\n", -1);
+    String[] b = to.split("\n", -1);
+    int prefix = 0;
+    while (prefix < a.length && prefix < b.length && a[prefix].equals(b[prefix])) prefix++;
+    int suffix = 0;
+    while (suffix < a.length - prefix && suffix < b.length - prefix
+      && a[a.length - 1 - suffix].equals(b[b.length - 1 - suffix])) suffix++;
+    ArrayNode lines = MAPPER.createArrayNode();
+    for (int i = prefix; i < b.length - suffix; i++) lines.add(b[i]);
+    ObjectNode changes = MAPPER.createObjectNode();
+    changes.set("keep", MAPPER.createArrayNode().add(prefix).add(suffix));
+    changes.set("lines", lines);
+    return changes;
+  }
+
+  private static String applyLineChanges(String from, JsonNode changes) {
+    String[] a = from.split("\n", -1);
+    int prefix = changes.get("keep").get(0).asInt();
+    int suffix = changes.get("keep").get(1).asInt();
+    List<String> lines = new ArrayList<>(Arrays.asList(a).subList(0, prefix));
+    changes.get("lines").forEach(line -> lines.add(line.asText()));
+    lines.addAll(Arrays.asList(a).subList(a.length - suffix, a.length));
+    return String.join("\n", lines);
   }
 }
