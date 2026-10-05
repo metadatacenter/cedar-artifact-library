@@ -430,6 +430,9 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     while (jsonChildKeys.hasNext()) {
       String childKey = jsonChildKeys.next();
+      // An empty key cannot name a property of an instance.
+      if (childKey.isEmpty())
+        throw new ArtifactParseException("A child key must not be empty", childKey, path + "/properties");
       if (TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
           || FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
           || ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)) {
@@ -727,8 +730,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                       multiInstanceElementInstances);
                 } else if (instanceNode.isTextual()) { // A list of attribute-value field names
                   String attributeValueFieldName = instanceNode.asText();
-                  if (attributeValueFieldName.isEmpty()) {
-                    throw new ArtifactParseException("Empty attribute-value field name in array",
+                  if (attributeValueFieldName.isBlank()) {
+                    throw new ArtifactParseException("Blank attribute-value field name in array",
                         instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
                   }
 
@@ -926,7 +929,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
             }
 
             try {
-              URI propertyUri = new URI(elementNode.asText());
+              URI propertyUri = IriSyntax.uri(elementNode.asText());
               childKey2URI.put(childKey, propertyUri);
             } catch (URISyntaxException e) {
               throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
@@ -962,10 +965,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     for (JsonNode value : values) {
       if (!value.isTextual()) throw new ArtifactParseException("Instance type must be an IRI string", "enum", path);
       try {
-        URI uri = URI.create(value.asText());
+        URI uri = IriSyntax.uri(value.asText());
         if (!uri.isAbsolute() || types.contains(uri)) throw new IllegalArgumentException();
         types.add(uri);
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException | URISyntaxException e) {
         throw new ArtifactParseException("Instance types must be unique absolute IRIs", "enum", path);
       }
     }

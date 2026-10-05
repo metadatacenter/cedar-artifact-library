@@ -201,10 +201,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     for (Object item : values) {
       if (!(item instanceof String)) throw new ArtifactParseException("Instance type must be an IRI string", INSTANCE_TYPE, path);
       try {
-        URI uri = URI.create((String) item);
+        URI uri = IriSyntax.uri((String) item);
         if (!uri.isAbsolute() || types.contains(uri)) throw new IllegalArgumentException();
         types.add(uri);
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException | URISyntaxException e) {
         throw new ArtifactParseException("Instance types must be unique absolute IRIs", INSTANCE_TYPE, path);
       }
     }
@@ -657,6 +657,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       for (Map.Entry<String, Object> fieldEntry : groupNode.entrySet()) {
         String fieldName = fieldEntry.getKey();
         Object fieldRaw = fieldEntry.getValue();
+        if (fieldName.isBlank())
+          throw new ArtifactParseException("Blank attribute-value field name", key, path);
         if (!(fieldRaw instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map value for attribute-value field " + fieldName, key, path);
         groupFields.put(fieldName,
@@ -1354,6 +1356,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> versionString = readString(sourceNode, path, fieldKey, false);
 
     if (versionString.isEmpty()) {
+      // An absent version takes the default, but an empty one is a version that is not one.
+      if ("".equals(sourceNode.get(fieldKey)))
+        throw new ArtifactParseException("Invalid version \"\" in field " + fieldKey, fieldKey, path);
       return Optional.empty();
     }
 
@@ -1439,7 +1444,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     else if (rawValue instanceof String) {
       rejectEmptyUri((String)rawValue, fieldKey, path);
       try {
-        return new URI((String)rawValue);
+        return IriSyntax.uri((String)rawValue);
       } catch (URISyntaxException e) {
         throw new ArtifactParseException("Invalid URI " + rawValue, fieldKey, path);
       }
@@ -1462,7 +1467,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     else if (rawValue instanceof String) {
       rejectEmptyUri((String)rawValue, fieldKey, path);
       try {
-        return Optional.of(new URI((String)rawValue));
+        return Optional.of(IriSyntax.uri((String)rawValue));
       } catch (URISyntaxException e) {
         throw new ArtifactParseException("Invalid URI " + rawValue, fieldKey, path);
       }
