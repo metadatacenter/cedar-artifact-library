@@ -212,11 +212,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    */
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode) {
     // Standalone JSON rendering of an attribute-value field wraps the actual field
-    // node in a {type: array, minItems: 0, items: {field}} envelope. Multi-instance
+    // node in a {type: array, minItems, items: {field}} envelope. Multi-instance
     // (non-AV) fields are rendered the same way only when the model marks them
-    // multi-instance. Unwrap the envelope so schema:name etc. can be located, and
-    // derive isMultiInstance only for non-AV kinds (for AV the wrapper is structural,
-    // not a multi-instance marker).
+    // multi-instance. Unwrap the envelope so schema:name etc. can be located. For an
+    // attribute-value field the wrapper does not mark it multi-instance, since it is a
+    // list by nature, but it does carry its bounds.
     ObjectNode fieldNode = sourceNode;
     boolean isMultiInstance = false;
     Optional<Integer> minItems = Optional.empty();
@@ -231,11 +231,12 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       JsonNode innerUi = fieldNode.get(UI);
       boolean isAttributeValue = innerUi != null && innerUi.isObject() && innerUi.has(UI_FIELD_INPUT_TYPE)
           && FIELD_INPUT_TYPE_ATTRIBUTE_VALUE.equals(innerUi.get(UI_FIELD_INPUT_TYPE).asText());
-      if (!isAttributeValue) {
-        isMultiInstance = true;
-        minItems = readInteger(sourceNode, "/", JSON_SCHEMA_MIN_ITEMS);
-        maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
-      }
+      // An attribute-value field is a list by nature rather than by being marked multiple, but its
+      // bounds are read like any other child's: the nested reader already took them from the same
+      // wrapper, so a standalone field and a template's child read differently.
+      isMultiInstance = !isAttributeValue;
+      minItems = readInteger(sourceNode, "/", JSON_SCHEMA_MIN_ITEMS);
+      maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
     }
 
     String name = readRequiredString(fieldNode, "/", SCHEMA_ORG_NAME);

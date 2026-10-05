@@ -435,9 +435,15 @@ public class JsonArtifactRoundTripTest
     String name = "Field name";
     String description = "Field description";
 
-    AttributeValueField originalFieldSchemaArtifact = AttributeValueField.builder().withName(name)
+    // JSON always states an attribute-value field's lower bound, so a field that states none is written
+    // as one stating the default, and reads back as that.
+    AttributeValueField unstated = AttributeValueField.builder().withName(name)
       .withDescription(description).build();
+    AttributeValueField originalFieldSchemaArtifact = AttributeValueField.builder().withName(name)
+      .withDescription(description).withMinItems(0).build();
 
+    assertEquals(jsonArtifactRenderer.renderFieldSchemaArtifact(unstated),
+      jsonArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact));
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
 
