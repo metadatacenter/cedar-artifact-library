@@ -327,6 +327,38 @@ final class JsonNodeReaders {
   }
 
 
+  /**
+   * An identifier-valued key: absent or null reads as no value, and a stated value must be an
+   * absolute IRI. Unlike {@link #readUri}, the empty string is refused rather than read as absent.
+   */
+  static Optional<URI> readAbsoluteUri(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
+
+    if (jsonNode == null || jsonNode.isNull())
+      return Optional.empty();
+
+    return Optional.of(readRequiredAbsoluteUri(sourceNode, path, fieldKey));
+  }
+
+
+  static URI readRequiredAbsoluteUri(ObjectNode sourceNode, String path, String fieldKey) {
+    JsonNode jsonNode = sourceNode.get(fieldKey);
+
+    if (jsonNode == null)
+      throw new ArtifactParseException("No URI value present", fieldKey, path);
+    if (jsonNode.isNull())
+      throw new ArtifactParseException("Null value present", fieldKey, path);
+    if (!jsonNode.isTextual())
+      throw new ArtifactParseException("Value must be a URI", fieldKey, path);
+
+    try {
+      return IriSyntax.absolute(jsonNode.asText());
+    } catch (URISyntaxException e) {
+      throw new ArtifactParseException("Value " + jsonNode.asText() + " must be an absolute IRI", fieldKey, path);
+    }
+  }
+
+
   static Optional<String> readString(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 

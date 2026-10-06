@@ -78,7 +78,7 @@ public class YamlPlainScalarPolicyTest
   {
     Stream.Builder<Arguments> members = Stream.builder();
     typeValues().forEach(value -> members.add(Arguments.of(TYPE, value)));
-    Stream.of("0.0.0", "1.6.0", "2147483647.2147483647.2147483647").forEach(value -> {
+    Stream.of("0.0.1", "1.6.0", "2147483647.2147483647.2147483647").forEach(value -> {
       assertTrue(Version.isValidVersion(value));
       members.add(Arguments.of(VERSION, value));
       members.add(Arguments.of(MODEL_VERSION, value));

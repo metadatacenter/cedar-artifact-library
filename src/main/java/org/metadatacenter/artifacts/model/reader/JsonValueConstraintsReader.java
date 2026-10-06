@@ -157,7 +157,7 @@ final class JsonValueConstraintsReader {
     } else if (childNode.isObject()) {
       String nestedPath = path + "/" + fieldKey;
       ObjectNode defaultValueNode = (ObjectNode) childNode;
-      URI termUri = readRequiredUri(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
+      URI termUri = readRequiredAbsoluteUri(defaultValueNode, nestedPath, VALUE_CONSTRAINTS_DEFAULT_VALUE_TERM_URI);
       Optional<String> rdfsLabel = readString(defaultValueNode, nestedPath, RDFS_LABEL);
       return Optional.of(new ControlledTermDefaultValue(termUri, rdfsLabel.orElse("")));
     } else if (childNode.isNumber()) {
@@ -166,14 +166,15 @@ final class JsonValueConstraintsReader {
       return Optional.of(new NumericDefaultValue(childNode.numberValue()));
     } else if (childNode.isTextual()) {
       String textValue = childNode.asText();
+      // An empty default is no default, which is how production stores one for a link field.
       if (textValue.isEmpty()) {
         return Optional.empty();
       } else {
         if (fieldInputType.isIri()) {
           try {
-            return Optional.of(new LinkDefaultValue(IriSyntax.uri(textValue)));
+            return Optional.of(new LinkDefaultValue(IriSyntax.absolute(textValue)));
           } catch (URISyntaxException e) {
-            throw new ArtifactParseException("A link default value must be an IRI", fieldKey, path);
+            throw new ArtifactParseException("A link default value must be an absolute IRI", fieldKey, path);
           }
         } else if (fieldInputType.isNumeric()) {
           return Optional.of(new NumericDefaultValue(parseNumericDefault(textValue, path, fieldKey)));
@@ -355,10 +356,11 @@ final class JsonValueConstraintsReader {
 
 
   static ControlledTermValueConstraintsAction readValueConstraintsAction(ObjectNode sourceNode, String path) {
-    URI termUri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_TERM_URI);
+    URI termUri = readRequiredAbsoluteUri(sourceNode, path, VALUE_CONSTRAINTS_TERM_URI);
     Optional<String> source = readString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
     ValueConstraintsActionType actionType = readValueConstraintsActionType(sourceNode, path, VALUE_CONSTRAINTS_ACTION);
     ValueType valueType = readValueType(sourceNode, path, VALUE_CONSTRAINTS_TYPE);
+    // Not an identifier: the legacy editor writes "template" here for one of the template's own classes.
     Optional<URI> sourceUri = readUri(sourceNode, path, VALUE_CONSTRAINTS_SOURCE_URI);
     Optional<Integer> to = readInteger(sourceNode, path, VALUE_CONSTRAINTS_ACTION_TO);
 
@@ -404,7 +406,7 @@ final class JsonValueConstraintsReader {
 
 
   static OntologyValueConstraint readOntologyValueConstraint(ObjectNode sourceNode, String path) {
-    URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
+    URI uri = readRequiredAbsoluteUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String acronym = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_ACRONYM);
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
     Optional<Integer> numTerms = readInteger(sourceNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
@@ -415,7 +417,7 @@ final class JsonValueConstraintsReader {
 
 
   static ClassValueConstraint readClassValueConstraint(ObjectNode sourceNode, String path) {
-    URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
+    URI uri = readRequiredAbsoluteUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String preferredLabel = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_PREFLABEL);
     ValueType valueType = readValueType(sourceNode, path, VALUE_CONSTRAINTS_TYPE);
     String label = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_LABEL);
@@ -427,7 +429,7 @@ final class JsonValueConstraintsReader {
 
 
   static ValueSetValueConstraint readValueSetValueConstraint(ObjectNode sourceNode, String path) {
-    URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
+    URI uri = readRequiredAbsoluteUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);
     String vsCollection = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_VS_COLLECTION);
     Optional<Integer> numTerms = readInteger(sourceNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
@@ -438,7 +440,7 @@ final class JsonValueConstraintsReader {
 
 
   static BranchValueConstraint readBranchValueConstraint(ObjectNode sourceNode, String path) {
-    URI uri = readRequiredUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
+    URI uri = readRequiredAbsoluteUri(sourceNode, path, VALUE_CONSTRAINTS_URI);
     String source = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
     String acronym = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_ACRONYM);
     String name = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_NAME);

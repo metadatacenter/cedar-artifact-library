@@ -1732,9 +1732,9 @@
       "input" : " ",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     } ]
   }, {
@@ -2026,9 +2026,9 @@
       "input" : " ",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     } ]
   }, {
@@ -2320,9 +2320,9 @@
       "input" : " ",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     } ]
   }, {
@@ -2614,9 +2614,9 @@
       "input" : " ",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     } ]
   }, {
@@ -3567,29 +3567,29 @@
       }
     }, {
       "input" : "0.0.0",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "01.2.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "1.02.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
@@ -3686,7 +3686,7 @@
       "input" : "2147483648.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -3695,7 +3695,7 @@
       "input" : "99999999999.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -3735,29 +3735,29 @@
       }
     }, {
       "input" : "0.0.0",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "01.2.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "1.02.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
@@ -3854,7 +3854,7 @@
       "input" : "2147483648.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -3863,7 +3863,7 @@
       "input" : "99999999999.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -3903,29 +3903,29 @@
       }
     }, {
       "input" : "0.0.0",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "01.2.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "1.02.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
@@ -4022,7 +4022,7 @@
       "input" : "2147483648.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -4031,7 +4031,7 @@
       "input" : "99999999999.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -4071,29 +4071,29 @@
       }
     }, {
       "input" : "0.0.0",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "01.2.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
       "input" : "1.02.3",
-      "expected" : null,
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "rewritten",
-        "yaml" : "rewritten",
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused",
         "resourceVersion" : "refused"
       }
     }, {
@@ -4190,7 +4190,7 @@
       "input" : "2147483648.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -4199,7 +4199,7 @@
       "input" : "99999999999.0.0",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused",
         "resourceVersion" : "refused"
@@ -4220,9 +4220,9 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -4244,9 +4244,9 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -4268,9 +4268,9 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -4278,7 +4278,7 @@
       "input" : "",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -4286,9 +4286,9 @@
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -4386,7 +4386,7 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -4410,7 +4410,7 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -4434,7 +4434,7 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -4453,8 +4453,8 @@
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -4552,7 +4552,7 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -4576,7 +4576,7 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -4600,7 +4600,7 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -4611,7 +4611,7 @@
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "accepted",
+        "json" : "refused",
         "yaml" : "refused"
       }
     }, {
@@ -4619,8 +4619,8 @@
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -4717,9 +4717,9 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused"
       }
     }, {
@@ -4738,9 +4738,9 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused"
       }
     }, {
@@ -4759,24 +4759,24 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused"
       }
     }, {
       "input" : "",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted"
+        "validator" : "refused",
+        "json" : "refused"
       }
     }, {
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted"
+        "validator" : "refused",
+        "json" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -4864,9 +4864,9 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -4888,9 +4888,9 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -4912,9 +4912,9 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -4922,17 +4922,17 @@
       "input" : "",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
+        "validator" : "refused",
+        "json" : "refused",
         "yaml" : "refused"
       }
     }, {
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -5030,9 +5030,9 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5054,9 +5054,9 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5078,27 +5078,27 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
     }, {
       "input" : "",
-      "expected" : "refused",
+      "expected" : "rewritten",
       "java" : {
         "validator" : "accepted",
         "json" : "rewritten",
-        "yaml" : "refused"
+        "yaml" : "rewritten"
       }
     }, {
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -5196,9 +5196,9 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5220,9 +5220,9 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5244,9 +5244,9 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5254,7 +5254,7 @@
       "input" : "",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5262,9 +5262,9 @@
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -5362,9 +5362,9 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5386,9 +5386,9 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5410,9 +5410,9 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -5420,17 +5420,17 @@
       "input" : "",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
+        "validator" : "refused",
+        "json" : "refused",
         "yaml" : "refused"
       }
     }, {
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
@@ -5528,7 +5528,7 @@
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -5552,7 +5552,7 @@
       }
     }, {
       "input" : "https://example.org/\u2003term",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -5576,7 +5576,7 @@
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
-      "expected" : "accepted",
+      "expected" : "refused",
       "java" : {
         "validator" : "refused",
         "json" : "refused",
@@ -5595,8 +5595,8 @@
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "accepted",
-        "yaml" : "accepted"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",

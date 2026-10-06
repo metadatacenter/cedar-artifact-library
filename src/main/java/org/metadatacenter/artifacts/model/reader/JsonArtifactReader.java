@@ -284,7 +284,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private TemplateSchemaArtifact readTemplateSchemaArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
+    Optional<URI> jsonLdId = readSchemaJsonLdId(sourceNode, path);
     List<URI> instanceJsonLdType = readInstanceJsonLdTypes(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -304,7 +304,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
     Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
     Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
-    Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
+    Optional<URI> previousVersion = readAbsoluteUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas = new LinkedHashMap<>();
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas = new LinkedHashMap<>();
@@ -330,7 +330,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                                                           Optional<Integer> maxItems, Optional<URI> propertyUri) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
+    Optional<URI> jsonLdId = readSchemaJsonLdId(sourceNode, path);
     List<URI> instanceJsonLdType = readInstanceJsonLdTypes(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -347,7 +347,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
     Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
     Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
-    Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
+    Optional<URI> previousVersion = readAbsoluteUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
@@ -379,7 +379,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                                                       Optional<URI> propertyUri) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
-    Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
+    Optional<URI> jsonLdId = readSchemaJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
@@ -395,7 +395,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       isRootPath(path) ? ArtifactDefaults.Policy.APPLY : ArtifactDefaults.Policy.PRESERVE;
     Optional<Version> version = ArtifactDefaults.version(readVersion(sourceNode, path, PAV_VERSION), defaultingPolicy);
     Optional<Status> status = ArtifactDefaults.status(readStatus(sourceNode, path, BIBO_STATUS), defaultingPolicy);
-    Optional<URI> previousVersion = readUri(sourceNode, path, PAV_PREVIOUS_VERSION);
+    Optional<URI> previousVersion = readAbsoluteUri(sourceNode, path, PAV_PREVIOUS_VERSION);
     Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     Optional<String> preferredLabel = readString(sourceNode, path, SKOS_PREFLABEL);
     List<String> alternateLabels = readStringArray(sourceNode, path, SKOS_ALTLABEL);
@@ -430,9 +430,9 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     while (jsonChildKeys.hasNext()) {
       String childKey = jsonChildKeys.next();
-      // An empty key cannot name a property of an instance.
-      if (childKey.isEmpty())
-        throw new ArtifactParseException("A child key must not be empty", childKey, path + "/properties");
+      // A key with no visible character names an instance property no reader of it can tell apart.
+      if (childKey.isBlank())
+        throw new ArtifactParseException("A child key must not be blank", childKey, path + "/properties");
       if (TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
           || FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
           || ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)) {
@@ -546,7 +546,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDateTime(sourceNode, path, PAV_CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
-    URI isBasedOn = readRequiredUri(sourceNode, path, SCHEMA_IS_BASED_ON);
+    URI isBasedOn = readRequiredAbsoluteUri(sourceNode, path, SCHEMA_IS_BASED_ON);
     Optional<URI> derivedFrom = readDerivedFrom(sourceNode, path);
     Optional<String> name = readString(sourceNode, path, SCHEMA_ORG_NAME);
     Optional<String> description = readString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
@@ -601,12 +601,22 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
         singleInstanceElementInstances, multiInstanceElementInstances, attributeValueFieldInstances);
   }
 
+  /** An instance's or an element occurrence's {@code @id}, which is an identifier at every depth. */
   private Optional<URI> readJsonLdId(ObjectNode sourceNode, String path) {
-    return readIdentifier(sourceNode, path, JSON_LD_ID);
+    return readIdentifier(sourceNode, path, JSON_LD_ID, true);
+  }
+
+  /**
+   * A schema artifact's {@code @id}. A nested child's may be a temporary, relative one: the Template
+   * Designer writes one for a child it has just added, and the server replaces it on a write. The
+   * artifact's own is an identifier.
+   */
+  private Optional<URI> readSchemaJsonLdId(ObjectNode sourceNode, String path) {
+    return readIdentifier(sourceNode, path, JSON_LD_ID, path.isEmpty());
   }
 
   private Optional<URI> readDerivedFrom(ObjectNode sourceNode, String path) {
-    return readIdentifier(sourceNode, path, PAV_DERIVED_FROM);
+    return readIdentifier(sourceNode, path, PAV_DERIVED_FROM, true);
   }
 
   /**
@@ -625,8 +635,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    * What absence looks like differs by key. An artifact awaiting an identifier writes {@code @id: null},
    * since the server assigns it; {@code pav:derivedFrom} is optional, so an artifact derived from
    * nothing leaves it out.
+   *
+   * A stated identifier is an absolute IRI where {@code absolute} says so, and otherwise any IRI
+   * reference.
    */
-  private Optional<URI> readIdentifier(ObjectNode sourceNode, String path, String key) {
+  private Optional<URI> readIdentifier(ObjectNode sourceNode, String path, String key, boolean absolute) {
     JsonNode node = sourceNode.get(key);
 
     if (node != null && node.isTextual() && node.asText().isBlank())
@@ -634,7 +647,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
           "An empty string is not a URI; write null or leave the key out where there is no value",
           key, path);
 
-    return readUri(sourceNode, path, key);
+    return absolute ? readAbsoluteUri(sourceNode, path, key) : readUri(sourceNode, path, key);
   }
 
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {
@@ -928,12 +941,15 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                   path + contextPath + childKey);
             }
 
+            // A property IRI is an identifier. A JSON-LD keyword, such as the `@nest` that
+            // `_annotations` maps to, is not an IRI at all.
+            String mapped = elementNode.asText();
             try {
-              URI propertyUri = IriSyntax.uri(elementNode.asText());
+              URI propertyUri = mapped.startsWith("@") ? IriSyntax.uri(mapped) : IriSyntax.absolute(mapped);
               childKey2URI.put(childKey, propertyUri);
             } catch (URISyntaxException e) {
-              throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
-                  JSON_SCHEMA_ENUM, path + contextPath + childKey);
+              throw new ArtifactParseException("Invalid URI " + mapped + " for enum specification; a property IRI "
+                  + "must be an absolute IRI", JSON_SCHEMA_ENUM, path + contextPath + childKey);
             }
           }
         }

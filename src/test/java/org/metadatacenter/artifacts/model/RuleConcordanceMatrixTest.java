@@ -61,11 +61,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>Each case puts one input into one position of an artifact every checker accepts, and asks
  * each checker whether it takes the result unchanged, rewrites it or refuses it. The expected
- * verdict comes from the rule, not from any checker: a name {@link ReservedNames} reserves is
- * refused, a version is three numbers without leading zeros, and an IRI is an absolute RFC 3987
- * IRI kept as spelled. Where the rule has not been decided, the case records the verdicts and
- * expects nothing. A disagreement fails the matrix unless it is listed in {@link #KNOWN}, and a
- * listed one that no longer occurs fails it too.
+ * verdict comes from the rule, not from any checker. A name {@link ReservedNames} reserves is
+ * refused, and so is one with no visible character. A version is three numbers without leading
+ * zeros, each of which fits an int, and is not 0.0.0. A field's value is an absolute RFC 3987 IRI
+ * kept as spelled. Every other position holds an identifier, which is such an IRI without a space
+ * separator; an empty link default is read as no default. The validator cannot rewrite, so where a
+ * reader is expected to, the validator is expected to accept. Where the rule has not been decided,
+ * the case records the verdicts and expects nothing. A disagreement fails the matrix unless it is
+ * listed in {@link #KNOWN}, and a listed one that no longer occurs fails it too.
  */
 public class RuleConcordanceMatrixTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -159,38 +162,23 @@ public class RuleConcordanceMatrixTest {
   private record Known(String name, String reason, Predicate<Disagreement> matches) {}
 
   private static final Set<String> RELATIVE = Set.of("", "relative/path");
-  private static final Set<String> SPACE_SEPARATORS = Set.of("https://example.org/Niger\u00a0NER",
-      "https://example.org/\u2003term", "urn:example:Niger\u00a0NER");
+
+  /** The one position whose IRI is a value someone entered rather than an identifier. */
+  private static final String FIELD_VALUE = "field value";
+
+  /** The one position where an empty IRI is read as no value rather than refused. */
+  private static final String DEFAULT_VALUE = "default value";
 
   /**
    * The disagreements that are decisions still to be made. The matrix fails on a disagreement no
    * entry matches and on an entry that matches nothing, so each one goes when it is decided.
    */
   private static final List<Known> KNOWN = List.of(
-      new Known("relative references", "Every reader, and the format the validator applies, takes an empty or "
-          + "relative reference in most identifier positions, which a stored artifact should not hold. Refusing "
-          + "one needs a count of how many production holds first.",
-          d -> d.position().rule().equals("iris") && RELATIVE.contains(d.input())
-              && !d.verdict().equals(REFUSED)),
-      new Known("space separators outside a field value", "RFC 3987 allows a no-break space and other space "
-          + "separators, and a field value keeps one as spelled. Everywhere else the model holds a java.net.URI, "
-          + "which cannot, so the readers refuse one, as the validator's absolute-IRI check does in three "
-          + "positions and its format check does not elsewhere. Accepting one means keeping each spelling in the "
-          + "model; refusing one everywhere means a stricter validator.",
-          d -> d.position().rule().equals("iris") && SPACE_SEPARATORS.contains(d.input())
-              && d.verdict().equals(REFUSED)),
-      new Known("unruled versions", "ResourceVersion, which the server versions an artifact with, refuses 0.0.0 "
-          + "and a leading zero. The readers accept both, rewriting a leading zero away, and the validator passes "
-          + "both. One rule needs a count of how many production holds.",
-          d -> d.position().rule().equals("versions") && Set.of("0.0.0", "01.2.3", "1.02.3").contains(d.input())),
-      new Known("versions past an int", "The meta-schema's pattern cannot bound a part to an int, as the readers "
-          + "do; a pattern that refuses a leading zero can bound its length, so this goes with that rule.",
-          d -> d.position().rule().equals("versions") && d.checker().equals("validator")
-              && Set.of("2147483648.0.0", "99999999999.0.0").contains(d.input())),
-      new Known("whitespace keys", "Every checker takes a child key of spaces alone, while the validator refuses "
-          + "an attribute name of spaces alone. Refusing the key needs a count of how many production holds.",
-          d -> d.position().rule().equals("names") && d.position().base().matches("template|element")
-              && d.input().equals(" ")));
+      new Known("relative references in a field value", "A link or controlled-term value is what someone "
+          + "entered, and 179 production instances hold a relative one. The rule that refuses a relative "
+          + "identifier does not reach a value, and nobody has ruled on one.",
+          d -> d.position().name().equals(FIELD_VALUE) && RELATIVE.contains(d.input())
+              && !d.verdict().equals(REFUSED)));
 
   private static Map<String, Base> bases() {
     // Every child states its property, as the editors' children do.
@@ -397,14 +385,15 @@ public class RuleConcordanceMatrixTest {
         yield reserved ? REFUSED : ACCEPTED;
       }
       case "versions" -> {
-        if (!input.matches("\\d+\\.\\d+\\.\\d+")) yield REFUSED;
-        // Leading zeros and 0.0.0 are what the checkers disagree on, and nobody has ruled.
-        if (input.matches(".*\\b0\\d.*") || input.equals("0.0.0")) yield null;
+        if (!input.matches("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)") || input.equals("0.0.0")) yield REFUSED;
         boolean fits = true;
         for (String part : input.split("\\.")) fits &= part.length() < 10 || Long.parseLong(part) <= Integer.MAX_VALUE;
         yield fits ? ACCEPTED : REFUSED;
       }
       case "iris" -> {
+        if (input.isEmpty() && position.name().equals(DEFAULT_VALUE)) yield REWRITTEN;
+        boolean identifier = !position.name().equals(FIELD_VALUE);
+        if (identifier && input.codePoints().anyMatch(Character::isSpaceChar)) yield REFUSED;
         try {
           yield !input.isEmpty() && IriReference.toUri(input).isAbsolute() ? ACCEPTED : REFUSED;
         } catch (Exception notAnIri) {
@@ -475,8 +464,10 @@ public class RuleConcordanceMatrixTest {
         result.set("java", verdicts);
 
         verdicts.fields().forEachRemaining(verdict -> {
-          boolean agrees = expected == null ? verdict.getValue().asText().equals(verdicts.path("json").asText())
-              : verdict.getValue().asText().equals(expected);
+          String wanted = expected != null && expected.equals(REWRITTEN) && verdict.getKey().equals("validator")
+              ? ACCEPTED : expected;
+          boolean agrees = wanted == null ? verdict.getValue().asText().equals(verdicts.path("json").asText())
+              : verdict.getValue().asText().equals(wanted);
           if (!agrees) disagreements.put(id + " / " + verdict.getKey(),
               new Disagreement(position, input, verdict.getKey(), verdict.getValue().asText()));
         });
