@@ -344,6 +344,22 @@ public class FieldConcordanceMatrixTest {
       if (!compact && !feature.equals("schemaText")) assertFeature(definition(restoredJson.at("/properties/property-key")), feature);
       result.set(compact ? "templateJsonFromCompactYaml" : "templateJsonFromYaml", restoredJson);
     }
+    // The same placement in an element, which an element's own writers and readers carry, so a field
+    // setting kept in a template can still be lost in one.
+    var element = ElementSchemaArtifact.builder().withName("Matrix element").withDescription("Matrix element")
+      .withJsonLdId(URI.create("https://example.org/template-elements/matrix"))
+      .withFieldSchema("property-key", field, "Display label", "Display description").build();
+    ObjectNode elementJson = JSON.renderElementSchemaArtifact(element);
+    assertFeature(definition(elementJson.at("/properties/property-key")), feature);
+    result.set("elementJson", elementJson);
+    for (boolean compact : List.of(false, true)) {
+      result.put(compact ? "elementCompactYaml" : "elementYaml", YamlSerializer.getYAML(element, compact, true));
+      var yaml = new YamlArtifactRenderer(compact).renderElementSchemaArtifact(element);
+      var restored = new YamlArtifactReader(compact).readElementSchemaArtifact(yaml);
+      ObjectNode restoredJson = JSON.renderElementSchemaArtifact(restored);
+      if (!compact && !feature.equals("schemaText")) assertFeature(definition(restoredJson.at("/properties/property-key")), feature);
+      result.set(compact ? "elementJsonFromCompactYaml" : "elementJsonFromYaml", restoredJson);
+    }
     return result;
   }
 
@@ -377,12 +393,14 @@ public class FieldConcordanceMatrixTest {
   // YAML is recorded against the case's own JSON, which it mostly equals. Every case asserts that
   // what it records rebuilds exactly what Java wrote, so a reader of the fixture reads Java's output.
 
-  private static final List<String> JSON_DOCUMENTS = List.of("json", "templateJson");
-  private static final List<String> YAML_DOCUMENTS = List.of("yaml", "compactYaml", "templateYaml", "templateCompactYaml");
+  private static final List<String> JSON_DOCUMENTS = List.of("json", "templateJson", "elementJson");
+  private static final List<String> YAML_DOCUMENTS = List.of("yaml", "compactYaml", "templateYaml", "templateCompactYaml",
+    "elementYaml", "elementCompactYaml");
   /** A document read back from YAML, and the document of the case it is recorded against. */
   private static final Map<String, String> READ_BACK = Map.of(
     "jsonFromYaml", "json", "jsonFromCompactYaml", "json",
-    "templateJsonFromYaml", "templateJson", "templateJsonFromCompactYaml", "templateJson");
+    "templateJsonFromYaml", "templateJson", "templateJsonFromCompactYaml", "templateJson",
+    "elementJsonFromYaml", "elementJson", "elementJsonFromCompactYaml", "elementJson");
 
   private static ObjectNode compress(ArrayNode cases) {
     ObjectNode bases = MAPPER.createObjectNode();
