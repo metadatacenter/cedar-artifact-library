@@ -212,11 +212,11 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    */
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode) {
     // Standalone JSON rendering of an attribute-value field wraps the actual field
-    // node in a {type: array, minItems: 0, items: {field}} envelope. Multi-instance
+    // node in a {type: array, minItems, items: {field}} envelope. Multi-instance
     // (non-AV) fields are rendered the same way only when the model marks them
-    // multi-instance. Unwrap the envelope so schema:name etc. can be located, and
-    // derive isMultiInstance only for non-AV kinds (for AV the wrapper is structural,
-    // not a multi-instance marker).
+    // multi-instance. Unwrap the envelope so schema:name etc. can be located. For an
+    // attribute-value field the wrapper does not mark it multi-instance, since it is a
+    // list by nature, but it does carry its bounds.
     ObjectNode fieldNode = sourceNode;
     boolean isMultiInstance = false;
     Optional<Integer> minItems = Optional.empty();
@@ -231,11 +231,12 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       JsonNode innerUi = fieldNode.get(UI);
       boolean isAttributeValue = innerUi != null && innerUi.isObject() && innerUi.has(UI_FIELD_INPUT_TYPE)
           && FIELD_INPUT_TYPE_ATTRIBUTE_VALUE.equals(innerUi.get(UI_FIELD_INPUT_TYPE).asText());
-      if (!isAttributeValue) {
-        isMultiInstance = true;
-        minItems = readInteger(sourceNode, "/", JSON_SCHEMA_MIN_ITEMS);
-        maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
-      }
+      // An attribute-value field is a list by nature rather than by being marked multiple, but its
+      // bounds are read like any other child's: the nested reader already took them from the same
+      // wrapper, so a standalone field and a template's child read differently.
+      isMultiInstance = !isAttributeValue;
+      minItems = readInteger(sourceNode, "/", JSON_SCHEMA_MIN_ITEMS);
+      maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
     }
 
     String name = readRequiredString(fieldNode, "/", SCHEMA_ORG_NAME);
@@ -429,6 +430,9 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     while (jsonChildKeys.hasNext()) {
       String childKey = jsonChildKeys.next();
+      // An empty key cannot name a property of an instance.
+      if (childKey.isEmpty())
+        throw new ArtifactParseException("A child key must not be empty", childKey, path + "/properties");
       if (TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
           || FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
           || ELEMENT_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)) {
@@ -726,8 +730,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                       multiInstanceElementInstances);
                 } else if (instanceNode.isTextual()) { // A list of attribute-value field names
                   String attributeValueFieldName = instanceNode.asText();
-                  if (attributeValueFieldName.isEmpty()) {
-                    throw new ArtifactParseException("Empty attribute-value field name in array",
+                  if (attributeValueFieldName.isBlank()) {
+                    throw new ArtifactParseException("Blank attribute-value field name in array",
                         instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
                   }
 
@@ -925,7 +929,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
             }
 
             try {
-              URI propertyUri = new URI(elementNode.asText());
+              URI propertyUri = IriSyntax.uri(elementNode.asText());
               childKey2URI.put(childKey, propertyUri);
             } catch (URISyntaxException e) {
               throw new ArtifactParseException("Invalid URI " + elementNode.asText() + " for enum specification",
@@ -961,10 +965,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     for (JsonNode value : values) {
       if (!value.isTextual()) throw new ArtifactParseException("Instance type must be an IRI string", "enum", path);
       try {
-        URI uri = URI.create(value.asText());
+        URI uri = IriSyntax.uri(value.asText());
         if (!uri.isAbsolute() || types.contains(uri)) throw new IllegalArgumentException();
         types.add(uri);
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException | URISyntaxException e) {
         throw new ArtifactParseException("Instance types must be unique absolute IRIs", "enum", path);
       }
     }

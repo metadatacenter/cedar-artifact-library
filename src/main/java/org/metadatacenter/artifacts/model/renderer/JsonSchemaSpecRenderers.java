@@ -2,6 +2,7 @@ package org.metadatacenter.artifacts.model.renderer;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.ChildSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.ValidationHelper;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 
 import java.net.URI;
@@ -260,7 +261,10 @@ final class JsonSchemaSpecRenderers {
     wrapperRendering.put(JSON_SCHEMA_TYPE, JSON_SCHEMA_ARRAY);
     wrapperRendering.put(JSON_SCHEMA_MIN_ITEMS, minItems);
 
-    if (maxItems.isPresent()) {
+    // A maximum of 0 is the Template Editor's "no upper bound", which JSON Schema, and so the
+    // validator, reads as "no items". An absent maximum is JSON Schema's "no upper bound", so 0 is
+    // left out rather than written as a limit no filled list can meet.
+    if (maxItems.isPresent() && maxItems.get() != ValidationHelper.UNBOUNDED_MAX_ITEMS) {
       wrapperRendering.put(JSON_SCHEMA_MAX_ITEMS, maxItems.get());
     }
 

@@ -101,7 +101,7 @@ public class Templates2Ubkg
 
   private static ObjectNode readJsonFromApi(String resourceServerBase, String templateIri, String cedarAPIKey) throws IOException
   {
-    String requestUrl = resourceServerBase + URLEncoder.encode(templateIri, StandardCharsets.UTF_8);
+    String requestUrl = resourceServerBase + URLEncoder.encode(org.metadatacenter.artifacts.util.CedarResourceAddress.pathId(templateIri), StandardCharsets.UTF_8);
     HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestUrl, cedarAPIKey);
     int responseCode = connection.getResponseCode();
 

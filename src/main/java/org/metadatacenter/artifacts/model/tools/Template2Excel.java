@@ -64,7 +64,7 @@ public class Template2Excel
       } else if (command.hasOption(TEMPLATE_IRI_OPTION)) {
         String templateIRI = command.getOptionValue(TEMPLATE_IRI_OPTION);
         String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_BASE_OPTION);
-        String requestURL = resourceServerBase + URLEncoder.encode(templateIRI, StandardCharsets.UTF_8);
+        String requestURL = resourceServerBase + URLEncoder.encode(org.metadatacenter.artifacts.util.CedarResourceAddress.pathId(templateIRI), StandardCharsets.UTF_8);
         HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarAPIKey);
         int responseCode = connection.getResponseCode();
 

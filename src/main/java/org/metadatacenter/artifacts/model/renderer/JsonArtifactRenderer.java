@@ -447,8 +447,12 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
     }
 
     addSchemaExtensions(fieldSchemaArtifact, rendering);
+    // An attribute-value field is a list by nature, so it is always wrapped; the bounds are the
+    // model's, as for any other repeated child. Writing a fixed 0 and no maximum lost the ones an
+    // author stated.
     if (fieldSchemaArtifact.isAttributeValue()) {
-      return renderJsonSchemaArrayWrapperSpecification(rendering, 0, Optional.empty());
+      return renderJsonSchemaArrayWrapperSpecification(rendering, fieldSchemaArtifact.startingOccurrences(),
+          fieldSchemaArtifact.maxItems());
     } else {
       return rendering;
     }

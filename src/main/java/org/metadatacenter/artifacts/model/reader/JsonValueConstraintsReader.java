@@ -29,6 +29,7 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -169,7 +170,11 @@ final class JsonValueConstraintsReader {
         return Optional.empty();
       } else {
         if (fieldInputType.isIri()) {
-          return Optional.of(new LinkDefaultValue(URI.create(textValue)));
+          try {
+            return Optional.of(new LinkDefaultValue(IriSyntax.uri(textValue)));
+          } catch (URISyntaxException e) {
+            throw new ArtifactParseException("A link default value must be an IRI", fieldKey, path);
+          }
         } else if (fieldInputType.isNumeric()) {
           return Optional.of(new NumericDefaultValue(parseNumericDefault(textValue, path, fieldKey)));
         } else if (fieldInputType.isTemporal()) {

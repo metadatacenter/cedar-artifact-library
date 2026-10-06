@@ -217,7 +217,7 @@ final class JsonNodeReaders {
           String currentFieldValue = fieldEntry.getValue().textValue();
 
           try {
-            URI currentFieldUriValue = new URI(currentFieldValue);
+            URI currentFieldUriValue = IriSyntax.uri(currentFieldValue);
             string2UriMap.put(currentFieldKey, currentFieldUriValue);
           } catch (URISyntaxException e) {
             throw new ArtifactParseException("Object in field must contain URI values", fieldKey, path);
@@ -319,7 +319,7 @@ final class JsonNodeReaders {
       return Optional.of(XsdDatatype.fromString(uriValue).toUri());
     } else {
       try {
-        return Optional.of(new URI(uriValue));
+        return Optional.of(IriSyntax.uri(uriValue));
       } catch (URISyntaxException e) {
         throw new ArtifactParseException("Value " + uriValue + " in URI field must be a valid URI", fieldKey, path);
       }
@@ -415,7 +415,7 @@ final class JsonNodeReaders {
       }
 
       try {
-        return new URI(jsonNode.asText());
+        return IriSyntax.uri(jsonNode.asText());
       } catch (URISyntaxException e) {
         throw new ArtifactParseException("Value must be a valid URI", fieldKey, path);
       }
@@ -474,7 +474,7 @@ final class JsonNodeReaders {
                   fieldKey, path);
             }
             try {
-              URI uriValue = new URI(itemNode.asText());
+              URI uriValue = IriSyntax.uri(itemNode.asText());
               uriValues.add(uriValue);
             } catch (URISyntaxException e) {
               throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must a valid URI",

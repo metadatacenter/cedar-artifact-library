@@ -33,6 +33,9 @@ public sealed interface AttributeValueField extends FieldSchemaArtifact
       internalName, internalDescription);
   }
 
+  /** A list of attributes by nature, like a checkbox, so a stated lower bound is the only one it has. */
+  @Override default boolean isMultipleByNature() {return true;}
+
   static AttributeValueFieldBuilder builder() {return new AttributeValueFieldBuilder();}
 
   static AttributeValueFieldBuilder builder(AttributeValueField attributeValueField)

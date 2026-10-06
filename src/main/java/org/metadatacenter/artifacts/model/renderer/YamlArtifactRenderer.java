@@ -280,7 +280,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent() && !fieldSchemaArtifact.isAttributeValue())
+    if (statesUpperBound(fieldSchemaArtifact))
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     return rendering;
@@ -1228,7 +1228,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (statesLowerBound(elementSchemaArtifact))
       rendering.put(MIN_ITEMS, elementSchemaArtifact.minItems().get());
 
-    if (elementSchemaArtifact.maxItems().isPresent())
+    if (statesUpperBound(elementSchemaArtifact))
       rendering.put(MAX_ITEMS, elementSchemaArtifact.maxItems().get());
 
     return rendering;
@@ -1283,7 +1283,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (statesLowerBound(fieldSchemaArtifact))
       rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
 
-    if (fieldSchemaArtifact.maxItems().isPresent())
+    if (statesUpperBound(fieldSchemaArtifact))
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
 
     if (fieldSchemaArtifact.fieldUi().isStatic()) {
@@ -1677,17 +1677,24 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
    * A bound equal to the one a child that states none is read with carries nothing, and writing it
    * would make a document that omitted it round trip into one that does not. A lower bound the
    * author chose differs from the default and is written, whether the child is an element, a field
-   * the template marks multiple, or a field multiple by its own type. An attribute-value field is
-   * wrapped with a zero by construction rather than by an author, so stating it would put in the
-   * document something nobody wrote.
+   * the template marks multiple, or a field multiple by its own type, an attribute-value field
+   * among them.
    */
   private boolean statesLowerBound(ChildSchemaArtifact childSchemaArtifact)
   {
     if (childSchemaArtifact.minItems().isEmpty())
       return false;
-    if (childSchemaArtifact instanceof FieldSchemaArtifact field && field.isAttributeValue())
-      return false;
     return childSchemaArtifact.minItems().get() != childSchemaArtifact.defaultOccurrences();
+  }
+
+  /**
+   * Whether the child's upper bound is worth stating. A maximum of 0 is the Template Editor's "no
+   * upper bound", which is what leaving the bound out says, so it is left out as the JSON leaves it.
+   */
+  private boolean statesUpperBound(ChildSchemaArtifact childSchemaArtifact)
+  {
+    return childSchemaArtifact.maxItems().isPresent()
+      && childSchemaArtifact.maxItems().get() != ValidationHelper.UNBOUNDED_MAX_ITEMS;
   }
 
   private boolean isMultiSelectListField(FieldSchemaArtifact fieldSchemaArtifact)

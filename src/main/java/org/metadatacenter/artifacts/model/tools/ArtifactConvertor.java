@@ -193,7 +193,7 @@ public class ArtifactConvertor {
     String artifactIri = command.getOptionValue(artifactKind.iriOption());
     String resourceServerBase = command.getOptionValue(CEDAR_RESOURCE_REST_API_BASE_OPTION);
     String requestURL = resourceServerBase + "/" + artifactKind.resourcePathExtension() + "/" + URLEncoder.encode(
-        artifactIri, StandardCharsets.UTF_8);
+        org.metadatacenter.artifacts.util.CedarResourceAddress.pathId(artifactIri), StandardCharsets.UTF_8);
     String acceptMediaType = yamlInput ? APPLICATION_YAML_MEDIA_TYPE : APPLICATION_JSON_MEDIA_TYPE;
     HttpURLConnection connection = ConnectionUtil.createAndOpenConnection("GET", requestURL, cedarApiKey,
         acceptMediaType);
