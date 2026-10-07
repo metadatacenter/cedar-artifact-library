@@ -95,11 +95,16 @@ final class ParentSchemaArtifactInvariants
 
   /**
    * Refuse a child whose key {@link ReservedNames} reserves: any reserved name for every child, and the
-   * parent's YAML metadata keys as well for an attribute-value field.
+   * parent's YAML metadata keys as well for an attribute-value field. A key with no visible character
+   * names a property no one can tell from another, so it is refused too.
    */
   static void validateChildNames(Object self, Map<String, ? extends FieldSchemaArtifact> fieldSchemas,
                                  Map<String, ?> elementSchemas, ReservedNames.AttributeValueFieldParent parent)
   {
+    for (String key : fieldSchemas.keySet())
+      requireVisibleChildName(self, key);
+    for (String key : elementSchemas.keySet())
+      requireVisibleChildName(self, key);
     for (String key : elementSchemas.keySet())
       if (ReservedNames.isReservedName(key))
         throw new IllegalStateException("child name \"" + key + "\" in " + self.getClass().getSimpleName()
@@ -111,6 +116,13 @@ final class ParentSchemaArtifactInvariants
         throw new IllegalStateException("child name \"" + field.getKey() + "\" in "
           + self.getClass().getSimpleName() + " is reserved for CEDAR instance metadata");
     }
+  }
+
+  static void requireVisibleChildName(Object self, String key)
+  {
+    if (key.isBlank())
+      throw new IllegalStateException("child name \"" + key + "\" in " + self.getClass().getSimpleName()
+        + " must have a visible character");
   }
 
   /**

@@ -22,4 +22,18 @@ final class IriSyntax
     IriReference.toUri(value);
     return new URI(value);
   }
+
+  /**
+   * The value as an identifier: an absolute IRI, with no space separator. Every identifier outside
+   * a field's value is one. java.net.URI refuses the no-break space and the other space separators
+   * RFC 3987 allows, so {@link #uri} already does; this adds that the reference is not relative,
+   * which the empty string is.
+   */
+  static URI absolute(String value) throws URISyntaxException
+  {
+    URI uri = uri(value);
+    if (!uri.isAbsolute())
+      throw new URISyntaxException(value, "An identifier must be an absolute IRI");
+    return uri;
+  }
 }

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public record Version(int major, int minor, int patch)
 {
-  private static final String VERSION_REGEX = "(\\d+)\\.(\\d+)\\.(\\d+)";
+  private static final String VERSION_REGEX = "(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)";
 
   /** The default version assigned to a freshly created artifact: {@code 0.0.1}. */
   public static final Version DEFAULT = new Version(0, 0, 1);
@@ -20,6 +20,9 @@ public record Version(int major, int minor, int patch)
 
     if (patch < 0)
       throw new IllegalArgumentException("patch must be 0 or greater");
+
+    if (major == 0 && minor == 0 && patch == 0)
+      throw new IllegalArgumentException("0.0.0 is not a version");
   }
 
   public static Version fromString(String versionText)
@@ -38,9 +41,11 @@ public record Version(int major, int minor, int patch)
   }
 
   /**
-   * Whether the text is three numbers, each of which fits a part of this record. A part too large
-   * for an int used to pass and then throw from {@link Integer#parseInt}, outside the readers'
-   * contract of refusing an artifact with an {@code ArtifactParseException}.
+   * Whether the text is three numbers without leading zeros, each of which fits a part of this
+   * record, and not {@code 0.0.0}. A part too large for an int used to pass and then throw from
+   * {@link Integer#parseInt}, outside the readers' contract of refusing an artifact with an
+   * {@code ArtifactParseException}. A leading zero used to be read away, so a reader wrote back a
+   * different version from the one stored.
    */
   public static boolean isValidVersion(String versionText)
   {
@@ -53,7 +58,7 @@ public record Version(int major, int minor, int patch)
       if (part.length() > 10 || Long.parseLong(part) > Integer.MAX_VALUE)
         return false;
     }
-    return true;
+    return !versionText.equals("0.0.0");
   }
 
   @Override public String toString()
