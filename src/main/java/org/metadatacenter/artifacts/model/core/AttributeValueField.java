@@ -143,6 +143,10 @@ record AttributeValueFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<
     if (!fieldUi.isAttributeValue())
       throw new IllegalStateException("field UI must specify attribute-value type in attribute-value field " + name);
 
+    // Whoever fills in an instance names its attributes, so no template can require some.
+    if (minItems.isPresent() && minItems.get() > 0)
+      throw new IllegalStateException("minItems must be zero in attribute-value field " + name);
+
     jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
     alternateLabels = List.copyOf(alternateLabels);
