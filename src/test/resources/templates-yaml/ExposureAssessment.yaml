@@ -540,6 +540,7 @@ children:
   modifiedOn: '2026-01-11T19:51:05-08:00'
   modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   configuration:
+    minItems: 0
     propertyIri: https://schema.metadatacenter.org/properties/6ab8109e-602f-404d-9c0e-80f61ef84c9e
 - key: sampled_media
   type: controlled-term-field
@@ -668,6 +669,7 @@ children:
   modifiedOn: '2026-01-11T19:51:05-08:00'
   modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   configuration:
+    minItems: 0
     propertyIri: https://schema.metadatacenter.org/properties/05800e65-96b0-416c-8236-b253cf424887
 - key: biological_media
   type: controlled-term-field
@@ -735,6 +737,7 @@ children:
   modifiedOn: '2026-01-11T19:51:05-08:00'
   modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   configuration:
+    minItems: 0
     propertyIri: https://schema.metadatacenter.org/properties/70184c52-e33e-4410-867c-2ec808eb4873
 - key: exposure_model
   type: controlled-term-field
@@ -801,6 +804,7 @@ children:
   modifiedOn: '2026-01-11T19:51:05-08:00'
   modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   configuration:
+    minItems: 0
     propertyIri: https://schema.metadatacenter.org/properties/7266fd35-ee30-422d-b169-9fd380ae2126
 - key: limit_of_detection_reported
   type: checkbox-field
@@ -818,4 +822,5 @@ children:
   modifiedOn: '2026-01-11T19:51:05-08:00'
   modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   configuration:
+    minItems: 0
     propertyIri: https://schema.metadatacenter.org/properties/90f07cfe-ce88-48b5-9e25-1c3ff69d8d8b

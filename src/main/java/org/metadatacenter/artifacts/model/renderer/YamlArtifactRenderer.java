@@ -277,8 +277,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (statesLowerBound(fieldSchemaArtifact))
-      rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
+    // No parent holds a standalone field, so no JSON states a bound beside it to keep in step
+    // with. It carries the bound it states, and nothing when it states none.
+    fieldSchemaArtifact.minItems().ifPresent(minItems -> rendering.put(MIN_ITEMS, minItems));
 
     if (statesUpperBound(fieldSchemaArtifact))
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
@@ -1225,8 +1226,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementSchemaArtifact.isMultiple())
       rendering.put(MULTIPLE, true);
 
-    if (statesLowerBound(elementSchemaArtifact))
-      rendering.put(MIN_ITEMS, elementSchemaArtifact.minItems().get());
+    if (repeats(elementSchemaArtifact))
+      rendering.put(MIN_ITEMS, elementSchemaArtifact.startingOccurrences());
 
     if (statesUpperBound(elementSchemaArtifact))
       rendering.put(MAX_ITEMS, elementSchemaArtifact.maxItems().get());
@@ -1280,8 +1281,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
       rendering.put(MULTIPLE, true);
 
-    if (statesLowerBound(fieldSchemaArtifact))
-      rendering.put(MIN_ITEMS, fieldSchemaArtifact.minItems().get());
+    if (repeats(fieldSchemaArtifact))
+      rendering.put(MIN_ITEMS, fieldSchemaArtifact.startingOccurrences());
 
     if (statesUpperBound(fieldSchemaArtifact))
       rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
@@ -1672,19 +1673,16 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   }
 
   /**
-   * Whether the child's lower bound is worth stating.
+   * Whether the child repeats, and so has a lower bound the YAML states.
    * <p>
-   * A bound equal to the one a child that states none is read with carries nothing, and writing it
-   * would make a document that omitted it round trip into one that does not. A lower bound the
-   * author chose differs from the default and is written, whether the child is an element, a field
-   * the template marks multiple, or a field multiple by its own type, an attribute-value field
-   * among them.
+   * Every repeated child's bound is written, a bound of zero included, whether the child is an
+   * element, a field the template marks multiple, or a field multiple by its own type, an
+   * attribute-value field among them. The JSON form states the same number, so the two forms never
+   * depend on a reader's default to agree.
    */
-  private boolean statesLowerBound(ChildSchemaArtifact childSchemaArtifact)
+  private boolean repeats(ChildSchemaArtifact childSchemaArtifact)
   {
-    if (childSchemaArtifact.minItems().isEmpty())
-      return false;
-    return childSchemaArtifact.minItems().get() != childSchemaArtifact.defaultOccurrences();
+    return childSchemaArtifact.isMultiple() || childSchemaArtifact.isMultipleByNature();
   }
 
   /**

@@ -109,6 +109,7 @@ children:
   - label: en
   - label: cn
   configuration:
+    minItems: 0
     propertyIri: https://w3id.org/radx/radmo/otherLanguage
 - key: Subjects
   type: controlled-term-field
@@ -953,6 +954,8 @@ children:
     status: draft
     version: 0.0.1
     modelVersion: 1.6.0
+    configuration:
+      minItems: 0
   configuration:
     propertyIri: https://w3id.org/radx/radmo/dataCharacteristicsDescriptor
 - key: Data Sources
@@ -1422,6 +1425,8 @@ children:
     status: draft
     version: 0.0.1
     modelVersion: 1.6.0
+    configuration:
+      minItems: 0
   - key: Additional Commentary
     type: text-area-field
     name: Additional Commentary

@@ -19,3 +19,5 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2024-01-22T10:19:16-08:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  configuration:
+    minItems: 0

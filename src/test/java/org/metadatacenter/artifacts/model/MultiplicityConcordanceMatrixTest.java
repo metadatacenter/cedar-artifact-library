@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,11 +53,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * bound, but JSON Schema, and so the validator, reads it as no items, so both libraries now leave it
  * out, which is how JSON Schema says there is no upper bound.
  *
- * <p>The expectations here are the model's, stated independently of any writer: a child marked
- * multiple starts with one occurrence, one multiple by nature with none, and a stated minimum
- * decides either way. The JSON states that bound and any stated maximum, the YAML carries them both
- * through, an inflated instance holds that many occurrences, and it validates against its template,
- * except where it cannot: an attribute-value field's attributes need names, which no inflater can
+ * <p>The expectations here are the model's, stated independently of any writer: a repeated child
+ * that states no minimum starts with none, as an absent {@code minItems} means in JSON Schema,
+ * whether its author marked it multiple or its type makes it so, and a stated minimum decides. The
+ * JSON and the YAML both state that bound, the YAML carries any stated maximum through, an inflated
+ * instance holds that many occurrences, and it validates against its template.
+ * The model refuses bounds no inflated instance could meet: a maximum below the minimum, and an
+ * attribute-value field's minimum above 0, since its attributes need names that no inflater can
  * invent.
  */
 public class MultiplicityConcordanceMatrixTest {
@@ -128,6 +131,15 @@ public class MultiplicityConcordanceMatrixTest {
     return container.equals("template") ? properties.path(CHILD) : properties.path(GROUP).path("properties").path(CHILD);
   }
 
+  /** The configuration the YAML gives the child, or an empty map when it gives none. */
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> yamlConfiguration(Map<String, Object> yaml, String container) {
+    Map<String, Object> parent = container.equals("template") ? yaml
+        : ((List<Map<String, Object>>) yaml.get("children")).get(0);
+    Map<String, Object> child = ((List<Map<String, Object>>) parent.get("children")).get(0);
+    return (Map<String, Object>) child.getOrDefault("configuration", Map.of());
+  }
+
   /** The child's slot in an instance. */
   private static JsonNode slotAt(JsonNode instance, String container) {
     return container.equals("template") ? instance.path(CHILD) : instance.path(GROUP).path(CHILD);
@@ -183,7 +195,7 @@ public class MultiplicityConcordanceMatrixTest {
     ChildSchemaArtifact child = kind.build(multiple, min, max);
     TemplateSchemaArtifact template = template(child, container);
     ObjectNode templateJson = JSON.renderTemplateSchemaArtifact(template);
-    int starting = min.orElse(kind.byNature() ? 0 : 1);
+    int starting = min.orElse(0);
 
     JsonNode schema = schemaAt(templateJson, container);
     if (multiple) {
@@ -206,24 +218,24 @@ public class MultiplicityConcordanceMatrixTest {
         id + ": the case is its kind's base with its bounds applied");
 
     LinkedHashMap<String, Object> yaml = new YamlArtifactRenderer(false).renderTemplateSchemaArtifact(template);
+    if (multiple) {
+      assertEquals(starting, yamlConfiguration(yaml, container).get("minItems"),
+          id + ": the YAML states the lower bound, the default included");
+    }
     ObjectNode fromYaml = JSON.renderTemplateSchemaArtifact(new YamlArtifactReader(false).readTemplateSchemaArtifact(yaml));
     assertEquals(bounds, jsonBounds(schemaAt(fromYaml, container)), id + ": the bounds survive YAML");
 
     TemplateInstanceArtifact sparse = new JsonArtifactReader().readTemplateInstanceArtifact((ObjectNode) sparseJson);
     ObjectNode inflated = JSON.renderTemplateInstanceArtifact(InstanceInflater.inflate(template, sparse));
     JsonNode slot = slotAt(inflated, container);
-    boolean attributeValue = kind.name().equals("attributeValue");
-    // Attributes need names, so an attribute-value field starts empty whatever its bound.
-    int occurrences = attributeValue ? 0 : starting;
     if (multiple) {
       assertTrue(slot.isArray(), id + ": a repeated child's slot is a list: " + slot);
-      assertEquals(occurrences, slot.size(), id + ": the inflated occurrences");
+      assertEquals(starting, slot.size(), id + ": the inflated occurrences");
     } else {
       assertTrue(slot.isObject(), id + ": a single child's slot is one value: " + slot);
     }
-    String verdict = new CedarValidator().validateTemplateInstance(inflated, templateJson).getValidationStatus();
-    boolean valid = !(attributeValue && starting > 0);
-    assertEquals(valid ? CedarValidationReport.IS_VALID : CedarValidationReport.IS_INVALID, verdict,
+    assertEquals(CedarValidationReport.IS_VALID,
+        new CedarValidator().validateTemplateInstance(inflated, templateJson).getValidationStatus(),
         id + ": the inflated instance against its template");
 
     ObjectNode result = MAPPER.createObjectNode().put("id", id).put("base", baseKey).put("container", container)
@@ -238,19 +250,23 @@ public class MultiplicityConcordanceMatrixTest {
       result.set("storedBounds", stored);
     }
     result.put("yaml", YamlSerializer.getYAML(template, false, true));
-    if (multiple) result.put("inflatedOccurrences", occurrences); else result.putNull("inflatedOccurrences");
+    if (multiple) result.put("inflatedOccurrences", starting); else result.putNull("inflatedOccurrences");
     return result;
   }
 
   /**
-   * A child whose maximum is below its minimum, which no template can satisfy. The model refuses one,
-   * so the case is its kind's base with those bounds applied, and the reader must refuse that too.
+   * A child whose bounds no inflated instance can meet: a maximum below its minimum, or an
+   * attribute-value field's minimum above 0. The model refuses one, so the case is its kind's base
+   * with those bounds applied, and the reader must refuse that too.
    */
-  private static ObjectNode refusedCase(Kind kind, int min, String container, ObjectNode bases) {
-    String id = kind.name() + " / min " + min + ", max " + (min - 1) + " / in " + container;
-    assertThrows(IllegalStateException.class, () -> kind.build(true, Optional.of(min), Optional.of(min - 1)), id);
+  private static ObjectNode refusedCase(Kind kind, int min, Optional<Integer> max, String container,
+                                        ObjectNode bases) {
+    String id = kind.name() + " / min " + min + ", max " + max.map(String::valueOf).orElse("absent") + " / in "
+        + container;
+    assertThrows(IllegalStateException.class, () -> kind.build(true, Optional.of(min), max), id);
     String baseKey = kind.name() + " in " + container;
-    ObjectNode bounds = MAPPER.createObjectNode().put("minItems", min).put("maxItems", min - 1);
+    ObjectNode bounds = MAPPER.createObjectNode().put("minItems", min);
+    max.ifPresent(value -> bounds.put("maxItems", value));
     ObjectNode templateJson = withBounds(bases.get(baseKey), container, bounds);
     assertThrows(RuntimeException.class, () -> new JsonArtifactReader().readTemplateSchemaArtifact(templateJson),
         id + ": the reader refuses it");
@@ -272,7 +288,12 @@ public class MultiplicityConcordanceMatrixTest {
           cases.add(renderCase(kind, false, Optional.empty(), Optional.empty(), container, bases, sparse));
         }
         for (Optional<Integer> min : List.of(Optional.<Integer>empty(), Optional.of(0), Optional.of(1), Optional.of(2))) {
-          int starting = min.orElse(kind.byNature() ? 0 : 1);
+          int starting = min.orElse(0);
+          // Its attributes need names, so an attribute-value field takes no minimum above 0.
+          if (kind.name().equals("attributeValue") && starting > 0) {
+            cases.add(refusedCase(kind, starting, Optional.empty(), container, bases));
+            continue;
+          }
           cases.add(renderCase(kind, true, min, Optional.empty(), container, bases, sparse));
           cases.add(renderCase(kind, true, min, Optional.of(ValidationHelper.UNBOUNDED_MAX_ITEMS), container, bases,
               sparse));
@@ -282,7 +303,7 @@ public class MultiplicityConcordanceMatrixTest {
           cases.add(renderCase(kind, true, min, Optional.of(starting + 3), container, bases, sparse));
           // A maximum of 1 below a minimum of 2; below a minimum of 1 the maximum would be 0.
           if (min.isPresent() && min.get() > 1) {
-            cases.add(refusedCase(kind, min.get(), container, bases));
+            cases.add(refusedCase(kind, min.get(), Optional.of(min.get() - 1), container, bases));
           }
         }
       }

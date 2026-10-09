@@ -405,6 +405,7 @@ children:
   modifiedOn: '2022-12-01T14:25:30-08:00'
   modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   configuration:
+    minItems: 0
     propertyIri: https://schema.metadatacenter.org/properties/2c498495-d829-4ef9-8581-f4966ae8378b
 - key: Pick from a List - Single Select
   type: single-select-list-field
@@ -437,6 +438,7 @@ children:
   modifiedOn: '2022-12-01T14:25:30-08:00'
   modifiedBy: https://metadatacenter.org/users/6d21a887-b704-49a9-922a-aa71632f3232
   configuration:
+    minItems: 0
     propertyIri: https://schema.metadatacenter.org/properties/90ecd3f0-c8c5-46f3-9044-1825617a4162
 - key: Phone
   type: phone-number-field
@@ -559,6 +561,8 @@ children:
   description: Help Text
   id: tmp-1680730278523-26677
   modelVersion: 1.6.0
+  configuration:
+    minItems: 0
 - key: My Page Break
   type: static-page-break
   name: My Page Break
