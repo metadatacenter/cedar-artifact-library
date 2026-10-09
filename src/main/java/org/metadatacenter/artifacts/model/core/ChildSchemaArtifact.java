@@ -7,14 +7,15 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifac
   FieldSchemaArtifact
 {
   /**
-   * What a multi-instance child takes when it states no lower bound of its own: one instance.
+   * The lower bound a repeated child takes when it states none of its own: zero, which is what an
+   * absent {@code minItems} means in JSON Schema.
    * <p>
-   * A rule of the model rather than of a serialization, so a reader that fills it in and a writer
-   * that leaves it out agree on it. Zero would say the array may be empty, which is a different
-   * contract and one the meta-schema takes literally, and it is not what the system stores: every
-   * such child in production carries one.
+   * A rule of the model rather than of a serialization, so the JSON and YAML forms mean the same
+   * thing by an absent bound. Both writers state the bound of every repeated child, so only a
+   * document written by hand relies on it. An authoring tool that wants a repeated child to start
+   * with an occurrence states that bound itself.
    */
-  int DEFAULT_MIN_ITEMS = 1;
+  int DEFAULT_MIN_ITEMS = 0;
 
   String name();
 
@@ -32,15 +33,12 @@ public sealed interface ChildSchemaArtifact extends SchemaArtifact, ChildArtifac
   default boolean isMultipleByNature() {return false;}
 
   /**
-   * The lower bound implied by what this child is, for one that states none.
-   *
-   * A child someone marked multiple takes {@link #DEFAULT_MIN_ITEMS}, for the reason above; a
-   * child that is multiple by nature takes none, because an occupant there would stand for a
-   * selection nobody made.
+   * The lower bound implied for a child that states none: {@link #DEFAULT_MIN_ITEMS}, whether its
+   * author marked it multiple or its type makes it so.
    */
   default int defaultOccurrences()
   {
-    return isMultipleByNature() ? 0 : DEFAULT_MIN_ITEMS;
+    return DEFAULT_MIN_ITEMS;
   }
 
   /**

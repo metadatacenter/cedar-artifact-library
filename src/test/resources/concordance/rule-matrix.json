@@ -864,7 +864,10 @@
             "id" : "https://example.org/fields/nested-attributes",
             "status" : "draft",
             "version" : "0.0.1",
-            "modelVersion" : "1.6.0"
+            "modelVersion" : "1.6.0",
+            "configuration" : {
+              "minItems" : 0
+            }
           } ],
           "configuration" : {
             "propertyIri" : "https://example.org/properties/group"
@@ -876,7 +879,10 @@
           "id" : "https://example.org/fields/attributes",
           "status" : "draft",
           "version" : "0.0.1",
-          "modelVersion" : "1.6.0"
+          "modelVersion" : "1.6.0",
+          "configuration" : {
+            "minItems" : 0
+          }
         }, {
           "key" : "term",
           "type" : "controlled-term-field",
@@ -1172,7 +1178,10 @@
           "id" : "https://example.org/fields/element-attributes",
           "status" : "draft",
           "version" : "0.0.1",
-          "modelVersion" : "1.6.0"
+          "modelVersion" : "1.6.0",
+          "configuration" : {
+            "minItems" : 0
+          }
         } ]
       }
     },

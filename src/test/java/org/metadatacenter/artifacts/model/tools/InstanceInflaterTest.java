@@ -80,10 +80,9 @@ public class InstanceInflaterTest
 
   @Test public void missingMultipleFieldIsFilledToTheLowerBoundItsTemplateStates()
   {
-    // A template always states a lower bound for a multi-instance child, and states the default of
-    // one when the artifact names none, so an empty array fails the very template the instance
-    // names. Completing an instance fills the bound the same way it fills a missing single field.
-    TextField aliases = TextField.builder().withName("Aliases").withIsMultiple(true).build();
+    // An empty array fails a template whose lower bound is above zero, so completing an instance
+    // fills the bound the same way it fills a missing single field.
+    TextField aliases = TextField.builder().withName("Aliases").withIsMultiple(true).withMinItems(1).build();
     TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
       .withFieldSchema(aliases).build();
     String key = template.getUi().order().get(0);
@@ -106,6 +105,21 @@ public class InstanceInflaterTest
     TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
 
     assertEquals(3, inflated.multiInstanceFieldInstances().get(key).size());
+  }
+
+  @Test public void anUnstatedLowerBoundLeavesTheListEmpty()
+  {
+    // An absent bound means zero, as it does in JSON Schema, whether the author marked the child
+    // multiple or its type makes it so.
+    TextField aliases = TextField.builder().withName("Aliases").withIsMultiple(true).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema(aliases).build();
+    String key = template.getUi().order().get(0);
+
+    TemplateInstanceArtifact inflated = InstanceInflater.inflate(template, sparseInstance().build());
+
+    assertTrue(inflated.multiInstanceFieldInstances().get(key).isEmpty(),
+      "a child that states no lower bound starts with no occurrence");
   }
 
   @Test public void aLowerBoundOfZeroLeavesTheListEmpty()
@@ -184,7 +198,7 @@ public class InstanceInflaterTest
   @Test public void aMissingRepeatedElementIsFilledToItsLowerBound()
   {
     ElementSchemaArtifact address = ElementSchemaArtifact.builder().withName("Address")
-      .withIsMultiple(true)
+      .withIsMultiple(true).withMinItems(1)
       .withFieldSchema(TextField.builder().withName("Street").build()).build();
     TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
       .withElementSchema(address).build();
@@ -218,9 +232,9 @@ public class InstanceInflaterTest
       .multiInstanceElementInstances().get("Nested");
     assertEquals(2, occurrences.size());
     for (var occurrence : occurrences) {
-      // Each occurrence keeps its array shape, filled to the lower bound its template states.
-      assertEquals(1, occurrence.multiInstanceFieldInstances().get("NIH Grant ID Field").size());
-      assertEquals(1, occurrence.multiInstanceFieldInstances().get("DOI Field").size());
+      // Each occurrence keeps its array shape, empty because the template states no lower bound.
+      assertEquals(0, occurrence.multiInstanceFieldInstances().get("NIH Grant ID Field").size());
+      assertEquals(0, occurrence.multiInstanceFieldInstances().get("DOI Field").size());
       assertTrue(occurrence.singleInstanceFieldInstances().isEmpty());
     }
     assertEquals(inflated, InstanceInflater.inflate(template, inflated));

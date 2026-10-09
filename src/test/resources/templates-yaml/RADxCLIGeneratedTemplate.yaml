@@ -896,6 +896,7 @@ children:
     - label: zh-TW
     - label: zu
     configuration:
+      minItems: 0
       propertyIri: http://purl.org/radx-terms/metadata-terms/otherLanguage
   configuration:
     propertyIri: http://purl.org/radx-terms/metadata-terms/languageDescriptor
@@ -2204,6 +2205,8 @@ children:
     status: draft
     version: 0.0.1
     modelVersion: 1.6.0
+    configuration:
+      minItems: 0
   configuration:
     propertyIri: http://purl.org/radx-terms/metadata-terms/dataCharacteristicsDescriptor
 - key: Data Sources
@@ -2714,6 +2717,8 @@ children:
     status: draft
     version: 0.0.1
     modelVersion: 1.6.0
+    configuration:
+      minItems: 0
   - key: Additional Commentary
     type: text-area-field
     name: Additional Commentary

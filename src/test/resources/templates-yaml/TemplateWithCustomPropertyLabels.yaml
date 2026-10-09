@@ -105,6 +105,7 @@ children:
     overrideDescription: ''
     valueRecommendation: true
     multiple: true
+    minItems: 1
 - key: GenreForm
   type: element
   name: GenreForm
@@ -132,6 +133,7 @@ children:
       overrideDescription: ''
       valueRecommendation: true
       multiple: true
+      minItems: 1
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/e0e1c645-4532-44d1-a572-a14b6578790b
     overrideLabel: Custom GenreForm

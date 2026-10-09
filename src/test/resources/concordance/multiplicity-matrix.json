@@ -5441,46 +5441,35 @@
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "text / min absent, max 0 / in template",
     "base" : "text in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "text / min absent, max 1 / in template",
+    "id" : "text / min absent, max 3 / in template",
     "base" : "text in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "text / min absent, max 4 / in template",
-    "base" : "text in template",
-    "container" : "template",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n      maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "text / min 0, max absent / in template",
     "base" : "text in template",
@@ -5524,7 +5513,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 1, max 0 / in template",
@@ -5538,7 +5527,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 1, max 1 / in template",
@@ -5549,7 +5538,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 1, max 4 / in template",
@@ -5560,7 +5549,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: text-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 2, max absent / in template",
@@ -5631,46 +5620,35 @@
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "text / min absent, max 0 / in element",
     "base" : "text in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "text / min absent, max 1 / in element",
+    "id" : "text / min absent, max 3 / in element",
     "base" : "text in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "text / min absent, max 4 / in element",
-    "base" : "text in element",
-    "container" : "element",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n          maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "text / min 0, max absent / in element",
     "base" : "text in element",
@@ -5714,7 +5692,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 1, max 0 / in element",
@@ -5728,7 +5706,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 1, max 1 / in element",
@@ -5739,7 +5717,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 1, max 4 / in element",
@@ -5750,7 +5728,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: text-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "text / min 2, max absent / in element",
@@ -5821,46 +5799,35 @@
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "controlledTerm / min absent, max 0 / in template",
     "base" : "controlledTerm in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "controlledTerm / min absent, max 1 / in template",
+    "id" : "controlledTerm / min absent, max 3 / in template",
     "base" : "controlledTerm in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "controlledTerm / min absent, max 4 / in template",
-    "base" : "controlledTerm in template",
-    "container" : "template",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      minItems: 0\n      maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "controlledTerm / min 0, max absent / in template",
     "base" : "controlledTerm in template",
@@ -5904,7 +5871,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 1, max 0 / in template",
@@ -5918,7 +5885,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 1, max 1 / in template",
@@ -5929,7 +5896,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 1, max 4 / in template",
@@ -5940,7 +5907,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: controlled-term-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    datatype: iri\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 2, max absent / in template",
@@ -6011,46 +5978,35 @@
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "controlledTerm / min absent, max 0 / in element",
     "base" : "controlledTerm in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "controlledTerm / min absent, max 1 / in element",
+    "id" : "controlledTerm / min absent, max 3 / in element",
     "base" : "controlledTerm in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "controlledTerm / min absent, max 4 / in element",
-    "base" : "controlledTerm in element",
-    "container" : "element",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          minItems: 0\n          maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "controlledTerm / min 0, max absent / in element",
     "base" : "controlledTerm in element",
@@ -6094,7 +6050,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 1, max 0 / in element",
@@ -6108,7 +6064,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 1, max 1 / in element",
@@ -6119,7 +6075,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 1, max 4 / in element",
@@ -6130,7 +6086,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: controlled-term-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        datatype: iri\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "controlledTerm / min 2, max absent / in element",
@@ -6201,46 +6157,35 @@
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "link / min absent, max 0 / in template",
     "base" : "link in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "link / min absent, max 1 / in template",
+    "id" : "link / min absent, max 3 / in template",
     "base" : "link in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "link / min absent, max 4 / in template",
-    "base" : "link in template",
-    "container" : "template",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n      maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "link / min 0, max absent / in template",
     "base" : "link in template",
@@ -6284,7 +6229,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 1, max 0 / in template",
@@ -6298,7 +6243,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 1, max 1 / in template",
@@ -6309,7 +6254,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 1, max 4 / in template",
@@ -6320,7 +6265,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: link-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 2, max absent / in template",
@@ -6391,46 +6336,35 @@
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "link / min absent, max 0 / in element",
     "base" : "link in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "link / min absent, max 1 / in element",
+    "id" : "link / min absent, max 3 / in element",
     "base" : "link in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "link / min absent, max 4 / in element",
-    "base" : "link in element",
-    "container" : "element",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n          maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "link / min 0, max absent / in element",
     "base" : "link in element",
@@ -6474,7 +6408,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 1, max 0 / in element",
@@ -6488,7 +6422,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 1, max 1 / in element",
@@ -6499,7 +6433,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 1, max 4 / in element",
@@ -6510,7 +6444,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: link-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "link / min 2, max absent / in element",
@@ -6581,46 +6515,35 @@
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "element / min absent, max 0 / in template",
     "base" : "element in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "element / min absent, max 1 / in template",
+    "id" : "element / min absent, max 3 / in template",
     "base" : "element in template",
     "container" : "template",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "element / min absent, max 4 / in template",
-    "base" : "element in template",
-    "container" : "template",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 0\n      maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "element / min 0, max absent / in template",
     "base" : "element in template",
@@ -6664,7 +6587,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 1, max 0 / in template",
@@ -6678,7 +6601,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 1, max 1 / in template",
@@ -6689,7 +6612,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 1, max 4 / in template",
@@ -6700,7 +6623,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: element\n    name: \"Child\"\n    id: \"https://example.org/elements/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"text\"\n        type: text-field\n        name: \"Text\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n    configuration:\n      multiple: true\n      minItems: 1\n      maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 2, max absent / in template",
@@ -6771,46 +6694,35 @@
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "element / min absent, max 0 / in element",
     "base" : "element in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1
+      "minItems" : 0
     },
     "storedBounds" : {
-      "minItems" : 1,
+      "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n",
+    "inflatedOccurrences" : 0
   }, {
-    "id" : "element / min absent, max 1 / in element",
+    "id" : "element / min absent, max 3 / in element",
     "base" : "element in element",
     "container" : "element",
     "refused" : false,
     "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 1
+      "minItems" : 0,
+      "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 1\n",
-    "inflatedOccurrences" : 1
-  }, {
-    "id" : "element / min absent, max 4 / in element",
-    "base" : "element in element",
-    "container" : "element",
-    "refused" : false,
-    "bounds" : {
-      "minItems" : 1,
-      "maxItems" : 4
-    },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 4\n",
-    "inflatedOccurrences" : 1
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 0\n          maxItems: 3\n",
+    "inflatedOccurrences" : 0
   }, {
     "id" : "element / min 0, max absent / in element",
     "base" : "element in element",
@@ -6854,7 +6766,7 @@
     "bounds" : {
       "minItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 1, max 0 / in element",
@@ -6868,7 +6780,7 @@
       "minItems" : 1,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 1, max 1 / in element",
@@ -6879,7 +6791,7 @@
       "minItems" : 1,
       "maxItems" : 1
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 1\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 1\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 1, max 4 / in element",
@@ -6890,7 +6802,7 @@
       "minItems" : 1,
       "maxItems" : 4
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          maxItems: 4\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: element\n        name: \"Child\"\n        id: \"https://example.org/elements/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        children:\n          - key: \"text\"\n            type: text-field\n            name: \"Text\"\n            status: draft\n            version: 0.0.1\n            modelVersion: 1.6.0\n        configuration:\n          multiple: true\n          minItems: 1\n          maxItems: 4\n",
     "inflatedOccurrences" : 1
   }, {
     "id" : "element / min 2, max absent / in element",
@@ -6955,7 +6867,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min absent, max 0 / in template",
@@ -6969,7 +6881,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min absent, max 3 / in template",
@@ -6980,7 +6892,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n      maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 0, max absent / in template",
@@ -6990,7 +6902,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 0, max 0 / in template",
@@ -7004,7 +6916,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 0, max 3 / in template",
@@ -7015,7 +6927,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: checkbox-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n      maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 1, max absent / in template",
@@ -7126,7 +7038,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min absent, max 0 / in element",
@@ -7140,7 +7052,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min absent, max 3 / in element",
@@ -7151,7 +7063,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n          maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 0, max absent / in element",
@@ -7161,7 +7073,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 0, max 0 / in element",
@@ -7175,7 +7087,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 0, max 3 / in element",
@@ -7186,7 +7098,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: checkbox-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n          maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "checkbox / min 1, max absent / in element",
@@ -7297,7 +7209,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min absent, max 0 / in template",
@@ -7311,7 +7223,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min absent, max 3 / in template",
@@ -7322,7 +7234,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n      maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 0, max absent / in template",
@@ -7332,7 +7244,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 0, max 0 / in template",
@@ -7346,7 +7258,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 0, max 3 / in template",
@@ -7357,7 +7269,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: multi-select-list-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n      maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 1, max absent / in template",
@@ -7468,7 +7380,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min absent, max 0 / in element",
@@ -7482,7 +7394,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min absent, max 3 / in element",
@@ -7493,7 +7405,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n          maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 0, max absent / in element",
@@ -7503,7 +7415,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 0, max 0 / in element",
@@ -7517,7 +7429,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 0, max 3 / in element",
@@ -7528,7 +7440,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: multi-select-list-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n          maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "multipleList / min 1, max absent / in element",
@@ -7639,7 +7551,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min absent, max 0 / in template",
@@ -7653,7 +7565,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min absent, max 3 / in template",
@@ -7664,7 +7576,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n      maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 0, max absent / in template",
@@ -7674,7 +7586,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 0, max 0 / in template",
@@ -7688,7 +7600,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 0, max 3 / in template",
@@ -7699,7 +7611,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"child\"\n    type: attribute-value-field\n    name: \"Child\"\n    id: \"https://example.org/fields/child\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    configuration:\n      minItems: 0\n      maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 1, max absent / in template",
@@ -7725,7 +7637,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min absent, max 0 / in element",
@@ -7739,7 +7651,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min absent, max 3 / in element",
@@ -7750,7 +7662,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n          maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 0, max absent / in element",
@@ -7760,7 +7672,7 @@
     "bounds" : {
       "minItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 0, max 0 / in element",
@@ -7774,7 +7686,7 @@
       "minItems" : 0,
       "maxItems" : 0
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 0, max 3 / in element",
@@ -7785,7 +7697,7 @@
       "minItems" : 0,
       "maxItems" : 3
     },
-    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          maxItems: 3\n",
+    "yaml" : "type: template\nname: \"Matrix\"\nid: \"https://example.org/templates/multiplicity\"\nstatus: draft\nversion: 0.0.1\nmodelVersion: 1.6.0\nchildren:\n  - key: \"group\"\n    type: element\n    name: \"Group\"\n    id: \"https://example.org/elements/group\"\n    status: draft\n    version: 0.0.1\n    modelVersion: 1.6.0\n    children:\n      - key: \"child\"\n        type: attribute-value-field\n        name: \"Child\"\n        id: \"https://example.org/fields/child\"\n        status: draft\n        version: 0.0.1\n        modelVersion: 1.6.0\n        configuration:\n          minItems: 0\n          maxItems: 3\n",
     "inflatedOccurrences" : 0
   }, {
     "id" : "attributeValue / min 1, max absent / in element",

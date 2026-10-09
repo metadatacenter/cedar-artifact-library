@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,10 +53,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * bound, but JSON Schema, and so the validator, reads it as no items, so both libraries now leave it
  * out, which is how JSON Schema says there is no upper bound.
  *
- * <p>The expectations here are the model's, stated independently of any writer: a child marked
- * multiple starts with one occurrence, one multiple by nature with none, and a stated minimum
- * decides either way. The JSON states that bound and any stated maximum, the YAML carries them both
- * through, an inflated instance holds that many occurrences, and it validates against its template.
+ * <p>The expectations here are the model's, stated independently of any writer: a repeated child
+ * that states no minimum starts with none, as an absent {@code minItems} means in JSON Schema,
+ * whether its author marked it multiple or its type makes it so, and a stated minimum decides. The
+ * JSON and the YAML both state that bound, the YAML carries any stated maximum through, an inflated
+ * instance holds that many occurrences, and it validates against its template.
  * The model refuses bounds no inflated instance could meet: a maximum below the minimum, and an
  * attribute-value field's minimum above 0, since its attributes need names that no inflater can
  * invent.
@@ -129,6 +131,15 @@ public class MultiplicityConcordanceMatrixTest {
     return container.equals("template") ? properties.path(CHILD) : properties.path(GROUP).path("properties").path(CHILD);
   }
 
+  /** The configuration the YAML gives the child, or an empty map when it gives none. */
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> yamlConfiguration(Map<String, Object> yaml, String container) {
+    Map<String, Object> parent = container.equals("template") ? yaml
+        : ((List<Map<String, Object>>) yaml.get("children")).get(0);
+    Map<String, Object> child = ((List<Map<String, Object>>) parent.get("children")).get(0);
+    return (Map<String, Object>) child.getOrDefault("configuration", Map.of());
+  }
+
   /** The child's slot in an instance. */
   private static JsonNode slotAt(JsonNode instance, String container) {
     return container.equals("template") ? instance.path(CHILD) : instance.path(GROUP).path(CHILD);
@@ -184,7 +195,7 @@ public class MultiplicityConcordanceMatrixTest {
     ChildSchemaArtifact child = kind.build(multiple, min, max);
     TemplateSchemaArtifact template = template(child, container);
     ObjectNode templateJson = JSON.renderTemplateSchemaArtifact(template);
-    int starting = min.orElse(kind.byNature() ? 0 : 1);
+    int starting = min.orElse(0);
 
     JsonNode schema = schemaAt(templateJson, container);
     if (multiple) {
@@ -207,6 +218,10 @@ public class MultiplicityConcordanceMatrixTest {
         id + ": the case is its kind's base with its bounds applied");
 
     LinkedHashMap<String, Object> yaml = new YamlArtifactRenderer(false).renderTemplateSchemaArtifact(template);
+    if (multiple) {
+      assertEquals(starting, yamlConfiguration(yaml, container).get("minItems"),
+          id + ": the YAML states the lower bound, the default included");
+    }
     ObjectNode fromYaml = JSON.renderTemplateSchemaArtifact(new YamlArtifactReader(false).readTemplateSchemaArtifact(yaml));
     assertEquals(bounds, jsonBounds(schemaAt(fromYaml, container)), id + ": the bounds survive YAML");
 
@@ -273,7 +288,7 @@ public class MultiplicityConcordanceMatrixTest {
           cases.add(renderCase(kind, false, Optional.empty(), Optional.empty(), container, bases, sparse));
         }
         for (Optional<Integer> min : List.of(Optional.<Integer>empty(), Optional.of(0), Optional.of(1), Optional.of(2))) {
-          int starting = min.orElse(kind.byNature() ? 0 : 1);
+          int starting = min.orElse(0);
           // Its attributes need names, so an attribute-value field takes no minimum above 0.
           if (kind.name().equals("attributeValue") && starting > 0) {
             cases.add(refusedCase(kind, starting, Optional.empty(), container, bases));
