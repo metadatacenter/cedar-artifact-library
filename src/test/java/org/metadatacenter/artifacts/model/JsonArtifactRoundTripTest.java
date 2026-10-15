@@ -64,7 +64,7 @@ public class JsonArtifactRoundTripTest
   {
     TextField originalFieldSchemaArtifact = TextField.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Study")
-      .withDefaultValue("A default value").withRegex("*").build();
+      .withDefaultValue("A default value").withRegex(".*").build();
 
     testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
   }
