@@ -40,9 +40,12 @@ import java.util.List;
  *       -Dexec.args=/path/to/cedar-test-artifacts
  * }</pre>
  *
- * Exits non-zero when a fixture is stale, so continuous integration can stand on it. Pass
- * {@code --write} before the path to rewrite the stale ones instead of reporting them, which keeps a
- * regeneration and the check that judges it to the same rendering call.
+ * Exits non-zero when a fixture is stale, or when this library cannot read a corpus artifact, so
+ * continuous integration can stand on it. An artifact the reader refuses has fixtures nobody compares:
+ * they record output this library no longer produces from an input it no longer accepts, and the
+ * TypeScript library's comparison against them would go on passing. Pass {@code --write} before the
+ * path to rewrite the stale fixtures instead of reporting them, which keeps a regeneration and the
+ * check that judges it to the same rendering call.
  */
 public final class CorpusFixtureVerifier
 {
@@ -82,8 +85,8 @@ public final class CorpusFixtureVerifier
     }
 
     List<String> stale = new ArrayList<>();
+    List<String> unreadable = new ArrayList<>();
     int checked = 0;
-    int unreadable = 0;
 
     for (Kind kind : Kind.values()) {
       Path kindDirectory = artifacts.resolve(kind.directory);
@@ -100,9 +103,7 @@ public final class CorpusFixtureVerifier
           try {
             artifact = read(kind, Files.readString(source));
           } catch (Exception e) {
-            // A corpus artifact this library cannot read is a divergence in its own right, recorded in
-            // the parity survey rather than here. Counted so the run says how many it passed over.
-            unreadable++;
+            unreadable.add(artifacts.relativize(source) + ": " + e.getClass().getSimpleName() + ": " + e.getMessage());
             continue;
           }
 
@@ -117,7 +118,13 @@ public final class CorpusFixtureVerifier
     }
 
     System.out.printf("corpus fixtures checked: %d   %s: %d   artifacts this library cannot read: %d%n",
-      checked, write ? "rewritten" : "stale", stale.size(), unreadable);
+      checked, write ? "rewritten" : "stale", stale.size(), unreadable.size());
+    if (!unreadable.isEmpty()) {
+      System.out.println("\nThis library refuses these corpus artifacts, so their fixtures were not compared:");
+      unreadable.forEach(artifact -> System.out.println("  " + artifact));
+      System.out.println("\nEither the reader refuses something it should read, or the corpus holds an artifact\n"
+        + "the model no longer admits, whose fixtures the TypeScript library still compares against.");
+    }
     if (!stale.isEmpty()) {
       System.out.println(write ? "\nThese fixtures now hold what this library writes:"
         : "\nThese committed fixtures are not what this library writes now:");
@@ -131,6 +138,8 @@ public final class CorpusFixtureVerifier
         System.exit(1);
       }
     }
+    if (!unreadable.isEmpty())
+      System.exit(1);
   }
 
   /**
