@@ -105,6 +105,34 @@ public class JsonValueConstraintsReaderTest
     assertTrue(JsonValueConstraintsReader.readOntologyValueConstraint(node, "/").version().isEmpty());
   }
 
+  @Test public void testEmptyVersionIdIsRefusedWithItsExistingMessage()
+  {
+    ObjectNode node = mapper.createObjectNode();
+    node.put("uri", "https://data.bioontology.org/ontologies/DOID");
+    node.put("acronym", "DOID");
+    node.put("name", "Human Disease Ontology");
+    node.putObject("version").put("id", "");
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> JsonValueConstraintsReader.readOntologyValueConstraint(node, "/"));
+    assertEquals("Expecting non-empty string value", thrown.getParseErrorMessage());
+  }
+
+  @Test public void testBlankVersionIdIsRefusedAsAParseError()
+  {
+    // VersionSpec refuses a blank id too, but with no path; the reader says where the id is.
+    ObjectNode node = mapper.createObjectNode();
+    node.put("uri", "https://data.bioontology.org/ontologies/DOID");
+    node.put("acronym", "DOID");
+    node.put("name", "Human Disease Ontology");
+    node.putObject("version").put("id", "   ");
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> JsonValueConstraintsReader.readOntologyValueConstraint(node, "/_valueConstraints/ontologies/0"));
+    assertEquals("A version id must not be blank", thrown.getParseErrorMessage());
+    assertEquals("/_valueConstraints/ontologies/0/version", thrown.getPath());
+  }
+
   @Test public void testPinnedOntologyConstraintRoundTripsThroughJson()
   {
     // Render (via the renderer's mapper config) then read back: the triple survives, and a constraint

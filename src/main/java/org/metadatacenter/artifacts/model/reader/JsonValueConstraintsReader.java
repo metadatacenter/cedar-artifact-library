@@ -462,8 +462,9 @@ final class JsonValueConstraintsReader {
   }
 
   /** Reads the version triple. Absent, or the explicit string {@code "latest"}, means latest (empty);
-   *  a JSON object is read as a pinned {@link VersionSpec}, whose {@code id} must be a non-empty string,
-   *  as the YAML reader and the meta-schema require. */
+   *  a JSON object is read as a pinned {@link VersionSpec}. Its {@code id} must be a non-empty string,
+   *  as the YAML reader and the meta-schema require, and must not be blank, as the YAML reader and
+   *  {@link VersionSpec} require. */
   private static Optional<VersionSpec> readVersionSpec(ObjectNode sourceNode, String path) {
     JsonNode versionNode = sourceNode.get(VALUE_CONSTRAINTS_VERSION);
     if (versionNode == null || versionNode.isNull() || !versionNode.isObject()) {
@@ -474,6 +475,8 @@ final class JsonValueConstraintsReader {
     String id = readRequiredString(version, versionPath, VALUE_CONSTRAINTS_VERSION_ID);
     if (id.isEmpty())
       throw new ArtifactParseException("Expecting non-empty string value", VALUE_CONSTRAINTS_VERSION_ID, versionPath);
+    if (id.isBlank())
+      throw new ArtifactParseException("A version id must not be blank", VALUE_CONSTRAINTS_VERSION_ID, versionPath);
     Optional<String> effectiveDate = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_EFFECTIVE_DATE);
     Optional<String> declaredVersion = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_DECLARED_VERSION);
     return Optional.of(new VersionSpec(id, effectiveDate, declaredVersion));

@@ -1628,7 +1628,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   /** Reads the version triple: absent or a plain string ({@code latest}) ⇒ latest (empty); a map ⇒ a
-   *  pinned {@link VersionSpec} (its {@code id} required). Mirrors the JSON reader. */
+   *  pinned {@link VersionSpec} (its {@code id} required, and neither empty nor blank). Mirrors the JSON
+   *  reader. */
   private Optional<VersionSpec> readVersion(LinkedHashMap<String, Object> entry, String path)
   {
     Object v = entry.get(VERSION);
@@ -1639,6 +1640,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, Object> versionMap = (LinkedHashMap<String, Object>) v;
     String versionPath = path + "/" + VERSION;
     String id = readRequiredString(versionMap, versionPath, VERSION_ID, false);
+    if (id.isBlank())
+      throw new ArtifactParseException("A version id must not be blank", VERSION_ID, versionPath);
     Optional<String> effectiveDate = readString(versionMap, versionPath, VERSION_EFFECTIVE_DATE);
     Optional<String> declaredVersion = readString(versionMap, versionPath, VERSION_DECLARED_VERSION);
     return Optional.of(new VersionSpec(id, effectiveDate, declaredVersion));

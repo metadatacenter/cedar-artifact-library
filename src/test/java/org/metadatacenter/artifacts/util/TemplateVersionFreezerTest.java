@@ -1,12 +1,15 @@
 package org.metadatacenter.artifacts.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -125,6 +128,45 @@ public class TemplateVersionFreezerTest {
     TemplateVersionFreezer.freeze(template, resolver("NOTHING", null, null, DOID_V));
 
     assertEquals(before, template.toString());
+  }
+
+  @Test public void everyUnpinnedEntryKeepsItsFormWhenTheResolverYieldsNothing() {
+    // The publish path's resolver yields nothing for an answer it cannot use, an empty or blank id
+    // among them. Every kind of entry, in each form that means latest, must come through as it went in.
+    Map<String, String[]> keyOfKind = Map.of(
+        "ontologies", new String[]{"acronym", "DOID"},
+        "branches", new String[]{"acronym", "DOID"},
+        "classes", new String[]{"uri", "http://purl.obolibrary.org/obo/DOID_9351"},
+        "valueSets", new String[]{"vsCollection", "CEDARVS"});
+    ObjectNode template = mapper.createObjectNode();
+    ObjectNode vc = template.putObject("properties").putObject("f").putObject("_valueConstraints");
+    keyOfKind.forEach((kind, key) -> {
+      ArrayNode entries = vc.putArray(kind);
+      entries.addObject().put(key[0], key[1]);
+      entries.addObject().put(key[0], key[1]).putNull("version");
+      entries.addObject().put(key[0], key[1]).put("version", "latest");
+    });
+    ObjectNode before = template.deepCopy();
+    AtomicInteger asked = new AtomicInteger();
+    ControlledTermVersionFreezer.VersionResolver nothing = new ControlledTermVersionFreezer.VersionResolver() {
+      @Override public Optional<VersionSpec> currentVersionByAcronym(String a) {
+        asked.incrementAndGet();
+        return Optional.empty();
+      }
+      @Override public Optional<VersionSpec> currentVersionByClassUri(URI u) {
+        asked.incrementAndGet();
+        return Optional.empty();
+      }
+      @Override public Optional<VersionSpec> currentVersionByValueSetCollection(String c) {
+        asked.incrementAndGet();
+        return Optional.empty();
+      }
+    };
+
+    TemplateVersionFreezer.freeze(template, nothing);
+
+    assertEquals(12, asked.get(), "every entry is unpinned, so each one is looked up");
+    assertEquals(before, template);
   }
 
   private static final String ELEMENT_TYPE = "https://schema.metadatacenter.org/core/TemplateElement";

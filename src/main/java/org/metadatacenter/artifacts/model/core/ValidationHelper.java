@@ -81,6 +81,15 @@ public class ValidationHelper
       throw new IllegalStateException("field " + fieldKey + " is empty in " + obj);
   }
 
+  /** Refuses a string that is null, empty, or made only of whitespace. */
+  public static void validateStringFieldNotBlank(Object obj, String field, String fieldKey)
+  {
+    validateStringFieldNotEmpty(obj, field, fieldKey);
+
+    if (field.isBlank())
+      throw new IllegalStateException("field " + fieldKey + " is blank in " + obj);
+  }
+
   public static void validateStringFieldEquals(Object obj, String field, String fieldKey, String fieldValue)
   {
     validateStringFieldNotNull(obj, field, fieldKey);

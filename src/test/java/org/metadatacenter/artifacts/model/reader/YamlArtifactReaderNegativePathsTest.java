@@ -2,15 +2,22 @@ package org.metadatacenter.artifacts.model.reader;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
+import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -259,5 +266,58 @@ public class YamlArtifactReaderNegativePathsTest
     ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
       () -> new YamlArtifactReader().readTemplateInstanceArtifact(node));
     assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
+  }
+
+  @Test public void anEmptyVersionIdIsRefusedWithItsExistingMessage()
+  {
+    LinkedHashMap<String, Object> field = controlledTermFieldPinnedTo("");
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> reader.readFieldSchemaArtifact(field));
+    assertEquals("Expecting non-empty string value", thrown.getParseErrorMessage());
+  }
+
+  @Test public void aBlankVersionIdIsRefusedAsAParseError()
+  {
+    // VersionSpec refuses a blank id too, but with no path; the reader says where the id is.
+    LinkedHashMap<String, Object> field = controlledTermFieldPinnedTo("   ");
+
+    ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+      () -> reader.readFieldSchemaArtifact(field));
+    assertEquals("A version id must not be blank", thrown.getParseErrorMessage());
+  }
+
+  /** A controlled-term field's YAML, its one ontology constraint pinned to {@code versionId}. */
+  private static LinkedHashMap<String, Object> controlledTermFieldPinnedTo(String versionId)
+  {
+    OntologyValueConstraint pinned = new OntologyValueConstraint(
+      URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID", "Human Disease Ontology",
+      Optional.empty(), Optional.empty(), Optional.empty(),
+      Optional.of(new VersionSpec("63ef56dff672", Optional.empty(), Optional.empty())));
+    ControlledTermField field = ControlledTermField.builder().withName("Disease")
+      .withOntologyValueConstraint(pinned).build();
+    LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(false).renderFieldSchemaArtifact(field);
+    assertTrue(setVersionId(rendering, versionId), "the rendering states the constraint's version");
+    return rendering;
+  }
+
+  /** Replaces the id of the first version map under {@code node}; false when there is none. */
+  @SuppressWarnings("unchecked")
+  private static boolean setVersionId(Object node, String versionId)
+  {
+    if (node instanceof Map<?, ?> map) {
+      if (map.get("version") instanceof Map<?, ?> version && version.containsKey("id")) {
+        ((Map<String, Object>) version).put("id", versionId);
+        return true;
+      }
+      for (Object child : map.values())
+        if (setVersionId(child, versionId))
+          return true;
+    } else if (node instanceof List<?> list) {
+      for (Object child : list)
+        if (setVersionId(child, versionId))
+          return true;
+    }
+    return false;
   }
 }
