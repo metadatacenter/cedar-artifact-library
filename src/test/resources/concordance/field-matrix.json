@@ -50029,5 +50029,28 @@
       "keep" : [ 15, 1 ],
       "lines" : [ "      id: \"\"" ]
     }
+  }, {
+    "id" : "controlledTerm/ontology-version-blank-id",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-blank-id",
+    "against" : "controlledTerm/ontology-version-id",
+    "refused" : true,
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "   "
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 15, 1 ],
+      "lines" : [ "      id: \"   \"" ]
+    }
   } ]
 }

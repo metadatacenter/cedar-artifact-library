@@ -488,10 +488,10 @@ public class FieldConcordanceMatrixTest {
    * Documents that state a version in a form no writer produces. The meta-schema admits the string
    * "latest", which both of this library's readers take to mean the newest snapshot, as they take an
    * absent version, so a reader given it must produce the documents of the cell with no version. It
-   * refuses a version object with no `id`, or with an empty one, and both readers refuse them too.
-   * Each input is the cell pinned to an `id` alone with its version stated otherwise, in its JSON and
-   * in its full YAML, and is recorded, as a case is, against the cell whose documents a reader must
-   * produce from it, or against the pinned cell where every reader must refuse it.
+   * refuses a version object with no `id`, or with an empty or blank one, and both readers refuse
+   * them too. Each input is the cell pinned to an `id` alone with its version stated otherwise, in its
+   * JSON and in its full YAML, and is recorded, as a case is, against the cell whose documents a
+   * reader must produce from it, or against the pinned cell where every reader must refuse it.
    */
   private static ArrayNode inputs(ArrayNode cases) throws Exception {
     JsonNode pinned = caseOf(cases, "controlledTerm/ontology-version-id");
@@ -502,6 +502,8 @@ public class FieldConcordanceMatrixTest {
     inputs.add(input(pinned, null, "ontology-version-empty-object", MAPPER.createObjectNode(), "$1version: {}"));
     inputs.add(input(pinned, null, "ontology-version-empty-id", MAPPER.createObjectNode().put("id", ""),
       "$1version:\n$1  id: \"\""));
+    inputs.add(input(pinned, null, "ontology-version-blank-id", MAPPER.createObjectNode().put("id", "   "),
+      "$1version:\n$1  id: \"   \""));
     return inputs;
   }
 
