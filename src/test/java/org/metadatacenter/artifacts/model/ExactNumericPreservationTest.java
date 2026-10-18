@@ -31,6 +31,24 @@ class ExactNumericPreservationTest {
     }
   }
 
+  @Test void floatingPointYamlPreservesDecimalValuesAtIntegerBoundaries() throws Exception {
+    for (Number value : new Number[] {2147483648f, Math.nextDown(2147483648f), Math.nextUp(2147483648f),
+        -2147483648f, Float.MAX_VALUE, Float.MIN_VALUE, 0f, 2147483648d, Double.MAX_VALUE, Double.MIN_VALUE}) {
+      var original = NumericField.builder().withName("Boundary")
+          .withNumericType(XsdNumericDatatype.DECIMAL).withDefaultValue(value)
+          .withMinValue(value).withMaxValue(value).build();
+      for (boolean fullQuotes : new boolean[] {false, true}) {
+        String source = org.metadatacenter.artifacts.model.tools.YamlSerializer.getYAML(original, false, fullQuotes);
+        var parsed = org.metadatacenter.artifacts.model.reader.ArtifactSourceParser.yaml(source);
+        var read = new YamlArtifactReader().readFieldSchemaArtifact(parsed).valueConstraints()
+            .orElseThrow().asNumericValueConstraints();
+        assertEquals(0, NumericPolicy.compare(value.toString(), read.defaultValue().orElseThrow().value().toString()));
+        assertEquals(0, NumericPolicy.compare(value.toString(), read.minValue().orElseThrow().toString()));
+        assertEquals(0, NumericPolicy.compare(value.toString(), read.maxValue().orElseThrow().toString()));
+      }
+    }
+  }
+
   @Test void rejectsNonFiniteDefaults() {
     assertThrows(NumberFormatException.class, () -> NumericField.builder().withName("Bad")
         .withNumericType(XsdNumericDatatype.DECIMAL).withDefaultValue(Double.NaN).build());
