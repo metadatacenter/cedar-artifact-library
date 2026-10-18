@@ -34,7 +34,7 @@ public class EmailDefaultValueTest
   {
     IllegalStateException ex =
       assertThrows(IllegalStateException.class, () -> new EmailDefaultValue("not-an-email"));
-    assertTrue(ex.getMessage().contains("not a valid e-mail address"), ex.getMessage());
+    assertTrue(ex.getMessage().contains("Not a valid e-mail address"), ex.getMessage());
   }
 
   @Test public void rejectsValueWithSpace()

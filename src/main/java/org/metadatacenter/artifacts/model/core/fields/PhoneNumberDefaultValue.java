@@ -10,6 +10,7 @@ public record PhoneNumberDefaultValue(@JsonValue String value) implements Defaul
   public PhoneNumberDefaultValue {
     validateStringFieldNotNull(this, value, "value");
     validateStringFieldNotEmpty(this, value, "value");
+    DefaultValueValidation.requireValid("phone-number", value);
   }
 
   @Override public DefaultValueType getValueType()

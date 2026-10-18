@@ -11,6 +11,7 @@ public record LinkDefaultValue(@JsonValue URI termUri) implements DefaultValue<U
 {
   public LinkDefaultValue {
     validateUriFieldNotNull(this, termUri, VALUE_CONSTRAINTS_TERM_URI);
+    DefaultValueValidation.requireValid("link", termUri.toString());
   }
 
   @Override public DefaultValueType getValueType()

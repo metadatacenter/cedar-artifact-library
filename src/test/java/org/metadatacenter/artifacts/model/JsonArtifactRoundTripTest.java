@@ -27,6 +27,8 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType.DELETE;
 
 public class JsonArtifactRoundTripTest
@@ -728,9 +730,15 @@ public class JsonArtifactRoundTripTest
     testTemplateSchemaArtifactRoundTripFromFile("templates/template-007.json");
   }
 
-  @Test public void testRoundTripTemplate008()
+  @Test public void testRejectTemplate008DefaultOutsideRegex() throws Exception
   {
-    testTemplateSchemaArtifactRoundTripFromFile("templates/template-008.json");
+    // The historic fixture's "Default Value" has two capitals; its regex allows only the first.
+    ObjectNode original = getJSONFileContentAsObjectNode("templates/template-008.json");
+    ValidationReport report = cedarModelValidator.validateTemplate(original);
+    assertFalse(report.canSave());
+    assertTrue(report.getFindings().stream().anyMatch(finding -> finding.code().equals("regex")
+      && finding.path().equals("/properties/Text Field 1/_valueConstraints/defaultValue")));
+    assertThrows(RuntimeException.class, () -> artifactReader.readTemplateSchemaArtifact(original));
   }
 
   @Test public void testRoundTripTemplate009()
@@ -908,9 +916,15 @@ public class JsonArtifactRoundTripTest
     testElementSchemaArtifactRoundTripFromFile("elements/element-004.json");
   }
 
-  @Test public void testRoundTripField001()
+  @Test public void testRejectField001DefaultOutsideRegex() throws Exception
   {
-    testFieldSchemaArtifactRoundTripFromFile("fields/field-001.json");
+    // The historic fixture's default does not contain the literal regex text "regex".
+    ObjectNode original = getJSONFileContentAsObjectNode("fields/field-001.json");
+    ValidationReport report = cedarModelValidator.validateTemplateField(original);
+    assertFalse(report.canSave());
+    assertTrue(report.getFindings().stream().anyMatch(finding -> finding.code().equals("regex")
+      && finding.path().equals("/_valueConstraints/defaultValue")));
+    assertThrows(RuntimeException.class, () -> artifactReader.readFieldSchemaArtifact(original));
   }
 
   @Test public void testRoundTripStandaloneField()

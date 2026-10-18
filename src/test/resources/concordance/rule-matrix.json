@@ -6377,7 +6377,7 @@
       "input" : "",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
       }
@@ -6385,7 +6385,7 @@
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
-        "validator" : "accepted",
+        "validator" : "refused",
         "json" : "accepted",
         "yaml" : "accepted"
       }

@@ -83,7 +83,7 @@ public class YamlArtifactRoundTripTest
   {
     TextField original = TextField.builder()
       .withJsonLdId(URI.create("https://repo.metadatacenter.org/template_fields/123")).withName("Study")
-      .withDefaultValue("A default value").withRegex("*").build();
+      .withDefaultValue("A default value").withRegex(".*").build();
     roundTripField(original);
   }
 

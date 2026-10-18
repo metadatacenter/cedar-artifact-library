@@ -152,5 +152,13 @@ record TextValueConstraintsRecord(Optional<Integer> minLength, Optional<Integer>
     validateOptionalFieldNotNull(this, defaultValue, VALUE_CONSTRAINTS_DEFAULT_VALUE);
     validateListFieldNotNull(this, literals, VALUE_CONSTRAINTS_LITERALS);
     validateOptionalFieldNotNull(this, regex, VALUE_CONSTRAINTS_REGEX);
+    var field = ConstraintConsistency.field("textfield");
+    var constraints = field.withObject("/_valueConstraints");
+    minLength.ifPresent(value -> constraints.put("minLength", value));
+    maxLength.ifPresent(value -> constraints.put("maxLength", value));
+    regex.ifPresent(value -> constraints.put("regex", value));
+    var choices = constraints.putArray("literals");
+    literals.forEach(value -> choices.addObject().put("label", value.label()));
+    ConstraintConsistency.validate(field, defaultValue.map(TextDefaultValue::value));
   }
 }

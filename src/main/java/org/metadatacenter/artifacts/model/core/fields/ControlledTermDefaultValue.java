@@ -17,6 +17,7 @@ public record ControlledTermDefaultValue(URI termUri, @JsonProperty("rdfs:label"
 {
   public ControlledTermDefaultValue {
     validateUriFieldNotNull(this, termUri, VALUE_CONSTRAINTS_TERM_URI);
+    DefaultValueValidation.requireValid("controlled-term", termUri.toString());
     validateStringFieldNotNull(this, label, VALUE_CONSTRAINTS_LABEL);
     validateStringFieldNotEmpty(this, label, VALUE_CONSTRAINTS_LABEL);
   }
