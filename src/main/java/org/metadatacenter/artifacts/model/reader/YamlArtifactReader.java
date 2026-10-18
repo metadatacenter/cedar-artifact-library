@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
@@ -657,7 +659,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       for (Map.Entry<String, Object> fieldEntry : groupNode.entrySet()) {
         String fieldName = fieldEntry.getKey();
         Object fieldRaw = fieldEntry.getValue();
-        if (fieldName.isBlank())
+        if (TextPolicy.isBlank(fieldName))
           throw new ArtifactParseException("Blank attribute-value field name", key, path);
         if (!(fieldRaw instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map value for attribute-value field " + fieldName, key, path);
@@ -1512,7 +1514,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    */
   private static void rejectEmptyUri(String rawValue, String fieldKey, String path)
   {
-    if (rawValue.isBlank())
+    if (TextPolicy.isBlank(rawValue))
       throw new ArtifactParseException(
         "An empty string is not a URI; write null or leave the key out where there is no value",
         fieldKey, path);
@@ -1640,7 +1642,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, Object> versionMap = (LinkedHashMap<String, Object>) v;
     String versionPath = path + "/" + VERSION;
     String id = readRequiredString(versionMap, versionPath, VERSION_ID, false);
-    if (id.isBlank())
+    if (TextPolicy.isBlank(id))
       throw new ArtifactParseException("A version id must not be blank", VERSION_ID, versionPath);
     Optional<String> effectiveDate = readString(versionMap, versionPath, VERSION_EFFECTIVE_DATE);
     Optional<String> declaredVersion = readString(versionMap, versionPath, VERSION_DECLARED_VERSION);

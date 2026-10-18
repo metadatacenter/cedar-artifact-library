@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -475,7 +477,7 @@ final class JsonValueConstraintsReader {
     String id = readRequiredString(version, versionPath, VALUE_CONSTRAINTS_VERSION_ID);
     if (id.isEmpty())
       throw new ArtifactParseException("Expecting non-empty string value", VALUE_CONSTRAINTS_VERSION_ID, versionPath);
-    if (id.isBlank())
+    if (TextPolicy.isBlank(id))
       throw new ArtifactParseException("A version id must not be blank", VALUE_CONSTRAINTS_VERSION_ID, versionPath);
     Optional<String> effectiveDate = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_EFFECTIVE_DATE);
     Optional<String> declaredVersion = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_DECLARED_VERSION);

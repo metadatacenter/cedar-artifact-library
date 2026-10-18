@@ -142,7 +142,8 @@ public class RuleConcordanceMatrixTest {
       "schema:isBasedOn", "pav:derivedFrom", "pav:createdOn", "oslc:modifiedBy", "rdfs:label", "skos:prefLabel",
       "skos:notation", "skos:altLabel", "_annotations", "__proto__", "constructor", "prototype", "name",
       "description", "id", "type", "children", "isBasedOn", "derivedFrom", "annotations", "createdOn", "", " ",
-      SIBLING, DUPLICATE);
+      "\u001c", "\u001d", "\u001e", "\u001f", "\u00a0", "\u2007", "\u202f", "\ufeff",
+      "é", "e\u0301", "\ud83d\ude00", SIBLING, DUPLICATE);
 
   private static final List<String> VERSIONS = List.of("1.0.0", "0.0.1", "10.20.30", "0.0.0", "01.2.3", "1.02.3",
       "1.0", "1", "1.2.3.4", "1.2.3-rc1", "v1.0.0", " 1.0.0", "1.0.0 ", "", "banana", "2147483647.0.0",

@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.AnnotationValue;
@@ -431,7 +433,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     while (jsonChildKeys.hasNext()) {
       String childKey = jsonChildKeys.next();
       // A key with no visible character names an instance property no reader of it can tell apart.
-      if (childKey.isBlank())
+      if (TextPolicy.isBlank(childKey))
         throw new ArtifactParseException("A child key must not be blank", childKey, path + "/properties");
       if (TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
           || FIELD_INSTANCE_ARTIFACT_KEYWORDS.contains(childKey)
@@ -642,7 +644,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private Optional<URI> readIdentifier(ObjectNode sourceNode, String path, String key, boolean absolute) {
     JsonNode node = sourceNode.get(key);
 
-    if (node != null && node.isTextual() && node.asText().isBlank())
+    if (node != null && node.isTextual() && TextPolicy.isBlank(node.asText()))
       throw new ArtifactParseException(
           "An empty string is not a URI; write null or leave the key out where there is no value",
           key, path);
@@ -743,7 +745,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                       multiInstanceElementInstances);
                 } else if (instanceNode.isTextual()) { // A list of attribute-value field names
                   String attributeValueFieldName = instanceNode.asText();
-                  if (attributeValueFieldName.isBlank()) {
+                  if (TextPolicy.isBlank(attributeValueFieldName)) {
                     throw new ArtifactParseException("Blank attribute-value field name in array",
                         instanceArtifactFieldKey, arrayEnclosedInstanceArtifactPath);
                   }

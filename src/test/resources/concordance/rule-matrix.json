@@ -1745,6 +1745,94 @@
         "json" : "refused",
         "yaml" : "refused"
       }
+    }, {
+      "input" : "\u001C",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001D",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001E",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001F",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u00A0",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u2007",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u202F",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uFEFF",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u00E9",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "e\u0301",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uD83D\uDE00",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
     } ]
   }, {
     "rule" : "names",
@@ -2038,6 +2126,94 @@
         "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001C",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001D",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001E",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001F",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u00A0",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u2007",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u202F",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uFEFF",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u00E9",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "e\u0301",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uD83D\uDE00",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     } ]
   }, {
@@ -2333,6 +2509,94 @@
         "json" : "refused",
         "yaml" : "refused"
       }
+    }, {
+      "input" : "\u001C",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001D",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001E",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001F",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u00A0",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u2007",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u202F",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uFEFF",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u00E9",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "e\u0301",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uD83D\uDE00",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
     } ]
   }, {
     "rule" : "names",
@@ -2627,6 +2891,94 @@
         "json" : "refused",
         "yaml" : "refused"
       }
+    }, {
+      "input" : "\u001C",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001D",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001E",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001F",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u00A0",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u2007",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u202F",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uFEFF",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u00E9",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "e\u0301",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uD83D\uDE00",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
     } ]
   }, {
     "rule" : "names",
@@ -2920,6 +3272,94 @@
         "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001C",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001D",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001E",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001F",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u00A0",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u2007",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u202F",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uFEFF",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u00E9",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "e\u0301",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uD83D\uDE00",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     }, {
       "input" : "<sibling child key>",
@@ -3232,6 +3672,94 @@
         "yaml" : "refused"
       }
     }, {
+      "input" : "\u001C",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001D",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001E",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001F",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u00A0",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u2007",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u202F",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uFEFF",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u00E9",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "e\u0301",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uD83D\uDE00",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
       "input" : "<sibling child key>",
       "value" : "slotelementchild",
       "expected" : "refused",
@@ -3532,6 +4060,94 @@
         "validator" : "refused",
         "json" : "refused",
         "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001C",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001D",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001E",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u001F",
+      "expected" : "refused",
+      "java" : {
+        "validator" : "refused",
+        "json" : "refused",
+        "yaml" : "refused"
+      }
+    }, {
+      "input" : "\u00A0",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u2007",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u202F",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uFEFF",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\u00E9",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "e\u0301",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
+      }
+    }, {
+      "input" : "\uD83D\uDE00",
+      "expected" : "accepted",
+      "java" : {
+        "validator" : "accepted",
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     }, {
       "input" : "<sibling child key>",

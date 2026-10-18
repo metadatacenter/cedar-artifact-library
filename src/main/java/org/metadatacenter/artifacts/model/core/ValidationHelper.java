@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.ui.Ui;
@@ -86,7 +88,7 @@ public class ValidationHelper
   {
     validateStringFieldNotEmpty(obj, field, fieldKey);
 
-    if (field.isBlank())
+    if (TextPolicy.isBlank(field))
       throw new IllegalStateException("field " + fieldKey + " is blank in " + obj);
   }
 
