@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.metadatacenter.artifacts.model.reader.ArtifactSourceParser;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.cli.*;
 import org.metadatacenter.artifacts.model.core.*;
@@ -114,9 +114,6 @@ public class ArtifactConvertor {
 
   private static ObjectWriter PRETTY_OBJECT_WRITER;
 
-  private static final ObjectMapper JSON_INPUT_MAPPER = new ObjectMapper();
-
-  private static final ObjectMapper YAML_INPUT_MAPPER = new ObjectMapper(new YAMLFactory());
 
   static {
     ObjectMapper mapper = new ObjectMapper();
@@ -225,24 +222,11 @@ public class ArtifactConvertor {
   }
 
   private static ObjectNode readJsonNode(String artifactSource) throws IOException {
-    JsonNode artifactJsonNode = JSON_INPUT_MAPPER.readTree(artifactSource);
-
-    if (!artifactJsonNode.isObject())
-      throw new ConvertorException("Expecting JSON object");
-
-    return (ObjectNode) artifactJsonNode;
+    return ArtifactSourceParser.json(artifactSource);
   }
 
   private static LinkedHashMap<String, Object> readYamlNode(String artifactSource) throws IOException {
-    Object artifactYamlNode = YAML_INPUT_MAPPER.readValue(artifactSource, Object.class);
-
-    if (!(artifactYamlNode instanceof LinkedHashMap<?, ?>))
-      throw new ConvertorException("Expecting YAML mapping");
-
-    @SuppressWarnings("unchecked") LinkedHashMap<String, Object> yamlNode =
-        (LinkedHashMap<String, Object>) artifactYamlNode;
-
-    return yamlNode;
+    return ArtifactSourceParser.yaml(artifactSource);
   }
 
   private static void writeYaml(Artifact artifact, CommandLine command, boolean compactYaml) {
