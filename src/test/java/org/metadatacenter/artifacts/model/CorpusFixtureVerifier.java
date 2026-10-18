@@ -8,12 +8,21 @@ import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.tools.CustomPrettyPrinter;
 import org.metadatacenter.artifacts.model.tools.YamlSerializer;
+import org.metadatacenter.model.validation.CedarValidator;
+import org.metadatacenter.model.validation.ValidationPolicy;
+import org.metadatacenter.model.validation.report.ValidationReport;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.HexFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Checks that the Java-generated fixtures committed to the shared corpus are what this library writes
@@ -40,10 +49,11 @@ import java.util.List;
  *       -Dexec.args=/path/to/cedar-test-artifacts
  * }</pre>
  *
- * Exits non-zero when a fixture is stale, or when this library cannot read a corpus artifact, so
- * continuous integration can stand on it. An artifact the reader refuses has fixtures nobody compares:
- * they record output this library no longer produces from an input it no longer accepts, and the
- * TypeScript library's comparison against them would go on passing. Pass {@code --write} before the
+ * Exits non-zero when a fixture is stale or an artifact is unexpectedly unreadable. Historic invalid
+ * definitions are recorded in {@code /concordance/corpus-expected-rejections.json}: their exact source
+ * bytes, reader failure and blocking validation finding must all match. They must remain rejected;
+ * their old renderings are retained as historical evidence, not compared as current output. A changed
+ * or missing source, changed rejection, or unexpected acceptance fails the check. Pass {@code --write} before the
  * path to rewrite the stale fixtures instead of reporting them, which keeps a regeneration and the
  * check that judges it to the same rendering call.
  */
@@ -52,6 +62,34 @@ public final class CorpusFixtureVerifier
   // The same writer the ArtifactConvertor uses, since that is what wrote the JSON fixtures. Jackson's
   // own pretty printer lays out arrays differently, which made every JSON fixture look stale.
   private static final ObjectWriter PRETTY_OBJECT_WRITER = new ObjectMapper().writer(new CustomPrettyPrinter());
+
+  record ExpectedRejection(String sha256, String code, String path, String exceptionClass,
+                           String exceptionMessage, String reason) {}
+
+  record VerificationResult(int checked, List<String> stale, List<String> expectedRejections,
+                            List<String> problems) {
+    boolean successful(boolean write) { return problems.isEmpty() && (write || stale.isEmpty()); }
+  }
+
+  static Map<String, ExpectedRejection> expectedRejections() throws IOException
+  {
+    var result = new LinkedHashMap<String, ExpectedRejection>();
+    try (var input = CorpusFixtureVerifier.class.getResourceAsStream("/concordance/corpus-expected-rejections.json")) {
+      if (input == null) throw new IOException("Missing expected-rejection metadata");
+      for (var row : new ObjectMapper().readTree(input).path("cases")) {
+        String source = row.path("source").asText();
+        var expectation = new ExpectedRejection(row.path("sha256").asText(), row.path("code").asText(),
+          row.path("path").asText(), row.path("exceptionClass").asText(), row.path("exceptionMessage").asText(),
+          row.path("reason").asText());
+        if (source.isBlank() || !expectation.sha256().matches("[a-f0-9]{64}") || expectation.code().isBlank()
+          || expectation.path().isBlank() || expectation.exceptionClass().isBlank()
+          || expectation.exceptionMessage().isBlank() || expectation.reason().isBlank()
+          || result.putIfAbsent(source, expectation) != null)
+          throw new IOException("Invalid expected-rejection metadata for " + source);
+      }
+    }
+    return result;
+  }
 
   /** The artifact kinds the corpus holds, by directory, with the reader each one needs. */
   private enum Kind
@@ -78,14 +116,41 @@ public final class CorpusFixtureVerifier
       System.exit(2);
     }
     boolean write = List.of(args).contains("--write");
-    Path artifacts = Path.of(args[args.length - 1]).resolve("artifacts");
+    Path corpus = Path.of(args[args.length - 1]);
+    Path artifacts = corpus.resolve("artifacts");
     if (!Files.isDirectory(artifacts)) {
       System.err.println("Not a corpus: " + artifacts.toAbsolutePath());
       System.exit(2);
     }
 
-    List<String> stale = new ArrayList<>();
-    List<String> unreadable = new ArrayList<>();
+    var result = verify(corpus, write, expectedRejections());
+    System.out.printf("corpus fixtures checked: %d   %s: %d   verified expected rejections: %d   problems: %d%n",
+      result.checked(), write ? "rewritten" : "stale", result.stale().size(), result.expectedRejections().size(),
+      result.problems().size());
+    if (!result.expectedRejections().isEmpty()) {
+      System.out.println("\nThese pinned historic definitions remain invalid; their old fixtures are retained:");
+      result.expectedRejections().forEach(artifact -> System.out.println("  " + artifact));
+    }
+    if (!result.problems().isEmpty()) {
+      System.out.println("\nUnexpected corpus acceptance or rejection:");
+      result.problems().forEach(problem -> System.out.println("  " + problem));
+    }
+    if (!result.stale().isEmpty()) {
+      System.out.println(write ? "\nThese fixtures now hold what this library writes:"
+        : "\nThese committed fixtures are not what this library writes now:");
+      result.stale().forEach(fixture -> System.out.println("  " + fixture));
+      System.out.println("\nRegenerate current fixtures with --write and mirror them into the TypeScript corpus.\n"
+        + "Expected-rejection fixtures are historical and are never rewritten by this command.");
+    }
+    if (!result.successful(write)) System.exit(1);
+  }
+
+  static VerificationResult verify(Path corpus, boolean write, Map<String, ExpectedRejection> expectations)
+    throws IOException
+  {
+    Path artifacts = corpus.resolve("artifacts");
+    List<String> stale = new ArrayList<>(), rejected = new ArrayList<>(), problems = new ArrayList<>();
+    var missing = new HashSet<>(expectations.keySet());
     int checked = 0;
 
     for (Kind kind : Kind.values()) {
@@ -99,11 +164,29 @@ public final class CorpusFixtureVerifier
           if (!Files.isRegularFile(source))
             continue;
 
+          String relative = artifacts.relativize(source).toString().replace('\\', '/');
+          var expected = expectations.get(relative);
+          missing.remove(relative);
+          byte[] bytes = Files.readAllBytes(source);
+          if (expected != null && !expected.sha256().equals(sha256(bytes))) {
+            problems.add(relative + ": expected-invalid source bytes changed; review its rejection metadata");
+            continue;
+          }
+
           Artifact artifact;
           try {
-            artifact = read(kind, Files.readString(source));
+            artifact = read(kind, new String(bytes, java.nio.charset.StandardCharsets.UTF_8));
           } catch (Exception e) {
-            unreadable.add(artifacts.relativize(source) + ": " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            if (expected != null && expected.exceptionClass().equals(e.getClass().getName())
+              && expected.exceptionMessage().equals(e.getMessage())
+              && hasExpectedFinding(kind, bytes, expected))
+              rejected.add(relative + ": " + expected.code() + " at " + expected.path() + " — " + expected.reason());
+            else problems.add(relative + ": " + e.getClass().getSimpleName() + ": " + e.getMessage()
+              + (expected == null ? " (unlisted rejection)" : " (rejection differs from pinned expectation)"));
+            continue;
+          }
+          if (expected != null) {
+            problems.add(relative + ": expected-invalid definition was accepted");
             continue;
           }
 
@@ -117,29 +200,33 @@ public final class CorpusFixtureVerifier
       }
     }
 
-    System.out.printf("corpus fixtures checked: %d   %s: %d   artifacts this library cannot read: %d%n",
-      checked, write ? "rewritten" : "stale", stale.size(), unreadable.size());
-    if (!unreadable.isEmpty()) {
-      System.out.println("\nThis library refuses these corpus artifacts, so their fixtures were not compared:");
-      unreadable.forEach(artifact -> System.out.println("  " + artifact));
-      System.out.println("\nEither the reader refuses something it should read, or the corpus holds an artifact\n"
-        + "the model no longer admits, whose fixtures the TypeScript library still compares against.");
+    missing.stream().sorted().forEach(source -> problems.add(source + ": expected-invalid source is missing"));
+    return new VerificationResult(checked, stale, rejected, problems);
+  }
+
+  private static boolean hasExpectedFinding(Kind kind, byte[] bytes, ExpectedRejection expected) throws IOException
+  {
+    var validator = new CedarValidator();
+    var source = new ObjectMapper().readTree(bytes);
+    ValidationReport report = switch (kind) {
+      case FIELDS -> validator.validateTemplateField(source);
+      case ELEMENTS -> validator.validateTemplateElement(source);
+      case TEMPLATES -> validator.validateTemplate(source);
+      case INSTANCES -> throw new IllegalArgumentException("Instance rejection needs its template; not supported here");
+    };
+    var blocking = report.getFindings().stream()
+      .filter(finding -> ValidationPolicy.blocksSave(finding, ValidationPolicy.Context.TEMPLATE)).toList();
+    return !report.canSave() && blocking.size() == 1 && blocking.get(0).code().equals(expected.code())
+      && blocking.get(0).path().equals(expected.path());
+  }
+
+  static String sha256(byte[] bytes)
+  {
+    try {
+      return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("SHA-256 is required by Java", e);
     }
-    if (!stale.isEmpty()) {
-      System.out.println(write ? "\nThese fixtures now hold what this library writes:"
-        : "\nThese committed fixtures are not what this library writes now:");
-      stale.forEach(fixture -> System.out.println("  " + fixture));
-      if (write) {
-        System.out.println("\nMirror them into the copy the TypeScript library carries, and refresh that library's\n"
-          + "own fixtures, so the two are compared at the same revision of each writer.");
-      } else {
-        System.out.println("\nRegenerate them with --write, here and in the copy the TypeScript library carries,\n"
-          + "or the comparison between the two libraries measures output this one no longer produces.");
-        System.exit(1);
-      }
-    }
-    if (!unreadable.isEmpty())
-      System.exit(1);
   }
 
   /**

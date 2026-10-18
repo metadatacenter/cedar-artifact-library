@@ -1,0 +1,31 @@
+{
+  "cases": [
+    {
+      "source": "fields/001/field-001.json",
+      "sha256": "3ab6865e802a2fbbc29f0bd092b51d0dec7a86f903b2507f4354f5a80b312bc1",
+      "code": "regex",
+      "path": "/_valueConstraints/defaultValue",
+      "exceptionClass": "java.lang.IllegalStateException",
+      "exceptionMessage": "Does not match regex.",
+      "reason": "The historical default 'default value' does not match the field's regex 'regex'."
+    },
+    {
+      "source": "templates/008/template-008.json",
+      "sha256": "a840275d1b355729310f77284c7776334e201a3a25586d60310e9f5c2ec5e625",
+      "code": "regex",
+      "path": "/properties/Text Field 1/_valueConstraints/defaultValue",
+      "exceptionClass": "java.lang.IllegalStateException",
+      "exceptionMessage": "Does not match ^[A-Z][^A-Z]*$.",
+      "reason": "The historical default 'Default Value' has a second capital letter forbidden by its regex."
+    },
+    {
+      "source": "templates/020/template-020.json",
+      "sha256": "70fb59c414661a3c8a613499aa7e8116e2ebbcbc36fe0392dbcef8a762317d95",
+      "code": "choiceMembership",
+      "path": "/properties/MultiSelect/items/_valueConstraints/defaultValue",
+      "exceptionClass": "java.lang.IllegalStateException",
+      "exceptionMessage": "Not one of the permitted choices.",
+      "reason": "The historical default 'Option 11' is absent from the permitted choices Option 1 through Option 4."
+    }
+  ]
+}
