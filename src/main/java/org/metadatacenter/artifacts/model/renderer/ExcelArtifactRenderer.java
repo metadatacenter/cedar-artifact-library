@@ -44,6 +44,7 @@ import org.metadatacenter.artifacts.util.TerminologyServerClient;
 import org.metadatacenter.artifacts.util.TerminologyValue;
 import org.metadatacenter.model.ModelNodeNames;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -154,7 +155,16 @@ public class ExcelArtifactRenderer {
         NumericDefaultValue numericDefaultValue = value.asNumericDefaultValue();
         Number n = numericDefaultValue.value();
 
-        dataCell.setCellValue(n.doubleValue());
+        // Excel numeric cells have at most 15 significant decimal digits. Preserve
+        // a more precise default as text instead of silently rounding it on export.
+        BigDecimal exact = new BigDecimal(n.toString());
+        double approximate = n.doubleValue();
+        if (Double.isFinite(approximate) && exact.stripTrailingZeros().precision() <= 15
+            && BigDecimal.valueOf(approximate).compareTo(exact) == 0) {
+          dataCell.setCellValue(approximate);
+        } else {
+          dataCell.setCellValue(n.toString());
+        }
       } else if (value.isControlledTermDefaultValue()) {
         ControlledTermDefaultValue controlledTermDefaultValue = value.asControlledTermDefaultValue();
         String label = controlledTermDefaultValue.value().getRight();

@@ -71,6 +71,8 @@ public final class ArtifactSourceParser {
           for (var pair : map.getValue()) {
             if (!(pair.getKeyNode() instanceof ScalarNode key))
               throw new IllegalArgumentException("Artifact mapping keys must be scalar strings");
+            if (!Set.of(Tag.STR, Tag.NULL, Tag.BOOL, Tag.INT, Tag.FLOAT).contains(key.getTag()))
+              throw new IllegalArgumentException("Unsupported artifact YAML key tag: " + key.getTag());
             String name = key.getValue();
             if (result.containsKey(name)) throw new IllegalArgumentException("Duplicate mapping key: " + name);
             result.put(name, read(pair.getValueNode()));

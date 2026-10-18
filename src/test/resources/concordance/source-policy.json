@@ -150,6 +150,24 @@
       "format": "yaml",
       "source": "\"a\\u00a0\": \"value\\ufeff\"\n",
       "expected": "{\"a\\u00a0\":\"value\\ufeff\"}"
+    },
+    {
+      "id": "yaml-key-tag",
+      "format": "yaml",
+      "source": "!unknown key: value\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-core-explicit-1.1",
+      "format": "yaml",
+      "source": "%YAML 1.1\n---\na: yes\nb: 012\n",
+      "expected": "{\"a\":\"yes\",\"b\":12}"
+    },
+    {
+      "id": "yaml-core-explicit-1.2",
+      "format": "yaml",
+      "source": "%YAML 1.2\n---\na: yes\nb: 012\n",
+      "expected": "{\"a\":\"yes\",\"b\":12}"
     }
   ]
 }
