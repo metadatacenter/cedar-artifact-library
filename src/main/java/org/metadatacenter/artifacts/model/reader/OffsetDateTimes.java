@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
 import java.time.OffsetDateTime;
+import org.metadatacenter.model.validation.TimestampPolicy;
 
 /**
  * Offset-datetime parsing shared by the JSON and YAML readers, so both accept exactly the same set
@@ -18,6 +19,6 @@ final class OffsetDateTimes
    */
   static OffsetDateTime parse(String value)
   {
-    return OffsetDateTime.parse(value.replaceAll("([+-]\\d{2})(\\d{2})$", "$1:$2"));
+    return TimestampPolicy.parse(value);
   }
 }

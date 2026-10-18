@@ -12,7 +12,7 @@ import org.metadatacenter.model.ModelNodeNames;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
+import org.metadatacenter.model.validation.TimestampPolicy;
 import java.util.*;
 
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
@@ -30,7 +30,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         + "\" is reserved for CEDAR YAML metadata.");
   }
   private final boolean isCompact;
-  private final DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
   private final TerminologyServerClient terminologyServerClient;
   private final Version modelVersion = Version.fromString(ModelNodeNames.MODEL_VERSION);
 
@@ -1501,13 +1500,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
   private String renderOffsetDateTime(OffsetDateTime offsetDateTime)
   {
-    return offsetDateTime.format(datetimeFormatter);
+    return TimestampPolicy.format(offsetDateTime);
   }
 
   /**
    * Decide how to emit a numeric schema default in YAML output.
    *
-   * <p>Returns the parsed {@link Number} (Long or Double) when the canonical string
+   * <p>Returns the parsed {@link Number} (Long or BigDecimal) when the canonical string
    * representation is round-trip-safe under SnakeYAML's auto-typing — i.e. a bare
    * integer or a plain decimal with no leading zeros, no exponential notation, no
    * trailing-dot weirdness. The YAML serializer then emits a bare number, which is
@@ -1532,7 +1531,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
     // Plain decimal: digits, dot, digits; no leading zeros on the integer part.
     if (canonical.matches("-?(0|[1-9]\\d*)\\.\\d+")) {
-      try { return Double.parseDouble(canonical); }
+      try { return new java.math.BigDecimal(canonical); }
       catch (NumberFormatException e) { /* fall through */ }
     }
     // Anything else stays String-typed and the YAML serializer will quote it.

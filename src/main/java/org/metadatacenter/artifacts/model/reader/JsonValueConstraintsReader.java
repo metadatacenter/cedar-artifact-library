@@ -9,6 +9,7 @@ import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
+import org.metadatacenter.model.validation.NumericPolicy;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
@@ -192,26 +193,16 @@ final class JsonValueConstraintsReader {
     }
   }
 
-  // Parse the string-encoded numeric default emitted by the renderer. We try
-  // increasingly permissive numeric types so that integer-shaped values stay integers
-  // (Long when in range) and decimals stay decimals (Double). Anything unparseable is
-  // an authoring error and surfaces as a parse exception.
   private static Number parseNumericDefault(String textValue, String path, String fieldKey)
   {
     try {
-      if (textValue.indexOf('.') < 0 && textValue.indexOf('e') < 0 && textValue.indexOf('E') < 0) {
-        try {
-          return Long.parseLong(textValue);
-        } catch (NumberFormatException ignored) {
-          // Fall through to double parsing for out-of-range integers.
-        }
-      }
-      return Double.parseDouble(textValue);
+      return NumericPolicy.number(textValue);
     } catch (NumberFormatException e) {
       throw new ArtifactParseException(
           "numeric default value '" + textValue + "' is not a valid number", fieldKey, path);
     }
   }
+
 
 
   static List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode sourceNode, String path,
