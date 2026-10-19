@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -7,6 +9,7 @@ import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
+import org.metadatacenter.model.validation.NumericPolicy;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
@@ -190,26 +193,16 @@ final class JsonValueConstraintsReader {
     }
   }
 
-  // Parse the string-encoded numeric default emitted by the renderer. We try
-  // increasingly permissive numeric types so that integer-shaped values stay integers
-  // (Long when in range) and decimals stay decimals (Double). Anything unparseable is
-  // an authoring error and surfaces as a parse exception.
   private static Number parseNumericDefault(String textValue, String path, String fieldKey)
   {
     try {
-      if (textValue.indexOf('.') < 0 && textValue.indexOf('e') < 0 && textValue.indexOf('E') < 0) {
-        try {
-          return Long.parseLong(textValue);
-        } catch (NumberFormatException ignored) {
-          // Fall through to double parsing for out-of-range integers.
-        }
-      }
-      return Double.parseDouble(textValue);
+      return NumericPolicy.number(textValue);
     } catch (NumberFormatException e) {
       throw new ArtifactParseException(
           "numeric default value '" + textValue + "' is not a valid number", fieldKey, path);
     }
   }
+
 
 
   static List<OntologyValueConstraint> readOntologyValueConstraints(ObjectNode sourceNode, String path,
@@ -462,7 +455,9 @@ final class JsonValueConstraintsReader {
   }
 
   /** Reads the version triple. Absent, or the explicit string {@code "latest"}, means latest (empty);
-   *  a JSON object is read as a pinned {@link VersionSpec} (its {@code id} required). */
+   *  a JSON object is read as a pinned {@link VersionSpec}. Its {@code id} must be a non-empty string,
+   *  as the YAML reader and the meta-schema require, and must not be blank, as the YAML reader and
+   *  {@link VersionSpec} require. */
   private static Optional<VersionSpec> readVersionSpec(ObjectNode sourceNode, String path) {
     JsonNode versionNode = sourceNode.get(VALUE_CONSTRAINTS_VERSION);
     if (versionNode == null || versionNode.isNull() || !versionNode.isObject()) {
@@ -471,6 +466,10 @@ final class JsonValueConstraintsReader {
     ObjectNode version = (ObjectNode) versionNode;
     String versionPath = path + "/" + VALUE_CONSTRAINTS_VERSION;
     String id = readRequiredString(version, versionPath, VALUE_CONSTRAINTS_VERSION_ID);
+    if (id.isEmpty())
+      throw new ArtifactParseException("Expecting non-empty string value", VALUE_CONSTRAINTS_VERSION_ID, versionPath);
+    if (TextPolicy.isBlank(id))
+      throw new ArtifactParseException("A version id must not be blank", VALUE_CONSTRAINTS_VERSION_ID, versionPath);
     Optional<String> effectiveDate = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_EFFECTIVE_DATE);
     Optional<String> declaredVersion = readString(version, versionPath, VALUE_CONSTRAINTS_VERSION_DECLARED_VERSION);
     return Optional.of(new VersionSpec(id, effectiveDate, declaredVersion));

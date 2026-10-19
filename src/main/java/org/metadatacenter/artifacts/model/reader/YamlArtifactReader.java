@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_INSTANCE_ARTIFACT_KEYWORDS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_INSTANCE_ARTIFACT_KEYWORDS;
@@ -19,6 +21,7 @@ import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
+import org.metadatacenter.model.validation.NumericPolicy;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.TextDefaultValue;
@@ -657,7 +660,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       for (Map.Entry<String, Object> fieldEntry : groupNode.entrySet()) {
         String fieldName = fieldEntry.getKey();
         Object fieldRaw = fieldEntry.getValue();
-        if (fieldName.isBlank())
+        if (TextPolicy.isBlank(fieldName))
           throw new ArtifactParseException("Blank attribute-value field name", key, path);
         if (!(fieldRaw instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map value for attribute-value field " + fieldName, key, path);
@@ -1512,7 +1515,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    */
   private static void rejectEmptyUri(String rawValue, String fieldKey, String path)
   {
-    if (rawValue.isBlank())
+    if (TextPolicy.isBlank(rawValue))
       throw new ArtifactParseException(
         "An empty string is not a URI; write null or leave the key out where there is no value",
         fieldKey, path);
@@ -1628,7 +1631,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   /** Reads the version triple: absent or a plain string ({@code latest}) ⇒ latest (empty); a map ⇒ a
-   *  pinned {@link VersionSpec} (its {@code id} required). Mirrors the JSON reader. */
+   *  pinned {@link VersionSpec} (its {@code id} required, and neither empty nor blank). Mirrors the JSON
+   *  reader. */
   private Optional<VersionSpec> readVersion(LinkedHashMap<String, Object> entry, String path)
   {
     Object v = entry.get(VERSION);
@@ -1639,6 +1643,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     LinkedHashMap<String, Object> versionMap = (LinkedHashMap<String, Object>) v;
     String versionPath = path + "/" + VERSION;
     String id = readRequiredString(versionMap, versionPath, VERSION_ID, false);
+    if (TextPolicy.isBlank(id))
+      throw new ArtifactParseException("A version id must not be blank", VERSION_ID, versionPath);
     Optional<String> effectiveDate = readString(versionMap, versionPath, VERSION_EFFECTIVE_DATE);
     Optional<String> declaredVersion = readString(versionMap, versionPath, VERSION_DECLARED_VERSION);
     return Optional.of(new VersionSpec(id, effectiveDate, declaredVersion));
@@ -1710,27 +1716,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private Optional<NumericDefaultValue> readNumericDefaultValue(LinkedHashMap<String, Object> sourceNode, String path)
   {
-    // The canonical YAML form for a numeric default is a quoted string — see the
-    // renderer comment for why. Accept either a string (canonical) or a number
-    // (legacy YAML files where the value was written bare). Parse the string into
-    // a Long if it has no fractional part, Double otherwise; the model compares
-    // NumericDefaultValue by canonical string form so the choice of Number subtype
-    // doesn't affect equality.
     Object raw = sourceNode.get(DEFAULT);
     if (raw == null) return Optional.empty();
     if (raw instanceof Number) return Optional.of(new NumericDefaultValue((Number) raw));
     if (raw instanceof String) {
-      String text = ((String) raw).trim();
+      String text = (String) raw;
       if (text.isEmpty()) return Optional.empty();
-      // A ternary returning Double-or-Long would trigger binary numeric promotion
-      // (unbox to primitives, promote to double, re-box) — silently widening every
-      // integer to Double. The if/else keeps the Number subtype distinct.
       Number parsed;
       try {
-        if (text.contains(".") || text.contains("e") || text.contains("E"))
-          parsed = Double.valueOf(text);
-        else
-          parsed = Long.valueOf(text);
+        parsed = NumericPolicy.number(text);
       } catch (NumberFormatException e) {
         throw new ArtifactParseException(
           "default for numeric field is not a valid number: '" + text + "'", DEFAULT, path);

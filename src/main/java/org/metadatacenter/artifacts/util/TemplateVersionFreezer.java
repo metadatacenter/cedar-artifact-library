@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.util;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
@@ -93,7 +95,7 @@ public final class TemplateVersionFreezer {
 
   private static Optional<String> textValue(ObjectNode entry, String field) {
     JsonNode node = entry.get(field);
-    return node != null && node.isTextual() && !node.asText().isBlank()
+    return node != null && node.isTextual() && !TextPolicy.isBlank(node.asText())
         ? Optional.of(node.asText()) : Optional.empty();
   }
 

@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import org.metadatacenter.model.validation.TextPolicy;
+
 import org.metadatacenter.artifacts.model.core.ui.Ui;
 
 import java.net.URI;
@@ -120,7 +122,7 @@ final class ParentSchemaArtifactInvariants
 
   static void requireVisibleChildName(Object self, String key)
   {
-    if (key.isBlank())
+    if (TextPolicy.isBlank(key))
       throw new IllegalStateException("child name \"" + key + "\" in " + self.getClass().getSimpleName()
         + " must have a visible character");
   }

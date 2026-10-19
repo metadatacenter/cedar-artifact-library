@@ -141,5 +141,12 @@ record NumericValueConstraintsRecord(XsdNumericDatatype numberType,
     validateOptionalFieldNotNull(this, maxValue, VALUE_CONSTRAINTS_MAX_NUMBER_VALUE);
     validateOptionalFieldNotNull(this, decimalPlace, VALUE_CONSTRAINTS_DECIMAL_PLACE);
     validateOptionalFieldNotNull(this, defaultValue, VALUE_CONSTRAINTS_DEFAULT_VALUE);
+    var field = ConstraintConsistency.field("numeric");
+    var constraints = field.withObject("/_valueConstraints");
+    constraints.put("numberType", numberType.getText());
+    ConstraintConsistency.number(constraints, "minValue", minValue);
+    ConstraintConsistency.number(constraints, "maxValue", maxValue);
+    decimalPlace.ifPresent(value -> constraints.put("decimalPlace", value));
+    ConstraintConsistency.validate(field, defaultValue.map(value -> value.value().toString()));
   }
 }

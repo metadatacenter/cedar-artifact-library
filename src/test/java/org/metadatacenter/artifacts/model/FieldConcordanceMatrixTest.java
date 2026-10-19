@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.*;
 import org.metadatacenter.artifacts.model.core.fields.constraints.*;
+import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
@@ -20,6 +22,8 @@ import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +34,23 @@ public class FieldConcordanceMatrixTest {
   private static final Path FIXTURE = Path.of("src/test/resources/concordance/field-matrix.json");
   private static final List<String> FEATURES = List.of("baseline", "identifier", "language", "annotations", "labels",
     "version", "published", "derivedFrom", "previousVersion", "provenance", "allMetadata", "schemaText");
+
+  /**
+   * The keys that say where a controlled-term constraint's terms come from: `iri`, the source's
+   * canonical identity; `sourceSystem`, the system that serves it; and `version`, the snapshot it is
+   * pinned to, which is absent or the string "latest" for the newest one. Each kind of constraint has
+   * a cell carrying all three with the full version. Each library reads and writes these keys through
+   * one routine that every kind shares, so the other forms a version can take are varied on the
+   * ontology constraint alone. Those cells carry `iri` and `sourceSystem` too.
+   */
+  private static final List<String> SOURCE_KINDS = List.of("ontology", "class", "branch", "valueSet");
+  private static final List<String> VERSION_FORMS = List.of("absent", "id", "id-effectiveDate", "id-declaredVersion");
+  private static final URI SOURCE_IRI = URI.create("http://purl.obolibrary.org/obo/doid.owl");
+  private static final URI VALUE_SET_SOURCE_IRI = URI.create("https://example.org/vocabularies/VS");
+  private static final String SOURCE_SYSTEM = "bioportal";
+  private static final String VERSION_ID = "e1dc041e5f2a";
+  private static final String VERSION_EFFECTIVE_DATE = "2026-07-01";
+  private static final String VERSION_DECLARED_VERSION = "2026-06-30";
 
   private static LinkedHashMap<String, Supplier<FieldSchemaArtifactBuilder<?>>> types() {
     var types = new LinkedHashMap<String, Supplier<FieldSchemaArtifactBuilder<?>>>();
@@ -77,8 +98,11 @@ public class FieldConcordanceMatrixTest {
     if (b instanceof TemporalField.TemporalFieldBuilder) settings.add("timePrecision");
     if (b instanceof RadioField.RadioFieldBuilder || b instanceof CheckboxField.CheckboxFieldBuilder
         || b instanceof ListField.ListFieldBuilder) settings.add("options");
-    if (b instanceof ControlledTermField.ControlledTermFieldBuilder)
+    if (b instanceof ControlledTermField.ControlledTermFieldBuilder) {
       settings.addAll(List.of("ontology", "class", "branch", "valueSet", "actions"));
+      for (String kind : SOURCE_KINDS) settings.add(kind + "-version-full");
+      for (String form : VERSION_FORMS) settings.add("ontology-version-" + form);
+    }
     if (isDynamic(b)) {
       // An attribute-value field carries no value constraints, and its builder takes the two flags
       // that would be kept there and does nothing with them.
@@ -191,7 +215,53 @@ public class FieldConcordanceMatrixTest {
       else if (b instanceof YouTubeField.YouTubeFieldBuilder y) y.withWidth(width).withHeight(height);
       else throw new IllegalArgumentException("Unsupported dimensions");
     }
-    return b.build();
+    FieldSchemaArtifact field = b.build();
+    return feature.contains("-version-") ? sourced((ControlledTermField) field, feature) : field;
+  }
+
+  /** The constraint kind a source-explicit feature names, and the form its version takes. */
+  private static String sourceKind(String feature) { return feature.substring(0, feature.indexOf("-version-")); }
+  private static String versionForm(String feature) { return feature.substring(feature.indexOf("-version-") + 9); }
+
+  private static Optional<VersionSpec> version(String form) {
+    return switch (form) {
+      case "absent" -> Optional.empty();
+      case "id" -> Optional.of(new VersionSpec(VERSION_ID, Optional.empty(), Optional.empty()));
+      case "id-effectiveDate" -> Optional.of(new VersionSpec(VERSION_ID, Optional.of(VERSION_EFFECTIVE_DATE), Optional.empty()));
+      case "id-declaredVersion" -> Optional.of(new VersionSpec(VERSION_ID, Optional.empty(), Optional.of(VERSION_DECLARED_VERSION)));
+      case "full" -> Optional.of(new VersionSpec(VERSION_ID, Optional.of(VERSION_EFFECTIVE_DATE), Optional.of(VERSION_DECLARED_VERSION)));
+      default -> throw new IllegalArgumentException(form);
+    };
+  }
+
+  /**
+   * The field with one constraint of the feature's kind carrying the source-explicit keys. The field
+   * builder takes a constraint built in advance only for an ontology, so the field is assembled with
+   * its constraints in place of the empty ones the builder gave it.
+   */
+  private static ControlledTermField sourced(ControlledTermField f, String feature) {
+    Optional<URI> iri = Optional.of(sourceKind(feature).equals("valueSet") ? VALUE_SET_SOURCE_IRI : SOURCE_IRI);
+    Optional<String> sourceSystem = Optional.of(SOURCE_SYSTEM);
+    Optional<VersionSpec> version = version(versionForm(feature));
+    var constraints = ControlledTermValueConstraints.builder();
+    switch (sourceKind(feature)) {
+      case "ontology" -> constraints.withOntologyValueConstraint(new OntologyValueConstraint(
+        URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID", "Disease Ontology", Optional.empty(), iri,
+        sourceSystem, version));
+      case "class" -> constraints.withClassValueConstraint(new ClassValueConstraint(
+        URI.create("http://purl.obolibrary.org/obo/DOID_530"), "DOID", "eyelid disease", "eyelid disease",
+        ValueType.ONTOLOGY_CLASS, iri, sourceSystem, version));
+      case "branch" -> constraints.withBranchValueConstraint(new BranchValueConstraint(
+        URI.create("http://purl.obolibrary.org/obo/DOID_4"), "DOID", "DOID", "disease", 3, iri, sourceSystem, version));
+      case "valueSet" -> constraints.withValueSetValueConstraint(new ValueSetValueConstraint(
+        URI.create("https://example.org/value-sets/colours"), "VS", "Colours", Optional.empty(), iri, sourceSystem, version));
+      default -> throw new IllegalArgumentException(feature);
+    }
+    return ControlledTermField.create(f.internalName(), f.internalDescription(), f.jsonLdContext(), f.jsonLdTypes(),
+      f.jsonLdId(), f.name(), f.description(), f.identifier(), f.version(), f.status(), f.previousVersion(),
+      f.derivedFrom(), f.isMultiple(), f.minItems(), f.maxItems(), f.propertyUri(), f.createdBy(), f.modifiedBy(),
+      f.createdOn(), f.lastUpdatedOn(), f.preferredLabel(), f.alternateLabels(), f.language(), f.fieldUi(),
+      Optional.of(constraints.build()), f.annotations());
   }
 
   private static JsonNode definition(JsonNode json) { return json.has("items") ? json.get("items") : json; }
@@ -302,6 +372,27 @@ public class FieldConcordanceMatrixTest {
       expect(json, "/_valueConstraints/actions/0/termUri", "http://purl.obolibrary.org/obo/DOID_530");
       expect(json, "/_valueConstraints/actions/0/action", "move");
     }
+    if (feature.contains("-version-")) {
+      String kind = sourceKind(feature);
+      String list = "/_valueConstraints/" + Map.of("ontology", "ontologies", "class", "classes", "branch", "branches",
+        "valueSet", "valueSets").get(kind) + "/0";
+      expect(json, list + "/uri", Map.of("ontology", "https://data.bioontology.org/ontologies/DOID",
+        "class", "http://purl.obolibrary.org/obo/DOID_530", "branch", "http://purl.obolibrary.org/obo/DOID_4",
+        "valueSet", "https://example.org/value-sets/colours").get(kind));
+      expect(json, list + "/iri", (kind.equals("valueSet") ? VALUE_SET_SOURCE_IRI : SOURCE_IRI).toString());
+      expect(json, list + "/sourceSystem", SOURCE_SYSTEM);
+      String form = versionForm(feature);
+      if (form.equals("absent")) assertTrue(json.at(list + "/version").isMissingNode(), "version");
+      else {
+        expect(json, list + "/version/id", VERSION_ID);
+        if (form.equals("full") || form.equals("id-effectiveDate"))
+          expect(json, list + "/version/effectiveDate", VERSION_EFFECTIVE_DATE);
+        else assertTrue(json.at(list + "/version/effectiveDate").isMissingNode(), "effectiveDate");
+        if (form.equals("full") || form.equals("id-declaredVersion"))
+          expect(json, list + "/version/declaredVersion", VERSION_DECLARED_VERSION);
+        else assertTrue(json.at(list + "/version/declaredVersion").isMissingNode(), "declaredVersion");
+      }
+    }
     if (feature.equals("required")) expect(json, "/_valueConstraints/requiredValue", "true");
     if (feature.equals("recommended")) expect(json, "/_valueConstraints/recommendedValue", "true");
     if (feature.equals("hidden")) expect(json, "/_ui/hidden", "true");
@@ -380,12 +471,83 @@ public class FieldConcordanceMatrixTest {
       for (String setting : settings(b)) cases.add(renderCase(type, factory, setting));
     });
     ObjectNode fixture = compress(cases);
+    fixture.set("inputs", inputs(cases));
     if (Boolean.getBoolean("updateFieldConcordance")) {
       Files.createDirectories(FIXTURE.getParent());
       Files.writeString(FIXTURE, MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(fixture) + "\n");
     }
     assertTrue(Files.exists(FIXTURE), "Generate with -DupdateFieldConcordance=true");
     assertEquals(MAPPER.readTree(Files.readString(FIXTURE)), normal(fixture), "Java matrix fixtures are stale; regenerate and refresh TS concordance fixtures");
+  }
+
+  private static final ObjectMapper YAML_INPUT = new ObjectMapper(new YAMLFactory());
+  /** The version block of the cell pinned to an `id` alone, in its full YAML. */
+  private static final Pattern PINNED_VERSION = Pattern.compile("(?m)^( *)version:\n\\1  id: \"" + VERSION_ID + "\"$");
+
+  /**
+   * Documents that state a version in a form no writer produces. The meta-schema admits the string
+   * "latest", which both of this library's readers take to mean the newest snapshot, as they take an
+   * absent version, so a reader given it must produce the documents of the cell with no version. It
+   * refuses a version object with no `id`, or with an empty or blank one, and both readers refuse
+   * them too. Each input is the cell pinned to an `id` alone with its version stated otherwise, in its
+   * JSON and in its full YAML, and is recorded, as a case is, against the cell whose documents a
+   * reader must produce from it, or against the pinned cell where every reader must refuse it.
+   */
+  private static ArrayNode inputs(ArrayNode cases) throws Exception {
+    JsonNode pinned = caseOf(cases, "controlledTerm/ontology-version-id");
+    JsonNode absent = caseOf(cases, "controlledTerm/ontology-version-absent");
+    ArrayNode inputs = MAPPER.createArrayNode();
+    inputs.add(input(pinned, absent, "ontology-version-latest", MAPPER.getNodeFactory().textNode("latest"),
+      "$1version: \"latest\""));
+    inputs.add(input(pinned, null, "ontology-version-empty-object", MAPPER.createObjectNode(), "$1version: {}"));
+    inputs.add(input(pinned, null, "ontology-version-empty-id", MAPPER.createObjectNode().put("id", ""),
+      "$1version:\n$1  id: \"\""));
+    inputs.add(input(pinned, null, "ontology-version-blank-id", MAPPER.createObjectNode().put("id", "   "),
+      "$1version:\n$1  id: \"   \""));
+    return inputs;
+  }
+
+  private static JsonNode caseOf(ArrayNode cases, String id) {
+    for (JsonNode c : cases) if (c.path("id").asText().equals(id)) return c;
+    throw new IllegalArgumentException(id);
+  }
+
+  private static ObjectNode input(JsonNode pinned, JsonNode readsAs, String feature, JsonNode version,
+                                  String yamlVersion) throws Exception {
+    String id = "controlledTerm/" + feature;
+    ObjectNode json = pinned.get("json").deepCopy();
+    ((ObjectNode) json.at("/_valueConstraints/ontologies/0")).set("version", version);
+    String pinnedYaml = pinned.get("yaml").asText();
+    Matcher block = PINNED_VERSION.matcher(pinnedYaml);
+    assertTrue(block.find(), id + ": the pinned cell's YAML states its version");
+    assertFalse(block.find(), id + ": the pinned cell's YAML states one version");
+    String yaml = PINNED_VERSION.matcher(pinnedYaml).replaceFirst(yamlVersion);
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Object> yamlMap = YAML_INPUT.readValue(yaml, LinkedHashMap.class);
+    if (readsAs == null) {
+      var fromJson = assertThrows(ArtifactParseException.class, () -> new JsonArtifactReader().readFieldSchemaArtifact(json),
+        id + ": the JSON reader refuses it");
+      assertTrue(fromJson.getMessage().contains("version"), id + ": " + fromJson.getMessage());
+      var fromYaml = assertThrows(ArtifactParseException.class,
+        () -> new YamlArtifactReader(false).readFieldSchemaArtifact(yamlMap), id + ": the YAML reader refuses it");
+      assertTrue(fromYaml.getMessage().contains("version"), id + ": " + fromYaml.getMessage());
+    } else {
+      FieldSchemaArtifact fromJson = new JsonArtifactReader().readFieldSchemaArtifact(json);
+      assertEquals(normal(readsAs.get("json")), normal(JSON.renderFieldSchemaArtifact(fromJson)), id + ": JSON → model → JSON");
+      assertEquals(readsAs.get("yaml").asText(), YamlSerializer.getYAML(fromJson, false, true), id + ": JSON → model → YAML");
+      FieldSchemaArtifact fromYaml = new YamlArtifactReader(false).readFieldSchemaArtifact(yamlMap);
+      assertEquals(normal(readsAs.get("jsonFromYaml")), normal(JSON.renderFieldSchemaArtifact(fromYaml)),
+        id + ": YAML → model → JSON");
+      assertEquals(readsAs.get("yaml").asText(), YamlSerializer.getYAML(fromYaml, false, true), id + ": YAML → model → YAML");
+    }
+    JsonNode against = readsAs != null ? readsAs : pinned;
+    ObjectNode row = MAPPER.createObjectNode().put("id", id).put("type", "controlledTerm").put("feature", feature)
+      .put("against", against.path("id").asText()).put("refused", readsAs == null);
+    row.set("json", changes(against.get("json"), json));
+    row.set("yaml", lineChanges(against.get("yaml").asText(), yaml));
+    assertEquals(json, applyChanges(against.get("json"), row.get("json")), id + ": the fixture rebuilds the input");
+    assertEquals(yaml, applyLineChanges(against.get("yaml").asText(), row.get("yaml")), id + ": the fixture rebuilds the input");
+    return row;
   }
 
   // The fixture records each type's baseline whole, and every other case as what it changes: in its
@@ -396,11 +558,20 @@ public class FieldConcordanceMatrixTest {
   private static final List<String> JSON_DOCUMENTS = List.of("json", "templateJson", "elementJson");
   private static final List<String> YAML_DOCUMENTS = List.of("yaml", "compactYaml", "templateYaml", "templateCompactYaml",
     "elementYaml", "elementCompactYaml");
-  /** A document read back from YAML, and the document of the case it is recorded against. */
-  private static final Map<String, String> READ_BACK = Map.of(
-    "jsonFromYaml", "json", "jsonFromCompactYaml", "json",
-    "templateJsonFromYaml", "templateJson", "templateJsonFromCompactYaml", "templateJson",
-    "elementJsonFromYaml", "elementJson", "elementJsonFromCompactYaml", "elementJson");
+  /**
+   * A document read back from YAML, and the document of the case it is recorded against, in the order
+   * the fixture records them. A {@code Map.of} iterates in an order that differs from one JVM run to
+   * the next, so each regeneration reordered every case's keys.
+   */
+  private static final Map<String, String> READ_BACK = new LinkedHashMap<>();
+  static {
+    READ_BACK.put("elementJsonFromYaml", "elementJson");
+    READ_BACK.put("templateJsonFromYaml", "templateJson");
+    READ_BACK.put("jsonFromCompactYaml", "json");
+    READ_BACK.put("jsonFromYaml", "json");
+    READ_BACK.put("templateJsonFromCompactYaml", "templateJson");
+    READ_BACK.put("elementJsonFromCompactYaml", "elementJson");
+  }
 
   private static ObjectNode compress(ArrayNode cases) {
     ObjectNode bases = MAPPER.createObjectNode();

@@ -1,0 +1,173 @@
+{
+  "contract": "Single artifact object; unique decoded keys; exact finite numbers; YAML 1.2 core scalar resolution with mapping-key spelling preserved, no custom tags or recursive aliases.",
+  "cases": [
+    {
+      "id": "json-exact",
+      "format": "json",
+      "source": "{\"n\":9007199254740993,\"d\":0.10000000000000001}",
+      "expected": "{\"n\":9007199254740993,\"d\":0.10000000000000001}"
+    },
+    {
+      "id": "json-duplicate",
+      "format": "json",
+      "source": "{\"a\":1,\"a\":2}",
+      "expected": null
+    },
+    {
+      "id": "json-escaped-duplicate",
+      "format": "json",
+      "source": "{\"a\":1,\"\\u0061\":2}",
+      "expected": null
+    },
+    {
+      "id": "json-trailing",
+      "format": "json",
+      "source": "{} {}",
+      "expected": null
+    },
+    {
+      "id": "json-nonfinite",
+      "format": "json",
+      "source": "{\"n\":NaN}",
+      "expected": null
+    },
+    {
+      "id": "json-nonobject",
+      "format": "json",
+      "source": "[]",
+      "expected": null
+    },
+    {
+      "id": "yaml-exact",
+      "format": "yaml",
+      "source": "n: 9007199254740993\nd: 0.10000000000000001\n",
+      "expected": "{\"n\":9007199254740993,\"d\":0.10000000000000001}"
+    },
+    {
+      "id": "yaml-core-booleans",
+      "format": "yaml",
+      "source": "a: yes\nb: on\nc: TRUE\nd: false\n",
+      "expected": "{\"a\":\"yes\",\"b\":\"on\",\"c\":true,\"d\":false}"
+    },
+    {
+      "id": "yaml-core-integers",
+      "format": "yaml",
+      "source": "a: 012\nb: 0o12\nc: 0x1f\nd: 1:20\n",
+      "expected": "{\"a\":12,\"b\":10,\"c\":31,\"d\":\"1:20\"}"
+    },
+    {
+      "id": "yaml-null-and-empty",
+      "format": "yaml",
+      "source": "a: null\nb: \"null\"\nc: \"\"\nd:\n",
+      "expected": "{\"a\":null,\"b\":\"null\",\"c\":\"\",\"d\":null}"
+    },
+    {
+      "id": "yaml-date-string",
+      "format": "yaml",
+      "source": "a: 2026-02-30\nb: 2026-01-02T03:04:05.123456789Z\n",
+      "expected": "{\"a\":\"2026-02-30\",\"b\":\"2026-01-02T03:04:05.123456789Z\"}"
+    },
+    {
+      "id": "yaml-key-spelling",
+      "format": "yaml",
+      "source": "012: value\ntrue: another\n",
+      "expected": "{\"012\":\"value\",\"true\":\"another\"}"
+    },
+    {
+      "id": "yaml-alias",
+      "format": "yaml",
+      "source": "a: &item [one, two]\nb: *item\n",
+      "expected": "{\"a\":[\"one\",\"two\"],\"b\":[\"one\",\"two\"]}"
+    },
+    {
+      "id": "yaml-duplicate",
+      "format": "yaml",
+      "source": "a: 1\na: 2\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-escaped-duplicate",
+      "format": "yaml",
+      "source": "a: 1\n\"\\u0061\": 2\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-nan",
+      "format": "yaml",
+      "source": "a: .nan\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-infinity",
+      "format": "yaml",
+      "source": "a: .inf\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-tag",
+      "format": "yaml",
+      "source": "a: !unknown foo\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-explicit-number",
+      "format": "yaml",
+      "source": "a: !!int nope\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-cycle",
+      "format": "yaml",
+      "source": "a: &loop [*loop]\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-multiple-documents",
+      "format": "yaml",
+      "source": "a: 1\n---\na: 2\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-complex-key",
+      "format": "yaml",
+      "source": "? [a, b]\n: value\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-nonobject",
+      "format": "yaml",
+      "source": "[a, b]",
+      "expected": null
+    },
+    {
+      "id": "yaml-empty",
+      "format": "yaml",
+      "source": "",
+      "expected": null
+    },
+    {
+      "id": "yaml-quoted-identity",
+      "format": "yaml",
+      "source": "\"a\\u00a0\": \"value\\ufeff\"\n",
+      "expected": "{\"a\\u00a0\":\"value\\ufeff\"}"
+    },
+    {
+      "id": "yaml-key-tag",
+      "format": "yaml",
+      "source": "!unknown key: value\n",
+      "expected": null
+    },
+    {
+      "id": "yaml-core-explicit-1.1",
+      "format": "yaml",
+      "source": "%YAML 1.1\n---\na: yes\nb: 012\n",
+      "expected": "{\"a\":\"yes\",\"b\":12}"
+    },
+    {
+      "id": "yaml-core-explicit-1.2",
+      "format": "yaml",
+      "source": "%YAML 1.2\n---\na: yes\nb: 012\n",
+      "expected": "{\"a\":\"yes\",\"b\":12}"
+    }
+  ]
+}

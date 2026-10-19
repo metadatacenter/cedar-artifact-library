@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.AttributeValueField;
 import org.metadatacenter.artifacts.model.core.CheckboxField;
@@ -29,6 +30,7 @@ import org.metadatacenter.model.validation.report.CedarValidationReport;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +63,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The model refuses bounds no inflated instance could meet: a maximum below the minimum, and an
  * attribute-value field's minimum above 0, since its attributes need names that no inflater can
  * invent.
+ *
+ * <p>Both writers state the minimum, so what Java writes for a child that states none is what it
+ * writes for one that states 0. A case whose minimum is absent therefore also records what its
+ * author stated, in JSON and in YAML, with no {@code minItems}. No writer produces such a document,
+ * but an author can write one by hand. Each reader must take it as 0, and each writer must write it
+ * back as Java writes the case.
  */
 public class MultiplicityConcordanceMatrixTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -69,6 +77,7 @@ public class MultiplicityConcordanceMatrixTest {
   private static final URI TEMPLATE_ID = URI.create("https://example.org/templates/multiplicity");
   private static final String CHILD = "child";
   private static final String GROUP = "group";
+  private static final ObjectMapper YAML_INPUT = new ObjectMapper(new YAMLFactory());
 
   /** A kind of child: whether it is a list by its own nature, and how to build one. */
   private record Kind(String name, boolean byNature, boolean canBeSingle) {
@@ -131,13 +140,58 @@ public class MultiplicityConcordanceMatrixTest {
     return container.equals("template") ? properties.path(CHILD) : properties.path(GROUP).path("properties").path(CHILD);
   }
 
+  /** The child's entry in a template's YAML. */
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> yamlChild(Map<String, Object> yaml, String container) {
+    Map<String, Object> parent = container.equals("template") ? yaml
+        : ((List<Map<String, Object>>) yaml.get("children")).get(0);
+    return ((List<Map<String, Object>>) parent.get("children")).get(0);
+  }
+
   /** The configuration the YAML gives the child, or an empty map when it gives none. */
   @SuppressWarnings("unchecked")
   private static Map<String, Object> yamlConfiguration(Map<String, Object> yaml, String container) {
-    Map<String, Object> parent = container.equals("template") ? yaml
-        : ((List<Map<String, Object>>) yaml.get("children")).get(0);
-    Map<String, Object> child = ((List<Map<String, Object>>) parent.get("children")).get(0);
-    return (Map<String, Object>) child.getOrDefault("configuration", Map.of());
+    return (Map<String, Object>) yamlChild(yaml, container).getOrDefault("configuration", Map.of());
+  }
+
+  @SuppressWarnings("unchecked")
+  private static LinkedHashMap<String, Object> parseYaml(String yaml) throws Exception {
+    return YAML_INPUT.readValue(yaml, LinkedHashMap.class);
+  }
+
+  /**
+   * A template's YAML with its child's lower bound left out, as a document that states none has it:
+   * the {@code minItems} line goes, and the {@code configuration} line with it when nothing else was
+   * configured. Asserted against the parsed YAML with the same key removed, so the text is exactly
+   * the case's YAML less its stated bound.
+   */
+  @SuppressWarnings("unchecked")
+  private static String withoutMinItems(String yaml, String container, String id) throws Exception {
+    List<String> lines = new ArrayList<>(List.of(yaml.split("\n", -1)));
+    int at = -1;
+    for (int i = 0; i < lines.size(); i++) {
+      if (lines.get(i).trim().startsWith("minItems:")) {
+        assertEquals(-1, at, id + ": the YAML states one lower bound");
+        at = i;
+      }
+    }
+    assertTrue(at > 0, id + ": the YAML states the lower bound");
+    int indent = lines.get(at).indexOf("minItems:");
+    lines.remove(at);
+    String next = at < lines.size() ? lines.get(at) : "";
+    int nextIndent = next.length() - next.stripLeading().length();
+    if (lines.get(at - 1).trim().equals("configuration:") && (next.isBlank() || nextIndent < indent)) {
+      lines.remove(at - 1);
+    }
+    String stated = String.join("\n", lines);
+
+    LinkedHashMap<String, Object> expected = parseYaml(yaml);
+    Map<String, Object> child = yamlChild(expected, container);
+    Map<String, Object> configuration = (Map<String, Object>) child.get("configuration");
+    configuration.remove("minItems");
+    if (configuration.isEmpty()) child.remove("configuration");
+    assertEquals(expected, parseYaml(stated), id + ": the YAML less its lower bound");
+    return stated;
   }
 
   /** The child's slot in an instance. */
@@ -241,15 +295,46 @@ public class MultiplicityConcordanceMatrixTest {
     ObjectNode result = MAPPER.createObjectNode().put("id", id).put("base", baseKey).put("container", container)
         .put("refused", false);
     result.set("bounds", bounds);
+    String yamlText = YamlSerializer.getYAML(template, false, true);
+    // What the author stated when the minimum is absent: the bounds Java writes, less the minimum,
+    // which each reader must take as 0.
+    boolean minAbsent = multiple && min.isEmpty();
+    ObjectNode stated = minAbsent ? ((ObjectNode) bounds).deepCopy() : null;
+    if (minAbsent) {
+      stated.remove("minItems");
+      ObjectNode statedJson = withBounds(bases.get(baseKey), container, stated);
+      assertFalse(schemaAt(statedJson, container).has("minItems"), id + ": the stated JSON has no lower bound");
+      TemplateSchemaArtifact fromStatedJson = new JsonArtifactReader().readTemplateSchemaArtifact(statedJson);
+      assertEquals(templateJson, JSON.renderTemplateSchemaArtifact(fromStatedJson),
+          id + ": JSON stating no minimum → model → JSON");
+      assertEquals(yamlText, YamlSerializer.getYAML(fromStatedJson, false, true),
+          id + ": JSON stating no minimum → model → YAML");
+      ObjectNode inflatedFromStated = JSON.renderTemplateInstanceArtifact(InstanceInflater.inflate(fromStatedJson, sparse));
+      assertEquals(starting, slotAt(inflatedFromStated, container).size(),
+          id + ": the occurrences inflated from a template stating no minimum");
+      assertEquals(CedarValidationReport.IS_VALID,
+          new CedarValidator().validateTemplateInstance(inflatedFromStated, templateJson).getValidationStatus(),
+          id + ": the instance inflated from a template stating no minimum");
+
+      String statedYaml = withoutMinItems(yamlText, container, id);
+      TemplateSchemaArtifact fromStatedYaml = new YamlArtifactReader(false).readTemplateSchemaArtifact(parseYaml(statedYaml));
+      assertEquals(bounds, jsonBounds(schemaAt(JSON.renderTemplateSchemaArtifact(fromStatedYaml), container)),
+          id + ": YAML stating no minimum → model → JSON");
+      assertEquals(yamlText, YamlSerializer.getYAML(fromStatedYaml, false, true),
+          id + ": YAML stating no minimum → model → YAML");
+      result.set("stated", stated);
+      result.put("statedYaml", statedYaml);
+    }
     // What the Template Editor stores for "no upper bound": the same child stating a maximum of 0,
     // which a reader takes in and a writer leaves out.
     if (max.equals(Optional.of(ValidationHelper.UNBOUNDED_MAX_ITEMS))) {
-      ObjectNode stored = ((ObjectNode) bounds).deepCopy().put("maxItems", ValidationHelper.UNBOUNDED_MAX_ITEMS);
+      ObjectNode stored = (minAbsent ? stated : (ObjectNode) bounds).deepCopy()
+          .put("maxItems", ValidationHelper.UNBOUNDED_MAX_ITEMS);
       assertEquals(templateJson, JSON.renderTemplateSchemaArtifact(new JsonArtifactReader().readTemplateSchemaArtifact(
           withBounds(bases.get(baseKey), container, stored))), id + ": a stored maximum of 0 is written as none");
       result.set("storedBounds", stored);
     }
-    result.put("yaml", YamlSerializer.getYAML(template, false, true));
+    result.put("yaml", yamlText);
     if (multiple) result.put("inflatedOccurrences", starting); else result.putNull("inflatedOccurrences");
     return result;
   }

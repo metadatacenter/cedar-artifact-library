@@ -51,11 +51,8 @@ final class JsonNodeReaders {
       throw new ArtifactParseException("Value must be a number", fieldKey, path);
     }
 
-    if (jsonNode.isIntegralNumber()) {
-      return Optional.of(jsonNode.asLong());
-    } else {
-      return Optional.of(jsonNode.asDouble());
-    }
+    // Retain BigInteger/BigDecimal nodes; narrowing to long/double loses their bounds.
+    return Optional.of(jsonNode.numberValue());
   }
 
 

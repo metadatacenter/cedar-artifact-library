@@ -9,7 +9,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer.DATETIME_FORMATTER;
+import org.metadatacenter.model.validation.TimestampPolicy;
 import static org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer.MAPPER;
 import static org.metadatacenter.artifacts.model.renderer.JsonLdContextRenderers.*;
 import static org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactPropertyRenderers.*;
@@ -275,7 +275,7 @@ final class JsonSchemaSpecRenderers {
 
 
   public static String renderOffsetDateTime(OffsetDateTime offsetDateTime) {
-    return offsetDateTime.format(DATETIME_FORMATTER);
+    return TimestampPolicy.format(offsetDateTime);
   }
 
 

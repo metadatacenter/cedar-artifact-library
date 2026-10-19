@@ -74,11 +74,9 @@ public class YamlSerializer {
   private static class CustomDoubleSerializer extends JsonSerializer<Double> {
     @Override
     public void serialize(Double value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-      if (value == value.intValue()) {
-        gen.writeNumber(value.intValue());
-      } else {
-        gen.writeNumber(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
-      }
+      // Comparing a float to intValue promotes the truncated integer back to float;
+      // 2147483648f then equals Integer.MAX_VALUE and used to serialize one less.
+      gen.writeNumber(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
     }
   }
 
@@ -86,11 +84,9 @@ public class YamlSerializer {
   private static class CustomFloatSerializer extends JsonSerializer<Float> {
     @Override
     public void serialize(Float value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-      if (value == value.intValue()) {
-        gen.writeNumber(value.intValue());
-      } else {
-        gen.writeNumber(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
-      }
+      // Comparing a float to intValue promotes the truncated integer back to float;
+      // 2147483648f then equals Integer.MAX_VALUE and used to serialize one less.
+      gen.writeNumber(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
     }
   }
 

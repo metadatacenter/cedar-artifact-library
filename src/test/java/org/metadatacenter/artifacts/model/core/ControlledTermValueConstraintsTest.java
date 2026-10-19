@@ -1,6 +1,8 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ControlledTermValueConstraints;
@@ -9,11 +11,13 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueC
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
 
 import java.net.URI;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ControlledTermValueConstraintsTest
@@ -81,5 +85,32 @@ public class ControlledTermValueConstraintsTest
     assertEquals(action, constraints.actions().get(0));
     assertEquals(defaultUri, constraints.defaultValue().get().termUri());
     assertEquals(defaultLabel, constraints.defaultValue().get().label());
+  }
+
+  @Test public void aVersionSpecAcceptsAnIdWithAVisibleCharacter()
+  {
+    VersionSpec spec = new VersionSpec("63ef56dff672", Optional.of("2026-07-01"), Optional.empty());
+
+    assertEquals("63ef56dff672", spec.id());
+  }
+
+  @Test public void aVersionSpecRefusesAnEmptyId()
+  {
+    IllegalStateException thrown = assertThrows(IllegalStateException.class,
+      () -> new VersionSpec("", Optional.empty(), Optional.empty()));
+
+    assertTrue(thrown.getMessage().contains("is empty"), thrown.getMessage());
+  }
+
+  // Two cases.
+  @ParameterizedTest
+  @ValueSource(strings = {"  ", "\t\n "})
+  public void aVersionSpecRefusesABlankId(String id)
+  {
+    // Whitespace identifies no version any more than an empty string does.
+    IllegalStateException thrown = assertThrows(IllegalStateException.class,
+      () -> new VersionSpec(id, Optional.empty(), Optional.empty()));
+
+    assertTrue(thrown.getMessage().contains("is blank"), thrown.getMessage());
   }
 }

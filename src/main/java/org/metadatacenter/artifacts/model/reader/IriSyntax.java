@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.reader;
 
 import org.metadatacenter.model.validation.IriReference;
+import org.metadatacenter.model.validation.IdentifierPolicy;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,8 +20,7 @@ final class IriSyntax
    */
   static URI uri(String value) throws URISyntaxException
   {
-    IriReference.toUri(value);
-    return new URI(value);
+    return IdentifierPolicy.reference(value);
   }
 
   /**
@@ -31,9 +31,6 @@ final class IriSyntax
    */
   static URI absolute(String value) throws URISyntaxException
   {
-    URI uri = uri(value);
-    if (!uri.isAbsolute())
-      throw new URISyntaxException(value, "An identifier must be an absolute IRI");
-    return uri;
+    return IdentifierPolicy.absolute(value);
   }
 }

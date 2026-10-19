@@ -19,7 +19,7 @@ public class TemplateSchemaInstanceReporterTest
   public void basicTemplateReporterTest()
   {
     String textFieldName = "text field";
-    String regex = "*";
+    String regex = ".*";
     String numericFieldName = "numeric field";
     XsdNumericDatatype numericType = XsdNumericDatatype.DOUBLE;
     String temporalFieldName = "temporal field";

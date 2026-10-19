@@ -22,7 +22,7 @@ public class FieldSchemaArtifactBuilderTest {
     String description = "Field description";
     Integer minLength = 0;
     Integer maxLength = 10;
-    String regex = "*";
+    String regex = ".*";
     boolean valueRecommendation = false;
 
     TextField textField = TextField.builder().
@@ -48,7 +48,7 @@ public class FieldSchemaArtifactBuilderTest {
     String description = "Field description";
     Integer minLength = 0;
     Integer maxLength = 10;
-    String regex = "*";
+    String regex = ".*";
     boolean valueRecommendation = false;
 
     TextField initialTextField = TextField.builder().

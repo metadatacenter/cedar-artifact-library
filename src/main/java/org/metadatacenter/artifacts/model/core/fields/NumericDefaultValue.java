@@ -9,6 +9,7 @@ public record NumericDefaultValue(Number value) implements DefaultValue<Number>
   public NumericDefaultValue
   {
     validateNumberFieldNotNull(this, value, "value");
+    org.metadatacenter.model.validation.NumericPolicy.parse(value.toString());
   }
 
   // The CEDAR JSON Schema for _valueConstraints.defaultValue allows only a string or a

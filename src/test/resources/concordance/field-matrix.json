@@ -31708,6 +31708,767 @@
       "set" : null
     } ]
   }, {
+    "id" : "controlledTerm/ontology-version-full",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-full",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
+    "id" : "controlledTerm/class-version-full",
+    "type" : "controlledTerm",
+    "feature" : "class-version-full",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "classes" ],
+      "set" : [ {
+        "uri" : "http://purl.obolibrary.org/obo/DOID_530",
+        "source" : "DOID",
+        "label" : "eyelid disease",
+        "prefLabel" : "eyelid disease",
+        "type" : "OntologyClass",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "classes" ],
+      "set" : [ {
+        "uri" : "http://purl.obolibrary.org/obo/DOID_530",
+        "source" : "DOID",
+        "label" : "eyelid disease",
+        "prefLabel" : "eyelid disease",
+        "type" : "OntologyClass",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "classes" ],
+      "set" : [ {
+        "uri" : "http://purl.obolibrary.org/obo/DOID_530",
+        "source" : "DOID",
+        "label" : "eyelid disease",
+        "prefLabel" : "eyelid disease",
+        "type" : "OntologyClass",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: class", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    termIri: \"http://purl.obolibrary.org/obo/DOID_530\"", "    termType: class", "    termLabel: \"eyelid disease\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: class", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    termIri: \"http://purl.obolibrary.org/obo/DOID_530\"", "    termType: class", "    termLabel: \"eyelid disease\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: class", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termIri: \"http://purl.obolibrary.org/obo/DOID_530\"", "        termType: class", "        termLabel: \"eyelid disease\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: class", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termIri: \"http://purl.obolibrary.org/obo/DOID_530\"", "        termType: class", "        termLabel: \"eyelid disease\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: class", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termIri: \"http://purl.obolibrary.org/obo/DOID_530\"", "        termType: class", "        termLabel: \"eyelid disease\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: class", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termIri: \"http://purl.obolibrary.org/obo/DOID_530\"", "        termType: class", "        termLabel: \"eyelid disease\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
+    "id" : "controlledTerm/branch-version-full",
+    "type" : "controlledTerm",
+    "feature" : "branch-version-full",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "branches" ],
+      "set" : [ {
+        "uri" : "http://purl.obolibrary.org/obo/DOID_4",
+        "source" : "DOID",
+        "acronym" : "DOID",
+        "name" : "disease",
+        "maxDepth" : 3,
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "branches" ],
+      "set" : [ {
+        "uri" : "http://purl.obolibrary.org/obo/DOID_4",
+        "source" : "DOID",
+        "acronym" : "DOID",
+        "name" : "disease",
+        "maxDepth" : 3,
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "branches" ],
+      "set" : [ {
+        "uri" : "http://purl.obolibrary.org/obo/DOID_4",
+        "source" : "DOID",
+        "acronym" : "DOID",
+        "name" : "disease",
+        "maxDepth" : 3,
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: branch", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"DOID\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    termBaseIri: \"http://purl.obolibrary.org/obo/DOID_4\"", "    termBaseLabel: \"disease\"", "    termMaxDepth: 3", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: branch", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"DOID\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    termBaseIri: \"http://purl.obolibrary.org/obo/DOID_4\"", "    termBaseLabel: \"disease\"", "    termMaxDepth: 3", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: branch", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termBaseIri: \"http://purl.obolibrary.org/obo/DOID_4\"", "        termBaseLabel: \"disease\"", "        termMaxDepth: 3", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: branch", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termBaseIri: \"http://purl.obolibrary.org/obo/DOID_4\"", "        termBaseLabel: \"disease\"", "        termMaxDepth: 3", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: branch", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termBaseIri: \"http://purl.obolibrary.org/obo/DOID_4\"", "        termBaseLabel: \"disease\"", "        termMaxDepth: 3", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: branch", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"DOID\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        termBaseIri: \"http://purl.obolibrary.org/obo/DOID_4\"", "        termBaseLabel: \"disease\"", "        termMaxDepth: 3", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
+    "id" : "controlledTerm/valueSet-version-full",
+    "type" : "controlledTerm",
+    "feature" : "valueSet-version-full",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "valueSets" ],
+      "set" : [ {
+        "uri" : "https://example.org/value-sets/colours",
+        "vsCollection" : "VS",
+        "name" : "Colours",
+        "iri" : "https://example.org/vocabularies/VS",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "valueSets" ],
+      "set" : [ {
+        "uri" : "https://example.org/value-sets/colours",
+        "vsCollection" : "VS",
+        "name" : "Colours",
+        "iri" : "https://example.org/vocabularies/VS",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "valueSets" ],
+      "set" : [ {
+        "uri" : "https://example.org/value-sets/colours",
+        "vsCollection" : "VS",
+        "name" : "Colours",
+        "iri" : "https://example.org/vocabularies/VS",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: valueSet", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"VS\"", "    sourceIri: \"https://example.org/vocabularies/VS\"", "    termBaseIri: \"https://example.org/value-sets/colours\"", "    termBaseLabel: \"Colours\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: valueSet", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"VS\"", "    sourceIri: \"https://example.org/vocabularies/VS\"", "    termBaseIri: \"https://example.org/value-sets/colours\"", "    termBaseLabel: \"Colours\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: valueSet", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"VS\"", "        sourceIri: \"https://example.org/vocabularies/VS\"", "        termBaseIri: \"https://example.org/value-sets/colours\"", "        termBaseLabel: \"Colours\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: valueSet", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"VS\"", "        sourceIri: \"https://example.org/vocabularies/VS\"", "        termBaseIri: \"https://example.org/value-sets/colours\"", "        termBaseLabel: \"Colours\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: valueSet", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"VS\"", "        sourceIri: \"https://example.org/vocabularies/VS\"", "        termBaseIri: \"https://example.org/value-sets/colours\"", "        termBaseLabel: \"Colours\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: valueSet", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"VS\"", "        sourceIri: \"https://example.org/vocabularies/VS\"", "        termBaseIri: \"https://example.org/value-sets/colours\"", "        termBaseLabel: \"Colours\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
+    "id" : "controlledTerm/ontology-version-absent",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-absent",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal"
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal"
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal"
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
+    "id" : "controlledTerm/ontology-version-id",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-id",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a"
+        }
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a"
+        }
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a"
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
+    "id" : "controlledTerm/ontology-version-id-effectiveDate",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-id-effectiveDate",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01"
+        }
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01"
+        }
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "effectiveDate" : "2026-07-01"
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"", "      effectiveDate: \"2026-07-01\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          effectiveDate: \"2026-07-01\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
+    "id" : "controlledTerm/ontology-version-id-declaredVersion",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-id-declaredVersion",
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "templateJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "elementJson" : [ {
+      "at" : [ "properties", "property-key", "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "e1dc041e5f2a",
+          "declaredVersion" : "2026-06-30"
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 8, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "compactYaml" : {
+      "keep" : [ 5, 1 ],
+      "lines" : [ "values:", "  - type: ontology", "    sourceSystem: \"bioportal\"", "    sourceAcronym: \"DOID\"", "    sourceName: \"Disease Ontology\"", "    sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "    version:", "      id: \"e1dc041e5f2a\"", "      declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "templateCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementYaml" : {
+      "keep" : [ 17, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementCompactYaml" : {
+      "keep" : [ 10, 4 ],
+      "lines" : [ "    values:", "      - type: ontology", "        sourceSystem: \"bioportal\"", "        sourceAcronym: \"DOID\"", "        sourceName: \"Disease Ontology\"", "        sourceIri: \"http://purl.obolibrary.org/obo/doid.owl\"", "        version:", "          id: \"e1dc041e5f2a\"", "          declaredVersion: \"2026-06-30\"" ]
+    },
+    "elementJsonFromYaml" : [ ],
+    "templateJsonFromYaml" : [ ],
+    "jsonFromCompactYaml" : [ ],
+    "jsonFromYaml" : [ ],
+    "templateJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ],
+    "elementJsonFromCompactYaml" : [ {
+      "at" : [ "properties", "property-key", "pav:version" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "bibo:status" ],
+      "remove" : true
+    }, {
+      "at" : [ "properties", "property-key", "@id" ],
+      "set" : null
+    } ]
+  }, {
     "id" : "controlledTerm/required",
     "type" : "controlledTerm",
     "feature" : "required",
@@ -49202,5 +49963,94 @@
       "at" : [ "properties", "property-key", "description" ],
       "set" : "Field field schema generated by the CEDAR Artifact Library"
     } ]
+  } ],
+  "inputs" : [ {
+    "id" : "controlledTerm/ontology-version-latest",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-latest",
+    "against" : "controlledTerm/ontology-version-absent",
+    "refused" : false,
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : "latest"
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 14, 1 ],
+      "lines" : [ "    version: \"latest\"" ]
+    }
+  }, {
+    "id" : "controlledTerm/ontology-version-empty-object",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-empty-object",
+    "against" : "controlledTerm/ontology-version-id",
+    "refused" : true,
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : { }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 14, 1 ],
+      "lines" : [ "    version: {}" ]
+    }
+  }, {
+    "id" : "controlledTerm/ontology-version-empty-id",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-empty-id",
+    "against" : "controlledTerm/ontology-version-id",
+    "refused" : true,
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : ""
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 15, 1 ],
+      "lines" : [ "      id: \"\"" ]
+    }
+  }, {
+    "id" : "controlledTerm/ontology-version-blank-id",
+    "type" : "controlledTerm",
+    "feature" : "ontology-version-blank-id",
+    "against" : "controlledTerm/ontology-version-id",
+    "refused" : true,
+    "json" : [ {
+      "at" : [ "_valueConstraints", "ontologies" ],
+      "set" : [ {
+        "uri" : "https://data.bioontology.org/ontologies/DOID",
+        "acronym" : "DOID",
+        "name" : "Disease Ontology",
+        "iri" : "http://purl.obolibrary.org/obo/doid.owl",
+        "sourceSystem" : "bioportal",
+        "version" : {
+          "id" : "   "
+        }
+      } ]
+    } ],
+    "yaml" : {
+      "keep" : [ 15, 1 ],
+      "lines" : [ "      id: \"   \"" ]
+    }
   } ]
 }

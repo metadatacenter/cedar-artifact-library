@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -72,16 +74,19 @@ public class JsonArtifactReaderNegativePathsTest
   @Test public void testReadFieldThrowsOnMissingSchemaName()
   {
     ObjectNode node = baseField("Test", "d");
+    assertDoesNotThrow(() -> reader.readFieldSchemaArtifact(node));
     node.remove(SCHEMA_ORG_NAME);
 
-    assertThrows(ArtifactParseException.class, () -> reader.readFieldSchemaArtifact(node));
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> reader.readFieldSchemaArtifact(node));
+    assertEquals(SCHEMA_ORG_NAME, ex.getFieldKey());
+    assertEquals("/", ex.getPath());
   }
 
   @Test public void testReadFieldThrowsOnMalformedVersion()
   {
     ObjectNode node = baseField("Test", "d");
     node.put(PAV_VERSION, "not-a-version");
-    node.with(UI).put("inputType", "textfield");
 
     ArtifactParseException ex = assertThrows(ArtifactParseException.class,
       () -> reader.readFieldSchemaArtifact(node));
@@ -184,9 +189,13 @@ public class JsonArtifactReaderNegativePathsTest
   @Test public void testReadFieldThrowsOnMissingUi()
   {
     ObjectNode node = baseField("Test", "d");
+    assertDoesNotThrow(() -> reader.readFieldSchemaArtifact(node));
     node.remove(UI);
 
-    assertThrows(Exception.class, () -> reader.readFieldSchemaArtifact(node));
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> reader.readFieldSchemaArtifact(node));
+    assertEquals(UI, ex.getFieldKey());
+    assertEquals("", ex.getPath());
   }
 
   @Test public void testReadTemplateThrowsOnWrongJsonSchemaType()
@@ -249,6 +258,7 @@ public class JsonArtifactReaderNegativePathsTest
     ObjectNode node = baseSchema(name, description);
     node.put(JSON_LD_CONTEXT, createContextMap(FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS));
     node.put(JSON_LD_TYPE, FIELD_SCHEMA_ARTIFACT_TYPE_IRI);
+    node.withObject("/" + UI).put("inputType", "textfield");
     return node;
   }
 

@@ -1,5 +1,7 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import org.metadatacenter.model.validation.FieldValuePolicy;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
@@ -174,6 +176,17 @@ record TemporalFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> j
     FieldSchemaArtifactInvariants.validate(this, name, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, minItems, maxItems, propertyUri, language,
       fieldUi, valueConstraints, annotations);
+    if (valueConstraints.isPresent() && valueConstraints.get() instanceof TemporalValueConstraints temporal
+        && temporal.defaultValue().isPresent()) {
+      var field = JsonNodeFactory.instance.objectNode();
+      field.putObject("_ui").put("inputType", "temporal")
+          .put("temporalGranularity", fieldUi.temporalGranularity().getText())
+          .put("timezoneEnabled", fieldUi.timezoneEnabled().orElse(false));
+      field.putObject("_valueConstraints").put("temporalType", temporal.temporalType().getText());
+      var findings = FieldValuePolicy.validate(temporal.defaultValue().get().value(), field,
+          "/_valueConstraints/defaultValue", true);
+      if (!findings.isEmpty()) throw new IllegalStateException(findings.get(0).message());
+    }
     jsonLdContext = FieldSchemaArtifactInvariants.canonicalContext(fieldUi);
     jsonLdTypes = List.copyOf(jsonLdTypes);
     alternateLabels = List.copyOf(alternateLabels);
