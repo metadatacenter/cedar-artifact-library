@@ -21,6 +21,11 @@
     <developerConnection>scm:git:https://github.com/metadatacenter/cedar-artifact-library.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-artifact-library</url>
   </scm>
+  <properties>
+    <!-- Line coverage measured on 2026-10-19: 76.3%. The build fails below this floor. -->
+    <cedar.coverage.line.minimum>0.74</cedar.coverage.line.minimum>
+  </properties>
+
   <dependencies>
 
     <dependency>
