@@ -331,6 +331,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 
     public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact)
     {
+      if (this.fieldSchemas.containsKey(fieldKey) || this.elementSchemas.containsKey(fieldKey))
+        throw new IllegalArgumentException("Element already has a child " + fieldKey);
+
       this.fieldSchemas.put(fieldKey, fieldSchemaArtifact);
       this.elementUiBuilder.withOrder(fieldKey);
       this.elementUiBuilder.withPropertyLabel(fieldKey, fieldSchemaArtifact.name());
@@ -398,6 +401,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact,
       String propertyLabel)
     {
+      if (this.fieldSchemas.containsKey(elementKey) || this.elementSchemas.containsKey(elementKey))
+        throw new IllegalArgumentException("Element already has a child " + elementKey);
+
       this.elementSchemas.put(elementKey, elementSchemaArtifact);
       this.elementUiBuilder.withOrder(elementKey);
       this.elementUiBuilder.withPropertyLabel(elementKey, propertyLabel);
@@ -407,6 +413,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
     public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact,
                                      String propertyLabel, String propertyDescription)
     {
+      if (this.fieldSchemas.containsKey(elementKey) || this.elementSchemas.containsKey(elementKey))
+        throw new IllegalArgumentException("Element already has a child " + elementKey);
+
       this.elementSchemas.put(elementKey, elementSchemaArtifact);
       this.elementUiBuilder.withOrder(elementKey);
       this.elementUiBuilder.withPropertyLabel(elementKey, propertyLabel);

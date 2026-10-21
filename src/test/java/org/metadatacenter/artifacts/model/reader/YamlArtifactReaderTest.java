@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
@@ -20,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
@@ -285,6 +287,38 @@ public class YamlArtifactReaderTest
         "a nested child that omitted version must not be defaulted");
     assertTrue(child.status().isEmpty(),
         "a nested child that omitted status must not be defaulted");
+  }
+
+  @Test public void readUnquotedInstanceValueKeepsTheTextTheAuthorWrote() throws IOException
+  {
+    // A YAML 1.2 core resolver reads these plain scalars as numbers or booleans. The field holds a
+    // literal, so the value read must be the text written: a ZIP code of 007 is not 7.
+    for (String spelling : List.of("007", "0x1F", "0o17", "1e3", "+1", ".5", "-0", "1.50",
+      "9007199254740993", "True", "TRUE", "false")) {
+      String yaml = "type: instance\nname: X\nisBasedOn: \"https://repo.metadatacenter.org/templates/abc\"\n"
+        + "children:\n  Count:\n    value: " + spelling + "\n  Counts:\n    - value: " + spelling + "\n";
+      TemplateInstanceArtifact instance =
+        artifactReader.readTemplateInstanceArtifact(ArtifactSourceParser.yaml(yaml));
+
+      assertEquals(spelling, instance.singleInstanceFieldInstances().get("Count").jsonLdValue().orElseThrow(),
+        spelling);
+      assertEquals(spelling,
+        instance.multiInstanceFieldInstances().get("Counts").get(0).jsonLdValue().orElseThrow(), spelling);
+    }
+  }
+
+  @Test public void readInstanceValueNullSpellingsStayNull() throws IOException
+  {
+    // A null is not a literal: it is still refused, and beside a label it still reads as no value.
+    String document = "type: instance\nname: X\nisBasedOn: \"https://repo.metadatacenter.org/templates/abc\"\n"
+      + "children:\n  Term:\n";
+    for (String spelling : List.of("~", "null", "Null", "NULL")) {
+      assertThrows(ArtifactParseException.class, () -> artifactReader.readTemplateInstanceArtifact(
+        ArtifactSourceParser.yaml(document + "    value: " + spelling + "\n")), spelling);
+      TemplateInstanceArtifact instance = artifactReader.readTemplateInstanceArtifact(
+        ArtifactSourceParser.yaml(document + "    value: " + spelling + "\n    label: \"Lung\"\n"));
+      assertTrue(instance.singleInstanceFieldInstances().get("Term").jsonLdValue().isEmpty(), spelling);
+    }
   }
 
   private LinkedHashMap<String, Object> readYamlAsMap(String yamlFilePath)

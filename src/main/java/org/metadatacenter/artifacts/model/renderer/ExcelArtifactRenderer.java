@@ -370,7 +370,7 @@ public class ExcelArtifactRenderer {
               dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN,
                   minLength.toString(), maxLength.toString()));
         } else { // Minimum length present, maximum length not present
-          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN,
+          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_OR_EQUAL,
               minLength.toString(), ""));
         }
       } else {

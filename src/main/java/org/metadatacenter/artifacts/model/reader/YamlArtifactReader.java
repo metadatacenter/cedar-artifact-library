@@ -527,15 +527,8 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       if (rawValue instanceof List<?>) {
         // Multi-instance: every element should be a map; if it carries `children:` it's an
         // element instance, otherwise it's a field instance. We assume the list is homogeneous.
+        // The entry point has already refused an empty list, so the list has a first entry.
         List<?> list = (List<?>) rawValue;
-        if (list.isEmpty()) {
-          // An empty multi-instance array is the expanded-mode skeleton slot for a
-          // multi-instance field (the renderer elides empty multi-element arrays, so an empty
-          // list here is always a field). Preserve it as an empty multi-field so the slot
-          // survives the round trip (e.g. so set_field_value can append to it).
-          acc.multiField(childKey, new ArrayList<>());
-          continue;
-        }
         Object first = list.get(0);
         if (!(first instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map entries in multi-instance list", childKey, path);
@@ -720,10 +713,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   }
 
   /**
-   * Read a field-instance {@code value:} as a string. Unlike {@link #readString}, this coerces a
-   * scalar number or boolean to its string form. The renderer preserves model values as quoted
-   * strings, but accepting scalars keeps the reader useful for human-authored YAML. An absent key
-   * or an explicit {@code null} reads as empty.
+   * Read a field-instance {@code value:} as a string. Unlike {@link #readString}, this accepts an
+   * unquoted number or boolean and reads it as the text it was written as, so {@code 007} stays
+   * {@code 007}. The renderer preserves model values as quoted strings, but accepting scalars keeps
+   * the reader useful for human-authored YAML. An absent key or an explicit {@code null} reads as
+   * empty.
    */
   private Optional<String> readScalarAsString(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
@@ -735,7 +729,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (raw instanceof String s)
       return Optional.of(s);
     if (raw instanceof Number || raw instanceof Boolean)
-      return Optional.of(raw.toString());
+      return Optional.of(ArtifactSourceParser.spelling(sourceNode, fieldKey).orElse(raw.toString()));
     throw new ArtifactParseException("Expecting a scalar value (string, number, or boolean), got "
       + raw.getClass(), fieldKey, path);
   }
@@ -1232,22 +1226,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldKey, path);
 
     return (Boolean)rawValue;
-  }
-
-  private Optional<Boolean> readBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
-  {
-    if (!sourceNode.containsKey(fieldKey))
-      return Optional.empty();
-
-    Object rawValue = sourceNode.get(fieldKey);
-
-    if (rawValue == null)
-      return Optional.empty();
-
-    if (!(rawValue instanceof Boolean))
-      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldKey, path);
-
-    return Optional.of((Boolean)rawValue);
   }
 
   private List<String> readStringArray(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)

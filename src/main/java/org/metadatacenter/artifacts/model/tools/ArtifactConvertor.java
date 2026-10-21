@@ -2,7 +2,6 @@ package org.metadatacenter.artifacts.model.tools;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;

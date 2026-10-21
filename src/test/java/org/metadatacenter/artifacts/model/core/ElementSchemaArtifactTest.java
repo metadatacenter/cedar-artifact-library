@@ -139,26 +139,32 @@ public class ElementSchemaArtifactTest
     assertThrows(IllegalArgumentException.class, () -> builder.withoutFieldSchema("missing"));
   }
 
-  @Test public void testAKeyHoldingOneKindOfChildRefusesTheOtherKind()
+  @Test public void testAKeyHoldingAChildRefusesAnotherChildThroughEveryOverload()
   {
-    // Some overloads check the key themselves and others rely on the UI builder's order list; either
-    // way an element must never hold a field and an element under one key.
+    // Every overload refuses a key the element already uses, for a field and an element alike, with
+    // the same message and before changing the builder, so the child already held survives.
     TextField field = TextField.builder().withName("x").build();
+    TextField otherField = TextField.builder().withName("x").withDescription("other").build();
     ElementSchemaArtifact element = ElementSchemaArtifact.builder().withName("x").build();
-    List<UnaryOperator<ElementSchemaArtifact.Builder>> addElement = List.of(
+    List<UnaryOperator<ElementSchemaArtifact.Builder>> addChild = List.of(
       b -> b.withElementSchema("x", element),
       b -> b.withElementSchema("x", element, "Label"),
-      b -> b.withElementSchema("x", element, "Label", "Description"));
-    List<UnaryOperator<ElementSchemaArtifact.Builder>> addField = List.of(
-      b -> b.withFieldSchema("x", field),
-      b -> b.withFieldSchema("x", field, "Label"),
-      b -> b.withFieldSchema("x", field, "Label", "Description"));
+      b -> b.withElementSchema("x", element, "Label", "Description"),
+      b -> b.withFieldSchema("x", otherField),
+      b -> b.withFieldSchema("x", otherField, "Label"),
+      b -> b.withFieldSchema("x", otherField, "Label", "Description"));
 
-    for (UnaryOperator<ElementSchemaArtifact.Builder> add : addElement)
-      assertThrows(IllegalArgumentException.class,
-        () -> add.apply(ElementSchemaArtifact.builder().withName("Parent").withFieldSchema("x", field)).build());
-    for (UnaryOperator<ElementSchemaArtifact.Builder> add : addField)
-      assertThrows(IllegalArgumentException.class,
-        () -> add.apply(ElementSchemaArtifact.builder().withName("Parent").withElementSchema("x", element)).build());
+    for (UnaryOperator<ElementSchemaArtifact.Builder> add : addChild) {
+      for (UnaryOperator<ElementSchemaArtifact.Builder> existing : List.<UnaryOperator<ElementSchemaArtifact.Builder>>of(
+        b -> b.withFieldSchema("x", field), b -> b.withElementSchema("x", element))) {
+        ElementSchemaArtifact.Builder builder = existing.apply(ElementSchemaArtifact.builder().withName("Parent"));
+        ElementSchemaArtifact before = builder.build();
+
+        IllegalArgumentException refusal = assertThrows(IllegalArgumentException.class, () -> add.apply(builder));
+
+        assertEquals("Element already has a child x", refusal.getMessage());
+        assertEquals(before, builder.build());
+      }
+    }
   }
 }

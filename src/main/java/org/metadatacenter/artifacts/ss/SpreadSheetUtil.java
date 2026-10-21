@@ -161,6 +161,7 @@ public class SpreadSheetUtil
 
     for (int i = 0; i <= rowCount; i++) {
       Row row = sheet.getRow(i);
+      boolean firstVisibleColumn = true;
       for (int j = 0; j < colCount; j++) {
         if (!sheet.isColumnHidden(j)) {
           Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -181,11 +182,12 @@ public class SpreadSheetUtil
             break;
           }
 
-          data.append(cellValue);
-
-          if (j < colCount - 1) {
+          if (!firstVisibleColumn) {
             data.append(separator);
           }
+
+          data.append(cellValue);
+          firstVisibleColumn = false;
         }
       }
       data.append(System.lineSeparator());

@@ -47,6 +47,21 @@ public final class ArtifactSourceParser {
     }
   }
 
+  /**
+   * The text a number or boolean in a parsed YAML mapping was written as, for a position that holds a
+   * literal rather than a number, while the mapping still holds the value read from that text.
+   */
+  static Optional<String> spelling(Map<String, Object> mapping, String key) {
+    if (!(mapping instanceof Mapping parsed)) return Optional.empty();
+    var spelling = parsed.spellings.get(key);
+    return spelling != null && spelling.getKey() == mapping.get(key) ? Optional.of(spelling.getValue()) : Optional.empty();
+  }
+
+  /** A YAML mapping that also keeps the source text of each number and boolean it holds. */
+  private static final class Mapping extends LinkedHashMap<String, Object> {
+    private final Map<String, Map.Entry<Object, String>> spellings = new HashMap<>();
+  }
+
   private static final class CoreResolver extends Resolver {
     @Override protected void addImplicitResolvers() {
       addImplicitResolver(Tag.NULL, Pattern.compile("^(?:~|null|Null|NULL|)$"), "~nN\0");
@@ -67,7 +82,7 @@ public final class ArtifactSourceParser {
       if (--remaining < 0 || !active.add(node)) throw new IllegalArgumentException("YAML alias expansion limit or cycle");
       try {
         if (node instanceof MappingNode map && Tag.MAP.equals(node.getTag())) {
-          var result = new LinkedHashMap<String, Object>();
+          var result = new Mapping();
           for (var pair : map.getValue()) {
             if (!(pair.getKeyNode() instanceof ScalarNode key))
               throw new IllegalArgumentException("Artifact mapping keys must be scalar strings");
@@ -75,7 +90,10 @@ public final class ArtifactSourceParser {
               throw new IllegalArgumentException("Unsupported artifact YAML key tag: " + key.getTag());
             String name = key.getValue();
             if (result.containsKey(name)) throw new IllegalArgumentException("Duplicate mapping key: " + name);
-            result.put(name, read(pair.getValueNode()));
+            Object value = read(pair.getValueNode());
+            result.put(name, value);
+            if ((value instanceof Number || value instanceof Boolean) && pair.getValueNode() instanceof ScalarNode scalar)
+              result.spellings.put(name, new AbstractMap.SimpleImmutableEntry<>(value, scalar.getValue()));
           }
           return result;
         }

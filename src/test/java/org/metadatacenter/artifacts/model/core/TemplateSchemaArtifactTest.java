@@ -119,26 +119,32 @@ public class TemplateSchemaArtifactTest
   }
 
   @Test
-  public void testAKeyHoldingOneKindOfChildRefusesTheOtherKind()
+  public void testAKeyHoldingAChildRefusesAnotherChildThroughEveryOverload()
   {
-    // Some overloads check the key themselves and others rely on the UI builder's order list; either
-    // way a template must never hold a field and an element under one key.
+    // Every overload refuses a key the template already uses, for a field and an element alike, with
+    // the same message and before changing the builder, so the child already held survives.
     TextField field = TextField.builder().withName("x").build();
+    TextField otherField = TextField.builder().withName("x").withDescription("other").build();
     ElementSchemaArtifact element = ElementSchemaArtifact.builder().withName("x").build();
-    List<UnaryOperator<TemplateSchemaArtifact.Builder>> addElement = List.of(
+    List<UnaryOperator<TemplateSchemaArtifact.Builder>> addChild = List.of(
       b -> b.withElementSchema("x", element),
       b -> b.withElementSchema("x", element, "Label"),
-      b -> b.withElementSchema("x", element, "Label", "Description"));
-    List<UnaryOperator<TemplateSchemaArtifact.Builder>> addField = List.of(
-      b -> b.withFieldSchema("x", field),
-      b -> b.withFieldSchema("x", field, "Label"),
-      b -> b.withFieldSchema("x", field, "Label", "Description"));
+      b -> b.withElementSchema("x", element, "Label", "Description"),
+      b -> b.withFieldSchema("x", otherField),
+      b -> b.withFieldSchema("x", otherField, "Label"),
+      b -> b.withFieldSchema("x", otherField, "Label", "Description"));
 
-    for (UnaryOperator<TemplateSchemaArtifact.Builder> add : addElement)
-      assertThrows(IllegalArgumentException.class,
-        () -> add.apply(TemplateSchemaArtifact.builder().withName("Study").withFieldSchema("x", field)).build());
-    for (UnaryOperator<TemplateSchemaArtifact.Builder> add : addField)
-      assertThrows(IllegalArgumentException.class,
-        () -> add.apply(TemplateSchemaArtifact.builder().withName("Study").withElementSchema("x", element)).build());
+    for (UnaryOperator<TemplateSchemaArtifact.Builder> add : addChild) {
+      for (UnaryOperator<TemplateSchemaArtifact.Builder> existing : List.<UnaryOperator<TemplateSchemaArtifact.Builder>>of(
+        b -> b.withFieldSchema("x", field), b -> b.withElementSchema("x", element))) {
+        TemplateSchemaArtifact.Builder builder = existing.apply(TemplateSchemaArtifact.builder().withName("Study"));
+        TemplateSchemaArtifact before = builder.build();
+
+        IllegalArgumentException refusal = assertThrows(IllegalArgumentException.class, () -> add.apply(builder));
+
+        assertEquals("Template already has a child x", refusal.getMessage());
+        assertEquals(before, builder.build());
+      }
+    }
   }
 }

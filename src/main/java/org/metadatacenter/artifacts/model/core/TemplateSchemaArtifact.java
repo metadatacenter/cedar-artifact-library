@@ -260,6 +260,10 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     }
 
     public Builder withFieldSchema(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact) {
+      if (this.fieldSchemas.containsKey(fieldKey) || this.elementSchemas.containsKey(fieldKey)) {
+        throw new IllegalArgumentException("Template already has a child " + fieldKey);
+      }
+
       this.fieldSchemas.put(fieldKey, fieldSchemaArtifact);
       this.templateUiBuilder.withOrder(fieldKey);
       this.templateUiBuilder.withPropertyLabel(fieldKey, fieldSchemaArtifact.name());
@@ -306,6 +310,10 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
 
 
     public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact) {
+      if (this.fieldSchemas.containsKey(elementKey) || this.elementSchemas.containsKey(elementKey)) {
+        throw new IllegalArgumentException("Template already has a child " + elementKey);
+      }
+
       this.elementSchemas.put(elementKey, elementSchemaArtifact);
       this.templateUiBuilder.withOrder(elementKey);
       this.templateUiBuilder.withPropertyLabel(elementKey, elementSchemaArtifact.name());
@@ -320,7 +328,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
     public Builder withElementSchema(String elementKey, ElementSchemaArtifact elementSchemaArtifact,
                                      String propertyLabel) {
       if (this.fieldSchemas.containsKey(elementKey) || this.elementSchemas.containsKey(elementKey)) {
-        throw new IllegalArgumentException("Element already has a child " + elementKey);
+        throw new IllegalArgumentException("Template already has a child " + elementKey);
       }
 
       this.elementSchemas.put(elementKey, elementSchemaArtifact);
@@ -333,7 +341,7 @@ public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, Paren
                                      String propertyLabel,
                                      String propertyDescription) {
       if (this.fieldSchemas.containsKey(elementKey) || this.elementSchemas.containsKey(elementKey)) {
-        throw new IllegalArgumentException("Element already has a child " + elementKey);
+        throw new IllegalArgumentException("Template already has a child " + elementKey);
       }
 
       this.elementSchemas.put(elementKey, elementSchemaArtifact);
