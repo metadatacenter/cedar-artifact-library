@@ -3,15 +3,22 @@ package org.metadatacenter.artifacts.model.core;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ui.ElementUi;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
+import org.metadatacenter.model.validation.CedarValidator;
+import org.metadatacenter.model.validation.report.ValidationReport;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -102,4 +109,56 @@ public class ElementSchemaArtifactTest
     Assertions.assertThrows(IllegalStateException.class, () -> ElementSchemaArtifact.builder().build());
   }
 
+  @Test public void testRemovingAChildRemovesItsUiEntriesAndLeavesAValidElement() throws IOException
+  {
+    ElementSchemaArtifact original = ElementSchemaArtifact.builder().withName("Address")
+      .withFieldSchema("street", TextField.builder().withName("Street").build(), "Street label", "Street description")
+      .withElementSchema("geo", ElementSchemaArtifact.builder().withName("Geo").build())
+      .withFieldSchema("zip", TextField.builder().withName("ZIP").build()).build();
+
+    ElementSchemaArtifact pruned = ElementSchemaArtifact.builder(original).withoutFieldSchema("street")
+      .withoutElementSchema("geo").build();
+
+    assertEquals(Set.of("zip"), pruned.fieldSchemas().keySet());
+    assertTrue(pruned.elementSchemas().isEmpty());
+    assertEquals(List.of("zip"), pruned.elementUi().order());
+    assertEquals(Set.of("zip"), pruned.elementUi().propertyLabels().keySet());
+    assertEquals(Set.of("zip"), pruned.elementUi().propertyDescriptions().keySet());
+    ValidationReport report = new CedarValidator()
+      .validateTemplateElement(new JsonArtifactRenderer().renderElementSchemaArtifact(pruned));
+    assertEquals("true", report.getValidationStatus(), report.getErrors().toString());
+
+    // A removed key is free again, which is how a child is replaced.
+    ElementSchemaArtifact replaced = ElementSchemaArtifact.builder(pruned)
+      .withFieldSchema("street", TextField.builder().withName("Street").build(), "New label").build();
+    assertEquals(List.of("zip", "street"), replaced.elementUi().order());
+
+    ElementSchemaArtifact.Builder builder = ElementSchemaArtifact.builder(original);
+    assertThrows(IllegalArgumentException.class, () -> builder.withoutElementSchema("street"));
+    assertThrows(IllegalArgumentException.class, () -> builder.withoutFieldSchema("geo"));
+    assertThrows(IllegalArgumentException.class, () -> builder.withoutFieldSchema("missing"));
+  }
+
+  @Test public void testAKeyHoldingOneKindOfChildRefusesTheOtherKind()
+  {
+    // Some overloads check the key themselves and others rely on the UI builder's order list; either
+    // way an element must never hold a field and an element under one key.
+    TextField field = TextField.builder().withName("x").build();
+    ElementSchemaArtifact element = ElementSchemaArtifact.builder().withName("x").build();
+    List<UnaryOperator<ElementSchemaArtifact.Builder>> addElement = List.of(
+      b -> b.withElementSchema("x", element),
+      b -> b.withElementSchema("x", element, "Label"),
+      b -> b.withElementSchema("x", element, "Label", "Description"));
+    List<UnaryOperator<ElementSchemaArtifact.Builder>> addField = List.of(
+      b -> b.withFieldSchema("x", field),
+      b -> b.withFieldSchema("x", field, "Label"),
+      b -> b.withFieldSchema("x", field, "Label", "Description"));
+
+    for (UnaryOperator<ElementSchemaArtifact.Builder> add : addElement)
+      assertThrows(IllegalArgumentException.class,
+        () -> add.apply(ElementSchemaArtifact.builder().withName("Parent").withFieldSchema("x", field)).build());
+    for (UnaryOperator<ElementSchemaArtifact.Builder> add : addField)
+      assertThrows(IllegalArgumentException.class,
+        () -> add.apply(ElementSchemaArtifact.builder().withName("Parent").withElementSchema("x", element)).build());
+  }
 }
