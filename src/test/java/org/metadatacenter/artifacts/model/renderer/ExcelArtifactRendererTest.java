@@ -16,17 +16,26 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
 import org.metadatacenter.artifacts.model.core.CheckboxField;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
+import org.metadatacenter.artifacts.model.core.DoiField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.EmailField;
 import org.metadatacenter.artifacts.model.core.ImageField;
 import org.metadatacenter.artifacts.model.core.LinkField;
 import org.metadatacenter.artifacts.model.core.ListField;
+import org.metadatacenter.artifacts.model.core.NihGrantIdField;
 import org.metadatacenter.artifacts.model.core.NumericField;
+import org.metadatacenter.artifacts.model.core.OrcidField;
+import org.metadatacenter.artifacts.model.core.PageBreakField;
+import org.metadatacenter.artifacts.model.core.PfasField;
 import org.metadatacenter.artifacts.model.core.PhoneNumberField;
+import org.metadatacenter.artifacts.model.core.PubMedField;
 import org.metadatacenter.artifacts.model.core.RadioField;
 import org.metadatacenter.artifacts.model.core.RichTextField;
+import org.metadatacenter.artifacts.model.core.RorField;
+import org.metadatacenter.artifacts.model.core.RridField;
 import org.metadatacenter.artifacts.model.core.SectionBreakField;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalField;
@@ -38,7 +47,9 @@ import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
+import org.metadatacenter.artifacts.ss.SpreadSheetUtil;
 import org.metadatacenter.artifacts.util.TerminologyServerClient;
+import org.metadatacenter.model.validation.NumericPolicy;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -59,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("integration")
 class ExcelArtifactRendererTest {
   private static final URI TEMPLATE_ID = URI.create("https://repo.metadatacenter.org/templates/study");
+  private static final String EOL = System.lineSeparator();
 
   @Test void exactDefaultsSurviveWorkbookRoundTrip() throws Exception {
     for (String value : new String[]{"1.5", "0.1", "9223372036854775807", "0.10000000000000001", "1e400"}) {
@@ -151,8 +163,11 @@ class ExcelArtifactRendererTest {
           "Value should be between 1 and 9");
       assertValidation(validations.get(3), ValidationType.INTEGER, OperatorType.BETWEEN,
           String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "Value should be a number");
-      assertConstraint(validations.get(4), ValidationType.DECIMAL, OperatorType.GREATER_OR_EQUAL, "0.5", "");
-      assertConstraint(validations.get(5), ValidationType.DECIMAL, OperatorType.LESS_OR_EQUAL, "2.5", "");
+      // A bound admits a value equal to it, and the message says so.
+      assertValidation(validations.get(4), ValidationType.DECIMAL, OperatorType.GREATER_OR_EQUAL, "0.5", "",
+          "Value should be at least 0.5");
+      assertValidation(validations.get(5), ValidationType.DECIMAL, OperatorType.LESS_OR_EQUAL, "2.5", "",
+          "Value should be at most 2.5");
       assertValidation(validations.get(6), ValidationType.DECIMAL, OperatorType.BETWEEN,
           String.valueOf(-Float.MAX_VALUE), String.valueOf(Float.MAX_VALUE), "Value should be a number");
       assertValidation(validations.get(7), ValidationType.DATE, OperatorType.BETWEEN, "Date(1, 1, 1)",
@@ -303,13 +318,75 @@ class ExcelArtifactRendererTest {
         .withFieldSchema(RichTextField.builder().withName("Instructions").withContent("Fill this in").build())
         .withFieldSchema(ImageField.builder().withName("Logo").withContent("https://example.org/logo.png").build())
         .withFieldSchema(YouTubeField.builder().withName("Video").withContent("dQw4w9WgXcQ").build())
+        .withFieldSchema(PageBreakField.builder().withName("Next page").build())
         .build();
     try (var workbook = render(template)) {
       var sheet = workbook.getSheetAt(0);
-      assertEquals(List.of(false, true, true, true, true, true),
+      assertEquals(List.of(false, true, true, true, true, true, true),
           List.of(sheet.isColumnHidden(0), sheet.isColumnHidden(1), sheet.isColumnHidden(2), sheet.isColumnHidden(3),
-              sheet.isColumnHidden(4), sheet.isColumnHidden(5)));
+              sheet.isColumnHidden(4), sheet.isColumnHidden(5), sheet.isColumnHidden(6)));
+      assertTrue(sheet.getDataValidations().isEmpty());
     }
+    // The TSV leaves out a hidden column, so there a static field has no column at all.
+    assertEquals("Title" + EOL + EOL, tsv(template));
+  }
+
+  @Test void anExternalAuthorityFieldIsAFreeTextColumn() throws Exception {
+    var template = template()
+        .withFieldSchema(OrcidField.builder().withName("ORCID").build())
+        .withFieldSchema(RorField.builder().withName("ROR").build())
+        .withFieldSchema(PfasField.builder().withName("PFAS").build())
+        .withFieldSchema(PubMedField.builder().withName("PubMed").build())
+        .withFieldSchema(RridField.builder().withName("RRID").build())
+        .withFieldSchema(NihGrantIdField.builder().withName("Grant").build())
+        .withFieldSchema(DoiField.builder().withName("DOI").build())
+        .build();
+    var names = List.of("ORCID", "ROR", "PFAS", "PubMed", "RRID", "Grant", "DOI");
+    try (var workbook = render(template)) {
+      var sheet = workbook.getSheetAt(0);
+      assertEquals(names, cellTexts(sheet.getRow(0), 0, 7));
+      for (int column = 0; column < 7; column++) assertFalse(sheet.isColumnHidden(column), names.get(column));
+      // Its values are identifiers looked up elsewhere, so the column offers no list and checks nothing.
+      assertEquals(List.of("Study", ".metadata"), sheetNames(workbook));
+      assertTrue(sheet.getDataValidations().isEmpty());
+    }
+    assertEquals(String.join("\t", names) + EOL + "\t".repeat(6) + EOL, tsv(template));
+  }
+
+  @Test void anAttributeValueFieldGetsNoColumn() throws Exception {
+    var template = template()
+        .withFieldSchema(TextField.builder().withName("Title").build())
+        .withFieldSchema(AttributeValueField.builder().withName("Extra").build())
+        .withFieldSchema(TextField.builder().withName("Notes").build())
+        .build();
+    try (var workbook = render(template)) {
+      // Its names are chosen when an instance is filled in, so the template has none to head a column with.
+      Row header = workbook.getSheetAt(0).getRow(0);
+      assertEquals(List.of("Title", "Notes"), cellTexts(header, 0, 2));
+      assertEquals(2, header.getLastCellNum());
+    }
+    assertEquals("Title\tNotes" + EOL + "\t" + EOL, tsv(template));
+  }
+
+  @Test void theTsvWritesANumericDefaultAsPlainDecimalText() throws Exception {
+    record Case(XsdNumericDatatype type, String defaultValue, String text) {}
+    var cases = new ArrayList<Case>();
+    for (XsdNumericDatatype type : XsdNumericDatatype.values()) cases.add(new Case(type, "3", "3"));
+    for (XsdNumericDatatype type : List.of(XsdNumericDatatype.DECIMAL, XsdNumericDatatype.FLOAT,
+        XsdNumericDatatype.DOUBLE)) {
+      cases.add(new Case(type, "3.50", "3.5"));
+      cases.add(new Case(type, "0.0001", "0.0001"));
+    }
+    // An integer type admits a whole number written with a fraction, and shows it with no decimal point,
+    // also when it is too precise for a numeric cell.
+    cases.add(new Case(XsdNumericDatatype.INT, "3.0", "3"));
+    cases.add(new Case(XsdNumericDatatype.LONG, "100000000000000", "100000000000000"));
+    cases.add(new Case(XsdNumericDatatype.LONG, "12345678901234567.0", "12345678901234567"));
+    assertAll(cases.stream().map(c -> () -> {
+      var template = template().withFieldSchema(NumericField.builder().withName("Count").withNumericType(c.type())
+          .withDefaultValue(NumericPolicy.number(c.defaultValue())).build()).build();
+      assertEquals("Count" + EOL + c.text() + EOL, tsv(template), c.type().name() + " " + c.defaultValue());
+    }));
   }
 
   @Test void aMetadataSheetIdentifiesTheTemplateTheWorkbookWasMadeFrom() throws Exception {
@@ -338,6 +415,13 @@ class ExcelArtifactRendererTest {
 
   private static XSSFWorkbook render(TemplateSchemaArtifact template) throws IOException {
     return reopen(new ExcelArtifactRenderer(null).render(template, 0, 0));
+  }
+
+  /** The TSV that {@code Template2Tsv} writes: the template's sheet, flattened. */
+  private static String tsv(TemplateSchemaArtifact template) throws IOException {
+    try (var workbook = new ExcelArtifactRenderer(null).render(template, 0, 0)) {
+      return SpreadSheetUtil.convertSheetToTsv(workbook.getSheetAt(0)).toString();
+    }
   }
 
   /** Write the workbook and read it back, so the assertions see what a spreadsheet program opens. */

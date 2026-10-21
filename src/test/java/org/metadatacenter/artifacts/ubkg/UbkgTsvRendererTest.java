@@ -27,6 +27,18 @@ public class UbkgTsvRendererTest
       new UbkgTsvRenderer(rendering).renderNodes().toString());
   }
 
+  @Test public void aTabOrLineBreakInALabelOrDefinitionBecomesASpace()
+  {
+    UbkgRendering rendering = UbkgRendering.builder()
+      .withNode(TITLE, "Study\ttitle", "The title\r\nof the study,\nin\t\tfull\rform").build();
+
+    // A tab would start a new column and a line break a new row. A run of them, such as a Windows line
+    // break, becomes one space.
+    assertEquals("node_id\tnode_namespace\tnode_label\tnode_definition\tnode_synonyms\tnode_dbxrefs\n"
+        + TITLE + "\t\tStudy title\tThe title of the study, in full form\t\t\n",
+      new UbkgTsvRenderer(rendering).renderNodes().toString());
+  }
+
   @Test public void eachObjectOfAnEdgeIsARowOfItsOwn()
   {
     UbkgRendering rendering = UbkgRendering.builder()

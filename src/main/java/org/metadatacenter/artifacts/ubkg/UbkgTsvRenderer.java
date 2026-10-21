@@ -31,8 +31,8 @@ public class UbkgTsvRenderer
       if (!nodeProperties.containsKey(NODE_DEFINITION))
         throw new RuntimeException("Node " + nodeURI + " does not have an entry for " + NODE_DEFINITION);
 
-      String nodeLabel = nodeProperties.get(NODE_LABEL);
-      String nodeDefinition = nodeProperties.get(NODE_DEFINITION);
+      String nodeLabel = singleLine(nodeProperties.get(NODE_LABEL));
+      String nodeDefinition = singleLine(nodeProperties.get(NODE_DEFINITION));
 
       sb.append(nodeURI.toString()).append("\t\t").append(nodeLabel).append("\t").append(nodeDefinition)
         .append("\t\t\n");
@@ -58,6 +58,12 @@ public class UbkgTsvRenderer
       }
     }
     return sb;
+  }
+
+  // A tab would start a new column and a line break a new row, so each run of them becomes one space
+  private static String singleLine(String text)
+  {
+    return text == null ? null : text.replaceAll("[\t\r\n]+", " ");
   }
 
 }

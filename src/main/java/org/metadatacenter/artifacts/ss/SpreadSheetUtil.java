@@ -10,6 +10,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.math.BigDecimal;
+
 public class SpreadSheetUtil
 {
   static public void checkColumnSpecification(String columnSpecification)
@@ -172,7 +174,9 @@ public class SpreadSheetUtil
             cellValue = cell.getStringCellValue();
             break;
           case NUMERIC:
-            cellValue = String.valueOf(cell.getNumericCellValue());
+            // Plain decimal text with no trailing zeros, so 3 is "3" and 3.50 is "3.5". A whole number
+            // never shows a decimal point.
+            cellValue = BigDecimal.valueOf(cell.getNumericCellValue()).stripTrailingZeros().toPlainString();
             break;
           case BOOLEAN:
             cellValue = String.valueOf(cell.getBooleanCellValue());
