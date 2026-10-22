@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactSourceParser;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
@@ -29,6 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * It decided whether an IRI named a datatype without regard to case, then looked the datatype up by
  * its exact spelling and found none. So {@code datatype: xsd:anyURI} read from YAML could not be
  * written as JSON, and a JSON value typed with the full anyURI IRI could not be read.
+ *
+ * <p>A value can also name an XSD datatype the library has no constant for, such as
+ * {@code xsd:integer}. The JSON renderer prefixed only the datatypes it has constants for, and the YAML
+ * reader expands every {@code xsd:} name to its full IRI. So JSON {@code xsd:integer} came back from
+ * YAML as {@code http://www.w3.org/2001/XMLSchema#integer}. The JSON renderer now writes every IRI in
+ * the XSD namespace as {@code xsd:} and its local name, and any other IRI as it is.
  */
 public class InstanceDatatypeRoundTripTest
 {
@@ -53,6 +60,20 @@ public class InstanceDatatypeRoundTripTest
     DATATYPES.put("xsd:short", "300");
   }
 
+  /** XSD datatypes the library has no constant for, each with a value of that type. */
+  private static final Map<String, String> OTHER_XSD_DATATYPES = new LinkedHashMap<>();
+
+  static {
+    OTHER_XSD_DATATYPES.put("xsd:integer", "42");
+    OTHER_XSD_DATATYPES.put("xsd:boolean", "true");
+    OTHER_XSD_DATATYPES.put("xsd:nonNegativeInteger", "3");
+    OTHER_XSD_DATATYPES.put("xsd:gYear", "2026");
+    OTHER_XSD_DATATYPES.put("xsd:duration", "P1DT2H");
+  }
+
+  /** An IRI that begins as the XSD namespace does but lies outside it, since the namespace ends at the #. */
+  private static final String NOT_XSD = "http://www.w3.org/2001/XMLSchema-datatypes#integer";
+
   /** A field is a child of the instance; an attribute value is a member of the group A. */
   private static Stream<Arguments> datatypesAndPositions()
   {
@@ -60,12 +81,39 @@ public class InstanceDatatypeRoundTripTest
       .flatMap(datatype -> Stream.of(Arguments.of(datatype, "field"), Arguments.of(datatype, "attribute")));
   }
 
+  /** Each datatype without a constant, spelled with the prefix and as its full IRI, in each position. */
+  private static Stream<Arguments> otherDatatypesSpellingsAndPositions()
+  {
+    return OTHER_XSD_DATATYPES.keySet().stream()
+      .flatMap(datatype -> Stream.of(datatype, XSD + datatype.substring("xsd:".length()))
+        .flatMap(spelling -> Stream.of(Arguments.of(datatype, spelling, "field"),
+          Arguments.of(datatype, spelling, "attribute"))));
+  }
+
   private static ObjectNode jsonInstance(String datatype, String position) throws Exception
   {
-    String value = "{\"@value\":\"" + DATATYPES.get(datatype) + "\",\"@type\":\"" + datatype + "\"}";
-    String child = position.equals("field") ? "\"F\":" + value : "\"A\":[\"F\"],\"F\":" + value;
+    return jsonInstance(datatype, DATATYPES.get(datatype), position);
+  }
+
+  private static ObjectNode jsonInstance(String type, String value, String position) throws Exception
+  {
+    String fieldValue = "{\"@value\":\"" + value + "\",\"@type\":\"" + type + "\"}";
+    String child = position.equals("field") ? "\"F\":" + fieldValue : "\"A\":[\"F\"],\"F\":" + fieldValue;
     return (ObjectNode) MAPPER.readTree("{\"schema:name\":\"Typed\",\"schema:isBasedOn\":"
       + "\"https://repo.metadatacenter.org/templates/t1\"," + child + "}");
+  }
+
+  private static TemplateInstanceArtifact fromYaml(String type, String value, String position) throws Exception
+  {
+    String yaml = "type: instance\nname: Typed\nisBasedOn: \"https://repo.metadatacenter.org/templates/t1\"\n"
+      + parentKey(position) + ":\n  F:\n    datatype: \"" + type + "\"\n    value: \"" + value + "\"\n";
+    return new YamlArtifactReader().readTemplateInstanceArtifact(ArtifactSourceParser.yaml(yaml));
+  }
+
+  private static TemplateInstanceArtifact throughYaml(TemplateInstanceArtifact instance) throws Exception
+  {
+    return new YamlArtifactReader().readTemplateInstanceArtifact(
+      ArtifactSourceParser.yaml(YamlSerializer.getYAML(instance, true, true)));
   }
 
   /** Where YAML writes the value: under the instance's children, or under the attribute-value group. */
@@ -119,11 +167,52 @@ public class InstanceDatatypeRoundTripTest
 
   @Test public void anXsdIriInAnotherCaseIsAnIriLikeAnyOther() throws Exception
   {
-    // XSD names are case-sensitive, so XMLSchema#DateTime names no XSD datatype. The meta-schema allows
-    // any IRI as a value's type, and this one is kept as written.
+    // XSD names are case-sensitive, so XMLSchema#DateTime is not xsd:dateTime. The meta-schema allows
+    // any IRI as a value's type, and this one is written prefixed, as every IRI in the namespace is.
     ObjectNode source = jsonInstance("xsd:dateTime", "field");
     ((ObjectNode) source.get("F")).put("@type", XSD + "DateTime");
 
-    assertEquals(XSD + "DateTime", typeOf(new JsonArtifactReader().readTemplateInstanceArtifact(source)).asText());
+    assertEquals("xsd:DateTime", typeOf(new JsonArtifactReader().readTemplateInstanceArtifact(source)).asText());
+  }
+
+  @ParameterizedTest(name = "{1}, {2}")
+  @MethodSource("otherDatatypesSpellingsAndPositions")
+  public void anXsdDatatypeWithoutAConstantIsWrittenPrefixedAndSurvivesYaml(String datatype, String spelling,
+    String position) throws Exception
+  {
+    TemplateInstanceArtifact instance = new JsonArtifactReader().readTemplateInstanceArtifact(
+      jsonInstance(spelling, OTHER_XSD_DATATYPES.get(datatype), position));
+    assertEquals(datatype, typeOf(instance).asText());
+
+    assertEquals(datatype, typeOf(throughYaml(instance)).asText());
+  }
+
+  @ParameterizedTest(name = "{1}, {2}")
+  @MethodSource("otherDatatypesSpellingsAndPositions")
+  public void anXsdDatatypeWithoutAConstantReadFromYamlIsWrittenPrefixed(String datatype, String spelling,
+    String position) throws Exception
+  {
+    assertEquals(datatype, typeOf(fromYaml(spelling, OTHER_XSD_DATATYPES.get(datatype), position)).asText());
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @ValueSource(strings = { "field", "attribute" })
+  public void aDatatypeOutsideTheXsdNamespaceIsWrittenAsItIs(String position) throws Exception
+  {
+    TemplateInstanceArtifact instance = new JsonArtifactReader().readTemplateInstanceArtifact(
+      jsonInstance(NOT_XSD, "42", position));
+    assertEquals(NOT_XSD, typeOf(instance).asText());
+
+    assertEquals(NOT_XSD, typeOf(throughYaml(instance)).asText());
+    assertEquals(NOT_XSD, typeOf(fromYaml(NOT_XSD, "42", position)).asText());
+  }
+
+  @Test public void theXsdNamespaceIriItselfIsWrittenAsItIs() throws Exception
+  {
+    // It has no local name, and a bare xsd: is not an IRI the JSON reader could read back.
+    TemplateInstanceArtifact instance = new JsonArtifactReader().readTemplateInstanceArtifact(
+      jsonInstance(XSD, "42", "field"));
+
+    assertEquals(XSD, typeOf(instance).asText());
   }
 }
