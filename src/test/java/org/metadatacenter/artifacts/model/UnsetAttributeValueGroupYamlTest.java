@@ -77,7 +77,7 @@ public class UnsetAttributeValueGroupYamlTest
       "schema:name": "Instance", "schema:description": "",
       "pav:createdOn": null, "pav:createdBy": null,
       "pav:lastUpdatedOn": null, "oslc:modifiedBy": null,
-      "Section": {"@id": "https://repo.metadatacenter.org/template-element-instances/e1",
+      "Section": {"@context": {}, "@id": "https://repo.metadatacenter.org/template-element-instances/e1",
                   "Name": {"@value": "set"}, "Extra": ["Extra1"], "Extra1": {"@value": null}}}""";
     assertNoPlaceholderAndReadsBack(yamlFor(json));
   }
@@ -90,7 +90,7 @@ public class UnsetAttributeValueGroupYamlTest
       "schema:name": "Instance", "schema:description": "",
       "pav:createdOn": null, "pav:createdBy": null,
       "pav:lastUpdatedOn": null, "oslc:modifiedBy": null,
-      "Section": [{"@id": "https://repo.metadatacenter.org/template-element-instances/e2",
+      "Section": [{"@context": {}, "@id": "https://repo.metadatacenter.org/template-element-instances/e2",
                    "Name": {"@value": "set"}, "Extra": ["Extra1"], "Extra1": {"@value": null}}]}""";
     assertNoPlaceholderAndReadsBack(yamlFor(json));
   }

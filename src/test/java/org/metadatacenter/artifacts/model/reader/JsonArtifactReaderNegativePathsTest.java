@@ -334,6 +334,75 @@ public class JsonArtifactReaderNegativePathsTest
     assertEquals(3, instance.multiInstanceElementInstances().get("items").size());
   }
 
+  @Test public void anElementValueWithoutContextIsRefusedRatherThanReadAsAField() throws Exception
+  {
+    // @context is what tells an element value from a field value. Without it the value was read as a
+    // field, and its children were dropped. A child's name is never one of a field value's keys, so a
+    // key outside them marks an element that lost its context.
+    Map<String, String> pathsByItems = Map.of(
+        "[{\"@value\":\"b\"},{\"f\":{\"@value\":\"a\"}}]", "/items[1]",
+        "[{\"f\":{\"@value\":\"a\"}}]", "/items[0]",
+        "{\"f\":{\"@value\":\"a\"}}", "/items",
+        "{\"@context\":{},\"inner\":{\"f\":{\"@value\":\"a\"}}}", "/items/inner",
+        "{\"@context\":{},\"inner\":[{\"@id\":\"https://example.org/e1\",\"f\":[{\"@value\":\"a\"}]}]}",
+        "/items/inner[0]");
+    for (var items : pathsByItems.entrySet()) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+          () -> reader.readTemplateInstanceArtifact(instanceWithItems(items.getKey())), items.getKey());
+      assertEquals("A field value cannot carry this key; an element value must carry @context",
+          thrown.getParseErrorMessage(), items.getKey());
+      assertEquals("f", thrown.getFieldKey(), items.getKey());
+      assertEquals(items.getValue(), thrown.getPath(), items.getKey());
+    }
+  }
+
+  @Test public void whatSitsBesideAFieldValueStaysReadable() throws Exception
+  {
+    // The instance's annotations, an attribute-value group and its members, an element's @context, and
+    // the legacy _valueLabel each sit beside or in field values, and none of them is an element's child.
+    ObjectNode instance = (ObjectNode) mapper.readTree("""
+        {
+          "schema:name": "X",
+          "schema:isBasedOn": "https://example.org/t",
+          "_annotations": { "https://example.org/note": { "@value": "reviewed" } },
+          "Extra": ["Extra1"],
+          "Extra1": { "@value": "v1" },
+          "Term": { "@id": "http://purl.obolibrary.org/obo/DOID_4", "@type": "https://example.org/Disease",
+                    "rdfs:label": "disease", "skos:notation": "DOID:4", "skos:prefLabel": "Disease",
+                    "skos:altLabel": "Illness" },
+          "Legacy": { "@value": "a", "_valueLabel": "A" },
+          "Section": { "@context": { "f": "https://example.org/f" }, "f": { "@value": "a", "@language": "en" } }
+        }
+        """);
+
+    var read = reader.readTemplateInstanceArtifact(instance);
+
+    assertTrue(read.annotations().isPresent());
+    assertEquals("v1",
+        read.attributeValueFieldInstanceGroups().get("Extra").get("Extra1").jsonLdValue().orElseThrow());
+    assertEquals("disease", read.singleInstanceFieldInstances().get("Term").label().orElseThrow());
+    assertEquals("a", read.singleInstanceFieldInstances().get("Legacy").jsonLdValue().orElseThrow());
+    assertEquals("a", read.singleInstanceElementInstances().get("Section").singleInstanceFieldInstances().get("f")
+        .jsonLdValue().orElseThrow());
+  }
+
+  @Test public void anEmptyDatatypeIsRefusedRatherThanReadAsNone() throws Exception
+  {
+    // "" parses as a relative IRI reference, yet it names no datatype. Read as no @type at all, the
+    // value lost what it stated and was written back without it.
+    Map<String, String> pathsByItems = Map.of(
+        "{\"@value\":\"b\",\"@type\":\"\"}", "/items",
+        "[{\"@value\":\"b\",\"@type\":\"\"}]", "/items[0]",
+        "{\"@value\":\"b\",\"@type\":[\"\"]}", "/items");
+    for (var items : pathsByItems.entrySet()) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+          () -> reader.readTemplateInstanceArtifact(instanceWithItems(items.getKey())), items.getKey());
+      assertEquals("Invalid datatype \"\"", thrown.getParseErrorMessage(), items.getKey());
+      assertEquals(JSON_LD_TYPE, thrown.getFieldKey(), items.getKey());
+      assertEquals(items.getValue(), thrown.getPath(), items.getKey());
+    }
+  }
+
   private ObjectNode instanceWithItems(String items) throws Exception
   {
     return (ObjectNode) mapper.readTree("{\"schema:name\":\"X\",\"schema:isBasedOn\":\"https://example.org/t\","

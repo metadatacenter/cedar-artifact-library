@@ -8,7 +8,7 @@ import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 
 public enum XsdDatatype
 {
-  STRING("xsd:string"), ANY_URI("xsd:anyUri"), DATE("xsd:date"), DATETIME("xsd:dateTime"), TIME("xsd:time"), DECIMAL(
+  STRING("xsd:string"), ANY_URI("xsd:anyURI"), DATE("xsd:date"), DATETIME("xsd:dateTime"), TIME("xsd:time"), DECIMAL(
   "xsd:decimal"), INTEGER("xsd:int"), LONG("xsd:long"), BYTE("xsd:byte"), SHORT("xsd:short"), INT("xsd:int"), FLOAT(
   "xsd:float"), DOUBLE("xsd:double");
 
@@ -48,10 +48,12 @@ public enum XsdDatatype
     return fromString("xsd:" + fragment);
   }
 
+  // XSD names are case-sensitive, and this test must agree with fromString, which every caller
+  // invokes on a datatype it reports as known.
   public static boolean isKnownXsdDatatype(String datatype)
   {
     for (XsdDatatype d : XsdDatatype.values()) {
-      if (d.toUri().toString().equalsIgnoreCase(datatype) || d.text.equals(datatype)) {
+      if (d.toUri().toString().equals(datatype) || d.text.equals(datatype)) {
         return true;
       }
     }
