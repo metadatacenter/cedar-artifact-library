@@ -42,8 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.metadatacenter.model.ModelNodeNames.ANNOTATIONS;
 import static org.metadatacenter.model.ModelNodeNames.ARTIFACT_CONTEXT_ENTRIES;
@@ -108,7 +106,6 @@ import static org.metadatacenter.model.ModelNodeNames.UI_WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
 import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
-import static org.metadatacenter.model.core.CedarModelVocabulary.VALUE_LABEL;
 
 import static org.metadatacenter.artifacts.model.reader.JsonArtifactShapeChecks.*;
 import static org.metadatacenter.artifacts.model.reader.JsonNodeReaders.*;
@@ -655,22 +652,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     return absolute ? readAbsoluteUri(sourceNode, path, key) : readUri(sourceNode, path, key);
   }
 
-  /**
-   * The keys a field value can carry. No child is named by one of them, so an element value read
-   * without its @context, which is what marks it as an element, shows a key outside them. The legacy
-   * _valueLabel is a field-value key the validator also takes for no child's name.
-   */
-  private static final Set<String> FIELD_VALUE_KEYS = Stream.concat(FIELD_INSTANCE_ARTIFACT_KEYWORDS.stream(),
-      Stream.of(VALUE_LABEL)).collect(Collectors.toUnmodifiableSet());
-
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {
-    Iterator<String> keys = sourceNode.fieldNames();
-    while (keys.hasNext()) {
-      String key = keys.next();
-      if (!FIELD_VALUE_KEYS.contains(key))
-        throw new ArtifactParseException("A field value cannot carry this key; an element value must carry @context",
-            key, path);
-    }
     if (sourceNode.has(JSON_LD_ID) && sourceNode.has(JSON_LD_VALUE))
       throw new ArtifactParseException("A field cannot contain both @id and @value", JSON_LD_VALUE, path);
     if (sourceNode.path(JSON_LD_TYPE).isArray() && sourceNode.get(JSON_LD_TYPE).size() > 1)

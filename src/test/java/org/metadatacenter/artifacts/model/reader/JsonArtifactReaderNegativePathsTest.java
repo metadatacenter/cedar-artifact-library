@@ -334,28 +334,6 @@ public class JsonArtifactReaderNegativePathsTest
     assertEquals(3, instance.multiInstanceElementInstances().get("items").size());
   }
 
-  @Test public void anElementValueWithoutContextIsRefusedRatherThanReadAsAField() throws Exception
-  {
-    // @context is what tells an element value from a field value. Without it the value was read as a
-    // field, and its children were dropped. A child's name is never one of a field value's keys, so a
-    // key outside them marks an element that lost its context.
-    Map<String, String> pathsByItems = Map.of(
-        "[{\"@value\":\"b\"},{\"f\":{\"@value\":\"a\"}}]", "/items[1]",
-        "[{\"f\":{\"@value\":\"a\"}}]", "/items[0]",
-        "{\"f\":{\"@value\":\"a\"}}", "/items",
-        "{\"@context\":{},\"inner\":{\"f\":{\"@value\":\"a\"}}}", "/items/inner",
-        "{\"@context\":{},\"inner\":[{\"@id\":\"https://example.org/e1\",\"f\":[{\"@value\":\"a\"}]}]}",
-        "/items/inner[0]");
-    for (var items : pathsByItems.entrySet()) {
-      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
-          () -> reader.readTemplateInstanceArtifact(instanceWithItems(items.getKey())), items.getKey());
-      assertEquals("A field value cannot carry this key; an element value must carry @context",
-          thrown.getParseErrorMessage(), items.getKey());
-      assertEquals("f", thrown.getFieldKey(), items.getKey());
-      assertEquals(items.getValue(), thrown.getPath(), items.getKey());
-    }
-  }
-
   @Test public void whatSitsBesideAFieldValueStaysReadable() throws Exception
   {
     // The instance's annotations, an attribute-value group and its members, an element's @context, and
