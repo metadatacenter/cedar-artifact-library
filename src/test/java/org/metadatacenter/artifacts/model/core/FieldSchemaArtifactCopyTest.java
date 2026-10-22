@@ -6,6 +6,10 @@ import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,6 +68,67 @@ public class FieldSchemaArtifactCopyTest
 
       assertEquals(original.preferredLabel(), copy.preferredLabel(),
         "preferredLabel lost when re-creating " + original.getClass().getSimpleName());
+    }
+  }
+
+  /**
+   * One field of every type the sealed hierarchy permits, each carrying the metadata every field
+   * shares, so that a copy which drops any of it is not equal to its source.
+   */
+  private static List<FieldSchemaArtifact> everyFieldTypeWithSharedMetadata()
+  {
+    return List.of(
+      withSharedMetadata(TextField.builder().withName("t")),
+      withSharedMetadata(TextAreaField.builder().withName("ta")),
+      withSharedMetadata(TemporalField.builder().withName("date").withTemporalType(XsdTemporalDatatype.DATE)
+        .withTemporalGranularity(TemporalGranularity.DAY)),
+      withSharedMetadata(RadioField.builder().withName("radio").withOption("yes")),
+      withSharedMetadata(PhoneNumberField.builder().withName("phone")),
+      withSharedMetadata(NumericField.builder().withName("n").withNumericType(XsdNumericDatatype.DECIMAL)),
+      withSharedMetadata(ListField.builder().withName("list").withOption("one")),
+      withSharedMetadata(EmailField.builder().withName("email")),
+      withSharedMetadata(CheckboxField.builder().withName("cbx").withOption("a")),
+      withSharedMetadata(AttributeValueField.builder().withName("av")),
+      withSharedMetadata(PageBreakField.builder().withName("pb")),
+      withSharedMetadata(SectionBreakField.builder().withName("sb").withContent("Section")),
+      withSharedMetadata(ImageField.builder().withName("img").withContent("https://example.org/i.png")),
+      withSharedMetadata(YouTubeField.builder().withName("yt").withContent("dQw4w9WgXcQ")),
+      withSharedMetadata(RichTextField.builder().withName("rt").withContent("<p>Text</p>")),
+      withSharedMetadata(ControlledTermField.builder().withName("ct")),
+      withSharedMetadata(LinkField.builder().withName("link")),
+      withSharedMetadata(RorField.builder().withName("ror")),
+      withSharedMetadata(OrcidField.builder().withName("orcid")),
+      withSharedMetadata(PfasField.builder().withName("pfas")),
+      withSharedMetadata(RridField.builder().withName("rrid")),
+      withSharedMetadata(PubMedField.builder().withName("pmid")),
+      withSharedMetadata(NihGrantIdField.builder().withName("nih")),
+      withSharedMetadata(DoiField.builder().withName("doi")));
+  }
+
+  private static <B extends FieldSchemaArtifactBuilder<B>> FieldSchemaArtifact withSharedMetadata(B builder)
+  {
+    return builder.withJsonLdId(URI.create("https://repo.metadatacenter.org/template-fields/1"))
+      .withDescription("A description").withIdentifier("ID-1").withPreferredLabel("Preferred")
+      .withAlternateLabels(List.of("Alternate")).withPropertyUri(URI.create("https://example.org/property"))
+      .withAnnotations(Annotations.builder().withLiteralAnnotation("source", "manual").build()).build();
+  }
+
+  @Test public void testGenericCopyBuilderRebuildsEveryFieldTypeUnchanged()
+  {
+    // FieldSchemaArtifactBuilder.builder(field) is how a caller holding a field of unknown type gets a
+    // builder for it; an arm missing from its dispatch, or one reached by the wrong instanceof, turns
+    // the field into another type or refuses it. The fixture list must name every permitted type, so a
+    // new type cannot be added without passing through the dispatch here.
+    List<FieldSchemaArtifact> fields = everyFieldTypeWithSharedMetadata();
+    Set<Class<?>> permitted = Set.of(FieldSchemaArtifact.class.getPermittedSubclasses());
+    assertEquals(permitted, permitted.stream().filter(type -> fields.stream().anyMatch(type::isInstance))
+      .collect(Collectors.toSet()));
+
+    for (FieldSchemaArtifact original : fields) {
+      FieldSchemaArtifact copy = FieldSchemaArtifactBuilder.builder(original).build();
+
+      assertEquals(original.getClass(), copy.getClass());
+      assertEquals(original, copy, "copy of " + original.getClass().getSimpleName() + " differs from its source");
     }
   }
 

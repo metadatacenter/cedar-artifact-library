@@ -25,11 +25,18 @@ import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
+import org.metadatacenter.artifacts.model.reader.ArtifactSourceParser;
+import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
+import org.metadatacenter.artifacts.model.tools.YamlSerializer;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -91,6 +98,20 @@ public class YamlArtifactRoundTripTest
   {
     TextField original = TextField.builder().withName("ZIP").withMinLength(5).withMaxLength(5).build();
     roundTripField(original);
+  }
+
+  @Test public void testStandaloneRepeatedFieldKeepsTheBoundsItStates() throws IOException
+  {
+    // A field written on its own has no parent to state its bounds beside it, so it carries both.
+    TextField original = TextField.builder().withName("Keyword").withIsMultiple(true).withMinItems(1)
+      .withMaxItems(4).build();
+
+    FieldSchemaArtifact read = yamlArtifactReader.readFieldSchemaArtifact(
+      ArtifactSourceParser.yaml(YamlSerializer.getYAML(original, false, true)));
+
+    assertEquals(Optional.of(1), read.minItems());
+    assertEquals(Optional.of(4), read.maxItems());
+    assertEquals(original, read);
   }
 
   @Test public void testRoundTripTextAreaField()
@@ -230,6 +251,28 @@ public class YamlArtifactRoundTripTest
     TemplateSchemaArtifact original = TemplateSchemaArtifact.builder().withName("Study").withFieldSchema(studyId)
       .withElementSchema(address).build();
     roundTripTemplate(original);
+  }
+
+  @Test public void testNestedElementMetadataSurvivesStoredJsonAndYaml() throws IOException
+  {
+    // Reading a template as YAML renders its stored JSON through the model, and a YAML write is read
+    // back into it. A nested element is rendered by its own method, separate from a top-level one's.
+    ElementSchemaArtifact address = ElementSchemaArtifact.builder().withName("Address")
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-elements/address"))
+      .withIdentifier("ADDR-1").withHeader("Postal address").withFooter("End of address")
+      .withPreferredLabel("Address").withAlternateLabels(List.of("Mailing address", "Location"))
+      .withAnnotations(Annotations.builder().withLiteralAnnotation("rdfs:comment", "a postal address").build())
+      .withFieldSchema(TextField.builder().withName("Street").build()).build();
+    TemplateSchemaArtifact original = TemplateSchemaArtifact.builder().withName("Study")
+      .withElementSchema(address).build();
+
+    TemplateSchemaArtifact stored = new JsonArtifactReader().readTemplateSchemaArtifact(
+      new JsonArtifactRenderer().renderTemplateSchemaArtifact(original));
+    TemplateSchemaArtifact read = yamlArtifactReader.readTemplateSchemaArtifact(
+      ArtifactSourceParser.yaml(YamlSerializer.getYAML(stored, false, true)));
+
+    assertEquals(original, stored);
+    assertEquals(original, read);
   }
 
   // -------- Instance JSON-LD type --------
@@ -479,6 +522,33 @@ public class YamlArtifactRoundTripTest
       .withMultiInstanceElementInstances("Addresses", java.util.List.of(address1, address2))
       .build();
     roundTripTemplateInstance(original);
+  }
+
+  @Test public void testRoundTripRepeatedChildrenInsideAnElementInstance() throws IOException
+  {
+    // Repeated children of a nested element instance are read by a different path from those at the
+    // top of the instance, and the resource server reads every YAML instance write through it.
+    ElementInstanceArtifact line1 = ElementInstanceArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-element-instances/line-1"))
+      .withSingleInstanceFieldInstance("Text", simpleLiteralField("Building 5")).build();
+    ElementInstanceArtifact line2 = ElementInstanceArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-element-instances/line-2"))
+      .withSingleInstanceFieldInstance("Text", simpleLiteralField("Room 210")).build();
+    ElementInstanceArtifact address = ElementInstanceArtifact.builder()
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-element-instances/address"))
+      .withSingleInstanceFieldInstance("City", simpleLiteralField("Palo Alto"))
+      .withMultiInstanceFieldInstances("Phone", List.of(simpleLiteralField("555-0100"), simpleLiteralField("555-0199")))
+      .withMultiInstanceElementInstances("Line", List.of(line1, line2))
+      .build();
+    TemplateInstanceArtifact original = TemplateInstanceArtifact.builder().withName("SDY232")
+      .withIsBasedOn(URI.create("https://repo.metadatacenter.org/templates/abc"))
+      .withSingleInstanceElementInstance("Address", address)
+      .build();
+
+    TemplateInstanceArtifact read = yamlArtifactReader.readTemplateInstanceArtifact(
+      ArtifactSourceParser.yaml(YamlSerializer.getYAML(original, false, true)));
+
+    assertEquals(original, read);
   }
 
   @Test public void testRoundTripTemplateInstanceWithAttributeValueFieldGroup()

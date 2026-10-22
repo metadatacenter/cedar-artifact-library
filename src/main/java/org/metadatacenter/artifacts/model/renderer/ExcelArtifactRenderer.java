@@ -25,6 +25,7 @@ import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -96,6 +97,11 @@ public class ExcelArtifactRenderer {
     for (String fieldKey : templateSchemaArtifact.getFieldKeys()) {
       FieldSchemaArtifact fieldSchemaArtifact = templateSchemaArtifact.getFieldSchemaArtifact(fieldKey);
 
+      // An attribute-value field's names are chosen when an instance is filled in, so it has no column
+      if (fieldSchemaArtifact.isAttributeValue()) {
+        continue;
+      }
+
       render(fieldSchemaArtifact, sheet, columnIndex, headerRow, firstDataRow);
 
       columnIndex += 1;
@@ -162,6 +168,10 @@ public class ExcelArtifactRenderer {
         if (Double.isFinite(approximate) && exact.stripTrailingZeros().precision() <= 15
             && BigDecimal.valueOf(approximate).compareTo(exact) == 0) {
           dataCell.setCellValue(approximate);
+        } else if (getValidationType(fieldSchemaArtifact) == DataValidationConstraint.ValidationType.INTEGER) {
+          // An integer type's column admits only whole numbers, so its default is written as one, without
+          // the fraction a value such as 12345678901234567.0 may have been written with
+          dataCell.setCellValue(exact.toBigIntegerExact().toString());
         } else {
           dataCell.setCellValue(n.toString());
         }
@@ -173,6 +183,10 @@ public class ExcelArtifactRenderer {
       } else if (value.isTemporalDefaultValue()) {
         TemporalDefaultValue temporalDefaultValue = value.asTemporalDefaultValue();
         dataCell.setCellValue(temporalDefaultValue.value());
+      } else if (value.isLinkDefaultValue()) {
+        // A link or external-authority default is an IRI, written as text in the field's free-text column
+        LinkDefaultValue linkDefaultValue = value.asLinkDefaultValue();
+        dataCell.setCellValue(linkDefaultValue.value().toString());
       } else {
         throw new RuntimeException("Unknown default value type " + value.getValueType() + " for field " + fieldKey);
       }
@@ -232,12 +246,12 @@ public class ExcelArtifactRenderer {
             Number maxValue = numericValueConstraints.maxValue().get();
             return "Value should be between " + minValue + " and " + maxValue;
           } else { // Minimum present, maximum not present
-            return "Value should be greater than " + minValue;
+            return "Value should be at least " + minValue;
           }
         } else {
           if (numericValueConstraints.maxValue().isPresent()) { // Maximum present, minimum not present
             Number maxValue = numericValueConstraints.maxValue().get();
-            return "Value should be less than " + maxValue;
+            return "Value should be at most " + maxValue;
           } else { // Maximum not present, minimum not present
             return "Value should be a number";
           }
@@ -370,7 +384,7 @@ public class ExcelArtifactRenderer {
               dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.BETWEEN,
                   minLength.toString(), maxLength.toString()));
         } else { // Minimum length present, maximum length not present
-          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_THAN,
+          return Optional.of(dataValidationHelper.createTextLengthConstraint(DataValidationConstraint.OperatorType.GREATER_OR_EQUAL,
               minLength.toString(), ""));
         }
       } else {
@@ -490,9 +504,16 @@ public class ExcelArtifactRenderer {
     Optional<ValueConstraints> valueConstraints = fieldSchemaArtifact.valueConstraints();
 
     if (fieldInputType == FieldInputType.PHONE_NUMBER || fieldInputType == FieldInputType.SECTION_BREAK
+        || fieldInputType == FieldInputType.PAGE_BREAK
         || fieldInputType == FieldInputType.RICHTEXT || fieldInputType == FieldInputType.EMAIL
         || fieldInputType == FieldInputType.IMAGE || fieldInputType == FieldInputType.LINK
         || fieldInputType == FieldInputType.YOUTUBE || fieldInputType == FieldInputType.TEXTAREA) {
+      return DataValidationConstraint.ValidationType.ANY;
+    } else if (fieldInputType == FieldInputType.ROR || fieldInputType == FieldInputType.ORCID
+        || fieldInputType == FieldInputType.PFAS || fieldInputType == FieldInputType.RRID
+        || fieldInputType == FieldInputType.PUBMED || fieldInputType == FieldInputType.NIH_GRANT_ID
+        || fieldInputType == FieldInputType.DOI) {
+      // An external-authority value is an identifier looked up elsewhere, so its column takes free text
       return DataValidationConstraint.ValidationType.ANY;
     } else if (fieldInputType == FieldInputType.LIST || fieldInputType == FieldInputType.RADIO || fieldInputType == FieldInputType.CHECKBOX) {
       return DataValidationConstraint.ValidationType.FORMULA;

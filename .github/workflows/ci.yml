@@ -71,6 +71,18 @@ jobs:
           -Dexec.mainClass=org.metadatacenter.artifacts.model.CorpusFixtureVerifier
           -Dexec.args=cedar-test-artifacts
 
+      # A YAML round trip compares YAML with YAML, so a reader and a writer that agree on a wrong reading
+      # of an absent key pass it. This writes every corpus artifact as JSON straight from its source and
+      # again through this library's YAML, and holds the differences to the families the YAML form is
+      # known to produce, case by case, as src/test/resources/concordance/corpus-yaml-trip.json declares.
+      - name: Verify the corpus writes the same JSON through YAML
+        run: >
+          ./mvnw --batch-mode --no-transfer-progress test-compile exec:java
+          --settings .m2/nexus-settings.xml
+          -Dexec.classpathScope=test
+          -Dexec.mainClass=org.metadatacenter.artifacts.model.CorpusYamlTripVerifier
+          -Dexec.args=cedar-test-artifacts
+
       # Other repositories resolve this artifact from Nexus, so a merged change
       # is invisible to their builds until the snapshot is republished. Tests have
       # already run in the step above; this only uploads what they verified.

@@ -1,0 +1,54 @@
+{
+  "families": {
+    "uiEntryFilled": [
+      "template-003",
+      "cee-template-076",
+      "cee-template-087"
+    ],
+    "ontologyAddress": [
+      "cee-template-021",
+      "cee-template-042",
+      "cee-template-043",
+      "cee-template-045",
+      "cee-template-071"
+    ],
+    "instanceCompletion": [
+      "instance-002",
+      "instance-004",
+      "instance-005",
+      "instance-009",
+      "instance-011",
+      "instance-012",
+      "instance-013",
+      "instance-015",
+      "instance-016",
+      "instance-017",
+      "instance-018",
+      "instance-019",
+      "instance-020",
+      "instance-021",
+      "instance-022",
+      "cee-instance-002",
+      "cee-instance-013",
+      "cee-instance-016",
+      "cee-instance-020",
+      "cee-instance-029",
+      "cee-instance-041",
+      "cee-instance-046",
+      "cee-instance-057",
+      "cee-instance-059",
+      "cee-instance-060",
+      "cee-instance-063",
+      "cee-instance-071",
+      "cee-instance-072",
+      "cee-instance-085",
+      "cee-instance-086"
+    ]
+  },
+  "exclusions": {
+    "cee-instance-004": "its template, cee-template-004, is refused by this library's JSON reader",
+    "cee-template-004": "an integer field states decimal places, which this library's JSON reader refuses",
+    "cee-template-086": "deliberately malformed JSON, which the TypeScript library's CEE reference test holds its reader to refusing",
+    "instance-008": "its template, https://repo.metadatacenter.org/templates/e26d7ff6-3a92-4445-85e4-fb2648c62500, is in no corpus case"
+  }
+}

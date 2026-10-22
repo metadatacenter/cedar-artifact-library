@@ -96,7 +96,7 @@ rather than the setter.
 
 ## Principle 5: Per-format reader / renderer pairs
 
-Each wire format (JSON, YAML, Excel, UBKG, REDCap) has its own reader + renderer pair.
+Each wire format (JSON, YAML, Excel, UBKG) has its own reader + renderer pair.
 They share the model layer but nothing else.
 
 ```
@@ -130,7 +130,7 @@ These tests remain enabled so either asymmetry will fail the suite if it returns
 The `model.core` package depends on nothing format-specific. The `model.reader.*` and
 `model.renderer.*` packages depend on the model. **I/O-bound utilities**
 (`TerminologyServerClient`, `ExcelArtifactRenderer`, `UbkgArtifactRenderer`,
-`redcap.*`, `ss.*`, `tools.*`) depend on heavy externals (Apache POI, HTTP clients,
+`ss.*`, `tools.*`) depend on heavy externals (Apache POI, HTTP clients,
 filesystem) and are candidates for extraction into separate repos eventually.
 
 When adding code, ask: does this *need* to live in the core library, or is it a downstream

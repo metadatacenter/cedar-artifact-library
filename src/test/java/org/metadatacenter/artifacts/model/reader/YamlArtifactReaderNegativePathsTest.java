@@ -100,6 +100,29 @@ public class YamlArtifactReaderNegativePathsTest
     assertTrue(ex.getMessage().contains("template"));
   }
 
+  @Test public void testReadElementRejectsWrongTopLevelType()
+  {
+    // The resource server picks the reader from the endpoint, so a template sent to the element
+    // endpoint must be refused rather than read as an element.
+    LinkedHashMap<String, Object> node = minimalTemplate();
+
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> reader.readElementSchemaArtifact(node));
+    assertTrue(ex.getMessage().contains("should be element"), ex.getMessage());
+  }
+
+  @Test public void testReadTemplateInstanceRejectsWrongTopLevelType()
+  {
+    LinkedHashMap<String, Object> node = new LinkedHashMap<>();
+    node.put("type", "element-instance");
+    node.put("name", "X");
+    node.put("isBasedOn", "https://repo.metadatacenter.org/templates/abc");
+
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateInstanceArtifact(node));
+    assertTrue(ex.getMessage().contains("should be instance"), ex.getMessage());
+  }
+
   @Test public void testReadVersionRejectsInvalidString()
   {
     // An invalid `version:` must surface a parse error, not silently coerce.

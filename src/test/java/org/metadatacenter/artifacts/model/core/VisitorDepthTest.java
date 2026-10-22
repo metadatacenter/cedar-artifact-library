@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Visitor coverage for deeply nested templates and multi-instance children — the paths
- * consumers like REDCap export and terminology lookups exercise.
+ * consumers like the exporters and terminology lookups exercise.
  */
 public class VisitorDepthTest
 {
