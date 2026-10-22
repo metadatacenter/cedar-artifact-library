@@ -22,6 +22,7 @@ import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.DoiField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.EmailField;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.ImageField;
 import org.metadatacenter.artifacts.model.core.LinkField;
 import org.metadatacenter.artifacts.model.core.ListField;
@@ -65,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("integration")
@@ -351,6 +353,41 @@ class ExcelArtifactRendererTest {
       assertTrue(sheet.getDataValidations().isEmpty());
     }
     assertEquals(String.join("\t", names) + EOL + "\t".repeat(6) + EOL, tsv(template));
+  }
+
+  @Test void aLinkOrExternalAuthorityDefaultIsWrittenAsItsIri() throws Exception {
+    record Case(String iri, Function<URI, FieldSchemaArtifact> field) {}
+    var cases = List.of(
+        new Case("https://example.org/protocol",
+            iri -> LinkField.builder().withName("Protocol").withDefaultValue(iri).build()),
+        new Case("https://orcid.org/0000-0002-1825-0097",
+            iri -> OrcidField.builder().withName("ORCID").withDefaultValue(iri).build()),
+        new Case("https://ror.org/00f54p054",
+            iri -> RorField.builder().withName("ROR").withDefaultValue(iri).build()),
+        new Case("https://comptox.epa.gov/dashboard/chemical/details/DTXSID3031864",
+            iri -> PfasField.builder().withName("PFAS").withDefaultValue(iri).build()),
+        new Case("https://pubmed.ncbi.nlm.nih.gov/26978244",
+            iri -> PubMedField.builder().withName("PubMed").withDefaultValue(iri).build()),
+        new Case("https://identifiers.org/RRID:AB_2298772",
+            iri -> RridField.builder().withName("RRID").withDefaultValue(iri).build()),
+        new Case("https://reporter.nih.gov/project-details/10000001",
+            iri -> NihGrantIdField.builder().withName("Grant").withDefaultValue(iri).build()),
+        new Case("https://doi.org/10.1038/sdata.2016.18",
+            iri -> DoiField.builder().withName("DOI").withDefaultValue(iri).build()));
+    assertAll(cases.stream().map(c -> () -> {
+      var field = c.field().apply(URI.create(c.iri()));
+      var template = template().withFieldSchema(field).build();
+      try (var workbook = render(template)) {
+        var sheet = workbook.getSheetAt(0);
+        var cell = sheet.getRow(1).getCell(0);
+        // The default is the IRI as text, in a column that checks nothing, so no rule can refuse it.
+        assertEquals(CellType.STRING, cell.getCellType(), field.name());
+        assertEquals(c.iri(), cell.getStringCellValue(), field.name());
+        assertFalse(sheet.isColumnHidden(0), field.name());
+        assertTrue(sheet.getDataValidations().isEmpty(), field.name());
+      }
+      assertEquals(field.name() + EOL + c.iri() + EOL, tsv(template), field.name());
+    }));
   }
 
   @Test void anAttributeValueFieldGetsNoColumn() throws Exception {

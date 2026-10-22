@@ -25,6 +25,7 @@ import org.metadatacenter.artifacts.model.core.fields.ControlledTermDefaultValue
 import org.metadatacenter.artifacts.model.core.fields.DefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.LinkDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.NumericDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalDefaultValue;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
@@ -182,6 +183,10 @@ public class ExcelArtifactRenderer {
       } else if (value.isTemporalDefaultValue()) {
         TemporalDefaultValue temporalDefaultValue = value.asTemporalDefaultValue();
         dataCell.setCellValue(temporalDefaultValue.value());
+      } else if (value.isLinkDefaultValue()) {
+        // A link or external-authority default is an IRI, written as text in the field's free-text column
+        LinkDefaultValue linkDefaultValue = value.asLinkDefaultValue();
+        dataCell.setCellValue(linkDefaultValue.value().toString());
       } else {
         throw new RuntimeException("Unknown default value type " + value.getValueType() + " for field " + fieldKey);
       }
