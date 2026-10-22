@@ -135,7 +135,7 @@ class ExcelArtifactRendererTest {
     var template = template()
         .withFieldSchema(TextField.builder().withName("Code").withMinLength(2).withMaxLength(10).build())
         .withFieldSchema(TextField.builder().withName("Short").withMaxLength(3).build())
-        .withFieldSchema(NumericField.builder().withName("Count").withNumericType(XsdNumericDatatype.INTEGER)
+        .withFieldSchema(NumericField.builder().withName("Count").withNumericType(XsdNumericDatatype.INT)
             .withMinValue(1).withMaxValue(9).build())
         .withFieldSchema(NumericField.builder().withName("Total").withNumericType(XsdNumericDatatype.LONG).build())
         .withFieldSchema(NumericField.builder().withName("Weight").withNumericType(XsdNumericDatatype.DECIMAL)

@@ -543,7 +543,7 @@ public class ExcelArtifactRenderer {
 
         if (numericType == XsdNumericDatatype.DECIMAL || numericType == XsdNumericDatatype.DOUBLE || numericType == XsdNumericDatatype.FLOAT) {
           return DataValidationConstraint.ValidationType.DECIMAL;
-        } else if (numericType == XsdNumericDatatype.LONG || numericType == XsdNumericDatatype.INTEGER || numericType == XsdNumericDatatype.INT
+        } else if (numericType == XsdNumericDatatype.LONG || numericType == XsdNumericDatatype.INT
             || numericType == XsdNumericDatatype.SHORT || numericType == XsdNumericDatatype.BYTE) {
           return DataValidationConstraint.ValidationType.INTEGER;
         } else {
@@ -589,7 +589,6 @@ public class ExcelArtifactRenderer {
         numericFormatString += ""; // TODO Handle decimal places in Excel rendering
       }
     } else if (numericType == XsdNumericDatatype.LONG) {
-    } else if (numericType == XsdNumericDatatype.INTEGER) {
     } else if (numericType == XsdNumericDatatype.INT) {
     } else if (numericType == XsdNumericDatatype.SHORT) {
     } else if (numericType == XsdNumericDatatype.BYTE) {

@@ -150,7 +150,7 @@ record YouTubeFieldRecord(LinkedHashMap<String, URI> jsonLdContext, List<URI> js
   public YouTubeFieldRecord
   {
     java.util.Objects.requireNonNull(extensions, "extensions");
-    FieldSchemaArtifactInvariants.validateStatic(this, jsonLdContext, jsonLdTypes,
+    FieldSchemaArtifactInvariants.validateStatic(this, name, jsonLdContext, jsonLdTypes,
       preferredLabel, alternateLabels, language, fieldUi, valueConstraints, annotations);
     jsonLdContext = FieldSchemaArtifactInvariants.staticContext();
     jsonLdTypes = List.copyOf(jsonLdTypes);

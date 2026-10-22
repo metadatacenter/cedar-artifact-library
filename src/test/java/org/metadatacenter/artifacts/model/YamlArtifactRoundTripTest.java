@@ -123,8 +123,6 @@ public class YamlArtifactRoundTripTest
 
   @Test public void testRoundTripNumericField()
   {
-    // XsdNumericDatatype.INT and INTEGER both have text "xsd:int", so fromString cannot
-    // distinguish them. Use DOUBLE (unique text) for a clean round-trip.
     NumericField original = NumericField.builder().withName("Percent").withNumericType(XsdNumericDatatype.DOUBLE)
       .withMinValue(0).withMaxValue(100).withDefaultValue(0).build();
     roundTripField(original);

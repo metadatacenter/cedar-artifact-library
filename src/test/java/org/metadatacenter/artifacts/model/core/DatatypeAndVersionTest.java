@@ -8,17 +8,11 @@ import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Round-trips for enum / datatype {@code fromString} parsers, plus {@link Version#fromString}.
- *
- * <p>Note: {@link XsdNumericDatatype#fromString} collides on {@code "xsd:int"} (both
- * {@code INT} and {@code INTEGER} carry that text), so the round-trip is checked on text
- * equality rather than enum identity. See {@code CoreContractPinningTest} for the explicit
- * first-wins pinning.
  */
 public class DatatypeAndVersionTest
 {
@@ -31,14 +25,9 @@ public class DatatypeAndVersionTest
 
   @Test public void testXsdNumericDatatypeRoundTrip()
   {
-    // Every numeric constant must round-trip through its text encoding back to *some* enum
-    // member with the same text. INT and INTEGER share "xsd:int" so we relax the round-trip
-    // to a text equality check rather than identity.
+    // No two constants share a text, so each one reads back as itself.
     for (XsdNumericDatatype dt : XsdNumericDatatype.values()) {
-      XsdNumericDatatype reparsed = XsdNumericDatatype.fromString(dt.getText());
-      assertNotNull(reparsed, "fromString returned null for " + dt);
-      assertEquals(dt.getText(), reparsed.getText(),
-        "Text encoding mismatch for " + dt + " (got " + reparsed + ")");
+      assertEquals(dt, XsdNumericDatatype.fromString(dt.getText()), "Round-trip failed for " + dt);
     }
     assertThrows(IllegalArgumentException.class, () -> XsdNumericDatatype.fromString("xsd:garbage"));
   }

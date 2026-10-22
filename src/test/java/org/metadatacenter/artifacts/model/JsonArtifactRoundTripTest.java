@@ -193,10 +193,8 @@ public class JsonArtifactRoundTripTest
 
   @Test public void testRoundTripNumericFieldWithIntegerDefault()
   {
-    // Use LONG: XsdNumericDatatype.INT and INTEGER both serialize as "xsd:int" so
-    // fromString cannot distinguish them on read-back; LONG has a unique text.
     NumericField original = NumericField.builder().withName("Count")
-      .withNumericType(XsdNumericDatatype.LONG)
+      .withNumericType(XsdNumericDatatype.INT)
       .withDefaultValue(7).build();
 
     testRoundTripFieldSchemaArtifact(original);

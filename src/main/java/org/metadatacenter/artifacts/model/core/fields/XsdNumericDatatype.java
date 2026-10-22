@@ -9,7 +9,6 @@ import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 public enum XsdNumericDatatype
 {
   DECIMAL("xsd:decimal"),
-  INTEGER("xsd:int"),
   LONG("xsd:long"),
   BYTE("xsd:byte"),
   SHORT("xsd:short"),

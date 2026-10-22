@@ -12,6 +12,7 @@ import java.util.Set;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateMapFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateOptionalFieldNotNull;
+import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateStringFieldNotEmpty;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUiFieldNotNull;
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateUriListFieldContainsOneOf;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -20,6 +21,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_LD_CONTEXT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_LD_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_ALTLABEL;
 import static org.metadatacenter.model.ModelNodeNames.SKOS_PREFLABEL;
 import static org.metadatacenter.model.ModelNodeNames.STATIC_FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
@@ -62,6 +64,7 @@ final class FieldSchemaArtifactInvariants
                        Optional<ValueConstraints> valueConstraints,
                        Optional<Annotations> annotations)
   {
+    validateStringFieldNotEmpty(self, name, SCHEMA_ORG_NAME);
     validateMapFieldNotNull(self, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(self, jsonLdTypes, JSON_LD_TYPE, ALLOWED_TYPE_IRIS);
     validateOptionalFieldNotNull(self, preferredLabel, SKOS_PREFLABEL);
@@ -82,6 +85,7 @@ final class FieldSchemaArtifactInvariants
    * which do not carry isMultiple / minItems / maxItems / propertyUri.
    */
   static void validateStatic(Object self,
+                             String name,
                              LinkedHashMap<String, URI> jsonLdContext,
                              List<URI> jsonLdTypes,
                              Optional<String> preferredLabel,
@@ -91,6 +95,7 @@ final class FieldSchemaArtifactInvariants
                              Optional<ValueConstraints> valueConstraints,
                              Optional<Annotations> annotations)
   {
+    validateStringFieldNotEmpty(self, name, SCHEMA_ORG_NAME);
     validateMapFieldNotNull(self, jsonLdContext, JSON_LD_CONTEXT);
     validateUriListFieldContainsOneOf(self, jsonLdTypes, JSON_LD_TYPE, ALLOWED_TYPE_IRIS);
     validateOptionalFieldNotNull(self, preferredLabel, SKOS_PREFLABEL);

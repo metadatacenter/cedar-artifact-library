@@ -245,7 +245,7 @@ An example numeric field representing the percentage of a treatment completed an
     NumericField numericField = NumericField.builder().
       withName("Treatment Completed %").
       withDescription("Please enter the percentage of the treatment that has been completed").
-      withNumericType(XsdNumericDatatype.INTEGER).
+      withNumericType(XsdNumericDatatype.INT).
       withMinValue(0).
       withMaxValue(100).
       withDefaultValue(0).

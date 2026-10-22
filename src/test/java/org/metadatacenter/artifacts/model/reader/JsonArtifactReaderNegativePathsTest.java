@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 
 import java.util.Map;
 
@@ -81,6 +84,29 @@ public class JsonArtifactReaderNegativePathsTest
       () -> reader.readFieldSchemaArtifact(node));
     assertEquals(SCHEMA_ORG_NAME, ex.getFieldKey());
     assertEquals("/", ex.getPath());
+  }
+
+  @Test public void testReadFieldThrowsOnEmptySchemaName()
+  {
+    ObjectNode node = baseField("Test", "d");
+    node.put(SCHEMA_ORG_NAME, "");
+
+    IllegalStateException ex = assertThrows(IllegalStateException.class,
+      () -> reader.readFieldSchemaArtifact(node));
+    assertTrue(ex.getMessage().startsWith("field " + SCHEMA_ORG_NAME + " is empty in "), ex.getMessage());
+  }
+
+  @Test public void testReadTemplateThrowsOnChildFieldWithEmptySchemaName()
+  {
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
+      .withFieldSchema(TextField.builder().withName("C").build()).build();
+    ObjectNode node = new JsonArtifactRenderer().renderTemplateSchemaArtifact(template);
+    assertDoesNotThrow(() -> reader.readTemplateSchemaArtifact(node));
+    ((ObjectNode) node.get(JSON_SCHEMA_PROPERTIES).get("C")).put(SCHEMA_ORG_NAME, "");
+
+    IllegalStateException ex = assertThrows(IllegalStateException.class,
+      () -> reader.readTemplateSchemaArtifact(node));
+    assertTrue(ex.getMessage().startsWith("field " + SCHEMA_ORG_NAME + " is empty in "), ex.getMessage());
   }
 
   @Test public void testReadFieldThrowsOnMalformedVersion()

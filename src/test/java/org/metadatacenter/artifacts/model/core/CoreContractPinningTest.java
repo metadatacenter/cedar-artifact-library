@@ -1,28 +1,37 @@
 package org.metadatacenter.artifacts.model.core;
 
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 
 public class CoreContractPinningTest
 {
-  @Test public void testXsdNumericDatatypeIntStringIsDeterministicallyInteger()
+  @Test public void testXsdIntReadsAsInt()
   {
-    // Both XsdNumericDatatype.INTEGER and XsdNumericDatatype.INT carry the text "xsd:int".
-    // fromString iterates in enum-declaration order; INTEGER is declared first, so it wins.
-    // Reordering the constants would silently change which one downstream callers receive.
-    XsdNumericDatatype result = XsdNumericDatatype.fromString("xsd:int");
-    assertEquals(XsdNumericDatatype.INTEGER, result,
-      "Expected INTEGER (first declared); got " + result + ". "
-        + "If you reordered the enum, search for `XsdNumericDatatype.fromString(\"xsd:int\")` "
-        + "usages and verify they still expect INTEGER.");
+    // One constant carries "xsd:int", so reading it back gives the constant a field was built with.
+    assertEquals(XsdNumericDatatype.INT, XsdNumericDatatype.fromString("xsd:int"));
+    assertEquals(XsdDatatype.INT, XsdDatatype.fromString("xsd:int"));
+    assertEquals(XsdDatatype.INT, XsdDatatype.fromString(XSD_IRI + "int"));
+  }
+
+  @Test public void testXsdIntegerIsRefused()
+  {
+    // xsd:integer is a different XSD datatype from xsd:int, and the meta-schema admits only xsd:int
+    // as a numberType.
+    assertThrows(IllegalArgumentException.class, () -> XsdNumericDatatype.fromString("xsd:integer"));
+    assertThrows(IllegalArgumentException.class, () -> XsdDatatype.fromString("xsd:integer"));
+    assertThrows(IllegalArgumentException.class, () -> XsdDatatype.fromString(XSD_IRI + "integer"));
+    assertFalse(XsdDatatype.isKnownXsdDatatype("xsd:integer"));
   }
 
   @Test public void testFieldInstanceCreateAcceptsEmptyJsonLdTypes()

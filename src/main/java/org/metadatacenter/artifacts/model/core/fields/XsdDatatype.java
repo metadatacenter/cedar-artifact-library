@@ -9,8 +9,8 @@ import static org.metadatacenter.model.ModelNodeNames.XSD_IRI;
 public enum XsdDatatype
 {
   STRING("xsd:string"), ANY_URI("xsd:anyURI"), DATE("xsd:date"), DATETIME("xsd:dateTime"), TIME("xsd:time"), DECIMAL(
-  "xsd:decimal"), INTEGER("xsd:int"), LONG("xsd:long"), BYTE("xsd:byte"), SHORT("xsd:short"), INT("xsd:int"), FLOAT(
-  "xsd:float"), DOUBLE("xsd:double");
+  "xsd:decimal"), LONG("xsd:long"), BYTE("xsd:byte"), SHORT("xsd:short"), INT("xsd:int"), FLOAT("xsd:float"), DOUBLE(
+  "xsd:double");
 
   private final String text;
 
