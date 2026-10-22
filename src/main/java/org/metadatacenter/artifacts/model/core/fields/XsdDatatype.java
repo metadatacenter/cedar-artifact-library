@@ -36,18 +36,6 @@ public enum XsdDatatype
     throw new IllegalArgumentException("No XSD datatype constant " + datatype + " found");
   }
 
-  public static XsdDatatype fromUri(URI uri)
-  {
-    String uriString = uri.toString();
-    String base = uri.toString().substring(0, uriString.indexOf("#") + 1);
-    String fragment = uri.toString().substring(uriString.indexOf("#") + 1);
-
-    if (base == null || !base.equals(XSD_IRI))
-      throw new IllegalArgumentException("Base of URI " + uriString + " is not " + XSD_IRI);
-
-    return fromString("xsd:" + fragment);
-  }
-
   // XSD names are case-sensitive, and this test must agree with fromString, which every caller
   // invokes on a datatype it reports as known.
   public static boolean isKnownXsdDatatype(String datatype)
@@ -58,11 +46,6 @@ public enum XsdDatatype
       }
     }
     return false;
-  }
-
-  public static boolean isKnownXsdDatatypeUri(URI uri)
-  {
-    return isKnownXsdDatatype(uri.toString());
   }
 
   @Override public String toString()
