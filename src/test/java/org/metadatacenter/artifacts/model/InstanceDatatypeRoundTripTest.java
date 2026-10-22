@@ -16,6 +16,7 @@ import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.tools.YamlSerializer;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -32,10 +33,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * written as JSON, and a JSON value typed with the full anyURI IRI could not be read.
  *
  * <p>A value can also name an XSD datatype the library has no constant for, such as
- * {@code xsd:integer}. The JSON renderer prefixed only the datatypes it has constants for, and the YAML
- * reader expands every {@code xsd:} name to its full IRI. So JSON {@code xsd:integer} came back from
- * YAML as {@code http://www.w3.org/2001/XMLSchema#integer}. The JSON renderer now writes every IRI in
- * the XSD namespace as {@code xsd:} and its local name, and any other IRI as it is.
+ * {@code xsd:integer}. The renderers prefixed only the datatypes the library has constants for, and the
+ * YAML reader expands every {@code xsd:} name to its full IRI. So JSON {@code xsd:integer} came back
+ * from YAML as {@code http://www.w3.org/2001/XMLSchema#integer}, and YAML {@code xsd:integer} was
+ * written back as YAML in that form. Both renderers now write every IRI in the XSD namespace as
+ * {@code xsd:} and its local name, and any other IRI as it is.
+ *
+ * <p>The YAML writer leaves a datatype unquoted only when the library has a constant for it. A name
+ * without one is quoted, unless the writer minimizes quotes.
  */
 public class InstanceDatatypeRoundTripTest
 {
@@ -90,6 +95,30 @@ public class InstanceDatatypeRoundTripTest
           Arguments.of(datatype, spelling, "attribute"))));
   }
 
+  /** Each datatype, with a constant or without, spelled with the prefix and as its full IRI, in each position. */
+  private static Stream<Arguments> everyDatatypeSpellingAndPosition()
+  {
+    return Stream.concat(DATATYPES.keySet().stream(), OTHER_XSD_DATATYPES.keySet().stream())
+      .flatMap(datatype -> Stream.of(datatype, XSD + datatype.substring("xsd:".length()))
+        .flatMap(spelling -> Stream.of(Arguments.of(datatype, spelling, "field"),
+          Arguments.of(datatype, spelling, "attribute"))));
+  }
+
+  private static Stream<String> datatypes()
+  {
+    return DATATYPES.keySet().stream();
+  }
+
+  private static Stream<String> otherDatatypes()
+  {
+    return OTHER_XSD_DATATYPES.keySet().stream();
+  }
+
+  private static String valueOf(String datatype)
+  {
+    return DATATYPES.containsKey(datatype) ? DATATYPES.get(datatype) : OTHER_XSD_DATATYPES.get(datatype);
+  }
+
   private static ObjectNode jsonInstance(String datatype, String position) throws Exception
   {
     return jsonInstance(datatype, DATATYPES.get(datatype), position);
@@ -112,8 +141,26 @@ public class InstanceDatatypeRoundTripTest
 
   private static TemplateInstanceArtifact throughYaml(TemplateInstanceArtifact instance) throws Exception
   {
-    return new YamlArtifactReader().readTemplateInstanceArtifact(
-      ArtifactSourceParser.yaml(YamlSerializer.getYAML(instance, true, true)));
+    return readYaml(YamlSerializer.getYAML(instance, true, true));
+  }
+
+  private static TemplateInstanceArtifact readYaml(String yaml) throws Exception
+  {
+    return new YamlArtifactReader().readTemplateInstanceArtifact(ArtifactSourceParser.yaml(yaml));
+  }
+
+  /** The datatype a YAML document states for the value F. */
+  private static Object datatypeIn(Map<?, ?> yaml, String position)
+  {
+    return ((Map<?, ?>) ((Map<?, ?>) yaml.get(parentKey(position))).get("F")).get("datatype");
+  }
+
+  /** The datatype a written YAML document states for the value F, as the writer spelled it. */
+  private static String datatypeLine(String yaml)
+  {
+    List<String> lines = yaml.lines().map(String::trim).filter(line -> line.startsWith("datatype:")).toList();
+    assertEquals(1, lines.size(), yaml);
+    return lines.get(0);
   }
 
   /** Where YAML writes the value: under the instance's children, or under the attribute-value group. */
@@ -149,10 +196,71 @@ public class InstanceDatatypeRoundTripTest
     assertEquals(datatype, typeOf(instance).asText());
 
     LinkedHashMap<String, Object> yaml = ArtifactSourceParser.yaml(YamlSerializer.getYAML(instance, true, true));
-    assertEquals(datatype, ((Map<?, ?>) ((Map<?, ?>) yaml.get(parentKey(position))).get("F")).get("datatype"));
+    assertEquals(datatype, datatypeIn(yaml, position));
     TemplateInstanceArtifact restored = new YamlArtifactReader().readTemplateInstanceArtifact(yaml);
 
     assertEquals(datatype, typeOf(restored).asText());
+  }
+
+  @ParameterizedTest(name = "{0}, {1}")
+  @MethodSource("datatypesAndPositions")
+  public void aDatatypeStatedInAOneElementArrayIsWrittenAsYaml(String datatype, String position) throws Exception
+  {
+    // The JSON reader expands a prefixed constant stated as a string, and keeps one stated in an array as
+    // written. The YAML renderer took that IRI for a known datatype, then failed to look it up.
+    ObjectNode source = jsonInstance(datatype, position);
+    ((ObjectNode) source.get("F")).putArray("@type").add(datatype);
+    TemplateInstanceArtifact instance = new JsonArtifactReader().readTemplateInstanceArtifact(source);
+
+    LinkedHashMap<String, Object> yaml = ArtifactSourceParser.yaml(YamlSerializer.getYAML(instance, true, true));
+    assertEquals(datatype, datatypeIn(yaml, position));
+
+    assertEquals(datatype, typeOf(new YamlArtifactReader().readTemplateInstanceArtifact(yaml)).asText());
+  }
+
+  @ParameterizedTest(name = "{1}, {2}")
+  @MethodSource("everyDatatypeSpellingAndPosition")
+  public void aDatatypeReadFromYamlIsWrittenPrefixedAsYamlAndReadsBack(String datatype, String spelling,
+    String position) throws Exception
+  {
+    TemplateInstanceArtifact instance = fromYaml(spelling, valueOf(datatype), position);
+
+    for (boolean compact : new boolean[] { true, false }) {
+      LinkedHashMap<String, Object> yaml = ArtifactSourceParser.yaml(YamlSerializer.getYAML(instance, compact, true));
+      assertEquals(datatype, datatypeIn(yaml, position));
+      TemplateInstanceArtifact restored = new YamlArtifactReader().readTemplateInstanceArtifact(yaml);
+
+      assertEquals(datatype,
+        datatypeIn(ArtifactSourceParser.yaml(YamlSerializer.getYAML(restored, compact, true)), position));
+    }
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("datatypes")
+  public void aDatatypeWithAConstantIsWrittenUnquoted(String datatype) throws Exception
+  {
+    TemplateInstanceArtifact instance = fromYaml(datatype, valueOf(datatype), "field");
+
+    assertEquals("datatype: " + datatype, datatypeLine(YamlSerializer.getYAML(instance, true, true)));
+    assertEquals("datatype: " + datatype, datatypeLine(YamlSerializer.getYAML(instance, true, false)));
+  }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("otherDatatypes")
+  public void anXsdDatatypeWithoutAConstantIsQuotedUnlessQuotesAreMinimizedAndReadsBack(String datatype)
+    throws Exception
+  {
+    TemplateInstanceArtifact instance = fromYaml(datatype, valueOf(datatype), "field");
+
+    String quoted = YamlSerializer.getYAML(instance, true, true);
+    assertEquals("datatype: \"" + datatype + "\"", datatypeLine(quoted));
+    assertEquals(datatype, typeOf(readYaml(quoted)).asText());
+    assertEquals(datatypeLine(quoted), datatypeLine(YamlSerializer.getYAML(readYaml(quoted), true, true)));
+
+    String minimal = YamlSerializer.getYAML(instance, true, false);
+    assertEquals("datatype: " + datatype, datatypeLine(minimal));
+    assertEquals(datatype, typeOf(readYaml(minimal)).asText());
+    assertEquals(datatypeLine(minimal), datatypeLine(YamlSerializer.getYAML(readYaml(minimal), true, false)));
   }
 
   @ParameterizedTest(name = "{0}, {1}")
@@ -205,6 +313,10 @@ public class InstanceDatatypeRoundTripTest
 
     assertEquals(NOT_XSD, typeOf(throughYaml(instance)).asText());
     assertEquals(NOT_XSD, typeOf(fromYaml(NOT_XSD, "42", position)).asText());
+    assertEquals(NOT_XSD, datatypeIn(ArtifactSourceParser.yaml(
+      YamlSerializer.getYAML(instance, true, true)), position));
+    assertEquals(NOT_XSD, datatypeIn(ArtifactSourceParser.yaml(
+      YamlSerializer.getYAML(fromYaml(NOT_XSD, "42", position), true, true)), position));
   }
 
   @Test public void theXsdNamespaceIriItselfIsWrittenAsItIs() throws Exception
@@ -214,5 +326,10 @@ public class InstanceDatatypeRoundTripTest
       jsonInstance(XSD, "42", "field"));
 
     assertEquals(XSD, typeOf(instance).asText());
+    assertEquals("datatype: \"" + XSD + "\"", datatypeLine(YamlSerializer.getYAML(instance, true, true)));
+    // YAML expands a bare xsd: to the namespace IRI, which is then written as it is.
+    for (String spelling : new String[] { XSD, "xsd:" })
+      assertEquals("datatype: \"" + XSD + "\"",
+        datatypeLine(YamlSerializer.getYAML(fromYaml(spelling, "42", "field"), true, true)));
   }
 }

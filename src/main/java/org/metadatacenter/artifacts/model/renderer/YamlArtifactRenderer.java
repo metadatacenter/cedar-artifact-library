@@ -15,6 +15,7 @@ import java.time.OffsetDateTime;
 import org.metadatacenter.model.validation.TimestampPolicy;
 import java.util.*;
 
+import static org.metadatacenter.artifacts.model.renderer.JsonSchemaSpecRenderers.renderPossiblyXsdPrefixedUri;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
@@ -1698,14 +1699,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     return fieldSchemaArtifact.fieldUi().isList() && fieldSchemaArtifact.valueConstraints().isPresent()
       && fieldSchemaArtifact.valueConstraints().get().multipleChoice();
-  }
-
-  private String renderPossiblyXsdPrefixedUri(URI uri)
-  {
-    if (XsdDatatype.isKnownXsdDatatypeUri(uri))
-      return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
-    else
-      return uri.toString();
   }
 
   private void addSchemaExtensions(SchemaArtifact artifact, LinkedHashMap<String, Object> rendering) {
