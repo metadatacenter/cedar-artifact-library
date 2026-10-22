@@ -525,14 +525,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       String childPath = path + "/" + childKey;
 
       if (rawValue instanceof List<?>) {
-        // Multi-instance: every element should be a map; if it carries `children:` it's an
-        // element instance, otherwise it's a field instance. We assume the list is homogeneous.
-        // The entry point has already refused an empty list, so the list has a first entry.
+        // Multi-instance: every entry is a map, and every entry is of the first entry's kind, element
+        // or field instance. The entry point has already refused an empty list, so the list has a
+        // first entry.
         List<?> list = (List<?>) rawValue;
-        Object first = list.get(0);
-        if (!(first instanceof LinkedHashMap<?, ?>))
-          throw new ArtifactParseException("Expected map entries in multi-instance list", childKey, path);
-        boolean isElement = isElementInstanceMap((LinkedHashMap<String, Object>) first);
+        for (int i = 0; i < list.size(); i++)
+          if (!(list.get(i) instanceof LinkedHashMap<?, ?>))
+            throw new ArtifactParseException("Expected map entries in multi-instance list", childKey,
+              childPath + "[" + i + "]");
+        boolean isElement = isElementInstanceMap((LinkedHashMap<String, Object>) list.get(0));
+        for (int i = 1; i < list.size(); i++)
+          if (isElementInstanceMap((LinkedHashMap<String, Object>) list.get(i)) != isElement)
+            throw new ArtifactParseException("A repeated child mixes element and field entries", childKey,
+              childPath + "[" + i + "]");
         if (isElement) {
           List<ElementInstanceArtifact> elements = new ArrayList<>();
           for (Object e : list)
@@ -684,9 +689,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       // expand the prefix here — otherwise rendering the instance to JSON throws when it
       // tries to re-prefix a value that is already prefixed.
       String dt = datatype.get();
-      jsonLdTypes.add(dt.startsWith("xsd:")
-        ? URI.create(XSD_IRI + dt.substring("xsd:".length()))
-        : URI.create(dt));
+      try {
+        // The empty string parses as a relative reference, yet it names no datatype.
+        if (dt.isEmpty()) throw new IllegalArgumentException("Empty IRI");
+        jsonLdTypes.add(dt.startsWith("xsd:")
+          ? URI.create(XSD_IRI + dt.substring("xsd:".length()))
+          : URI.create(dt));
+      } catch (IllegalArgumentException e) {
+        throw new ArtifactParseException("Invalid datatype \"" + dt + "\"", DATATYPE, path);
+      }
     }
     Optional<String> jsonLdId = readString(sourceNode, path, ID);
     if (jsonLdId.isPresent()) {

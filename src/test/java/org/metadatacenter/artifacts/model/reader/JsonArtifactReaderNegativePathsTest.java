@@ -306,6 +306,40 @@ public class JsonArtifactReaderNegativePathsTest
     assertTrue(thrown.getMessage().contains("empty string is not a URI"), thrown.getMessage());
   }
 
+  @Test public void aRepeatedChildMixingElementAndFieldEntriesIsRefused() throws Exception
+  {
+    // An entry carrying @context makes the list a repeated element, and every entry is then read as
+    // an element occurrence. A controlled term read as one keeps its @id as the occurrence's and loses
+    // its label. A key only a field value carries marks the entry as a field.
+    String element = "{\"@context\":{\"f\":\"https://example.org/p\"},\"f\":{\"@value\":\"a\"}}";
+    String term = "\"@id\":\"http://purl.obolibrary.org/obo/DOID_4\"";
+    for (String field : new String[] { "{" + term + ",\"rdfs:label\":\"disease\"}",
+        "{" + term + ",\"skos:notation\":\"D4\"}", "{" + term + ",\"skos:prefLabel\":\"Disease\"}",
+        "{" + term + ",\"skos:altLabel\":\"Illness\"}", "{\"@value\":\"b\"}", "{\"@language\":\"en\"}" }) {
+      for (boolean fieldFirst : new boolean[] { false, true }) {
+        ObjectNode instance = instanceWithItems(
+            "[" + (fieldFirst ? field + "," + element : element + "," + field) + "]");
+
+        ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+            () -> reader.readTemplateInstanceArtifact(instance), field);
+        assertEquals("A repeated child mixes element and field entries", thrown.getParseErrorMessage(), field);
+        assertEquals("items", thrown.getFieldKey(), field);
+        assertEquals(fieldFirst ? "/items[0]" : "/items[1]", thrown.getPath(), field);
+      }
+    }
+
+    // Empty and identifier-only entries carry nothing of a field's, and stay occurrences of the element.
+    var instance = reader.readTemplateInstanceArtifact(
+        instanceWithItems("[" + element + ",{\"@id\":\"https://example.org/occurrence\"},{}]"));
+    assertEquals(3, instance.multiInstanceElementInstances().get("items").size());
+  }
+
+  private ObjectNode instanceWithItems(String items) throws Exception
+  {
+    return (ObjectNode) mapper.readTree("{\"schema:name\":\"X\",\"schema:isBasedOn\":\"https://example.org/t\","
+        + "\"items\":" + items + "}");
+  }
+
   @Test public void anEmptyDerivedFromIsRefusedToo() throws Exception
   {
     // pav:derivedFrom names the artifact this one was copied from, and it is optional: an artifact

@@ -852,6 +852,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     }
   }
 
+  /** The keys of a field value that an element occurrence cannot carry. */
+  private static final Set<String> FIELD_VALUE_ONLY_KEYS = Set.of(JSON_LD_VALUE, JSON_LD_LANGUAGE, RDFS_LABEL,
+      SKOS_NOTATION, SKOS_PREFLABEL, SKOS_ALTLABEL);
+
   private void readNestedMultiInstanceArtifact(String instanceArtifactFieldKey, String instanceArtifactPath,
                                                ObjectNode instanceArtifactArrayNode, boolean elementArray, List<String> childKeys,
                                                LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
@@ -863,8 +867,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     }
 
     if (elementArray) {
-      if (instanceArtifactArrayNode.has(JSON_LD_VALUE))
-        throw new ArtifactParseException("Cannot mix literal fields and element instances in one array",
+      // A key only a field value carries marks the entry as a field, and an element occurrence never
+      // has a child of that name. Each is a JSON-LD keyword or a reserved instance property.
+      if (FIELD_VALUE_ONLY_KEYS.stream().anyMatch(instanceArtifactArrayNode::has))
+        throw new ArtifactParseException("A repeated child mixes element and field entries",
           instanceArtifactFieldKey, instanceArtifactPath);
       // Empty and identifier-only occurrences still belong to this repeated element.
       ObjectNode elementInstanceArtifactNode = instanceArtifactArrayNode;

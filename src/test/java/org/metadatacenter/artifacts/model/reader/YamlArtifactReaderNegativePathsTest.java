@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
@@ -308,6 +309,85 @@ public class YamlArtifactReaderNegativePathsTest
     ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
       () -> reader.readFieldSchemaArtifact(field));
     assertEquals("A version id must not be blank", thrown.getParseErrorMessage());
+  }
+
+  private static final String INSTANCE =
+    "type: instance\nname: X\nisBasedOn: \"https://repo.metadatacenter.org/templates/abc\"\n";
+
+  private ArtifactParseException refusalOf(String children)
+  {
+    return assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateInstanceArtifact(ArtifactSourceParser.yaml(INSTANCE + children)));
+  }
+
+  @Test public void aRepeatedChildMixingElementAndFieldEntriesIsRefused() throws Exception
+  {
+    // Reading the list by its first entry reads every later entry of the other kind as the wrong one.
+    // A field read as an element loses its value, and an element read as a field loses its children.
+    // An entry is an element when it carries `children:` or `type: element-instance`.
+    String element = "    - children:\n        f:\n          value: a\n";
+    String field = "    - value: b\n";
+    String stub = "    - type: element-instance\n";
+    Map<String, String> cases = new LinkedHashMap<>();
+    cases.put("children:\n  R:\n" + element + field, "/R[1]");
+    cases.put("children:\n  R:\n" + field + element, "/R[1]");
+    cases.put("children:\n  R:\n" + field + stub, "/R[1]");
+    cases.put("children:\n  R:\n" + element + stub + field, "/R[2]");
+    cases.put("children:\n  E:\n    children:\n      R:\n        - value: b\n"
+      + "        - children:\n            f:\n              value: a\n", "/E/R[1]");
+
+    for (Map.Entry<String, String> mixed : cases.entrySet()) {
+      ArtifactParseException thrown = refusalOf(mixed.getKey());
+      assertEquals("A repeated child mixes element and field entries", thrown.getParseErrorMessage(),
+        mixed.getKey());
+      assertEquals("R", thrown.getFieldKey(), mixed.getKey());
+      assertTrue(thrown.getPath().endsWith(mixed.getValue()), thrown.getMessage());
+    }
+
+    // A list of one kind still reads, the stub among elements included.
+    TemplateInstanceArtifact elements = reader.readTemplateInstanceArtifact(
+      ArtifactSourceParser.yaml(INSTANCE + "children:\n  R:\n" + element + stub));
+    assertEquals(2, elements.multiInstanceElementInstances().get("R").size());
+    TemplateInstanceArtifact fields = reader.readTemplateInstanceArtifact(
+      ArtifactSourceParser.yaml(INSTANCE + "children:\n  R:\n" + field + field));
+    assertEquals(2, fields.multiInstanceFieldInstances().get("R").size());
+  }
+
+  @Test public void aNonMappingEntryInARepeatedChildIsAParseError()
+  {
+    // Each entry is checked before any is cast, so a later one cannot throw ClassCastException.
+    Map<String, String> cases = new LinkedHashMap<>();
+    cases.put("children:\n  R:\n    - value: b\n    - plain\n", "/R[1]");
+    cases.put("children:\n  R:\n    - children:\n        f:\n          value: a\n    - 5\n", "/R[1]");
+    cases.put("children:\n  R:\n    - value: a\n    - value: b\n    - [c]\n", "/R[2]");
+    cases.put("children:\n  R:\n    - plain\n    - value: b\n", "/R[0]");
+
+    for (Map.Entry<String, String> entry : cases.entrySet()) {
+      ArtifactParseException thrown = refusalOf(entry.getKey());
+      assertEquals("Expected map entries in multi-instance list", thrown.getParseErrorMessage(), entry.getKey());
+      assertEquals("R", thrown.getFieldKey(), entry.getKey());
+      assertTrue(thrown.getPath().endsWith(entry.getValue()), thrown.getMessage());
+    }
+  }
+
+  @Test public void anEmptyDatatypeIsRefusedAsAnInvalidDatatype()
+  {
+    // Read as the empty relative IRI, it would be written to JSON as "@type": "".
+    for (String children : List.of("children:\n  F:\n    value: x\n    datatype: \"\"\n",
+      "children:\n  R:\n    - value: x\n      datatype: \"\"\n")) {
+      ArtifactParseException thrown = refusalOf(children);
+      assertEquals("Invalid datatype \"\"", thrown.getParseErrorMessage(), children);
+      assertEquals("datatype", thrown.getFieldKey(), children);
+    }
+  }
+
+  @Test public void aDatatypeThatIsNotAnIriIsRefusedTheSameWay()
+  {
+    // The refusal names the key and the path, where java.net.URI's IllegalArgumentException named neither.
+    ArtifactParseException thrown = refusalOf("children:\n  F:\n    value: x\n    datatype: \"a b\"\n");
+    assertEquals("Invalid datatype \"a b\"", thrown.getParseErrorMessage());
+    assertEquals("datatype", thrown.getFieldKey());
+    assertTrue(thrown.getPath().endsWith("/F"), thrown.getMessage());
   }
 
   /** A controlled-term field's YAML, its one ontology constraint pinned to {@code versionId}. */
