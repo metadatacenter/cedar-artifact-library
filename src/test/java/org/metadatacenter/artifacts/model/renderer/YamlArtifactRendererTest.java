@@ -11,8 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.*;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
+import org.metadatacenter.artifacts.model.reader.ArtifactSourceParser;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReaderTest;
+import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
+import org.metadatacenter.artifacts.model.tools.YamlSerializer;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
@@ -1463,5 +1467,35 @@ public class YamlArtifactRendererTest {
     assertFalse(assertInstanceOf(Map.class, values.get(0)).containsKey(SELECTED_BY_DEFAULT));
     assertEquals(false, assertInstanceOf(Map.class, values.get(1)).get(SELECTED_BY_DEFAULT));
     assertEquals(true, assertInstanceOf(Map.class, values.get(2)).get(SELECTED_BY_DEFAULT));
+  }
+
+  @Test
+  public void aTemplateInstanceWithAnEmptyNameIsRefusedAsOneWithoutAName() throws Exception
+  {
+    // The YAML reader refuses an instance document without a name, and one whose name is empty. The
+    // renderer refused only the first, and wrote name: "" for the second.
+    URI isBasedOn = URI.create("https://repo.metadatacenter.org/templates/t1");
+    TemplateInstanceArtifact unnamed = TemplateInstanceArtifact.builder().withIsBasedOn(isBasedOn).build();
+    TemplateInstanceArtifact emptyNamed = TemplateInstanceArtifact.builder().withName("").withIsBasedOn(isBasedOn)
+      .build();
+
+    for (TemplateInstanceArtifact instance : List.of(unnamed, emptyNamed))
+      for (boolean compact : new boolean[] { true, false }) {
+        ArtifactRenderException thrown = assertThrows(ArtifactRenderException.class,
+          () -> new YamlArtifactRenderer(compact).renderTemplateInstanceArtifact(instance));
+        assertEquals("template instance must have a name", thrown.getMessage());
+        assertThrows(ArtifactRenderException.class, () -> YamlSerializer.getYAML(instance, compact, true));
+      }
+
+    // The name stays optional in the model and in JSON.
+    assertEquals("", new JsonArtifactRenderer().renderTemplateInstanceArtifact(emptyNamed).path("schema:name")
+      .asText(null));
+    assertFalse(new JsonArtifactRenderer().renderTemplateInstanceArtifact(unnamed).has("schema:name"));
+
+    // A name of nothing but white space is one the YAML reader takes, so it is still written.
+    TemplateInstanceArtifact blankNamed = TemplateInstanceArtifact.builder().withName(" ").withIsBasedOn(isBasedOn)
+      .build();
+    assertEquals(Optional.of(" "), new YamlArtifactReader().readTemplateInstanceArtifact(
+      ArtifactSourceParser.yaml(YamlSerializer.getYAML(blankNamed, false, true))).name());
   }
 }

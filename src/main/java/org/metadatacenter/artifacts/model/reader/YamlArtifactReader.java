@@ -55,6 +55,7 @@ import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -1395,16 +1396,33 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     throw new ArtifactParseException("Expecting string or enum value, got " + raw.getClass(), fieldKey, path);
   }
 
+  // A number type and a temporal type match ignoring case, as each enum's fromString does.
   private Optional<XsdNumericDatatype> readNumberType(LinkedHashMap<String, Object> sourceNode, String path,
     String fieldKey)
   {
-    return readEnumOrString(sourceNode, path, fieldKey).map(XsdNumericDatatype::fromString);
+    Optional<String> numberType = readEnumOrString(sourceNode, path, fieldKey);
+
+    try {
+      return numberType.map(XsdNumericDatatype::fromString);
+    } catch (IllegalArgumentException e) {
+      List<String> spellings = Arrays.stream(XsdNumericDatatype.values()).map(XsdNumericDatatype::getText).toList();
+      throw new ArtifactParseException("Invalid number type \"" + numberType.get() + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
   }
 
   private Optional<XsdTemporalDatatype> readTemporalType(LinkedHashMap<String, Object> sourceNode, String path,
     String fieldKey)
   {
-    return readEnumOrString(sourceNode, path, fieldKey).map(XsdTemporalDatatype::fromString);
+    Optional<String> temporalType = readEnumOrString(sourceNode, path, fieldKey);
+
+    try {
+      return temporalType.map(XsdTemporalDatatype::fromString);
+    } catch (IllegalArgumentException e) {
+      List<String> spellings = Arrays.stream(XsdTemporalDatatype.values()).map(XsdTemporalDatatype::getText).toList();
+      throw new ArtifactParseException("Invalid temporal type \"" + temporalType.get() + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
   }
 
   private Optional<Status> readStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)

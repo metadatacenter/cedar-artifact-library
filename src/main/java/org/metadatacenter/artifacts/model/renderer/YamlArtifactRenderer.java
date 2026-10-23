@@ -399,7 +399,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(TYPE, INSTANCE);
 
-    if (templateInstanceArtifact.name().isEmpty())
+    // The YAML reader refuses an instance document without a name and one whose name is empty, so the
+    // renderer writes neither. The model and the JSON form leave the name optional.
+    if (templateInstanceArtifact.name().isEmpty() || templateInstanceArtifact.name().get().isEmpty())
       throw new ArtifactRenderException("template instance must have a name");
     else
       rendering.put(NAME, templateInstanceArtifact.name().get());

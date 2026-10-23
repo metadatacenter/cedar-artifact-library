@@ -7,11 +7,16 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
@@ -29,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -593,6 +599,56 @@ public class YamlArtifactReaderNegativePathsTest
         thrown.getParseErrorMessage(), label);
       assertEquals("type", thrown.getFieldKey(), label);
       assertTrue(thrown.getPath().endsWith(child ? "/Disease" : "/"), label + ": " + thrown.getMessage());
+    }
+  }
+
+  // ---- A numeric or temporal datatype is refused by the reader, naming the key and the path ----
+
+  private static final NumericField NUMERIC_FIELD = NumericField.builder().withName("N")
+    .withNumericType(XsdNumericDatatype.INT).build();
+  private static final TemporalField TEMPORAL_FIELD = TemporalField.builder().withName("W")
+    .withTemporalType(XsdTemporalDatatype.DATE).withTemporalGranularity(TemporalGranularity.DAY).build();
+
+  /** Reads the YAML of {@code field}, standalone or as a template's only child, with its datatype respelled. */
+  private static void readWithDatatype(FieldSchemaArtifact field, boolean child, boolean compact, String spelling)
+    throws Exception
+  {
+    SchemaArtifact artifact = child
+      ? TemplateSchemaArtifact.builder().withName("T").withFieldSchema(field).build()
+      : field;
+    LinkedHashMap<String, Object> yaml = ArtifactSourceParser.yaml(YamlSerializer.getYAML(artifact, compact, true));
+    assertEquals(1, respell(yaml, "datatype", "datatype", spelling), spelling);
+    readTermFieldYaml(yaml, child, compact);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void aNumericOrTemporalDatatypeIsReadIgnoringCase(String position, boolean child, boolean compact)
+  {
+    for (String type : List.of("xsd:int", "XSD:INT", "Xsd:Int"))
+      assertDoesNotThrow(() -> readWithDatatype(NUMERIC_FIELD, child, compact, type), type);
+    for (String type : List.of("xsd:date", "XSD:DATE", "Xsd:Date"))
+      assertDoesNotThrow(() -> readWithDatatype(TEMPORAL_FIELD, child, compact, type), type);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void anUnknownNumericOrTemporalDatatypeIsRefusedWithItsKeyAndPath(String position, boolean child,
+    boolean compact)
+  {
+    for (String type : List.of("xsd:integer", "int", "xsd:date", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readWithDatatype(NUMERIC_FIELD, child, compact, type), type);
+      assertEquals("Invalid number type \"" + type + "\"; should be xsd:decimal, xsd:long, xsd:byte, xsd:short, "
+        + "xsd:int, xsd:float or xsd:double", thrown.getParseErrorMessage(), type);
+      assertEquals("datatype", thrown.getFieldKey(), type);
+      assertTrue(thrown.getPath().endsWith(child ? "/N" : "/"), type + ": " + thrown.getMessage());
+    }
+    for (String type : List.of("xsd:dateTimeStamp", "date", "xsd:int", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readWithDatatype(TEMPORAL_FIELD, child, compact, type), type);
+      assertEquals("Invalid temporal type \"" + type + "\"; should be xsd:date, xsd:dateTime or xsd:time",
+        thrown.getParseErrorMessage(), type);
+      assertEquals("datatype", thrown.getFieldKey(), type);
+      assertTrue(thrown.getPath().endsWith(child ? "/W" : "/"), type + ": " + thrown.getMessage());
     }
   }
 
