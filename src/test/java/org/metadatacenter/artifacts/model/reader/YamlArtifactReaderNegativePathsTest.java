@@ -2,14 +2,22 @@ package org.metadatacenter.artifacts.model.reader;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
+import org.metadatacenter.artifacts.model.tools.YamlSerializer;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -19,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -402,6 +411,110 @@ public class YamlArtifactReaderNegativePathsTest
     LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(false).renderFieldSchemaArtifact(field);
     assertTrue(setVersionId(rendering, versionId), "the rendering states the constraint's version");
     return rendering;
+  }
+
+  // ---- A controlled term's term type and action: exactly the spellings the renderer writes ----
+
+  /** A controlled-term field with one class and one action, rendered with the spellings given. */
+  private static ControlledTermField termField(ValueType classType, ValueConstraintsActionType action,
+    ValueType actionType)
+  {
+    return ControlledTermField.builder().withName("Disease")
+      .withClassValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_530"), "DOID", "eyelid disease",
+        "eyelid disease", classType)
+      .withValueConstraintsAction(URI.create("http://purl.obolibrary.org/obo/DOID_162"), "DOID", actionType, action,
+        URI.create("https://data.bioontology.org/ontologies/DOID"), 0)
+      .build();
+  }
+
+  /** The YAML of {@code field}, standalone or as the only child of a template, read back as a map. */
+  private static LinkedHashMap<String, Object> termFieldYaml(ControlledTermField field, boolean child,
+    boolean compact) throws Exception
+  {
+    SchemaArtifact artifact = child
+      ? TemplateSchemaArtifact.builder().withName("T").withFieldSchema(field).build()
+      : field;
+    return ArtifactSourceParser.yaml(YamlSerializer.getYAML(artifact, compact, true));
+  }
+
+  private static SchemaArtifact readTermFieldYaml(LinkedHashMap<String, Object> yaml, boolean child, boolean compact)
+  {
+    YamlArtifactReader reader = new YamlArtifactReader(compact);
+    return child ? reader.readTemplateSchemaArtifact(yaml) : reader.readFieldSchemaArtifact(yaml);
+  }
+
+  /** Sets {@code key} on every map under {@code node} that also carries {@code marker}; returns how many. */
+  @SuppressWarnings("unchecked")
+  private static int respell(Object node, String marker, String key, String spelling)
+  {
+    int count = 0;
+    if (node instanceof Map<?, ?> map) {
+      if (map.containsKey(marker) && map.containsKey(key)) {
+        ((Map<String, Object>) map).put(key, spelling);
+        count++;
+      }
+      for (Object child : map.values())
+        count += respell(child, marker, key, spelling);
+    } else if (node instanceof List<?> list) {
+      for (Object child : list)
+        count += respell(child, marker, key, spelling);
+    }
+    return count;
+  }
+
+  static Stream<Arguments> termSpellingPositions()
+  {
+    List<Arguments> positions = new ArrayList<>();
+    for (boolean child : new boolean[] { false, true })
+      for (boolean compact : new boolean[] { false, true })
+        positions.add(Arguments.of((child ? "child" : "standalone") + ", " + (compact ? "compact" : "full"), child,
+          compact));
+    return positions.stream();
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void theRenderersSpellingsReadBackAsWritten(String position, boolean child, boolean compact) throws Exception
+  {
+    for (ValueType type : ValueType.values())
+      for (ValueConstraintsActionType action : ValueConstraintsActionType.values()) {
+        ControlledTermField field = termField(type, action, type);
+        SchemaArtifact read = readTermFieldYaml(termFieldYaml(field, child, compact), child, compact);
+        FieldSchemaArtifact readField = child
+          ? ((TemplateSchemaArtifact) read).getFieldSchemaArtifact("Disease")
+          : (FieldSchemaArtifact) read;
+        assertEquals(field.valueConstraints(), readField.valueConstraints(), type + " " + action);
+      }
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void aTermTypeOrActionTheRendererDoesNotWriteIsRefused(String position, boolean child, boolean compact)
+    throws Exception
+  {
+    ControlledTermField field = termField(ValueType.ONTOLOGY_CLASS, ValueConstraintsActionType.DELETE,
+      ValueType.ONTOLOGY_CLASS);
+    // marker, key, the spelling written in its place, and the refusal
+    List<String[]> cases = List.of(
+      new String[] { "termType", "termType", "Class", "Invalid term type \"Class\"; should be class or value" },
+      new String[] { "termType", "termType", "VALUE", "Invalid term type \"VALUE\"; should be class or value" },
+      new String[] { "termType", "termType", "OntologyClass",
+        "Invalid term type \"OntologyClass\"; should be class or value" },
+      new String[] { "action", "action", "Delete", "Invalid action \"Delete\"; should be delete or move" },
+      new String[] { "action", "action", "MOVE", "Invalid action \"MOVE\"; should be delete or move" },
+      new String[] { "action", "action", "remove", "Invalid action \"remove\"; should be delete or move" },
+      new String[] { "action", "type", "Class", "Invalid term type \"Class\"; should be class or value" },
+      new String[] { "action", "type", "Value", "Invalid term type \"Value\"; should be class or value" },
+      new String[] { "action", "type", "term", "Invalid term type \"term\"; should be class or value" });
+    for (String[] c : cases) {
+      String label = c[1] + " " + c[2];
+      LinkedHashMap<String, Object> yaml = termFieldYaml(field, child, compact);
+      assertEquals(1, respell(yaml, c[0], c[1], c[2]), label);
+
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readTermFieldYaml(yaml, child, compact), label);
+      assertEquals(c[3], thrown.getParseErrorMessage(), label);
+      assertEquals(c[1], thrown.getFieldKey(), label);
+      assertTrue(thrown.getPath().endsWith(child ? "/Disease" : "/"), label + ": " + thrown.getMessage());
+    }
   }
 
   /** Replaces the id of the first version map under {@code node}; false when there is none. */

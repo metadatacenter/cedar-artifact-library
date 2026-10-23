@@ -97,6 +97,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MOVE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NOTATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
@@ -1579,12 +1580,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     return readValuesEntriesOfType(sourceNode, path, CLASS, entry -> {
       String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
-      String termType = readRequiredString(entry, path, TERM_TYPE, false);
+      ValueType valueType = readTermType(entry, path, TERM_TYPE);
       String termLabel = readRequiredString(entry, path, TERM_LABEL, false);
       URI uri = readRequiredAbsoluteUri(entry, path, TERM_IRI);
-      ValueType valueType = termType.equalsIgnoreCase(CLASS)
-        ? ValueType.ONTOLOGY_CLASS
-        : ValueType.VALUE;
       // A display label of the template's own where the author set one, and the ontology's preferred
       // label otherwise. The model and the JSON Schema carry both either way.
       String displayLabel = readString(entry, path, TERM_DISPLAY_LABEL).orElse(termLabel);
@@ -1676,21 +1674,45 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       if (!(rawEntry instanceof LinkedHashMap<?, ?>)) continue;
       LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) rawEntry;
 
-      String actionName = readRequiredString(entry, path, ACTION, false);
-      ValueConstraintsActionType actionType = actionName.equalsIgnoreCase(DELETE_ACTION)
-        ? ValueConstraintsActionType.DELETE
-        : ValueConstraintsActionType.MOVE;
+      ValueConstraintsActionType actionType = readActionType(entry, path);
       Optional<Integer> to = readInteger(entry, path, ACTION_TO);
       URI termIri = readRequiredAbsoluteUri(entry, path, TERM_IRI);
       // Not an identifier: the legacy editor writes "template" here for one of the template's own classes.
       Optional<URI> sourceIri = readUri(entry, path, SOURCE_IRI);
       String sourceAcronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
-      String typeName = readRequiredString(entry, path, TYPE, false);
-      ValueType valueType = typeName.equalsIgnoreCase(CLASS) ? ValueType.ONTOLOGY_CLASS : ValueType.VALUE;
+      ValueType valueType = readTermType(entry, path, TYPE);
 
       result.add(new ControlledTermValueConstraintsAction(termIri, sourceAcronym, valueType, actionType, sourceIri, to));
     }
     return result;
+  }
+
+  // A term's type and an action take exactly the spellings the renderer writes. A case variant is
+  // refused too, as the TypeScript YAML reader refuses it.
+  private ValueType readTermType(LinkedHashMap<String, Object> entry, String path, String fieldKey)
+  {
+    String termType = readRequiredString(entry, path, fieldKey, false);
+
+    if (termType.equals(CLASS))
+      return ValueType.ONTOLOGY_CLASS;
+    else if (termType.equals(VALUE))
+      return ValueType.VALUE;
+    else
+      throw new ArtifactParseException(
+        "Invalid term type \"" + termType + "\"; should be " + CLASS + " or " + VALUE, fieldKey, path);
+  }
+
+  private ValueConstraintsActionType readActionType(LinkedHashMap<String, Object> entry, String path)
+  {
+    String action = readRequiredString(entry, path, ACTION, false);
+
+    if (action.equals(DELETE_ACTION))
+      return ValueConstraintsActionType.DELETE;
+    else if (action.equals(MOVE_ACTION))
+      return ValueConstraintsActionType.MOVE;
+    else
+      throw new ArtifactParseException(
+        "Invalid action \"" + action + "\"; should be " + DELETE_ACTION + " or " + MOVE_ACTION, ACTION, path);
   }
 
   private Optional<TextDefaultValue> readTextDefaultValue(LinkedHashMap<String, Object> sourceNode, String path)
