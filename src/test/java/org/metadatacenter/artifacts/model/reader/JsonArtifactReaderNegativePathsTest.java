@@ -603,6 +603,50 @@ public class JsonArtifactReaderNegativePathsTest
     assertEquals(3, instance.multiInstanceElementInstances().get("items").size());
   }
 
+  @Test public void anObjectWithoutContextCarryingAChildIsRefused() throws Exception
+  {
+    // @context is what marks an element value. Without it a lone element was read as a field value, and
+    // its children were dropped. A key that a child could take marks an element written without its
+    // @context, whether it stands alone, sits in a list, or sits beside an occurrence that carries one.
+    String element = "{\"@context\":{\"f\":\"https://example.org/p\"},\"f\":{\"@value\":\"a\"}}";
+    String identified = "\"@id\":\"https://example.org/e1\"";
+    Map<String, String> pathsByItems = Map.of(
+        "{\"f\":{\"@value\":\"a\"}}", "/items",
+        "{" + identified + ",\"f\":{\"@value\":\"a\"}}", "/items",
+        "{\"@value\":\"b\",\"f\":{\"@value\":\"a\"}}", "/items",
+        "[{\"@value\":\"b\"},{\"f\":{\"@value\":\"a\"}}]", "/items[1]",
+        "[{\"f\":{\"@value\":\"a\"}}]", "/items[0]",
+        "[" + element + ",{" + identified + ",\"f\":{\"@value\":\"a\"}}]", "/items[1]",
+        "[{\"f\":[{\"@value\":\"a\"}]}," + element + "]", "/items[0]",
+        "{\"@context\":{},\"inner\":{\"f\":{\"@value\":\"a\"}}}", "/items/inner",
+        "{\"@context\":{},\"inner\":[{" + identified + ",\"f\":[{\"@value\":\"a\"}]}]}", "/items/inner[0]");
+    for (var items : pathsByItems.entrySet()) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+          () -> reader.readTemplateInstanceArtifact(instanceWithItems(items.getKey())), items.getKey());
+      assertEquals("An element value must carry @context, and an object without one cannot carry a child key",
+          thrown.getParseErrorMessage(), items.getKey());
+      assertEquals("f", thrown.getFieldKey(), items.getKey());
+      assertEquals(items.getValue(), thrown.getPath(), items.getKey());
+    }
+  }
+
+  @Test public void anObjectWithoutContextHoldingOnlyFieldValueKeysReadsAsBefore() throws Exception
+  {
+    // An empty object, an identifier alone and a value alone are field values. Beside an occurrence that
+    // carries @context, an empty or identifier-only entry is still an occurrence of the element.
+    for (String value : List.of("{}", "{\"@id\":\"https://example.org/x\"}", "{\"@value\":\"b\",\"@language\":\"en\"}",
+        "{\"@value\":null}", "{\"@id\":\"https://example.org/x\",\"@type\":\"https://example.org/T\"}"))
+      assertTrue(reader.readTemplateInstanceArtifact(instanceWithItems(value)).singleInstanceFieldInstances()
+          .containsKey("items"), value);
+
+    String element = "{\"@context\":{\"f\":\"https://example.org/p\"},\"f\":{\"@value\":\"a\"}}";
+    var instance = reader.readTemplateInstanceArtifact(
+        instanceWithItems("[{\"@id\":\"https://example.org/occurrence\"}," + element + ",{}]"));
+    assertEquals(3, instance.multiInstanceElementInstances().get("items").size());
+    assertEquals("https://example.org/occurrence",
+        instance.multiInstanceElementInstances().get("items").get(0).jsonLdId().orElseThrow().toString());
+  }
+
   @Test public void whatSitsBesideAFieldValueStaysReadable() throws Exception
   {
     // The instance's annotations, an attribute-value group and its members, an element's @context, and
