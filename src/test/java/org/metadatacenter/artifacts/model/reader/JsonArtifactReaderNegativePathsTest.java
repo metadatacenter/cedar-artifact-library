@@ -10,9 +10,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.metadatacenter.artifacts.model.core.AttributeValueField;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.NumericField;
 import org.metadatacenter.artifacts.model.core.SectionBreakField;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
@@ -28,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.BIBO_STATUS;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
 import static org.metadatacenter.model.ModelNodeNames.FIELD_SCHEMA_ARTIFACT_TYPE_IRI;
@@ -53,6 +60,8 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_T
 import static org.metadatacenter.model.ModelNodeNames.UI;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTION;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_NUMBER_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TEMPORAL_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE;
 
 /**
@@ -231,6 +240,115 @@ public class JsonArtifactReaderNegativePathsTest
       assertEquals("Invalid action \"" + action + "\"; should be delete or move", ex.getParseErrorMessage());
       assertEquals(VALUE_CONSTRAINTS_ACTION, ex.getFieldKey());
       assertEquals(constraints + "/actions", ex.getPath());
+    }
+  }
+
+  // ---- A status, a number type and a temporal type are refused by the reader, naming the key and the path ----
+
+  static Stream<Arguments> statusPositions()
+  {
+    Function<ObjectNode, ?> template = node -> new JsonArtifactReader().readTemplateSchemaArtifact(node);
+    Function<ObjectNode, ?> element = node -> new JsonArtifactReader().readElementSchemaArtifact(node);
+    Function<ObjectNode, ?> field = node -> new JsonArtifactReader().readFieldSchemaArtifact(node);
+    Supplier<ObjectNode> templateJson = () -> RENDERER.renderTemplateSchemaArtifact(TEMPLATE);
+    // position, the document, where its status is, how it is read, the path the refusal names
+    return Stream.of(
+      Arguments.of("template", templateJson, "", template, ""),
+      Arguments.of("element", (Supplier<ObjectNode>) () -> RENDERER.renderElementSchemaArtifact("E", ELEMENT), "",
+        element, ""),
+      Arguments.of("field", (Supplier<ObjectNode>) () -> RENDERER.renderFieldSchemaArtifact("C", FIELD), "", field, ""),
+      Arguments.of("template's element", templateJson, "/properties/E", template, "/properties/E"),
+      Arguments.of("template's field", templateJson, "/properties/C", template, "/properties/C"),
+      Arguments.of("template's element's field", templateJson, "/properties/E/properties/C", template,
+        "/properties/E/properties/C"));
+  }
+
+  /** The document with {@code bibo:status} at {@code pointer} set to {@code status}. */
+  private static ObjectNode withStatus(Supplier<ObjectNode> document, String pointer, String status)
+  {
+    ObjectNode node = document.get();
+    (pointer.isEmpty() ? node : (ObjectNode) node.at(pointer)).put(BIBO_STATUS, status);
+    return node;
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("statusPositions")
+  public void aStatusIsReadIgnoringCase(String position, Supplier<ObjectNode> document, String pointer,
+    Function<ObjectNode, ?> read, String path)
+  {
+    for (String status : List.of("bibo:draft", "bibo:published", "BIBO:DRAFT", "Bibo:Published")) {
+      ObjectNode node = withStatus(document, pointer, status);
+      assertDoesNotThrow(() -> read.apply(node), status);
+    }
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("statusPositions")
+  public void anUnknownStatusIsRefusedWithItsKeyAndPath(String position, Supplier<ObjectNode> document, String pointer,
+    Function<ObjectNode, ?> read, String path)
+  {
+    for (String status : List.of("draft", "published", "bibo:limbo", "")) {
+      ObjectNode node = withStatus(document, pointer, status);
+      ArtifactParseException ex = assertThrows(ArtifactParseException.class, () -> read.apply(node), status);
+      assertEquals("Invalid status \"" + status + "\"; should be bibo:draft or bibo:published",
+        ex.getParseErrorMessage());
+      assertEquals(BIBO_STATUS, ex.getFieldKey());
+      assertEquals(path, ex.getPath());
+    }
+  }
+
+  private static final NumericField NUMERIC_FIELD = NumericField.builder().withName("N")
+    .withNumericType(XsdNumericDatatype.INT).build();
+  private static final TemporalField TEMPORAL_FIELD = TemporalField.builder().withName("W")
+    .withTemporalType(XsdTemporalDatatype.DATE).withTemporalGranularity(TemporalGranularity.DAY).build();
+
+  static Stream<Arguments> datatypePositions()
+  {
+    return Stream.of(Arguments.of("standalone", false), Arguments.of("child", true));
+  }
+
+  /**
+   * Reads the numeric field N or the temporal field W, standalone or as a template's child, after
+   * {@code key} in its value constraints is set to {@code spelling}.
+   */
+  private void readTypedField(boolean child, String name, String key, String spelling)
+  {
+    FieldSchemaArtifact field = name.equals("N") ? NUMERIC_FIELD : TEMPORAL_FIELD;
+    ObjectNode node = child
+      ? RENDERER.renderTemplateSchemaArtifact(TemplateSchemaArtifact.builder().withName("T")
+          .withFieldSchema(name, field).build())
+      : RENDERER.renderFieldSchemaArtifact(name, field);
+    ObjectNode constraints = (ObjectNode) node.at((child ? "/properties/" + name : "") + "/" + VALUE_CONSTRAINTS);
+    assertTrue(constraints.has(key), name + " " + key);
+    constraints.put(key, spelling);
+    if (child) reader.readTemplateSchemaArtifact(node); else reader.readFieldSchemaArtifact(node);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("datatypePositions")
+  public void aNumberTypeAndATemporalTypeAreReadIgnoringCase(String position, boolean child)
+  {
+    for (String type : List.of("xsd:int", "XSD:INT", "Xsd:Int"))
+      assertDoesNotThrow(() -> readTypedField(child, "N", VALUE_CONSTRAINTS_NUMBER_TYPE, type), type);
+    for (String type : List.of("xsd:date", "XSD:DATE", "Xsd:Date"))
+      assertDoesNotThrow(() -> readTypedField(child, "W", VALUE_CONSTRAINTS_TEMPORAL_TYPE, type), type);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("datatypePositions")
+  public void anUnknownNumberTypeOrTemporalTypeIsRefusedWithItsKeyAndPath(String position, boolean child)
+  {
+    for (String type : List.of("xsd:integer", "int", "xsd:date", "")) {
+      ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+        () -> readTypedField(child, "N", VALUE_CONSTRAINTS_NUMBER_TYPE, type), type);
+      assertEquals("Invalid number type \"" + type + "\"; should be xsd:decimal, xsd:long, xsd:byte, xsd:short, "
+        + "xsd:int, xsd:float or xsd:double", ex.getParseErrorMessage());
+      assertEquals(VALUE_CONSTRAINTS_NUMBER_TYPE, ex.getFieldKey());
+      assertEquals((child ? "/properties/N" : "") + "/" + VALUE_CONSTRAINTS, ex.getPath());
+    }
+    for (String type : List.of("xsd:dateTimeStamp", "date", "xsd:int", "")) {
+      ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+        () -> readTypedField(child, "W", VALUE_CONSTRAINTS_TEMPORAL_TYPE, type), type);
+      assertEquals("Invalid temporal type \"" + type + "\"; should be xsd:date, xsd:dateTime or xsd:time",
+        ex.getParseErrorMessage());
+      assertEquals(VALUE_CONSTRAINTS_TEMPORAL_TYPE, ex.getFieldKey());
+      assertEquals((child ? "/properties/W" : "") + "/" + VALUE_CONSTRAINTS, ex.getPath());
     }
   }
 

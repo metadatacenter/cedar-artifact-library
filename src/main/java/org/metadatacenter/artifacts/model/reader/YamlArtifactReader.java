@@ -1528,11 +1528,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
   }
 
+  // The type spellings the renderer writes on a values: entry, which are the only ones read.
+  private static final Set<String> VALUE_CONSTRAINT_TYPES = Set.of(ONTOLOGY, CLASS, BRANCH, VALUE_SET);
+
   /**
    * Read each entry of the {@code values:} list at {@code sourceNode}, dispatching to the supplied
-   * mapper for entries whose {@code type} discriminator matches {@code typeDiscriminator}. Entries
-   * that don't match (e.g. {@code literal:}-style entries when reading ontology constraints) are
-   * silently skipped.
+   * mapper for entries whose {@code type} discriminator matches {@code typeDiscriminator}. Entries of
+   * another kind are skipped: a literal entry carries no {@code type}, and an ontology, class, branch or
+   * value-set entry is read by the call for its own kind. A {@code type} other than those four is
+   * refused rather than skipped, because skipping it drops the constraint.
    */
   @SuppressWarnings("unchecked")
   private <T> List<T> readValuesEntriesOfType(LinkedHashMap<String, Object> sourceNode, String path,
@@ -1546,6 +1550,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       if (!(rawEntry instanceof LinkedHashMap<?, ?>)) continue;
       LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) rawEntry;
       Object t = entry.get(TYPE);
+      if (entry.containsKey(TYPE) && !(t instanceof String type && VALUE_CONSTRAINT_TYPES.contains(type)))
+        throw new ArtifactParseException("Invalid value constraint type \"" + t + "\"; should be " + ONTOLOGY + ", "
+          + CLASS + ", " + BRANCH + " or " + VALUE_SET, TYPE, path);
       if (typeDiscriminator.equals(t))
         result.add(mapper.apply(entry));
     }

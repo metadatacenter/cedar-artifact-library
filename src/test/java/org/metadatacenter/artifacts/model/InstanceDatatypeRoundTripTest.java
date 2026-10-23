@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.reader.ArtifactSourceParser;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
@@ -15,6 +16,7 @@ import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.tools.YamlSerializer;
 
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,6 +171,15 @@ public class InstanceDatatypeRoundTripTest
     return position.equals("field") ? "children" : "A";
   }
 
+  /** The types the model holds for the value F. */
+  private static List<URI> typesOf(TemplateInstanceArtifact instance, String position)
+  {
+    FieldInstanceArtifact value = position.equals("field")
+      ? instance.singleInstanceFieldInstances().get("F")
+      : instance.attributeValueFieldInstanceGroups().get("A").get("F");
+    return value.jsonLdTypes();
+  }
+
   private static JsonNode typeOf(TemplateInstanceArtifact instance)
   {
     return new JsonArtifactRenderer().renderTemplateInstanceArtifact(instance).path("F").path("@type");
@@ -204,10 +215,26 @@ public class InstanceDatatypeRoundTripTest
 
   @ParameterizedTest(name = "{0}, {1}")
   @MethodSource("datatypesAndPositions")
+  public void aDatatypeStatedInAOneElementArrayReadsAsTheSameIriAsAString(String datatype, String position)
+    throws Exception
+  {
+    // The JSON reader expanded a prefixed constant stated as a string, and kept one stated in an array as
+    // written, so the model held the IRI xsd:int for one spelling and the full XSD IRI for the other.
+    ObjectNode asString = jsonInstance(datatype, position);
+    ObjectNode asArray = jsonInstance(datatype, position);
+    ((ObjectNode) asArray.get("F")).putArray("@type").add(datatype);
+    List<URI> expanded = List.of(URI.create(XSD + datatype.substring("xsd:".length())));
+
+    assertEquals(expanded, typesOf(new JsonArtifactReader().readTemplateInstanceArtifact(asString), position));
+    assertEquals(expanded, typesOf(new JsonArtifactReader().readTemplateInstanceArtifact(asArray), position));
+  }
+
+  @ParameterizedTest(name = "{0}, {1}")
+  @MethodSource("datatypesAndPositions")
   public void aDatatypeStatedInAOneElementArrayIsWrittenAsYaml(String datatype, String position) throws Exception
   {
-    // The JSON reader expands a prefixed constant stated as a string, and keeps one stated in an array as
-    // written. The YAML renderer took that IRI for a known datatype, then failed to look it up.
+    // The YAML renderer once took the unexpanded IRI the JSON reader kept from an array for a known
+    // datatype, then failed to look it up.
     ObjectNode source = jsonInstance(datatype, position);
     ((ObjectNode) source.get("F")).putArray("@type").add(datatype);
     TemplateInstanceArtifact instance = new JsonArtifactReader().readTemplateInstanceArtifact(source);

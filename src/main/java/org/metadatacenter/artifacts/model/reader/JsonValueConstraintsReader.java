@@ -34,6 +34,7 @@ import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -361,11 +362,18 @@ final class JsonValueConstraintsReader {
   }
 
 
+  // A temporal type and a number type match ignoring case, as each enum's fromString does.
   static Optional<XsdTemporalDatatype> readTemporalType(ObjectNode sourceNode, String path, String fieldKey) {
     Optional<String> temporalTypeValue = readString(sourceNode, path, fieldKey);
 
     if (temporalTypeValue.isPresent()) {
-      return Optional.of(XsdTemporalDatatype.fromString(temporalTypeValue.get()));
+      try {
+        return Optional.of(XsdTemporalDatatype.fromString(temporalTypeValue.get()));
+      } catch (IllegalArgumentException e) {
+        throw new ArtifactParseException("Invalid temporal type \"" + temporalTypeValue.get() + "\"; should be "
+            + alternatives(Arrays.stream(XsdTemporalDatatype.values()).map(XsdTemporalDatatype::getText).toList()),
+            fieldKey, path);
+      }
     } else {
       return Optional.empty();
     }
@@ -376,7 +384,13 @@ final class JsonValueConstraintsReader {
     Optional<String> numberTypeValue = readString(sourceNode, path, fieldKey);
 
     if (numberTypeValue.isPresent()) {
-      return Optional.of(XsdNumericDatatype.fromString(numberTypeValue.get()));
+      try {
+        return Optional.of(XsdNumericDatatype.fromString(numberTypeValue.get()));
+      } catch (IllegalArgumentException e) {
+        throw new ArtifactParseException("Invalid number type \"" + numberTypeValue.get() + "\"; should be "
+            + alternatives(Arrays.stream(XsdNumericDatatype.values()).map(XsdNumericDatatype::getText).toList()),
+            fieldKey, path);
+      }
     } else {
       return Optional.empty();
     }

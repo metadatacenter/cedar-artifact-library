@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -261,10 +262,25 @@ final class JsonNodeReaders {
     Optional<String> status = readString(sourceNode, path, fieldKey);
 
     if (status.isPresent()) {
-      return Optional.of(Status.fromString(status.get()));
+      // A status matches ignoring case, as Status.fromString does.
+      try {
+        return Optional.of(Status.fromString(status.get()));
+      } catch (IllegalArgumentException e) {
+        throw new ArtifactParseException("Invalid status \"" + status.get() + "\"; should be "
+            + alternatives(Arrays.stream(Status.values()).map(Status::getText).toList()), fieldKey, path);
+      }
     } else {
       return Optional.empty();
     }
+  }
+
+
+  /** The spellings a refusal offers in place of the one it refuses: "a or b", or "a, b or c". */
+  static String alternatives(List<String> spellings) {
+    int last = spellings.size() - 1;
+    return last == 0
+        ? spellings.get(0)
+        : String.join(", ", spellings.subList(0, last)) + " or " + spellings.get(last);
   }
 
 
@@ -514,12 +530,19 @@ final class JsonNodeReaders {
               throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must be textual",
                   fieldKey, path);
             }
-            try {
-              URI uriValue = IriSyntax.uri(itemNode.asText());
-              uriValues.add(uriValue);
-            } catch (URISyntaxException e) {
-              throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must a valid URI",
-                  fieldKey, path);
+            // A known XSD name is expanded as readUri expands it, so a one-element array names the same IRI
+            // as the string it holds.
+            String itemValue = itemNode.asText();
+            if (XsdDatatype.isKnownXsdDatatype(itemValue)) {
+              uriValues.add(XsdDatatype.fromString(itemValue).toUri());
+            } else {
+              try {
+                URI uriValue = IriSyntax.uri(itemValue);
+                uriValues.add(uriValue);
+              } catch (URISyntaxException e) {
+                throw new ArtifactParseException("Value in URI array at index " + arrayIndex + " must a valid URI",
+                    fieldKey, path);
+              }
             }
           }
           arrayIndex++;

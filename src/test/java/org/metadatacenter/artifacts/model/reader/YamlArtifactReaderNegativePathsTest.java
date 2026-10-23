@@ -517,6 +517,85 @@ public class YamlArtifactReaderNegativePathsTest
     }
   }
 
+  // ---- An entry under values: takes exactly the type spellings the renderer writes ----
+
+  /** A controlled-term field with one constraint of each kind the YAML writes under {@code values:}. */
+  private static ControlledTermField everyKindField()
+  {
+    return ControlledTermField.builder().withName("Disease")
+      .withOntologyValueConstraint(URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID",
+        "Human Disease Ontology")
+      .withClassValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_530"), "DOID", "eyelid disease",
+        "eyelid disease", ValueType.ONTOLOGY_CLASS)
+      .withBranchValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_4"), "Human Disease Ontology", "DOID",
+        "disease", 3)
+      .withValueSetValueConstraint(URI.create("https://example.org/value-sets/colours"), "VS", "Colours")
+      .build();
+  }
+
+  /** Sets the type of every entry under a {@code values:} list whose type is {@code from}; returns how many. */
+  @SuppressWarnings("unchecked")
+  private static int retype(Object node, String from, Object to)
+  {
+    int count = 0;
+    if (node instanceof Map<?, ?> map) {
+      if (map.get("values") instanceof List<?> values)
+        for (Object entry : values)
+          if (entry instanceof Map<?, ?> e && from.equals(e.get("type"))) {
+            ((Map<String, Object>) e).put("type", to);
+            count++;
+          }
+      for (Object child : map.values())
+        count += retype(child, from, to);
+    } else if (node instanceof List<?> list) {
+      for (Object child : list)
+        count += retype(child, from, to);
+    }
+    return count;
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void everyValueConstraintTypeTheRendererWritesReadsBack(String position, boolean child, boolean compact)
+    throws Exception
+  {
+    ControlledTermField field = everyKindField();
+    LinkedHashMap<String, Object> yaml = termFieldYaml(field, child, compact);
+    for (String type : List.of("ontology", "class", "branch", "valueSet"))
+      assertEquals(1, retype(yaml, type, type), type);
+
+    SchemaArtifact read = readTermFieldYaml(yaml, child, compact);
+    FieldSchemaArtifact readField = child
+      ? ((TemplateSchemaArtifact) read).getFieldSchemaArtifact("Disease")
+      : (FieldSchemaArtifact) read;
+    assertEquals(field.valueConstraints(), readField.valueConstraints());
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void aValueConstraintTypeTheRendererDoesNotWriteIsRefused(String position, boolean child, boolean compact)
+    throws Exception
+  {
+    // the type the renderer writes, and a spelling written in its place
+    List<Object[]> cases = List.of(
+      new Object[] { "ontology", "Ontology" }, new Object[] { "ontology", "ONTOLOGY" },
+      new Object[] { "ontology", "ontologies" }, new Object[] { "class", "Class" },
+      new Object[] { "class", "CLASS" }, new Object[] { "class", "term" }, new Object[] { "branch", "Branch" },
+      new Object[] { "branch", "tree" }, new Object[] { "valueSet", "valueset" },
+      new Object[] { "valueSet", "ValueSet" }, new Object[] { "valueSet", "value-set" },
+      new Object[] { "class", "literal" }, new Object[] { "class", "" }, new Object[] { "branch", 1 });
+    for (Object[] c : cases) {
+      String label = c[0] + " as " + c[1];
+      LinkedHashMap<String, Object> yaml = termFieldYaml(everyKindField(), child, compact);
+      assertEquals(1, retype(yaml, (String) c[0], c[1]), label);
+
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readTermFieldYaml(yaml, child, compact), label);
+      assertEquals("Invalid value constraint type \"" + c[1] + "\"; should be ontology, class, branch or valueSet",
+        thrown.getParseErrorMessage(), label);
+      assertEquals("type", thrown.getFieldKey(), label);
+      assertTrue(thrown.getPath().endsWith(child ? "/Disease" : "/"), label + ": " + thrown.getMessage());
+    }
+  }
+
   /** Replaces the id of the first version map under {@code node}; false when there is none. */
   @SuppressWarnings("unchecked")
   private static boolean setVersionId(Object node, String versionId)
