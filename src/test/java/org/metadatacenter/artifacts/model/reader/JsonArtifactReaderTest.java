@@ -7,13 +7,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifactBuilder;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.fields.XsdDatatype;
+import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
+import org.metadatacenter.model.validation.CedarValidator;
+import org.metadatacenter.model.validation.report.ValidationReport;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -248,6 +254,44 @@ public class JsonArtifactReaderTest
       .containsKey("Attribute-value instance field 3"));
     assertTrue(templateInstanceArtifact.attributeValueFieldInstanceGroups().get("Attribute-value field B")
       .containsKey("Attribute-value instance field 4"));
+  }
+
+  @Test public void testReadSchemaArtifactsWithWhitespaceOnlyName() throws IOException
+  {
+    // The builders refuse a name made only of whitespace. The meta-schema admits one, and the reader reads it.
+    JsonArtifactRenderer renderer = new JsonArtifactRenderer();
+    CedarValidator validator = new CedarValidator();
+    ObjectNode template = renderer.renderTemplateSchemaArtifact(TemplateSchemaArtifact.builder().withName("Study")
+      .build());
+    ObjectNode element = renderer.renderElementSchemaArtifact("Address",
+      ElementSchemaArtifact.builder().withName("Address").build());
+    ObjectNode field = renderer.renderFieldSchemaArtifact("Title", TextField.builder().withName("Title").build());
+
+    for (String name : List.of(" ", "   ", "\t", "\n", " \t\r\n ")) {
+      template.put(SCHEMA_ORG_NAME, name);
+      element.put(SCHEMA_ORG_NAME, name);
+      field.put(SCHEMA_ORG_NAME, name);
+
+      assertValid(validator.validateTemplate(template));
+      assertValid(validator.validateTemplateElement(element));
+      assertValid(validator.validateTemplateField(field));
+      TemplateSchemaArtifact readTemplate = artifactReader.readTemplateSchemaArtifact(template);
+      ElementSchemaArtifact readElement = artifactReader.readElementSchemaArtifact(element);
+      FieldSchemaArtifact readField = artifactReader.readFieldSchemaArtifact(field);
+      assertEquals(name, readTemplate.name());
+      assertEquals(name, readElement.name());
+      assertEquals(name, readField.name());
+
+      // A copy builder keeps the name it copies without passing it through withName.
+      assertEquals(name, TemplateSchemaArtifact.builder(readTemplate).build().name());
+      assertEquals(name, ElementSchemaArtifact.builder(readElement).build().name());
+      assertEquals(name, FieldSchemaArtifactBuilder.builder(readField).build().name());
+    }
+  }
+
+  private static void assertValid(ValidationReport report)
+  {
+    assertEquals("true", report.getValidationStatus(), report.getErrors().toString());
   }
 
   private ObjectNode createBaseTemplateSchemaArtifact(String title, String description)

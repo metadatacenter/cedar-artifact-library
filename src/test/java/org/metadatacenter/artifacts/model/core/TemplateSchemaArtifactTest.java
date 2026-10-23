@@ -14,6 +14,7 @@ import java.util.function.UnaryOperator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 
 public class TemplateSchemaArtifactTest
 {
@@ -85,6 +86,39 @@ public class TemplateSchemaArtifactTest
   public void testMissingName()
   {
     Assertions.assertThrows(IllegalStateException.class, () -> TemplateSchemaArtifact.builder().build());
+  }
+
+  @Test
+  public void testEmptyNameIsAcceptedBySetterAndRefusedByBuild()
+  {
+    TemplateSchemaArtifact.Builder builder = TemplateSchemaArtifact.builder().withName("");
+
+    IllegalStateException ex = assertThrows(IllegalStateException.class, builder::build);
+    assertTrue(ex.getMessage().startsWith("field " + SCHEMA_ORG_NAME + " is empty in "), ex.getMessage());
+  }
+
+  @Test
+  public void testBuilderRejectsWhitespaceOnlyName()
+  {
+    for (String name : BuilderValidationTest.WHITESPACE_ONLY_NAMES) {
+      TemplateSchemaArtifact.Builder builder = TemplateSchemaArtifact.builder();
+
+      IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> builder.withName(name));
+      assertEquals("whitespace-only name passed to builder", ex.getMessage());
+
+      // The refusal leaves the builder unchanged, so the internal name follows the next name given.
+      TemplateSchemaArtifact template = builder.withName("Study").build();
+      assertEquals("Study", template.name());
+      assertEquals("Study template schema", template.internalName());
+
+      assertThrows(IllegalArgumentException.class, () -> TemplateSchemaArtifact.builder(template).withName(name));
+    }
+  }
+
+  @Test
+  public void testBuilderAcceptsNameThatHasWhitespaceAroundIt()
+  {
+    assertEquals("\tStudy ", TemplateSchemaArtifact.builder().withName("\tStudy ").build().name());
   }
 
   @Test

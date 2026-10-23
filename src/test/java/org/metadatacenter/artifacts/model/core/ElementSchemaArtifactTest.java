@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.model.ModelNodeNames.ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.PARENT_SCHEMA_ARTIFACT_CONTEXT_PREFIX_MAPPINGS;
+import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_NAME;
 
 public class ElementSchemaArtifactTest
 {
@@ -107,6 +108,36 @@ public class ElementSchemaArtifactTest
   @Test public void testMissingName()
   {
     Assertions.assertThrows(IllegalStateException.class, () -> ElementSchemaArtifact.builder().build());
+  }
+
+  @Test public void testEmptyNameIsAcceptedBySetterAndRefusedByBuild()
+  {
+    ElementSchemaArtifact.Builder builder = ElementSchemaArtifact.builder().withName("");
+
+    IllegalStateException ex = assertThrows(IllegalStateException.class, builder::build);
+    assertTrue(ex.getMessage().startsWith("field " + SCHEMA_ORG_NAME + " is empty in "), ex.getMessage());
+  }
+
+  @Test public void testBuilderRejectsWhitespaceOnlyName()
+  {
+    for (String name : BuilderValidationTest.WHITESPACE_ONLY_NAMES) {
+      ElementSchemaArtifact.Builder builder = ElementSchemaArtifact.builder();
+
+      IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> builder.withName(name));
+      assertEquals("whitespace-only name passed to builder", ex.getMessage());
+
+      // The refusal leaves the builder unchanged, so the internal name follows the next name given.
+      ElementSchemaArtifact element = builder.withName("Address").build();
+      assertEquals("Address", element.name());
+      assertEquals("Address element schema", element.internalName());
+
+      assertThrows(IllegalArgumentException.class, () -> ElementSchemaArtifact.builder(element).withName(name));
+    }
+  }
+
+  @Test public void testBuilderAcceptsNameThatHasWhitespaceAroundIt()
+  {
+    assertEquals(" Address\n", ElementSchemaArtifact.builder().withName(" Address\n").build().name());
   }
 
   @Test public void testRemovingAChildRemovesItsUiEntriesAndLeavesAValidElement() throws IOException

@@ -268,8 +268,17 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
       return this;
     }
 
+    /**
+     * Sets the element's {@code schema:name}. A name made only of whitespace is refused. An empty or
+     * null name is accepted here and refused by {@link #build()}. The readers construct an element
+     * through its record's factory rather than through this builder, and a copy builder keeps the
+     * copied element's name without calling this method, so neither meets the whitespace refusal.
+     */
     public Builder withName(String name)
     {
+      if (name != null && !name.isEmpty() && name.isBlank())
+        throw new IllegalArgumentException("whitespace-only name passed to builder");
+
       this.name = name;
 
       if (this.internalName.isEmpty())

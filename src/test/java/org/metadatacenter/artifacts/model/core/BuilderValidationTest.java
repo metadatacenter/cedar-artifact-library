@@ -10,6 +10,7 @@ import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.TextValueConstraints;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -139,6 +140,42 @@ public class BuilderValidationTest
     // A copy keeps the name, and cannot be emptied of it.
     assertEquals("Name", FieldSchemaArtifactBuilder.builder(field).build().name());
     assertThrows(IllegalStateException.class, () -> FieldSchemaArtifactBuilder.builder(field).withName("").build());
+  }
+
+  // ---- A field builder refuses a name made only of whitespace ----
+
+  static final List<String> WHITESPACE_ONLY_NAMES = List.of(" ", "   ", "\t", "\n", " \t\r\n ");
+
+  static Stream<Arguments> everyFieldKindAndWhitespaceOnlyName()
+  {
+    return everyFieldKind().flatMap(kind -> WHITESPACE_ONLY_NAMES.stream()
+      .map(name -> Arguments.of(kind.get()[0], kind.get()[1], name)));
+  }
+
+  @ParameterizedTest(name = "{0} [{index}]") @MethodSource("everyFieldKindAndWhitespaceOnlyName")
+  public void testBuilderRejectsFieldWithWhitespaceOnlyName(String kind,
+    Supplier<FieldSchemaArtifactBuilder<?>> builder, String name)
+  {
+    FieldSchemaArtifactBuilder<?> fieldBuilder = builder.get();
+
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> fieldBuilder.withName(name));
+    assertEquals("whitespace-only name passed to builder", ex.getMessage());
+
+    // The refusal leaves the builder unchanged, so the internal name follows the next name given.
+    FieldSchemaArtifact field = fieldBuilder.withName("Name").build();
+    assertEquals("Name", field.name());
+    assertEquals("Name field schema", field.internalName());
+
+    IllegalArgumentException copyEx = assertThrows(IllegalArgumentException.class,
+      () -> FieldSchemaArtifactBuilder.builder(field).withName(name));
+    assertEquals("whitespace-only name passed to builder", copyEx.getMessage());
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("everyFieldKind")
+  public void testBuildAcceptsFieldWithNameThatHasWhitespaceAroundIt(String kind,
+    Supplier<FieldSchemaArtifactBuilder<?>> builder)
+  {
+    assertEquals(" Name\t", builder.get().withName(" Name\t").build().name());
   }
 
   // ---- TextValueConstraints negative paths ----
