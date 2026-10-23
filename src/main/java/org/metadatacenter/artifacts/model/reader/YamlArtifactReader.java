@@ -1274,9 +1274,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String granularityString = readEnumOrString(sourceNode, path, fieldKey)
       .orElseThrow(() -> new ArtifactParseException("No field present", fieldKey, path));
 
-    if (!TEMPORAL_GRANULARITIES.contains(granularityString))
-      throw new ArtifactParseException("Invalid granularity " + granularityString + " in field " + fieldKey, TYPE,
-        path);
+    // A granularity takes exactly the spellings the renderer writes.
+    if (!TEMPORAL_GRANULARITIES.contains(granularityString)) {
+      List<String> spellings = Arrays.stream(TemporalGranularity.values()).map(TemporalGranularity::getText).toList();
+      throw new ArtifactParseException("Invalid granularity \"" + granularityString + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
 
     return TemporalGranularity.fromString(granularityString);
   }
@@ -1290,9 +1293,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.empty();
     }
 
-    if (!TIME_FORMATS.contains(inputTimeFormatString.get()))
-      throw new ArtifactParseException(
-        "Invalid input time format " + inputTimeFormatString.get() + " in field " + fieldKey, TYPE, path);
+    // An input time format takes exactly the spellings the renderer writes.
+    if (!TIME_FORMATS.contains(inputTimeFormatString.get())) {
+      List<String> spellings = Arrays.stream(InputTimeFormat.values()).map(InputTimeFormat::getText).toList();
+      throw new ArtifactParseException("Invalid input time format \"" + inputTimeFormatString.get() + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
 
     return Optional.of(InputTimeFormat.fromString(inputTimeFormatString.get()));
   }

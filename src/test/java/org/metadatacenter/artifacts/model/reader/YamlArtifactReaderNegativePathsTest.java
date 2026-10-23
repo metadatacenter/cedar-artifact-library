@@ -14,6 +14,7 @@ import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
 import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
 import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
 import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
@@ -613,11 +614,18 @@ public class YamlArtifactReaderNegativePathsTest
   private static void readWithDatatype(FieldSchemaArtifact field, boolean child, boolean compact, String spelling)
     throws Exception
   {
+    readRespelled(field, child, compact, "datatype", spelling);
+  }
+
+  /** Reads the YAML of {@code field}, standalone or as a template's only child, with {@code key} respelled. */
+  private static void readRespelled(FieldSchemaArtifact field, boolean child, boolean compact, String key,
+    String spelling) throws Exception
+  {
     SchemaArtifact artifact = child
       ? TemplateSchemaArtifact.builder().withName("T").withFieldSchema(field).build()
       : field;
     LinkedHashMap<String, Object> yaml = ArtifactSourceParser.yaml(YamlSerializer.getYAML(artifact, compact, true));
-    assertEquals(1, respell(yaml, "datatype", "datatype", spelling), spelling);
+    assertEquals(1, respell(yaml, key, key, spelling), key + " " + spelling);
     readTermFieldYaml(yaml, child, compact);
   }
 
@@ -649,6 +657,42 @@ public class YamlArtifactReaderNegativePathsTest
         thrown.getParseErrorMessage(), type);
       assertEquals("datatype", thrown.getFieldKey(), type);
       assertTrue(thrown.getPath().endsWith(child ? "/W" : "/"), type + ": " + thrown.getMessage());
+    }
+  }
+
+  // ---- A temporal field's granularity and input time format: the renderer's spellings, refused by key ----
+
+  private static final TemporalField TIMED_FIELD = TemporalField.builder().withName("W")
+    .withTemporalType(XsdTemporalDatatype.TIME).withTemporalGranularity(TemporalGranularity.SECOND)
+    .withInputTimeFormat(InputTimeFormat.TWELVE_HOUR).build();
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void theRenderersGranularityAndInputTimeFormatReadBack(String position, boolean child, boolean compact)
+  {
+    assertDoesNotThrow(() -> readRespelled(TIMED_FIELD, child, compact, "granularity", "second"));
+    assertDoesNotThrow(() -> readRespelled(TIMED_FIELD, child, compact, "inputTimeFormat", "12h"));
+    assertDoesNotThrow(() -> readRespelled(TIMED_FIELD, child, compact, "inputTimeFormat", "24h"));
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void anUnknownGranularityOrInputTimeFormatIsRefusedWithItsKeyAndPath(String position, boolean child,
+    boolean compact)
+  {
+    for (String granularity : List.of("week", "Second", "SECOND", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readRespelled(TIMED_FIELD, child, compact, "granularity", granularity), granularity);
+      assertEquals("granularity", thrown.getFieldKey(), granularity);
+      assertEquals("Invalid granularity \"" + granularity + "\"; should be year, month, day, hour, minute, second "
+        + "or decimalSecond", thrown.getParseErrorMessage(), granularity);
+      assertTrue(thrown.getPath().endsWith(child ? "/W" : "/"), granularity + ": " + thrown.getMessage());
+    }
+    for (String format : List.of("36h", "12H", "12-hour", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readRespelled(TIMED_FIELD, child, compact, "inputTimeFormat", format), format);
+      assertEquals("inputTimeFormat", thrown.getFieldKey(), format);
+      assertEquals("Invalid input time format \"" + format + "\"; should be 12h or 24h", thrown.getParseErrorMessage(),
+        format);
+      assertTrue(thrown.getPath().endsWith(child ? "/W" : "/"), format + ": " + thrown.getMessage());
     }
   }
 
