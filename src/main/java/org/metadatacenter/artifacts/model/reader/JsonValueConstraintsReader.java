@@ -383,18 +383,30 @@ final class JsonValueConstraintsReader {
   }
 
 
+  // An action matches exactly and a term type ignores case, as each enum's fromString does.
   static ValueConstraintsActionType readValueConstraintsActionType(ObjectNode sourceNode, String path,
                                                                     String fieldKey) {
     String actionType = readRequiredString(sourceNode, path, fieldKey);
 
-    return ValueConstraintsActionType.fromString(actionType);
+    try {
+      return ValueConstraintsActionType.fromString(actionType);
+    } catch (IllegalArgumentException e) {
+      throw new ArtifactParseException("Invalid action \"" + actionType + "\"; should be "
+          + ValueConstraintsActionType.DELETE.getText() + " or " + ValueConstraintsActionType.MOVE.getText(),
+          fieldKey, path);
+    }
   }
 
 
   static ValueType readValueType(ObjectNode sourceNode, String path, String fieldKey) {
     String valueType = readRequiredString(sourceNode, path, fieldKey);
 
-    return ValueType.fromString(valueType);
+    try {
+      return ValueType.fromString(valueType);
+    } catch (IllegalArgumentException e) {
+      throw new ArtifactParseException("Invalid term type \"" + valueType + "\"; should be "
+          + ValueType.ONTOLOGY_CLASS.getText() + " or " + ValueType.VALUE.getText(), fieldKey, path);
+    }
   }
 
 

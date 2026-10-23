@@ -180,7 +180,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    * </pre>
    */
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode) {
-    String name = readRequiredString(sourceNode, "/", SCHEMA_ORG_NAME);
+    String name = readRequiredNonEmptyString(sourceNode, "/", SCHEMA_ORG_NAME);
     return readElementSchemaArtifact(sourceNode, "", name, false, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
@@ -241,7 +241,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
     }
 
-    String name = readRequiredString(fieldNode, "/", SCHEMA_ORG_NAME);
+    String name = readRequiredNonEmptyString(fieldNode, "/", SCHEMA_ORG_NAME);
     return readFieldSchemaArtifact(fieldNode, "", name, isMultiInstance, true, minItems, maxItems,
         Optional.empty());
   }
@@ -297,7 +297,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     // this reader does not decide that; its stored value is simply not what the model carries.
     readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String name = readRequiredNonEmptyString(sourceNode, path, SCHEMA_ORG_NAME);
     String internalName = SchemaArtifact.internalNameFor(name, SchemaArtifact.Kind.TEMPLATE);
     String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -340,7 +340,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String schemaOrgName = readRequiredNonEmptyString(sourceNode, path, SCHEMA_ORG_NAME);
     String internalName = SchemaArtifact.internalNameFor(schemaOrgName, SchemaArtifact.Kind.ELEMENT);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -388,7 +388,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String schemaOrgName = readRequiredNonEmptyString(sourceNode, path, SCHEMA_ORG_NAME);
     String internalName = SchemaArtifact.internalNameFor(schemaOrgName, SchemaArtifact.Kind.FIELD);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);

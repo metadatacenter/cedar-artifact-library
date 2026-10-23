@@ -4,11 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.metadatacenter.artifacts.model.core.AttributeValueField;
+import org.metadatacenter.artifacts.model.core.ControlledTermField;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.SectionBreakField;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TextField;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 
+import java.net.URI;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -37,6 +51,9 @@ import static org.metadatacenter.model.ModelNodeNames.SCHEMA_ORG_SCHEMA_VERSION;
 import static org.metadatacenter.model.ModelNodeNames.SCHEMA_IS_BASED_ON;
 import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI;
 import static org.metadatacenter.model.ModelNodeNames.UI;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_ACTION;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_TYPE;
 
 /**
  * Negative-path tests for JsonArtifactReader: malformed input must fail fast with a useful
@@ -86,27 +103,135 @@ public class JsonArtifactReaderNegativePathsTest
     assertEquals("/", ex.getPath());
   }
 
-  @Test public void testReadFieldThrowsOnEmptySchemaName()
-  {
-    ObjectNode node = baseField("Test", "d");
-    node.put(SCHEMA_ORG_NAME, "");
+  // ---- An empty schema:name is refused by the reader, naming the key and the path ----
 
-    IllegalStateException ex = assertThrows(IllegalStateException.class,
-      () -> reader.readFieldSchemaArtifact(node));
-    assertTrue(ex.getMessage().startsWith("field " + SCHEMA_ORG_NAME + " is empty in "), ex.getMessage());
+  private static final JsonArtifactRenderer RENDERER = new JsonArtifactRenderer();
+  private static final TextField FIELD = TextField.builder().withName("C").build();
+  private static final TextField MULTIPLE_FIELD = TextField.builder().withName("M").withIsMultiple(true).build();
+  private static final SectionBreakField STATIC_FIELD = SectionBreakField.builder().withName("S").build();
+  private static final AttributeValueField ATTRIBUTE_VALUE_FIELD = AttributeValueField.builder().withName("AV").build();
+  private static final ElementSchemaArtifact ELEMENT = ElementSchemaArtifact.builder().withName("E")
+    .withFieldSchema("C", FIELD).build();
+  private static final ElementSchemaArtifact MULTIPLE_ELEMENT = ElementSchemaArtifact.builder().withName("ME")
+    .withFieldSchema("C", FIELD).withIsMultiple(true).build();
+  private static final TemplateSchemaArtifact TEMPLATE = TemplateSchemaArtifact.builder().withName("T")
+    .withFieldSchema("C", FIELD).withFieldSchema("M", MULTIPLE_FIELD).withFieldSchema("S", STATIC_FIELD)
+    .withFieldSchema("AV", ATTRIBUTE_VALUE_FIELD).withElementSchema("E", ELEMENT)
+    .withElementSchema("ME", MULTIPLE_ELEMENT).build();
+
+  /** A standalone multi-instance field, as the reader accepts it: the field wrapped in an array schema. */
+  private static ObjectNode wrappedMultipleField()
+  {
+    ObjectNode wrapper = new ObjectMapper().createObjectNode();
+    wrapper.put(JSON_SCHEMA_TYPE, "array");
+    wrapper.put("minItems", 1);
+    wrapper.set("items", RENDERER.renderFieldSchemaArtifact("M", MULTIPLE_FIELD));
+    return wrapper;
   }
 
-  @Test public void testReadTemplateThrowsOnChildFieldWithEmptySchemaName()
+  static Stream<Arguments> namedPositions()
   {
-    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("T")
-      .withFieldSchema(TextField.builder().withName("C").build()).build();
-    ObjectNode node = new JsonArtifactRenderer().renderTemplateSchemaArtifact(template);
-    assertDoesNotThrow(() -> reader.readTemplateSchemaArtifact(node));
-    ((ObjectNode) node.get(JSON_SCHEMA_PROPERTIES).get("C")).put(SCHEMA_ORG_NAME, "");
+    Function<ObjectNode, ?> template = node -> new JsonArtifactReader().readTemplateSchemaArtifact(node);
+    Function<ObjectNode, ?> element = node -> new JsonArtifactReader().readElementSchemaArtifact(node);
+    Function<ObjectNode, ?> field = node -> new JsonArtifactReader().readFieldSchemaArtifact(node);
+    Supplier<ObjectNode> templateJson = () -> RENDERER.renderTemplateSchemaArtifact(TEMPLATE);
+    Supplier<ObjectNode> elementJson = () -> RENDERER.renderElementSchemaArtifact("E", ELEMENT);
+    // position, the document, where its name is, how it is read, the path the refusal names
+    return Stream.of(
+      Arguments.of("template", templateJson, "", template, ""),
+      Arguments.of("element", elementJson, "", element, "/"),
+      Arguments.of("field", (Supplier<ObjectNode>) () -> RENDERER.renderFieldSchemaArtifact("C", FIELD), "", field, "/"),
+      Arguments.of("static field", (Supplier<ObjectNode>) () -> RENDERER.renderFieldSchemaArtifact("S", STATIC_FIELD), "",
+        field, "/"),
+      Arguments.of("multi-instance field", (Supplier<ObjectNode>) JsonArtifactReaderNegativePathsTest::wrappedMultipleField,
+        "/items", field, "/"),
+      Arguments.of("template's field", templateJson, "/properties/C", template, "/properties/C"),
+      Arguments.of("template's multi-instance field", templateJson, "/properties/M/items", template,
+        "/properties/M/items"),
+      Arguments.of("template's static field", templateJson, "/properties/S", template, "/properties/S"),
+      Arguments.of("template's attribute-value field", templateJson, "/properties/AV/items", template,
+        "/properties/AV/items"),
+      Arguments.of("template's element", templateJson, "/properties/E", template, "/properties/E"),
+      Arguments.of("template's multi-instance element", templateJson, "/properties/ME/items", template,
+        "/properties/ME/items"),
+      Arguments.of("template's element's field", templateJson, "/properties/E/properties/C", template,
+        "/properties/E/properties/C"),
+      Arguments.of("element's field", elementJson, "/properties/C", element, "/properties/C"));
+  }
 
-    IllegalStateException ex = assertThrows(IllegalStateException.class,
-      () -> reader.readTemplateSchemaArtifact(node));
-    assertTrue(ex.getMessage().startsWith("field " + SCHEMA_ORG_NAME + " is empty in "), ex.getMessage());
+  @ParameterizedTest(name = "{0}") @MethodSource("namedPositions")
+  public void anEmptySchemaNameIsRefusedWithItsKeyAndPath(String position, Supplier<ObjectNode> document,
+    String pointer, Function<ObjectNode, ?> read, String path)
+  {
+    ObjectNode node = document.get();
+    assertDoesNotThrow(() -> read.apply(node));
+    ObjectNode named = pointer.isEmpty() ? node : (ObjectNode) node.at(pointer);
+    assertTrue(named.has(SCHEMA_ORG_NAME), pointer);
+    named.put(SCHEMA_ORG_NAME, "");
+
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class, () -> read.apply(node));
+    assertEquals("Expecting non-empty string value", ex.getParseErrorMessage());
+    assertEquals(SCHEMA_ORG_NAME, ex.getFieldKey());
+    assertEquals(path, ex.getPath());
+  }
+
+  // ---- A controlled term's type and action are refused by the reader, naming the key and the path ----
+
+  private static final ControlledTermField TERM_FIELD = ControlledTermField.builder().withName("D")
+    .withClassValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_530"), "DOID", "eyelid disease",
+      "eyelid disease", ValueType.ONTOLOGY_CLASS)
+    .withValueConstraintsAction(URI.create("http://purl.obolibrary.org/obo/DOID_162"), "DOID", ValueType.ONTOLOGY_CLASS,
+      ValueConstraintsActionType.DELETE, URI.create("https://data.bioontology.org/ontologies/DOID"), 0)
+    .build();
+
+  static Stream<Arguments> termPositions()
+  {
+    return Stream.of(Arguments.of("standalone", false), Arguments.of("child", true));
+  }
+
+  /** Reads the term field's JSON, standalone or as a template's child, after {@code key} at {@code entry} is set. */
+  private void readTermField(boolean child, String entry, String key, String spelling)
+  {
+    ObjectNode node = child
+      ? RENDERER.renderTemplateSchemaArtifact(TemplateSchemaArtifact.builder().withName("T")
+          .withFieldSchema("D", TERM_FIELD).build())
+      : RENDERER.renderFieldSchemaArtifact("D", TERM_FIELD);
+    ObjectNode target = (ObjectNode) node.at((child ? "/properties/D" : "") + "/" + VALUE_CONSTRAINTS + entry);
+    assertTrue(target.has(key), entry + " " + key);
+    target.put(key, spelling);
+    if (child) reader.readTemplateSchemaArtifact(node); else reader.readFieldSchemaArtifact(node);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termPositions")
+  public void aTermTypeIsReadIgnoringCaseAndAnActionExactly(String position, boolean child)
+  {
+    for (String type : List.of("OntologyClass", "Value", "ontologyclass", "VALUE")) {
+      assertDoesNotThrow(() -> readTermField(child, "/classes/0", VALUE_CONSTRAINTS_TYPE, type), type);
+      assertDoesNotThrow(() -> readTermField(child, "/actions/0", VALUE_CONSTRAINTS_TYPE, type), type);
+    }
+    for (String action : List.of("delete", "move"))
+      assertDoesNotThrow(() -> readTermField(child, "/actions/0", VALUE_CONSTRAINTS_ACTION, action), action);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termPositions")
+  public void anUnknownTermTypeOrActionIsRefusedWithItsKeyAndPath(String position, boolean child)
+  {
+    String constraints = (child ? "/properties/D" : "") + "/" + VALUE_CONSTRAINTS;
+    for (String type : List.of("Class", "class", "term", ""))
+      for (String entry : List.of("classes", "actions")) {
+        ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+          () -> readTermField(child, "/" + entry + "/0", VALUE_CONSTRAINTS_TYPE, type), entry + " " + type);
+        assertEquals("Invalid term type \"" + type + "\"; should be OntologyClass or Value", ex.getParseErrorMessage());
+        assertEquals(VALUE_CONSTRAINTS_TYPE, ex.getFieldKey());
+        assertEquals(constraints + "/" + entry, ex.getPath());
+      }
+    for (String action : List.of("Delete", "MOVE", "remove", "")) {
+      ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+        () -> readTermField(child, "/actions/0", VALUE_CONSTRAINTS_ACTION, action), action);
+      assertEquals("Invalid action \"" + action + "\"; should be delete or move", ex.getParseErrorMessage());
+      assertEquals(VALUE_CONSTRAINTS_ACTION, ex.getFieldKey());
+      assertEquals(constraints + "/actions", ex.getPath());
+    }
   }
 
   @Test public void testReadFieldThrowsOnMalformedVersion()

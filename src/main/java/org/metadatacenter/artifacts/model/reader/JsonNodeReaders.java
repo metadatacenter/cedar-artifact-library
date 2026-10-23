@@ -414,6 +414,18 @@ final class JsonNodeReaders {
   }
 
 
+  /** A required string that must not be empty, as a schema artifact's name must not be. */
+  static String readRequiredNonEmptyString(ObjectNode sourceNode, String path, String fieldKey) {
+    String value = readRequiredString(sourceNode, path, fieldKey);
+
+    if (value.isEmpty()) {
+      throw new ArtifactParseException("Expecting non-empty string value", fieldKey, path);
+    }
+
+    return value;
+  }
+
+
   static int readRequiredInt(ObjectNode sourceNode, String path, String fieldKey) {
     JsonNode jsonNode = sourceNode.get(fieldKey);
 
