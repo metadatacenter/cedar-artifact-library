@@ -107,6 +107,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_URI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_ONTOLOGY_ADDRESS_PREFIX;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_SYSTEM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_BASE_IRI;
@@ -1040,11 +1042,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
       Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(sourceNode, path, INPUT_TIME_FORMAT);
-      // A temporal field always says whether it carries a time zone, and the stored JSON of every
-      // one in production does. The YAML renderer writes the key only when it is true, so reading
-      // an absent key as "unsaid" rather than false dropped `timezoneEnabled` from the JSON of
-      // every temporal field that does not enable it, and the round trip lost an explicit false.
-      Optional<Boolean> timeZoneEnabled = Optional.of(readBoolean(sourceNode, path, INPUT_TIME_ZONE, false));
+      // A field may state that its values carry a time zone, state that they do not, or state nothing,
+      // and its JSON keeps the three apart. The renderer writes the key whenever the field states it,
+      // so an absent key states nothing, as an absent `timezoneEnabled` does in the JSON.
+      Optional<Boolean> timeZoneEnabled = readOptionalBoolean(sourceNode, path, INPUT_TIME_ZONE);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden,
         continuePreviousLine);
@@ -1239,6 +1240,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldKey, path);
 
     return (Boolean)rawValue;
+  }
+
+  private Optional<Boolean> readOptionalBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
+  {
+    Object rawValue = sourceNode.get(fieldKey);
+
+    if (rawValue == null)
+      return Optional.empty();
+
+    if (!(rawValue instanceof Boolean))
+      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldKey, path);
+
+    return Optional.of((Boolean)rawValue);
   }
 
   private List<String> readStringArray(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
@@ -1590,21 +1604,22 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
       String name = readRequiredString(entry, path, SOURCE_NAME, false);
       Optional<Integer> numTerms = readInteger(entry, path, TERM_COUNT);
-      return new OntologyValueConstraint(deriveOntologyUri(acronym), acronym, name, numTerms,
+      URI uri = readAbsoluteUri(entry, path, SOURCE_URI).orElseGet(() -> deriveOntologyUri(acronym));
+      return new OntologyValueConstraint(uri, acronym, name, numTerms,
         readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
   }
 
   /**
-   * Reconstruct an ontology's backend URL from its acronym. The compact YAML no longer carries the URL
-   * because it is derivable (VERSIONING-ROADMAP "Revisit: sourceUri is derivable"), but the model — and
-   * the JSON Schema it renders to — still require it. BioPortal addresses every ontology at
-   * {@code https://data.bioontology.org/ontologies/{ACRONYM}}, and only BioPortal is served today
-   * (absent {@code sourceSystem} means BioPortal). A different source system would need its own rule.
+   * Derive an ontology's service address from its acronym, for an entry that states none. The model, and
+   * the JSON Schema it renders to, require the address. BioPortal serves every ontology at
+   * {@code https://data.bioontology.org/ontologies/{ACRONYM}}, so the writer leaves out a BioPortal
+   * address for the entry's acronym, in whichever form it was stored, and states an address outside
+   * BioPortal, such as one under {@code purl.obolibrary.org}.
    */
   private static URI deriveOntologyUri(String acronym)
   {
-    return URI.create("https://data.bioontology.org/ontologies/" + acronym);
+    return URI.create(DERIVED_ONTOLOGY_ADDRESS_PREFIX + acronym);
   }
 
   private List<ClassValueConstraint> readClassValueConstraints(LinkedHashMap<String, Object> sourceNode, String path)

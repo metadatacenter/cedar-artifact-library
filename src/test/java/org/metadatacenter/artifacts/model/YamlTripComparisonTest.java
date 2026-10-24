@@ -60,6 +60,17 @@ class YamlTripComparisonTest
       json("{\"$schema\": \"x\", \"description\": \"generated\"}"))));
     assertEquals(List.of(Optional.of(Family.INSTANCE_COMPLETION)), families(YamlTripComparison.compareInstances(
       json("{\"Element\": {\"@context\": {}, \"Field\": {\"@value\": null}}}"), json("{}"))));
+    assertEquals(List.of(Optional.of(Family.NUMBER_SPELLING)), families(YamlTripComparison.compareSchemas(
+      json("{\"_valueConstraints\": {\"minValue\": 5.0}}"), json("{\"_valueConstraints\": {\"minValue\": 5}}"))));
+  }
+
+  @Test void numberChangedInValueOrTypeIsUnexplained() throws Exception
+  {
+    var differences = YamlTripComparison.compareSchemas(
+      json("{\"_valueConstraints\": {\"minValue\": 5.1, \"maxValue\": 10, \"decimalPlace\": 2}}"),
+      json("{\"_valueConstraints\": {\"minValue\": 5, \"maxValue\": \"10\", \"decimalPlace\": 2.0}}"));
+    assertEquals(List.of(Optional.<Family>empty(), Optional.<Family>empty(), Optional.of(Family.NUMBER_SPELLING)),
+      families(differences));
   }
 
   @Test void elementHoldingSomethingIsNotEmptyContent() throws Exception

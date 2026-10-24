@@ -1,6 +1,7 @@
 package org.metadatacenter.artifacts.model.yaml;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class YamlConstants
 {
@@ -107,8 +108,16 @@ public class YamlConstants
   // Value-constraint entry keys (VERSIONING-ROADMAP "The Model" §6). source* = the vocabulary, term* = the member.
   public static final String SOURCE_SYSTEM = "sourceSystem";     // backend; absent ⇒ bioportal
   public static final String SOURCE_NAME = "sourceName";         // source display name
-  // NB: an ontology's backend URL is no longer a YAML key. It is reconstructed from the acronym on read
-  // (VERSIONING-ROADMAP "Revisit: sourceUri is derivable"); the JSON Schema still carries it.
+  // An ontology's service address. The reader derives BioPortal's address from the acronym when the
+  // key is absent, as the prefix below followed by the acronym. The writer leaves out every BioPortal
+  // address for the entry's own acronym, in any of the forms the pattern below matches, and states an
+  // address outside BioPortal, such as one under purl.obolibrary.org.
+  public static final String SOURCE_URI = "sourceUri";
+  public static final String DERIVED_ONTOLOGY_ADDRESS_PREFIX = "https://data.bioontology.org/ontologies/";
+  // A BioPortal ontology address, over http or https, at data.bioontology.org or bioportal.bioontology.org.
+  // The one group is the acronym the address names.
+  public static final Pattern BIOPORTAL_ONTOLOGY_ADDRESS =
+    Pattern.compile("^https?://(?:data|bioportal)\\.bioontology\\.org/ontologies/([^/]+)$");
   public static final String TERM_BASE_IRI = "termBaseIri";      // branch/valueSet: the base of a term set
   public static final String TERM_BASE_LABEL = "termBaseLabel";  // branch/valueSet: the base's label
   public static final String TERM_MAX_DEPTH = "termMaxDepth";    // branch: how far below the base to descend

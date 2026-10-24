@@ -31,6 +31,7 @@ import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 import static org.metadatacenter.model.ModelNodeNames.MODEL_VERSION;
 
@@ -317,18 +318,58 @@ public class YamlAsymmetryProbeTest
   {
     TemporalField original = TemporalField.builder()
       .withName("Collected at").withTemporalType(XsdTemporalDatatype.TIME)
-      .withTemporalGranularity(TemporalGranularity.MINUTE).build();
+      .withTemporalGranularity(TemporalGranularity.MINUTE).withTimeZoneEnabled(false).build();
 
-    FieldSchemaArtifact roundTripped = roundTripField(original);
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(original);
+    assertEquals(false, rendering.get("inputTimeZone"));
 
-    // The YAML states a time zone only when one is enabled, so an absent key has to read as
-    // disabled rather than unsaid. Reading it as unsaid dropped `timezoneEnabled` from the JSON,
-    // where every stored temporal field carries it.
+    FieldSchemaArtifact roundTripped = reader.readFieldSchemaArtifact(rendering);
     assertTrue(roundTripped.fieldUi().asTemporalFieldUi().timezoneEnabled().isPresent());
     assertFalse(roundTripped.fieldUi().asTemporalFieldUi().timezoneEnabled().get());
 
     ObjectNode json = new JsonArtifactRenderer().renderFieldSchemaArtifact(roundTripped);
+    assertTrue(json.get("_ui").has("timezoneEnabled"));
     assertFalse(json.get("_ui").get("timezoneEnabled").asBoolean());
+  }
+
+  @Test public void testRoundTripLeavesATemporalFieldThatStatesNoTimeZoneSettingWithoutOne() throws Exception
+  {
+    // Some stored temporal fields state no `timezoneEnabled`. The JSON writes nothing for them, and the
+    // YAML has to read back as nothing too rather than as a time zone turned off.
+    String json = "{\"@type\":\"https://schema.metadatacenter.org/core/TemplateField\","
+      + "\"@id\":\"https://repo.metadatacenter.org/template-fields/00000000-0000-0000-0000-000000000000\","
+      + "\"schema:name\":\"Collected at\",\"schema:description\":\"d\","
+      + "\"schema:schemaVersion\":\"" + MODEL_VERSION + "\","
+      + "\"title\":\"Collected at field schema\",\"description\":\"Collected at field schema\","
+      + "\"_ui\":{\"inputType\":\"temporal\",\"temporalGranularity\":\"minute\"},"
+      + "\"_valueConstraints\":{\"requiredValue\":false,\"temporalType\":\"xsd:time\"},"
+      + "\"properties\":{},\"required\":[],\"type\":\"object\","
+      + "\"$schema\":\"http://json-schema.org/draft-04/schema#\"}";
+    FieldSchemaArtifact field = new JsonArtifactReader()
+      .readFieldSchemaArtifact((ObjectNode) new ObjectMapper().readTree(json));
+    assertFalse(field.fieldUi().asTemporalFieldUi().timezoneEnabled().isPresent());
+    assertFalse(new JsonArtifactRenderer().renderFieldSchemaArtifact(field).get("_ui").has("timezoneEnabled"));
+
+    LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(field);
+    assertFalse(rendering.containsKey("inputTimeZone"));
+    assertFalse(new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field).containsKey("inputTimeZone"));
+
+    FieldSchemaArtifact roundTripped = reader.readFieldSchemaArtifact(rendering);
+    assertFalse(roundTripped.fieldUi().asTemporalFieldUi().timezoneEnabled().isPresent());
+    assertFalse(new JsonArtifactRenderer().renderFieldSchemaArtifact(roundTripped).get("_ui").has("timezoneEnabled"));
+  }
+
+  @Test public void testRoundTripReadsATimeZoneTheYamlStates()
+  {
+    for (boolean stated : new boolean[] { true, false }) {
+      LinkedHashMap<String, Object> rendering = renderer.renderFieldSchemaArtifact(TemporalField.builder()
+        .withName("Collected at").withTemporalType(XsdTemporalDatatype.TIME)
+        .withTemporalGranularity(TemporalGranularity.MINUTE).build());
+      rendering.put("inputTimeZone", stated);
+
+      FieldSchemaArtifact read = reader.readFieldSchemaArtifact(rendering);
+      assertEquals(Optional.of(stated), read.fieldUi().asTemporalFieldUi().timezoneEnabled());
+    }
   }
 
   @Test public void testRoundTripKeepsALiteralThatStatesItIsNotSelected() throws Exception

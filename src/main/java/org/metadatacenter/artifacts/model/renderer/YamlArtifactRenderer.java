@@ -762,8 +762,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         && !templateUi.temporalGranularity().isDay() && templateUi.inputTimeFormat().isPresent()) {
         rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat().get().toString());
       }
-      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
-        rendering.put(INPUT_TIME_ZONE, true);
+      // Written as the field states it, false included, and left out when the field states nothing,
+      // as the JSON leaves it out.
+      templateUi.timezoneEnabled().ifPresent(timezoneEnabled -> rendering.put(INPUT_TIME_ZONE, timezoneEnabled));
     }
 
     if (fieldSchemaArtifact.isStatic()) {
@@ -1602,8 +1603,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     m.put(SOURCE_ACRONYM, o.acronym());
     m.put(SOURCE_NAME, o.name());
     o.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
-    // The ontology's backend URL is not rendered: it is derivable from the acronym and reconstructed on
-    // read (VERSIONING-ROADMAP "Revisit: sourceUri is derivable").
+    // The reader derives a BioPortal address from the acronym, so the service address is written only
+    // when it is not a BioPortal address for this acronym.
+    var bioPortalAddress = BIOPORTAL_ONTOLOGY_ADDRESS.matcher(o.uri().toString());
+    if (!bioPortalAddress.matches() || !bioPortalAddress.group(1).equals(o.acronym()))
+      m.put(SOURCE_URI, o.uri().toString());
     o.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
     o.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
     return m;
