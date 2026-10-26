@@ -714,6 +714,17 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
       rendering.putNull(JSON_LD_ID);
     }
 
+    // The classes an instance or an element occurrence states as its own @type, which the reader keeps:
+    // one is written as a string and several as a list, as a schema artifact's are.
+    if (parentInstanceArtifact.jsonLdTypes().size() == 1) {
+      rendering.put(JSON_LD_TYPE, renderUri(parentInstanceArtifact.jsonLdTypes().get(0)));
+    } else if (parentInstanceArtifact.jsonLdTypes().size() > 1) {
+      rendering.put(JSON_LD_TYPE, MAPPER.createArrayNode());
+      for (URI jsonLdType : parentInstanceArtifact.jsonLdTypes()) {
+        rendering.withArray(JSON_LD_TYPE).add(renderUri(jsonLdType));
+      }
+    }
+
     if (parentInstanceArtifact.name().isPresent()) {
       rendering.put(SCHEMA_ORG_NAME, parentInstanceArtifact.name().get());
     }
