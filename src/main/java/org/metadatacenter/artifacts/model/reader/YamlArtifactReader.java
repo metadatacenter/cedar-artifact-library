@@ -140,6 +140,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEADER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HEIGHT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IRI;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT_INSTANCE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.INSTANCE;
@@ -164,14 +165,11 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTI_SELECT_LIST_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NUMERIC_FIELD;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ORDER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_DESCRIPTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.OVERRIDE_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_DESCRIPTIONS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_IRI;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PROPERTY_LABELS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PUBLISHED_STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RADIO_FIELD;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SINGLE_SELECT_LIST_FIELD;
@@ -303,8 +301,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *         maxLength: 5
    * </pre>
    */
-  @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
+  @Override public TemplateSchemaArtifact readTemplateSchemaArtifact(LinkedHashMap<String, Object> source)
   {
+    LinkedHashMap<String, Object> sourceNode = YamlKeyTracking.track(source);
     String path = "/";
     rejectNullAndEmptyValues(sourceNode, path, true);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
@@ -313,7 +312,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + TEMPLATE, TYPE, path);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
-    return readTemplateSchemaArtifact(sourceNode, path);
+    TemplateSchemaArtifact artifact = readTemplateSchemaArtifact(sourceNode, path);
+    YamlKeyTracking.requireUsed(sourceNode);
+    return artifact;
   }
 
   /**
@@ -341,8 +342,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *           maxLength: 5
    * </pre>
    */
-  @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
+  @Override public ElementSchemaArtifact readElementSchemaArtifact(LinkedHashMap<String, Object> source)
   {
+    LinkedHashMap<String, Object> sourceNode = YamlKeyTracking.track(source);
     String path = "/";
     rejectNullAndEmptyValues(sourceNode, path, true);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
@@ -351,7 +353,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       throw new ArtifactParseException("invalid artifact type " + artifactType + "; should be " + ELEMENT, TYPE, path);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
-    return readElementSchemaArtifact(sourceNode, path);
+    ElementSchemaArtifact artifact = readElementSchemaArtifact(sourceNode, path);
+    YamlKeyTracking.requireUsed(sourceNode);
+    return artifact;
   }
 
   /**
@@ -380,17 +384,21 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    *     label: Translated Title
    * </pre>
    */
-  @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> sourceNode)
+  @Override public FieldSchemaArtifact readFieldSchemaArtifact(LinkedHashMap<String, Object> source)
   {
+    LinkedHashMap<String, Object> sourceNode = YamlKeyTracking.track(source);
     String path = "/";
     rejectNullAndEmptyValues(sourceNode, path, true);
 
     checkSchemaArtifactModelVersion(sourceNode, path);
-    return readFieldSchemaArtifact(sourceNode, path);
+    FieldSchemaArtifact artifact = readFieldSchemaArtifact(sourceNode, path);
+    YamlKeyTracking.requireUsed(sourceNode);
+    return artifact;
   }
 
-  @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
+  @Override public TemplateInstanceArtifact readTemplateInstanceArtifact(LinkedHashMap<String, Object> source)
   {
+    LinkedHashMap<String, Object> sourceNode = YamlKeyTracking.track(source);
     String path = "/";
     rejectNullAndEmptyValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
@@ -433,11 +441,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
     readAnnotations(sourceNode, path).ifPresent(builder::withAnnotations);
 
-    return builder.build();
+    TemplateInstanceArtifact artifact = builder.build();
+    YamlKeyTracking.requireUsed(sourceNode);
+    return artifact;
   }
 
-  @Override public ElementInstanceArtifact readElementInstanceArtifact(LinkedHashMap<String, Object> sourceNode)
+  @Override public ElementInstanceArtifact readElementInstanceArtifact(LinkedHashMap<String, Object> source)
   {
+    LinkedHashMap<String, Object> sourceNode = YamlKeyTracking.track(source);
     String path = "/";
     rejectNullAndEmptyValues(sourceNode, path);
     String artifactType = readRequiredString(sourceNode, path, TYPE, false);
@@ -477,7 +488,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     readAttributeValueFieldInstanceGroups(sourceNode, path, STANDALONE_ELEMENT_INSTANCE_RESERVED_KEYS,
       builder::withAttributeValueFieldGroup);
 
-    return builder.build();
+    ElementInstanceArtifact artifact = builder.build();
+    YamlKeyTracking.requireUsed(sourceNode);
+    return artifact;
   }
 
   /**
@@ -497,6 +510,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private static void rejectNullAndEmptyValues(Object node, String path, boolean schema)
   {
+    YamlKeyTracking.untracked(() -> rejectNullAndEmptyValuesWalk(node, path, schema));
+  }
+
+  private static void rejectNullAndEmptyValuesWalk(Object node, String path, boolean schema)
+  {
     if (node instanceof Map<?, ?> map) {
       for (Map.Entry<?, ?> entry : map.entrySet()) {
         String key = String.valueOf(entry.getKey());
@@ -510,12 +528,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
           && (map.get(LABEL) instanceof String || map.get(PREF_LABEL) instanceof String
             || map.get(NOTATION) instanceof String)) continue;
         rejectNullOrEmpty(entry.getValue(), key, path);
-        rejectNullAndEmptyValues(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key, schema);
+        rejectNullAndEmptyValuesWalk(entry.getValue(), path + (path.endsWith("/") ? "" : "/") + key, schema);
       }
     } else if (node instanceof List<?> list) {
       for (int i = 0; i < list.size(); i++) {
         rejectNullOrEmpty(list.get(i), "[" + i + "]", path);
-        rejectNullAndEmptyValues(list.get(i), path + "[" + i + "]", schema);
+        rejectNullAndEmptyValuesWalk(list.get(i), path + "[" + i + "]", schema);
       }
     }
   }
@@ -550,7 +568,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     for (Map.Entry<String, Object> entry : childrenNode.entrySet()) {
       String childKey = entry.getKey();
       Object rawValue = entry.getValue();
-      String childPath = path + "/" + childKey;
+      String childPath = below(path, childKey);
 
       if (rawValue instanceof List<?>) {
         // Multi-instance: every entry is a map, and every entry is of the first entry's kind, element
@@ -675,13 +693,17 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private void readAttributeValueFieldInstanceGroups(LinkedHashMap<String, Object> sourceNode, String path,
     Set<String> reservedKeys, java.util.function.BiConsumer<String, LinkedHashMap<String, FieldInstanceArtifact>> sink)
   {
-    for (Map.Entry<String, Object> entry : sourceNode.entrySet()) {
+    // A template-free reader can not tell a misspelled key holding a mapping from a group whose name
+    // the form-filler chose, so every mapping-valued key is a group and the template judges it. A key
+    // holding anything else is no group, and is left unread, so the document is refused for it.
+    for (Map.Entry<String, Object> entry : YamlKeyTracking.untracked(() -> new java.util.ArrayList<>(sourceNode.entrySet()))) {
       String key = entry.getKey();
       if (reservedKeys.contains(key))
         continue;
       Object rawValue = entry.getValue();
       if (!(rawValue instanceof LinkedHashMap<?, ?>))
         continue;
+      YamlKeyTracking.use(sourceNode, key);
       LinkedHashMap<String, Object> groupNode = (LinkedHashMap<String, Object>) rawValue;
       LinkedHashMap<String, FieldInstanceArtifact> groupFields = new LinkedHashMap<>();
       for (Map.Entry<String, Object> fieldEntry : groupNode.entrySet()) {
@@ -692,7 +714,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         if (!(fieldRaw instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map value for attribute-value field " + fieldName, key, path);
         groupFields.put(fieldName,
-          readFieldInstanceArtifact((LinkedHashMap<String, Object>) fieldRaw, path + "/" + key + "/" + fieldName));
+          readFieldInstanceArtifact((LinkedHashMap<String, Object>) fieldRaw, below(below(path, key), fieldName)));
       }
       sink.accept(key, groupFields);
     }
@@ -887,15 +909,18 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     ElementUi elementUi = readElementUi(sourceNode, path, childOrder, childLabels, childDescriptions);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
-    // isMultiple / minItems / maxItems / propertyUri are written by the renderer under the
-    // `configuration:` sub-block for nested elements. Accept either location for
-    // backwards-compat with hand-authored YAML and the existing reader tests.
-    LinkedHashMap<String, Object> configNode = readChildNode(sourceNode, path, CONFIGURATION);
-    LinkedHashMap<String, Object> configSource = configNode != null ? configNode : sourceNode;
+    // isMultiple / minItems / maxItems / propertyUri are what a parent says of its child, written
+    // by the renderer under a nested element's `configuration:` sub-block, and only there.
+    LinkedHashMap<String, Object> configNode = isRootPath(path) ? null : readChildNode(sourceNode, path, CONFIGURATION);
+    LinkedHashMap<String, Object> configSource = configNode != null ? configNode : new LinkedHashMap<>();
     boolean isMultiple = readBoolean(configSource, path, MULTIPLE, false);
-    Optional<Integer> minItems = readInteger(configSource, path, MIN_ITEMS);
-    Optional<Integer> maxItems = readInteger(configSource, path, MAX_ITEMS);
+    Optional<Integer> minItems = isMultiple ? readInteger(configSource, path, MIN_ITEMS) : Optional.empty();
+    Optional<Integer> maxItems = isMultiple ? readInteger(configSource, path, MAX_ITEMS) : Optional.empty();
     Optional<URI> propertyUri = readAbsoluteUri(configSource, path, PROPERTY_IRI);
+    // The model gives an element none of a field's settings. A document stating one for an element
+    // is read past, as it always has been, rather than refused.
+    for (String fieldSetting : List.of(CONTINUE_PREVIOUS_LINE, VALUE_RECOMMENDATION, HIDDEN, REQUIRED, RECOMMENDED))
+      YamlKeyTracking.use(configSource, fieldSetting);
 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdType, elementName, description, identifier, version, status, previousVersion, derivedFrom,
@@ -941,13 +966,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
-    // isMultiple / minItems / maxItems / propertyUri live under the `configuration:` sub-block
-    // for nested fields; top-level fields rendered by the renderer don't write configuration.
+    // isMultiple / minItems / maxItems live under the `configuration:` sub-block. A nested child
+    // states a bound where there is one to bound: when it repeats, or when its type always holds a
+    // list. A standalone field has no parent to state its bounds beside it, so it carries whichever it
+    // has. The property IRI is a parent's, so only a nested child states one.
+    boolean isRoot = isRootPath(path);
     LinkedHashMap<String, Object> configSource = configNode != null ? configNode : new LinkedHashMap<>();
     boolean isMultiple = readBoolean(configSource, path, MULTIPLE, false);
-    Optional<Integer> minItems = readInteger(configSource, path, MIN_ITEMS);
-    Optional<Integer> maxItems = readInteger(configSource, path, MAX_ITEMS);
-    Optional<URI> propertyUri = readAbsoluteUri(configSource, path, PROPERTY_IRI);
+    boolean bounded = isRoot || isMultiple || fieldInputType == FieldInputType.CHECKBOX
+      || fieldInputType == FieldInputType.ATTRIBUTE_VALUE
+      || MULTI_SELECT_LIST_FIELD.equals(YamlKeyTracking.untracked(() -> sourceNode.get(TYPE)));
+    Optional<Integer> minItems = bounded ? readInteger(configSource, path, MIN_ITEMS) : Optional.empty();
+    Optional<Integer> maxItems = bounded ? readInteger(configSource, path, MAX_ITEMS) : Optional.empty();
+    Optional<URI> propertyUri = isRoot ? Optional.empty() : readAbsoluteUri(configSource, path, PROPERTY_IRI);
 
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       fieldName, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
@@ -959,15 +990,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     List<String> derivedOrder, LinkedHashMap<String, String> derivedLabels,
     LinkedHashMap<String, String> derivedDescriptions)
   {
-    // The renderer derives order/labels/descriptions from the children list and never writes them
-    // as separate top-level keys; we accept the explicit keys for backwards-compat with hand-
-    // authored YAML and fall back to the derived ones.
-    List<String> explicitOrder = readStringArray(sourceNode, path, ORDER);
-    List<String> order = explicitOrder.isEmpty() ? derivedOrder : explicitOrder;
-    LinkedHashMap<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
-    if (propertyLabels.isEmpty()) propertyLabels = derivedLabels;
-    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
-    if (propertyDescriptions.isEmpty()) propertyDescriptions = derivedDescriptions;
+    // The order, labels and descriptions follow from the children as the document lists them. No
+    // writer states them apart from the children, and the TypeScript library reads them the same way.
+    List<String> order = derivedOrder;
+    LinkedHashMap<String, String> propertyLabels = derivedLabels;
+    LinkedHashMap<String, String> propertyDescriptions = derivedDescriptions;
     Optional<String> header = readString(sourceNode, path, HEADER);
     Optional<String> footer = readString(sourceNode, path, FOOTER);
 
@@ -978,12 +1005,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     List<String> derivedOrder, LinkedHashMap<String, String> derivedLabels,
     LinkedHashMap<String, String> derivedDescriptions)
   {
-    List<String> explicitOrder = readStringArray(sourceNode, path, ORDER);
-    List<String> order = explicitOrder.isEmpty() ? derivedOrder : explicitOrder;
-    LinkedHashMap<String, String> propertyLabels = readString2StringMap(sourceNode, path, PROPERTY_LABELS);
-    if (propertyLabels.isEmpty()) propertyLabels = derivedLabels;
-    LinkedHashMap<String, String> propertyDescriptions = readString2StringMap(sourceNode, path, PROPERTY_DESCRIPTIONS);
-    if (propertyDescriptions.isEmpty()) propertyDescriptions = derivedDescriptions;
+    // The order, labels and descriptions follow from the children as the document lists them. No
+    // writer states them apart from the children, and the TypeScript library reads them the same way.
+    List<String> order = derivedOrder;
+    LinkedHashMap<String, String> propertyLabels = derivedLabels;
+    LinkedHashMap<String, String> propertyDescriptions = derivedDescriptions;
     Optional<String> header = readString(sourceNode, path, HEADER);
     Optional<String> footer = readString(sourceNode, path, FOOTER);
 
@@ -1031,9 +1057,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private boolean readBooleanFromConfigOrField(LinkedHashMap<String, Object> configNode,
     LinkedHashMap<String, Object> sourceNode, String path, String key)
   {
+    // Both are read, so neither is refused as unknown; where both state it, configuration wins.
+    boolean own = readBoolean(sourceNode, path, key, false);
     if (configNode != null && configNode.containsKey(key))
       return readBoolean(configNode, path, key, false);
-    return readBoolean(sourceNode, path, key, false);
+    return own;
   }
 
   /**
@@ -1045,9 +1073,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private Optional<Integer> readIntegerFromConfigOrField(LinkedHashMap<String, Object> configNode,
     LinkedHashMap<String, Object> sourceNode, String path, String key)
   {
+    Optional<Integer> own = readInteger(sourceNode, path, key);
     if (configNode != null && configNode.containsKey(key))
       return readInteger(configNode, path, key);
-    return readInteger(sourceNode, path, key);
+    return own;
   }
 
   private FieldUi readFieldUi(LinkedHashMap<String, Object> sourceNode, String path, FieldInputType fieldInputType,
@@ -1057,12 +1086,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     // width / height, under the `configuration:` sub-block for nested fields. Older YAML or
     // hand-authored YAML may place them at the field level, as does the renderer for a
     // standalone field. Accept either, preferring configuration when present.
-    boolean valueRecommendationEnabled = readBooleanFromConfigOrField(configNode, sourceNode, path,
-      VALUE_RECOMMENDATION);
+    // Each setting is read only for the field types the model keeps it for, so a document stating it
+    // for another type is refused rather than read and dropped.
+    boolean valueRecommendationEnabled = fieldInputType == FieldInputType.TEXTFIELD
+      && readBooleanFromConfigOrField(configNode, sourceNode, path, VALUE_RECOMMENDATION);
     boolean hidden = readBooleanFromConfigOrField(configNode, sourceNode, path, HIDDEN);
     boolean continuePreviousLine = readBooleanFromConfigOrField(configNode, sourceNode, path, CONTINUE_PREVIOUS_LINE);
-    Optional<Integer> width = readIntegerFromConfigOrField(configNode, sourceNode, path, WIDTH);
-    Optional<Integer> height = readIntegerFromConfigOrField(configNode, sourceNode, path, HEIGHT);
+    boolean sized = fieldInputType == FieldInputType.IMAGE || fieldInputType == FieldInputType.YOUTUBE;
+    Optional<Integer> width = sized ? readIntegerFromConfigOrField(configNode, sourceNode, path, WIDTH) : Optional.empty();
+    Optional<Integer> height = sized ? readIntegerFromConfigOrField(configNode, sourceNode, path, HEIGHT) : Optional.empty();
 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
@@ -1099,37 +1131,36 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     // Only where the type records one, which is what the renderer now writes. Honouring a
     // requirement found on an attribute-value field in an older document would put one in the model
     // that no writer emits, and a form built from that model would enforce something the stored
-    // JSON never said.
+    // JSON never said. That older document is read past rather than refused.
     boolean recordsRequirement = fieldInputType.recordsRequirement();
-    boolean requiredValue =
-      recordsRequirement && configNode != null && readBoolean(configNode, path, REQUIRED, false);
-    boolean recommendedValue =
-      recordsRequirement && configNode != null && readBoolean(configNode, path, RECOMMENDED, false);
+    boolean requiredValue = false;
+    boolean recommendedValue = false;
+    if (recordsRequirement) {
+      requiredValue = readBooleanFromConfigOrField(configNode, sourceNode, path, REQUIRED);
+      recommendedValue = readBooleanFromConfigOrField(configNode, sourceNode, path, RECOMMENDED);
+    } else {
+      for (LinkedHashMap<String, Object> node : configNode != null ? List.of(configNode, sourceNode)
+        : List.of(sourceNode)) {
+        YamlKeyTracking.use(node, REQUIRED);
+        YamlKeyTracking.use(node, RECOMMENDED);
+      }
+    }
     // Checkbox is inherently multi-select. Lists can be either single or multi; the YAML
     // serialization encodes that via the multi-select-list-field vs single-select-list-field
     // discriminator. Both map to FieldInputType.LIST upstream, so we peek at the original
     // type string here to recover the multi-select bit.
-    boolean isMultiSelectList =
-      MULTI_SELECT_LIST_FIELD.equals(readString(sourceNode, path, TYPE).orElse(null));
+    String yamlType = readString(sourceNode, path, TYPE).orElse(null);
+    boolean isMultiSelectList = MULTI_SELECT_LIST_FIELD.equals(yamlType);
     boolean multipleChoice = fieldInputType == FieldInputType.CHECKBOX || isMultiSelectList;
 
-    Optional<String> unitOfMeasure = readString(sourceNode, path, UNIT);
-    Optional<Number> minValue = readNumber(sourceNode, path, MIN_VALUE);
-    Optional<Number> maxValue = readNumber(sourceNode, path, MAX_VALUE);
-    Optional<Integer> decimalPlaces = readInteger(sourceNode, path, DECIMAL_PLACES);
-    Optional<Integer> minLength = readInteger(sourceNode, path, MIN_LENGTH);
-    Optional<Integer> maxLength = readInteger(sourceNode, path, MAX_LENGTH);
-    Optional<String> regex = readString(sourceNode, path, REGEX);
-
-    List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(sourceNode, path);
-    List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(sourceNode, path);
-    List<ClassValueConstraint> classes = readClassValueConstraints(sourceNode, path);
-    List<BranchValueConstraint> branches = readBranchValueConstraints(sourceNode, path);
-    List<LiteralValueConstraint> literals = readLiteralValueConstraints(sourceNode, path);
-    List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(sourceNode, path);
-
+    // Each key below is read only for the field types that have it, so a document stating one for
+    // another type, a unit on a text field say, is refused rather than read and dropped.
     if (fieldInputType == FieldInputType.NUMERIC) {
       Optional<XsdNumericDatatype> numberType = readNumberType(sourceNode, path, DATATYPE);
+      Optional<String> unitOfMeasure = readString(sourceNode, path, UNIT);
+      Optional<Number> minValue = readNumber(sourceNode, path, MIN_VALUE);
+      Optional<Number> maxValue = readNumber(sourceNode, path, MAX_VALUE);
+      Optional<Integer> decimalPlaces = readInteger(sourceNode, path, DECIMAL_PLACES);
       Optional<NumericDefaultValue> numericDefaultValue = readNumericDefaultValue(sourceNode, path);
       return Optional.of(NumericValueConstraints.create(numberType.orElse(XsdNumericDatatype.DECIMAL), minValue,
         maxValue, decimalPlaces, unitOfMeasure, numericDefaultValue, requiredValue, recommendedValue, multipleChoice));
@@ -1147,19 +1178,37 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       Optional<LinkDefaultValue> linkDefaultValue = readLinkDefaultValue(sourceNode, path);
       return Optional.of(
         LinkValueConstraints.create(linkDefaultValue, requiredValue, recommendedValue, multipleChoice));
-    } else if (fieldInputType == FieldInputType.TEXTFIELD && (
-      !ontologies.isEmpty() || !valueSets.isEmpty() || !classes.isEmpty() || !branches.isEmpty()
-      || CONTROLLED_TERM_FIELD.equals(sourceNode.get(TYPE)))) {
+    } else if (CONTROLLED_TERM_FIELD.equals(yamlType)) {
+      List<OntologyValueConstraint> ontologies = readOntologyValueConstraints(sourceNode, path);
+      List<ValueSetValueConstraint> valueSets = readValueSetValueConstraints(sourceNode, path);
+      List<ClassValueConstraint> classes = readClassValueConstraints(sourceNode, path);
+      List<BranchValueConstraint> branches = readBranchValueConstraints(sourceNode, path);
+      List<ControlledTermValueConstraintsAction> actions = readValueConstraintsActions(sourceNode, path);
+      Optional<String> datatype = readString(sourceNode, path, DATATYPE);
+      if (datatype.isPresent() && !datatype.get().equals(IRI))
+        throw new ArtifactParseException("A controlled-term field's datatype is " + IRI + ", not " + datatype.get(),
+          DATATYPE, path);
       Optional<ControlledTermDefaultValue> controlledTermDefaultValue = readControlledTermDefaultValue(sourceNode, path);
       return Optional.of(
         ControlledTermValueConstraints.create(ontologies, valueSets, classes, branches, controlledTermDefaultValue,
           actions, requiredValue, recommendedValue, multipleChoice));
     } else {
-      Optional<TextDefaultValue> textDefaultValue = readTextDefaultValue(sourceNode, path);
+      boolean isText = fieldInputType == FieldInputType.TEXTFIELD;
+      boolean hasLength = isText || fieldInputType == FieldInputType.TEXTAREA;
+      boolean isChoice = fieldInputType == FieldInputType.RADIO || fieldInputType == FieldInputType.CHECKBOX
+        || fieldInputType == FieldInputType.LIST;
+      Optional<Integer> minLength = hasLength ? readInteger(sourceNode, path, MIN_LENGTH) : Optional.empty();
+      Optional<Integer> maxLength = hasLength ? readInteger(sourceNode, path, MAX_LENGTH) : Optional.empty();
+      Optional<String> regex = isText ? readString(sourceNode, path, REGEX) : Optional.empty();
+      List<LiteralValueConstraint> literals = isChoice ? readLiteralValueConstraints(sourceNode, path) : List.of();
+      // A static or attribute-value field has no default, as it records no requirement.
+      Optional<TextDefaultValue> textDefaultValue = recordsRequirement ? readTextDefaultValue(sourceNode, path)
+        : Optional.empty();
       return Optional.of(TextValueConstraints.create(minLength, maxLength, textDefaultValue, literals, requiredValue,
         recommendedValue, multipleChoice, regex));
     }
   }
+
 
   private String readRequiredString(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey,
     boolean allowEmpty)
@@ -1388,6 +1437,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   private static boolean isRootPath(String path)
   {
     return path.isEmpty() || "/".equals(path);
+  }
+
+  /** The path of {@code key} below {@code path}, which is "/" at the root. */
+  private static String below(String path, String key)
+  {
+    return (path.endsWith("/") ? path : path + "/") + key;
   }
 
   private Optional<Version> readVersion(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
@@ -1699,7 +1754,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
     @SuppressWarnings("unchecked")
     LinkedHashMap<String, Object> versionMap = (LinkedHashMap<String, Object>) v;
-    String versionPath = path + "/" + VERSION;
+    String versionPath = below(path, VERSION);
     String id = readRequiredString(versionMap, versionPath, VERSION_ID, false);
     if (TextPolicy.isBlank(id))
       throw new ArtifactParseException("A version id must not be blank", VERSION_ID, versionPath);
@@ -1846,23 +1901,6 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return Optional.of(new ControlledTermDefaultValue(uri, label));
   }
 
-  private LinkedHashMap<String, String> readString2StringMap(LinkedHashMap<String, Object> sourceNode, String path,
-    String fieldKey)
-  {
-    LinkedHashMap<String, Object> raw = readChildNode(sourceNode, path, fieldKey);
-    if (raw == null)
-      return new LinkedHashMap<>();
-
-    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-    for (Map.Entry<String, Object> entry : raw.entrySet()) {
-      if (entry.getValue() instanceof String)
-        result.put(entry.getKey(), (String) entry.getValue());
-      else
-        throw new ArtifactParseException("Expected string value at key " + entry.getKey(), fieldKey, path);
-    }
-    return result;
-  }
-
   /**
    * Returns the child map at {@code parentNode[fieldKey]} or {@code null} if the field is absent
    * or {@code null}-valued.
@@ -1913,7 +1951,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
             path + "/children/" + childKey);
       }
       String childType = readRequiredString(childNode, path, TYPE, false);
-      String childPath = path + "/" + childKey;
+      String childPath = below(path, childKey);
 
       // Read override-label / override-description from the child's configuration block if present;
       // otherwise default to the child's own name / description.
@@ -1924,6 +1962,11 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       String overrideDescription = childConfig != null
         ? readString(childConfig, childPath, OVERRIDE_DESCRIPTION).orElse(null)
         : null;
+
+      // The full form states every child's model version, as it states the document's, and the
+      // compact form states none.
+      if (childType.equals(ELEMENT) || FIELD_TYPES.contains(childType))
+        checkSchemaArtifactModelVersion(childNode, childPath);
 
       if (childType.equals(ELEMENT)) {
         ElementSchemaArtifact element = readElementSchemaArtifact(childNode, childPath);

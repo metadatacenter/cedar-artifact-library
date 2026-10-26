@@ -36,7 +36,6 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ELEMENT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.HIDDEN;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ID;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.KEY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
@@ -132,9 +131,6 @@ public class YamlArtifactReaderTest
     URI modifiedBy = URI.create("https://repo.metadatacenter.org/users/33");
     OffsetDateTime createdOn = OffsetDateTime.now();
     OffsetDateTime lastUpdatedOn = OffsetDateTime.now();
-    boolean isMultiple = true;
-    Integer minItems = 3;
-    Integer maxItems = 5;
     String language = "en";
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
@@ -152,9 +148,6 @@ public class YamlArtifactReaderTest
     yamlSource.put(MODIFIED_BY, modifiedBy.toString());
     yamlSource.put(CREATED_ON, createdOn.toString());
     yamlSource.put(MODIFIED_ON, lastUpdatedOn.toString());
-    yamlSource.put(MULTIPLE, isMultiple);
-    yamlSource.put(MIN_ITEMS, minItems);
-    yamlSource.put(MAX_ITEMS, maxItems);
     yamlSource.put(LANGUAGE, language);
 
     ElementSchemaArtifact elementSchemaArtifact = artifactReader.readElementSchemaArtifact(yamlSource);
@@ -171,15 +164,11 @@ public class YamlArtifactReaderTest
     assertEquals(modifiedBy, elementSchemaArtifact.modifiedBy().get());
     assertEquals(createdOn, elementSchemaArtifact.createdOn().get());
     assertEquals(lastUpdatedOn, elementSchemaArtifact.lastUpdatedOn().get());
-    assertEquals(isMultiple, elementSchemaArtifact.isMultiple());
-    assertEquals(minItems, elementSchemaArtifact.minItems().get());
-    assertEquals(maxItems, elementSchemaArtifact.maxItems().get());
     assertEquals(language, elementSchemaArtifact.language().get());
   }
 
   @Test public void readFieldSchemaArtifactTest()
   {
-    String fieldKey = "study_name";
     String fieldName = "Study Name";
     // The YAML `type:` discriminator is the kebab-case wire name (text-field),
     // not the Java enum's default toString (TEXTFIELD). Use the constant.
@@ -207,7 +196,6 @@ public class YamlArtifactReaderTest
     String language = "en";
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
-    yamlSource.put(KEY, fieldKey);
     yamlSource.put(TYPE, fieldType);
     yamlSource.put(NAME, fieldName);
     yamlSource.put(DESCRIPTION, description);
@@ -270,6 +258,7 @@ public class YamlArtifactReaderTest
     childField.put("key", "patient_name");
     childField.put("type", "text-field");
     childField.put("name", "Patient name");
+    childField.put("modelVersion", "1.6.0");
 
     LinkedHashMap<String, Object> template = new LinkedHashMap<>();
     template.put("type", "template");
