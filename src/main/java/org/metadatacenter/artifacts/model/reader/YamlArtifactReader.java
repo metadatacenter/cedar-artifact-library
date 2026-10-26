@@ -990,7 +990,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       if (valueNode.containsKey(VALUE))
         builder.withLiteralAnnotation(annotationName, readRequiredString(valueNode, annotationPath, VALUE, true));
       else if (valueNode.containsKey(ID))
-        builder.withIriAnnotation(annotationName, readRequiredUri(valueNode, annotationPath, ID));
+        builder.withIriAnnotation(annotationName, readRequiredAbsoluteUri(valueNode, annotationPath, ID));
       else
         throw new ArtifactParseException("Annotation " + annotationName + " must have either a `value:` or `id:` key",
           ANNOTATIONS, path);

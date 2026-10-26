@@ -544,7 +544,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
   private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
+    List<URI> jsonLdTypes = readInstanceTypes(sourceNode, path);
     Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -582,7 +582,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
+    List<URI> jsonLdTypes = readInstanceTypes(sourceNode, path);
     Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -1015,6 +1015,16 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    *   }
    * </pre>
    */
+  /** The classes an instance or an element occurrence states as its @type, each an absolute IRI. */
+  private List<URI> readInstanceTypes(ObjectNode sourceNode, String path) {
+    List<URI> types = readUriArray(sourceNode, path, JSON_LD_TYPE);
+    for (URI type : types) {
+      if (!type.isAbsolute())
+        throw new ArtifactParseException("An instance's types must be absolute IRIs", JSON_LD_TYPE, path);
+    }
+    return types;
+  }
+
   private List<URI> readInstanceJsonLdTypes(ObjectNode sourceNode, String path) {
     JsonNode values = sourceNode.at("/properties/@type/oneOf/0/enum");
     if (values.isMissingNode()) return List.of();
@@ -1175,7 +1185,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
           String annnotationValue = readRequiredString(annotationValueNode, annotationPath, JSON_LD_VALUE);
           annotations.put(annotationName, new LiteralAnnotationValue(annnotationValue));
         } else if (annotationValueNode.get(JSON_LD_ID) != null) {
-          URI annnotationValue = readRequiredUri(annotationValueNode, annotationPath, JSON_LD_ID);
+          URI annnotationValue = readRequiredAbsoluteUri(annotationValueNode, annotationPath, JSON_LD_ID);
           annotations.put(annotationName, new IriAnnotationValue(annnotationValue));
         } else {
           throw new ArtifactParseException("Value of annotation must contain an @id or @value", annotationName,

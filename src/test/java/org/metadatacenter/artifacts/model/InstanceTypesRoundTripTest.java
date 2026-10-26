@@ -47,4 +47,24 @@ class InstanceTypesRoundTripTest {
     assertEquals(List.of(PERSON), read.singleInstanceElementInstances().get("Person").jsonLdTypes());
     assertEquals(source, json.renderTemplateInstanceArtifact(read));
   }
+
+  @Test void refusesARelativeClass() {
+    var source = (com.fasterxml.jackson.databind.node.ObjectNode) json.renderTemplateInstanceArtifact(instance(List.of(STUDY)));
+    source.put("@type", "Study");
+    assertThrows(org.metadatacenter.artifacts.model.reader.ArtifactParseException.class,
+      () -> new JsonArtifactReader().readTemplateInstanceArtifact(source));
+    ((com.fasterxml.jackson.databind.node.ObjectNode) source.path("Person")).put("@type", "Person");
+    source.put("@type", STUDY.toString());
+    assertThrows(org.metadatacenter.artifacts.model.reader.ArtifactParseException.class,
+      () -> new JsonArtifactReader().readTemplateInstanceArtifact(source));
+  }
+
+  @Test void refusesARelativeAnnotationIdentifier() {
+    var source = (com.fasterxml.jackson.databind.node.ObjectNode) json.renderTemplateInstanceArtifact(instance(List.of()));
+    source.putObject("_annotations").putObject("https://example.org/p").put("@id", "B1");
+    assertThrows(org.metadatacenter.artifacts.model.reader.ArtifactParseException.class,
+      () -> new JsonArtifactReader().readTemplateInstanceArtifact(source));
+    ((com.fasterxml.jackson.databind.node.ObjectNode) source.path("_annotations").path("https://example.org/p")).put("@id", "https://example.org/B1");
+    assertEquals(1, new JsonArtifactReader().readTemplateInstanceArtifact(source).annotations().orElseThrow().annotations().size());
+  }
 }
