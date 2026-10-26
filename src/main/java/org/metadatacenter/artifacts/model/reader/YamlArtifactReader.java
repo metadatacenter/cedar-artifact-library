@@ -1963,9 +1963,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
         ? readString(childConfig, childPath, OVERRIDE_DESCRIPTION).orElse(null)
         : null;
 
-      // The full form states every child's model version, as it states the document's, and the
-      // compact form states none.
-      if (childType.equals(ELEMENT) || FIELD_TYPES.contains(childType))
+      // The document states the model version it is written against. A writer states each child's
+      // too, and a hand-written child may leave it to the document; one that states it states this one.
+      if ((childType.equals(ELEMENT) || FIELD_TYPES.contains(childType)) && childNode.containsKey(MODEL_VERSION))
         checkSchemaArtifactModelVersion(childNode, childPath);
 
       if (childType.equals(ELEMENT)) {

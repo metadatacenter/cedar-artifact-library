@@ -258,7 +258,6 @@ public class YamlArtifactReaderTest
     childField.put("key", "patient_name");
     childField.put("type", "text-field");
     childField.put("name", "Patient name");
-    childField.put("modelVersion", "1.6.0");
 
     LinkedHashMap<String, Object> template = new LinkedHashMap<>();
     template.put("type", "template");

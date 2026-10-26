@@ -150,12 +150,12 @@ public class YamlUnknownKeyTest
     assertRefused("id", "/annotations/note", () -> template(annotated + "    id: \"https://example.org/note\"\n"));
   }
 
-  @Test public void aChildOfTheFullFormStatesItsModelVersion() throws Exception
+  @Test public void aChildMayLeaveItsModelVersionToTheDocument() throws Exception
   {
-    String compactChild = TEMPLATE.replaceFirst("(key: \"Title\"[\\s\\S]*?)    modelVersion: \\S+\n", "$1");
-    ArtifactParseException refused = assertThrows(ArtifactParseException.class, () -> template(compactChild));
-    assertEquals("/Title", refused.getPath(), refused.getMessage());
-    assertEquals("modelVersion", refused.getFieldKey(), refused.getMessage());
+    // A writer states every child's model version, and a hand-written document often states only its own.
+    String unstated = TEMPLATE.replaceFirst("(key: \"Title\"[\\s\\S]*?)    modelVersion: \\S+\n", "$1");
+    assertTrue(unstated.length() < TEMPLATE.length());
+    assertEquals(template(TEMPLATE), template(unstated));
   }
 
   @Test public void aChildOfAnotherModelVersionIsRefused() throws Exception
