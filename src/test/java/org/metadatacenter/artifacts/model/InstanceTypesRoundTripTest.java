@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
+import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
+import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 
 import java.net.URI;
 import java.util.List;
@@ -66,5 +68,33 @@ class InstanceTypesRoundTripTest {
       () -> new JsonArtifactReader().readTemplateInstanceArtifact(source));
     ((com.fasterxml.jackson.databind.node.ObjectNode) source.path("_annotations").path("https://example.org/p")).put("@id", "https://example.org/B1");
     assertEquals(1, new JsonArtifactReader().readTemplateInstanceArtifact(source).annotations().orElseThrow().annotations().size());
+  }
+
+  @Test void carriesTheClassesThroughYamlAsInstanceType() {
+    for (boolean compact : new boolean[] {false, true}) {
+      var yaml = new YamlArtifactRenderer(compact);
+      var document = yaml.renderTemplateInstanceArtifact(instance(List.of(STUDY, DATASET)));
+      assertEquals(List.of(STUDY.toString(), DATASET.toString()), document.get("instanceType"));
+      @SuppressWarnings("unchecked")
+      var children = (java.util.Map<String, Object>) document.get("children");
+      @SuppressWarnings("unchecked")
+      var person = (java.util.Map<String, Object>) children.get("Person");
+      assertEquals(PERSON.toString(), person.get("instanceType"));
+      assertEquals("element-instance", person.get("type"));
+      var read = new YamlArtifactReader().readTemplateInstanceArtifact(document);
+      assertEquals(List.of(STUDY, DATASET), read.jsonLdTypes());
+      assertEquals(List.of(PERSON), read.singleInstanceElementInstances().get("Person").jsonLdTypes());
+      assertEquals(document, yaml.renderTemplateInstanceArtifact(read));
+    }
+    var one = new YamlArtifactRenderer(false).renderTemplateInstanceArtifact(instance(List.of(STUDY)));
+    assertEquals(STUDY.toString(), one.get("instanceType"));
+    assertFalse(new YamlArtifactRenderer(false).renderTemplateInstanceArtifact(instance(List.of())).containsKey("instanceType"));
+  }
+
+  @Test void refusesARelativeClassInYaml() {
+    var document = new YamlArtifactRenderer(false).renderTemplateInstanceArtifact(instance(List.of(STUDY)));
+    document.put("instanceType", "Study");
+    assertThrows(org.metadatacenter.artifacts.model.reader.ArtifactParseException.class,
+      () -> new YamlArtifactReader().readTemplateInstanceArtifact(document));
   }
 }

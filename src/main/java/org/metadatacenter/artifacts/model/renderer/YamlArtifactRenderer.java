@@ -414,6 +414,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
 
+    putInstanceTypes(rendering, templateInstanceArtifact.jsonLdTypes());
+
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
 
     if (!isCompact && templateInstanceArtifact.derivedFrom().isPresent())
@@ -484,6 +486,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
+    putInstanceTypes(rendering, elementInstanceArtifact.jsonLdTypes());
+
     if (!isCompact && elementInstanceArtifact.createdOn().isPresent())
       rendering.put(CREATED_ON, renderOffsetDateTime(elementInstanceArtifact.createdOn().get()));
 
@@ -513,6 +517,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
+  /**
+   * The classes an instance or an element occurrence states as its JSON-LD {@code @type}, under
+   * {@code instanceType}, the key a template uses for the classes its instances take: one class as
+   * a string, several as a list in order.
+   */
+  private static void putInstanceTypes(LinkedHashMap<String, Object> rendering, List<URI> types)
+  {
+    if (types.size() == 1)
+      rendering.put(INSTANCE_TYPE, types.get(0).toString());
+    else if (types.size() > 1)
+      rendering.put(INSTANCE_TYPE, types.stream().map(URI::toString).toList());
+  }
+
   private LinkedHashMap<String, Object> renderNestedElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
@@ -535,7 +552,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // only an `id:` would both reintroduce noise and be ambiguous with a field on read (a field
     // is a map with no `children:` key). The element's presence — and a fresh @id — are
     // reconstructable from the template at the JSON boundary.
-    if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty())
+    if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty()
+      && elementInstanceArtifact.jsonLdTypes().isEmpty())
       return rendering;
 
     // The reader tells an element from a field by `children:`. An element holding only
@@ -549,6 +567,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // repository-owned structure and can be reconstructed from the template when needed.
     if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
+
+    // The classes an occurrence states are its own data, not the repository's, so even a compact
+    // document keeps them, and an occurrence stating classes and nothing else is still written.
+    putInstanceTypes(rendering, elementInstanceArtifact.jsonLdTypes());
 
     if (!childInstanceArtifactsRendering.isEmpty())
       rendering.put(CHILDREN, childInstanceArtifactsRendering);

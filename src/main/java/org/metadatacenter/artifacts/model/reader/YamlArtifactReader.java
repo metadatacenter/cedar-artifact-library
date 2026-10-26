@@ -198,6 +198,28 @@ import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
 public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, Object>>
 {
+  /**
+   * The classes an instance or an element occurrence states under {@code instanceType}, its JSON-LD
+   * {@code @type}, as the JSON reader reads them: a string is one class, a list several in order, and
+   * each an absolute IRI.
+   */
+  private List<URI> readInstanceTypes(LinkedHashMap<String, Object> sourceNode, String path) {
+    Object value = sourceNode.get(INSTANCE_TYPE);
+    if (value == null) return List.of();
+    List<?> values = value instanceof List<?> list ? list : List.of(value);
+    if (values.isEmpty()) throw new ArtifactParseException("Instance types must not be empty", INSTANCE_TYPE, path);
+    List<URI> types = new ArrayList<>();
+    for (Object item : values) {
+      if (!(item instanceof String text)) throw new ArtifactParseException("Instance type must be an IRI string", INSTANCE_TYPE, path);
+      try {
+        types.add(IriSyntax.absolute(text));
+      } catch (URISyntaxException e) {
+        throw new ArtifactParseException("Instance types must be absolute IRIs", INSTANCE_TYPE, path);
+      }
+    }
+    return types;
+  }
+
   private List<URI> readInstanceJsonLdTypes(LinkedHashMap<String, Object> sourceNode, String path) {
     Object value = sourceNode.get(INSTANCE_TYPE);
     if (value == null) return List.of();
@@ -380,6 +402,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     builder.withName(readRequiredString(sourceNode, path, NAME, false));
     readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
     readAbsoluteUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    readInstanceTypes(sourceNode, path).forEach(builder::withJsonLdType);
     builder.withIsBasedOn(readRequiredAbsoluteUri(sourceNode, path, IS_BASED_ON));
     readAbsoluteUri(sourceNode, path, DERIVED_FROM).ifPresent(builder::withDerivedFrom);
     readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
@@ -427,6 +450,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     readString(sourceNode, path, NAME).ifPresent(builder::withName);
     readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
     readAbsoluteUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    readInstanceTypes(sourceNode, path).forEach(builder::withJsonLdType);
     readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
     readUri(sourceNode, path, MODIFIED_BY).ifPresent(builder::withModifiedBy);
     readOffsetDatetime(sourceNode, path, CREATED_ON).ifPresent(builder::withCreatedOn);
@@ -590,6 +614,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     ElementInstanceArtifact.Builder builder = ElementInstanceArtifact.builder();
     readAbsoluteUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    readInstanceTypes(sourceNode, path).forEach(builder::withJsonLdType);
 
     readChildInstanceArtifacts(sourceNode, path).accept(new InstanceChildVisitor() {
       @Override public void visitSingleField(String key, FieldInstanceArtifact f) {
@@ -621,7 +646,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * to field instances.
    */
   private static final Set<String> TEMPLATE_INSTANCE_RESERVED_KEYS = Set.of(
-    TYPE, NAME, DESCRIPTION, ID, IS_BASED_ON, DERIVED_FROM,
+    TYPE, NAME, DESCRIPTION, ID, INSTANCE_TYPE, IS_BASED_ON, DERIVED_FROM,
     CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON,
     CHILDREN, ANNOTATIONS);
 
@@ -630,7 +655,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * (they appear as values in a parent's {@code children:} map) and only ever carry {@code id}
    * and {@code children} as reserved keys.
    */
-  private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(TYPE, ID, CHILDREN);
+  private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(TYPE, ID, INSTANCE_TYPE, CHILDREN);
 
   /**
    * Top-level YAML keys reserved by the standalone element-instance form ({@code type:
@@ -638,7 +663,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * renderer emits.
    */
   private static final Set<String> STANDALONE_ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(
-    TYPE, NAME, DESCRIPTION, ID, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
+    TYPE, NAME, DESCRIPTION, ID, INSTANCE_TYPE, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
 
   /**
    * Walk top-level keys of an instance YAML map looking for attribute-value field groups. Each
