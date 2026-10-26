@@ -12,6 +12,7 @@ import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
 import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
+import org.metadatacenter.artifacts.model.core.ReservedNames;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -106,6 +107,7 @@ import static org.metadatacenter.model.ModelNodeNames.UI_WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
 import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
+import static org.metadatacenter.model.core.CedarModelVocabulary.VALUE_LABEL;
 
 import static org.metadatacenter.artifacts.model.reader.JsonArtifactShapeChecks.*;
 import static org.metadatacenter.artifacts.model.reader.JsonNodeReaders.*;
@@ -180,7 +182,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    * </pre>
    */
   public ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode) {
-    String name = readRequiredString(sourceNode, "/", SCHEMA_ORG_NAME);
+    String name = readRequiredNonEmptyString(sourceNode, "/", SCHEMA_ORG_NAME);
     return readElementSchemaArtifact(sourceNode, "", name, false, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
@@ -241,7 +243,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
       maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
     }
 
-    String name = readRequiredString(fieldNode, "/", SCHEMA_ORG_NAME);
+    String name = readRequiredNonEmptyString(fieldNode, "/", SCHEMA_ORG_NAME);
     return readFieldSchemaArtifact(fieldNode, "", name, isMultiInstance, true, minItems, maxItems,
         Optional.empty());
   }
@@ -297,7 +299,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     // this reader does not decide that; its stored value is simply not what the model carries.
     readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    String name = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String name = readRequiredNonEmptyString(sourceNode, path, SCHEMA_ORG_NAME);
     String internalName = SchemaArtifact.internalNameFor(name, SchemaArtifact.Kind.TEMPLATE);
     String description = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> identifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -340,7 +342,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String schemaOrgName = readRequiredNonEmptyString(sourceNode, path, SCHEMA_ORG_NAME);
     String internalName = SchemaArtifact.internalNameFor(schemaOrgName, SchemaArtifact.Kind.ELEMENT);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -388,7 +390,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDateTime(sourceNode, path, PAV_LAST_UPDATED_ON);
     readRequiredString(sourceNode, path, JSON_SCHEMA_TITLE);
     String internalDescription = readString(sourceNode, path, JSON_SCHEMA_DESCRIPTION, "");
-    String schemaOrgName = readRequiredString(sourceNode, path, SCHEMA_ORG_NAME);
+    String schemaOrgName = readRequiredNonEmptyString(sourceNode, path, SCHEMA_ORG_NAME);
     String internalName = SchemaArtifact.internalNameFor(schemaOrgName, SchemaArtifact.Kind.FIELD);
     String schemaOrgDescription = readRequiredString(sourceNode, path, SCHEMA_ORG_DESCRIPTION);
     Optional<String> schemaOrgIdentifier = readString(sourceNode, path, SCHEMA_ORG_IDENTIFIER);
@@ -542,7 +544,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
   private TemplateInstanceArtifact readTemplateInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
+    List<URI> jsonLdTypes = readInstanceTypes(sourceNode, path);
     Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -580,7 +582,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
   private ElementInstanceArtifact readElementInstanceArtifact(ObjectNode sourceNode, String path) {
     LinkedHashMap<String, URI> jsonLdContext = readString2UriMap(sourceNode, path, JSON_LD_CONTEXT);
-    List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
+    List<URI> jsonLdTypes = readInstanceTypes(sourceNode, path);
     Optional<URI> jsonLdId = readJsonLdId(sourceNode, path);
     Optional<URI> createdBy = readUri(sourceNode, path, PAV_CREATED_BY);
     Optional<URI> modifiedBy = readUri(sourceNode, path, OSLC_MODIFIED_BY);
@@ -652,11 +654,41 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     return absolute ? readAbsoluteUri(sourceNode, path, key) : readUri(sourceNode, path, key);
   }
 
+  /** The refusal of an object that lacks {@code @context} and carries a child. */
+  private static final String CHILD_WITHOUT_CONTEXT =
+      "An element value must carry @context, and an object without one cannot carry a child key";
+
+  /**
+   * Refuse an object without {@code @context} that carries a child key.
+   *
+   * {@code @context} is what marks an element value. An object without one is read as a field value
+   * or, in a repeated element whose other entries carry one, as an empty or identifier-only occurrence.
+   * Neither has children. A key that a child could take therefore marks an element written without
+   * its {@code @context}, and reading that object as a field value would drop its children. The keys no
+   * child can take are the reserved names, and the legacy {@code _valueLabel} is a field-value key the
+   * validator takes for no child's name either. An object holding only those keys is read as a field
+   * value, or as an occurrence beside one that carries {@code @context}.
+   */
+  private static void refuseChildWithoutContext(ObjectNode sourceNode, String path) {
+    Iterator<String> keys = sourceNode.fieldNames();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      if (!ReservedNames.isReservedName(key) && !VALUE_LABEL.equals(key))
+        throw new ArtifactParseException(CHILD_WITHOUT_CONTEXT, key, path);
+    }
+  }
+
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {
+    refuseChildWithoutContext(sourceNode, path);
     if (sourceNode.has(JSON_LD_ID) && sourceNode.has(JSON_LD_VALUE))
       throw new ArtifactParseException("A field cannot contain both @id and @value", JSON_LD_VALUE, path);
     if (sourceNode.path(JSON_LD_TYPE).isArray() && sourceNode.get(JSON_LD_TYPE).size() > 1)
       throw new ArtifactParseException("A field value can have at most one @type", JSON_LD_TYPE, path);
+    JsonNode type = sourceNode.path(JSON_LD_TYPE);
+    JsonNode statedType = type.isArray() && type.size() == 1 ? type.get(0) : type;
+    // The empty string parses as a relative reference, yet it names no datatype.
+    if (statedType.isTextual() && statedType.asText().isEmpty())
+      throw new ArtifactParseException("Invalid datatype \"\"", JSON_LD_TYPE, path);
     List<URI> jsonLdTypes = readUriArray(sourceNode, path, JSON_LD_TYPE);
     Optional<String> jsonLdId = readString(sourceNode, path, JSON_LD_ID);
     validateFieldIri(jsonLdId, JSON_LD_ID, path);
@@ -852,6 +884,10 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     }
   }
 
+  /** The keys of a field value that an element occurrence cannot carry. */
+  private static final Set<String> FIELD_VALUE_ONLY_KEYS = Set.of(JSON_LD_VALUE, JSON_LD_LANGUAGE, RDFS_LABEL,
+      SKOS_NOTATION, SKOS_PREFLABEL, SKOS_ALTLABEL);
+
   private void readNestedMultiInstanceArtifact(String instanceArtifactFieldKey, String instanceArtifactPath,
                                                ObjectNode instanceArtifactArrayNode, boolean elementArray, List<String> childKeys,
                                                LinkedHashMap<String, List<FieldInstanceArtifact>> multiInstanceFieldInstances,
@@ -863,10 +899,15 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     }
 
     if (elementArray) {
-      if (instanceArtifactArrayNode.has(JSON_LD_VALUE))
-        throw new ArtifactParseException("Cannot mix literal fields and element instances in one array",
+      // A key only a field value carries marks the entry as a field, and an element occurrence never
+      // has a child of that name. Each is a JSON-LD keyword or a reserved instance property.
+      if (FIELD_VALUE_ONLY_KEYS.stream().anyMatch(instanceArtifactArrayNode::has))
+        throw new ArtifactParseException("A repeated child mixes element and field entries",
           instanceArtifactFieldKey, instanceArtifactPath);
-      // Empty and identifier-only occurrences still belong to this repeated element.
+      // Empty and identifier-only occurrences still belong to this repeated element. One that
+      // carries a child without its @context does not.
+      if (!hasJsonLdContextField(instanceArtifactArrayNode))
+        refuseChildWithoutContext(instanceArtifactArrayNode, instanceArtifactPath);
       ObjectNode elementInstanceArtifactNode = instanceArtifactArrayNode;
       ElementInstanceArtifact elementInstanceArtifact = readElementInstanceArtifact(elementInstanceArtifactNode,
           instanceArtifactPath);
@@ -974,6 +1015,16 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    *   }
    * </pre>
    */
+  /** The classes an instance or an element occurrence states as its @type, each an absolute IRI. */
+  private List<URI> readInstanceTypes(ObjectNode sourceNode, String path) {
+    List<URI> types = readUriArray(sourceNode, path, JSON_LD_TYPE);
+    for (URI type : types) {
+      if (!type.isAbsolute())
+        throw new ArtifactParseException("An instance's types must be absolute IRIs", JSON_LD_TYPE, path);
+    }
+    return types;
+  }
+
   private List<URI> readInstanceJsonLdTypes(ObjectNode sourceNode, String path) {
     JsonNode values = sourceNode.at("/properties/@type/oneOf/0/enum");
     if (values.isMissingNode()) return List.of();
@@ -1134,7 +1185,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
           String annnotationValue = readRequiredString(annotationValueNode, annotationPath, JSON_LD_VALUE);
           annotations.put(annotationName, new LiteralAnnotationValue(annnotationValue));
         } else if (annotationValueNode.get(JSON_LD_ID) != null) {
-          URI annnotationValue = readRequiredUri(annotationValueNode, annotationPath, JSON_LD_ID);
+          URI annnotationValue = readRequiredAbsoluteUri(annotationValueNode, annotationPath, JSON_LD_ID);
           annotations.put(annotationName, new IriAnnotationValue(annnotationValue));
         } else {
           throw new ArtifactParseException("Value of annotation must contain an @id or @value", annotationName,

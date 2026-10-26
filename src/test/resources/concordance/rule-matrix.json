@@ -895,7 +895,8 @@
           "values" : [ {
             "type" : "ontology",
             "sourceAcronym" : "SLOT",
-            "sourceName" : "Slot ontology"
+            "sourceName" : "Slot ontology",
+            "sourceUri" : "https://example.org/slot/ontology"
           }, {
             "type" : "class",
             "sourceAcronym" : "SLOT",
@@ -5338,140 +5339,160 @@
       "expected" : "accepted",
       "java" : {
         "validator" : "accepted",
-        "json" : "accepted"
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     }, {
       "input" : "https://example.org/Niger\u00A0NER",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/Niger%C2%A0NER",
       "expected" : "accepted",
       "java" : {
         "validator" : "accepted",
-        "json" : "accepted"
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     }, {
       "input" : "https://example.org/caf\u00E9",
       "expected" : "accepted",
       "java" : {
         "validator" : "accepted",
-        "json" : "accepted"
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     }, {
       "input" : "https://example.org/\u2003term",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/\uD83D\uDE00",
       "expected" : "accepted",
       "java" : {
         "validator" : "accepted",
-        "json" : "accepted"
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     }, {
       "input" : "https://example.org/?q=\uE000",
       "expected" : "accepted",
       "java" : {
         "validator" : "accepted",
-        "json" : "accepted"
+        "json" : "accepted",
+        "yaml" : "accepted"
       }
     }, {
       "input" : "urn:example:Niger\u00A0NER",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "relative/path",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a b",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a\tb",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/\u0085",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/%xx",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/a#b#c",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "://example.org/a",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/\uD800",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/\uFFFF",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/\uE000",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     }, {
       "input" : "https://example.org/#\uE000",
       "expected" : "refused",
       "java" : {
         "validator" : "refused",
-        "json" : "refused"
+        "json" : "refused",
+        "yaml" : "refused"
       }
     } ]
   }, {

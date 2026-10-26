@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.reader.ArtifactParseException;
 import org.metadatacenter.artifacts.model.reader.JsonArtifactReader;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer;
@@ -44,5 +45,18 @@ class RepeatedElementClassificationTest {
     var document = source(false);
     ((ObjectNode) document.get("items").get(0)).put("@value", "keep me");
     assertThrows(RuntimeException.class, () -> new JsonArtifactReader().readTemplateInstanceArtifact(document));
+  }
+
+  // A context-bearing sibling vouches only for an entry that carries nothing a child could be. An entry
+  // that holds a child without its own @context is refused, in either position.
+  @Test void refusesAnOccurrenceCarryingAChildWithoutItsContext() throws Exception {
+    for (boolean reverse : new boolean[] {false, true}) {
+      var document = source(reverse);
+      ((ObjectNode) document.get("items").get(reverse ? 1 : 0)).putObject("field").putNull("@value");
+      var thrown = assertThrows(ArtifactParseException.class,
+        () -> new JsonArtifactReader().readTemplateInstanceArtifact(document));
+      assertEquals("field", thrown.getFieldKey());
+      assertEquals(reverse ? "/items[1]" : "/items[0]", thrown.getPath());
+    }
   }
 }

@@ -2,13 +2,28 @@ package org.metadatacenter.artifacts.model.reader;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
+import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.NumericField;
+import org.metadatacenter.artifacts.model.core.SchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
+import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TemporalField;
 import org.metadatacenter.artifacts.model.core.Version;
+import org.metadatacenter.artifacts.model.core.fields.InputTimeFormat;
+import org.metadatacenter.artifacts.model.core.fields.TemporalGranularity;
+import org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype;
+import org.metadatacenter.artifacts.model.core.fields.XsdTemporalDatatype;
 import org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueConstraintsActionType;
+import org.metadatacenter.artifacts.model.core.fields.constraints.ValueType;
 import org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
+import org.metadatacenter.artifacts.model.tools.YamlSerializer;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -18,7 +33,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -310,6 +327,85 @@ public class YamlArtifactReaderNegativePathsTest
     assertEquals("A version id must not be blank", thrown.getParseErrorMessage());
   }
 
+  private static final String INSTANCE =
+    "type: instance\nname: X\nisBasedOn: \"https://repo.metadatacenter.org/templates/abc\"\n";
+
+  private ArtifactParseException refusalOf(String children)
+  {
+    return assertThrows(ArtifactParseException.class,
+      () -> reader.readTemplateInstanceArtifact(ArtifactSourceParser.yaml(INSTANCE + children)));
+  }
+
+  @Test public void aRepeatedChildMixingElementAndFieldEntriesIsRefused() throws Exception
+  {
+    // Reading the list by its first entry reads every later entry of the other kind as the wrong one.
+    // A field read as an element loses its value, and an element read as a field loses its children.
+    // An entry is an element when it carries `children:` or `type: element-instance`.
+    String element = "    - children:\n        f:\n          value: a\n";
+    String field = "    - value: b\n";
+    String stub = "    - type: element-instance\n";
+    Map<String, String> cases = new LinkedHashMap<>();
+    cases.put("children:\n  R:\n" + element + field, "/R[1]");
+    cases.put("children:\n  R:\n" + field + element, "/R[1]");
+    cases.put("children:\n  R:\n" + field + stub, "/R[1]");
+    cases.put("children:\n  R:\n" + element + stub + field, "/R[2]");
+    cases.put("children:\n  E:\n    children:\n      R:\n        - value: b\n"
+      + "        - children:\n            f:\n              value: a\n", "/E/R[1]");
+
+    for (Map.Entry<String, String> mixed : cases.entrySet()) {
+      ArtifactParseException thrown = refusalOf(mixed.getKey());
+      assertEquals("A repeated child mixes element and field entries", thrown.getParseErrorMessage(),
+        mixed.getKey());
+      assertEquals("R", thrown.getFieldKey(), mixed.getKey());
+      assertTrue(thrown.getPath().endsWith(mixed.getValue()), thrown.getMessage());
+    }
+
+    // A list of one kind still reads, the stub among elements included.
+    TemplateInstanceArtifact elements = reader.readTemplateInstanceArtifact(
+      ArtifactSourceParser.yaml(INSTANCE + "children:\n  R:\n" + element + stub));
+    assertEquals(2, elements.multiInstanceElementInstances().get("R").size());
+    TemplateInstanceArtifact fields = reader.readTemplateInstanceArtifact(
+      ArtifactSourceParser.yaml(INSTANCE + "children:\n  R:\n" + field + field));
+    assertEquals(2, fields.multiInstanceFieldInstances().get("R").size());
+  }
+
+  @Test public void aNonMappingEntryInARepeatedChildIsAParseError()
+  {
+    // Each entry is checked before any is cast, so a later one cannot throw ClassCastException.
+    Map<String, String> cases = new LinkedHashMap<>();
+    cases.put("children:\n  R:\n    - value: b\n    - plain\n", "/R[1]");
+    cases.put("children:\n  R:\n    - children:\n        f:\n          value: a\n    - 5\n", "/R[1]");
+    cases.put("children:\n  R:\n    - value: a\n    - value: b\n    - [c]\n", "/R[2]");
+    cases.put("children:\n  R:\n    - plain\n    - value: b\n", "/R[0]");
+
+    for (Map.Entry<String, String> entry : cases.entrySet()) {
+      ArtifactParseException thrown = refusalOf(entry.getKey());
+      assertEquals("Expected map entries in multi-instance list", thrown.getParseErrorMessage(), entry.getKey());
+      assertEquals("R", thrown.getFieldKey(), entry.getKey());
+      assertTrue(thrown.getPath().endsWith(entry.getValue()), thrown.getMessage());
+    }
+  }
+
+  @Test public void anEmptyDatatypeIsRefusedAsAnInvalidDatatype()
+  {
+    // Read as the empty relative IRI, it would be written to JSON as "@type": "".
+    for (String children : List.of("children:\n  F:\n    value: x\n    datatype: \"\"\n",
+      "children:\n  R:\n    - value: x\n      datatype: \"\"\n")) {
+      ArtifactParseException thrown = refusalOf(children);
+      assertEquals("Invalid datatype \"\"", thrown.getParseErrorMessage(), children);
+      assertEquals("datatype", thrown.getFieldKey(), children);
+    }
+  }
+
+  @Test public void aDatatypeThatIsNotAnIriIsRefusedTheSameWay()
+  {
+    // The refusal names the key and the path, where java.net.URI's IllegalArgumentException named neither.
+    ArtifactParseException thrown = refusalOf("children:\n  F:\n    value: x\n    datatype: \"a b\"\n");
+    assertEquals("Invalid datatype \"a b\"", thrown.getParseErrorMessage());
+    assertEquals("datatype", thrown.getFieldKey());
+    assertTrue(thrown.getPath().endsWith("/F"), thrown.getMessage());
+  }
+
   /** A controlled-term field's YAML, its one ontology constraint pinned to {@code versionId}. */
   private static LinkedHashMap<String, Object> controlledTermFieldPinnedTo(String versionId)
   {
@@ -322,6 +418,282 @@ public class YamlArtifactReaderNegativePathsTest
     LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(false).renderFieldSchemaArtifact(field);
     assertTrue(setVersionId(rendering, versionId), "the rendering states the constraint's version");
     return rendering;
+  }
+
+  // ---- A controlled term's term type and action: exactly the spellings the renderer writes ----
+
+  /** A controlled-term field with one class and one action, rendered with the spellings given. */
+  private static ControlledTermField termField(ValueType classType, ValueConstraintsActionType action,
+    ValueType actionType)
+  {
+    return ControlledTermField.builder().withName("Disease")
+      .withClassValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_530"), "DOID", "eyelid disease",
+        "eyelid disease", classType)
+      .withValueConstraintsAction(URI.create("http://purl.obolibrary.org/obo/DOID_162"), "DOID", actionType, action,
+        URI.create("https://data.bioontology.org/ontologies/DOID"), 0)
+      .build();
+  }
+
+  /** The YAML of {@code field}, standalone or as the only child of a template, read back as a map. */
+  private static LinkedHashMap<String, Object> termFieldYaml(ControlledTermField field, boolean child,
+    boolean compact) throws Exception
+  {
+    SchemaArtifact artifact = child
+      ? TemplateSchemaArtifact.builder().withName("T").withFieldSchema(field).build()
+      : field;
+    return ArtifactSourceParser.yaml(YamlSerializer.getYAML(artifact, compact, true));
+  }
+
+  private static SchemaArtifact readTermFieldYaml(LinkedHashMap<String, Object> yaml, boolean child, boolean compact)
+  {
+    YamlArtifactReader reader = new YamlArtifactReader(compact);
+    return child ? reader.readTemplateSchemaArtifact(yaml) : reader.readFieldSchemaArtifact(yaml);
+  }
+
+  /** Sets {@code key} on every map under {@code node} that also carries {@code marker}; returns how many. */
+  @SuppressWarnings("unchecked")
+  private static int respell(Object node, String marker, String key, String spelling)
+  {
+    int count = 0;
+    if (node instanceof Map<?, ?> map) {
+      if (map.containsKey(marker) && map.containsKey(key)) {
+        ((Map<String, Object>) map).put(key, spelling);
+        count++;
+      }
+      for (Object child : map.values())
+        count += respell(child, marker, key, spelling);
+    } else if (node instanceof List<?> list) {
+      for (Object child : list)
+        count += respell(child, marker, key, spelling);
+    }
+    return count;
+  }
+
+  static Stream<Arguments> termSpellingPositions()
+  {
+    List<Arguments> positions = new ArrayList<>();
+    for (boolean child : new boolean[] { false, true })
+      for (boolean compact : new boolean[] { false, true })
+        positions.add(Arguments.of((child ? "child" : "standalone") + ", " + (compact ? "compact" : "full"), child,
+          compact));
+    return positions.stream();
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void theRenderersSpellingsReadBackAsWritten(String position, boolean child, boolean compact) throws Exception
+  {
+    for (ValueType type : ValueType.values())
+      for (ValueConstraintsActionType action : ValueConstraintsActionType.values()) {
+        ControlledTermField field = termField(type, action, type);
+        SchemaArtifact read = readTermFieldYaml(termFieldYaml(field, child, compact), child, compact);
+        FieldSchemaArtifact readField = child
+          ? ((TemplateSchemaArtifact) read).getFieldSchemaArtifact("Disease")
+          : (FieldSchemaArtifact) read;
+        assertEquals(field.valueConstraints(), readField.valueConstraints(), type + " " + action);
+      }
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void aTermTypeOrActionTheRendererDoesNotWriteIsRefused(String position, boolean child, boolean compact)
+    throws Exception
+  {
+    ControlledTermField field = termField(ValueType.ONTOLOGY_CLASS, ValueConstraintsActionType.DELETE,
+      ValueType.ONTOLOGY_CLASS);
+    // marker, key, the spelling written in its place, and the refusal
+    List<String[]> cases = List.of(
+      new String[] { "termType", "termType", "Class", "Invalid term type \"Class\"; should be class or value" },
+      new String[] { "termType", "termType", "VALUE", "Invalid term type \"VALUE\"; should be class or value" },
+      new String[] { "termType", "termType", "OntologyClass",
+        "Invalid term type \"OntologyClass\"; should be class or value" },
+      new String[] { "action", "action", "Delete", "Invalid action \"Delete\"; should be delete or move" },
+      new String[] { "action", "action", "MOVE", "Invalid action \"MOVE\"; should be delete or move" },
+      new String[] { "action", "action", "remove", "Invalid action \"remove\"; should be delete or move" },
+      new String[] { "action", "type", "Class", "Invalid term type \"Class\"; should be class or value" },
+      new String[] { "action", "type", "Value", "Invalid term type \"Value\"; should be class or value" },
+      new String[] { "action", "type", "term", "Invalid term type \"term\"; should be class or value" });
+    for (String[] c : cases) {
+      String label = c[1] + " " + c[2];
+      LinkedHashMap<String, Object> yaml = termFieldYaml(field, child, compact);
+      assertEquals(1, respell(yaml, c[0], c[1], c[2]), label);
+
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readTermFieldYaml(yaml, child, compact), label);
+      assertEquals(c[3], thrown.getParseErrorMessage(), label);
+      assertEquals(c[1], thrown.getFieldKey(), label);
+      assertTrue(thrown.getPath().endsWith(child ? "/Disease" : "/"), label + ": " + thrown.getMessage());
+    }
+  }
+
+  // ---- An entry under values: takes exactly the type spellings the renderer writes ----
+
+  /** A controlled-term field with one constraint of each kind the YAML writes under {@code values:}. */
+  private static ControlledTermField everyKindField()
+  {
+    return ControlledTermField.builder().withName("Disease")
+      .withOntologyValueConstraint(URI.create("https://data.bioontology.org/ontologies/DOID"), "DOID",
+        "Human Disease Ontology")
+      .withClassValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_530"), "DOID", "eyelid disease",
+        "eyelid disease", ValueType.ONTOLOGY_CLASS)
+      .withBranchValueConstraint(URI.create("http://purl.obolibrary.org/obo/DOID_4"), "Human Disease Ontology", "DOID",
+        "disease", 3)
+      .withValueSetValueConstraint(URI.create("https://example.org/value-sets/colours"), "VS", "Colours")
+      .build();
+  }
+
+  /** Sets the type of every entry under a {@code values:} list whose type is {@code from}; returns how many. */
+  @SuppressWarnings("unchecked")
+  private static int retype(Object node, String from, Object to)
+  {
+    int count = 0;
+    if (node instanceof Map<?, ?> map) {
+      if (map.get("values") instanceof List<?> values)
+        for (Object entry : values)
+          if (entry instanceof Map<?, ?> e && from.equals(e.get("type"))) {
+            ((Map<String, Object>) e).put("type", to);
+            count++;
+          }
+      for (Object child : map.values())
+        count += retype(child, from, to);
+    } else if (node instanceof List<?> list) {
+      for (Object child : list)
+        count += retype(child, from, to);
+    }
+    return count;
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void everyValueConstraintTypeTheRendererWritesReadsBack(String position, boolean child, boolean compact)
+    throws Exception
+  {
+    ControlledTermField field = everyKindField();
+    LinkedHashMap<String, Object> yaml = termFieldYaml(field, child, compact);
+    for (String type : List.of("ontology", "class", "branch", "valueSet"))
+      assertEquals(1, retype(yaml, type, type), type);
+
+    SchemaArtifact read = readTermFieldYaml(yaml, child, compact);
+    FieldSchemaArtifact readField = child
+      ? ((TemplateSchemaArtifact) read).getFieldSchemaArtifact("Disease")
+      : (FieldSchemaArtifact) read;
+    assertEquals(field.valueConstraints(), readField.valueConstraints());
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void aValueConstraintTypeTheRendererDoesNotWriteIsRefused(String position, boolean child, boolean compact)
+    throws Exception
+  {
+    // the type the renderer writes, and a spelling written in its place
+    List<Object[]> cases = List.of(
+      new Object[] { "ontology", "Ontology" }, new Object[] { "ontology", "ONTOLOGY" },
+      new Object[] { "ontology", "ontologies" }, new Object[] { "class", "Class" },
+      new Object[] { "class", "CLASS" }, new Object[] { "class", "term" }, new Object[] { "branch", "Branch" },
+      new Object[] { "branch", "tree" }, new Object[] { "valueSet", "valueset" },
+      new Object[] { "valueSet", "ValueSet" }, new Object[] { "valueSet", "value-set" },
+      new Object[] { "class", "literal" }, new Object[] { "class", "" }, new Object[] { "branch", 1 });
+    for (Object[] c : cases) {
+      String label = c[0] + " as " + c[1];
+      LinkedHashMap<String, Object> yaml = termFieldYaml(everyKindField(), child, compact);
+      assertEquals(1, retype(yaml, (String) c[0], c[1]), label);
+
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readTermFieldYaml(yaml, child, compact), label);
+      assertEquals("Invalid value constraint type \"" + c[1] + "\"; should be ontology, class, branch or valueSet",
+        thrown.getParseErrorMessage(), label);
+      assertEquals("type", thrown.getFieldKey(), label);
+      assertTrue(thrown.getPath().endsWith(child ? "/Disease" : "/"), label + ": " + thrown.getMessage());
+    }
+  }
+
+  // ---- A numeric or temporal datatype is refused by the reader, naming the key and the path ----
+
+  private static final NumericField NUMERIC_FIELD = NumericField.builder().withName("N")
+    .withNumericType(XsdNumericDatatype.INT).build();
+  private static final TemporalField TEMPORAL_FIELD = TemporalField.builder().withName("W")
+    .withTemporalType(XsdTemporalDatatype.DATE).withTemporalGranularity(TemporalGranularity.DAY).build();
+
+  /** Reads the YAML of {@code field}, standalone or as a template's only child, with its datatype respelled. */
+  private static void readWithDatatype(FieldSchemaArtifact field, boolean child, boolean compact, String spelling)
+    throws Exception
+  {
+    readRespelled(field, child, compact, "datatype", spelling);
+  }
+
+  /** Reads the YAML of {@code field}, standalone or as a template's only child, with {@code key} respelled. */
+  private static void readRespelled(FieldSchemaArtifact field, boolean child, boolean compact, String key,
+    String spelling) throws Exception
+  {
+    SchemaArtifact artifact = child
+      ? TemplateSchemaArtifact.builder().withName("T").withFieldSchema(field).build()
+      : field;
+    LinkedHashMap<String, Object> yaml = ArtifactSourceParser.yaml(YamlSerializer.getYAML(artifact, compact, true));
+    assertEquals(1, respell(yaml, key, key, spelling), key + " " + spelling);
+    readTermFieldYaml(yaml, child, compact);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void aNumericOrTemporalDatatypeIsReadIgnoringCase(String position, boolean child, boolean compact)
+  {
+    for (String type : List.of("xsd:int", "XSD:INT", "Xsd:Int"))
+      assertDoesNotThrow(() -> readWithDatatype(NUMERIC_FIELD, child, compact, type), type);
+    for (String type : List.of("xsd:date", "XSD:DATE", "Xsd:Date"))
+      assertDoesNotThrow(() -> readWithDatatype(TEMPORAL_FIELD, child, compact, type), type);
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void anUnknownNumericOrTemporalDatatypeIsRefusedWithItsKeyAndPath(String position, boolean child,
+    boolean compact)
+  {
+    for (String type : List.of("xsd:integer", "int", "xsd:date", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readWithDatatype(NUMERIC_FIELD, child, compact, type), type);
+      assertEquals("Invalid number type \"" + type + "\"; should be xsd:decimal, xsd:long, xsd:byte, xsd:short, "
+        + "xsd:int, xsd:float or xsd:double", thrown.getParseErrorMessage(), type);
+      assertEquals("datatype", thrown.getFieldKey(), type);
+      assertTrue(thrown.getPath().endsWith(child ? "/N" : "/"), type + ": " + thrown.getMessage());
+    }
+    for (String type : List.of("xsd:dateTimeStamp", "date", "xsd:int", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readWithDatatype(TEMPORAL_FIELD, child, compact, type), type);
+      assertEquals("Invalid temporal type \"" + type + "\"; should be xsd:date, xsd:dateTime or xsd:time",
+        thrown.getParseErrorMessage(), type);
+      assertEquals("datatype", thrown.getFieldKey(), type);
+      assertTrue(thrown.getPath().endsWith(child ? "/W" : "/"), type + ": " + thrown.getMessage());
+    }
+  }
+
+  // ---- A temporal field's granularity and input time format: the renderer's spellings, refused by key ----
+
+  private static final TemporalField TIMED_FIELD = TemporalField.builder().withName("W")
+    .withTemporalType(XsdTemporalDatatype.TIME).withTemporalGranularity(TemporalGranularity.SECOND)
+    .withInputTimeFormat(InputTimeFormat.TWELVE_HOUR).build();
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void theRenderersGranularityAndInputTimeFormatReadBack(String position, boolean child, boolean compact)
+  {
+    assertDoesNotThrow(() -> readRespelled(TIMED_FIELD, child, compact, "granularity", "second"));
+    assertDoesNotThrow(() -> readRespelled(TIMED_FIELD, child, compact, "inputTimeFormat", "12h"));
+    assertDoesNotThrow(() -> readRespelled(TIMED_FIELD, child, compact, "inputTimeFormat", "24h"));
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("termSpellingPositions")
+  public void anUnknownGranularityOrInputTimeFormatIsRefusedWithItsKeyAndPath(String position, boolean child,
+    boolean compact)
+  {
+    for (String granularity : List.of("week", "Second", "SECOND", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readRespelled(TIMED_FIELD, child, compact, "granularity", granularity), granularity);
+      assertEquals("granularity", thrown.getFieldKey(), granularity);
+      assertEquals("Invalid granularity \"" + granularity + "\"; should be year, month, day, hour, minute, second "
+        + "or decimalSecond", thrown.getParseErrorMessage(), granularity);
+      assertTrue(thrown.getPath().endsWith(child ? "/W" : "/"), granularity + ": " + thrown.getMessage());
+    }
+    for (String format : List.of("36h", "12H", "12-hour", "")) {
+      ArtifactParseException thrown = assertThrows(ArtifactParseException.class,
+        () -> readRespelled(TIMED_FIELD, child, compact, "inputTimeFormat", format), format);
+      assertEquals("inputTimeFormat", thrown.getFieldKey(), format);
+      assertEquals("Invalid input time format \"" + format + "\"; should be 12h or 24h", thrown.getParseErrorMessage(),
+        format);
+      assertTrue(thrown.getPath().endsWith(child ? "/W" : "/"), format + ": " + thrown.getMessage());
+    }
   }
 
   /** Replaces the id of the first version map under {@code node}; false when there is none. */

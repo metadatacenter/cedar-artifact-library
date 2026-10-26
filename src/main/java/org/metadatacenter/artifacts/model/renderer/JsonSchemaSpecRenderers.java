@@ -284,11 +284,19 @@ final class JsonSchemaSpecRenderers {
   }
 
 
+  /**
+   * Renders a field value's type, in JSON and in YAML. An IRI in the XSD namespace is written as
+   * {@code xsd:} and its local name, whether or not {@link XsdDatatype} has a constant for it. The YAML
+   * reader expands every {@code xsd:} name to its full IRI, and writing them all prefixed gives each XSD
+   * datatype one spelling through a YAML trip. Any other IRI is written as it is. So is the namespace IRI
+   * itself, since it has no local name and a bare {@code xsd:} is not an IRI.
+   */
   public static String renderPossiblyXsdPrefixedUri(URI uri) {
-    if (XsdDatatype.isKnownXsdDatatypeUri(uri)) {
-      return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
+    String iri = uri.toString();
+    if (iri.startsWith(XSD_IRI) && iri.length() > XSD_IRI.length()) {
+      return XSD + ":" + iri.substring(XSD_IRI.length());
     } else {
-      return uri.toString();
+      return iri;
     }
   }
 

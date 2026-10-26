@@ -123,8 +123,6 @@ public class YamlArtifactRoundTripTest
 
   @Test public void testRoundTripNumericField()
   {
-    // XsdNumericDatatype.INT and INTEGER both have text "xsd:int", so fromString cannot
-    // distinguish them. Use DOUBLE (unique text) for a clean round-trip.
     NumericField original = NumericField.builder().withName("Percent").withNumericType(XsdNumericDatatype.DOUBLE)
       .withMinValue(0).withMaxValue(100).withDefaultValue(0).build();
     roundTripField(original);
@@ -212,6 +210,45 @@ public class YamlArtifactRoundTripTest
       .withOntologyValueConstraint(frozen)
       .build();
     roundTripField(original);
+  }
+
+  @Test public void testRoundTripKeepsAnOntologyAddressOutsideBioPortal()
+  {
+    // Some stored templates address an ontology by its OBO PURL. The reader derives a BioPortal address
+    // from the acronym, which would replace it, so the YAML states this one. So it does for a BioPortal
+    // address naming another acronym, which the acronym cannot give either.
+    for (String address : List.of("http://purl.obolibrary.org/obo/uberon.owl",
+      "https://data.bioontology.org/ontologies/UBERON-OLD")) {
+      ControlledTermField original = ControlledTermField.builder().withName("Anatomy")
+        .withOntologyValueConstraint(URI.create(address), "UBERON", "Uberon").build();
+
+      assertEquals(address, ontologyEntry(original).get("sourceUri"));
+      roundTripField(original);
+    }
+  }
+
+  @Test public void testRoundTripRebuildsABioPortalOntologyAddressFromTheAcronym()
+  {
+    // YAML names a BioPortal ontology by its acronym, in whichever form its address was stored.
+    for (String address : List.of("https://data.bioontology.org/ontologies/DOID",
+      "http://data.bioontology.org/ontologies/DOID", "https://bioportal.bioontology.org/ontologies/DOID",
+      "http://bioportal.bioontology.org/ontologies/DOID")) {
+      ControlledTermField original = ControlledTermField.builder().withName("Disease")
+        .withOntologyValueConstraint(URI.create(address), "DOID", "Disease").build();
+
+      LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderFieldSchemaArtifact(original);
+      assertFalse(ontologyEntry(original).containsKey("sourceUri"), address);
+      FieldSchemaArtifact roundTripped = yamlArtifactReader.readFieldSchemaArtifact(rendering);
+      assertEquals(URI.create("https://data.bioontology.org/ontologies/DOID"),
+        roundTripped.valueConstraints().get().asControlledTermValueConstraints().ontologies().get(0).uri());
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private java.util.Map<String, Object> ontologyEntry(FieldSchemaArtifact field)
+  {
+    LinkedHashMap<String, Object> rendering = yamlArtifactRenderer.renderFieldSchemaArtifact(field);
+    return (java.util.Map<String, Object>)((List<?>)rendering.get("values")).get(0);
   }
 
   // -------- Schemas with child schemas --------

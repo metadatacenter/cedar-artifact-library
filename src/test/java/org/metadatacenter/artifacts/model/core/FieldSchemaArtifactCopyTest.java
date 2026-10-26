@@ -29,7 +29,7 @@ public class FieldSchemaArtifactCopyTest
     return new FieldSchemaArtifact[] {
       TextField.builder().withName("t").withPreferredLabel("LABEL").build(),
       TextAreaField.builder().withName("ta").withPreferredLabel("LABEL").build(),
-      NumericField.builder().withName("n").withNumericType(XsdNumericDatatype.INTEGER)
+      NumericField.builder().withName("n").withNumericType(XsdNumericDatatype.INT)
         .withPreferredLabel("LABEL").build(),
       TemporalField.builder().withName("date").withTemporalType(XsdTemporalDatatype.DATE)
         .withTemporalGranularity(TemporalGranularity.DAY).withPreferredLabel("LABEL").build(),

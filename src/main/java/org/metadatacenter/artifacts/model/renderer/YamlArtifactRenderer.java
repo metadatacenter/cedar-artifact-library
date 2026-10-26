@@ -15,6 +15,7 @@ import java.time.OffsetDateTime;
 import org.metadatacenter.model.validation.TimestampPolicy;
 import java.util.*;
 
+import static org.metadatacenter.artifacts.model.renderer.JsonSchemaSpecRenderers.renderPossiblyXsdPrefixedUri;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.*;
 
 public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<String, Object>>
@@ -398,7 +399,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     rendering.put(TYPE, INSTANCE);
 
-    if (templateInstanceArtifact.name().isEmpty())
+    // The YAML reader refuses an instance document without a name and one whose name is empty, so the
+    // renderer writes neither. The model and the JSON form leave the name optional.
+    if (templateInstanceArtifact.name().isEmpty() || templateInstanceArtifact.name().get().isEmpty())
       throw new ArtifactRenderException("template instance must have a name");
     else
       rendering.put(NAME, templateInstanceArtifact.name().get());
@@ -410,6 +413,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // not the identifier of the artifact being represented.
     if (templateInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, templateInstanceArtifact.jsonLdId().get().toString());
+
+    putInstanceTypes(rendering, templateInstanceArtifact.jsonLdTypes());
 
     rendering.put(IS_BASED_ON, templateInstanceArtifact.isBasedOn().toString());
 
@@ -481,6 +486,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
 
+    putInstanceTypes(rendering, elementInstanceArtifact.jsonLdTypes());
+
     if (!isCompact && elementInstanceArtifact.createdOn().isPresent())
       rendering.put(CREATED_ON, renderOffsetDateTime(elementInstanceArtifact.createdOn().get()));
 
@@ -510,6 +517,19 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     return rendering;
   }
 
+  /**
+   * The classes an instance or an element occurrence states as its JSON-LD {@code @type}, under
+   * {@code instanceType}, the key a template uses for the classes its instances take: one class as
+   * a string, several as a list in order.
+   */
+  private static void putInstanceTypes(LinkedHashMap<String, Object> rendering, List<URI> types)
+  {
+    if (types.size() == 1)
+      rendering.put(INSTANCE_TYPE, types.get(0).toString());
+    else if (types.size() > 1)
+      rendering.put(INSTANCE_TYPE, types.stream().map(URI::toString).toList());
+  }
+
   private LinkedHashMap<String, Object> renderNestedElementInstanceArtifact(ElementInstanceArtifact elementInstanceArtifact)
   {
     LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
@@ -532,7 +552,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // only an `id:` would both reintroduce noise and be ambiguous with a field on read (a field
     // is a map with no `children:` key). The element's presence — and a fresh @id — are
     // reconstructable from the template at the JSON boundary.
-    if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty())
+    if (childInstanceArtifactsRendering.isEmpty() && attributeValueGroups.isEmpty()
+      && elementInstanceArtifact.jsonLdTypes().isEmpty())
       return rendering;
 
     // The reader tells an element from a field by `children:`. An element holding only
@@ -546,6 +567,10 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     // repository-owned structure and can be reconstructed from the template when needed.
     if (!isCompact && elementInstanceArtifact.jsonLdId().isPresent())
       rendering.put(ID, elementInstanceArtifact.jsonLdId().get().toString());
+
+    // The classes an occurrence states are its own data, not the repository's, so even a compact
+    // document keeps them, and an occurrence stating classes and nothing else is still written.
+    putInstanceTypes(rendering, elementInstanceArtifact.jsonLdTypes());
 
     if (!childInstanceArtifactsRendering.isEmpty())
       rendering.put(CHILDREN, childInstanceArtifactsRendering);
@@ -759,8 +784,9 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
         && !templateUi.temporalGranularity().isDay() && templateUi.inputTimeFormat().isPresent()) {
         rendering.put(INPUT_TIME_FORMAT, templateUi.inputTimeFormat().get().toString());
       }
-      if (templateUi.timezoneEnabled().isPresent() && templateUi.timezoneEnabled().get())
-        rendering.put(INPUT_TIME_ZONE, true);
+      // Written as the field states it, false included, and left out when the field states nothing,
+      // as the JSON leaves it out.
+      templateUi.timezoneEnabled().ifPresent(timezoneEnabled -> rendering.put(INPUT_TIME_ZONE, timezoneEnabled));
     }
 
     if (fieldSchemaArtifact.isStatic()) {
@@ -1599,8 +1625,11 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     m.put(SOURCE_ACRONYM, o.acronym());
     m.put(SOURCE_NAME, o.name());
     o.iri().ifPresent(i -> m.put(SOURCE_IRI, i.toString()));
-    // The ontology's backend URL is not rendered: it is derivable from the acronym and reconstructed on
-    // read (VERSIONING-ROADMAP "Revisit: sourceUri is derivable").
+    // The reader derives a BioPortal address from the acronym, so the service address is written only
+    // when it is not a BioPortal address for this acronym.
+    var bioPortalAddress = BIOPORTAL_ONTOLOGY_ADDRESS.matcher(o.uri().toString());
+    if (!bioPortalAddress.matches() || !bioPortalAddress.group(1).equals(o.acronym()))
+      m.put(SOURCE_URI, o.uri().toString());
     o.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
     o.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
     return m;
@@ -1698,14 +1727,6 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
   {
     return fieldSchemaArtifact.fieldUi().isList() && fieldSchemaArtifact.valueConstraints().isPresent()
       && fieldSchemaArtifact.valueConstraints().get().multipleChoice();
-  }
-
-  private String renderPossiblyXsdPrefixedUri(URI uri)
-  {
-    if (XsdDatatype.isKnownXsdDatatypeUri(uri))
-      return XsdDatatype.fromUri(uri).getText(); // We render the prefixed form of XSD datatypes
-    else
-      return uri.toString();
   }
 
   private void addSchemaExtensions(SchemaArtifact artifact, LinkedHashMap<String, Object> rendering) {

@@ -9,8 +9,10 @@ import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.core.Version;
 import org.metadatacenter.artifacts.model.core.fields.FieldInputType;
+import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.metadatacenter.model.ModelNodeNames;
 
 import java.io.File;
@@ -318,6 +320,31 @@ public class YamlArtifactReaderTest
       TemplateInstanceArtifact instance = artifactReader.readTemplateInstanceArtifact(
         ArtifactSourceParser.yaml(document + "    value: " + spelling + "\n    label: \"Lung\"\n"));
       assertTrue(instance.singleInstanceFieldInstances().get("Term").jsonLdValue().isEmpty(), spelling);
+    }
+  }
+
+  @Test public void readSchemaArtifactsWithWhitespaceOnlyName() throws IOException
+  {
+    // The builders refuse a name made only of whitespace. The YAML reader reads one, from YAML text.
+    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
+    LinkedHashMap<String, Object> template = renderer.renderTemplateSchemaArtifact(
+      TemplateSchemaArtifact.builder().withName("Study").build());
+    LinkedHashMap<String, Object> element = renderer.renderElementSchemaArtifact(
+      ElementSchemaArtifact.builder().withName("Address").build());
+    LinkedHashMap<String, Object> field = renderer.renderFieldSchemaArtifact(TextField.builder().withName("Title")
+      .build());
+
+    for (String name : List.of(" ", "   ", "\t", "\n", " \t\r\n ")) {
+      template.put(NAME, name);
+      element.put(NAME, name);
+      field.put(NAME, name);
+
+      assertEquals(name, artifactReader.readTemplateSchemaArtifact(
+        ArtifactSourceParser.yaml(objectMapper.writeValueAsString(template))).name());
+      assertEquals(name, artifactReader.readElementSchemaArtifact(
+        ArtifactSourceParser.yaml(objectMapper.writeValueAsString(element))).name());
+      assertEquals(name, artifactReader.readFieldSchemaArtifact(
+        ArtifactSourceParser.yaml(objectMapper.writeValueAsString(field))).name());
     }
   }
 

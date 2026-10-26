@@ -55,6 +55,7 @@ import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -97,6 +98,7 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_VALUE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_LENGTH;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_VALUE;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MOVE_ACTION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NOTATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ONTOLOGY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.RECOMMENDED;
@@ -105,6 +107,8 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SELECTED_BY_DEFAULT;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_ACRONYM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_IRI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_URI;
+import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_ONTOLOGY_ADDRESS_PREFIX;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_SYSTEM;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.SOURCE_NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TERM_BASE_IRI;
@@ -194,6 +198,28 @@ import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 
 public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, Object>>
 {
+  /**
+   * The classes an instance or an element occurrence states under {@code instanceType}, its JSON-LD
+   * {@code @type}, as the JSON reader reads them: a string is one class, a list several in order, and
+   * each an absolute IRI.
+   */
+  private List<URI> readInstanceTypes(LinkedHashMap<String, Object> sourceNode, String path) {
+    Object value = sourceNode.get(INSTANCE_TYPE);
+    if (value == null) return List.of();
+    List<?> values = value instanceof List<?> list ? list : List.of(value);
+    if (values.isEmpty()) throw new ArtifactParseException("Instance types must not be empty", INSTANCE_TYPE, path);
+    List<URI> types = new ArrayList<>();
+    for (Object item : values) {
+      if (!(item instanceof String text)) throw new ArtifactParseException("Instance type must be an IRI string", INSTANCE_TYPE, path);
+      try {
+        types.add(IriSyntax.absolute(text));
+      } catch (URISyntaxException e) {
+        throw new ArtifactParseException("Instance types must be absolute IRIs", INSTANCE_TYPE, path);
+      }
+    }
+    return types;
+  }
+
   private List<URI> readInstanceJsonLdTypes(LinkedHashMap<String, Object> sourceNode, String path) {
     Object value = sourceNode.get(INSTANCE_TYPE);
     if (value == null) return List.of();
@@ -376,6 +402,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     builder.withName(readRequiredString(sourceNode, path, NAME, false));
     readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
     readAbsoluteUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    readInstanceTypes(sourceNode, path).forEach(builder::withJsonLdType);
     builder.withIsBasedOn(readRequiredAbsoluteUri(sourceNode, path, IS_BASED_ON));
     readAbsoluteUri(sourceNode, path, DERIVED_FROM).ifPresent(builder::withDerivedFrom);
     readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
@@ -423,6 +450,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     readString(sourceNode, path, NAME).ifPresent(builder::withName);
     readString(sourceNode, path, DESCRIPTION).ifPresent(builder::withDescription);
     readAbsoluteUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    readInstanceTypes(sourceNode, path).forEach(builder::withJsonLdType);
     readUri(sourceNode, path, CREATED_BY).ifPresent(builder::withCreatedBy);
     readUri(sourceNode, path, MODIFIED_BY).ifPresent(builder::withModifiedBy);
     readOffsetDatetime(sourceNode, path, CREATED_ON).ifPresent(builder::withCreatedOn);
@@ -525,14 +553,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       String childPath = path + "/" + childKey;
 
       if (rawValue instanceof List<?>) {
-        // Multi-instance: every element should be a map; if it carries `children:` it's an
-        // element instance, otherwise it's a field instance. We assume the list is homogeneous.
-        // The entry point has already refused an empty list, so the list has a first entry.
+        // Multi-instance: every entry is a map, and every entry is of the first entry's kind, element
+        // or field instance. The entry point has already refused an empty list, so the list has a
+        // first entry.
         List<?> list = (List<?>) rawValue;
-        Object first = list.get(0);
-        if (!(first instanceof LinkedHashMap<?, ?>))
-          throw new ArtifactParseException("Expected map entries in multi-instance list", childKey, path);
-        boolean isElement = isElementInstanceMap((LinkedHashMap<String, Object>) first);
+        for (int i = 0; i < list.size(); i++)
+          if (!(list.get(i) instanceof LinkedHashMap<?, ?>))
+            throw new ArtifactParseException("Expected map entries in multi-instance list", childKey,
+              childPath + "[" + i + "]");
+        boolean isElement = isElementInstanceMap((LinkedHashMap<String, Object>) list.get(0));
+        for (int i = 1; i < list.size(); i++)
+          if (isElementInstanceMap((LinkedHashMap<String, Object>) list.get(i)) != isElement)
+            throw new ArtifactParseException("A repeated child mixes element and field entries", childKey,
+              childPath + "[" + i + "]");
         if (isElement) {
           List<ElementInstanceArtifact> elements = new ArrayList<>();
           for (Object e : list)
@@ -581,6 +614,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
   {
     ElementInstanceArtifact.Builder builder = ElementInstanceArtifact.builder();
     readAbsoluteUri(sourceNode, path, ID).ifPresent(builder::withJsonLdId);
+    readInstanceTypes(sourceNode, path).forEach(builder::withJsonLdType);
 
     readChildInstanceArtifacts(sourceNode, path).accept(new InstanceChildVisitor() {
       @Override public void visitSingleField(String key, FieldInstanceArtifact f) {
@@ -612,7 +646,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * to field instances.
    */
   private static final Set<String> TEMPLATE_INSTANCE_RESERVED_KEYS = Set.of(
-    TYPE, NAME, DESCRIPTION, ID, IS_BASED_ON, DERIVED_FROM,
+    TYPE, NAME, DESCRIPTION, ID, INSTANCE_TYPE, IS_BASED_ON, DERIVED_FROM,
     CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON,
     CHILDREN, ANNOTATIONS);
 
@@ -621,7 +655,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * (they appear as values in a parent's {@code children:} map) and only ever carry {@code id}
    * and {@code children} as reserved keys.
    */
-  private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(TYPE, ID, CHILDREN);
+  private static final Set<String> ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(TYPE, ID, INSTANCE_TYPE, CHILDREN);
 
   /**
    * Top-level YAML keys reserved by the standalone element-instance form ({@code type:
@@ -629,7 +663,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * renderer emits.
    */
   private static final Set<String> STANDALONE_ELEMENT_INSTANCE_RESERVED_KEYS = Set.of(
-    TYPE, NAME, DESCRIPTION, ID, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
+    TYPE, NAME, DESCRIPTION, ID, INSTANCE_TYPE, CREATED_BY, MODIFIED_BY, CREATED_ON, MODIFIED_ON, CHILDREN);
 
   /**
    * Walk top-level keys of an instance YAML map looking for attribute-value field groups. Each
@@ -684,9 +718,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       // expand the prefix here — otherwise rendering the instance to JSON throws when it
       // tries to re-prefix a value that is already prefixed.
       String dt = datatype.get();
-      jsonLdTypes.add(dt.startsWith("xsd:")
-        ? URI.create(XSD_IRI + dt.substring("xsd:".length()))
-        : URI.create(dt));
+      try {
+        // The empty string parses as a relative reference, yet it names no datatype.
+        if (dt.isEmpty()) throw new IllegalArgumentException("Empty IRI");
+        jsonLdTypes.add(dt.startsWith("xsd:")
+          ? URI.create(XSD_IRI + dt.substring("xsd:".length()))
+          : URI.create(dt));
+      } catch (IllegalArgumentException e) {
+        throw new ArtifactParseException("Invalid datatype \"" + dt + "\"", DATATYPE, path);
+      }
     }
     Optional<String> jsonLdId = readString(sourceNode, path, ID);
     if (jsonLdId.isPresent()) {
@@ -975,7 +1015,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       if (valueNode.containsKey(VALUE))
         builder.withLiteralAnnotation(annotationName, readRequiredString(valueNode, annotationPath, VALUE, true));
       else if (valueNode.containsKey(ID))
-        builder.withIriAnnotation(annotationName, readRequiredUri(valueNode, annotationPath, ID));
+        builder.withIriAnnotation(annotationName, readRequiredAbsoluteUri(valueNode, annotationPath, ID));
       else
         throw new ArtifactParseException("Annotation " + annotationName + " must have either a `value:` or `id:` key",
           ANNOTATIONS, path);
@@ -1027,11 +1067,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     if (fieldInputType.isTemporal()) {
       TemporalGranularity temporalGranularity = readTemporalGranularity(sourceNode, path, GRANULARITY);
       Optional<InputTimeFormat> inputTimeFormat = readInputTimeFormat(sourceNode, path, INPUT_TIME_FORMAT);
-      // A temporal field always says whether it carries a time zone, and the stored JSON of every
-      // one in production does. The YAML renderer writes the key only when it is true, so reading
-      // an absent key as "unsaid" rather than false dropped `timezoneEnabled` from the JSON of
-      // every temporal field that does not enable it, and the round trip lost an explicit false.
-      Optional<Boolean> timeZoneEnabled = Optional.of(readBoolean(sourceNode, path, INPUT_TIME_ZONE, false));
+      // A field may state that its values carry a time zone, state that they do not, or state nothing,
+      // and its JSON keeps the three apart. The renderer writes the key whenever the field states it,
+      // so an absent key states nothing, as an absent `timezoneEnabled` does in the JSON.
+      Optional<Boolean> timeZoneEnabled = readOptionalBoolean(sourceNode, path, INPUT_TIME_ZONE);
 
       return TemporalFieldUi.create(temporalGranularity, inputTimeFormat, timeZoneEnabled, hidden,
         continuePreviousLine);
@@ -1228,6 +1267,19 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return (Boolean)rawValue;
   }
 
+  private Optional<Boolean> readOptionalBoolean(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
+  {
+    Object rawValue = sourceNode.get(fieldKey);
+
+    if (rawValue == null)
+      return Optional.empty();
+
+    if (!(rawValue instanceof Boolean))
+      throw new ArtifactParseException("Expecting Boolean value, got " + rawValue.getClass(), fieldKey, path);
+
+    return Optional.of((Boolean)rawValue);
+  }
+
   private List<String> readStringArray(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
   {
     Object rawValue = sourceNode.get(fieldKey);
@@ -1261,9 +1313,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     String granularityString = readEnumOrString(sourceNode, path, fieldKey)
       .orElseThrow(() -> new ArtifactParseException("No field present", fieldKey, path));
 
-    if (!TEMPORAL_GRANULARITIES.contains(granularityString))
-      throw new ArtifactParseException("Invalid granularity " + granularityString + " in field " + fieldKey, TYPE,
-        path);
+    // A granularity takes exactly the spellings the renderer writes.
+    if (!TEMPORAL_GRANULARITIES.contains(granularityString)) {
+      List<String> spellings = Arrays.stream(TemporalGranularity.values()).map(TemporalGranularity::getText).toList();
+      throw new ArtifactParseException("Invalid granularity \"" + granularityString + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
 
     return TemporalGranularity.fromString(granularityString);
   }
@@ -1277,9 +1332,12 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       return Optional.empty();
     }
 
-    if (!TIME_FORMATS.contains(inputTimeFormatString.get()))
-      throw new ArtifactParseException(
-        "Invalid input time format " + inputTimeFormatString.get() + " in field " + fieldKey, TYPE, path);
+    // An input time format takes exactly the spellings the renderer writes.
+    if (!TIME_FORMATS.contains(inputTimeFormatString.get())) {
+      List<String> spellings = Arrays.stream(InputTimeFormat.values()).map(InputTimeFormat::getText).toList();
+      throw new ArtifactParseException("Invalid input time format \"" + inputTimeFormatString.get() + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
 
     return Optional.of(InputTimeFormat.fromString(inputTimeFormatString.get()));
   }
@@ -1383,16 +1441,33 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     throw new ArtifactParseException("Expecting string or enum value, got " + raw.getClass(), fieldKey, path);
   }
 
+  // A number type and a temporal type match ignoring case, as each enum's fromString does.
   private Optional<XsdNumericDatatype> readNumberType(LinkedHashMap<String, Object> sourceNode, String path,
     String fieldKey)
   {
-    return readEnumOrString(sourceNode, path, fieldKey).map(XsdNumericDatatype::fromString);
+    Optional<String> numberType = readEnumOrString(sourceNode, path, fieldKey);
+
+    try {
+      return numberType.map(XsdNumericDatatype::fromString);
+    } catch (IllegalArgumentException e) {
+      List<String> spellings = Arrays.stream(XsdNumericDatatype.values()).map(XsdNumericDatatype::getText).toList();
+      throw new ArtifactParseException("Invalid number type \"" + numberType.get() + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
   }
 
   private Optional<XsdTemporalDatatype> readTemporalType(LinkedHashMap<String, Object> sourceNode, String path,
     String fieldKey)
   {
-    return readEnumOrString(sourceNode, path, fieldKey).map(XsdTemporalDatatype::fromString);
+    Optional<String> temporalType = readEnumOrString(sourceNode, path, fieldKey);
+
+    try {
+      return temporalType.map(XsdTemporalDatatype::fromString);
+    } catch (IllegalArgumentException e) {
+      List<String> spellings = Arrays.stream(XsdTemporalDatatype.values()).map(XsdTemporalDatatype::getText).toList();
+      throw new ArtifactParseException("Invalid temporal type \"" + temporalType.get() + "\"; should be "
+        + JsonNodeReaders.alternatives(spellings), fieldKey, path);
+    }
   }
 
   private Optional<Status> readStatus(LinkedHashMap<String, Object> sourceNode, String path, String fieldKey)
@@ -1516,11 +1591,15 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     }
   }
 
+  // The type spellings the renderer writes on a values: entry, which are the only ones read.
+  private static final Set<String> VALUE_CONSTRAINT_TYPES = Set.of(ONTOLOGY, CLASS, BRANCH, VALUE_SET);
+
   /**
    * Read each entry of the {@code values:} list at {@code sourceNode}, dispatching to the supplied
-   * mapper for entries whose {@code type} discriminator matches {@code typeDiscriminator}. Entries
-   * that don't match (e.g. {@code literal:}-style entries when reading ontology constraints) are
-   * silently skipped.
+   * mapper for entries whose {@code type} discriminator matches {@code typeDiscriminator}. Entries of
+   * another kind are skipped: a literal entry carries no {@code type}, and an ontology, class, branch or
+   * value-set entry is read by the call for its own kind. A {@code type} other than those four is
+   * refused rather than skipped, because skipping it drops the constraint.
    */
   @SuppressWarnings("unchecked")
   private <T> List<T> readValuesEntriesOfType(LinkedHashMap<String, Object> sourceNode, String path,
@@ -1534,6 +1613,9 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       if (!(rawEntry instanceof LinkedHashMap<?, ?>)) continue;
       LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) rawEntry;
       Object t = entry.get(TYPE);
+      if (entry.containsKey(TYPE) && !(t instanceof String type && VALUE_CONSTRAINT_TYPES.contains(type)))
+        throw new ArtifactParseException("Invalid value constraint type \"" + t + "\"; should be " + ONTOLOGY + ", "
+          + CLASS + ", " + BRANCH + " or " + VALUE_SET, TYPE, path);
       if (typeDiscriminator.equals(t))
         result.add(mapper.apply(entry));
     }
@@ -1547,33 +1629,31 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
       String name = readRequiredString(entry, path, SOURCE_NAME, false);
       Optional<Integer> numTerms = readInteger(entry, path, TERM_COUNT);
-      return new OntologyValueConstraint(deriveOntologyUri(acronym), acronym, name, numTerms,
+      URI uri = readAbsoluteUri(entry, path, SOURCE_URI).orElseGet(() -> deriveOntologyUri(acronym));
+      return new OntologyValueConstraint(uri, acronym, name, numTerms,
         readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
     });
   }
 
   /**
-   * Reconstruct an ontology's backend URL from its acronym. The compact YAML no longer carries the URL
-   * because it is derivable (VERSIONING-ROADMAP "Revisit: sourceUri is derivable"), but the model — and
-   * the JSON Schema it renders to — still require it. BioPortal addresses every ontology at
-   * {@code https://data.bioontology.org/ontologies/{ACRONYM}}, and only BioPortal is served today
-   * (absent {@code sourceSystem} means BioPortal). A different source system would need its own rule.
+   * Derive an ontology's service address from its acronym, for an entry that states none. The model, and
+   * the JSON Schema it renders to, require the address. BioPortal serves every ontology at
+   * {@code https://data.bioontology.org/ontologies/{ACRONYM}}, so the writer leaves out a BioPortal
+   * address for the entry's acronym, in whichever form it was stored, and states an address outside
+   * BioPortal, such as one under {@code purl.obolibrary.org}.
    */
   private static URI deriveOntologyUri(String acronym)
   {
-    return URI.create("https://data.bioontology.org/ontologies/" + acronym);
+    return URI.create(DERIVED_ONTOLOGY_ADDRESS_PREFIX + acronym);
   }
 
   private List<ClassValueConstraint> readClassValueConstraints(LinkedHashMap<String, Object> sourceNode, String path)
   {
     return readValuesEntriesOfType(sourceNode, path, CLASS, entry -> {
       String acronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
-      String termType = readRequiredString(entry, path, TERM_TYPE, false);
+      ValueType valueType = readTermType(entry, path, TERM_TYPE);
       String termLabel = readRequiredString(entry, path, TERM_LABEL, false);
       URI uri = readRequiredAbsoluteUri(entry, path, TERM_IRI);
-      ValueType valueType = termType.equalsIgnoreCase(CLASS)
-        ? ValueType.ONTOLOGY_CLASS
-        : ValueType.VALUE;
       // A display label of the template's own where the author set one, and the ontology's preferred
       // label otherwise. The model and the JSON Schema carry both either way.
       String displayLabel = readString(entry, path, TERM_DISPLAY_LABEL).orElse(termLabel);
@@ -1665,21 +1745,45 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       if (!(rawEntry instanceof LinkedHashMap<?, ?>)) continue;
       LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) rawEntry;
 
-      String actionName = readRequiredString(entry, path, ACTION, false);
-      ValueConstraintsActionType actionType = actionName.equalsIgnoreCase(DELETE_ACTION)
-        ? ValueConstraintsActionType.DELETE
-        : ValueConstraintsActionType.MOVE;
+      ValueConstraintsActionType actionType = readActionType(entry, path);
       Optional<Integer> to = readInteger(entry, path, ACTION_TO);
       URI termIri = readRequiredAbsoluteUri(entry, path, TERM_IRI);
       // Not an identifier: the legacy editor writes "template" here for one of the template's own classes.
       Optional<URI> sourceIri = readUri(entry, path, SOURCE_IRI);
       String sourceAcronym = readRequiredString(entry, path, SOURCE_ACRONYM, false);
-      String typeName = readRequiredString(entry, path, TYPE, false);
-      ValueType valueType = typeName.equalsIgnoreCase(CLASS) ? ValueType.ONTOLOGY_CLASS : ValueType.VALUE;
+      ValueType valueType = readTermType(entry, path, TYPE);
 
       result.add(new ControlledTermValueConstraintsAction(termIri, sourceAcronym, valueType, actionType, sourceIri, to));
     }
     return result;
+  }
+
+  // A term's type and an action take exactly the spellings the renderer writes. A case variant is
+  // refused too, as the TypeScript YAML reader refuses it.
+  private ValueType readTermType(LinkedHashMap<String, Object> entry, String path, String fieldKey)
+  {
+    String termType = readRequiredString(entry, path, fieldKey, false);
+
+    if (termType.equals(CLASS))
+      return ValueType.ONTOLOGY_CLASS;
+    else if (termType.equals(VALUE))
+      return ValueType.VALUE;
+    else
+      throw new ArtifactParseException(
+        "Invalid term type \"" + termType + "\"; should be " + CLASS + " or " + VALUE, fieldKey, path);
+  }
+
+  private ValueConstraintsActionType readActionType(LinkedHashMap<String, Object> entry, String path)
+  {
+    String action = readRequiredString(entry, path, ACTION, false);
+
+    if (action.equals(DELETE_ACTION))
+      return ValueConstraintsActionType.DELETE;
+    else if (action.equals(MOVE_ACTION))
+      return ValueConstraintsActionType.MOVE;
+    else
+      throw new ArtifactParseException(
+        "Invalid action \"" + action + "\"; should be " + DELETE_ACTION + " or " + MOVE_ACTION, ACTION, path);
   }
 
   private Optional<TextDefaultValue> readTextDefaultValue(LinkedHashMap<String, Object> sourceNode, String path)

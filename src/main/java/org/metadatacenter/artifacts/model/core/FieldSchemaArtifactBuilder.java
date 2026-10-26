@@ -188,9 +188,19 @@ public abstract sealed class FieldSchemaArtifactBuilder<SELF extends FieldSchema
     return self();
   }
 
+  /**
+   * Sets the field's {@code schema:name}. A null name and a name made only of whitespace are refused.
+   * An empty name is accepted here and refused by {@code build()}. The readers construct a field
+   * through its record's factory rather than through a builder, and a copy builder keeps the copied
+   * field's name without calling this method, so neither meets the whitespace refusal.
+   */
   public SELF withName(String name) {
     if (name == null) {
       throw new IllegalArgumentException("null name passed to builder");
+    }
+
+    if (!name.isEmpty() && name.isBlank()) {
+      throw new IllegalArgumentException("whitespace-only name passed to builder");
     }
 
     this.name = name;

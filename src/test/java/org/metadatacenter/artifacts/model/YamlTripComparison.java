@@ -3,6 +3,7 @@ package org.metadatacenter.artifacts.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.metadatacenter.artifacts.model.yaml.YamlConstants;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -11,7 +12,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
@@ -44,7 +44,13 @@ final class YamlTripComparison
      * IRI is the template's. An element instance holding nothing but an identifier loses the identifier,
      * since the element itself is dropped.
      */
-    INSTANCE_COMPLETION("instanceCompletion");
+    INSTANCE_COMPLETION("instanceCompletion"),
+    /**
+     * YAML writes a number in its shortest spelling, so a number can come back with the same value written
+     * another way: a decimal bound stored as {@code 5.0} comes back as {@code 5}. The two are equal as
+     * decimals.
+     */
+    NUMBER_SPELLING("numberSpelling");
 
     private final String key;
 
@@ -76,8 +82,6 @@ final class YamlTripComparison
     }
   }
 
-  private static final Pattern BIOPORTAL_ONTOLOGY =
-    Pattern.compile("^https?://(?:data|bioportal)\\.bioontology\\.org/ontologies/([^/]+)$");
 
   static List<Difference> compareSchemas(JsonNode direct, JsonNode viaYaml)
   {
@@ -150,7 +154,14 @@ final class YamlTripComparison
       for (int i = 0; i < x.size(); i++) walkSchema(x.get(i), y.get(i), append(at, String.valueOf(i)), out);
       return;
     }
-    out.add(new Difference(pointer(at), direct, viaYaml, Optional.empty()));
+    out.add(new Difference(pointer(at), direct, viaYaml, valueFamily(direct, viaYaml)));
+  }
+
+  // Two values the walk cannot descend into, which differ as JSON.
+  private static Optional<Family> valueFamily(JsonNode direct, JsonNode viaYaml)
+  {
+    return isNumber(direct) && isNumber(viaYaml) && direct.decimalValue().compareTo(viaYaml.decimalValue()) == 0
+      ? Optional.of(Family.NUMBER_SPELLING) : Optional.empty();
   }
 
   private static Optional<Family> schemaFamily(ObjectNode parent, List<String> at, JsonNode direct, JsonNode viaYaml)
@@ -161,7 +172,7 @@ final class YamlTripComparison
     if (endsWith(at, "_ui", "propertyLabels", "*") || endsWith(at, "_ui", "propertyDescriptions", "*"))
       return direct == null && isText(viaYaml) ? Optional.of(Family.UI_ENTRY_FILLED) : Optional.empty();
     if (endsWith(at, "_valueConstraints", "ontologies", "*", "uri") && isText(direct) && isText(viaYaml)) {
-      var matcher = BIOPORTAL_ONTOLOGY.matcher(direct.asText());
+      var matcher = YamlConstants.BIOPORTAL_ONTOLOGY_ADDRESS.matcher(direct.asText());
       if (matcher.matches() && viaYaml.asText().equals("https://data.bioontology.org/ontologies/" + matcher.group(1)))
         return Optional.of(Family.ONTOLOGY_ADDRESS);
     }
@@ -202,7 +213,7 @@ final class YamlTripComparison
       for (int i = 0; i < kept.size(); i++) walkInstance(kept.get(i), keptViaYaml.get(i), append(at, String.valueOf(i)), out);
       return;
     }
-    out.add(new Difference(pointer(at), direct, viaYaml, Optional.empty()));
+    out.add(new Difference(pointer(at), direct, viaYaml, valueFamily(direct, viaYaml)));
   }
 
   // A property's IRI is the template's on the YAML path. Any other @context entry has to survive.
@@ -247,6 +258,8 @@ final class YamlTripComparison
   }
 
   private static boolean isText(JsonNode node) { return node != null && node.isTextual(); }
+
+  private static boolean isNumber(JsonNode node) { return node != null && node.isNumber(); }
 
   private static boolean isAbsentOrNull(JsonNode node) { return node == null || node.isNull(); }
 
