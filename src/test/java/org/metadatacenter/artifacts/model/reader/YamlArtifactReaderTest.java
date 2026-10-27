@@ -23,10 +23,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.ALT_LABEL;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CONFIGURATION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_BY;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.CREATED_ON;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.DERIVED_FROM;
@@ -39,14 +39,10 @@ import static org.metadatacenter.artifacts.model.yaml.YamlConstants.IDENTIFIER;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREF_LABEL;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.LANGUAGE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_ON;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MAX_ITEMS;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MIN_ITEMS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODEL_VERSION;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MODIFIED_BY;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.MULTIPLE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.NAME;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.PREVIOUS_VERSION;
-import static org.metadatacenter.artifacts.model.yaml.YamlConstants.REQUIRED;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.STATUS;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEMPLATE;
 import static org.metadatacenter.artifacts.model.yaml.YamlConstants.TEXT_FIELD;
@@ -187,12 +183,8 @@ public class YamlArtifactReaderTest
     String preferredLabel = "Study";
     List<String> altLabels = List.of("Label 1", "Label 2");
     FieldInputType fieldInputType = FieldInputType.TEXTFIELD;
-    boolean requiredValue = true;
     boolean valueRecommendation = false;
     boolean hidden = false;
-    boolean isMultiple = true;
-    Integer minItems = 3;
-    Integer maxItems = 5;
     String language = "en";
 
     LinkedHashMap<String, Object> yamlSource = new LinkedHashMap<>();
@@ -214,15 +206,6 @@ public class YamlArtifactReaderTest
     yamlSource.put(VALUE_RECOMMENDATION, valueRecommendation);
     yamlSource.put(HIDDEN, hidden);
     yamlSource.put(LANGUAGE, language);
-    // The canonical YAML form (matching what YamlArtifactRenderer emits for nested
-    // fields) puts required / multiple / minItems / maxItems inside a configuration:
-    // sub-block. The reader looks there for these flags.
-    LinkedHashMap<String, Object> configuration = new LinkedHashMap<>();
-    configuration.put(REQUIRED, requiredValue);
-    configuration.put(MULTIPLE, isMultiple);
-    configuration.put(MIN_ITEMS, minItems);
-    configuration.put(MAX_ITEMS, maxItems);
-    yamlSource.put(CONFIGURATION, configuration);
 
     FieldSchemaArtifact fieldSchemaArtifact = artifactReader.readFieldSchemaArtifact(yamlSource);
 
@@ -240,12 +223,12 @@ public class YamlArtifactReaderTest
     assertEquals(preferredLabel, fieldSchemaArtifact.preferredLabel().get());
     assertEquals(altLabels, fieldSchemaArtifact.alternateLabels());
     assertEquals(fieldInputType, fieldSchemaArtifact.fieldUi().inputType());
-    assertEquals(requiredValue, fieldSchemaArtifact.valueConstraints().get().requiredValue());
+    // Whether a field is required, and whether it repeats, is what a parent says of its child, so a
+    // field written on its own has no configuration and is neither.
+    assertFalse(fieldSchemaArtifact.valueConstraints().get().requiredValue());
     assertEquals(valueRecommendation, fieldSchemaArtifact.fieldUi().valueRecommendationEnabled());
     assertEquals(hidden, fieldSchemaArtifact.fieldUi().hidden());
-    assertEquals(isMultiple, fieldSchemaArtifact.isMultiple());
-    assertEquals(minItems, fieldSchemaArtifact.minItems().get());
-    assertEquals(maxItems, fieldSchemaArtifact.maxItems().get());
+    assertFalse(fieldSchemaArtifact.isMultiple());
     assertEquals(language, fieldSchemaArtifact.language().get());
   }
 

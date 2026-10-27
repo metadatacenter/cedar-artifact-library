@@ -406,11 +406,24 @@ public class FieldConcordanceMatrixTest {
     }
   }
 
+  /** The settings a parent states of its child, which a field written on its own does not have. */
+  private static final Set<String> PARENT_SETTINGS = Set.of("required", "recommended");
+
+  /** A field written on its own carries every setting but a parent's, and states no requirement. */
+  private static void assertStandalone(JsonNode json, String feature) {
+    if (!PARENT_SETTINGS.contains(feature)) {
+      assertFeature(json, feature);
+      return;
+    }
+    expect(json, "/_valueConstraints/requiredValue", "false");
+    assertTrue(json.at("/_valueConstraints/recommendedValue").isMissingNode(), "recommendedValue");
+  }
+
   private static ObjectNode renderCase(String type, Supplier<FieldSchemaArtifactBuilder<?>> factory, String feature) {
     FieldSchemaArtifact field = build(factory, feature);
     ObjectNode result = MAPPER.createObjectNode().put("id", type + "/" + feature).put("type", type).put("feature", feature);
     ObjectNode json = JSON.renderFieldSchemaArtifact(field);
-    assertFeature(definition(json), feature);
+    assertStandalone(definition(json), feature);
     assertEquals(normal(json), normal(JSON.renderFieldSchemaArtifact(new JsonArtifactReader().readFieldSchemaArtifact(json))),
       type + "/" + feature);
     result.set("json", json);
@@ -418,7 +431,7 @@ public class FieldConcordanceMatrixTest {
       result.put(compact ? "compactYaml" : "yaml", YamlSerializer.getYAML(field, compact, true));
       var yaml = new YamlArtifactRenderer(compact).renderFieldSchemaArtifact(field);
       var restored = new YamlArtifactReader(compact).readFieldSchemaArtifact(yaml);
-      if (!compact && !feature.equals("schemaText")) assertFeature(definition(JSON.renderFieldSchemaArtifact(restored)), feature);
+      if (!compact && !feature.equals("schemaText")) assertStandalone(definition(JSON.renderFieldSchemaArtifact(restored)), feature);
       result.set(compact ? "jsonFromCompactYaml" : "jsonFromYaml", JSON.renderFieldSchemaArtifact(restored));
     }
     var template = TemplateSchemaArtifact.builder().withName("Matrix").withDescription("Matrix template")

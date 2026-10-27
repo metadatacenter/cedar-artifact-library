@@ -100,19 +100,28 @@ public class YamlArtifactRoundTripTest
     roundTripField(original);
   }
 
-  @Test public void testStandaloneRepeatedFieldKeepsTheBoundsItStates() throws IOException
+  @Test public void testAFieldWrittenOnItsOwnStatesNoMultiplicity() throws IOException
   {
-    // A field written on its own has no parent to state its bounds beside it, so it carries both.
-    TextField original = TextField.builder().withName("Keyword").withIsMultiple(true).withMinItems(1)
+    // Whether a field repeats, and how often, is a parent's to say, so a field on its own states
+    // neither, and a document stating them is refused.
+    TextField repeated = TextField.builder().withName("Keyword").withIsMultiple(true).withMinItems(1)
       .withMaxItems(4).build();
+    String yaml = YamlSerializer.getYAML(repeated, false, true);
+    assertFalse(yaml.contains("multiple") || yaml.contains("minItems") || yaml.contains("maxItems"), yaml);
 
-    FieldSchemaArtifact read = yamlArtifactReader.readFieldSchemaArtifact(
-      ArtifactSourceParser.yaml(YamlSerializer.getYAML(original, false, true)));
+    FieldSchemaArtifact read = yamlArtifactReader.readFieldSchemaArtifact(ArtifactSourceParser.yaml(yaml));
+    assertFalse(read.isMultiple());
+    assertEquals(Optional.empty(), read.minItems());
+    assertEquals(Optional.empty(), read.maxItems());
 
-    assertEquals(Optional.of(1), read.minItems());
-    assertEquals(Optional.of(4), read.maxItems());
-    assertEquals(original, read);
+    for (String bound : List.of("multiple: true", "minItems: 1", "maxItems: 4")) {
+      String stated = yaml + "configuration:\n  " + bound + "\n";
+      ArtifactParseException refused = assertThrows(ArtifactParseException.class,
+        () -> yamlArtifactReader.readFieldSchemaArtifact(ArtifactSourceParser.yaml(stated)), stated);
+      assertTrue(refused.getParseErrorMessage().startsWith("unknown key"), refused.getMessage());
+    }
   }
+
 
   @Test public void testRoundTripTextAreaField()
   {

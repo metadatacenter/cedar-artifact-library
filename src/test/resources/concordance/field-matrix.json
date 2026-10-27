@@ -15026,10 +15026,7 @@
     "id" : "text/required",
     "type" : "text",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -15039,12 +15036,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -15090,10 +15087,7 @@
     "id" : "text/recommended",
     "type" : "text",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -15103,12 +15097,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -16822,10 +16816,7 @@
     "id" : "textarea/required",
     "type" : "textarea",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -16835,12 +16826,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -16886,10 +16877,7 @@
     "id" : "textarea/recommended",
     "type" : "textarea",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -16899,12 +16887,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -18225,10 +18213,7 @@
     "id" : "phone/required",
     "type" : "phone",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -18238,12 +18223,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -18289,10 +18274,7 @@
     "id" : "phone/recommended",
     "type" : "phone",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -18302,12 +18284,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -19628,10 +19610,7 @@
     "id" : "email/required",
     "type" : "email",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -19641,12 +19620,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -19692,10 +19671,7 @@
     "id" : "email/recommended",
     "type" : "email",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -19705,12 +19681,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -21232,10 +21208,7 @@
     "id" : "numeric/required",
     "type" : "numeric",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -21245,12 +21218,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 8, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 9, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 5, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 6, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 18, 3 ],
@@ -21296,10 +21269,7 @@
     "id" : "numeric/recommended",
     "type" : "numeric",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -21309,12 +21279,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 8, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 9, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 5, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 6, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 18, 3 ],
@@ -22726,10 +22696,7 @@
     "id" : "temporal/required",
     "type" : "temporal",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -22739,12 +22706,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 9, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 10, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 6, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 7, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 19, 3 ],
@@ -22790,10 +22757,7 @@
     "id" : "temporal/recommended",
     "type" : "temporal",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -22803,12 +22767,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 9, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 10, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 6, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 7, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 19, 3 ],
@@ -24211,10 +24175,7 @@
     "id" : "radio/required",
     "type" : "radio",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -24224,12 +24185,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -24275,10 +24236,7 @@
     "id" : "radio/recommended",
     "type" : "radio",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -24288,12 +24246,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -25696,10 +25654,7 @@
     "id" : "checkbox/required",
     "type" : "checkbox",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "items", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -25709,12 +25664,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 4 ],
@@ -25760,10 +25715,7 @@
     "id" : "checkbox/recommended",
     "type" : "checkbox",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "items", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -25773,12 +25725,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 4 ],
@@ -27181,10 +27133,7 @@
     "id" : "singleList/required",
     "type" : "singleList",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -27194,12 +27143,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -27245,10 +27194,7 @@
     "id" : "singleList/recommended",
     "type" : "singleList",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -27258,12 +27204,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -28666,10 +28612,7 @@
     "id" : "multipleList/required",
     "type" : "multipleList",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "items", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -28679,12 +28622,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 4 ],
@@ -28730,10 +28673,7 @@
     "id" : "multipleList/recommended",
     "type" : "multipleList",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "items", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -28743,12 +28683,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 4 ],
@@ -32472,10 +32412,7 @@
     "id" : "controlledTerm/required",
     "type" : "controlledTerm",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -32485,12 +32422,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 8, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 9, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 5, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 6, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 18, 3 ],
@@ -32536,10 +32473,7 @@
     "id" : "controlledTerm/recommended",
     "type" : "controlledTerm",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -32549,12 +32483,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 8, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 9, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 5, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 6, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 18, 3 ],
@@ -33939,10 +33873,7 @@
     "id" : "link/required",
     "type" : "link",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -33952,12 +33883,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -34003,10 +33934,7 @@
     "id" : "link/recommended",
     "type" : "link",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -34016,12 +33944,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -35342,10 +35270,7 @@
     "id" : "ror/required",
     "type" : "ror",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -35355,12 +35280,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -35406,10 +35331,7 @@
     "id" : "ror/recommended",
     "type" : "ror",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -35419,12 +35341,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -36745,10 +36667,7 @@
     "id" : "orcid/required",
     "type" : "orcid",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -36758,12 +36677,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -36809,10 +36728,7 @@
     "id" : "orcid/recommended",
     "type" : "orcid",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -36822,12 +36738,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -38148,10 +38064,7 @@
     "id" : "pfas/required",
     "type" : "pfas",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -38161,12 +38074,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -38212,10 +38125,7 @@
     "id" : "pfas/recommended",
     "type" : "pfas",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -38225,12 +38135,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -39551,10 +39461,7 @@
     "id" : "rrid/required",
     "type" : "rrid",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -39564,12 +39471,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -39615,10 +39522,7 @@
     "id" : "rrid/recommended",
     "type" : "rrid",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -39628,12 +39532,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -40954,10 +40858,7 @@
     "id" : "pubmed/required",
     "type" : "pubmed",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -40967,12 +40868,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -41018,10 +40919,7 @@
     "id" : "pubmed/recommended",
     "type" : "pubmed",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -41031,12 +40929,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -42357,10 +42255,7 @@
     "id" : "nihGrant/required",
     "type" : "nihGrant",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -42370,12 +42265,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -42421,10 +42316,7 @@
     "id" : "nihGrant/recommended",
     "type" : "nihGrant",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -42434,12 +42326,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -43760,10 +43652,7 @@
     "id" : "doi/required",
     "type" : "doi",
     "feature" : "required",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "requiredValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "requiredValue" ],
       "set" : true
@@ -43773,12 +43662,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  required: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],
@@ -43824,10 +43713,7 @@
     "id" : "doi/recommended",
     "type" : "doi",
     "feature" : "recommended",
-    "json" : [ {
-      "at" : [ "_valueConstraints", "recommendedValue" ],
-      "set" : true
-    } ],
+    "json" : [ ],
     "templateJson" : [ {
       "at" : [ "properties", "property-key", "_valueConstraints", "recommendedValue" ],
       "set" : true
@@ -43837,12 +43723,12 @@
       "set" : true
     } ],
     "yaml" : {
-      "keep" : [ 7, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 8, 0 ],
+      "lines" : [ ]
     },
     "compactYaml" : {
-      "keep" : [ 4, 1 ],
-      "lines" : [ "configuration:", "  recommended: true" ]
+      "keep" : [ 5, 0 ],
+      "lines" : [ ]
     },
     "templateYaml" : {
       "keep" : [ 17, 3 ],

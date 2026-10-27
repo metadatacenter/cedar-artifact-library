@@ -52,6 +52,8 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_SCHEMA_IRI;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_STRING;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_BY;
 import static org.metadatacenter.model.ModelNodeNames.PAV_CREATED_ON;
@@ -74,6 +76,8 @@ import static org.metadatacenter.model.ModelNodeNames.UI_HEIGHT;
 import static org.metadatacenter.model.ModelNodeNames.UI_WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_MULTIPLE_CHOICE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_RECOMMENDED_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_REQUIRED_VALUE;
 
 import static org.metadatacenter.artifacts.model.renderer.JsonLdContextRenderers.*;
 import static org.metadatacenter.artifacts.model.renderer.JsonSchemaArtifactPropertyRenderers.*;
@@ -343,6 +347,27 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
    *  }
    * </pre>
    */
+  /**
+   * A field written on its own. Whether a field is required or recommended, and whether and how
+   * often it repeats, is a parent's to say, so a field written on its own states none of them. The
+   * meta-schema requires every field to state requiredValue, which is false here. It writes an
+   * attribute-value field as an array of its attribute names, which must state a minimum, and that
+   * array has none but the minimum of zero the form requires.
+   */
+  @Override public ObjectNode renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact) {
+    ObjectNode rendering = renderFieldSchemaArtifact(fieldSchemaArtifact.name(), fieldSchemaArtifact);
+    if (fieldSchemaArtifact.isAttributeValue()) {
+      rendering.put(JSON_SCHEMA_MIN_ITEMS, 0);
+      rendering.remove(JSON_SCHEMA_MAX_ITEMS);
+    }
+    if (rendering.get(VALUE_CONSTRAINTS) instanceof ObjectNode valueConstraints) {
+      if (valueConstraints.has(VALUE_CONSTRAINTS_REQUIRED_VALUE))
+        valueConstraints.put(VALUE_CONSTRAINTS_REQUIRED_VALUE, false);
+      valueConstraints.remove(VALUE_CONSTRAINTS_RECOMMENDED_VALUE);
+    }
+    return rendering;
+  }
+
   public ObjectNode renderFieldSchemaArtifact(String fieldKey, FieldSchemaArtifact fieldSchemaArtifact) {
     ObjectNode rendering = renderJsonLdArtifact(fieldSchemaArtifact);
 

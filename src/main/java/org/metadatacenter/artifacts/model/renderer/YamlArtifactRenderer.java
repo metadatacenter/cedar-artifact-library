@@ -242,48 +242,13 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
 
     addCoreFieldSchemaArtifactRendering(fieldSchemaArtifact, rendering);
 
-    // A standalone field has no parent, which is where a nested child's `configuration:`
-    // block is normally rendered. Emit the field-level UI flags and the field-own
-    // configuration entries here so a top-level field round-trips losslessly through the
-    // YAML reader/renderer pair.
+    // A child's `configuration:` block is what its parent says of it: whether it is required or
+    // recommended, whether and how often it repeats, its property and its label and description
+    // there. A field written on its own has no parent, so it has no configuration. Its own UI flags
+    // are written among its keys.
     addStandaloneFieldUiRendering(fieldSchemaArtifact, rendering);
 
-    LinkedHashMap<String, Object> configuration = renderStandaloneFieldConfiguration(fieldSchemaArtifact);
-    if (!configuration.isEmpty())
-      rendering.put(CONFIGURATION, configuration);
-
     addSchemaExtensions(fieldSchemaArtifact, rendering);
-    return rendering;
-  }
-
-  /**
-   * The field-own {@code configuration:} entries for a standalone field — the subset of
-   * {@link #renderFieldConfiguration} that does not depend on a parent (no property-IRI
-   * mapping, no parent label/description overrides). The standalone reader consumes exactly
-   * these keys from a top-level {@code configuration:} block.
-   */
-  private LinkedHashMap<String, Object> renderStandaloneFieldConfiguration(FieldSchemaArtifact fieldSchemaArtifact)
-  {
-    LinkedHashMap<String, Object> rendering = new LinkedHashMap<>();
-
-    if (fieldSchemaArtifact.valueConstraints().isPresent()) {
-      if (fieldSchemaArtifact.valueConstraints().get().requiredValue())
-        rendering.put(REQUIRED, true);
-      if (fieldSchemaArtifact.valueConstraints().get().recommendedValue())
-        rendering.put(RECOMMENDED, true);
-    }
-
-    if (fieldSchemaArtifact.isMultiple() && !fieldSchemaArtifact.fieldUi().isCheckbox()
-      && !fieldSchemaArtifact.isAttributeValue() && !isMultiSelectListField(fieldSchemaArtifact))
-      rendering.put(MULTIPLE, true);
-
-    // No parent holds a standalone field, so no JSON states a bound beside it to keep in step
-    // with. It carries the bound it states, and nothing when it states none.
-    fieldSchemaArtifact.minItems().ifPresent(minItems -> rendering.put(MIN_ITEMS, minItems));
-
-    if (statesUpperBound(fieldSchemaArtifact))
-      rendering.put(MAX_ITEMS, fieldSchemaArtifact.maxItems().get());
-
     return rendering;
   }
 

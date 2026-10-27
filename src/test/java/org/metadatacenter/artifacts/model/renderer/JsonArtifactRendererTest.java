@@ -307,7 +307,7 @@ public class JsonArtifactRendererTest
     assertTrue(validateFieldSchemaArtifact(rendering));
   }
 
-  @Test public void testRenderStandaloneFieldPreservesItsFlags()
+  @Test public void testRenderStandaloneFieldKeepsItsOwnFlagsAndStatesNoRequirement()
   {
     String fieldName = "Field name";
 
@@ -324,10 +324,11 @@ public class JsonArtifactRendererTest
 
     assertTrue(validateJsonSchema(rendering));
 
-    // The flags live on the field artifact itself; the standalone rendering preserves them,
-    // keeping the standalone round trip lossless (they were previously scrubbed to false).
-    assertTrue(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
-    assertTrue(rendering.get("_valueConstraints").get("recommendedValue").asBoolean());
+    // Whether a field is required or recommended is what a parent says of its child, so a field
+    // written on its own states requiredValue false, which the meta-schema requires, and no
+    // recommendation. Its presentation settings are its own and are kept.
+    assertFalse(rendering.get("_valueConstraints").get("requiredValue").asBoolean());
+    assertFalse(rendering.get("_valueConstraints").has("recommendedValue"));
     assertTrue(rendering.get("_ui").get("continuePreviousLine").asBoolean());
     assertTrue(rendering.get("_ui").get("hidden").asBoolean());
     assertTrue(rendering.get("_ui").get("valueRecommendationEnabled").asBoolean());

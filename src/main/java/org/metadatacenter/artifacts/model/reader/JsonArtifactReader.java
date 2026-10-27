@@ -105,6 +105,8 @@ import static org.metadatacenter.model.ModelNodeNames.UI_VALUE_RECOMMENDATION_EN
 import static org.metadatacenter.model.ModelNodeNames.UI_SIZE;
 import static org.metadatacenter.model.ModelNodeNames.UI_WIDTH;
 import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_RECOMMENDED_VALUE;
+import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_REQUIRED_VALUE;
 import static org.metadatacenter.model.ModelNodeValues.TEMPORAL_GRANULARITIES;
 import static org.metadatacenter.model.ModelNodeValues.TIME_FORMATS;
 import static org.metadatacenter.model.core.CedarModelVocabulary.VALUE_LABEL;
@@ -215,36 +217,35 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
    * </pre>
    */
   public FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode) {
-    // Standalone JSON rendering of an attribute-value field wraps the actual field
-    // node in a {type: array, minItems, items: {field}} envelope. Multi-instance
-    // (non-AV) fields are rendered the same way only when the model marks them
-    // multi-instance. Unwrap the envelope so schema:name etc. can be located. For an
-    // attribute-value field the wrapper does not mark it multi-instance, since it is a
-    // list by nature, but it does carry its bounds.
+    // Whether a field repeats, and how often, is what a template or element says of its child, so
+    // a field written on its own has neither. The one array a standalone field document may be is
+    // the meta-schema's form of an attribute-value field, a list of attribute names by nature, and
+    // the bounds that array states are no field's. Any other array is refused, as the validator
+    // refuses it.
     ObjectNode fieldNode = sourceNode;
-    boolean isMultiInstance = false;
-    Optional<Integer> minItems = Optional.empty();
-    Optional<Integer> maxItems = Optional.empty();
     JsonNode jsonSchemaTypeNode = sourceNode.get(JSON_SCHEMA_TYPE);
     if (jsonSchemaTypeNode != null && jsonSchemaTypeNode.isTextual()
         && JSON_SCHEMA_ARRAY.equals(jsonSchemaTypeNode.asText())) {
       JsonNode items = sourceNode.get(JSON_SCHEMA_ITEMS);
-      if (items == null || !items.isObject())
-        throw new ArtifactParseException("Array wrapper missing items object", JSON_SCHEMA_ITEMS, "/");
+      boolean isAttributeValue = items != null && items.isObject()
+          && FIELD_INPUT_TYPE_ATTRIBUTE_VALUE.equals(items.path(UI).path(UI_FIELD_INPUT_TYPE).asText());
+      if (!isAttributeValue)
+        throw new ArtifactParseException("A field written on its own does not repeat, so it is an object, not an "
+            + "array; only a template or an element repeats a field", JSON_SCHEMA_TYPE, "/");
       fieldNode = (ObjectNode) items;
-      JsonNode innerUi = fieldNode.get(UI);
-      boolean isAttributeValue = innerUi != null && innerUi.isObject() && innerUi.has(UI_FIELD_INPUT_TYPE)
-          && FIELD_INPUT_TYPE_ATTRIBUTE_VALUE.equals(innerUi.get(UI_FIELD_INPUT_TYPE).asText());
-      // An attribute-value field is a list by nature rather than by being marked multiple, but its
-      // bounds are read like any other child's: the nested reader already took them from the same
-      // wrapper, so a standalone field and a template's child read differently.
-      isMultiInstance = !isAttributeValue;
-      minItems = readInteger(sourceNode, "/", JSON_SCHEMA_MIN_ITEMS);
-      maxItems = readInteger(sourceNode, "/", JSON_SCHEMA_MAX_ITEMS);
+    }
+
+    // Whether a field is required or recommended is likewise what a parent says of its child. The
+    // meta-schema requires every field to state requiredValue, so a field on its own states false.
+    for (String requirement : List.of(VALUE_CONSTRAINTS_REQUIRED_VALUE, VALUE_CONSTRAINTS_RECOMMENDED_VALUE)) {
+      if (fieldNode.path(VALUE_CONSTRAINTS).path(requirement).asBoolean(false))
+        throw new ArtifactParseException("A field written on its own is not " + (requirement.equals(
+            VALUE_CONSTRAINTS_REQUIRED_VALUE) ? "required" : "recommended") + "; only a template or an element "
+            + "requires or recommends a field", requirement, "/" + VALUE_CONSTRAINTS);
     }
 
     String name = readRequiredNonEmptyString(fieldNode, "/", SCHEMA_ORG_NAME);
-    return readFieldSchemaArtifact(fieldNode, "", name, isMultiInstance, true, minItems, maxItems,
+    return readFieldSchemaArtifact(fieldNode, "", name, false, true, Optional.empty(), Optional.empty(),
         Optional.empty());
   }
 

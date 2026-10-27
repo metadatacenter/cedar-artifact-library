@@ -958,7 +958,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<URI> modifiedBy = readUri(sourceNode, path, MODIFIED_BY);
     Optional<OffsetDateTime> createdOn = readOffsetDatetime(sourceNode, path, CREATED_ON);
     Optional<OffsetDateTime> lastUpdatedOn = readOffsetDatetime(sourceNode, path, MODIFIED_ON);
-    LinkedHashMap<String, Object> configNode = readChildNode(sourceNode, path, CONFIGURATION);
+    // A child's configuration is what its parent says of it. A field written on its own has no
+    // parent, so it has none, and a document stating one is refused.
+    LinkedHashMap<String, Object> configNode = isRootPath(path) ? null
+      : readChildNode(sourceNode, path, CONFIGURATION);
     FieldUi fieldUi = readFieldUi(sourceNode, path, fieldInputType, configNode);
     Optional<ValueConstraints> valueConstraints = readValueConstraints(sourceNode, path, fieldInputType, configNode);
     Optional<String> preferredLabel = readString(sourceNode, path, PREF_LABEL);
@@ -966,19 +969,17 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     Optional<String> language = readString(sourceNode, path, LANGUAGE);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path);
 
-    // isMultiple / minItems / maxItems live under the `configuration:` sub-block. A nested child
-    // states a bound where there is one to bound: when it repeats, or when its type always holds a
-    // list. A standalone field has no parent to state its bounds beside it, so it carries whichever it
-    // has. The property IRI is a parent's, so only a nested child states one.
-    boolean isRoot = isRootPath(path);
+    // isMultiple / minItems / maxItems / propertyUri are what a parent says of its child, under the
+    // child's `configuration:` sub-block. A child states a bound where there is one to bound: when
+    // it repeats, or when its type always holds a list.
     LinkedHashMap<String, Object> configSource = configNode != null ? configNode : new LinkedHashMap<>();
     boolean isMultiple = readBoolean(configSource, path, MULTIPLE, false);
-    boolean bounded = isRoot || isMultiple || fieldInputType == FieldInputType.CHECKBOX
+    boolean bounded = isMultiple || fieldInputType == FieldInputType.CHECKBOX
       || fieldInputType == FieldInputType.ATTRIBUTE_VALUE
       || MULTI_SELECT_LIST_FIELD.equals(YamlKeyTracking.untracked(() -> sourceNode.get(TYPE)));
     Optional<Integer> minItems = bounded ? readInteger(configSource, path, MIN_ITEMS) : Optional.empty();
     Optional<Integer> maxItems = bounded ? readInteger(configSource, path, MAX_ITEMS) : Optional.empty();
-    Optional<URI> propertyUri = isRoot ? Optional.empty() : readAbsoluteUri(configSource, path, PROPERTY_IRI);
+    Optional<URI> propertyUri = readAbsoluteUri(configSource, path, PROPERTY_IRI);
 
     return FieldSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       fieldName, description, identifier, version, status, previousVersion, derivedFrom, isMultiple, minItems, maxItems,
@@ -1132,13 +1133,16 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     // requirement found on an attribute-value field in an older document would put one in the model
     // that no writer emits, and a form built from that model would enforce something the stored
     // JSON never said. That older document is read past rather than refused.
+    // Whether a field is required or recommended is what a parent says of its child, so a field
+    // written on its own is neither.
+    boolean nested = !isRootPath(path);
     boolean recordsRequirement = fieldInputType.recordsRequirement();
     boolean requiredValue = false;
     boolean recommendedValue = false;
-    if (recordsRequirement) {
+    if (nested && recordsRequirement) {
       requiredValue = readBooleanFromConfigOrField(configNode, sourceNode, path, REQUIRED);
       recommendedValue = readBooleanFromConfigOrField(configNode, sourceNode, path, RECOMMENDED);
-    } else {
+    } else if (nested) {
       for (LinkedHashMap<String, Object> node : configNode != null ? List.of(configNode, sourceNode)
         : List.of(sourceNode)) {
         YamlKeyTracking.use(node, REQUIRED);

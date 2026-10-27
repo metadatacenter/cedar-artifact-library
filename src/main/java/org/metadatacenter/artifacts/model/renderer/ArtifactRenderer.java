@@ -21,10 +21,8 @@ public interface ArtifactRenderer<T>
 
   default T renderFieldSchemaArtifact(FieldSchemaArtifact fieldSchemaArtifact)
   {
-    // Render the field exactly as it is. The required/recommended/hidden and related flags
-    // live on the field artifact itself (value constraints and field UI), and the readers
-    // accept them on a standalone field — scrubbing them here would make the standalone
-    // round trip lossy.
+    // A field written on its own. A renderer whose form states a parent's settings on the field,
+    // as JSON states a requirement, writes none of them here.
     return renderFieldSchemaArtifact(fieldSchemaArtifact.name(), fieldSchemaArtifact);
   }
 

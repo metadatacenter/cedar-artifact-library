@@ -138,6 +138,15 @@ public class JsonArtifactReaderNegativePathsTest
     return wrapper;
   }
 
+  /** Whether a field repeats is a parent's to say, so a field written on its own is no array. */
+  @Test public void aRepeatedFieldWrittenOnItsOwnIsRefused()
+  {
+    ArtifactParseException ex = assertThrows(ArtifactParseException.class,
+      () -> new JsonArtifactReader().readFieldSchemaArtifact(wrappedMultipleField()));
+    assertTrue(ex.getParseErrorMessage().startsWith("A field written on its own does not repeat"), ex.getMessage());
+    assertEquals("/", ex.getPath());
+  }
+
   static Stream<Arguments> namedPositions()
   {
     Function<ObjectNode, ?> template = node -> new JsonArtifactReader().readTemplateSchemaArtifact(node);
@@ -152,8 +161,8 @@ public class JsonArtifactReaderNegativePathsTest
       Arguments.of("field", (Supplier<ObjectNode>) () -> RENDERER.renderFieldSchemaArtifact("C", FIELD), "", field, "/"),
       Arguments.of("static field", (Supplier<ObjectNode>) () -> RENDERER.renderFieldSchemaArtifact("S", STATIC_FIELD), "",
         field, "/"),
-      Arguments.of("multi-instance field", (Supplier<ObjectNode>) JsonArtifactReaderNegativePathsTest::wrappedMultipleField,
-        "/items", field, "/"),
+      Arguments.of("attribute-value field", (Supplier<ObjectNode>) () -> RENDERER.renderFieldSchemaArtifact(
+        AttributeValueField.builder().withName("AV").build()), "/items", field, "/"),
       Arguments.of("template's field", templateJson, "/properties/C", template, "/properties/C"),
       Arguments.of("template's multi-instance field", templateJson, "/properties/M/items", template,
         "/properties/M/items"),
