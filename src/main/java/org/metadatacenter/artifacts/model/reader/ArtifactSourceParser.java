@@ -52,9 +52,15 @@ public final class ArtifactSourceParser {
    * literal rather than a number, while the mapping still holds the value read from that text.
    */
   static Optional<String> spelling(Map<String, Object> mapping, String key) {
-    if (!(mapping instanceof Mapping parsed)) return Optional.empty();
-    var spelling = parsed.spellings.get(key);
+    var spelling = spellings(mapping).get(key);
     return spelling != null && spelling.getKey() == mapping.get(key) ? Optional.of(spelling.getValue()) : Optional.empty();
+  }
+
+  /** The source text of each number and boolean a parsed YAML mapping holds, by key. */
+  static Map<String, Map.Entry<Object, String>> spellings(Map<?, ?> mapping) {
+    if (mapping instanceof Mapping parsed) return parsed.spellings;
+    if (mapping instanceof YamlKeyTracking.Tracked tracked) return tracked.spellings;
+    return Map.of();
   }
 
   /** A YAML mapping that also keeps the source text of each number and boolean it holds. */

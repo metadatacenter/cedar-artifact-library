@@ -1427,26 +1427,24 @@ public class YamlArtifactRendererTest {
     }
   }
 
-  @Test public void standaloneFieldRoundTripsRequiredAndMultipleThroughConfiguration()
+  @Test public void standaloneFieldStatesNoConfiguration()
   {
     org.metadatacenter.artifacts.model.core.TextField field =
       org.metadatacenter.artifacts.model.core.TextField.builder()
-        .withName("Probe").withRequiredValue(true).withIsMultiple(true).build();
+        .withName("Probe").withRequiredValue(true).withIsMultiple(true).withMinItems(1).withMaxItems(3).build();
 
     LinkedHashMap<String, Object> rendering = new YamlArtifactRenderer(true).renderFieldSchemaArtifact(field);
 
-    @SuppressWarnings("unchecked")
-    LinkedHashMap<String, Object> configuration = (LinkedHashMap<String, Object>) rendering.get("configuration");
-    assertNotNull(configuration, "standalone field must carry its configuration block; got: " + rendering);
-    assertEquals(Boolean.TRUE, configuration.get("required"));
-    assertEquals(Boolean.TRUE, configuration.get("multiple"));
+    // A configuration is what a parent says of its child: whether it is required, whether and how
+    // often it repeats. A field written on its own has no parent, so it has none.
+    assertFalse(rendering.containsKey("configuration"), rendering.toString());
 
-    // And the standalone reader consumes exactly this shape back into the model.
     org.metadatacenter.artifacts.model.core.FieldSchemaArtifact reread =
       new org.metadatacenter.artifacts.model.reader.YamlArtifactReader(true).readFieldSchemaArtifact(rendering);
-    assertTrue(reread.valueConstraints().get().requiredValue(), "required must survive the round trip");
-    assertTrue(reread.isMultiple(), "multiple must survive the round trip");
+    assertFalse(reread.valueConstraints().get().requiredValue(), "a field written on its own is not required");
+    assertFalse(reread.isMultiple(), "a field written on its own does not repeat");
   }
+
 
   @Test
   public void testRenderListFieldStatesOnlyStatedSelections()

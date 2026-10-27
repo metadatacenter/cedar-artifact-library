@@ -442,9 +442,10 @@ public class JsonArtifactRoundTripTest
     AttributeValueField originalFieldSchemaArtifact = AttributeValueField.builder().withName(name)
       .withDescription(description).withMinItems(0).build();
 
+    // A field written on its own states no bound, so the one this field was built with is not written.
     assertEquals(jsonArtifactRenderer.renderFieldSchemaArtifact(unstated),
       jsonArtifactRenderer.renderFieldSchemaArtifact(originalFieldSchemaArtifact));
-    testRoundTripFieldSchemaArtifact(originalFieldSchemaArtifact);
+    testRoundTripFieldSchemaArtifact(unstated);
   }
 
   @Test public void testRoundTripSectionBreakField()

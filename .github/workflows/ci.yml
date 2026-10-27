@@ -83,6 +83,18 @@ jobs:
           -Dexec.mainClass=org.metadatacenter.artifacts.model.CorpusYamlTripVerifier
           -Dexec.args=cedar-test-artifacts
 
+      # The YAML reader refuses a key it does not read, and the TypeScript library's reader refuses keys
+      # the same way, so the two accept the same documents only while they read the same keys. The
+      # record of the keys this reader reads in every corpus document is what the TypeScript library
+      # compares its own with; this keeps the record current.
+      - name: Verify the YAML key vocabulary record is current
+        run: >
+          ./mvnw --batch-mode --no-transfer-progress test-compile exec:java
+          --settings .m2/nexus-settings.xml
+          -Dexec.classpathScope=test
+          -Dexec.mainClass=org.metadatacenter.artifacts.model.reader.CorpusYamlKeyVerifier
+          -Dexec.args=cedar-test-artifacts
+
       # Other repositories resolve this artifact from Nexus, so a merged change
       # is invisible to their builds until the snapshot is republished. Tests have
       # already run in the step above; this only uploads what they verified.
