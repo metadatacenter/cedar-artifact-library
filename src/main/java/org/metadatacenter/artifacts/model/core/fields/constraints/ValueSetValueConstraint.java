@@ -21,7 +21,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VS_COLLE
  */
 public record ValueSetValueConstraint(URI uri, String vsCollection, String name, Optional<Integer> numTerms,
                                       Optional<URI> iri, Optional<String> sourceSystem,
-                                      Optional<VersionSpec> version) {
+                                      Optional<VersionSpec> version, Optional<ConstraintLinks> links) {
 
   public ValueSetValueConstraint {
     validateStringFieldNotNull(this, name, VALUE_CONSTRAINTS_NAME);
@@ -31,6 +31,13 @@ public record ValueSetValueConstraint(URI uri, String vsCollection, String name,
     validateOptionalFieldNotNull(this, iri, VALUE_CONSTRAINTS_IRI);
     validateOptionalFieldNotNull(this, sourceSystem, VALUE_CONSTRAINTS_SOURCE_SYSTEM);
     validateOptionalFieldNotNull(this, version, VALUE_CONSTRAINTS_VERSION);
+    validateOptionalFieldNotNull(this, links, "links");
+  }
+
+  public ValueSetValueConstraint(URI uri, String vsCollection, String name, Optional<Integer> numTerms,
+                                      Optional<URI> iri, Optional<String> sourceSystem,
+                                      Optional<VersionSpec> version) {
+    this(uri, vsCollection, name, numTerms, iri, sourceSystem, version, Optional.empty());
   }
 
   /** Backward-compatible constructor: the source-explicit fields default to absent. */

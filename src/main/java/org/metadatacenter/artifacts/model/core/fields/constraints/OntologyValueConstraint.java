@@ -23,7 +23,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VERSION;
  */
 public record OntologyValueConstraint(URI uri, String acronym, String name, Optional<Integer> numTerms,
                                       Optional<URI> iri, Optional<String> sourceSystem,
-                                      Optional<VersionSpec> version) {
+                                      Optional<VersionSpec> version, Optional<ConstraintLinks> links) {
 
   public OntologyValueConstraint {
     validateUriFieldNotNull(this, uri, VALUE_CONSTRAINTS_URI);
@@ -33,6 +33,13 @@ public record OntologyValueConstraint(URI uri, String acronym, String name, Opti
     validateOptionalFieldNotNull(this, iri, VALUE_CONSTRAINTS_IRI);
     validateOptionalFieldNotNull(this, sourceSystem, VALUE_CONSTRAINTS_SOURCE_SYSTEM);
     validateOptionalFieldNotNull(this, version, VALUE_CONSTRAINTS_VERSION);
+    validateOptionalFieldNotNull(this, links, "links");
+  }
+
+  public OntologyValueConstraint(URI uri, String acronym, String name, Optional<Integer> numTerms,
+                                      Optional<URI> iri, Optional<String> sourceSystem,
+                                      Optional<VersionSpec> version) {
+    this(uri, acronym, name, numTerms, iri, sourceSystem, version, Optional.empty());
   }
 
   /** Backward-compatible constructor: the source-explicit fields default to absent (BioPortal source,

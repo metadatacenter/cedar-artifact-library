@@ -22,7 +22,7 @@ import static org.metadatacenter.model.ModelNodeNames.VALUE_CONSTRAINTS_VERSION;
  */
 public record ClassValueConstraint(URI uri, String source, String label, String prefLabel, ValueType type,
                                    Optional<URI> iri, Optional<String> sourceSystem,
-                                   Optional<VersionSpec> version) {
+                                   Optional<VersionSpec> version, Optional<ConstraintLinks> links) {
 
   public ClassValueConstraint {
     validateUriFieldNotNull(this, uri, VALUE_CONSTRAINTS_URI);
@@ -32,6 +32,13 @@ public record ClassValueConstraint(URI uri, String source, String label, String 
     validateOptionalFieldNotNull(this, iri, VALUE_CONSTRAINTS_IRI);
     validateOptionalFieldNotNull(this, sourceSystem, VALUE_CONSTRAINTS_SOURCE_SYSTEM);
     validateOptionalFieldNotNull(this, version, VALUE_CONSTRAINTS_VERSION);
+    validateOptionalFieldNotNull(this, links, "links");
+  }
+
+  public ClassValueConstraint(URI uri, String source, String label, String prefLabel, ValueType type,
+                                   Optional<URI> iri, Optional<String> sourceSystem,
+                                   Optional<VersionSpec> version) {
+    this(uri, source, label, prefLabel, type, iri, sourceSystem, version, Optional.empty());
   }
 
   /** Backward-compatible constructor: the source-explicit fields default to absent. */

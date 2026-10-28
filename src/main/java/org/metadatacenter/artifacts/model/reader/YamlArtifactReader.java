@@ -1681,6 +1681,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     return result;
   }
 
+  private Optional<org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks> readLinks(LinkedHashMap<String, Object> entry, String path) {
+    if (!entry.containsKey("links")) return Optional.empty();
+    try {
+      return Optional.of(org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks.read(
+          new com.fasterxml.jackson.databind.ObjectMapper().valueToTree(entry.get("links"))));
+    } catch (IllegalArgumentException e) { throw new ArtifactParseException(e.getMessage(), "links", path); }
+  }
+
   private List<OntologyValueConstraint> readOntologyValueConstraints(LinkedHashMap<String, Object> sourceNode,
     String path)
   {
@@ -1690,7 +1698,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       Optional<Integer> numTerms = readInteger(entry, path, TERM_COUNT);
       URI uri = readAbsoluteUri(entry, path, SOURCE_URI).orElseGet(() -> deriveOntologyUri(acronym));
       return new OntologyValueConstraint(uri, acronym, name, numTerms,
-        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path), readLinks(entry, path));
     });
   }
 
@@ -1717,7 +1725,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       // label otherwise. The model and the JSON Schema carry both either way.
       String displayLabel = readString(entry, path, TERM_DISPLAY_LABEL).orElse(termLabel);
       return new ClassValueConstraint(uri, acronym, displayLabel, termLabel, valueType,
-        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path), readLinks(entry, path));
     });
   }
 
@@ -1730,7 +1738,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       URI uri = readRequiredAbsoluteUri(entry, path, TERM_BASE_IRI);
       Optional<Integer> numTerms = readInteger(entry, path, TERM_COUNT);
       return new ValueSetValueConstraint(uri, acronym, name, numTerms,
-        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path), readLinks(entry, path));
     });
   }
 
@@ -1743,7 +1751,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
       URI uri = readRequiredAbsoluteUri(entry, path, TERM_BASE_IRI);
       Optional<Integer> maxDepth = readInteger(entry, path, TERM_MAX_DEPTH);
       return new BranchValueConstraint(uri, ontologyName, acronym, termLabel, maxDepth.orElse(0),
-        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path));
+        readUri(entry, path, SOURCE_IRI), readString(entry, path, SOURCE_SYSTEM), readVersion(entry, path), readLinks(entry, path));
     });
   }
 

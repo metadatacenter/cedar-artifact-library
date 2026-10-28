@@ -431,7 +431,7 @@ final class JsonValueConstraintsReader {
     Optional<Integer> numTerms = readInteger(sourceNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
 
     return new OntologyValueConstraint(uri, acronym, name, numTerms,
-        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path), readLinks(sourceNode, path));
   }
 
 
@@ -443,7 +443,7 @@ final class JsonValueConstraintsReader {
     String source = readRequiredString(sourceNode, path, VALUE_CONSTRAINTS_SOURCE);
 
     return new ClassValueConstraint(uri, source, label, preferredLabel, valueType,
-        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path), readLinks(sourceNode, path));
   }
 
 
@@ -454,7 +454,7 @@ final class JsonValueConstraintsReader {
     Optional<Integer> numTerms = readInteger(sourceNode, path, VALUE_CONSTRAINTS_NUM_TERMS);
 
     return new ValueSetValueConstraint(uri, vsCollection, name, numTerms,
-        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path), readLinks(sourceNode, path));
   }
 
 
@@ -466,11 +466,17 @@ final class JsonValueConstraintsReader {
     int maxDepth = readRequiredInt(sourceNode, path, VALUE_CONSTRAINTS_MAX_DEPTH);
 
     return new BranchValueConstraint(uri, source, acronym, name, maxDepth,
-        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path));
+        readIri(sourceNode, path), readSourceSystem(sourceNode, path), readVersionSpec(sourceNode, path), readLinks(sourceNode, path));
   }
 
   /* The additive, source-explicit fields (VERSIONING-ROADMAP "The Model" §6). All optional and tolerant: a legacy
    * entry that omits them reads as empty (BioPortal source, latest version, acronym-derived iri). */
+
+  private static Optional<org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks> readLinks(ObjectNode node, String path) {
+    if (!node.has("links")) return Optional.empty();
+    try { return Optional.of(org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks.read(node.get("links"))); }
+    catch (IllegalArgumentException e) { throw new ArtifactParseException(e.getMessage(), "links", path); }
+  }
 
   private static Optional<URI> readIri(ObjectNode sourceNode, String path) {
     return readUri(sourceNode, path, VALUE_CONSTRAINTS_IRI);
