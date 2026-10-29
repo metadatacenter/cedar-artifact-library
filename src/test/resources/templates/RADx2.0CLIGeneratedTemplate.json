@@ -88,6 +88,7 @@
           ]
         },
         "rdfs:label": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -98,6 +99,7 @@
           }
         },
         "schema:isBasedOn": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -108,6 +110,7 @@
           }
         },
         "schema:name": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -118,6 +121,7 @@
           }
         },
         "schema:description": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -128,6 +132,7 @@
           }
         },
         "pav:derivedFrom": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -138,6 +143,7 @@
           }
         },
         "pav:createdOn": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -148,6 +154,7 @@
           }
         },
         "pav:createdBy": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -158,6 +165,7 @@
           }
         },
         "pav:lastUpdatedOn": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -168,6 +176,7 @@
           }
         },
         "oslc:modifiedBy": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
@@ -178,6 +187,7 @@
           }
         },
         "skos:notation": {
+          "type": "object",
           "properties": {
             "@type": {
               "type": "string",
