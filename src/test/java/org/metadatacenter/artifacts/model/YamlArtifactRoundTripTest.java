@@ -201,6 +201,33 @@ public class YamlArtifactRoundTripTest
     roundTripField(original);
   }
 
+  @Test public void testLinksRoundTripForEveryConstraintType() {
+    var links = java.util.Optional.of(new org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks(
+        "https://example.org/page", "https://example.org/icon.svg"));
+    var pin = java.util.Optional.of(new org.metadatacenter.artifacts.model.core.fields.constraints.VersionSpec(
+        "snapshot", java.util.Optional.of("2026-10-28"), java.util.Optional.empty()));
+    var source = java.util.Optional.of(URI.create("urn:source:one"));
+    var system = java.util.Optional.of("future");
+    var field = ControlledTermField.builder().withName("Linked constraints")
+      .withOntologyValueConstraint(new org.metadatacenter.artifacts.model.core.fields.constraints.OntologyValueConstraint(
+          URI.create("https://example.org/api"), "TEST", "Test", java.util.Optional.of(2), source, system, pin, links))
+      .withBranchValueConstraint(new org.metadatacenter.artifacts.model.core.fields.constraints.BranchValueConstraint(
+          URI.create("urn:root"), "Test", "TEST", "Root", 2, source, system, pin, links))
+      .withClassValueConstraint(new org.metadatacenter.artifacts.model.core.fields.constraints.ClassValueConstraint(
+          URI.create("urn:term"), "TEST", "Term", "Term", org.metadatacenter.artifacts.model.core.fields.constraints.ValueType.ONTOLOGY_CLASS,
+          source, system, pin, links))
+      .withValueSetValueConstraint(new org.metadatacenter.artifacts.model.core.fields.constraints.ValueSetValueConstraint(
+          URI.create("urn:set"), "TEST", "Set", java.util.Optional.of(2), source, system, pin, links)).build();
+    roundTripField(field);
+    var json = new JsonArtifactRenderer().renderFieldSchemaArtifact(field);
+    var reread = new JsonArtifactReader().readFieldSchemaArtifact(json);
+    assertEquals(json, new JsonArtifactRenderer().renderFieldSchemaArtifact(reread));
+    for (String kind : java.util.List.of("ontologies", "classes", "branches", "valueSets")) {
+      assertEquals("https://example.org/page", json.path("_valueConstraints").path(kind).get(0).path("links").path("landingPage").asText());
+      assertEquals("snapshot", json.path("_valueConstraints").path(kind).get(0).path("version").path("id").asText());
+    }
+  }
+
   @Test public void testRoundTripFrozenOntologyConstraint()
   {
     // A frozen constraint carries the additive spec fields (sourceIri / sourceSystem / version); they

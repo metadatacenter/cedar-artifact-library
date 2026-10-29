@@ -155,6 +155,27 @@ public sealed interface ControlledTermField extends FieldSchemaArtifact
       return this;
     }
 
+    /** Accepts a complete constraint, including source, version and public links. */
+    public ControlledTermFieldBuilder withBranchValueConstraint(BranchValueConstraint constraint)
+    {
+      valueConstraintsBuilder.withBranchValueConstraint(constraint);
+      return this;
+    }
+
+    /** Accepts a complete constraint, including source, version and public links. */
+    public ControlledTermFieldBuilder withClassValueConstraint(ClassValueConstraint constraint)
+    {
+      valueConstraintsBuilder.withClassValueConstraint(constraint);
+      return this;
+    }
+
+    /** Accepts a complete constraint, including source, version and public links. */
+    public ControlledTermFieldBuilder withValueSetValueConstraint(ValueSetValueConstraint constraint)
+    {
+      valueConstraintsBuilder.withValueSetValueConstraint(constraint);
+      return this;
+    }
+
     public ControlledTermFieldBuilder withValueConstraintsAction(URI termUri, String source, ValueType type,
       ValueConstraintsActionType action, URI sourceUri, Integer to)
     {

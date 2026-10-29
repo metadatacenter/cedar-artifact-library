@@ -74,7 +74,7 @@ public final class ControlledTermVersionFreezer {
     }
     return resolver.currentVersionByAcronym(o.acronym())
         .map(v -> new OntologyValueConstraint(o.uri(), o.acronym(), o.name(), o.numTerms(),
-            o.iri(), o.sourceSystem(), Optional.of(v)))
+            o.iri(), o.sourceSystem(), Optional.of(v), o.links()))
         .orElse(o); // cannot resolve — leave unpinned
   }
 
@@ -84,7 +84,7 @@ public final class ControlledTermVersionFreezer {
     }
     return resolver.currentVersionByAcronym(b.acronym())
         .map(v -> new BranchValueConstraint(b.uri(), b.source(), b.acronym(), b.name(), b.maxDepth(),
-            b.iri(), b.sourceSystem(), Optional.of(v)))
+            b.iri(), b.sourceSystem(), Optional.of(v), b.links()))
         .orElse(b);
   }
 
@@ -94,7 +94,7 @@ public final class ControlledTermVersionFreezer {
     }
     return resolver.currentVersionByClassUri(c.uri())
         .map(v -> new ClassValueConstraint(c.uri(), c.source(), c.label(), c.prefLabel(), c.type(),
-            c.iri(), c.sourceSystem(), Optional.of(v)))
+            c.iri(), c.sourceSystem(), Optional.of(v), c.links()))
         .orElse(c);
   }
 
@@ -104,7 +104,7 @@ public final class ControlledTermVersionFreezer {
     }
     return resolver.currentVersionByValueSetCollection(vs.vsCollection())
         .map(v -> new ValueSetValueConstraint(vs.uri(), vs.vsCollection(), vs.name(), vs.numTerms(),
-            vs.iri(), vs.sourceSystem(), Optional.of(v)))
+            vs.iri(), vs.sourceSystem(), Optional.of(v), vs.links()))
         .orElse(vs);
   }
 

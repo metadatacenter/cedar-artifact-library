@@ -1569,6 +1569,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     if (!c.label().equals(c.prefLabel()))
       m.put(TERM_DISPLAY_LABEL, c.label());
     c.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    c.links().ifPresent(l -> m.put("links", l.asMap()));
     return m;
   }
 
@@ -1597,6 +1598,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       m.put(SOURCE_URI, o.uri().toString());
     o.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
     o.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    o.links().ifPresent(l -> m.put("links", l.asMap()));
     return m;
   }
 
@@ -1625,6 +1627,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     m.put(TERM_BASE_LABEL, b.name());
     m.put(TERM_MAX_DEPTH, b.maxDepth());
     b.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    b.links().ifPresent(l -> m.put("links", l.asMap()));
     return m;
   }
 
@@ -1650,6 +1653,7 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     m.put(TERM_BASE_LABEL, vs.name());
     vs.numTerms().ifPresent(n -> m.put(TERM_COUNT, n));
     vs.version().ifPresent(v -> m.put(VERSION, renderVersionSpec(v)));
+    vs.links().ifPresent(l -> m.put("links", l.asMap()));
     return m;
   }
 
