@@ -22,8 +22,8 @@
     <url>https://github.com/metadatacenter/cedar-artifact-library</url>
   </scm>
   <properties>
-    <!-- Line coverage measured on 2026-10-19: 76.3%. The build fails below this floor. -->
-    <cedar.coverage.line.minimum>0.74</cedar.coverage.line.minimum>
+    <!-- Line coverage measured on 2026-11-04: 85.5%. The build fails below this floor. -->
+    <cedar.coverage.line.minimum>0.83</cedar.coverage.line.minimum>
     <!-- Branch coverage measured on 2026-10-26: 77.5%. The build fails below this floor. -->
     <cedar.coverage.branch.minimum>0.75</cedar.coverage.branch.minimum>
   </properties>
