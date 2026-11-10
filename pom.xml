@@ -90,9 +90,12 @@
       <artifactId>commons-cli</artifactId>
     </dependency>
 
+    <!-- The backend for the log4j-api that POI and XMLBeans log through. No class in the library
+         references it, so it sits on the runtime classpath only. -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
