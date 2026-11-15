@@ -693,8 +693,13 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
         // @value at all. Rendering one here made the instance invalid against its own template.
     }
 
+    // A stated null the stored template requires is kept, where the model holds no value for the key.
+    Set<String> keptNulls = fieldInstanceArtifact.statedNulls().kept();
+
     if (fieldInstanceArtifact.label().isPresent() && fieldInstanceArtifact.label().get() != null) {
       objectNode.put(RDFS_LABEL, fieldInstanceArtifact.label().get());
+    } else if (keptNulls.contains(RDFS_LABEL)) {
+      objectNode.putNull(RDFS_LABEL);
     }
 
     // The model holds at most one type for a field value.
@@ -704,14 +709,20 @@ public class JsonArtifactRenderer implements ArtifactRenderer<ObjectNode> {
 
     if (fieldInstanceArtifact.language().isPresent()) {
       objectNode.put(JSON_LD_LANGUAGE, fieldInstanceArtifact.language().get());
+    } else if (keptNulls.contains(JSON_LD_LANGUAGE)) {
+      objectNode.putNull(JSON_LD_LANGUAGE);
     }
 
     if (fieldInstanceArtifact.notation().isPresent()) {
       objectNode.put(SKOS_NOTATION, fieldInstanceArtifact.notation().get());
+    } else if (keptNulls.contains(SKOS_NOTATION)) {
+      objectNode.putNull(SKOS_NOTATION);
     }
 
     if (fieldInstanceArtifact.preferredLabel().isPresent()) {
       objectNode.put(SKOS_PREFLABEL, fieldInstanceArtifact.preferredLabel().get());
+    } else if (keptNulls.contains(SKOS_PREFLABEL)) {
+      objectNode.putNull(SKOS_PREFLABEL);
     }
 
     return objectNode;

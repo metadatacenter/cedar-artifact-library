@@ -24,6 +24,9 @@ public non-sealed interface ElementSchemaArtifact extends SchemaArtifact, ChildS
 {
   @Override ElementSchemaArtifact withExtensions(SchemaExtensions extensions);
 
+  /** This element, carrying the keys each child field's stored value schema requires. */
+  ElementSchemaArtifact withStoredValueRequirements(StoredValueRequirements storedValueRequirements);
+
   static ElementSchemaArtifact create(String internalName, String internalDescription,
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes, Optional<URI> jsonLdId,
     Optional<URI> instanceJsonLdType, String name, String description, Optional<String> identifier,
@@ -534,7 +537,8 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
                                    LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
                                    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple,
                                    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
-                                   Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations, SchemaExtensions extensions)
+                                   Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations, SchemaExtensions extensions,
+                                   @com.fasterxml.jackson.annotation.JsonIgnore StoredValueRequirements storedValueRequirements)
   implements ElementSchemaArtifact
 {
   public ElementSchemaArtifactRecord(String internalName, String internalDescription,
@@ -549,19 +553,29 @@ record ElementSchemaArtifactRecord(String internalName, String internalDescripti
                                    LinkedHashMap<String, ElementSchemaArtifact> elementSchemas, boolean isMultiple,
                                    Optional<Integer> minItems, Optional<Integer> maxItems, Optional<URI> propertyUri,
                                    Optional<String> language, ElementUi elementUi, Optional<Annotations> annotations) {
-    this(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations, SchemaExtensions.empty());
+    this(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas, isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations, SchemaExtensions.empty(), StoredValueRequirements.NONE);
   }
 
   @Override public ElementSchemaArtifact withExtensions(SchemaExtensions extensions) {
     return new ElementSchemaArtifactRecord(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
       instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
       modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas,
-      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations, extensions);
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations, extensions,
+      storedValueRequirements);
+  }
+
+  @Override public ElementSchemaArtifact withStoredValueRequirements(StoredValueRequirements storedValueRequirements) {
+    return new ElementSchemaArtifactRecord(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
+      instanceJsonLdTypes, name, description, identifier, version, status, previousVersion, derivedFrom, createdBy,
+      modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas, elementSchemas,
+      isMultiple, minItems, maxItems, propertyUri, language, elementUi, annotations, extensions,
+      storedValueRequirements);
   }
 
   public ElementSchemaArtifactRecord
   {
     java.util.Objects.requireNonNull(extensions, "extensions");
+    java.util.Objects.requireNonNull(storedValueRequirements, "storedValueRequirements");
     ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
       jsonLdContext, jsonLdTypes, URI.create(ELEMENT_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdTypes,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, elementUi, annotations);
