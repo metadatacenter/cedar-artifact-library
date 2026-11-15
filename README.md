@@ -86,6 +86,27 @@ Path outputFile = Path.of("template.yaml");
 YamlSerializer.saveYAML(templateSchemaArtifact, compact, fullQuotes, outputFile);
 ```
 
+### Property IRIs in YAML Instances
+
+A JSON instance maps each child to its property IRI in its `@context`. The YAML form of an instance
+leaves those mappings out, because the template states them, and an instance read from YAML takes
+them from its template when it is completed. An attribute of an attribute-value field is the
+exception. Its name and its property IRI belong to the instance, and no template holds them. So each
+attribute states its IRI beside its value under `propertyIri`, the key a template uses for a child's
+property IRI, in the full and the compact form alike:
+
+```yaml
+Sample Attribute Value:
+  Attribute name 1:
+    value: "value 1"
+    propertyIri: "https://schema.metadatacenter.org/properties/d6b2e884-9791-4aca-b412-5d7947fed203"
+```
+
+The reader puts the IRI back in the `@context` of the instance or element that holds the attribute.
+An attribute may omit it, as a draft does before the server assigns one. Only an attribute takes the
+key: on an ordinary field value it is refused. The TypeScript model library writes and reads the same
+form.
+
 ### Unicode field identifiers
 
 Field-instance JSON `@id` and YAML `id` preserve RFC 3987 IRI spelling, including Unicode

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.yaml.YamlConstants;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -216,17 +217,31 @@ final class YamlTripComparison
     out.add(new Difference(pointer(at), direct, viaYaml, valueFamily(direct, viaYaml)));
   }
 
-  // A property's IRI is the template's on the YAML path. Any other @context entry has to survive.
+  // A child's property IRI is the template's on the YAML path. An attribute's is the instance's own, which
+  // the YAML form carries, so it has to survive, unless the attribute was dropped for holding nothing. Any
+  // other @context entry has to survive too.
   private static void compareContext(ObjectNode container, ObjectNode containerViaYaml, ObjectNode context,
     ObjectNode contextViaYaml, List<String> at, List<Difference> out)
   {
+    Set<String> attributes = new HashSet<>(attributeNames(container));
+    attributes.addAll(attributeNames(containerViaYaml));
     for (String key : keys(context, contextViaYaml)) {
       JsonNode a = context.get(key), b = contextViaYaml.get(key);
       if (Objects.equals(a, b)) continue;
-      boolean property = (container.has(key) || containerViaYaml.has(key)) && (a == null || a.isTextual())
-        && (b == null || b.isTextual());
-      out.add(new Difference(pointer(append(at, key)), a, b, property ? Optional.of(Family.INSTANCE_COMPLETION) : Optional.empty()));
+      boolean completion = attributes.contains(key)
+        ? b == null && !containerViaYaml.has(key) && isEmptyContent(container.get(key))
+        : (container.has(key) || containerViaYaml.has(key)) && (a == null || a.isTextual()) && (b == null || b.isTextual());
+      out.add(new Difference(pointer(append(at, key)), a, b, completion ? Optional.of(Family.INSTANCE_COMPLETION) : Optional.empty()));
     }
+  }
+
+  // The attributes a container holds: every name its attribute-value fields list.
+  private static Set<String> attributeNames(ObjectNode container)
+  {
+    Set<String> attributes = new HashSet<>();
+    for (String key : names(container))
+      if (!key.startsWith("@") && isNameList(container.get(key))) attributes.addAll(texts(container.get(key)));
+    return attributes;
   }
 
   // An attribute-value field lists the names of its attributes. One whose value is empty is dropped.

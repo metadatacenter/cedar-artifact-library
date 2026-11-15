@@ -42,6 +42,26 @@ class YamlTripComparisonTest
     assertEquals(List.of(Optional.<Family>empty()), families(differences));
   }
 
+  @Test void attributeIriLostOrChangedIsUnexplained() throws Exception
+  {
+    String direct = "{\"@context\": {\"A\": \"https://example.org/a\"}, \"Names\": [\"A\"], \"A\": {\"@value\": \"kept\"}}";
+    var lost = YamlTripComparison.compareInstances(json(direct),
+      json("{\"@context\": {}, \"Names\": [\"A\"], \"A\": {\"@value\": \"kept\"}}"));
+    assertEquals(List.of(Optional.<Family>empty()), families(lost));
+    var changed = YamlTripComparison.compareInstances(json(direct),
+      json("{\"@context\": {\"A\": \"https://example.org/b\"}, \"Names\": [\"A\"], \"A\": {\"@value\": \"kept\"}}"));
+    assertEquals(List.of(Optional.<Family>empty()), families(changed));
+  }
+
+  @Test void attributeDroppedForHoldingNothingTakesItsIri() throws Exception
+  {
+    var differences = YamlTripComparison.compareInstances(
+      json("{\"@context\": {\"A\": \"https://example.org/a\"}, \"Names\": [\"A\"], \"A\": {\"@value\": null}}"),
+      json("{\"@context\": {}, \"Names\": []}"));
+    assertTrue(families(differences).stream().allMatch(f -> f.equals(Optional.of(Family.INSTANCE_COMPLETION))),
+      differences.toString());
+  }
+
   @Test void ontologyMovedToAnotherAcronymIsUnexplained() throws Exception
   {
     var differences = YamlTripComparison.compareSchemas(ontology("http://data.bioontology.org/ontologies/OBI"),

@@ -415,7 +415,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       // its own round trip. An instance says what it holds by omission, and the server completes
       // it against its template.
       LinkedHashMap<String, Object> attributeValueFieldInstanceGroupRendering =
-        renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields);
+        renderAttributeValueFieldInstanceGroupFields(attributeValueFieldInstanceGroupFields,
+          templateInstanceArtifact.jsonLdContext());
       if (!attributeValueFieldInstanceGroupRendering.isEmpty()) {
         rendering.put(attributeValueFieldInstanceGroupKey, attributeValueFieldInstanceGroupRendering);
       }
@@ -474,7 +475,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       .entrySet()) {
       requireAttributeGroupName(attributeValueFieldInstanceGroup.getKey(), STANDALONE_ELEMENT_KEYS);
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
-      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
+      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields,
+        elementInstanceArtifact.jsonLdContext());
       if (!groupRendering.isEmpty())
         rendering.put(attributeValueFieldInstanceGroup.getKey(), groupRendering);
     }
@@ -507,7 +509,8 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       .entrySet()) {
       requireAttributeGroupName(attributeValueFieldInstanceGroup.getKey(), NESTED_ELEMENT_KEYS);
       Map<String, FieldInstanceArtifact> fields = attributeValueFieldInstanceGroup.getValue();
-      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields);
+      LinkedHashMap<String, Object> groupRendering = renderAttributeValueFieldInstanceGroupFields(fields,
+        elementInstanceArtifact.jsonLdContext());
       if (!groupRendering.isEmpty())
         attributeValueGroups.put(attributeValueFieldInstanceGroup.getKey(), groupRendering);
     }
@@ -1447,8 +1450,15 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
     }
   }
 
+  /**
+   * Render the attributes of one attribute-value field, each as the field value it is. An attribute's
+   * property IRI is the instance's own, minted when the attribute was named, and no template states it,
+   * so it is written beside the value under {@code propertyIri}, the key a template uses for a child's
+   * property IRI. It is taken from the {@code @context} of the instance or element that holds the
+   * attribute.
+   */
   private LinkedHashMap<String, Object> renderAttributeValueFieldInstanceGroupFields(
-    Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields)
+    Map<String, FieldInstanceArtifact> attributeValueFieldInstanceGroupFields, Map<String, URI> context)
   {
     LinkedHashMap<String, Object> attributeValueFieldInstanceGroupFieldsRendering = new LinkedHashMap<>();
 
@@ -1460,8 +1470,12 @@ public class YamlArtifactRenderer implements ArtifactRenderer<LinkedHashMap<Stri
       // The same omission rule applies inside an attribute-value group: an attribute whose
       // value is unknown must not become `{}`, because the strict YAML reader rejects empty
       // placeholders everywhere in the document.
-      if (!fieldRendering.isEmpty())
+      if (!fieldRendering.isEmpty()) {
+        URI propertyIri = context.get(attributeValueFieldInstanceFieldKey);
+        if (propertyIri != null)
+          fieldRendering.put(PROPERTY_IRI, propertyIri.toString());
         attributeValueFieldInstanceGroupFieldsRendering.put(attributeValueFieldInstanceFieldKey, fieldRendering);
+      }
     }
 
     return attributeValueFieldInstanceGroupFieldsRendering;
