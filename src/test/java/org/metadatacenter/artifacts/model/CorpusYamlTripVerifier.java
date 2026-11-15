@@ -209,10 +209,7 @@ public final class CorpusYamlTripVerifier
         : ownTemplate != null && Files.isRegularFile(ownTemplate) ? read(ownTemplate) : null;
       if (templateSource == null) throw new IllegalStateException("its template is in no corpus case");
       ObjectNode templateNode = json(templateSource);
-      if (!source.has("schema:isBasedOn")) {
-        source.set("schema:isBasedOn", templateNode.get("@id"));
-        source.put("schema:name", id);
-      }
+      source = CorpusFixtureVerifier.ceeInstanceAsStored(source, templateNode, id);
       var jsonReader = new JsonArtifactReader();
       TemplateSchemaArtifact template = jsonReader.readTemplateSchemaArtifact(templateNode);
       TemplateInstanceArtifact instance = jsonReader.readTemplateInstanceArtifact(source);

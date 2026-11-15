@@ -34,7 +34,7 @@ import java.util.Map;
  * a change to a writer here, unaccompanied by a regeneration, leaves that comparison measuring output
  * this library no longer produces. It went unnoticed for months once.
  *
- * <p>So this walks the corpus, renders each artifact the three ways the fixtures record — full YAML,
+ * <p>So this walks the corpus, the CEE suite included, renders each artifact the three ways the fixtures record — full YAML,
  * compact YAML, JSON — and reports every fixture whose committed bytes differ from what it produced.
  * The renderings go through the same calls the {@code ArtifactConvertor} makes for {@code -yof -yq},
  * {@code -yof -yq -cy} and {@code -jof}, since that is what generated them.
@@ -200,8 +200,63 @@ public final class CorpusFixtureVerifier
       }
     }
 
+    // Each CEE suite case holds a template and often an instance, and its Java renderings are checked as
+    // the numbered collections' are. A case the corpus records no Java rendering for is not read, which
+    // leaves out the template this library refuses and the one that is malformed on purpose.
+    Path suite = artifacts.resolve("cee-suite");
+    if (Files.isDirectory(suite)) {
+      try (var cases = Files.list(suite)) {
+        for (Path caseDirectory : cases.filter(Files::isDirectory).sorted().toList()) {
+          String number = caseDirectory.getFileName().toString();
+          for (Kind kind : List.of(Kind.TEMPLATES, Kind.INSTANCES)) {
+            String name = kind.stem + "-" + number;
+            Path source = caseDirectory.resolve(name + ".json");
+            String relative = artifacts.relativize(source).toString().replace('\\', '/');
+            boolean rendered = Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"))
+              || Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.yaml"))
+              || Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.compact.yaml"));
+            if (!Files.isRegularFile(source) || !rendered)
+              continue;
+            Artifact artifact;
+            try {
+              ObjectNode json = parse(Files.readString(source));
+              if (kind == Kind.INSTANCES && !json.has("schema:isBasedOn"))
+                json = ceeInstanceAsStored(json, parse(Files.readString(caseDirectory.resolve("template-" + number + ".json"))),
+                  "cee-" + name);
+              artifact = read(kind, json.toString());
+            } catch (Exception e) {
+              problems.add(relative + ": " + e.getClass().getSimpleName() + ": " + e.getMessage() + " (its Java renderings are committed)");
+              continue;
+            }
+            checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.yaml"),
+              YamlSerializer.getYAML(artifact, false, true), stale, write);
+            checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.compact.yaml"),
+              YamlSerializer.getYAML(artifact, true, true), stale, write);
+            checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"),
+              renderJson(kind, artifact), stale, write);
+          }
+        }
+      }
+    }
+
     missing.stream().sorted().forEach(source -> problems.add(source + ": expected-invalid source is missing"));
     return new VerificationResult(checked, stale, rejected, problems);
+  }
+
+  /**
+   * A CEE suite instance as a host stores it. Most of the suite's instances are CEE's output before a host
+   * stores it: data alone, with no name and no template named. This library's reader requires both, so
+   * such an instance is given the template in its own case and its case identifier as its name. The
+   * TypeScript library's corpus generators give it the same.
+   */
+  static ObjectNode ceeInstanceAsStored(ObjectNode instance, ObjectNode template, String caseId)
+  {
+    if (instance.has("schema:isBasedOn"))
+      return instance;
+    ObjectNode stored = instance.deepCopy();
+    stored.set("schema:isBasedOn", template.get("@id"));
+    stored.put("schema:name", caseId);
+    return stored;
   }
 
   private static boolean hasExpectedFinding(Kind kind, byte[] bytes, ExpectedRejection expected) throws IOException
