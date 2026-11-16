@@ -6,11 +6,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
+import org.metadatacenter.artifacts.model.core.TextField;
 import org.metadatacenter.artifacts.model.reader.YamlArtifactReader;
 import org.metadatacenter.artifacts.model.renderer.YamlArtifactRenderer;
 import org.yaml.snakeyaml.Yaml;
 
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -19,6 +22,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +51,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * reader: the ordinary one rejects it over the absent model version, which is what the CLI's
  * {@code -cy} flag selects on the way in as well as on the way out.
  *
+ * <p>A fixpoint cannot see what the compact writer leaves out, since a key missing from the first
+ * compact map is missing from the second as well. The compact form is therefore also compared with
+ * the full form of the same artifact: with the documented keys removed from the full form, the two
+ * must be equal.
+ *
  * <p>Sister test: {@link TemplateBatteryYamlRoundTripTest}, which closes the same loop through the
  * full form and the JSON pair.
  */
@@ -57,6 +67,11 @@ public class CompactYamlRoundTripTest
   /** What the compact form drops, and what must therefore not appear in it. */
   private static final List<String> SYSTEM_RECORDED_KEYS =
     List.of("modelVersion", "version", "status", "createdOn", "createdBy", "modifiedOn", "modifiedBy");
+
+  /** Keys of each artifact in the full form that the compact form leaves out at every depth. */
+  private static final List<String> KEYS_COMPACT_FORM_DROPS =
+    List.of("modelVersion", "version", "status", "previousVersion", "derivedFrom", "createdOn", "createdBy",
+      "modifiedOn", "modifiedBy");
 
   private YamlArtifactReader fullReader;
   private YamlArtifactReader compactReader;
@@ -101,6 +116,108 @@ public class CompactYamlRoundTripTest
       assertFalse(compact.containsKey(key),
         "the compact form carries " + key + ", which the system records: " + displayName);
     }
+  }
+
+  @ParameterizedTest(name = "{0}") @MethodSource("templates")
+  public void compactFormSaysWhatTheFullFormSaysLessTheDocumentedKeys(String displayName, Path yamlFile)
+    throws Exception
+  {
+    TemplateSchemaArtifact artifact = fullReader.readTemplateSchemaArtifact(parse(yamlFile));
+
+    LinkedHashMap<String, Object> compact = compactRenderer.renderTemplateSchemaArtifact(artifact);
+    LinkedHashMap<String, Object> full = fullRenderer.renderTemplateSchemaArtifact(artifact);
+
+    assertEquals(withoutCompactlessKeys(full, true), compact,
+      "the compact form differs from the full form in more than the keys it documents as dropped: " + displayName);
+  }
+
+  /**
+   * The battery's templates bound repeated fields but no repeated element, so this template states every
+   * setting a parent gives a child, at the root and inside a repeated element, with the values written
+   * out here rather than taken from another rendering.
+   */
+  @Test public void compactFormStatesEverySettingAParentGivesAChild() throws Exception
+  {
+    TextField line = TextField.builder().withName("Line")
+      .withPropertyUri(URI.create("https://example.org/properties/line"))
+      .withIsMultiple(true).withMinItems(1).withMaxItems(3).build();
+    ElementSchemaArtifact address = ElementSchemaArtifact.builder().withName("Address")
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/template-elements/address"))
+      .withPropertyUri(URI.create("https://example.org/properties/address"))
+      .withIsMultiple(true).withMinItems(2).withMaxItems(4)
+      .withFieldSchema(line).build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Settings")
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/settings"))
+      .withFieldSchema(TextField.builder().withName("Title").withRequiredValue(true).build(), "Heading")
+      .withFieldSchema(TextField.builder().withName("Notes").withRecommendedValue(true).build())
+      .withFieldSchema(TextField.builder().withName("Secret").withHidden(true).build())
+      .withElementSchema(address, "Postal Address", "Where to write")
+      .build();
+
+    LinkedHashMap<String, Object> compact = compactRenderer.renderTemplateSchemaArtifact(template);
+    LinkedHashMap<String, Object> full = fullRenderer.renderTemplateSchemaArtifact(template);
+    assertEquals(withoutCompactlessKeys(full, true), compact,
+      "the compact form differs from the full form in more than the keys it documents as dropped");
+
+    assertEquals(Map.of("required", true, "overrideLabel", "Heading"), configurationOf(compact, "Title"));
+    assertEquals(Map.of("recommended", true), configurationOf(compact, "Notes"));
+    assertEquals(Map.of("hidden", true), configurationOf(compact, "Secret"));
+    assertEquals(Map.of("overrideLabel", "Postal Address", "overrideDescription", "Where to write",
+      "multiple", true, "minItems", 2, "maxItems", 4), configurationOf(compact, "Address"));
+    assertEquals(Map.of("multiple", true, "minItems", 1, "maxItems", 3),
+      configurationOf(childOf(compact, "Address"), "Line"));
+
+    ElementSchemaArtifact reread =
+      compactReader.readTemplateSchemaArtifact(compact).getElementSchemaArtifact("Address");
+    assertEquals(Optional.of(2), reread.minItems());
+    assertEquals(Optional.of(4), reread.maxItems());
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> childOf(Map<String, Object> rendering, String key)
+  {
+    for (Object child : (List<Object>) rendering.get("children")) {
+      Map<String, Object> childMap = (Map<String, Object>) child;
+      if (key.equals(childMap.get("key")))
+        return childMap;
+    }
+    throw new AssertionError("no child " + key + " in " + rendering);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> configurationOf(Map<String, Object> rendering, String key)
+  {
+    return (Map<String, Object>) childOf(rendering, key).get("configuration");
+  }
+
+  /**
+   * A copy of a full-form artifact rendering without the keys the compact form documents as dropped: the
+   * system-recorded keys at every depth, the identifier of every artifact below the root and every
+   * child's property IRI.
+   */
+  @SuppressWarnings("unchecked")
+  private static LinkedHashMap<String, Object> withoutCompactlessKeys(Map<String, Object> artifact, boolean isRoot)
+  {
+    LinkedHashMap<String, Object> copy = new LinkedHashMap<>();
+    for (Map.Entry<String, Object> entry : artifact.entrySet()) {
+      String key = entry.getKey();
+      Object value = entry.getValue();
+      if (KEYS_COMPACT_FORM_DROPS.contains(key) || (!isRoot && key.equals("id")))
+        continue;
+      if (key.equals("children") && value instanceof List<?> children) {
+        List<Object> childCopies = new ArrayList<>();
+        for (Object child : children)
+          childCopies.add(withoutCompactlessKeys((Map<String, Object>) child, false));
+        copy.put(key, childCopies);
+      } else if (key.equals("configuration") && value instanceof Map<?, ?> configuration) {
+        LinkedHashMap<String, Object> configurationCopy = new LinkedHashMap<>((Map<String, Object>) configuration);
+        configurationCopy.remove("propertyIri");
+        if (!configurationCopy.isEmpty())
+          copy.put(key, configurationCopy);
+      } else
+        copy.put(key, value);
+    }
+    return copy;
   }
 
   @ParameterizedTest(name = "{0}") @MethodSource("templates")
