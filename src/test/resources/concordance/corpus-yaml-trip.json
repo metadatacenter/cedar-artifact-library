@@ -44,9 +44,17 @@
     ]
   },
   "exclusions": {
-    "cee-instance-004": "its template, cee-template-004, is refused by this library's JSON reader",
-    "cee-template-004": "an integer field states decimal places, which this library's JSON reader refuses",
-    "cee-template-086": "deliberately malformed JSON, which the TypeScript library's CEE reference test holds its reader to refusing",
-    "instance-008": "its template, https://repo.metadatacenter.org/templates/e26d7ff6-3a92-4445-85e4-fb2648c62500, is in no corpus case"
+    "cee-instance-004": {
+      "reason": "its template, cee-template-004, is refused by this library's JSON reader",
+      "refusal": "An integer datatype cannot have decimal places."
+    },
+    "cee-template-086": {
+      "reason": "deliberately malformed JSON, which the TypeScript library's CEE reference test holds its reader to refusing",
+      "refusal": "not JSON: Unexpected character ('`' (code 96))"
+    },
+    "instance-008": {
+      "reason": "its template, https://repo.metadatacenter.org/templates/e26d7ff6-3a92-4445-85e4-fb2648c62500, is in no corpus case",
+      "refusal": "its template is in no corpus case"
+    }
   }
 }

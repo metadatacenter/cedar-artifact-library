@@ -114,13 +114,54 @@ class CorpusFixtureVerifierTest
     assertEquals(1, current.checked());
   }
 
-  @Test void committedMetadataDescribesExactlyTheThreeHistoricalDefaultDefects() throws Exception
+  @Test void committedMetadataDescribesTheThreeHistoricalDefaultsAndTheIntegerWithDecimalPlaces() throws Exception
   {
     var expectations = CorpusFixtureVerifier.expectedRejections();
-    assertEquals(3, expectations.size());
+    assertEquals(4, expectations.size());
     assertEquals("regex", expectations.get(SOURCE).code());
     assertEquals("regex", expectations.get("templates/008/template-008.json").code());
     assertEquals("choiceMembership", expectations.get("templates/020/template-020.json").code());
+    assertEquals("templateConstraint", expectations.get("cee-suite/004/template-004.json").code());
+  }
+
+  private static final String CEE_SOURCE = "cee-suite/001/template-001.json";
+
+  /** A template whose Weight field is an integer that states decimal places, or a decimal one when not {@code refused}. */
+  private static byte[] ceeTemplate(boolean refused) throws Exception
+  {
+    var template = org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact.builder().withName("Measures")
+      .withFieldSchema(org.metadatacenter.artifacts.model.core.NumericField.builder().withName("Weight")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.DECIMAL)
+        .withDecimalPlaces(2).build())
+      .build();
+    ObjectNode json = new org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer().renderTemplateSchemaArtifact(template);
+    if (refused) json.withObject("/properties/Weight/_valueConstraints").put("numberType", "xsd:long");
+    return new ObjectMapper().writeValueAsBytes(json);
+  }
+
+  private static CorpusFixtureVerifier.ExpectedRejection ceeExpected(byte[] source)
+  {
+    return new CorpusFixtureVerifier.ExpectedRejection(CorpusFixtureVerifier.sha256(source), "templateConstraint",
+      "/properties/Weight/_valueConstraints/decimalPlace", "java.lang.IllegalStateException",
+      "An integer datatype cannot have decimal places.", "An integer field states decimal places.");
+  }
+
+  @Test void ceeSuiteRejectionIsPinnedLikeANumberedOne() throws Exception
+  {
+    byte[] source = ceeTemplate(true);
+    put(CEE_SOURCE, source);
+    var result = CorpusFixtureVerifier.verify(corpus, false, Map.of(CEE_SOURCE, ceeExpected(source)));
+    assertTrue(result.successful(false), result.problems().toString());
+    assertEquals(1, result.expectedRejections().size());
+  }
+
+  @Test void ceeSuiteDefinitionNoLongerRefusedFailsItsPin() throws Exception
+  {
+    byte[] source = ceeTemplate(false);
+    put(CEE_SOURCE, source);
+    var result = CorpusFixtureVerifier.verify(corpus, false, Map.of(CEE_SOURCE, ceeExpected(source)));
+    assertFalse(result.successful(false));
+    assertTrue(result.problems().get(0).contains("was accepted"), result.problems().toString());
   }
 
   private void put(String relative, byte[] bytes) throws Exception

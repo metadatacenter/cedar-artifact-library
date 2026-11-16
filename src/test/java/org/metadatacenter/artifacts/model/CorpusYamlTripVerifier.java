@@ -40,8 +40,9 @@ import java.util.function.Supplier;
  * template before it is written, as the resource server completes a YAML write. An instance finds its
  * template by {@code schema:isBasedOn}; a CEE suite instance that names none takes the template in its
  * own case. {@code /concordance/corpus-yaml-trip.json} declares which cases show each family and which
- * cases cannot be compared. A case showing an undeclared family fails, and so does one that stops
- * showing a declared one or can now be compared despite its exclusion.
+ * cases cannot be compared, each with the beginning of the message of the refusal that stops it. A case showing an
+ * undeclared family fails, and so does one that stops showing a declared one, one that is refused with
+ * another message than its exclusion states, or one that can now be compared despite its exclusion.
  *
  * <p>Not a unit test, for the reason {@link CorpusFixtureVerifier} gives. Run with:
  *
@@ -54,7 +55,10 @@ import java.util.function.Supplier;
  */
 public final class CorpusYamlTripVerifier
 {
-  record Declarations(Map<String, Set<Family>> families, Map<String, String> exclusions) {}
+  /** Why a case cannot be compared, and how the message of the refusal that stops it begins. */
+  record Exclusion(String reason, String refusal) {}
+
+  record Declarations(Map<String, Set<Family>> families, Map<String, Exclusion> exclusions) {}
 
   record VerificationResult(int compared, int excluded, Map<String, Set<Family>> shown, List<String> problems)
   {
@@ -75,16 +79,23 @@ public final class CorpusYamlTripVerifier
       Map<String, Set<Family>> families = new TreeMap<>();
       root.path("families").fields().forEachRemaining(entry -> entry.getValue().forEach(id ->
         families.computeIfAbsent(id.asText(), any -> EnumSet.noneOf(Family.class)).add(Family.of(entry.getKey()))));
-      Map<String, String> exclusions = new TreeMap<>();
+      Map<String, Exclusion> exclusions = new TreeMap<>();
       root.path("exclusions").fields().forEachRemaining(entry -> {
-        if (entry.getValue().asText().isBlank()) throw new IllegalArgumentException("No reason given for excluding " + entry.getKey());
-        exclusions.put(entry.getKey(), entry.getValue().asText());
+        String reason = entry.getValue().path("reason").asText(), refusal = entry.getValue().path("refusal").asText();
+        if (reason.isBlank() || refusal.isBlank())
+          throw new IllegalArgumentException("No reason or refusal given for excluding " + entry.getKey());
+        exclusions.put(entry.getKey(), new Exclusion(reason, refusal));
       });
       if (families.values().stream().anyMatch(f -> f.contains(Family.SCHEMA_TEXT)))
         throw new IllegalArgumentException("schemaText is allowed everywhere and declared nowhere");
       // A definition this library refuses on purpose is pinned once, beside the fixtures it left behind.
-      CorpusFixtureVerifier.expectedRejections().forEach((source, rejection) -> exclusions.put(caseId(source),
-        "refused by the JSON reader, as corpus-expected-rejections.json pins: " + rejection.reason()));
+      CorpusFixtureVerifier.expectedRejections().forEach((source, rejection) -> {
+        if (exclusions.containsKey(caseId(source)))
+          throw new IllegalArgumentException(caseId(source) + " is pinned in corpus-expected-rejections.json and excluded again");
+        exclusions.put(caseId(source), new Exclusion(
+          "refused by the JSON reader, as corpus-expected-rejections.json pins: " + rejection.reason(),
+          rejection.exceptionMessage()));
+      });
       return new Declarations(families, exclusions);
     }
   }
@@ -141,8 +152,13 @@ public final class CorpusYamlTripVerifier
       try {
         differences = c.trip().get();
       } catch (RuntimeException e) {
-        if (declared.exclusions().containsKey(c.id())) excluded++;
-        else problems.add(c.id() + ": cannot be compared (" + e.getMessage() + "); fix it or declare its exclusion");
+        Exclusion exclusion = declared.exclusions().get(c.id());
+        if (exclusion == null)
+          problems.add(c.id() + ": cannot be compared (" + e.getMessage() + "); fix it or declare its exclusion");
+        else if (e.getMessage() == null || !e.getMessage().startsWith(exclusion.refusal()))
+          problems.add(c.id() + ": excluded for the refusal \"" + exclusion.refusal() + "\", but refused with \""
+            + e.getMessage() + "\"");
+        else excluded++;
         continue;
       }
       if (declared.exclusions().containsKey(c.id())) {

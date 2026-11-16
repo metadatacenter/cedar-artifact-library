@@ -26,6 +26,15 @@
       "exceptionClass": "java.lang.IllegalStateException",
       "exceptionMessage": "Not one of the permitted choices.",
       "reason": "The historical default 'Option 11' is absent from the permitted choices Option 1 through Option 4."
+    },
+    {
+      "source": "cee-suite/004/template-004.json",
+      "sha256": "6f8a5000dd3e121c1cf27a40109d7c80a95d9c585115060dc8ee65e9b2001641",
+      "code": "templateConstraint",
+      "path": "/properties/Number 2/items/_valueConstraints/decimalPlace",
+      "exceptionClass": "java.lang.IllegalStateException",
+      "exceptionMessage": "An integer datatype cannot have decimal places.",
+      "reason": "The repeated field Number 2 is an xsd:long that states two decimal places, which an integer cannot have; its _ui.pages is refused as well."
     }
   ]
 }

@@ -51,7 +51,8 @@ import java.util.Map;
  *
  * Exits non-zero when a fixture is stale or an artifact is unexpectedly unreadable. Historic invalid
  * definitions are recorded in {@code /concordance/corpus-expected-rejections.json}: their exact source
- * bytes, reader failure and blocking validation finding must all match. They must remain rejected;
+ * bytes and reader failure must match, and the validator must block saving them with the pinned finding
+ * among its blocking findings. They must remain rejected;
  * their old renderings are retained as historical evidence, not compared as current output. A changed
  * or missing source, changed rejection, or unexpected acceptance fails the check. Pass {@code --write} before the
  * path to rewrite the stale fixtures instead of reporting them, which keeps a regeneration and the
@@ -168,8 +169,8 @@ public final class CorpusFixtureVerifier
           var expected = expectations.get(relative);
           missing.remove(relative);
           byte[] bytes = Files.readAllBytes(source);
-          if (expected != null && !expected.sha256().equals(sha256(bytes))) {
-            problems.add(relative + ": expected-invalid source bytes changed; review its rejection metadata");
+          if (expected != null) {
+            checkExpectedRejection(kind, relative, bytes, expected, rejected, problems);
             continue;
           }
 
@@ -177,16 +178,7 @@ public final class CorpusFixtureVerifier
           try {
             artifact = read(kind, new String(bytes, java.nio.charset.StandardCharsets.UTF_8));
           } catch (Exception e) {
-            if (expected != null && expected.exceptionClass().equals(e.getClass().getName())
-              && expected.exceptionMessage().equals(e.getMessage())
-              && hasExpectedFinding(kind, bytes, expected))
-              rejected.add(relative + ": " + expected.code() + " at " + expected.path() + " — " + expected.reason());
-            else problems.add(relative + ": " + e.getClass().getSimpleName() + ": " + e.getMessage()
-              + (expected == null ? " (unlisted rejection)" : " (rejection differs from pinned expectation)"));
-            continue;
-          }
-          if (expected != null) {
-            problems.add(relative + ": expected-invalid definition was accepted");
+            problems.add(relative + ": " + e.getClass().getSimpleName() + ": " + e.getMessage() + " (unlisted rejection)");
             continue;
           }
 
@@ -201,8 +193,9 @@ public final class CorpusFixtureVerifier
     }
 
     // Each CEE suite case holds a template and often an instance, and its Java renderings are checked as
-    // the numbered collections' are. A case the corpus records no Java rendering for is not read, which
-    // leaves out the template this library refuses and the one that is malformed on purpose.
+    // the numbered collections' are. A template this library refuses is pinned like a numbered one. A case
+    // the corpus records no Java rendering for is otherwise not read, which leaves out the instance of a
+    // refused template and the template that is malformed on purpose.
     Path suite = artifacts.resolve("cee-suite");
     if (Files.isDirectory(suite)) {
       try (var cases = Files.list(suite)) {
@@ -212,6 +205,13 @@ public final class CorpusFixtureVerifier
             String name = kind.stem + "-" + number;
             Path source = caseDirectory.resolve(name + ".json");
             String relative = artifacts.relativize(source).toString().replace('\\', '/');
+            var expected = expectations.get(relative);
+            if (expected != null) {
+              missing.remove(relative);
+              if (Files.isRegularFile(source))
+                checkExpectedRejection(kind, relative, Files.readAllBytes(source), expected, rejected, problems);
+              continue;
+            }
             boolean rendered = Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"))
               || Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.yaml"))
               || Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.compact.yaml"));
@@ -259,6 +259,27 @@ public final class CorpusFixtureVerifier
     return stored;
   }
 
+  /** A pinned definition must keep its bytes, and the reader must refuse it with the pinned exception. */
+  private static void checkExpectedRejection(Kind kind, String relative, byte[] bytes, ExpectedRejection expected,
+    List<String> rejected, List<String> problems) throws IOException
+  {
+    if (!expected.sha256().equals(sha256(bytes))) {
+      problems.add(relative + ": expected-invalid source bytes changed; review its rejection metadata");
+      return;
+    }
+    try {
+      read(kind, new String(bytes, java.nio.charset.StandardCharsets.UTF_8));
+    } catch (Exception e) {
+      if (expected.exceptionClass().equals(e.getClass().getName()) && expected.exceptionMessage().equals(e.getMessage())
+        && hasExpectedFinding(kind, bytes, expected))
+        rejected.add(relative + ": " + expected.code() + " at " + expected.path() + " — " + expected.reason());
+      else problems.add(relative + ": " + e.getClass().getSimpleName() + ": " + e.getMessage()
+        + " (rejection differs from pinned expectation)");
+      return;
+    }
+    problems.add(relative + ": expected-invalid definition was accepted");
+  }
+
   private static boolean hasExpectedFinding(Kind kind, byte[] bytes, ExpectedRejection expected) throws IOException
   {
     var validator = new CedarValidator();
@@ -271,8 +292,8 @@ public final class CorpusFixtureVerifier
     };
     var blocking = report.getFindings().stream()
       .filter(finding -> ValidationPolicy.blocksSave(finding, ValidationPolicy.Context.TEMPLATE)).toList();
-    return !report.canSave() && blocking.size() == 1 && blocking.get(0).code().equals(expected.code())
-      && blocking.get(0).path().equals(expected.path());
+    return !report.canSave() && blocking.stream()
+      .anyMatch(finding -> finding.code().equals(expected.code()) && finding.path().equals(expected.path()));
   }
 
   static String sha256(byte[] bytes)
