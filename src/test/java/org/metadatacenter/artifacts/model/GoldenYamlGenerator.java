@@ -41,18 +41,34 @@ import java.util.LinkedHashMap;
  * has since been fixed at the renderer; the map now contains only YAML-native
  * scalars.)
  *
+ * <p>Only a golden that already exists is rewritten, so the source directory may hold other templates.
+ * {@link TemplateSourceRenderingTest} holds each golden to what {@link #golden} writes from its source.
+ *
  * <p>Not a unit test (no {@code @Test} methods). Run with:
  *
  * <pre>{@code
  *   mvn test-compile exec:java \
  *       -Dexec.classpathScope=test \
  *       -Dexec.mainClass=org.metadatacenter.artifacts.model.GoldenYamlGenerator \
- *       -Dexec.args="/path/to/source-json-dir src/test/resources/templates-yaml"
+ *       -Dexec.args="src/test/resources/templates src/test/resources/templates-yaml"
  * }</pre>
  */
 public final class GoldenYamlGenerator
 {
   private GoldenYamlGenerator() {}
+
+  /** The golden YAML for a source: JSON -> model -> full YAML, dumped in block style. */
+  static String golden(ObjectNode source)
+  {
+    DumperOptions opts = new DumperOptions();
+    opts.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    opts.setPrettyFlow(true);
+    opts.setIndent(2);
+    opts.setSplitLines(false);
+    TemplateSchemaArtifact template = new JsonArtifactReader().readTemplateSchemaArtifact(source);
+    LinkedHashMap<String, Object> yamlMap = new YamlArtifactRenderer(false).renderTemplateSchemaArtifact(template);
+    return new Yaml(opts).dump(yamlMap);
+  }
 
   public static void main(String[] args) throws IOException
   {
@@ -67,15 +83,6 @@ public final class GoldenYamlGenerator
     Files.createDirectories(outDir);
 
     ObjectMapper jackson = new ObjectMapper();
-    JsonArtifactReader reader = new JsonArtifactReader();
-    YamlArtifactRenderer renderer = new YamlArtifactRenderer(false);
-
-    DumperOptions opts = new DumperOptions();
-    opts.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    opts.setPrettyFlow(true);
-    opts.setIndent(2);
-    opts.setSplitLines(false);
-
     int ok = 0;
     int fail = 0;
     try (DirectoryStream<Path> ds = Files.newDirectoryStream(inDir, "*.json")) {
@@ -83,12 +90,11 @@ public final class GoldenYamlGenerator
         String stem = jsonFile.getFileName().toString();
         stem = stem.substring(0, stem.length() - ".json".length());
         Path outFile = outDir.resolve(stem + ".yaml");
+        if (!Files.isRegularFile(outFile))
+          continue;
         try {
           ObjectNode node = (ObjectNode) jackson.readTree(Files.newBufferedReader(jsonFile));
-          TemplateSchemaArtifact template = reader.readTemplateSchemaArtifact(node);
-          LinkedHashMap<String, Object> yamlMap = renderer.renderTemplateSchemaArtifact(template);
-          String yamlText = new Yaml(opts).dump(yamlMap);
-          Files.writeString(outFile, yamlText, StandardCharsets.UTF_8);
+          Files.writeString(outFile, golden(node), StandardCharsets.UTF_8);
           System.out.println("ok  " + stem);
           ok++;
         } catch (Exception e) {
@@ -98,7 +104,7 @@ public final class GoldenYamlGenerator
       }
     }
     System.out.println();
-    System.out.println("Generated " + ok + " golden YAML files; " + fail + " failures.");
+    System.out.println("Regenerated " + ok + " golden YAML files; " + fail + " failures.");
     if (fail > 0) System.exit(2);
   }
 }

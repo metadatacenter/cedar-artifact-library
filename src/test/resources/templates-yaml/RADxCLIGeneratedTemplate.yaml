@@ -896,8 +896,8 @@ children:
     - label: zh-TW
     - label: zu
     configuration:
-      minItems: 0
       propertyIri: http://purl.org/radx-terms/metadata-terms/otherLanguage
+      minItems: 0
   configuration:
     propertyIri: http://purl.org/radx-terms/metadata-terms/languageDescriptor
 - key: Data File Subjects

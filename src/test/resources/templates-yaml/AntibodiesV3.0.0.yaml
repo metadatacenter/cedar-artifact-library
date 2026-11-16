@@ -7,21 +7,21 @@ modelVersion: 1.6.0
 previousVersion: https://repo.metadatacenter.org/templates/f8bdbf2e-6e4a-4102-bc5f-55ee39f1591b
 createdOn: '2023-11-10T12:42:01-08:00'
 createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-modifiedOn: '2025-03-14T16:45:48-07:00'
+modifiedOn: '2023-12-11T13:50:18-08:00'
 modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
 children:
 - key: channel_id
   type: text-field
   name: channel_id
-  description: Structure of the identifier depends on the acquisition system. Whenever possible this should exactly match the channel ID in the OME TIFF file. For example the channel ID in an OME TIFF might be something like "Channel:0:13" which would then be the value entered here.
+  description: Structure of the identifier depends on the assay type.
   id: https://repo.metadatacenter.org/template-fields/f5b563ba-89ff-426f-80a8-be2a44d8d929
   status: draft
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Channel ID
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -36,9 +36,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: HGNC symbol
   regex: ''
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -53,9 +53,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Antibody RRID
   regex: ^AB_\d+$
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -69,9 +69,9 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Uniprot accession number
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -85,11 +85,12 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Lot number
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
+    required: true
     propertyIri: https://schema.metadatacenter.org/properties/4bc13fb3-381a-4028-a026-f5b64d711cec
 - key: dilution_factor
   type: numeric-field
@@ -101,9 +102,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Dilution factor
   datatype: xsd:int
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/6ac4feb5-05d1-4d6f-93ff-b755f320e2ac
@@ -117,9 +118,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Antibody concentration value
   datatype: xsd:decimal
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/b3242846-50d9-4338-b40a-bef1db8d94c1
@@ -140,9 +141,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1001921
     termBaseLabel: Antibody concentration unit
     termMaxDepth: 0
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/9ec9f29a-ce4d-4219-93e5-f2489ee65955
@@ -155,9 +156,9 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Conjugated cat number
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/2b6504af-51c3-4c3a-a5b2-fa38900cd58d
@@ -169,9 +170,9 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Conjugated tag
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/74baa364-e381-4feb-9bfa-59cb8748f3d1
@@ -185,9 +186,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Metadata schema ID
   default: 312f7be0-9aec-4cae-b942-a8864c0aa1ce
-  createdOn: '2025-03-14T16:45:48-07:00'
+  createdOn: '2023-12-11T13:50:18-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-03-14T16:45:48-07:00'
+  modifiedOn: '2023-12-11T13:50:18-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
