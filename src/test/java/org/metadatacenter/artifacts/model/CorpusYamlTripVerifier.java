@@ -231,7 +231,7 @@ public final class CorpusYamlTripVerifier
       TemplateInstanceArtifact instance = jsonReader.readTemplateInstanceArtifact(source);
       TemplateInstanceArtifact sparse = new YamlArtifactReader(false)
         .readTemplateInstanceArtifact(yaml(YamlSerializer.getYAML(instance, false, true)));
-      return YamlTripComparison.compareInstances(RENDERER.renderTemplateInstanceArtifact(instance),
+      return YamlTripComparison.compareInstances(templateNode, RENDERER.renderTemplateInstanceArtifact(instance),
         RENDERER.renderTemplateInstanceArtifact(template, sparse));
     });
   }
