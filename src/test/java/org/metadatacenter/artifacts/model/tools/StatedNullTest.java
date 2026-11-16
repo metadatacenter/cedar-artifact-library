@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
+import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -25,6 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A value can state {@code rdfs:label} as null, and a stored template can require the key. The model keeps the
  * null as no value, so the writer left the key out, and the written document failed the template the stored
  * one satisfied. The writer keeps a stated null exactly where the stored template requires its key.
+ *
+ * <p>The same holds for {@code skos:notation}, {@code skos:prefLabel} and {@code @language}, and for a field
+ * at any depth: the second group of tests states each key as null in a field at the root, in a single
+ * element and in a repeated element.
  */
 public class StatedNullTest
 {
@@ -115,6 +123,82 @@ public class StatedNullTest
     ObjectNode document = new JsonArtifactRenderer().renderTemplateInstanceArtifact(storedInstance(template));
 
     assertFalse(document.get("Note").has("rdfs:label"));
+  }
+
+  /** The keys a value can state as null. */
+  private static final List<String> NULLABLE_KEYS = List.of("rdfs:label", "skos:notation", "skos:prefLabel", "@language");
+
+  /**
+   * A template whose Note field sits at the root, whose Street field sits in the single element Address and
+   * whose Site field sits in the repeated element Visits, each field's value schema requiring {@code keys}.
+   */
+  private static TemplateSchemaArtifact nestedStoredTemplate(List<String> keys)
+  {
+    TemplateSchemaArtifact built = TemplateSchemaArtifact.builder().withName("Study")
+      .withJsonLdId(URI.create("https://repo.metadatacenter.org/templates/stated-null-nested"))
+      .withFieldSchema(TextField.builder().withName("Note").withPropertyUri(PROPERTY).build())
+      .withElementSchema(ElementSchemaArtifact.builder().withName("Address")
+        .withPropertyUri(URI.create("https://schema.metadatacenter.org/properties/address"))
+        .withFieldSchema(TextField.builder().withName("Street")
+          .withPropertyUri(URI.create("https://schema.metadatacenter.org/properties/street")).build()).build())
+      .withElementSchema(ElementSchemaArtifact.builder().withName("Visits").withIsMultiple(true)
+        .withPropertyUri(URI.create("https://schema.metadatacenter.org/properties/visits"))
+        .withFieldSchema(TextField.builder().withName("Site")
+          .withPropertyUri(URI.create("https://schema.metadatacenter.org/properties/site")).build()).build())
+      .build();
+    ObjectNode document = new JsonArtifactRenderer().renderTemplateSchemaArtifact(built);
+    require((ObjectNode) document.at("/properties/Note"), keys);
+    require((ObjectNode) document.at("/properties/Address/properties/Street"), keys);
+    require((ObjectNode) document.at("/properties/Visits/items/properties/Site"), keys);
+    return new JsonArtifactReader().readTemplateSchemaArtifact(document);
+  }
+
+  /** An instance stating {@code key} as null in Note, in Street and in the first of two Visits' Site. */
+  private static TemplateInstanceArtifact nestedStoredInstance(TemplateSchemaArtifact template, String key)
+  {
+    TemplateInstanceArtifact built = TemplateInstanceArtifact.builder().withName("Study Instance")
+      .withIsBasedOn(template.jsonLdId().orElseThrow())
+      .withSingleInstanceFieldInstance("Note", literal("first"))
+      .withSingleInstanceElementInstance("Address",
+        ElementInstanceArtifact.builder().withSingleInstanceFieldInstance("Street", literal("Main")).build())
+      .withMultiInstanceElementInstances("Visits", List.of(
+        ElementInstanceArtifact.builder().withSingleInstanceFieldInstance("Site", literal("North")).build(),
+        ElementInstanceArtifact.builder().withSingleInstanceFieldInstance("Site", literal("South")).build()))
+      .build();
+    ObjectNode document = new JsonArtifactRenderer().renderTemplateInstanceArtifact(template, built);
+    ((ObjectNode) document.at("/Note")).putNull(key);
+    ((ObjectNode) document.at("/Address/Street")).putNull(key);
+    ((ObjectNode) document.at("/Visits/0/Site")).putNull(key);
+    return new JsonArtifactReader().readTemplateInstanceArtifact(document);
+  }
+
+  private static ObjectNode writtenNested(List<String> required, String key)
+  {
+    TemplateSchemaArtifact template = nestedStoredTemplate(required);
+    return new JsonArtifactRenderer().renderTemplateInstanceArtifact(template, nestedStoredInstance(template, key));
+  }
+
+  @ParameterizedTest(name = "{0}") @ValueSource(strings = { "rdfs:label", "skos:notation", "skos:prefLabel", "@language" })
+  public void keepsAStatedNullOfEachKeyAtEveryDepth(String key)
+  {
+    ObjectNode document = writtenNested(NULLABLE_KEYS, key);
+
+    for (String path : List.of("/Note", "/Address/Street", "/Visits/0/Site")) {
+      assertEquals(List.of("@value", key), keys(document.at(path)), path);
+      assertTrue(document.at(path).get(key).isNull(), path);
+    }
+    // The second visit stated no null, so it gains none.
+    assertEquals(List.of("@value"), keys(document.at("/Visits/1/Site")));
+  }
+
+  @ParameterizedTest(name = "{0}") @ValueSource(strings = { "rdfs:label", "skos:notation", "skos:prefLabel", "@language" })
+  public void dropsAStatedNullOfEachKeyAtEveryDepthTheTemplateDoesNotRequire(String key)
+  {
+    List<String> others = NULLABLE_KEYS.stream().filter(other -> !other.equals(key)).toList();
+    ObjectNode document = writtenNested(others, key);
+
+    for (String path : List.of("/Note", "/Address/Street", "/Visits/0/Site"))
+      assertEquals(List.of("@value"), keys(document.at(path)), path);
   }
 
   @Test public void aStatedNullChangesNeitherTheModelNorItsEquality()
