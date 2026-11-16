@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model;
 
+import org.metadatacenter.artifacts.model.reader.Refusals;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -109,7 +110,8 @@ public class AttributeValuePropertyIriYamlTest
           value: "plain"
           propertyIri: "https://schema.metadatacenter.org/properties/text"
       """;
-    assertThrows(RuntimeException.class, () -> readYaml(yaml), "a field's IRI is its template's, not the instance's");
+    // A field's IRI is its template's, not the instance's, so the YAML form has no key for it.
+    assertEquals("propertyIri at /Text", Refusals.keyAndPath(() -> readYaml(yaml)));
   }
 
   private static TemplateInstanceArtifact readJson(String json) throws Exception

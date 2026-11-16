@@ -379,7 +379,7 @@ public class JsonArtifactReaderNegativePathsTest
     node.put(SCHEMA_ORG_NAME, "Inst");
     node.put(SCHEMA_ORG_DESCRIPTION, "d");
 
-    assertThrows(Exception.class, () -> reader.readTemplateInstanceArtifact(node));
+    assertEquals(SCHEMA_IS_BASED_ON + " at ", Refusals.keyAndPath(() -> reader.readTemplateInstanceArtifact(node)));
   }
 
   @Test public void testReadTemplateInstanceRejectsDuplicateAttributeValueName()
@@ -400,7 +400,7 @@ public class JsonArtifactReaderNegativePathsTest
     ObjectNode node = baseElement("E", "d");
     node.remove(JSON_SCHEMA_PROPERTIES);
 
-    assertThrows(ArtifactParseException.class, () -> reader.readElementSchemaArtifact(node));
+    assertEquals(JSON_SCHEMA_PROPERTIES + " at ", Refusals.keyAndPath(() -> reader.readElementSchemaArtifact(node)));
   }
 
   // ---- JsonNodeReaders helper rejections ----
@@ -410,7 +410,7 @@ public class JsonArtifactReaderNegativePathsTest
     ObjectNode node = mapper.createObjectNode();
     node.put("uri", 42);
 
-    assertThrows(Exception.class, () -> JsonNodeReaders.readUri(node, "/", "uri"));
+    assertEquals("uri at /", Refusals.keyAndPath(() -> JsonNodeReaders.readUri(node, "/", "uri")));
   }
 
   @Test public void testReadIntegerRejectsStringFormattedNumber()
@@ -438,7 +438,7 @@ public class JsonArtifactReaderNegativePathsTest
     ObjectNode node = mapper.createObjectNode();
     node.put("ts", "not-a-date");
 
-    assertThrows(Exception.class, () -> JsonNodeReaders.readOffsetDateTime(node, "/", "ts"));
+    assertEquals("ts at /", Refusals.keyAndPath(() -> JsonNodeReaders.readOffsetDateTime(node, "/", "ts")));
   }
 
   // ---- JSON shape robustness ----

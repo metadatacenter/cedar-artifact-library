@@ -741,7 +741,9 @@ public class JsonArtifactRoundTripTest
     assertFalse(report.canSave());
     assertTrue(report.getFindings().stream().anyMatch(finding -> finding.code().equals("regex")
       && finding.path().equals("/properties/Text Field 1/_valueConstraints/defaultValue")));
-    assertThrows(RuntimeException.class, () -> artifactReader.readTemplateSchemaArtifact(original));
+    IllegalStateException refusal = assertThrows(IllegalStateException.class,
+      () -> artifactReader.readTemplateSchemaArtifact(original));
+    assertEquals("Does not match ^[A-Z][^A-Z]*$.", refusal.getMessage());
   }
 
   @Test public void testRoundTripTemplate009()
@@ -927,7 +929,9 @@ public class JsonArtifactRoundTripTest
     assertFalse(report.canSave());
     assertTrue(report.getFindings().stream().anyMatch(finding -> finding.code().equals("regex")
       && finding.path().equals("/_valueConstraints/defaultValue")));
-    assertThrows(RuntimeException.class, () -> artifactReader.readFieldSchemaArtifact(original));
+    IllegalStateException refusal = assertThrows(IllegalStateException.class,
+      () -> artifactReader.readFieldSchemaArtifact(original));
+    assertEquals("Does not match regex.", refusal.getMessage());
   }
 
   @Test public void testRoundTripStandaloneField()
