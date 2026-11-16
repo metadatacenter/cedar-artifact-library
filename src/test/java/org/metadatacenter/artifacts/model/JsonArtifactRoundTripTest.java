@@ -676,22 +676,26 @@ public class JsonArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
   }
 
-  @Test public void testRADxInstanceAgainstTemplate()
+  @Test public void testRADxInstanceAgainstTemplate() throws Exception
   {
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
 
     assertTrue(validateJsonSchema(templateNode, instanceNode));
+    ValidationReport report = cedarModelValidator.validateTemplateInstance(instanceNode, templateNode);
+    assertEquals("true", report.getValidationStatus(), report.getErrors().toString());
   }
 
-  @Test public void testRADx2InstanceAgainstTemplate()
+  @Test public void testRADx2InstanceAgainstTemplate() throws Exception
   {
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADx2.0CLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADx2.0CLIGeneratedInstance.json");
 
     assertTrue(validateJsonSchema(templateNode, instanceNode));
+    ValidationReport report = cedarModelValidator.validateTemplateInstance(instanceNode, templateNode);
+    assertEquals("true", report.getValidationStatus(), report.getErrors().toString());
   }
 
   @Test public void testRoundTripInstanceWithNestedAttributeValues()
@@ -1127,8 +1131,7 @@ public class JsonArtifactRoundTripTest
   {
     try {
       JsonSchema schema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
-      schema.validate(instanceNode);
-      return true;
+      return schema.validate(instanceNode).isEmpty();
     } catch (RuntimeException e) {
       return false;
     }

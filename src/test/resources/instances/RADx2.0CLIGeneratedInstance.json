@@ -93,9 +93,13 @@
   "Data File Related Resources": [
     {
       "@id": "https://repo.metadatacenter.org/template-element-instances/659558f1-1d4d-4fe7-ba97-c1a492405472",
-      "Related Resource Identifier": {},
+      "Related Resource Identifier": {
+        "@value": null
+      },
       "Related Resource Identifier Type": {},
-      "Related Resource File Name": {},
+      "Related Resource File Name": {
+        "@value": null
+      },
       "Related Resource Type Category": {
         "@id": "https://w3id.org/gdmt/Text",
         "rdfs:label": "Text"
@@ -166,7 +170,9 @@
         "@id": "https://w3id.org/gdmt/CCBYSA4.0",
         "rdfs:label": "CC BY-SA 4.0"
       },
-      "License Text": {},
+      "License Text": {
+        "@value": null
+      },
       "@context": {
         "License Text": "https://w3id.org/radx/radmo/licenseText",
         "License Name": "https://w3id.org/radx/radmo/licenseName"
@@ -181,7 +187,7 @@
         "rdfs:label": "Created"
       },
       "Date": {
-        "@value": "2022-11-23T01:23:45.678-07:00",
+        "@value": "2022-11-23",
         "@type": "http://www.w3.org/2001/XMLSchema#date"
       },
       "@context": {
@@ -203,11 +209,11 @@
         "@value": "NHLBI GO-ESP: Lung Cohorts Exome Sequencing Project (COPDGene)"
       },
       "Study Start Date": {
-        "@value": "10/5/21",
+        "@value": "2021-10-05",
         "@type": "http://www.w3.org/2001/XMLSchema#date"
       },
       "Study End Date": {
-        "@value": "10/5/22",
+        "@value": "2022-10-05",
         "@type": "http://www.w3.org/2001/XMLSchema#date"
       },
       "@context": {
@@ -249,17 +255,33 @@
   "Data File Distributions": [
     {
       "@id": "https://repo.metadatacenter.org/template-element-instances/92eacc24-904d-4144-bac5-d56e9161e458",
-      "Distribution Publisher": {},
+      "Distribution Publisher": {
+        "@value": null
+      },
       "Distribution Publisher Identifier": {},
-      "Distribution Identifier": {},
+      "Distribution Identifier": {
+        "@value": null
+      },
       "Distribution Identifier Type": {},
-      "Distribution Format": {},
+      "Distribution Format": {
+        "@value": null
+      },
       "Distribution Media Type": {},
-      "Distribution Size": {},
-      "Distribution Access Protocol": {},
-      "Distribution Access Configuration": {},
-      "Distribution Query Statement": {},
-      "Data File Publication Date": {},
+      "Distribution Size": {
+        "@value": null
+      },
+      "Distribution Access Protocol": {
+        "@value": null
+      },
+      "Distribution Access Configuration": {
+        "@value": null
+      },
+      "Distribution Query Statement": {
+        "@value": null
+      },
+      "Data File Publication Date": {
+        "@value": null
+      },
       "Publication Date Type": {
         "@value": "[Published](https://w3id.org/gdmt/Published)"
       },
@@ -281,12 +303,17 @@
   ],
   "Data Characteristics Summary": {
     "@id": "https://repo.metadatacenter.org/template-element-instances/cd6842b5-d151-4ab1-8d59-0cb762cfa73d",
-    "Data Characteristics Table in HTML": {},
-    "Data Characteristics Table in CSV": {},
-    "Data Characteristics Table in TSV": {},
+    "Data Characteristics Table in HTML": {
+      "@value": null
+    },
+    "Data Characteristics Table in CSV": {
+      "@value": null
+    },
+    "Data Characteristics Table in TSV": {
+      "@value": null
+    },
     "Data Characteristics Table in Key-Value Pairs": [],
     "@context": {
-      "Data Characteristics Table in Key-Value Pairs": "https://w3id.org/radx/radmo/dataCharacteristicsTableInKeyValuePairs",
       "Data Characteristics Table in HTML": "https://w3id.org/radx/radmo/dataCharacteristicsTableInHtml",
       "Data Characteristics Table in TSV": "https://w3id.org/radx/radmo/dataCharacteristicsTableInTsv",
       "Data Characteristics Table in CSV": "https://w3id.org/radx/radmo/dataCharacteristicsTableInCsv"
@@ -295,8 +322,12 @@
   "Data Sources": [
     {
       "@id": "https://repo.metadatacenter.org/template-element-instances/98453162-5096-43c9-b412-a8e503c0ff7c",
-      "Data Source Name": {},
-      "Data Source Identifier": {},
+      "Data Source Name": {
+        "@value": null
+      },
+      "Data Source Identifier": {
+        "@value": null
+      },
       "@context": {
         "Data Source Identifier": "https://w3id.org/radx/radmo/dataSourceIdentifier",
         "Data Source Name": "https://w3id.org/radx/radmo/dataSourceName"
@@ -306,12 +337,20 @@
   "Data Streams": [
     {
       "@id": "https://repo.metadatacenter.org/template-element-instances/02c2fe59-7c5e-48ec-9876-3d5a3d78e7ba",
-      "Data Stream Name": {},
-      "Data Stream Identifier": {},
+      "Data Stream Name": {
+        "@value": null
+      },
+      "Data Stream Identifier": {
+        "@value": null
+      },
       "Data Stream Variable Names": [
-        {}
+        {
+          "@value": null
+        }
       ],
-      "Data Stream Data Source Identifier": {},
+      "Data Stream Data Source Identifier": {
+        "@value": null
+      },
       "@context": {
         "Data Stream Variable Names": "https://w3id.org/radx/radmo/dataStreamVariableName",
         "Data Stream Name": "https://w3id.org/radx/radmo/dataStreamName",
@@ -323,10 +362,18 @@
   "Data File Creation Processes": [
     {
       "@id": "https://repo.metadatacenter.org/template-element-instances/a7b55c1b-41a7-4d07-af5f-462d0db79088",
-      "Process Name": {},
-      "Process IRI": {},
-      "Process Version": {},
-      "Process Execution Identifier": {},
+      "Process Name": {
+        "@value": null
+      },
+      "Process IRI": {
+        "@value": null
+      },
+      "Process Version": {
+        "@value": null
+      },
+      "Process Execution Identifier": {
+        "@value": null
+      },
       "@context": {
         "Process IRI": "https://w3id.org/radx/radmo/creationProcessIri",
         "Process Version": "https://w3id.org/radx/radmo/creationProcessVersion",
@@ -339,11 +386,11 @@
     {
       "@id": "https://repo.metadatacenter.org/template-element-instances/8e660189-4f49-43b0-bf9b-c81ec1409577",
       "Temporal Extent Minimum Value": {
-        "@value": "6/1/22",
+        "@value": "2022-06-01",
         "@type": "http://www.w3.org/2001/XMLSchema#date"
       },
       "Temporal Extent Maximum Value": {
-        "@value": "6/29/22",
+        "@value": "2022-06-29",
         "@type": "http://www.w3.org/2001/XMLSchema#date"
       },
       "Temporal Resolution": {
@@ -457,10 +504,11 @@
     "@id": "https://repo.metadatacenter.org/template-element-instances/1f6d7809-09c4-4a0c-af82-0cb1fc04eccb",
     "Data File Descriptive Key-Value Pairs": [],
     "Additional Commentary": [
-      {}
+      {
+        "@value": null
+      }
     ],
     "@context": {
-      "Data File Descriptive Key-Value Pairs": "https://w3id.org/radx/radmo/auxiliaryMetadataKeyValuePair",
       "Additional Commentary": "https://w3id.org/radx/radmo/auxiliaryMetadataCommentary"
     }
   },
