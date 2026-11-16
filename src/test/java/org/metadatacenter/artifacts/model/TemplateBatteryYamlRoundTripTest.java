@@ -48,10 +48,11 @@ import static org.junit.jupiter.api.Assertions.fail;
  * each side is therefore exercised against its complement on the other side, and
  * any drift in either direction surfaces here.
  *
- * <p>Structural equality is computed by {@link Map#equals(Object)} on the
- * top-level {@code LinkedHashMap}s, which is order-independent for keys and
- * order-dependent for list elements — both of which match CEDAR's data model
- * (key insertion order is rendering-only; child ordering is semantic).
+ * <p>Structural equality is a walk of both trees that ignores key order and keeps list
+ * order — key insertion order is rendering-only, and child ordering is semantic. Two
+ * numbers are equal when both are whole or both are not, and their exact decimal values
+ * are equal, so an Integer that comes back as a Long passes while {@code 1} that comes
+ * back as {@code 1.0}, or a large bound that comes back rounded, does not.
  *
  * <p>Sister tests:
  * <ul>
@@ -142,9 +143,8 @@ public class TemplateBatteryYamlRoundTripTest
 
     LinkedHashMap<String, Object> regeneratedYamlMap = yamlRenderer.renderTemplateSchemaArtifact(fromJson);
 
-    // Walk both trees and find the first structural difference (if any). The walk
-    // applies numeric-value equality across Number subtypes, so Integer 0 and Long 0
-    // are treated as equal — they represent the same value in CEDAR's data model.
+    // Walk both trees and find the first structural difference (if any). Numbers compare
+    // with BatteryNumbers, so Integer 0 and Long 0 are equal and 1 and 1.0 are not.
     String diff = describeFirstDifference("", originalYamlMap, regeneratedYamlMap);
     if (diff != null) {
       failures.add(displayName + " — structural diff: " + diff);
@@ -219,12 +219,10 @@ public class TemplateBatteryYamlRoundTripTest
       return null;
     }
 
-    // Number subtypes (Integer, Long, Double, ...) compare by numeric value, not by
-    // class. The CEDAR data model doesn't distinguish Integer 0 from Long 0; the JSON
-    // Schema round-trip can widen Integer to Long depending on the reader.
-    if (a instanceof Number && b instanceof Number) {
-      if (Double.compare(((Number) a).doubleValue(), ((Number) b).doubleValue()) == 0)
-        return null;
+    // A whole number may come back as another integral class, but keeps its spelling and exact value.
+    if (a instanceof Number x && b instanceof Number y) {
+      String numberDifference = BatteryNumbers.difference(x, y);
+      return numberDifference == null ? null : path + " (" + numberDifference + ")";
     }
     if (!a.equals(b))
       return path + " (value differs: original=" + summarize(a) + " <" + a.getClass().getSimpleName()

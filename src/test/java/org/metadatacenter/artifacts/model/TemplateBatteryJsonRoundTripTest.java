@@ -172,8 +172,8 @@ public class TemplateBatteryJsonRoundTripTest
   }
 
   // -----------------------------------------------------------------------
-  // diff helper — same shape as TemplateBatteryYamlRoundTripTest. Number subtypes
-  // compare by numeric value.
+  // diff helper — same shape as TemplateBatteryYamlRoundTripTest. Numbers compare by
+  // BatteryNumbers: exact value, and integral or not.
   // -----------------------------------------------------------------------
 
   @SuppressWarnings("unchecked")
@@ -213,9 +213,9 @@ public class TemplateBatteryJsonRoundTripTest
       return null;
     }
 
-    if (a instanceof Number && b instanceof Number) {
-      if (Double.compare(((Number) a).doubleValue(), ((Number) b).doubleValue()) == 0)
-        return null;
+    if (a instanceof Number x && b instanceof Number y) {
+      String numberDifference = BatteryNumbers.difference(x, y);
+      return numberDifference == null ? null : path + " (" + numberDifference + ")";
     }
     if (!a.equals(b))
       return path + " (value differs: original=" + summarize(a) + " <" + a.getClass().getSimpleName()
