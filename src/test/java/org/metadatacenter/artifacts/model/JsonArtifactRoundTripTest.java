@@ -1121,14 +1121,10 @@ public class JsonArtifactRoundTripTest
     }
   }
 
+  /** Whether a rendering is a JSON Schema: valid against the draft-04 meta-schema, not merely compilable. */
   private boolean validateJsonSchema(ObjectNode schemaNode)
   {
-    try {
-      JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
-      return true;
-    } catch (RuntimeException e) {
-      return false;
-    }
+    return JsonSchemaMetaSchema.violations(schemaNode).isEmpty();
   }
 
   private boolean validateJsonSchema(ObjectNode schemaNode, ObjectNode instanceNode)

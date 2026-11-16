@@ -8,6 +8,7 @@ import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metadatacenter.artifacts.model.JsonSchemaMetaSchema;
 import org.metadatacenter.artifacts.model.core.ControlledTermField;
 import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.FieldInstanceArtifact;
@@ -562,14 +563,10 @@ public class JsonArtifactRendererTest
     // Similar test for renderFieldSchemaArtifact() if needed
   }
 
+  /** Whether a rendering is a JSON Schema: valid against the draft-04 meta-schema, not merely compilable. */
   private boolean validateJsonSchema(ObjectNode schemaNode)
   {
-    try {
-      JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
-      return true;
-    } catch (RuntimeException e) {
-      return false;
-    }
+    return JsonSchemaMetaSchema.violations(schemaNode).isEmpty();
   }
 
   private boolean validateJsonSchema(ObjectNode schemaNode, ObjectNode instanceNode)
