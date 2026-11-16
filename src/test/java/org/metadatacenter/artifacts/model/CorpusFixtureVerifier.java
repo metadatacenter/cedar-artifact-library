@@ -18,6 +18,10 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
@@ -68,8 +72,66 @@ public final class CorpusFixtureVerifier
                            String exceptionMessage, String reason) {}
 
   record VerificationResult(int checked, List<String> stale, List<String> expectedRejections,
-                            List<String> problems) {
+                            List<String> problems, Map<String, Set<SourceRenderingComparison.Family>> shown,
+                            Map<String, List<String>> unexplained) {
     boolean successful(boolean write) { return problems.isEmpty() && (write || stale.isEmpty()); }
+  }
+
+  /** What corpus-source-rendering.json declares: the cases showing each family, and the differences recorded by case. */
+  record SourceRenderingDeclarations(Map<String, Set<SourceRenderingComparison.Family>> families,
+                                     Map<String, List<String>> recorded) {}
+
+  static SourceRenderingDeclarations sourceRenderingDeclarations() throws IOException
+  {
+    try (var input = CorpusFixtureVerifier.class.getResourceAsStream("/concordance/corpus-source-rendering.json")) {
+      if (input == null) throw new IOException("Missing corpus source rendering declarations");
+      var root = new ObjectMapper().readTree(input);
+      Map<String, Set<SourceRenderingComparison.Family>> families = new TreeMap<>();
+      root.path("families").fields().forEachRemaining(entry -> entry.getValue().forEach(id -> families
+        .computeIfAbsent(id.asText(), any -> EnumSet.noneOf(SourceRenderingComparison.Family.class))
+        .add(SourceRenderingComparison.Family.of(entry.getKey()))));
+      if (families.values().stream().anyMatch(f -> f.contains(SourceRenderingComparison.Family.SCHEMA_TEXT)))
+        throw new IOException("schemaText is allowed everywhere and declared nowhere");
+      Map<String, List<String>> recorded = new TreeMap<>();
+      root.path("recorded").fields().forEachRemaining(entry -> {
+        if (entry.getValue().path("reason").asText().isBlank())
+          throw new IllegalArgumentException("No reason given for the differences recorded for " + entry.getKey());
+        List<String> paths = new ArrayList<>();
+        entry.getValue().path("paths").forEach(path -> paths.add(path.asText()));
+        recorded.put(entry.getKey(), paths);
+      });
+      return new SourceRenderingDeclarations(families, recorded);
+    }
+  }
+
+  /**
+   * Each schema artifact's source, compared with the JSON this library writes from it, may differ only in the
+   * normalizations corpus-source-rendering.json declares for that case and the differences it records for it.
+   * A case showing an undeclared family or an unrecorded difference fails, and so does one that stops showing
+   * a declared family or a recorded difference.
+   */
+  static List<String> sourceRenderingProblems(VerificationResult result, SourceRenderingDeclarations declared)
+  {
+    List<String> problems = new ArrayList<>();
+    Set<String> cases = new TreeSet<>(result.shown().keySet());
+    cases.addAll(result.unexplained().keySet());
+    cases.addAll(declared.families().keySet());
+    cases.addAll(declared.recorded().keySet());
+    for (String id : cases) {
+      Set<SourceRenderingComparison.Family> shown = result.shown().getOrDefault(id, Set.of());
+      Set<SourceRenderingComparison.Family> expected = declared.families().getOrDefault(id, Set.of());
+      if (!shown.equals(expected))
+        problems.add(id + ": shows " + shown.stream().map(SourceRenderingComparison.Family::key).sorted().toList()
+          + " where corpus-source-rendering.json declares "
+          + expected.stream().map(SourceRenderingComparison.Family::key).sorted().toList());
+      List<String> unexplained = result.unexplained().getOrDefault(id, List.of());
+      List<String> recorded = declared.recorded().getOrDefault(id, List.of());
+      unexplained.stream().filter(d -> recorded.stream().noneMatch(path -> d.startsWith(path + ":"))).limit(8)
+        .forEach(d -> problems.add(id + ": its source and its JSON rendering differ at " + d));
+      recorded.stream().filter(path -> unexplained.stream().noneMatch(d -> d.startsWith(path + ":")))
+        .forEach(path -> problems.add(id + ": recorded difference at " + path + " is no longer shown"));
+    }
+    return problems;
   }
 
   static Map<String, ExpectedRejection> expectedRejections() throws IOException
@@ -169,6 +231,7 @@ public final class CorpusFixtureVerifier
 
     var result = verify(corpus, write, expectedRejections(), expectedUnparseable());
     result.problems().addAll(inventoryProblems(artifacts));
+    result.problems().addAll(sourceRenderingProblems(result, sourceRenderingDeclarations()));
     System.out.printf("corpus fixtures checked: %d   %s: %d   verified expected rejections: %d   problems: %d%n",
       result.checked(), write ? "rewritten" : "stale", result.stale().size(), result.expectedRejections().size(),
       result.problems().size());
@@ -205,6 +268,8 @@ public final class CorpusFixtureVerifier
   {
     Path artifacts = corpus.resolve("artifacts");
     List<String> stale = new ArrayList<>(), rejected = new ArrayList<>(), problems = new ArrayList<>();
+    Map<String, Set<SourceRenderingComparison.Family>> shown = new TreeMap<>();
+    Map<String, List<String>> unexplained = new TreeMap<>();
     var missing = new HashSet<>(expectations.keySet());
     var unlistedUnparseable = new HashSet<>(unparseable.keySet());
     int checked = 0;
@@ -243,6 +308,8 @@ public final class CorpusFixtureVerifier
             YamlSerializer.getYAML(artifact, true, true), stale, problems, write);
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"),
             renderJson(kind, artifact), stale, problems, write);
+          if (kind != Kind.INSTANCES)
+            compareSource(name, bytes, renderJson(kind, artifact), shown, unexplained);
         }
       }
     }
@@ -295,6 +362,8 @@ public final class CorpusFixtureVerifier
               YamlSerializer.getYAML(artifact, true, true), stale, problems, write);
             checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"),
               renderJson(kind, artifact), stale, problems, write);
+            if (kind == Kind.TEMPLATES)
+              compareSource("cee-" + name, Files.readAllBytes(source), renderJson(kind, artifact), shown, unexplained);
           }
         }
       }
@@ -302,7 +371,7 @@ public final class CorpusFixtureVerifier
 
     missing.stream().sorted().forEach(source -> problems.add(source + ": expected-invalid source is missing"));
     unlistedUnparseable.stream().sorted().forEach(source -> problems.add(source + ": unparseable source is missing"));
-    return new VerificationResult(checked, stale, rejected, problems);
+    return new VerificationResult(checked, stale, rejected, problems, shown, unexplained);
   }
 
   /**
@@ -319,6 +388,18 @@ public final class CorpusFixtureVerifier
     stored.set("schema:isBasedOn", template.get("@id"));
     stored.put("schema:name", caseId);
     return stored;
+  }
+
+  private static void compareSource(String id, byte[] source, String rendering,
+    Map<String, Set<SourceRenderingComparison.Family>> shown, Map<String, List<String>> unexplained) throws IOException
+  {
+    var mapper = new ObjectMapper();
+    for (var difference : SourceRenderingComparison.compare(mapper.readTree(source), mapper.readTree(rendering))) {
+      if (difference.family().isEmpty())
+        unexplained.computeIfAbsent(id, any -> new ArrayList<>()).add(difference.toString());
+      else if (difference.family().get() != SourceRenderingComparison.Family.SCHEMA_TEXT)
+        shown.computeIfAbsent(id, any -> EnumSet.noneOf(SourceRenderingComparison.Family.class)).add(difference.family().get());
+    }
   }
 
   /** A pinned definition must keep its bytes, and the reader must refuse it with the pinned exception. */

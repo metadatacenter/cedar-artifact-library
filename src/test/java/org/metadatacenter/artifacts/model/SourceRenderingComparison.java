@@ -37,11 +37,35 @@ final class SourceRenderingComparison
      * {@code @context}, and the value schema of a static field.
      */
     GENERATED_SCHEMA("generatedSchema"),
-    /** A value constraint stated at its default, {@code false} or an empty list, is left out. */
+    /** A value constraint stated at its default, {@code false}, an empty list or an empty default, is left out. */
     DEFAULT_CONSTRAINT_DROPPED("defaultConstraintDropped"),
+    /** A constraint list or flag the model always holds is written at its default where the source omits it. */
+    DEFAULT_CONSTRAINT_ADDED("defaultConstraintAdded"),
+    /** An empty {@code skos:altLabel} list is left out. */
+    EMPTY_LABELS_DROPPED("emptyLabelsDropped"),
+    /** A key the model no longer has, {@code multiValued} or {@code _ui.pages}, is left out. */
+    LEGACY_KEY_DROPPED("legacyKeyDropped"),
+    /** A {@code _ui.hidden} stated as {@code false} is left out. */
+    UI_DEFAULT_DROPPED("uiDefaultDropped"),
+    /** A static field that states no {@code _ui._content} is written with it as null. */
+    STATIC_CONTENT_SUPPLIED("staticContentSupplied"),
+    /** A {@code multipleChoice} stated on a field that offers no choices is left out. */
+    INAPPLICABLE_CONSTRAINT_DROPPED("inapplicableConstraintDropped"),
+    /**
+     * A key stated on the array that wraps a repeated child, rather than on the child in its {@code items},
+     * is left out: the wrapper is JSON Schema, and the model holds the child.
+     */
+    ARRAY_WRAPPER_KEY_DROPPED("arrayWrapperKeyDropped"),
+    /** A template has no preferred label in the model or the template meta-schema, so a stated one is left out. */
+    TEMPLATE_PREF_LABEL_DROPPED("templatePrefLabelDropped"),
+    /** An artifact with no {@code @id} is written with a null one. */
+    NULL_ID_SUPPLIED("nullIdSupplied"),
     /** An empty {@code _ui} description or label entry is left out, and an absent map is written empty. */
     EMPTY_UI_ENTRY_DROPPED("emptyUiEntryDropped"),
-    /** A date field has no time, so its time format and time zone settings are left out. */
+    /**
+     * A date field has no time, so its time format and time zone settings are left out, and a temporal
+     * field's {@code _ui} has no room for value recommendation, so that is left out too.
+     */
     INAPPLICABLE_TEMPORAL_UI("inapplicableTemporalUi"),
     /** An {@code _ui.order} entry that names no child is left out. */
     DANGLING_ORDER_ENTRY("danglingOrderEntry");
@@ -126,6 +150,8 @@ final class SourceRenderingComparison
       return Optional.of(Family.GENERATED_SCHEMA);
     if (isStaticField(parent) && (key.equals("properties") || key.equals("@context")))
       return Optional.of(Family.GENERATED_SCHEMA);
+    if (key.equals("properties") && parent.path("_ui").path("inputType").asText().equals("attribute-value"))
+      return Optional.of(Family.GENERATED_SCHEMA);
 
     if (parentKey.equals("_valueConstraints") && rendering == null && isDefault(source))
       return Optional.of(Family.DEFAULT_CONSTRAINT_DROPPED);
@@ -144,6 +170,36 @@ final class SourceRenderingComparison
       && grandparentObject(ancestors).map(field -> field.path("_valueConstraints").path("temporalType").asText())
       .orElse("").equals("xsd:date"))
       return Optional.of(Family.INAPPLICABLE_TEMPORAL_UI);
+    if (parentKey.equals("_ui") && key.equals("valueRecommendationEnabled") && rendering == null
+      && parent.path("inputType").asText().equals("temporal"))
+      return Optional.of(Family.INAPPLICABLE_TEMPORAL_UI);
+
+    if (parentKey.equals("_valueConstraints") && key.equals("defaultValue") && rendering == null && isText(source)
+      && source.asText().isEmpty())
+      return Optional.of(Family.DEFAULT_CONSTRAINT_DROPPED);
+    if (parentKey.equals("_valueConstraints") && source == null && isDefault(rendering))
+      return Optional.of(Family.DEFAULT_CONSTRAINT_ADDED);
+    if (key.equals("skos:altLabel") && rendering == null && source instanceof ArrayNode labels && labels.isEmpty())
+      return Optional.of(Family.EMPTY_LABELS_DROPPED);
+    if ((key.equals("multiValued") || (parentKey.equals("_ui") && key.equals("pages"))) && rendering == null)
+      return Optional.of(Family.LEGACY_KEY_DROPPED);
+    if (parentKey.equals("_ui") && key.equals("hidden") && rendering == null && isDefault(source))
+      return Optional.of(Family.UI_DEFAULT_DROPPED);
+    if (parentKey.equals("_ui") && key.equals("_content") && source == null && rendering != null && rendering.isNull()
+      && grandparentObject(ancestors).map(SourceRenderingComparison::isStaticField).orElse(false))
+      return Optional.of(Family.STATIC_CONTENT_SUPPLIED);
+    if (parentKey.equals("_valueConstraints") && key.equals("multipleChoice") && rendering == null
+      && !Set.of("checkbox", "list", "radio").contains(grandparentObject(ancestors)
+      .map(field -> field.path("_ui").path("inputType").asText()).orElse("")))
+      return Optional.of(Family.INAPPLICABLE_CONSTRAINT_DROPPED);
+    if (rendering == null && parent.path("type").asText().equals("array") && parent.has("items")
+      && !Set.of("type", "minItems", "maxItems", "items").contains(key))
+      return Optional.of(Family.ARRAY_WRAPPER_KEY_DROPPED);
+    if (at.size() == 1 && key.equals("skos:prefLabel") && rendering == null
+      && parent.path("@type").asText().endsWith("/Template"))
+      return Optional.of(Family.TEMPLATE_PREF_LABEL_DROPPED);
+    if (key.equals("@id") && source == null && rendering != null && rendering.isNull() && parent.has("$schema"))
+      return Optional.of(Family.NULL_ID_SUPPLIED);
 
     if (parentKey.equals("_ui") && key.equals("order") && source instanceof ArrayNode order && rendering instanceof ArrayNode kept) {
       JsonNode children = grandparentObject(ancestors).map(artifact -> artifact.path("properties")).orElse(null);
@@ -173,7 +229,7 @@ final class SourceRenderingComparison
     return node.has("$schema") || node.has("properties") || node.has("type");
   }
 
-  private static boolean isStaticField(ObjectNode node)
+  private static boolean isStaticField(JsonNode node)
   {
     return node.path("@type").asText().endsWith("/StaticTemplateField");
   }
