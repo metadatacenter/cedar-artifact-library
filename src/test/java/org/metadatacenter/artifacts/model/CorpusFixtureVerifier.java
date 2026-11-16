@@ -92,6 +92,49 @@ public final class CorpusFixtureVerifier
     return result;
   }
 
+  /** The sources, by path below {@code artifacts}, that are not JSON on purpose, with the reason. */
+  static Map<String, String> expectedUnparseable() throws IOException
+  {
+    var result = new LinkedHashMap<String, String>();
+    try (var input = CorpusFixtureVerifier.class.getResourceAsStream("/concordance/corpus-expected-rejections.json")) {
+      if (input == null) throw new IOException("Missing expected-rejection metadata");
+      for (var row : new ObjectMapper().readTree(input).path("unparseable")) {
+        String source = row.path("source").asText(), reason = row.path("reason").asText();
+        if (source.isBlank() || reason.isBlank() || result.putIfAbsent(source, reason) != null)
+          throw new IOException("Invalid unparseable-source metadata for " + source);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * How many cases each collection holds, as {@code /concordance/corpus-inventory.json} records it. A case
+   * removed from the corpus removes it from this check and from the TypeScript comparisons, so a count that
+   * differs from the record fails until the record is changed with the corpus.
+   */
+  static List<String> inventoryProblems(Path artifacts) throws IOException
+  {
+    List<String> problems = new ArrayList<>();
+    try (var input = CorpusFixtureVerifier.class.getResourceAsStream("/concordance/corpus-inventory.json")) {
+      if (input == null) throw new IOException("Missing corpus inventory");
+      var counts = new ObjectMapper().readTree(input).path("caseCounts");
+      var names = new ArrayList<String>();
+      counts.fieldNames().forEachRemaining(names::add);
+      for (String collection : names) {
+        Path directory = artifacts.resolve(collection);
+        long found = 0;
+        if (Files.isDirectory(directory))
+          try (var cases = Files.list(directory)) { found = cases.filter(Files::isDirectory).count(); }
+        if (found != counts.get(collection).asLong())
+          problems.add(collection + ": " + found + " cases, where corpus-inventory.json records "
+            + counts.get(collection).asLong() + "; change the record with the corpus");
+      }
+      for (String collection : List.of("fields", "elements", "templates", "instances", "cee-suite"))
+        if (!names.contains(collection)) problems.add(collection + ": no count in corpus-inventory.json");
+    }
+    return problems;
+  }
+
   /** The artifact kinds the corpus holds, by directory, with the reader each one needs. */
   private enum Kind
   {
@@ -124,7 +167,8 @@ public final class CorpusFixtureVerifier
       System.exit(2);
     }
 
-    var result = verify(corpus, write, expectedRejections());
+    var result = verify(corpus, write, expectedRejections(), expectedUnparseable());
+    result.problems().addAll(inventoryProblems(artifacts));
     System.out.printf("corpus fixtures checked: %d   %s: %d   verified expected rejections: %d   problems: %d%n",
       result.checked(), write ? "rewritten" : "stale", result.stale().size(), result.expectedRejections().size(),
       result.problems().size());
@@ -149,9 +193,20 @@ public final class CorpusFixtureVerifier
   static VerificationResult verify(Path corpus, boolean write, Map<String, ExpectedRejection> expectations)
     throws IOException
   {
+    return verify(corpus, write, expectations, Map.of());
+  }
+
+  /**
+   * {@code unparseable} holds the sources, by path below {@code artifacts}, that are not JSON on purpose and
+   * so record no Java rendering. Every other readable case must record all three.
+   */
+  static VerificationResult verify(Path corpus, boolean write, Map<String, ExpectedRejection> expectations,
+    Map<String, String> unparseable) throws IOException
+  {
     Path artifacts = corpus.resolve("artifacts");
     List<String> stale = new ArrayList<>(), rejected = new ArrayList<>(), problems = new ArrayList<>();
     var missing = new HashSet<>(expectations.keySet());
+    var unlistedUnparseable = new HashSet<>(unparseable.keySet());
     int checked = 0;
 
     for (Kind kind : Kind.values()) {
@@ -183,19 +238,18 @@ public final class CorpusFixtureVerifier
           }
 
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.yaml"),
-            YamlSerializer.getYAML(artifact, false, true), stale, write);
+            YamlSerializer.getYAML(artifact, false, true), stale, problems, write);
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.compact.yaml"),
-            YamlSerializer.getYAML(artifact, true, true), stale, write);
+            YamlSerializer.getYAML(artifact, true, true), stale, problems, write);
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"),
-            renderJson(kind, artifact), stale, write);
+            renderJson(kind, artifact), stale, problems, write);
         }
       }
     }
 
     // Each CEE suite case holds a template and often an instance, and its Java renderings are checked as
-    // the numbered collections' are. A template this library refuses is pinned like a numbered one. A case
-    // the corpus records no Java rendering for is otherwise not read, which leaves out the instance of a
-    // refused template and the template that is malformed on purpose.
+    // the numbered collections' are. A template this library refuses is pinned like a numbered one, and a
+    // template that is malformed on purpose is listed as unparseable; every other case records all three.
     Path suite = artifacts.resolve("cee-suite");
     if (Files.isDirectory(suite)) {
       try (var cases = Files.list(suite)) {
@@ -212,11 +266,18 @@ public final class CorpusFixtureVerifier
                 checkExpectedRejection(kind, relative, Files.readAllBytes(source), expected, rejected, problems);
               continue;
             }
-            boolean rendered = Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"))
-              || Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.yaml"))
-              || Files.isRegularFile(caseDirectory.resolve(name + "-generated-java-artifact-lib.compact.yaml"));
-            if (!Files.isRegularFile(source) || !rendered)
+            if (!Files.isRegularFile(source))
               continue;
+            if (unparseable.containsKey(relative)) {
+              unlistedUnparseable.remove(relative);
+              try {
+                parse(Files.readString(source));
+                problems.add(relative + ": listed as unparseable, but it is JSON now");
+              } catch (IllegalArgumentException notJson) {
+                rejected.add(relative + ": not JSON — " + unparseable.get(relative));
+              }
+              continue;
+            }
             Artifact artifact;
             try {
               ObjectNode json = parse(Files.readString(source));
@@ -225,21 +286,22 @@ public final class CorpusFixtureVerifier
                   "cee-" + name);
               artifact = read(kind, json.toString());
             } catch (Exception e) {
-              problems.add(relative + ": " + e.getClass().getSimpleName() + ": " + e.getMessage() + " (its Java renderings are committed)");
+              problems.add(relative + ": " + e.getClass().getSimpleName() + ": " + e.getMessage() + " (neither pinned nor listed as unparseable)");
               continue;
             }
             checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.yaml"),
-              YamlSerializer.getYAML(artifact, false, true), stale, write);
+              YamlSerializer.getYAML(artifact, false, true), stale, problems, write);
             checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.compact.yaml"),
-              YamlSerializer.getYAML(artifact, true, true), stale, write);
+              YamlSerializer.getYAML(artifact, true, true), stale, problems, write);
             checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"),
-              renderJson(kind, artifact), stale, write);
+              renderJson(kind, artifact), stale, problems, write);
           }
         }
       }
     }
 
     missing.stream().sorted().forEach(source -> problems.add(source + ": expected-invalid source is missing"));
+    unlistedUnparseable.stream().sorted().forEach(source -> problems.add(source + ": unparseable source is missing"));
     return new VerificationResult(checked, stale, rejected, problems);
   }
 
@@ -306,17 +368,22 @@ public final class CorpusFixtureVerifier
   }
 
   /**
-   * Returns 1 when the fixture was present and compared, 0 when there was nothing to compare.
+   * Returns 1 when the fixture was present and compared, 0 when it is missing, which is a problem: every
+   * readable case records all three Java renderings, and the TypeScript library compares its own output
+   * with each of them, so a missing one would leave both comparisons short without notice.
    *
    * <p>Under {@code write} a fixture that differs is rewritten with what was rendered here, so a
    * regeneration cannot be produced by a different call than the one that judges it stale. Only an
-   * existing fixture is rewritten: which artifacts the corpus records in which forms is the corpus's
-   * business, not this tool's.
+   * existing fixture is rewritten: which cases the corpus records is the corpus's business, not this tool's.
    */
-  private static int compare(Path fixture, String rendered, List<String> stale, boolean write) throws IOException
+  private static int compare(Path fixture, String rendered, List<String> stale, List<String> problems, boolean write)
+    throws IOException
   {
-    if (!Files.isRegularFile(fixture))
+    if (!Files.isRegularFile(fixture)) {
+      problems.add(fixture.getParent().getParent().getFileName() + "/" + fixture.getParent().getFileName() + "/"
+        + fixture.getFileName() + ": missing; every readable case records all three Java renderings");
       return 0;
+    }
     if (!Files.readString(fixture).trim().equals(rendered.trim())) {
       stale.add(fixture.getParent().getParent().getFileName() + "/" + fixture.getParent().getFileName() + "/"
         + fixture.getFileName());

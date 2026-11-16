@@ -36,5 +36,11 @@
       "exceptionMessage": "An integer datatype cannot have decimal places.",
       "reason": "The repeated field Number 2 is an xsd:long that states two decimal places, which an integer cannot have; its _ui.pages is refused as well."
     }
+  ],
+  "unparseable": [
+    {
+      "source": "cee-suite/086/template-086.json",
+      "reason": "Deliberately malformed JSON, which the TypeScript library's CEE reference test holds its reader to refusing."
+    }
   ]
 }
