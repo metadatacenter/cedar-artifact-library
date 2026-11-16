@@ -572,32 +572,29 @@ public class ExcelArtifactRenderer {
     }
   }
 
+  /**
+   * The Excel number format for a numeric field: a fractional type shows the decimal places the field states,
+   * and a unit of measure follows the number as literal text. A field that states neither has an empty
+   * format, which shows a number as Excel's general format does.
+   */
   private String getNumericFormatString(String fieldKey, XsdNumericDatatype numericType,
                                         Optional<Integer> decimalPlaces, Optional<String> unitOfMeasure) {
+    boolean fractional = switch (numericType) {
+      case DECIMAL, DOUBLE, FLOAT -> true;
+      case LONG, INT, SHORT, BYTE -> false;
+    };
     String numericFormatString = "";
 
-    if (numericType == XsdNumericDatatype.DECIMAL) {
-      if (decimalPlaces.isPresent()) {
-        numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      }
-    } else if (numericType == XsdNumericDatatype.DOUBLE) {
-      if (decimalPlaces.isPresent()) {
-        numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      }
-    } else if (numericType == XsdNumericDatatype.FLOAT) {
-      if (decimalPlaces.isPresent()) {
-        numericFormatString += ""; // TODO Handle decimal places in Excel rendering
-      }
-    } else if (numericType == XsdNumericDatatype.LONG) {
-    } else if (numericType == XsdNumericDatatype.INT) {
-    } else if (numericType == XsdNumericDatatype.SHORT) {
-    } else if (numericType == XsdNumericDatatype.BYTE) {
-    } else {
-      throw new RuntimeException("Invalid number type " + numericType + " for numeric field " + fieldKey);
+    if (fractional && decimalPlaces.isPresent()) {
+      int places = decimalPlaces.get();
+      numericFormatString = places == 0 ? "0" : "0." + "0".repeat(places);
     }
 
-    if (unitOfMeasure.isPresent()) {
-      // TODO Handle unit representation in Excel if possible
+    if (unitOfMeasure.isPresent() && !unitOfMeasure.get().isBlank()) {
+      if (numericFormatString.isEmpty())
+        numericFormatString = fractional ? "General" : "0";
+      // A double quote cannot appear inside a quoted literal, so it is closed, escaped and reopened.
+      numericFormatString += "\" " + unitOfMeasure.get().replace("\"", "\"\\\"\"") + "\"";
     }
 
     return numericFormatString;
