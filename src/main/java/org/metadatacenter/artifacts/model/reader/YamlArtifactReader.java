@@ -1688,9 +1688,16 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private Optional<org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks> readLinks(LinkedHashMap<String, Object> entry, String path) {
     if (!entry.containsKey("links")) return Optional.empty();
+    Object links = entry.get("links");
+    // Both keys are part of the links vocabulary whether or not this entry states them, as the TypeScript
+    // reader reads them; the whole mapping is still validated, so another key is refused.
+    if (links instanceof Map<?, ?> stated) {
+      stated.get("landingPage");
+      stated.get("icon");
+    }
     try {
       return Optional.of(org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks.read(
-          new com.fasterxml.jackson.databind.ObjectMapper().valueToTree(entry.get("links"))));
+          new com.fasterxml.jackson.databind.ObjectMapper().valueToTree(links)));
     } catch (IllegalArgumentException e) { throw new ArtifactParseException(e.getMessage(), "links", path); }
   }
 
