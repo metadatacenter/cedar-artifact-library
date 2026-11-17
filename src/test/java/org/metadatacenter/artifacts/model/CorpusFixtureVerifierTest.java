@@ -161,7 +161,7 @@ class CorpusFixtureVerifierTest
     var problems = CorpusFixtureVerifier.inventoryProblems(corpus.resolve("artifacts"));
     assertTrue(problems.stream().anyMatch(problem -> problem.startsWith("fields: 1 cases, where corpus-inventory.json records")),
       problems.toString());
-    assertEquals(5, problems.size(), problems.toString());
+    assertEquals(6, problems.size(), problems.toString());
     assertEquals(Map.of("cee-suite/086/template-086.json",
       "Deliberately malformed JSON, which the TypeScript library's CEE reference test holds its reader to refusing."),
       CorpusFixtureVerifier.expectedUnparseable());

@@ -191,7 +191,7 @@ public final class CorpusFixtureVerifier
           problems.add(collection + ": " + found + " cases, where corpus-inventory.json records "
             + counts.get(collection).asLong() + "; change the record with the corpus");
       }
-      for (String collection : List.of("fields", "elements", "templates", "instances", "cee-suite"))
+      for (String collection : List.of("fields", "elements", "templates", "instances", "element-instances", "cee-suite"))
         if (!names.contains(collection)) problems.add(collection + ": no count in corpus-inventory.json");
     }
     return problems;
@@ -203,7 +203,8 @@ public final class CorpusFixtureVerifier
     FIELDS("fields", "field"),
     ELEMENTS("elements", "element"),
     TEMPLATES("templates", "template"),
-    INSTANCES("instances", "instance");
+    INSTANCES("instances", "instance"),
+    ELEMENT_INSTANCES("element-instances", "element-instance");
 
     private final String directory;
     private final String stem;
@@ -308,7 +309,7 @@ public final class CorpusFixtureVerifier
             YamlSerializer.getYAML(artifact, true, true), stale, problems, write);
           checked += compare(caseDirectory.resolve(name + "-generated-java-artifact-lib.json"),
             renderJson(kind, artifact), stale, problems, write);
-          if (kind != Kind.INSTANCES)
+          if (kind != Kind.INSTANCES && kind != Kind.ELEMENT_INSTANCES)
             compareSource(name, bytes, renderJson(kind, artifact), shown, unexplained);
         }
       }
@@ -431,7 +432,8 @@ public final class CorpusFixtureVerifier
       case FIELDS -> validator.validateTemplateField(source);
       case ELEMENTS -> validator.validateTemplateElement(source);
       case TEMPLATES -> validator.validateTemplate(source);
-      case INSTANCES -> throw new IllegalArgumentException("Instance rejection needs its template; not supported here");
+      case INSTANCES, ELEMENT_INSTANCES ->
+        throw new IllegalArgumentException("Instance rejection needs its template; not supported here");
     };
     var blocking = report.getFindings().stream()
       .filter(finding -> ValidationPolicy.blocksSave(finding, ValidationPolicy.Context.TEMPLATE)).toList();
@@ -482,6 +484,7 @@ public final class CorpusFixtureVerifier
       case ELEMENTS -> reader.readElementSchemaArtifact(parse(json));
       case TEMPLATES -> reader.readTemplateSchemaArtifact(parse(json));
       case INSTANCES -> reader.readTemplateInstanceArtifact(parse(json));
+      case ELEMENT_INSTANCES -> reader.readElementInstanceArtifact(parse(json));
     };
   }
 
@@ -493,6 +496,7 @@ public final class CorpusFixtureVerifier
       case ELEMENTS -> renderer.renderElementSchemaArtifact((org.metadatacenter.artifacts.model.core.ElementSchemaArtifact) artifact);
       case TEMPLATES -> renderer.renderTemplateSchemaArtifact((org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact) artifact);
       case INSTANCES -> renderer.renderTemplateInstanceArtifact((org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact) artifact);
+      case ELEMENT_INSTANCES -> renderer.renderElementInstanceArtifact((org.metadatacenter.artifacts.model.core.ElementInstanceArtifact) artifact);
     };
     return PRETTY_OBJECT_WRITER.writeValueAsString(rendering);
   }

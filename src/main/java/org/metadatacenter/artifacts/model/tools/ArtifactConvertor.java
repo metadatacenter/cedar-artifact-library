@@ -30,14 +30,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Convert a CEDAR artifact between JSON and YAML.
  * <p>
  * The artifact is named either by a file option ({@code -tsf}, {@code -esf}, {@code -fsf},
- * {@code -tif}) or by an IRI option ({@code -tsi}, {@code -esi}, {@code -fsi}, {@code -tii})
+ * {@code -tif}, {@code -eif}) or by an IRI option ({@code -tsi}, {@code -esi}, {@code -fsi}, {@code -tii})
  * naming an artifact on a running CEDAR system.
  * <p>
  * Input and output formats are selected independently: {@code -yif} or {@code -jif} for the
@@ -52,6 +54,7 @@ public class ArtifactConvertor {
   private static final String ELEMENT_SCHEMA_FILE_OPTION = "esf";
   private static final String FIELD_SCHEMA_FILE_OPTION = "fsf";
   private static final String TEMPLATE_INSTANCE_FILE_OPTION = "tif";
+  private static final String ELEMENT_INSTANCE_FILE_OPTION = "eif";
   private static final String TEMPLATE_SCHEMA_IRI_OPTION = "tsi";
   private static final String ELEMENT_SCHEMA_IRI_OPTION = "esi";
   private static final String FIELD_SCHEMA_IRI_OPTION = "fsi";
@@ -71,14 +74,17 @@ public class ArtifactConvertor {
   private static final String APPLICATION_YAML_MEDIA_TYPE = "application/yaml";
 
   /**
-   * The four artifact types the tool converts, each with the command line options that name an
-   * instance of it and the Resource Server path segment under which such instances are served.
+   * The artifact types the tool converts, each with the command line options that name an instance
+   * of it and the Resource Server path segment under which such instances are served. A standalone
+   * element instance is read only from a file: the Resource Server serves none on its own, so it
+   * has no IRI option and no path segment.
    */
   enum ArtifactKind {
     TEMPLATE_SCHEMA(TEMPLATE_SCHEMA_FILE_OPTION, TEMPLATE_SCHEMA_IRI_OPTION, "templates"),
     ELEMENT_SCHEMA(ELEMENT_SCHEMA_FILE_OPTION, ELEMENT_SCHEMA_IRI_OPTION, "template-elements"),
     FIELD_SCHEMA(FIELD_SCHEMA_FILE_OPTION, FIELD_SCHEMA_IRI_OPTION, "template-fields"),
-    TEMPLATE_INSTANCE(TEMPLATE_INSTANCE_FILE_OPTION, TEMPLATE_INSTANCE_IRI_OPTION, "template-instances");
+    TEMPLATE_INSTANCE(TEMPLATE_INSTANCE_FILE_OPTION, TEMPLATE_INSTANCE_IRI_OPTION, "template-instances"),
+    ELEMENT_INSTANCE(ELEMENT_INSTANCE_FILE_OPTION, null, null);
 
     private final String fileOption;
     private final String iriOption;
@@ -101,10 +107,10 @@ public class ArtifactConvertor {
       .map(ArtifactKind::fileOption).collect(Collectors.toUnmodifiableSet());
 
   private static final Set<String> ARTIFACT_IRI_OPTIONS = Arrays.stream(ArtifactKind.values())
-      .map(ArtifactKind::iriOption).collect(Collectors.toUnmodifiableSet());
+      .map(ArtifactKind::iriOption).filter(Objects::nonNull).collect(Collectors.toUnmodifiableSet());
 
   private static final Set<String> ARTIFACT_OPTIONS = Arrays.stream(ArtifactKind.values())
-      .flatMap(kind -> Arrays.stream(new String[] { kind.fileOption(), kind.iriOption() }))
+      .flatMap(kind -> Stream.of(kind.fileOption(), kind.iriOption())).filter(Objects::nonNull)
       .collect(Collectors.toUnmodifiableSet());
 
   private static final Set<String> INPUT_FORMAT_OPTIONS = Set.of(YAML_INPUT_FORMAT_OPTION, JSON_INPUT_FORMAT_OPTION);
@@ -170,7 +176,8 @@ public class ArtifactConvertor {
 
   private static ArtifactKind selectArtifactKind(CommandLine command) {
     for (ArtifactKind artifactKind : ArtifactKind.values())
-      if (command.hasOption(artifactKind.fileOption()) || command.hasOption(artifactKind.iriOption()))
+      if (command.hasOption(artifactKind.fileOption())
+          || (artifactKind.iriOption() != null && command.hasOption(artifactKind.iriOption())))
         return artifactKind;
 
     throw new IllegalStateException("No artifact option present on an accepted command line");
@@ -217,6 +224,7 @@ public class ArtifactConvertor {
       case ELEMENT_SCHEMA -> artifactReader.readElementSchemaArtifact(sourceNode);
       case FIELD_SCHEMA -> artifactReader.readFieldSchemaArtifact(sourceNode);
       case TEMPLATE_INSTANCE -> artifactReader.readTemplateInstanceArtifact(sourceNode);
+      case ELEMENT_INSTANCE -> artifactReader.readElementInstanceArtifact(sourceNode);
     };
   }
 
@@ -270,6 +278,7 @@ public class ArtifactConvertor {
       case ELEMENT_SCHEMA -> jsonArtifactRenderer.renderElementSchemaArtifact((ElementSchemaArtifact) artifact);
       case FIELD_SCHEMA -> jsonArtifactRenderer.renderFieldSchemaArtifact((FieldSchemaArtifact) artifact);
       case TEMPLATE_INSTANCE -> jsonArtifactRenderer.renderTemplateInstanceArtifact((TemplateInstanceArtifact) artifact);
+      case ELEMENT_INSTANCE -> jsonArtifactRenderer.renderElementInstanceArtifact((ElementInstanceArtifact) artifact);
     };
   }
 
@@ -315,6 +324,12 @@ public class ArtifactConvertor {
         .argName("template-instance-file")
         .hasArg()
         .desc("Template instance file")
+        .build();
+
+    Option elementInstanceFileOption = Option.builder(ELEMENT_INSTANCE_FILE_OPTION)
+        .argName("element-instance-file")
+        .hasArg()
+        .desc("Standalone element instance file")
         .build();
 
     Option templateSchemaIriOption = Option.builder(TEMPLATE_SCHEMA_IRI_OPTION)
@@ -400,6 +415,7 @@ public class ArtifactConvertor {
     artifactGroup.addOption(elementSchemaFileOption);
     artifactGroup.addOption(fieldSchemaFileOption);
     artifactGroup.addOption(templateInstanceFileOption);
+    artifactGroup.addOption(elementInstanceFileOption);
     artifactGroup.addOption(templateSchemaIriOption);
     artifactGroup.addOption(elementSchemaIriOption);
     artifactGroup.addOption(fieldSchemaIriOption);

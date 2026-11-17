@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.YamlTripComparison.Difference;
 import org.metadatacenter.artifacts.model.YamlTripComparison.Family;
+import org.metadatacenter.artifacts.model.core.ElementInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
@@ -39,7 +40,7 @@ import java.util.function.Supplier;
  * artifact that artifact's YAML yields. An instance read back from YAML is completed against its
  * template before it is written, as the resource server completes a YAML write. An instance finds its
  * template by {@code schema:isBasedOn}; a CEE suite instance that names none takes the template in its
- * own case. {@code /concordance/corpus-yaml-trip.json} declares which cases show each family and which
+ * own case. A standalone element instance is completed against the element schema in its own case. {@code /concordance/corpus-yaml-trip.json} declares which cases show each family and which
  * cases cannot be compared, each with the beginning of the message of the refusal that stops it. A case showing an
  * undeclared family fails, and so does one that stops showing a declared one, one that is refused with
  * another message than its exclusion states, or one that can now be compared despite its exclusion.
@@ -133,6 +134,7 @@ public final class CorpusYamlTripVerifier
     caseFiles(artifacts.resolve("elements"), "element").forEach((id, file) -> cases.add(schemaCase(id, file, Kind.ELEMENT)));
     caseFiles(artifacts.resolve("fields"), "field").forEach((id, file) -> cases.add(schemaCase(id, file, Kind.FIELD)));
     caseFiles(artifacts.resolve("instances"), "instance").forEach((id, file) -> cases.add(instanceCase(id, file, null, templates)));
+    caseFiles(artifacts.resolve("element-instances"), "element-instance").forEach((id, file) -> cases.add(elementInstanceCase(id, file)));
     caseFiles(artifacts.resolve("cee-suite"), "template").forEach((id, file) -> cases.add(schemaCase("cee-" + id, file, Kind.TEMPLATE)));
     caseFiles(artifacts.resolve("cee-suite"), "instance").forEach((id, file) -> cases.add(instanceCase("cee-" + id, file,
       file.resolveSibling(file.getFileName().toString().replace("instance-", "template-")), templates)));
@@ -233,6 +235,24 @@ public final class CorpusYamlTripVerifier
         .readTemplateInstanceArtifact(yaml(YamlSerializer.getYAML(instance, false, true)));
       return YamlTripComparison.compareInstances(templateNode, RENDERER.renderTemplateInstanceArtifact(instance),
         RENDERER.renderTemplateInstanceArtifact(template, sparse));
+    });
+  }
+
+  // A standalone element instance names no template, so its case holds the element it is an instance of,
+  // as element-NNN.json beside it.
+  private static TripCase elementInstanceCase(String id, Path file)
+  {
+    return new TripCase(id, () -> {
+      Path elementFile = file.resolveSibling(file.getFileName().toString().replace("element-instance-", "element-"));
+      if (!Files.isRegularFile(elementFile)) throw new IllegalStateException("its case holds no element schema");
+      ObjectNode elementNode = json(elementFile);
+      var jsonReader = new JsonArtifactReader();
+      ElementSchemaArtifact element = jsonReader.readElementSchemaArtifact(elementNode);
+      ElementInstanceArtifact instance = jsonReader.readElementInstanceArtifact(json(file));
+      ElementInstanceArtifact sparse = new YamlArtifactReader(false)
+        .readElementInstanceArtifact(yaml(YamlSerializer.getYAML(instance, false, true)));
+      return YamlTripComparison.compareInstances(elementNode, RENDERER.renderElementInstanceArtifact(instance),
+        RENDERER.renderElementInstanceArtifact(element, sparse));
     });
   }
 
