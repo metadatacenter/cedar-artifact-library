@@ -1,11 +1,13 @@
 package org.metadatacenter.artifacts.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.metadatacenter.artifacts.model.yaml.YamlConstants;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -90,10 +92,15 @@ final class YamlTripComparison
     return out;
   }
 
-  static List<Difference> compareInstances(JsonNode direct, JsonNode viaYaml)
+  /**
+   * Compares an instance written directly with the same instance written after its YAML trip. {@code template}
+   * is the JSON of the template the instance is completed against, which says what property IRI each child
+   * takes on the YAML path.
+   */
+  static List<Difference> compareInstances(JsonNode template, JsonNode direct, JsonNode viaYaml)
   {
     List<Difference> out = new ArrayList<>();
-    walkInstance(direct, viaYaml, List.of(), out);
+    walkInstance(template, direct, viaYaml, List.of(), out);
     return out;
   }
 
@@ -179,7 +186,8 @@ final class YamlTripComparison
     return Optional.empty();
   }
 
-  private static void walkInstance(JsonNode direct, JsonNode viaYaml, List<String> at, List<Difference> out)
+  private static void walkInstance(JsonNode template, JsonNode direct, JsonNode viaYaml, List<String> at,
+    List<Difference> out)
   {
     if (Objects.equals(direct, viaYaml)) return;
     if (direct instanceof ObjectNode x && viaYaml instanceof ObjectNode y) {
@@ -188,7 +196,7 @@ final class YamlTripComparison
         if (Objects.equals(a, b)) continue;
         List<String> here = append(at, key);
         if (key.equals("@context") && a instanceof ObjectNode context && b instanceof ObjectNode contextViaYaml)
-          compareContext(x, y, context, contextViaYaml, here, out);
+          compareContext(contextSchema(template, at), x, y, context, contextViaYaml, here, out);
         else if ((a == null || isEmptyContent(a)) && (b == null || isEmptyContent(b)))
           out.add(new Difference(pointer(here), a, b, Optional.of(Family.INSTANCE_COMPLETION)));
         else if (key.equals("@id") && isAbsentOrNull(b) && isElementInstance(x) && holdsNothing(x) && holdsNothing(y))
@@ -197,7 +205,7 @@ final class YamlTripComparison
         else if (isNameList(a) && b instanceof ArrayNode && StreamSupport.stream(b.spliterator(), false).allMatch(JsonNode::isTextual))
           compareAttributeNames(x, a, b, here, out);
         else
-          walkInstance(a, b, here, out);
+          walkInstance(template, a, b, here, out);
       }
       return;
     }
@@ -210,23 +218,56 @@ final class YamlTripComparison
         out.add(new Difference(pointer(at), x, y, Optional.empty()));
         return;
       }
-      for (int i = 0; i < kept.size(); i++) walkInstance(kept.get(i), keptViaYaml.get(i), append(at, String.valueOf(i)), out);
+      for (int i = 0; i < kept.size(); i++)
+        walkInstance(template, kept.get(i), keptViaYaml.get(i), append(at, String.valueOf(i)), out);
       return;
     }
     out.add(new Difference(pointer(at), direct, viaYaml, valueFamily(direct, viaYaml)));
   }
 
-  // A property's IRI is the template's on the YAML path. Any other @context entry has to survive.
-  private static void compareContext(ObjectNode container, ObjectNode containerViaYaml, ObjectNode context,
-    ObjectNode contextViaYaml, List<String> at, List<Difference> out)
+  // A child's property IRI is the template's on the YAML path, so a changed one is completion only where the
+  // YAML side holds the IRI the template declares for that child, or holds none where the template does not
+  // require one, as for an attribute-value group's optional mapping. An attribute's is the instance's own,
+  // which the YAML form carries, so it has to survive, unless the attribute was dropped for holding nothing.
+  // Any other @context entry has to survive too.
+  private static void compareContext(ObjectNode contextSchema, ObjectNode container, ObjectNode containerViaYaml,
+    ObjectNode context, ObjectNode contextViaYaml, List<String> at, List<Difference> out)
   {
+    Set<String> attributes = new HashSet<>(attributeNames(container));
+    attributes.addAll(attributeNames(containerViaYaml));
     for (String key : keys(context, contextViaYaml)) {
       JsonNode a = context.get(key), b = contextViaYaml.get(key);
       if (Objects.equals(a, b)) continue;
-      boolean property = (container.has(key) || containerViaYaml.has(key)) && (a == null || a.isTextual())
-        && (b == null || b.isTextual());
-      out.add(new Difference(pointer(append(at, key)), a, b, property ? Optional.of(Family.INSTANCE_COMPLETION) : Optional.empty()));
+      boolean completion = attributes.contains(key)
+        ? b == null && !containerViaYaml.has(key) && isEmptyContent(container.get(key))
+        : (container.has(key) || containerViaYaml.has(key)) && (a == null || a.isTextual())
+          && (b == null ? !texts(contextSchema.path("required")).contains(key)
+            : b.equals(contextSchema.path("properties").path(key).path("enum").path(0)));
+      out.add(new Difference(pointer(append(at, key)), a, b, completion ? Optional.of(Family.INSTANCE_COMPLETION) : Optional.empty()));
     }
+  }
+
+  // The schema the template declares for the @context of the container at {@code at}, whose properties hold
+  // the children's IRIs. An array index names an occurrence, which shares its schema with the others.
+  private static ObjectNode contextSchema(JsonNode template, List<String> at)
+  {
+    JsonNode schema = template;
+    for (String key : at) {
+      if (key.chars().allMatch(Character::isDigit)) continue;
+      schema = schema.path("properties").path(key);
+      if (schema.has("items")) schema = schema.get("items");
+    }
+    JsonNode context = schema.path("properties").path("@context");
+    return context instanceof ObjectNode object ? object : new ObjectMapper().createObjectNode();
+  }
+
+  // The attributes a container holds: every name its attribute-value fields list.
+  private static Set<String> attributeNames(ObjectNode container)
+  {
+    Set<String> attributes = new HashSet<>();
+    for (String key : names(container))
+      if (!key.startsWith("@") && isNameList(container.get(key))) attributes.addAll(texts(container.get(key)));
+    return attributes;
   }
 
   // An attribute-value field lists the names of its attributes. One whose value is empty is dropped.

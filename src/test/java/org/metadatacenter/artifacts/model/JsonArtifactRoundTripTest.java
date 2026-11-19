@@ -676,22 +676,26 @@ public class JsonArtifactRoundTripTest
     testTemplateInstanceArtifactRoundTripFromFile("instances/SimpleInstanceWithAttributeValues.json");
   }
 
-  @Test public void testRADxInstanceAgainstTemplate()
+  @Test public void testRADxInstanceAgainstTemplate() throws Exception
   {
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADxCLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADxCLIGeneratedInstance.json");
 
     assertTrue(validateJsonSchema(templateNode, instanceNode));
+    ValidationReport report = cedarModelValidator.validateTemplateInstance(instanceNode, templateNode);
+    assertEquals("true", report.getValidationStatus(), report.getErrors().toString());
   }
 
-  @Test public void testRADx2InstanceAgainstTemplate()
+  @Test public void testRADx2InstanceAgainstTemplate() throws Exception
   {
 
     ObjectNode templateNode = getJSONFileContentAsObjectNode("templates/RADx2.0CLIGeneratedTemplate.json");
     ObjectNode instanceNode = getJSONFileContentAsObjectNode("instances/RADx2.0CLIGeneratedInstance.json");
 
     assertTrue(validateJsonSchema(templateNode, instanceNode));
+    ValidationReport report = cedarModelValidator.validateTemplateInstance(instanceNode, templateNode);
+    assertEquals("true", report.getValidationStatus(), report.getErrors().toString());
   }
 
   @Test public void testRoundTripInstanceWithNestedAttributeValues()
@@ -737,7 +741,9 @@ public class JsonArtifactRoundTripTest
     assertFalse(report.canSave());
     assertTrue(report.getFindings().stream().anyMatch(finding -> finding.code().equals("regex")
       && finding.path().equals("/properties/Text Field 1/_valueConstraints/defaultValue")));
-    assertThrows(RuntimeException.class, () -> artifactReader.readTemplateSchemaArtifact(original));
+    IllegalStateException refusal = assertThrows(IllegalStateException.class,
+      () -> artifactReader.readTemplateSchemaArtifact(original));
+    assertEquals("Does not match ^[A-Z][^A-Z]*$.", refusal.getMessage());
   }
 
   @Test public void testRoundTripTemplate009()
@@ -923,7 +929,9 @@ public class JsonArtifactRoundTripTest
     assertFalse(report.canSave());
     assertTrue(report.getFindings().stream().anyMatch(finding -> finding.code().equals("regex")
       && finding.path().equals("/_valueConstraints/defaultValue")));
-    assertThrows(RuntimeException.class, () -> artifactReader.readFieldSchemaArtifact(original));
+    IllegalStateException refusal = assertThrows(IllegalStateException.class,
+      () -> artifactReader.readFieldSchemaArtifact(original));
+    assertEquals("Does not match regex.", refusal.getMessage());
   }
 
   @Test public void testRoundTripStandaloneField()
@@ -1113,22 +1121,17 @@ public class JsonArtifactRoundTripTest
     }
   }
 
+  /** Whether a rendering is a JSON Schema: valid against the draft-04 meta-schema, not merely compilable. */
   private boolean validateJsonSchema(ObjectNode schemaNode)
   {
-    try {
-      JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
-      return true;
-    } catch (RuntimeException e) {
-      return false;
-    }
+    return JsonSchemaMetaSchema.violations(schemaNode).isEmpty();
   }
 
   private boolean validateJsonSchema(ObjectNode schemaNode, ObjectNode instanceNode)
   {
     try {
       JsonSchema schema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaNode);
-      schema.validate(instanceNode);
-      return true;
+      return schema.validate(instanceNode).isEmpty();
     } catch (RuntimeException e) {
       return false;
     }

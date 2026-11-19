@@ -14,6 +14,7 @@ import org.metadatacenter.artifacts.model.core.IriAnnotationValue;
 import org.metadatacenter.artifacts.model.core.LiteralAnnotationValue;
 import org.metadatacenter.artifacts.model.core.ReservedNames;
 import org.metadatacenter.artifacts.model.core.SchemaArtifact;
+import org.metadatacenter.artifacts.model.core.StoredValueRequirements;
 import org.metadatacenter.artifacts.model.core.Status;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
@@ -39,6 +40,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -66,6 +68,7 @@ import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MAX_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_MIN_ITEMS;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_OBJECT;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_PROPERTIES;
+import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_REQUIRED;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TITLE;
 import static org.metadatacenter.model.ModelNodeNames.JSON_SCHEMA_TYPE;
 import static org.metadatacenter.model.ModelNodeNames.OSLC_MODIFIED_BY;
@@ -316,8 +319,9 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     LinkedHashMap<String, URI> childPropertyUris = getChildPropertyUris(sourceNode, path);
     Optional<String> language = readLanguage(sourceNode, path);
     Optional<Annotations> annotations = readAnnotations(sourceNode, path, ANNOTATIONS);
+    LinkedHashMap<String, List<String>> storedValueRequired = new LinkedHashMap<>();
     Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas,
-        elementSchemas, childPropertyUris);
+        elementSchemas, childPropertyUris, storedValueRequired);
     TemplateUi templateUi = readTemplateUi(sourceNode, path, UI, childSchemaOrgNames);
 
     checkArtifactJsonSchemaSchemaUri(sourceNode, path);
@@ -327,7 +331,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
 
     return TemplateSchemaArtifact.create(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdType, name, description,
         identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn,
-        fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription).withExtensions(SchemaExtensionReader.json(sourceNode));
+        fieldSchemas, elementSchemas, language, templateUi, annotations, internalName, internalDescription).withExtensions(SchemaExtensionReader.json(sourceNode))
+        .withStoredValueRequirements(new StoredValueRequirements(storedValueRequired));
   }
 
   private ElementSchemaArtifact readElementSchemaArtifact(ObjectNode sourceNode, String path, String childKey,
@@ -367,15 +372,17 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     checkElementSchemaArtifactJsonLdType(jsonLdTypes, path);
     checkSchemaArtifactModelVersion(sourceNode, path);
 
+    LinkedHashMap<String, List<String>> storedValueRequired = new LinkedHashMap<>();
     Map<String, String> childSchemaOrgNames = readNestedFieldAndElementSchemaArtifacts(sourceNode, path, fieldSchemas,
-        elementSchemas, childPropertyUris);
+        elementSchemas, childPropertyUris, storedValueRequired);
 
     ElementUi elementUi = readElementUi(sourceNode, path, UI, childSchemaOrgNames);
 
     return ElementSchemaArtifact.create(internalName, internalDescription, jsonLdContext, jsonLdTypes, jsonLdId,
         instanceJsonLdType, schemaOrgName, schemaOrgDescription, schemaOrgIdentifier, version, status, previousVersion,
         derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, preferredLabel, alternateLabels, fieldSchemas,
-        elementSchemas, isMultiInstance, minItems, maxItems, propertyUri, language, elementUi, annotations).withExtensions(SchemaExtensionReader.json(sourceNode));
+        elementSchemas, isMultiInstance, minItems, maxItems, propertyUri, language, elementUi, annotations).withExtensions(SchemaExtensionReader.json(sourceNode))
+        .withStoredValueRequirements(new StoredValueRequirements(storedValueRequired));
   }
 
   private FieldSchemaArtifact readFieldSchemaArtifact(ObjectNode sourceNode, String path, String childKey,
@@ -423,7 +430,8 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
   private Map<String, String> readNestedFieldAndElementSchemaArtifacts(ObjectNode parentNode, String path,
                                                                        Map<String, FieldSchemaArtifact> fieldSchemas,
                                                                        Map<String, ElementSchemaArtifact> elementSchemas,
-                                                                       Map<String, URI> childPropertyUris) {
+                                                                       Map<String, URI> childPropertyUris,
+                                                                       Map<String, List<String>> storedValueRequired) {
     JsonNode propertiesNode = parentNode.get(JSON_SCHEMA_PROPERTIES);
     Map<String, String> childSchemaOrgNames = new HashMap<>();
 
@@ -528,6 +536,7 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
                     minItems, maxItems, propertyUri);
                 fieldSchemas.put(childKey, fieldSchemaArtifact);
                 childSchemaOrgNames.put(childKey, fieldSchemaArtifact.name());
+                storedValueRequired.put(childKey, storedRequiredKeys(jsonFieldOrElementSchemaArtifactNode));
               }
               default ->
                   throw new ArtifactParseException("Unknown JSON-LD @type " + subSchemaArtifactJsonLdType, childKey,
@@ -679,6 +688,19 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     }
   }
 
+  /** The keys a field's stored value schema lists as required, the items schema of a repeated field. */
+  private static List<String> storedRequiredKeys(JsonNode valueSchema) {
+    List<String> required = new ArrayList<>();
+    valueSchema.path(JSON_SCHEMA_REQUIRED).forEach(key -> {
+      if (key.isTextual()) required.add(key.asText());
+    });
+    return required;
+  }
+
+  /** The optional value keys a document may state as null, which the model keeps as no value. */
+  private static final List<String> NULLABLE_VALUE_KEYS = List.of(RDFS_LABEL, SKOS_NOTATION, SKOS_PREFLABEL,
+      JSON_LD_LANGUAGE);
+
   private FieldInstanceArtifact readFieldInstanceArtifact(ObjectNode sourceNode, String path) {
     refuseChildWithoutContext(sourceNode, path);
     if (sourceNode.has(JSON_LD_ID) && sourceNode.has(JSON_LD_VALUE))
@@ -703,8 +725,13 @@ public class JsonArtifactReader implements ArtifactReader<ObjectNode> {
     // unfilled literal field from an unfilled controlled-term or link field once the value is gone.
     boolean carriesValueKey = sourceNode.has(JSON_LD_VALUE);
 
+    Set<String> statedNulls = new LinkedHashSet<>();
+    for (String key : NULLABLE_VALUE_KEYS)
+      if (sourceNode.has(key) && sourceNode.get(key).isNull())
+        statedNulls.add(key);
+
     return FieldInstanceArtifact.createWithIri(jsonLdTypes, jsonLdId, jsonLdValue, rdfsLabel, notation, preferredLabel,
-        language, carriesValueKey);
+        language, carriesValueKey, statedNulls);
   }
 
   private void validateFieldIri(Optional<String> value, String key, String path) {

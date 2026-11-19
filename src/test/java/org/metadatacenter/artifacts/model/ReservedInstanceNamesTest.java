@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model;
 
+import org.metadatacenter.artifacts.model.reader.Refusals;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -29,12 +30,14 @@ class ReservedInstanceNamesTest
         ObjectNode parent = nested ? json.putObject("Element") : json;
         if (nested) parent.putObject("@context");
         parent.set(key, field);
-        assertThrows(RuntimeException.class, () -> new JsonArtifactReader().readTemplateInstanceArtifact(json), key);
+        String reserved = "child name \"" + key + "\" in " + (nested ? "Element" : "Template")
+          + "InstanceArtifactRecord is reserved for CEDAR instance metadata";
+        assertEquals(reserved, Refusals.messages(() -> new JsonArtifactReader().readTemplateInstanceArtifact(json)), key);
         Map<String, Object> children = Map.of(key, Map.of("value", "KEEP"));
         Map<String, Object> yaml = Map.of("type", "instance", "name", "Audit", "isBasedOn", "https://example.org/t",
           "children", nested ? Map.of("Element", Map.of("children", children)) : children);
         LinkedHashMap<String, Object> source = mapper.convertValue(yaml, new TypeReference<>() {});
-        assertThrows(RuntimeException.class, () -> new YamlArtifactReader().readTemplateInstanceArtifact(source), key);
+        assertEquals(reserved, Refusals.messages(() -> new YamlArtifactReader().readTemplateInstanceArtifact(source)), key);
       }
       assertThrows(IllegalStateException.class, () -> ElementInstanceArtifact.builder()
         .withSingleInstanceFieldInstance(key, TextFieldInstance.builder().withValue("KEEP").build()).build());

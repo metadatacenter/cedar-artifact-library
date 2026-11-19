@@ -109,8 +109,8 @@ children:
   - label: en
   - label: cn
   configuration:
-    minItems: 0
     propertyIri: https://w3id.org/radx/radmo/otherLanguage
+    minItems: 0
 - key: Subjects
   type: controlled-term-field
   name: Subjects

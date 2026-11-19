@@ -437,7 +437,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     });
 
     readAttributeValueFieldInstanceGroups(sourceNode, path, TEMPLATE_INSTANCE_RESERVED_KEYS,
-      builder::withAttributeValueFieldGroup);
+      builder::withAttributeValueFieldGroup, builder::withJsonLdContextEntry);
 
     readAnnotations(sourceNode, path).ifPresent(builder::withAnnotations);
 
@@ -486,7 +486,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     });
 
     readAttributeValueFieldInstanceGroups(sourceNode, path, STANDALONE_ELEMENT_INSTANCE_RESERVED_KEYS,
-      builder::withAttributeValueFieldGroup);
+      builder::withAttributeValueFieldGroup, builder::withJsonLdContextEntry);
 
     ElementInstanceArtifact artifact = builder.build();
     YamlKeyTracking.requireUsed(sourceNode);
@@ -653,7 +653,7 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
     });
 
     readAttributeValueFieldInstanceGroups(sourceNode, path, ELEMENT_INSTANCE_RESERVED_KEYS,
-      builder::withAttributeValueFieldGroup);
+      builder::withAttributeValueFieldGroup, builder::withJsonLdContextEntry);
 
     return builder.build();
   }
@@ -687,11 +687,14 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
    * Walk top-level keys of an instance YAML map looking for attribute-value field groups. Each
    * non-reserved key whose value is a map is treated as a group; each entry in that map is
    * read as a {@link FieldInstanceArtifact} (so the inner shape is the same one written by
-   * {@code renderAttributeValueFieldInstanceGroupFields}).
+   * {@code renderAttributeValueFieldInstanceGroupFields}). An attribute's {@code propertyIri}, when
+   * stated, is its {@code @context} entry in the instance or element that holds it; no template can
+   * supply it, since the attribute's name and IRI are the instance's own.
    */
   @SuppressWarnings("unchecked")
   private void readAttributeValueFieldInstanceGroups(LinkedHashMap<String, Object> sourceNode, String path,
-    Set<String> reservedKeys, java.util.function.BiConsumer<String, LinkedHashMap<String, FieldInstanceArtifact>> sink)
+    Set<String> reservedKeys, java.util.function.BiConsumer<String, LinkedHashMap<String, FieldInstanceArtifact>> sink,
+    java.util.function.BiConsumer<String, URI> contextSink)
   {
     // A template-free reader can not tell a misspelled key holding a mapping from a group whose name
     // the form-filler chose, so every mapping-valued key is a group and the template judges it. A key
@@ -713,8 +716,10 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
           throw new ArtifactParseException("Blank attribute-value field name", key, path);
         if (!(fieldRaw instanceof LinkedHashMap<?, ?>))
           throw new ArtifactParseException("Expected map value for attribute-value field " + fieldName, key, path);
-        groupFields.put(fieldName,
-          readFieldInstanceArtifact((LinkedHashMap<String, Object>) fieldRaw, below(below(path, key), fieldName)));
+        LinkedHashMap<String, Object> fieldNode = (LinkedHashMap<String, Object>) fieldRaw;
+        String fieldPath = below(below(path, key), fieldName);
+        readAbsoluteUri(fieldNode, fieldPath, PROPERTY_IRI).ifPresent(iri -> contextSink.accept(fieldName, iri));
+        groupFields.put(fieldName, readFieldInstanceArtifact(fieldNode, fieldPath));
       }
       sink.accept(key, groupFields);
     }
@@ -1683,9 +1688,16 @@ public class YamlArtifactReader implements ArtifactReader<LinkedHashMap<String, 
 
   private Optional<org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks> readLinks(LinkedHashMap<String, Object> entry, String path) {
     if (!entry.containsKey("links")) return Optional.empty();
+    Object links = entry.get("links");
+    // Both keys are part of the links vocabulary whether or not this entry states them, as the TypeScript
+    // reader reads them; the whole mapping is still validated, so another key is refused.
+    if (links instanceof Map<?, ?> stated) {
+      stated.get("landingPage");
+      stated.get("icon");
+    }
     try {
       return Optional.of(org.metadatacenter.artifacts.model.core.fields.constraints.ConstraintLinks.read(
-          new com.fasterxml.jackson.databind.ObjectMapper().valueToTree(entry.get("links"))));
+          new com.fasterxml.jackson.databind.ObjectMapper().valueToTree(links)));
     } catch (IllegalArgumentException e) { throw new ArtifactParseException(e.getMessage(), "links", path); }
   }
 

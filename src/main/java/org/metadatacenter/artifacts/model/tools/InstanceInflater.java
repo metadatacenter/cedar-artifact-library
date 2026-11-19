@@ -33,6 +33,10 @@ import java.util.function.Consumer;
  * affects validity, but serializing instances the way their template orders its fields keeps
  * them readable and diffable. Present values are preserved untouched; keys the schema doesn't
  * know are never touched and stay ahead of the schema-ordered children.
+ *
+ * <p>A field value keeps each optional key the document stated as null where the stored template's value
+ * schema for that field requires the key, so the writer writes it. The model holds a stated null as no
+ * value, and writing none made an instance the server stored fail the same template once written back.
  */
 public final class InstanceInflater
 {
@@ -216,7 +220,8 @@ public final class InstanceInflater
           requireMatchingSlot(existing, childKey, "a list of fields", holding);
           List<FieldInstanceArtifact> values = new ArrayList<>();
           if (existing != null && existing.multiInstanceFieldInstances().containsKey(childKey)) {
-            values.addAll(existing.multiInstanceFieldInstances().get(childKey));
+            for (FieldInstanceArtifact value : existing.multiInstanceFieldInstances().get(childKey))
+              values.add(value.keepingStatedNulls(schema.storedValueRequirements().of(childKey)));
             ops.removeMultiField().accept(childKey);
           }
           while (values.size() < field.startingOccurrences())
@@ -225,7 +230,8 @@ public final class InstanceInflater
         } else {
           requireMatchingSlot(existing, childKey, "a single field", holding);
           if (existing != null && existing.singleInstanceFieldInstances().containsKey(childKey)) {
-            FieldInstanceArtifact value = existing.singleInstanceFieldInstances().get(childKey);
+            FieldInstanceArtifact value = existing.singleInstanceFieldInstances().get(childKey)
+                .keepingStatedNulls(schema.storedValueRequirements().of(childKey));
             ops.removeSingleField().accept(childKey);
             ops.putSingleField().accept(childKey, value);
           } else {

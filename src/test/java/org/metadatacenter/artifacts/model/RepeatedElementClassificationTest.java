@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model;
 
+import org.metadatacenter.artifacts.model.reader.Refusals;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class RepeatedElementClassificationTest {
   @Test void rejectsMixedLiteralAndElementInsteadOfLosingOne() throws Exception {
     var document = source(false);
     ((ObjectNode) document.get("items").get(0)).put("@value", "keep me");
-    assertThrows(RuntimeException.class, () -> new JsonArtifactReader().readTemplateInstanceArtifact(document));
+    assertEquals("items at /items[0]", Refusals.keyAndPath(() -> new JsonArtifactReader().readTemplateInstanceArtifact(document)));
   }
 
   // A context-bearing sibling vouches only for an entry that carries nothing a child could be. An entry

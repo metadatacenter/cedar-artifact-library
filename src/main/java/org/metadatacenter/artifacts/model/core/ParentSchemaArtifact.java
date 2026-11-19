@@ -22,6 +22,13 @@ public sealed interface ParentSchemaArtifact extends ParentArtifact
   // elementKey -> element schema artifact. Note that a child element's key is distinct from the child element's name
   Map<String, ElementSchemaArtifact> elementSchemas();
 
+  /**
+   * The keys each child field's stored value schema requires, which the reader records and equality ignores.
+   * None for a schema built or copied in code.
+   */
+  @com.fasterxml.jackson.annotation.JsonIgnore
+  default StoredValueRequirements storedValueRequirements() {return StoredValueRequirements.NONE;}
+
   default boolean isField(String fieldKey) {return fieldSchemas().containsKey(fieldKey);}
 
   default boolean isStaticField(String fieldKey)

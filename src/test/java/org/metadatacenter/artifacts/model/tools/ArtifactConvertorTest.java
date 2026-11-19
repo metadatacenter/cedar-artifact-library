@@ -101,6 +101,27 @@ public class ArtifactConvertorTest
     assertEquals(Files.readString(yamlFile), Files.readString(regeneratedYamlFile));
   }
 
+  @Test public void testStandaloneElementInstanceThroughYamlAndBack(@TempDir Path tempDir) throws IOException
+  {
+    Path jsonSource = tempDir.resolve("element-instance.json");
+    Path yamlFile = tempDir.resolve("element-instance.yaml");
+    Path jsonFile = tempDir.resolve("element-instance-again.json");
+    Files.writeString(jsonSource, """
+      {"@context": {"Title": "https://example.org/properties/title"},
+       "@id": "https://repo.metadatacenter.org/template-element-instances/e1",
+       "Title": {"@value": "A study"}}
+      """);
+
+    ArtifactConvertor.main(new String[] { "-jif", "-yof", "-eif", jsonSource.toString(), "-f", yamlFile.toString() });
+    ArtifactConvertor.main(new String[] { "-yif", "-jof", "-eif", yamlFile.toString(), "-f", jsonFile.toString() });
+
+    String yaml = Files.readString(yamlFile);
+    assertTrue(yaml.startsWith("type: element-instance"), yaml);
+    JsonNode regenerated = jsonMapper.readTree(jsonFile.toFile());
+    assertEquals("https://repo.metadatacenter.org/template-element-instances/e1", regenerated.get("@id").asText());
+    assertEquals("A study", regenerated.get("Title").get("@value").asText());
+  }
+
   private String fixturePath()
   {
     URL fixtureUrl = getClass().getClassLoader().getResource(TEMPLATE_FIXTURE);

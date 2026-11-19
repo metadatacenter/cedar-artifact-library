@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.artifacts.model.core.ElementSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.FieldSchemaArtifactBuilder;
+import org.metadatacenter.artifacts.model.core.SectionBreakField;
 import org.metadatacenter.artifacts.model.core.TemplateInstanceArtifact;
 import org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact;
 import org.metadatacenter.artifacts.model.core.TextField;
@@ -19,8 +20,10 @@ import org.metadatacenter.model.validation.report.ValidationReport;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -286,6 +289,55 @@ public class JsonArtifactReaderTest
       assertEquals(name, TemplateSchemaArtifact.builder(readTemplate).build().name());
       assertEquals(name, ElementSchemaArtifact.builder(readElement).build().name());
       assertEquals(name, FieldSchemaArtifactBuilder.builder(readField).build().name());
+    }
+  }
+
+  @Test public void testValidatorAndReaderAgreeOnAStaticFieldsIdentifierAndAlternativeLabels() throws IOException
+  {
+    // The reader takes only text in either place, and the validator, which gates what the server stores,
+    // must refuse what the reader refuses, or a stored static field could not be opened again.
+    JsonArtifactRenderer renderer = new JsonArtifactRenderer();
+    CedarValidator validator = new CedarValidator();
+    SectionBreakField section = SectionBreakField.builder().withName("Part").build();
+    TemplateSchemaArtifact template = TemplateSchemaArtifact.builder().withName("Study")
+      .withFieldSchema("Part", section).build();
+
+    Map<String, Boolean> cases = new LinkedHashMap<>();
+    cases.put("{\"schema:identifier\": \"S-1\", \"skos:altLabel\": [\"Part one\", \"Opening\"]}", true);
+    cases.put("{\"schema:identifier\": 3}", false);
+    cases.put("{\"schema:identifier\": true}", false);
+    cases.put("{\"skos:altLabel\": 3}", false);
+    cases.put("{\"skos:altLabel\": [3]}", false);
+    cases.put("{\"skos:altLabel\": [\"Part one\", 3]}", false);
+
+    for (Map.Entry<String, Boolean> entry : cases.entrySet()) {
+      ObjectNode values = (ObjectNode) mapper.readTree(entry.getKey());
+      ObjectNode standalone = renderer.renderFieldSchemaArtifact("Part", section);
+      standalone.setAll(values.deepCopy());
+      ObjectNode parent = renderer.renderTemplateSchemaArtifact(template);
+      ((ObjectNode) parent.get(JSON_SCHEMA_PROPERTIES).get("Part")).setAll(values.deepCopy());
+
+      boolean valid = entry.getValue();
+      assertEquals(Boolean.toString(valid), validator.validateTemplateField(standalone).getValidationStatus(),
+        entry.getKey());
+      assertEquals(Boolean.toString(valid), validator.validateTemplate(parent).getValidationStatus(), entry.getKey());
+      assertEquals(valid, reads(() -> artifactReader.readFieldSchemaArtifact(standalone)), entry.getKey());
+      assertEquals(valid, reads(() -> artifactReader.readTemplateSchemaArtifact(parent)), entry.getKey());
+      if (valid) {
+        FieldSchemaArtifact read = artifactReader.readFieldSchemaArtifact(standalone);
+        assertEquals(Optional.of("S-1"), read.identifier());
+        assertEquals(List.of("Part one", "Opening"), read.alternateLabels());
+      }
+    }
+  }
+
+  private static boolean reads(Runnable read)
+  {
+    try {
+      read.run();
+      return true;
+    } catch (ArtifactParseException e) {
+      return false;
     }
   }
 

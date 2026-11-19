@@ -9,7 +9,7 @@ previousVersion: https://repo.metadatacenter.org/templates/e7475329-9a60-4088-8e
 derivedFrom: https://repo.metadatacenter.org/templates/f4690032-0a2c-42df-9638-b9f054847045
 createdOn: '2024-01-08T11:57:46-08:00'
 createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-modifiedOn: '2025-04-24T10:15:56-07:00'
+modifiedOn: '2024-01-09T12:03:11-08:00'
 modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
 children:
 - key: parent_sample_id
@@ -22,9 +22,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Parent sample ID
   regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}(?:,\s*(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3})*$
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -38,24 +38,24 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Lab ID
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/8559c935-505a-46f4-a4a6-e6310a9cf883
 - key: preparation_protocol_doi
   type: link-field
   name: preparation_protocol_doi
-  description: 'DOI for the protocols.io page that describes the assay or sample procurement and preparation. For example for an imaging assay, the protocol might begin with staining of a section and finalize with the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1.'
+  description: 'DOI for the protocols.io page that describes the assay or sample procurment and preparation. For example for an imaging assay, the protocol might include staining of a section through the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1'
   id: https://repo.metadatacenter.org/template-fields/6c14b186-47e0-4e2c-a5f6-d8ac3cca10f2
   status: draft
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Preparation protocol DOI
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -80,9 +80,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
     termBaseLabel: Dataset type
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -104,9 +104,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000371
     termBaseLabel: Analyte class
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -124,9 +124,9 @@ children:
   - label: 'Yes'
     selected: true
   - label: 'No'
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -148,9 +148,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000391
     termBaseLabel: Acquisition instrument vendor
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -172,9 +172,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000401
     termBaseLabel: Acquisition instrument model
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -190,9 +190,9 @@ children:
   prefLabel: Source storage duration value
   datatype: xsd:decimal
   minValue: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -214,9 +214,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
     termBaseLabel: Source storage duration unit
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -224,7 +224,7 @@ children:
 - key: time_since_acquisition_instrument_calibration_value
   type: numeric-field
   name: time_since_acquisition_instrument_calibration_value
-  description: The amount of time since the acquisition instrument was last serviced or calibrated. This provides a metric for assessing drift in data capture.
+  description: The amount of time since the acqusition instrument was last serviced by the vendor. This provides a metric for assessing drift in data capture.
   id: https://repo.metadatacenter.org/template-fields/2eaf9c86-f543-4b9a-a4d3-85f3cf7f125c
   status: draft
   version: 0.0.1
@@ -232,9 +232,9 @@ children:
   prefLabel: Time since acquisition instrument calibration value
   datatype: xsd:decimal
   minValue: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/d34761c5-04c5-4ab2-a5a6-906823a0f568
@@ -255,9 +255,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000421
     termBaseLabel: Time since acquisition instrument calibration unit
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/6c621abe-4010-4314-9a7d-93a961b65d9d
@@ -270,10 +270,10 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Contributors path
-  regex: ^(?:\.\/.*|\w.*)\.tsv$
-  createdOn: '2025-04-24T10:15:56-07:00'
+  regex: ^\.(?:\/[a-zA-Z0-9-_]+)*\.tsv$
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -287,10 +287,10 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Data path
-  regex: ^(?:\.|\.\/.+|\w.*)$
-  createdOn: '2025-04-24T10:15:56-07:00'
+  regex: ^\.(?:\/[a-zA-Z0-9-_]+)*\/?$
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -307,9 +307,9 @@ children:
   values:
   - label: 'Yes'
   - label: 'No'
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/5df97e17-71dd-45b4-849b-f419f7d13ae1
@@ -330,9 +330,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000461
     termBaseLabel: Stain name
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -354,9 +354,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000471
     termBaseLabel: Stain technique
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/fbbd433b-2b37-498d-a5ef-20f604719bc7
@@ -372,9 +372,9 @@ children:
   values:
   - label: 'Yes'
   - label: 'No'
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -391,9 +391,9 @@ children:
   values:
   - label: 'Yes'
   - label: 'No'
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -415,9 +415,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000501
     termBaseLabel: Preparation instrument vendor
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/bfba3f1c-3f26-4a3b-9b49-c6c65bcd9065
@@ -438,9 +438,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000511
     termBaseLabel: Preparation instrument model
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/7e60de7d-5861-4005-8d73-69ec3f37d1a0
@@ -453,9 +453,9 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Slide ID
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/fd786910-ee7f-4301-a405-815156fe18cf
@@ -476,9 +476,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000531
     termBaseLabel: Tile configuration
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/cf32e6bb-4c7d-4846-b900-b4c26c06b392
@@ -520,9 +520,9 @@ children:
     sourceIri: https://purl.humanatlas.io/HRAVS_0000005
     sourceAcronym: HRAVS
     type: class
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/0a926cb0-c21f-4b59-84ef-545bb27ee27d
@@ -537,9 +537,9 @@ children:
   prefLabel: Tiled image columns
   datatype: xsd:int
   minValue: 1
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/79a3bad7-453e-4a5e-ad4b-75efed7559d9
@@ -554,9 +554,9 @@ children:
   prefLabel: Tiled image count
   datatype: xsd:int
   minValue: 1
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/cd53bb98-a044-415e-9f77-e3021979a7db
@@ -571,9 +571,9 @@ children:
   prefLabel: Intended tile overlap percentage
   datatype: xsd:decimal
   minValue: 0
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/bab1b039-17bc-4097-994e-cb7ac3fa13e4
@@ -586,10 +586,9 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Non global files
-  regex: ^(?:\.\/[^;]+|\w[^;]+)(?:;\s*(?:\.\/[^;]+|\w[^;]+))*$
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/a2d583dc-95e3-48bd-9570-fe2930abb6fe
@@ -603,9 +602,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Metadata schema ID
   default: 907d89c7-6cf4-4ec6-9edd-63cf0441d689
-  createdOn: '2025-04-24T10:15:56-07:00'
+  createdOn: '2024-01-09T12:03:11-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:15:56-07:00'
+  modifiedOn: '2024-01-09T12:03:11-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true

@@ -8,7 +8,7 @@ previousVersion: https://repo.metadatacenter.org/templates/d8fa795d-f65e-407b-89
 derivedFrom: https://repo.metadatacenter.org/templates/63c06fb2-4638-4979-aa97-5aff2a840156
 createdOn: '2023-12-11T15:17:02-08:00'
 createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-modifiedOn: '2025-04-24T10:34:09-07:00'
+modifiedOn: '2023-12-11T15:17:49-08:00'
 modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
 children:
 - key: parent_sample_id
@@ -21,9 +21,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Parent sample ID
   regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}(?:,\s*(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3})*$
-  createdOn: '2025-04-24T10:34:09-07:00'
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -37,24 +37,24 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Lab ID
-  createdOn: '2025-04-24T10:34:09-07:00'
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/99eb5190-7ae6-4add-b8b4-f96f1499679a
 - key: preparation_protocol_doi
   type: link-field
   name: preparation_protocol_doi
-  description: 'DOI for the protocols.io page that describes the assay or sample procurement and preparation. For example for an imaging assay, the protocol might begin with staining of a section and finalize with the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1.'
+  description: 'DOI for the protocols.io page that describes the assay or sample procurment and preparation. For example for an imaging assay, the protocol might include staining of a section through the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1'
   id: https://repo.metadatacenter.org/template-fields/6c14b186-47e0-4e2c-a5f6-d8ac3cca10f2
   status: draft
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Preparation protocol DOI
-  createdOn: '2025-04-24T10:34:09-07:00'
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -79,9 +79,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
     termBaseLabel: Dataset type
     termMaxDepth: 0
-  createdOn: '2025-04-24T10:34:09-07:00'
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -95,10 +95,10 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Contributors path
-  regex: ^(?:\.\/.*|\w.*)\.tsv$
-  createdOn: '2025-04-24T10:34:09-07:00'
+  regex: ^\.(?:\/[a-zA-Z0-9-_]+)*\.tsv$
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -112,10 +112,10 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Data path
-  regex: ^(?:\.|\.\/.+|\w.*)$
-  createdOn: '2025-04-24T10:34:09-07:00'
+  regex: ^\.(?:\/[a-zA-Z0-9-_]+)*\/?$
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -130,9 +130,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Number of pre-amplification PCR cycles
   datatype: xsd:int
-  createdOn: '2025-04-24T10:34:09-07:00'
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/8d15c9f4-c8ec-4ba5-8a03-00840164f087
@@ -146,9 +146,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Metadata schema ID
   default: b76e54fe-5352-449b-9188-f250b51fbedc
-  createdOn: '2025-04-24T10:34:09-07:00'
+  createdOn: '2023-12-11T15:17:49-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-04-24T10:34:09-07:00'
+  modifiedOn: '2023-12-11T15:17:49-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true

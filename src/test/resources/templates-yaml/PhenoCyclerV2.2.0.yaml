@@ -9,7 +9,7 @@ previousVersion: https://repo.metadatacenter.org/templates/ba8c2dec-950e-49c7-93
 derivedFrom: https://repo.metadatacenter.org/templates/2d2c70c3-4735-4844-9542-832b8ddaee52
 createdOn: '2024-01-05T09:35:09-08:00'
 createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-modifiedOn: '2025-06-04T13:51:02-07:00'
+modifiedOn: '2024-01-09T12:03:42-08:00'
 modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
 children:
 - key: parent_sample_id
@@ -22,9 +22,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Parent sample ID
   regex: ^(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3}(?:,\s*(?:HBM|SNT)\d{3}\.[A-Z]{4}\.\d{3})*$
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -38,24 +38,24 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Lab ID
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/d7cfde4e-d38a-47ad-94d5-db0fd441d256
 - key: preparation_protocol_doi
   type: link-field
   name: preparation_protocol_doi
-  description: 'DOI for the protocols.io page that describes the assay or sample procurement and preparation. For example for an imaging assay, the protocol might begin with staining of a section and finalize with the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1.'
+  description: 'DOI for the protocols.io page that describes the assay or sample procurment and preparation. For example for an imaging assay, the protocol might include staining of a section through the creation of an OME-TIFF file. In this case the protocol would include any image processing steps required to create the OME-TIFF file. Example: https://dx.doi.org/10.17504/protocols.io.eq2lyno9qvx9/v1'
   id: https://repo.metadatacenter.org/template-fields/6c14b186-47e0-4e2c-a5f6-d8ac3cca10f2
   status: draft
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Preparation protocol DOI
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -80,9 +80,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000361
     termBaseLabel: Dataset type
     termMaxDepth: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -104,9 +104,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000371
     termBaseLabel: Analyte class
     termMaxDepth: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -124,9 +124,9 @@ children:
   - label: 'Yes'
     selected: true
   - label: 'No'
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -148,9 +148,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000391
     termBaseLabel: Acquisition instrument vendor
     termMaxDepth: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -172,9 +172,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000401
     termBaseLabel: Acquisition instrument model
     termMaxDepth: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -190,9 +190,9 @@ children:
   prefLabel: Source storage duration value
   datatype: xsd:decimal
   minValue: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -214,9 +214,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000031
     termBaseLabel: Source storage duration unit
     termMaxDepth: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -224,7 +224,7 @@ children:
 - key: time_since_acquisition_instrument_calibration_value
   type: numeric-field
   name: time_since_acquisition_instrument_calibration_value
-  description: The amount of time since the acquisition instrument was last serviced or calibrated. This provides a metric for assessing drift in data capture.
+  description: The amount of time since the acqusition instrument was last serviced by the vendor. This provides a metric for assessing drift in data capture.
   id: https://repo.metadatacenter.org/template-fields/2eaf9c86-f543-4b9a-a4d3-85f3cf7f125c
   status: draft
   version: 0.0.1
@@ -232,9 +232,9 @@ children:
   prefLabel: Time since acquisition instrument calibration value
   datatype: xsd:decimal
   minValue: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/290c923c-3c6e-4add-b94f-53b05188588a
@@ -255,9 +255,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000421
     termBaseLabel: Time since acquisition instrument calibration unit
     termMaxDepth: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/e050f17f-323f-4bcf-88fc-da2e57925fe0
@@ -270,10 +270,10 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Contributors path
-  regex: ^(?:\.\/.*|\w.*)\.tsv$
-  createdOn: '2025-06-04T13:51:02-07:00'
+  regex: ^\.(?:\/[a-zA-Z0-9-_]+)*\.tsv$
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -287,10 +287,10 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Data path
-  regex: ^(?:\.|\.\/.+|\w.*)$
-  createdOn: '2025-06-04T13:51:02-07:00'
+  regex: ^\.(?:\/[a-zA-Z0-9-_]+)*\/?$
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -304,10 +304,10 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Antibodies path
-  regex: ^(?:\.\/.*|\w.*)\.tsv$
-  createdOn: '2025-06-04T13:51:02-07:00'
+  regex: ^\.(?:\/[a-zA-Z0-9-_]+)*\.tsv$
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -315,7 +315,7 @@ children:
 - key: total_run_time_value
   type: numeric-field
   name: total_run_time_value
-  description: How long did the instrument take to fully complete all imaging rounds on the loaded slide.
+  description: How long the tissue was on the acquisition instrument.
   id: https://repo.metadatacenter.org/template-fields/8eb93c3c-2f86-4c29-a38d-a9e03be6ffe6
   status: draft
   version: 0.0.1
@@ -323,9 +323,9 @@ children:
   prefLabel: Total run time value
   datatype: xsd:decimal
   minValue: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -347,9 +347,9 @@ children:
     termBaseIri: https://purl.humanatlas.io/vocab/hravs#HRAVS_1000631
     termBaseLabel: Total run time unit
     termMaxDepth: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -365,9 +365,9 @@ children:
   prefLabel: Number of antibodies
   datatype: xsd:int
   minValue: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -383,17 +383,17 @@ children:
   prefLabel: Number of channels
   datatype: xsd:int
   minValue: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
-    propertyIri: https://schema.metadatacenter.org/properties/9218c502-6b63-454d-961d-639dfe46e835
+    propertyIri: https://schema.metadatacenter.org/properties/eb3650a7-9ad7-4b7b-b9c9-c3e7855f6bc2
 - key: number_of_biomarker_imaging_rounds
   type: numeric-field
   name: number_of_biomarker_imaging_rounds
-  description: Number of imaging rounds to capture the tagged biomarkers. For CODEX a biomarker imaging round consists of 1. oligo and fluor application, 2. imaging, 3. removal of oligo and fluor along washes. For Cell DIVE a biomarker imaging round consists of 1. staining of a biomarker via secondary detection or direct conjugate and 2. dye inactivation.
+  description: Number of imaging rounds to capture the tagged biomarkers. For CODEX a biomarker imaging round consists of 1. oligo application, 2. fluor application, 3. washes. For Cell DIVE a biomarker imaging round consists of 1. staining of a biomarker via secondary detection or direct conjugate and 2. dye inactivation.
   id: https://repo.metadatacenter.org/template-fields/1430e1bb-3070-4696-b012-0bc4fde8c5e9
   status: draft
   version: 0.0.1
@@ -401,9 +401,9 @@ children:
   prefLabel: Number of biomarker imaging rounds
   datatype: xsd:int
   minValue: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -419,9 +419,9 @@ children:
   prefLabel: Number of total imaging rounds
   datatype: xsd:int
   minValue: 0
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true
@@ -435,14 +435,14 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Slide ID
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/ba0261ca-37d2-4dff-846f-c000feec020d
 - key: cell_boundary_marker_or_stain
-  type: text-field
+  type: radio-field
   name: cell_boundary_marker_or_stain
   description: If a marker or stain was used to identify all cell boundaries in the tissue, then the name of the marker or stain should be included here. The name of the antibody-targeted molecule marker or non-antibody targeted molecule stain included here must be identical to what is found in the imaging data. For example, with the PhenoCycler, this name must match the value found in the XPD output file. If multiple marker or stains are used to identify all cell boundaries, then a comma separated list should be used here.
   id: https://repo.metadatacenter.org/template-fields/c4c6047e-82e6-43a2-97ee-7e5def893a1d
@@ -450,14 +450,19 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Cell boundary marker or stain
-  createdOn: '2025-06-04T13:51:02-07:00'
+  values:
+  - label: NAKATPASE
+  - label: CD298
+  - label: Not applicable
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
-    propertyIri: https://schema.metadatacenter.org/properties/2b3d325e-7385-41c8-8700-fafa0c64a8a7
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/ffb3248e-6512-4a34-804e-04243a0150a6
 - key: nuclear_marker_or_stain
-  type: text-field
+  type: radio-field
   name: nuclear_marker_or_stain
   description: For markers, an antibody-targetted molecule present in or around the cell nucleus, the protein or gene symbol that identifies the antibody target that is used as the nuclear marker. This symbol must match the antibody target that is either generated from the panel used or entered with custom panels. Preferably, if using a custom antibody marker, this symbol should be the HGNC symbol (https://www.genenames.org/).   For non-protein targets this is the stain name (e.g., DAPI) and, when appropriate, associated staining kit and vendor. For the PhenoCycler, this symbol must match the value found in the XPD output file.
   id: https://repo.metadatacenter.org/template-fields/e903cf03-98a6-4527-abc3-a5704e5a046e
@@ -465,12 +470,16 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Nuclear marker or stain
-  createdOn: '2025-06-04T13:51:02-07:00'
+  values:
+  - label: DAPI
+  - label: Not applicable
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
-    propertyIri: https://schema.metadatacenter.org/properties/53c0ec41-142d-49fc-8c38-a6551edc341f
+    required: true
+    propertyIri: https://schema.metadatacenter.org/properties/564e282c-d3e8-4adb-b781-9a715500c4a3
 - key: non_global_files
   type: text-field
   name: non_global_files
@@ -480,10 +489,9 @@ children:
   version: 0.0.1
   modelVersion: 1.6.0
   prefLabel: Non global files
-  regex: ^(?:\.\/[^;]+|\w[^;]+)(?:;\s*(?:\.\/[^;]+|\w[^;]+))*$
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     propertyIri: https://schema.metadatacenter.org/properties/aba9ed55-5de7-4cd1-8d9e-866de1dfc384
@@ -497,9 +505,9 @@ children:
   modelVersion: 1.6.0
   prefLabel: Metadata schema ID
   default: 62af6829-743d-423e-a701-204710e56beb
-  createdOn: '2025-06-04T13:51:02-07:00'
+  createdOn: '2024-01-09T12:03:42-08:00'
   createdBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
-  modifiedOn: '2025-06-04T13:51:02-07:00'
+  modifiedOn: '2024-01-09T12:03:42-08:00'
   modifiedBy: https://metadatacenter.org/users/70417c1c-ffa6-49b2-9ddf-e4a2d73fe1e9
   configuration:
     required: true

@@ -59,12 +59,13 @@
   "@id": null,
   "Auxiliary Metadata": {
     "@context": {
-      "Additional Commentary": "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataCommentary",
-      "Data File Descriptive Key-Value Pairs": "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataKeyValuePair"
+      "Additional Commentary": "http://purl.org/radx-terms/metadata-terms/auxiliaryMetadataCommentary"
     },
     "@id": "https://repo.metadatacenter.org/template-element-instances/ea3d0b52-8185-4822-853d-3134736f70b3",
     "Additional Commentary": [
-      {}
+      {
+        "@value": null
+      }
     ],
     "Data File Descriptive Key-Value Pairs": []
   },
@@ -72,14 +73,19 @@
     "@context": {
       "Data Characteristics Table in CSV": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInCsv",
       "Data Characteristics Table in HTML": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInHtml",
-      "Data Characteristics Table in Key-Value Pairs": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInKeyValuePairs",
       "Data Characteristics Table in TSV": "http://purl.org/radx-terms/metadata-terms/dataCharacteristicsTableInTsv"
     },
     "@id": "https://repo.metadatacenter.org/template-element-instances/de1133b0-83fa-4891-b811-97a5b5456d0b",
-    "Data Characteristics Table in CSV": {},
-    "Data Characteristics Table in HTML": {},
+    "Data Characteristics Table in CSV": {
+      "@value": null
+    },
+    "Data Characteristics Table in HTML": {
+      "@value": null
+    },
     "Data Characteristics Table in Key-Value Pairs": [],
-    "Data Characteristics Table in TSV": {}
+    "Data Characteristics Table in TSV": {
+      "@value": null
+    }
   },
   "Data File Contributors": [
     {
@@ -145,10 +151,18 @@
         "Process Version": "http://purl.org/radx-terms/metadata-terms/creationProcessVersion"
       },
       "@id": "https://repo.metadatacenter.org/template-element-instances/eb567a99-08a0-4fa2-867c-84ea464c2a6b",
-      "Process Execution Identifier": {},
-      "Process IRI": {},
-      "Process Name": {},
-      "Process Version": {}
+      "Process Execution Identifier": {
+        "@value": null
+      },
+      "Process IRI": {
+        "@value": null
+      },
+      "Process Name": {
+        "@value": null
+      },
+      "Process Version": {
+        "@value": null
+      }
     }
   ],
   "Data File Creators": [
@@ -275,22 +289,38 @@
           "Publication Date Type": "http://purl.org/radx-terms/metadata-terms/distributionPublicationDateType"
         },
         "@id": "https://repo.metadatacenter.org/template-element-instances/0e72d64f-c2f1-4229-91e7-7cdc7fa19561",
-        "Data File Publication Date": {},
+        "Data File Publication Date": {
+          "@value": null
+        },
         "Publication Date Type": {
           "@value": "[Published](http://vocab.fairdatacollective.org/gdmt/Published)"
         }
       },
-      "Distribution Access Configuration": {},
-      "Distribution Access Protocol": {},
-      "Distribution Format": {},
-      "Distribution Identifier": {},
+      "Distribution Access Configuration": {
+        "@value": null
+      },
+      "Distribution Access Protocol": {
+        "@value": null
+      },
+      "Distribution Format": {
+        "@value": null
+      },
+      "Distribution Identifier": {
+        "@value": null
+      },
       "Distribution Identifier Type": {},
       "Distribution Media Type": {},
-      "Distribution Publisher": {},
+      "Distribution Publisher": {
+        "@value": null
+      },
       "Distribution Publisher Identifier": {},
       "Distribution Publisher Identifier Scheme": {},
-      "Distribution Query Statement": {},
-      "Distribution Size": {}
+      "Distribution Query Statement": {
+        "@value": null
+      },
+      "Distribution Size": {
+        "@value": null
+      }
     }
   ],
   "Data File Elevation Coverage": [
@@ -435,8 +465,12 @@
         "Related Resource Type Category": "http://purl.org/radx-terms/metadata-terms/relatedResourceTypeCategory"
       },
       "@id": "https://repo.metadatacenter.org/template-element-instances/ba90c8f0-3f32-45a7-b2fe-b00bd9325d9c",
-      "Related Resource File Name": {},
-      "Related Resource Identifier": {},
+      "Related Resource File Name": {
+        "@value": null
+      },
+      "Related Resource Identifier": {
+        "@value": null
+      },
       "Related Resource Identifier Type": {},
       "Related Resource Relation": {
         "@value": "The publication describes how the data file is constructed and can be used."
@@ -458,7 +492,9 @@
         "@id": "http://vocab.fairdatacollective.org/gdmt/CCBYSA4.0",
         "rdfs:label": "CC BY-SA 4.0"
       },
-      "License Text": {}
+      "License Text": {
+        "@value": null
+      }
     }
   ],
   "Data File Spatial Coverage": [
@@ -597,9 +633,13 @@
         "Data Source Name": "http://purl.org/radx-terms/metadata-terms/dataSourceName"
       },
       "@id": "https://repo.metadatacenter.org/template-element-instances/9c2aebdb-6701-44c2-adc8-758f8dd69443",
-      "Data Source Identifier": {},
+      "Data Source Identifier": {
+        "@value": null
+      },
       "Data Source Identifier Scheme": {},
-      "Data Source Name": {}
+      "Data Source Name": {
+        "@value": null
+      }
     }
   ],
   "Data Streams": [
@@ -612,12 +652,20 @@
         "Data Stream Variable Names": "http://purl.org/radx-terms/metadata-terms/dataStreamVariableName"
       },
       "@id": "https://repo.metadatacenter.org/template-element-instances/86209166-409f-42af-82a4-dd54363442e7",
-      "Data Stream Data Source Identifier": {},
-      "Data Stream Identifier": {},
+      "Data Stream Data Source Identifier": {
+        "@value": null
+      },
+      "Data Stream Identifier": {
+        "@value": null
+      },
       "Data Stream Identifier Scheme": {},
-      "Data Stream Name": {},
+      "Data Stream Name": {
+        "@value": null
+      },
       "Data Stream Variable Names": [
-        {}
+        {
+          "@value": null
+        }
       ]
     }
   ],

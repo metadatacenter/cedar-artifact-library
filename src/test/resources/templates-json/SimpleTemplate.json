@@ -345,6 +345,9 @@
         },
         "Classes Value Field" : {
           "enum" : [ "https://schema.metadatacenter.org/properties/ec9aebeb-86c8-404b-898e-d531a356d123" ]
+        },
+        "My A-V Field" : {
+          "enum" : [ "https://schema.metadatacenter.org/properties/252cff51-3347-43c3-ade8-c18c7b4bb71d" ]
         }
       },
       "required" : [ "xsd", "pav", "schema", "oslc", "schema:isBasedOn", "schema:name", "schema:description", "pav:createdOn", "pav:createdBy", "pav:lastUpdatedOn", "oslc:modifiedBy", "Text Field", "Text Field - Default Value", "Text Field - Min/Max String Lengths", "Text Field - Hidden", "Datetime Field - Datetime (hh:mm:ss)", "Datetime Field - Datetime (hh:mm:ss, seconds)", "Datetime Field - Date (hh:mm)", "Datetime Field - Datetime (hh)", "Datetime Field - Date (YYYY-MM-DD)", "Datetime Field - Date (YYYY-MM)", "Datetime Field - Date (YYYY)", "Datetime Field - Time (hh:mm:ss, seconds)", "Datetime Field - Time (hh:mm:ss)", "Datetime Field - Time (hh:mm)", "Datetime Field - Time (hh)", "Email", "Numeric - Basic", "Numeric - With Unit", "Numeric - Long", "Numeric - Integer", "Numeric - Double Precision Real", "Numeric - Single Precision Real", "Numeric - Min and Max", "Numeric - Decimal Places", "Link", "Paragraph", "Multiple Choice", "Checkbox", "Pick from a List - Single Select", "Pick from a List - Multi Select", "Phone", "Ontology Value Field", "Ontology Branch Value Field", "Classes Value Field" ],
@@ -2406,7 +2409,7 @@
     },
     "Checkbox" : {
       "type" : "array",
-      "minItems" : 0,
+      "minItems" : 1,
       "items" : {
         "@id" : "https://repo.metadatacenter.org/template-fields/656135d0-8baa-4118-baef-851b4b9749e2",
         "@type" : "https://schema.metadatacenter.org/core/TemplateField",
@@ -2566,7 +2569,7 @@
     },
     "Pick from a List - Multi Select" : {
       "type" : "array",
-      "minItems" : 0,
+      "minItems" : 1,
       "items" : {
         "@id" : "https://repo.metadatacenter.org/template-fields/00035382-1410-4e04-8973-7456ff801dd6",
         "@type" : "https://schema.metadatacenter.org/core/TemplateField",

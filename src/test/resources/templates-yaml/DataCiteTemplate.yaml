@@ -38,6 +38,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Creators
   children:
   - key: creatorName
     type: text-field
@@ -183,6 +184,7 @@ children:
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-19T10:59:00-07:00'
     modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+    prefLabel: Name Identifier
     children:
     - key: nameIdentifier
       type: text-field
@@ -248,6 +250,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Titles
   children:
   - key: titleName
     type: text-field
@@ -336,6 +339,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Subjects
   children:
   - key: subjectName
     type: text-field
@@ -427,6 +431,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Contributors
   children:
   - key: contributorName
     type: text-field
@@ -592,6 +597,7 @@ children:
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T16:01:04-07:00'
     modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+    prefLabel: Name Identifier
     children:
     - key: nameIdentifier
       type: text-field
@@ -657,6 +663,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Dates
   children:
   - key: date
     type: temporal-field
@@ -749,6 +756,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Alternate Identifiers
   children:
   - key: alternateIdentifier
     type: text-field
@@ -795,6 +803,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Related Identifiers
   children:
   - key: RelatedIdentifier
     type: text-field
@@ -989,6 +998,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Rights
   children:
   - key: Rights
     type: text-field
@@ -1080,6 +1090,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Descriptions
   children:
   - key: Description
     type: text-field
@@ -1134,6 +1145,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Geographic Locations
   children:
   - key: geoLocationPlace
     type: text-field
@@ -1160,6 +1172,7 @@ children:
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T17:15:58-07:00'
     modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+    prefLabel: Geographic Location Point
     children:
     - key: pointLongitude
       type: numeric-field
@@ -1210,6 +1223,7 @@ children:
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-26T17:15:58-07:00'
     modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+    prefLabel: Geographic Location Box
     children:
     - key: westBoundLongitude
       type: numeric-field
@@ -1300,6 +1314,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Funding References
   children:
   - key: funderName
     type: text-field
@@ -1443,6 +1458,7 @@ children:
   createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
   modifiedOn: '2023-07-11T17:00:51-07:00'
   modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+  prefLabel: Related Items
   children:
   - key: relatedItemType
     type: controlled-term-field
@@ -1584,6 +1600,7 @@ children:
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
     modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+    prefLabel: Creators
     children:
     - key: creatorName
       type: text-field
@@ -1671,6 +1688,7 @@ children:
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
     modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+    prefLabel: Titles
     children:
     - key: titleName
       type: text-field
@@ -1882,6 +1900,7 @@ children:
     createdBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
     modifiedOn: '2023-06-28T11:24:50-07:00'
     modifiedBy: https://metadatacenter.org/users/6124554b-9c83-443c-8207-241d75b82f44
+    prefLabel: Contributors
     children:
     - key: contributorType
       type: controlled-term-field

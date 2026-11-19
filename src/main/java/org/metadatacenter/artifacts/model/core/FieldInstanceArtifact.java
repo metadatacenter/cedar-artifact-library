@@ -1,7 +1,11 @@
 package org.metadatacenter.artifacts.model.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 
 import static org.metadatacenter.artifacts.model.core.ValidationHelper.validateListFieldNotNull;
@@ -18,7 +22,7 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
                                       Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation,
                                       Optional<String> preferredLabel, Optional<String> language) {
     return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
-        preferredLabel, language, true, jsonLdId.map(URI::toString));
+        preferredLabel, language, true, jsonLdId.map(URI::toString), StatedNulls.NONE);
   }
 
   /**
@@ -35,20 +39,28 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
                                       Optional<String> preferredLabel, Optional<String> language,
                                       boolean carriesValueKey) {
     return new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label, notation,
-        preferredLabel, language, carriesValueKey, jsonLdId.map(URI::toString));
+        preferredLabel, language, carriesValueKey, jsonLdId.map(URI::toString), StatedNulls.NONE);
   }
 
   /** Construct a field preserving its exact RDF IRI spelling, including valid Unicode separators. */
   static FieldInstanceArtifact createWithIri(List<URI> jsonLdTypes, Optional<String> jsonLdIdIri,
       Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation,
       Optional<String> preferredLabel, Optional<String> language, boolean carriesValueKey) {
+    return createWithIri(jsonLdTypes, jsonLdIdIri, jsonLdValue, label, notation, preferredLabel, language,
+        carriesValueKey, Set.of());
+  }
+
+  /** As above, recording the optional value keys the document stated as null. */
+  static FieldInstanceArtifact createWithIri(List<URI> jsonLdTypes, Optional<String> jsonLdIdIri,
+      Optional<String> jsonLdValue, Optional<String> label, Optional<String> notation,
+      Optional<String> preferredLabel, Optional<String> language, boolean carriesValueKey, Set<String> statedNulls) {
     Optional<URI> transportId = jsonLdIdIri.map(value -> {
       if (value.isEmpty()) throw new IllegalArgumentException("An empty string is not a field IRI");
       try { return org.metadatacenter.model.validation.IriReference.toUri(value); }
       catch (java.net.URISyntaxException e) { throw new IllegalArgumentException("Invalid field IRI", e); }
     });
     return new FieldInstanceArtifactRecord(jsonLdTypes, transportId, jsonLdValue, label, notation,
-        preferredLabel, language, carriesValueKey, jsonLdIdIri);
+        preferredLabel, language, carriesValueKey, jsonLdIdIri, StatedNulls.of(statedNulls));
   }
 
   /** Exact RDF identifier. Use this for identity and serialization; jsonLdId() is a URI view. */
@@ -79,6 +91,20 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
     return true;
   }
 
+  /**
+   * The optional value keys the document this was read from stated as null, and those the writer keeps.
+   * None for anything built rather than read. See {@link StatedNulls}.
+   */
+  @JsonIgnore
+  default StatedNulls statedNulls() {
+    return StatedNulls.NONE;
+  }
+
+  /** This value, keeping each stated null among {@code required}, the keys its stored value schema requires. */
+  default FieldInstanceArtifact keepingStatedNulls(Collection<String> required) {
+    return this;
+  }
+
   @Override
   default void accept(InstanceArtifactVisitor visitor, String path) {
     visitor.visitFieldInstanceArtifact(this, path);
@@ -92,7 +118,8 @@ public sealed interface FieldInstanceArtifact extends ChildInstanceArtifact perm
 
 record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId, Optional<String> jsonLdValue,
                                    Optional<String> label, Optional<String> notation, Optional<String> preferredLabel,
-                                   Optional<String> language, boolean carriesValueKey, Optional<String> jsonLdIdIri)
+                                   Optional<String> language, boolean carriesValueKey, Optional<String> jsonLdIdIri,
+                                   @JsonIgnore StatedNulls statedNulls)
     implements FieldInstanceArtifact {
   public FieldInstanceArtifactRecord {
     validateListFieldNotNull(this, jsonLdTypes, JSON_LD_TYPE);
@@ -104,6 +131,13 @@ record FieldInstanceArtifactRecord(List<URI> jsonLdTypes, Optional<URI> jsonLdId
     validateOptionalFieldNotNull(this, language, JSON_LD_LANGUAGE);
     validateOptionalFieldNotNull(this, notation, SKOS_NOTATION);
     validateOptionalFieldNotNull(this, preferredLabel, SKOS_PREFLABEL);
+    java.util.Objects.requireNonNull(statedNulls, "statedNulls");
     jsonLdTypes = List.copyOf(jsonLdTypes);
+  }
+
+  @Override public FieldInstanceArtifact keepingStatedNulls(Collection<String> required) {
+    StatedNulls kept = statedNulls.keeping(required);
+    return kept == statedNulls ? this : new FieldInstanceArtifactRecord(jsonLdTypes, jsonLdId, jsonLdValue, label,
+        notation, preferredLabel, language, carriesValueKey, jsonLdIdIri, kept);
   }
 }

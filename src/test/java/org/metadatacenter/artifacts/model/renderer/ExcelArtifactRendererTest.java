@@ -289,6 +289,29 @@ class ExcelArtifactRendererTest {
     }
   }
 
+  @Test void aNumericColumnShowsTheDecimalPlacesAndUnitItsFieldStates() throws Exception {
+    record Case(XsdNumericDatatype type, Integer decimalPlaces, String unit, String format) {}
+    var cases = List.of(
+        new Case(XsdNumericDatatype.DECIMAL, 2, null, "0.00"),
+        new Case(XsdNumericDatatype.DOUBLE, 3, null, "0.000"),
+        new Case(XsdNumericDatatype.FLOAT, 0, null, "0"),
+        new Case(XsdNumericDatatype.DECIMAL, 1, "kg", "0.0\" kg\""),
+        new Case(XsdNumericDatatype.DOUBLE, null, "mm Hg", "General\" mm Hg\""),
+        new Case(XsdNumericDatatype.INT, null, "beats/min", "0\" beats/min\""),
+        new Case(XsdNumericDatatype.DECIMAL, 2, "in\"", "0.00\" in\"\\\"\"\""),
+        // A field that states neither keeps the empty format it had.
+        new Case(XsdNumericDatatype.DECIMAL, null, null, ""),
+        new Case(XsdNumericDatatype.LONG, null, null, ""));
+    for (Case c : cases) {
+      var field = NumericField.builder().withName("Measure").withNumericType(c.type());
+      if (c.decimalPlaces() != null) field.withDecimalPlaces(c.decimalPlaces());
+      if (c.unit() != null) field.withUnitOfMeasure(c.unit());
+      try (var workbook = render(template().withFieldSchema(field.build()).build())) {
+        assertEquals(c.format(), workbook.getSheetAt(0).getColumnStyle(0).getDataFormatString(), c.toString());
+      }
+    }
+  }
+
   @Test void defaultsFillTheFirstRowBelowTheHeader() throws Exception {
     var template = template()
         .withFieldSchema(TextField.builder().withName("Title").withDefaultValue("Untitled").build())

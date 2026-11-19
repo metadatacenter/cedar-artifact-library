@@ -1,5 +1,6 @@
 package org.metadatacenter.artifacts.model;
 
+import org.metadatacenter.artifacts.model.reader.Refusals;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -59,12 +60,12 @@ class UnicodeFieldIriTest {
       "https://example.org/%xx", "https://example.org/a#b#c", "://example.org/a", "https://example.org/\ud800",
       "https://example.org/\uffff", "https://example.org/\ue000", "https://example.org/#\ue000"})
   void rejectsMalformedFieldIdentifiersInBothReaders(String iri) {
-    assertThrows(RuntimeException.class, () -> new JsonArtifactReader().readTemplateInstanceArtifact(source(iri)));
+    assertEquals("@id at /country", Refusals.keyAndPath(() -> new JsonArtifactReader().readTemplateInstanceArtifact(source(iri))));
     var valid = new JsonArtifactReader().readTemplateInstanceArtifact(source("https://example.org/term"));
     var yaml = new YamlArtifactRenderer(false).renderTemplateInstanceArtifact(valid);
     // Renderer structure is exercised by the valid round-trip above; replace the field's actual map.
     replaceId(yaml, iri);
-    assertThrows(RuntimeException.class, () -> new YamlArtifactReader().readTemplateInstanceArtifact(yaml));
+    assertEquals("id at /country", Refusals.keyAndPath(() -> new YamlArtifactReader().readTemplateInstanceArtifact(yaml)));
   }
 
   private void replaceId(java.util.Map<String, Object> node, String iri) {

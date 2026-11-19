@@ -353,8 +353,12 @@ public class MultiplicityConcordanceMatrixTest {
     ObjectNode bounds = MAPPER.createObjectNode().put("minItems", min);
     max.ifPresent(value -> bounds.put("maxItems", value));
     ObjectNode templateJson = withBounds(bases.get(baseKey), container, bounds);
-    assertThrows(RuntimeException.class, () -> new JsonArtifactReader().readTemplateSchemaArtifact(templateJson),
-        id + ": the reader refuses it");
+    RuntimeException refusal = assertThrows(RuntimeException.class,
+        () -> new JsonArtifactReader().readTemplateSchemaArtifact(templateJson), id + ": the reader refuses it");
+    // An attribute-value field admits no minimum; any other child refuses a maximum below its minimum.
+    assertTrue(refusal instanceof IllegalStateException && refusal.getMessage().startsWith(kind.name().startsWith("attribute")
+        ? "minItems must be zero in attribute-value field" : "minItems must be less than or equal to maxItems"),
+        id + ": " + refusal);
     ObjectNode result = MAPPER.createObjectNode().put("id", id).put("base", baseKey).put("container", container)
         .put("refused", true);
     result.set("bounds", bounds);

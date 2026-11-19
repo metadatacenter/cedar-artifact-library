@@ -17,6 +17,9 @@ import static org.metadatacenter.model.ModelNodeNames.TEMPLATE_SCHEMA_ARTIFACT_T
 public non-sealed interface TemplateSchemaArtifact extends SchemaArtifact, ParentSchemaArtifact {
   @Override TemplateSchemaArtifact withExtensions(SchemaExtensions extensions);
 
+  /** This template, carrying the keys each child field's stored value schema requires. */
+  TemplateSchemaArtifact withStoredValueRequirements(StoredValueRequirements storedValueRequirements);
+
   static TemplateSchemaArtifact create(LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
                                        Optional<URI> jsonLdId, Optional<URI> instanceJsonLdType, String name,
                                        String description,
@@ -426,7 +429,8 @@ record TemplateSchemaArtifactRecord(
     LinkedHashMap<String, FieldSchemaArtifact> fieldSchemas,
     LinkedHashMap<String, ElementSchemaArtifact> elementSchemas,
     Optional<String> language, TemplateUi templateUi, Optional<Annotations> annotations, String internalName,
-    String internalDescription, SchemaExtensions extensions)
+    String internalDescription, SchemaExtensions extensions,
+    @com.fasterxml.jackson.annotation.JsonIgnore StoredValueRequirements storedValueRequirements)
     implements TemplateSchemaArtifact {
   public TemplateSchemaArtifactRecord(
     LinkedHashMap<String, URI> jsonLdContext, List<URI> jsonLdTypes,
@@ -441,18 +445,27 @@ record TemplateSchemaArtifactRecord(
     String internalDescription) {
     this(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name, description, identifier, version, status,
       previousVersion, derivedFrom, createdBy, modifiedBy, createdOn, lastUpdatedOn, fieldSchemas, elementSchemas,
-      language, templateUi, annotations, internalName, internalDescription, SchemaExtensions.empty());
+      language, templateUi, annotations, internalName, internalDescription, SchemaExtensions.empty(),
+      StoredValueRequirements.NONE);
   }
 
   @Override public TemplateSchemaArtifact withExtensions(SchemaExtensions extensions) {
     return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name,
       description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
       lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUi, annotations, internalName,
-      internalDescription, extensions);
+      internalDescription, extensions, storedValueRequirements);
+  }
+
+  @Override public TemplateSchemaArtifact withStoredValueRequirements(StoredValueRequirements storedValueRequirements) {
+    return new TemplateSchemaArtifactRecord(jsonLdContext, jsonLdTypes, jsonLdId, instanceJsonLdTypes, name,
+      description, identifier, version, status, previousVersion, derivedFrom, createdBy, modifiedBy, createdOn,
+      lastUpdatedOn, fieldSchemas, elementSchemas, language, templateUi, annotations, internalName,
+      internalDescription, extensions, storedValueRequirements);
   }
 
   public TemplateSchemaArtifactRecord {
     java.util.Objects.requireNonNull(extensions, "extensions");
+    java.util.Objects.requireNonNull(storedValueRequirements, "storedValueRequirements");
     ParentSchemaArtifactInvariants.validate(this, internalName, internalDescription, name, description,
       jsonLdContext, jsonLdTypes, URI.create(TEMPLATE_SCHEMA_ARTIFACT_TYPE_IRI), jsonLdId, instanceJsonLdTypes,
       version, status, previousVersion, derivedFrom, fieldSchemas, elementSchemas, language, templateUi, annotations);

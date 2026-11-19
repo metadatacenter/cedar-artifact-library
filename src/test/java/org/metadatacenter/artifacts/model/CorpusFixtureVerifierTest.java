@@ -8,6 +8,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,27 +101,120 @@ class CorpusFixtureVerifierTest
     assertTrue(result.problems().get(0).contains("is missing"));
   }
 
+  private static final List<String> YAML_FIXTURES = List.of("fields/001/field-001-generated-java-artifact-lib.yaml",
+    "fields/001/field-001-generated-java-artifact-lib.compact.yaml");
+
   @Test void validArtifactStillRequiresCurrentFixturesAndWriteProducesVerifiableOutput() throws Exception
   {
     put(SOURCE, validField());
     put(FIXTURE, "stale output".getBytes(StandardCharsets.UTF_8));
+    for (String fixture : YAML_FIXTURES) put(fixture, "stale output".getBytes(StandardCharsets.UTF_8));
     var stale = CorpusFixtureVerifier.verify(corpus, false, Map.of());
     assertFalse(stale.successful(false));
-    assertEquals(1, stale.stale().size());
+    assertEquals(3, stale.stale().size());
     assertEquals("stale output", Files.readString(corpus.resolve("artifacts").resolve(FIXTURE)));
     assertTrue(CorpusFixtureVerifier.verify(corpus, true, Map.of()).successful(true));
     var current = CorpusFixtureVerifier.verify(corpus, false, Map.of());
-    assertTrue(current.successful(false));
-    assertEquals(1, current.checked());
+    assertTrue(current.successful(false), current.problems().toString());
+    assertEquals(3, current.checked());
   }
 
-  @Test void committedMetadataDescribesExactlyTheThreeHistoricalDefaultDefects() throws Exception
+  @Test void aMissingFixtureOfAReadableCaseFails() throws Exception
+  {
+    put(SOURCE, validField());
+    put(FIXTURE, "stale output".getBytes(StandardCharsets.UTF_8));
+    put(YAML_FIXTURES.get(0), "stale output".getBytes(StandardCharsets.UTF_8));
+    var result = CorpusFixtureVerifier.verify(corpus, true, Map.of());
+    assertFalse(result.successful(true));
+    assertEquals(List.of("fields/001/field-001-generated-java-artifact-lib.compact.yaml: missing; every readable case "
+      + "records all three Java renderings"), result.problems());
+  }
+
+  @Test void aCeeSuiteCaseWithNoRenderingFailsUnlessListedAsUnparseable() throws Exception
+  {
+    String malformed = "cee-suite/086/template-086.json";
+    put(malformed, "{ `not json".getBytes(StandardCharsets.UTF_8));
+    var unlisted = CorpusFixtureVerifier.verify(corpus, false, Map.of());
+    assertFalse(unlisted.successful(false));
+    assertTrue(unlisted.problems().get(0).contains("neither pinned nor listed as unparseable"), unlisted.problems().toString());
+    var listed = CorpusFixtureVerifier.verify(corpus, false, Map.of(), Map.of(malformed, "malformed on purpose"));
+    assertTrue(listed.successful(false), listed.problems().toString());
+    assertEquals(1, listed.expectedRejections().size());
+
+    put("cee-suite/001/template-001.json", ceeTemplate(false));
+    var unrendered = CorpusFixtureVerifier.verify(corpus, false, Map.of(), Map.of(malformed, "malformed on purpose"));
+    assertEquals(3, unrendered.problems().size(), unrendered.problems().toString());
+    assertTrue(unrendered.problems().stream().allMatch(problem -> problem.contains("missing; every readable case")));
+  }
+
+  @Test void anUnparseableSourceThatParsesFails() throws Exception
+  {
+    String listed = "cee-suite/086/template-086.json";
+    put(listed, "{}".getBytes(StandardCharsets.UTF_8));
+    var result = CorpusFixtureVerifier.verify(corpus, false, Map.of(), Map.of(listed, "malformed on purpose"));
+    assertTrue(result.problems().get(0).contains("listed as unparseable, but it is JSON now"), result.problems().toString());
+  }
+
+  @Test void theInventoryCountsEveryCollection() throws Exception
+  {
+    Files.createDirectories(corpus.resolve("artifacts/fields/001"));
+    var problems = CorpusFixtureVerifier.inventoryProblems(corpus.resolve("artifacts"));
+    assertTrue(problems.stream().anyMatch(problem -> problem.startsWith("fields: 1 cases, where corpus-inventory.json records")),
+      problems.toString());
+    assertEquals(6, problems.size(), problems.toString());
+    assertEquals(Map.of("cee-suite/086/template-086.json",
+      "Deliberately malformed JSON, which the TypeScript library's CEE reference test holds its reader to refusing."),
+      CorpusFixtureVerifier.expectedUnparseable());
+  }
+
+  @Test void committedMetadataDescribesTheThreeHistoricalDefaultsAndTheIntegerWithDecimalPlaces() throws Exception
   {
     var expectations = CorpusFixtureVerifier.expectedRejections();
-    assertEquals(3, expectations.size());
+    assertEquals(4, expectations.size());
     assertEquals("regex", expectations.get(SOURCE).code());
     assertEquals("regex", expectations.get("templates/008/template-008.json").code());
     assertEquals("choiceMembership", expectations.get("templates/020/template-020.json").code());
+    assertEquals("templateConstraint", expectations.get("cee-suite/004/template-004.json").code());
+  }
+
+  private static final String CEE_SOURCE = "cee-suite/001/template-001.json";
+
+  /** A template whose Weight field is an integer that states decimal places, or a decimal one when not {@code refused}. */
+  private static byte[] ceeTemplate(boolean refused) throws Exception
+  {
+    var template = org.metadatacenter.artifacts.model.core.TemplateSchemaArtifact.builder().withName("Measures")
+      .withFieldSchema(org.metadatacenter.artifacts.model.core.NumericField.builder().withName("Weight")
+        .withNumericType(org.metadatacenter.artifacts.model.core.fields.XsdNumericDatatype.DECIMAL)
+        .withDecimalPlaces(2).build())
+      .build();
+    ObjectNode json = new org.metadatacenter.artifacts.model.renderer.JsonArtifactRenderer().renderTemplateSchemaArtifact(template);
+    if (refused) json.withObject("/properties/Weight/_valueConstraints").put("numberType", "xsd:long");
+    return new ObjectMapper().writeValueAsBytes(json);
+  }
+
+  private static CorpusFixtureVerifier.ExpectedRejection ceeExpected(byte[] source)
+  {
+    return new CorpusFixtureVerifier.ExpectedRejection(CorpusFixtureVerifier.sha256(source), "templateConstraint",
+      "/properties/Weight/_valueConstraints/decimalPlace", "java.lang.IllegalStateException",
+      "An integer datatype cannot have decimal places.", "An integer field states decimal places.");
+  }
+
+  @Test void ceeSuiteRejectionIsPinnedLikeANumberedOne() throws Exception
+  {
+    byte[] source = ceeTemplate(true);
+    put(CEE_SOURCE, source);
+    var result = CorpusFixtureVerifier.verify(corpus, false, Map.of(CEE_SOURCE, ceeExpected(source)));
+    assertTrue(result.successful(false), result.problems().toString());
+    assertEquals(1, result.expectedRejections().size());
+  }
+
+  @Test void ceeSuiteDefinitionNoLongerRefusedFailsItsPin() throws Exception
+  {
+    byte[] source = ceeTemplate(false);
+    put(CEE_SOURCE, source);
+    var result = CorpusFixtureVerifier.verify(corpus, false, Map.of(CEE_SOURCE, ceeExpected(source)));
+    assertFalse(result.successful(false));
+    assertTrue(result.problems().get(0).contains("was accepted"), result.problems().toString());
   }
 
   private void put(String relative, byte[] bytes) throws Exception

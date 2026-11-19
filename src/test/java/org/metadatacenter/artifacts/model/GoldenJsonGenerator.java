@@ -43,18 +43,36 @@ import java.util.LinkedHashMap;
  * preserves (e.g. {@code internalName}, {@code internalDescription}) would
  * appear stable on a JSON &rarr; JSON round-trip but drift on a full circle.
  *
+ * <p>Only a golden that already exists is rewritten, so the source directory may hold other templates.
+ * {@link TemplateSourceRenderingTest} holds each golden to what {@link #golden} writes from its source.
+ *
  * <p>Not a unit test (no {@code @Test} methods). Run with:
  *
  * <pre>{@code
  *   mvn test-compile exec:java \
  *       -Dexec.classpathScope=test \
  *       -Dexec.mainClass=org.metadatacenter.artifacts.model.GoldenJsonGenerator \
- *       -Dexec.args="/path/to/source-json-dir src/test/resources/templates-json"
+ *       -Dexec.args="src/test/resources/templates src/test/resources/templates-json"
  * }</pre>
  */
 public final class GoldenJsonGenerator
 {
   private GoldenJsonGenerator() {}
+
+  private static final ObjectMapper JACKSON = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+  /**
+   * The golden JSON for a source: JSON -> model -> YAML -> model -> JSON. The YAML hop forces the model to
+   * drop and then regenerate fields (internalName / internalDescription) that only the JSON serialization
+   * carries, so the resulting JSON is byte-stable under TemplateBatteryJsonRoundTripTest's pipeline.
+   */
+  static String golden(ObjectNode source) throws IOException
+  {
+    TemplateSchemaArtifact fromJson = new JsonArtifactReader().readTemplateSchemaArtifact(source);
+    LinkedHashMap<String, Object> yamlMap = new YamlArtifactRenderer(false).renderTemplateSchemaArtifact(fromJson);
+    TemplateSchemaArtifact fromYaml = new YamlArtifactReader().readTemplateSchemaArtifact(yamlMap);
+    return JACKSON.writeValueAsString(new JsonArtifactRenderer().renderTemplateSchemaArtifact(fromYaml));
+  }
 
   public static void main(String[] args) throws IOException
   {
@@ -68,12 +86,6 @@ public final class GoldenJsonGenerator
       throw new IllegalArgumentException("input dir does not exist: " + inDir);
     Files.createDirectories(outDir);
 
-    ObjectMapper jackson = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-    JsonArtifactReader jsonReader = new JsonArtifactReader();
-    YamlArtifactRenderer yamlRenderer = new YamlArtifactRenderer(false);
-    YamlArtifactReader yamlReader = new YamlArtifactReader();
-    JsonArtifactRenderer jsonRenderer = new JsonArtifactRenderer();
-
     int ok = 0;
     int fail = 0;
     try (DirectoryStream<Path> ds = Files.newDirectoryStream(inDir, "*.json")) {
@@ -81,17 +93,11 @@ public final class GoldenJsonGenerator
         String stem = jsonFile.getFileName().toString();
         stem = stem.substring(0, stem.length() - ".json".length());
         Path outFile = outDir.resolve(stem + ".json");
+        if (!Files.isRegularFile(outFile))
+          continue;
         try {
-          ObjectNode original = (ObjectNode) jackson.readTree(Files.newBufferedReader(jsonFile));
-          // JSON -> model -> YAML -> model -> JSON. The YAML hop forces the model
-          // to drop and then regenerate fields (internalName / internalDescription)
-          // that only the JSON serialization carries, so the resulting JSON is
-          // byte-stable under TemplateBatteryJsonRoundTripTest's pipeline.
-          TemplateSchemaArtifact fromJson = jsonReader.readTemplateSchemaArtifact(original);
-          LinkedHashMap<String, Object> yamlMap = yamlRenderer.renderTemplateSchemaArtifact(fromJson);
-          TemplateSchemaArtifact fromYaml = yamlReader.readTemplateSchemaArtifact(yamlMap);
-          ObjectNode regenerated = jsonRenderer.renderTemplateSchemaArtifact(fromYaml);
-          Files.writeString(outFile, jackson.writeValueAsString(regenerated), StandardCharsets.UTF_8);
+          ObjectNode original = (ObjectNode) JACKSON.readTree(Files.newBufferedReader(jsonFile));
+          Files.writeString(outFile, golden(original), StandardCharsets.UTF_8);
           System.out.println("ok  " + stem);
           ok++;
         } catch (Exception e) {
@@ -101,7 +107,7 @@ public final class GoldenJsonGenerator
       }
     }
     System.out.println();
-    System.out.println("Generated " + ok + " golden JSON files; " + fail + " failures.");
+    System.out.println("Regenerated " + ok + " golden JSON files; " + fail + " failures.");
     if (fail > 0) System.exit(2);
   }
 }
