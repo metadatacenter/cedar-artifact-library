@@ -22,8 +22,9 @@ public class TerminologyServerClient
   private static final String INTEGRATED_SEARCH_PATH_SEGMENT = "integrated-search";
   private static final String INTEGRATED_RETRIEVE_PATH_SEGMENT = "integrated-retrieve";
 
-  private static final int PAGE_SIZE = 1000;
-  private static final int MAXIMUM_PAGES = 1000;
+  // The largest page the terminology server serves
+  private static final int PAGE_SIZE = 500;
+  private static final int MAXIMUM_PAGES = 2000;
 
   private final String terminologyServerIntegratedRetrieveEndpoint;
   private final String terminologyServerApiKey;
@@ -62,11 +63,11 @@ public class TerminologyServerClient
       String vc = controlledTermValueConstraints2Json(controlledTermValueConstraints);
       Map<String, Object> vcMap = mapper.readValue(vc, Map.class);
 
-      int page = 1;
+      int pages = 1;
       int retrievedCount = 0;
 
       while (true) {
-        Map<String, Object> pageOfResults = integratedRetrieve(vcMap, page, PAGE_SIZE,
+        Map<String, Object> pageOfResults = integratedRetrieve(vcMap, retrievedCount, PAGE_SIZE,
           terminologyServerIntegratedRetrieveEndpoint, terminologyServerApiKey);
 
         List<Map<String, String>> valueDescriptions = valueDescriptions(pageOfResults);
@@ -85,11 +86,11 @@ public class TerminologyServerClient
         if (totalCount != null && retrievedCount >= totalCount)
           break;
 
-        if (page == MAXIMUM_PAGES)
+        if (pages == MAXIMUM_PAGES)
           throw new RuntimeException(
             "value space exceeds " + (MAXIMUM_PAGES * PAGE_SIZE) + " values, which is more than this client retrieves");
 
-        page++;
+        pages++;
       }
     } catch (IOException | RuntimeException e) {
       throw new RuntimeException("Error retrieving values from terminology server " + e.getMessage(), e);
@@ -146,7 +147,7 @@ public class TerminologyServerClient
   }
 
   private Map<String, Object> integratedRetrieve(Map<String, Object> valueConstraints,
-    Integer page, Integer pageSize, String integratedRetrieveEndpoint, String apiKey) throws IOException, RuntimeException
+    int offset, int limit, String integratedRetrieveEndpoint, String apiKey) throws IOException, RuntimeException
   {
     HttpURLConnection connection = null;
     Map<String, Object> resultsMap;
@@ -156,8 +157,8 @@ public class TerminologyServerClient
       // them in a parameterObject alongside the user's input text
       Map<String, Object> payloadMap = new HashMap<>();
       payloadMap.put("valueConstraints", valueConstraints);
-      payloadMap.put("page", page);
-      payloadMap.put("pageSize", pageSize);
+      payloadMap.put("offset", offset);
+      payloadMap.put("limit", limit);
       String payload = mapper.writeValueAsString(payloadMap);
       connection = ConnectionUtil.createAndOpenConnection("POST", integratedRetrieveEndpoint, apiKey);
       OutputStream os = connection.getOutputStream();

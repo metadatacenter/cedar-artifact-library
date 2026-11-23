@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -72,8 +73,10 @@ class TerminologyServerClientTest
       "POST /integrated-retrieve"), paths);
     assertEquals("apiKey secret", authorizations.get(0));
     JsonNode payload = payloads.get(0);
-    assertEquals(1, payload.get("page").asInt());
-    assertEquals(1000, payload.get("pageSize").asInt());
+    assertEquals(0, payload.get("offset").asInt());
+    assertEquals(500, payload.get("limit").asInt());
+    assertFalse(payload.has("page"));
+    assertFalse(payload.has("pageSize"));
     assertEquals("http://purl.obolibrary.org/obo/DOID_4", payload.at("/valueConstraints/branches/0/uri").asText());
     assertEquals("DOID", payload.at("/valueConstraints/branches/0/acronym").asText());
   }
@@ -81,18 +84,18 @@ class TerminologyServerClientTest
   @Test void pagesUntilAShortPageOrTheReportedTotal()
   {
     // A full page with no total asks for the next one; the short page after it ends the walk.
-    respond(200, page(1, 1000, null));
-    respond(200, page(1001, 2, null));
+    respond(200, page(1, 500, null));
+    respond(200, page(501, 2, null));
     List<TerminologyValue> values = client().getValuesFromTerminologyServer(diseaseBranch());
-    assertEquals(1002, values.size());
+    assertEquals(502, values.size());
     assertEquals(URI.create("http://purl.obolibrary.org/obo/DOID_1"), values.get(0).uri());
-    assertEquals(URI.create("http://purl.obolibrary.org/obo/DOID_1002"), values.get(1001).uri());
-    assertEquals(List.of(1, 2), payloads.stream().map(payload -> payload.get("page").asInt()).toList());
+    assertEquals(URI.create("http://purl.obolibrary.org/obo/DOID_502"), values.get(501).uri());
+    assertEquals(List.of(0, 500), payloads.stream().map(payload -> payload.get("offset").asInt()).toList());
 
     // A full page that reaches the reported total is the last one.
     payloads.clear();
-    respond(200, page(1, 1000, 1000));
-    assertEquals(1000, client().getValuesFromTerminologyServer(diseaseBranch()).size());
+    respond(200, page(1, 500, 500));
+    assertEquals(500, client().getValuesFromTerminologyServer(diseaseBranch()).size());
     assertEquals(1, payloads.size());
   }
 
